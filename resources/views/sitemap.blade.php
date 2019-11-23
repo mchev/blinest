@@ -8,6 +8,12 @@
     <priority>1.00</priority>
   </url>
 
+  <url>
+    <loc>https://blinest.com/releases</loc>
+    <lastmod>2019-11-23T10:27:50+00:00</lastmod>
+    <priority>0.10</priority>
+  </url>
+
   @foreach($categories as $page)
   <url>
     <loc>https://blinest.com/parties/{{ $page->slug }}</loc>
