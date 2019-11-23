@@ -34,6 +34,15 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+
+        if (env('APP_ENV') == 'production' && !$this->isHttpException($exception)) {
+
+            // parse html from response
+            $exceptionHtml = $this->render(null, $exception)->getContent();
+
+            Mail::to(env('APP_EMAIL'))->send(new \App\Mail\ExceptionOccured($exceptionHtml));
+        }
+
         parent::report($exception);
     }
 
