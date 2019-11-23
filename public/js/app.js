@@ -102014,8 +102014,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/html/production/blindtest/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /var/www/html/production/blindtest/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\mchev\Mega\Sites\laragon\www\blinest\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\mchev\Mega\Sites\laragon\www\blinest\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
