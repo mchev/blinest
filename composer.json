@@ -20,6 +20,7 @@
         "laravel/tinker": "^1.0",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^3.4",
+        "rennokki/larafy": "^1.0",
         "spatie/laravel-analytics": "^3.8"
     },
     "require-dev": {

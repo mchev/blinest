@@ -16,6 +16,9 @@
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('releases') }}">Actualités</a>
+                </li>
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -25,9 +28,6 @@
                             <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                         </li>
                     @endif
-                    <li class="ml-3 nav-item">
-                        <a href="{{ url('/auth/redirect/facebook') }}" class="btn btn-info"><i class="fab fa-facebook"></i> Se connecter avec Facebook</a>
-                    </li> 
                 @else
 
                     @if(Auth::user()->is('admin'))

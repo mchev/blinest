@@ -30,6 +30,7 @@ Route::get('/politique-confidentialite', function() {
 	return view('confidentialite');
 });
 
+Route::get('/releases', 'SpotifyController@releases')->name('releases');
 
 Route::get('/auth/redirect/{provider}', 'SocialController@redirect');
 Route::get('/callback/{provider}', 'SocialController@callback');
