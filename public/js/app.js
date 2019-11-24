@@ -2517,6 +2517,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['games'],
   data: function data() {
@@ -83293,14 +83295,45 @@ var render = function() {
       _vm._l(_vm.games, function(game) {
         return _c("div", { staticClass: "col-md-6 col-lg-4" }, [
           _c(
-            "a",
+            "div",
             {
               staticClass: "portfolio-item mx-auto",
-              style: { backgroundColor: _vm.randomColor(game.id) },
-              attrs: { href: "/parties/" + game.slug }
+              style: { backgroundColor: _vm.randomColor(game.id) }
             },
             [
-              _vm._m(0, true),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100"
+                },
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass:
+                        "portfolio-item-caption-content text-center text-white",
+                      attrs: { href: "/parties/" + game.slug, title: "Jouer" }
+                    },
+                    [_c("i", { staticClass: "fas fa-play fa-3x" })]
+                  ),
+                  _vm._v(" "),
+                  game.user_id == _vm.$userId
+                    ? _c(
+                        "a",
+                        {
+                          staticClass:
+                            "portfolio-item-caption-content text-center text-white ml-4",
+                          attrs: {
+                            href: "/games/" + game.id + "/edit",
+                            title: "Modifier"
+                          }
+                        },
+                        [_c("i", { staticClass: "fas fa-edit fa-3x" })]
+                      )
+                    : _vm._e()
+                ]
+              ),
               _vm._v(" "),
               _c(
                 "div",
@@ -83326,47 +83359,14 @@ var render = function() {
                 ]
               )
             ]
-          ),
-          _vm._v(" "),
-          game.user_id == _vm.$userId
-            ? _c(
-                "a",
-                {
-                  staticClass: "btn btn-secondary",
-                  attrs: { href: "/games/" + game.id + "/edit" }
-                },
-                [_vm._v("Modifier " + _vm._s(game.title))]
-              )
-            : _vm._e()
+          )
         ])
       })
     ],
     2
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass:
-          "portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100"
-      },
-      [
-        _c(
-          "div",
-          {
-            staticClass: "portfolio-item-caption-content text-center text-white"
-          },
-          [_c("i", { staticClass: "fas fa-play fa-3x" })]
-        )
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

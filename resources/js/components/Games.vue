@@ -11,11 +11,14 @@
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
     <div v-for="game in games" class="col-md-6 col-lg-4">
-      <a class="portfolio-item mx-auto" :href="'/parties/' + game.slug" :style="{backgroundColor: randomColor(game.id)}">
+      <div class="portfolio-item mx-auto" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
-            <div class="portfolio-item-caption-content text-center text-white">
+            <a :href="'/parties/' + game.slug" title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
-            </div>
+            </a>
+            <a v-if="game.user_id == $userId" :href="'/games/' + game.id + '/edit'" title="Modifier" class="portfolio-item-caption-content text-center text-white ml-4">
+                <i class="fas fa-edit fa-3x"></i>
+            </a>
         </div>
         <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
             <div class="text-center text-white">
@@ -23,8 +26,7 @@
                 <h3>{{ game.title }}</h3>
             </div>
         </div>
-      </a>
-      <a v-if="game.user_id == $userId" class="btn btn-secondary" :href="'/games/' + game.id + '/edit'">Modifier {{ game.title }}</a>
+      </div>
     </div>
 </div>
 
