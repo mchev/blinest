@@ -26,6 +26,8 @@
     <link rel="canonical" href="{{ URL::current() }}" />
     <meta name="description" content="Administration du site blinest.com">
 
+    <meta name="user-id" content="{{ optional(Auth::user())->id }}">
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
