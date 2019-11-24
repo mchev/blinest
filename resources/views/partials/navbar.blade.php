@@ -46,7 +46,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             @if(Auth::user()->is('admin'))<a class="dropdown-item" href="{{ route('admin.dashboard.index') }}">Administration</a>@endif
                             <a class="dropdown-item" href="{{ route('games.create') }}">Créer un blind test</a>
-                            <a class="dropdown-item" href="{{ route('games.me') }}">Mes parties privées</a>
+                            <a class="dropdown-item" href="{{ route('games.me') }}">Mes parties</a>
                             <a class="dropdown-item" href="{{ route('profile') }}">Mon compte</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();

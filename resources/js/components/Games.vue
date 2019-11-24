@@ -24,6 +24,7 @@
             </div>
         </div>
       </a>
+      <a v-if="game.user_id == $userId" class="btn btn-secondary" :href="'/games/' + game.id + '/edit'">Modifier {{ game.title }}</a>
     </div>
 </div>
 

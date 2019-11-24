@@ -26,6 +26,8 @@
     <link rel="canonical" href="{{ URL::current() }}" />
     <meta name="description" content="@yield('description')">
 
+    <meta name="user-id" content="{{ optional(Auth::user())->id }}">
+
     <meta property="og:image" content="/img/screenshot.jpg" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:description" content="@yield('description')" />

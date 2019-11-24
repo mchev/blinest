@@ -16,7 +16,7 @@
     <game :game="{{ $game->toJson() }}"></game>
   @endif
 
-  @if(Auth::check() && Auth::user()->is('moderator') )
+  @if(Auth::user()->is('moderator') || Auth::user() == $game->user)
     <section class="page-section bg-primary text-white text-center mb-0">
       <div class="container">
 

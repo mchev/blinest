@@ -2516,6 +2516,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['games'],
   data: function data() {
@@ -83325,7 +83326,18 @@ var render = function() {
                 ]
               )
             ]
-          )
+          ),
+          _vm._v(" "),
+          game.user_id == _vm.$userId
+            ? _c(
+                "a",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { href: "/games/" + game.id + "/edit" }
+                },
+                [_vm._v("Modifier " + _vm._s(game.title))]
+              )
+            : _vm._e()
         ])
       })
     ],
@@ -100914,6 +100926,7 @@ window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
+Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 Vue.component('games', __webpack_require__(/*! ./components/Games.vue */ "./resources/js/components/Games.vue")["default"]);
 Vue.component('game', __webpack_require__(/*! ./components/Game.vue */ "./resources/js/components/Game.vue")["default"]);
 Vue.component('multiplayer', __webpack_require__(/*! ./components/Multiplayer.vue */ "./resources/js/components/Multiplayer.vue")["default"]);

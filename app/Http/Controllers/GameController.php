@@ -47,7 +47,7 @@ class GameController extends Controller
      */
     public function me()
     {
-        $games = Game::where('user_id', Auth::user()->id)->where('public', 0)->orderBy('hit', 'DESC')->get();
+        $games = Game::where('user_id', Auth::user()->id)->orderBy('hit', 'DESC')->get();
 
         return view('games.me', compact('games'));
     }
