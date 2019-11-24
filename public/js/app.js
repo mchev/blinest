@@ -2519,6 +2519,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['games'],
   data: function data() {
@@ -83294,32 +83310,35 @@ var render = function() {
       _vm._v(" "),
       _vm._l(_vm.games, function(game) {
         return _c("div", { staticClass: "col-md-6 col-lg-4" }, [
-          _c(
-            "div",
-            {
-              staticClass: "portfolio-item mx-auto",
-              style: { backgroundColor: _vm.randomColor(game.id) }
-            },
-            [
-              _c(
+          game.user_id == _vm.$userId
+            ? _c(
                 "div",
                 {
-                  staticClass:
-                    "portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100"
+                  staticClass: "portfolio-item mx-auto",
+                  style: { backgroundColor: _vm.randomColor(game.id) }
                 },
                 [
                   _c(
-                    "a",
+                    "div",
                     {
                       staticClass:
-                        "portfolio-item-caption-content text-center text-white",
-                      attrs: { href: "/parties/" + game.slug, title: "Jouer" }
+                        "portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100"
                     },
-                    [_c("i", { staticClass: "fas fa-play fa-3x" })]
-                  ),
-                  _vm._v(" "),
-                  game.user_id == _vm.$userId
-                    ? _c(
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass:
+                            "portfolio-item-caption-content text-center text-white",
+                          attrs: {
+                            href: "/parties/" + game.slug,
+                            title: "Jouer"
+                          }
+                        },
+                        [_c("i", { staticClass: "fas fa-play fa-3x" })]
+                      ),
+                      _vm._v(" "),
+                      _c(
                         "a",
                         {
                           staticClass:
@@ -83331,42 +83350,100 @@ var render = function() {
                         },
                         [_c("i", { staticClass: "fas fa-edit fa-3x" })]
                       )
-                    : _vm._e()
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "d-flex align-items-center justify-content-center h-100 w-100 game-item"
-                },
-                [
-                  _c("div", { staticClass: "text-center text-white" }, [
-                    game.thumbnail
-                      ? _c("img", {
-                          staticClass: "img-circle",
-                          attrs: {
-                            alt: game.title,
-                            src: "/storage/games/" + game.thumbnail
-                          }
-                        })
-                      : _vm._e(),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("h3", [_vm._v(_vm._s(game.title))])
-                  ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "d-flex align-items-center justify-content-center h-100 w-100 game-item"
+                    },
+                    [
+                      _c("div", { staticClass: "text-center text-white" }, [
+                        game.thumbnail
+                          ? _c("img", {
+                              staticClass: "img-circle",
+                              attrs: {
+                                alt: game.title,
+                                src: "/storage/games/" + game.thumbnail
+                              }
+                            })
+                          : _vm._e(),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("h3", [_vm._v(_vm._s(game.title))])
+                      ])
+                    ]
+                  )
                 ]
               )
-            ]
-          )
+            : _c(
+                "a",
+                {
+                  staticClass: "portfolio-item mx-auto",
+                  style: { backgroundColor: _vm.randomColor(game.id) },
+                  attrs: { href: "/parties/" + game.slug }
+                },
+                [
+                  _vm._m(0, true),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "d-flex align-items-center justify-content-center h-100 w-100 game-item"
+                    },
+                    [
+                      _c("div", { staticClass: "text-center text-white" }, [
+                        game.thumbnail
+                          ? _c("img", {
+                              staticClass: "img-circle",
+                              attrs: {
+                                alt: game.title,
+                                src: "/storage/games/" + game.thumbnail
+                              }
+                            })
+                          : _vm._e(),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("h3", [_vm._v(_vm._s(game.title))])
+                      ])
+                    ]
+                  )
+                ]
+              )
         ])
       })
     ],
     2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass:
+          "portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100"
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "portfolio-item-caption-content text-center text-white",
+            attrs: { title: "Jouer" }
+          },
+          [_c("i", { staticClass: "fas fa-play fa-3x" })]
+        )
+      ]
+    )
+  }
+]
 render._withStripped = true
 
 
