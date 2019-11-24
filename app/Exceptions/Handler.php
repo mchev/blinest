@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
 
-        if (env('APP_ENV') == 'production' && !$this->isHttpException($exception)) {
+        if (env('APP_ENV') == 'production') {
 
             // parse html from response
             $exceptionHtml = $this->render(null, $exception)->getContent();
