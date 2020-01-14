@@ -18,58 +18,40 @@ class TrackController extends Controller
     public function index()
     {
 
-        $tracks = Track::orderBy('down_rate', 'desc')->paginate(20);
+        $tracks = Track::count();
 
-        return view('admin.tracks.index', ['tracks' => $tracks]);
+        return view('admin.tracks.index', ['tracks_count' => $tracks]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function duplicates()
+    /**       
+    * Display a listing of the resource.
+    *
+    * @param  Illuminate\Http\Request $request
+    * @return Response
+    */
+    public function list(Request $request)
     {
+        if($request->ajax()){
 
-        $tracks = Track::whereIn('id', function ( $query ) {
-            $query->select('id')->from('tracks')->groupBy('track_name')->havingRaw('count(*) > 1');
-        })->paginate(20);
+            $request->order = (isset($request->order)) ? $request->order : 'down_rate';
 
-        return view('admin.tracks.index', ['tracks' => $tracks]);
-    }
+            if ($request->q) {
+                $tracks = Track::where('track_name', 'like', '%' . $request->q . '%')
+                            ->orWhere('artist_name', 'like', '%' . $request->q . '%')
+                            ->orderBy($request->order, 'DESC')
+                            ->with('game')
+                            ->paginate($request->paginate);
+            } else {
+                $tracks = Track::orderBy($request->order, 'DESC')->with('game')->paginate($request->paginate);
+            }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+            return response()->json($tracks);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Track  $track
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Track $track)
-    {
-        //
-    }
+        } else {
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Track  $track
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Track $track)
-    {
-        //
+            return view('customers.index');
+
+        }
     }
 
     /**
@@ -82,21 +64,13 @@ class TrackController extends Controller
     public function update(Request $request, Track $track)
     {
 
-        if($request->has('delete')){
+        $track->artist_name = $request->artist_name;
+        $track->track_name = $request->track_name;
+        $track->custom_answer = $request->custom_answer;
+        $track->down_rate = $request->down_rate;
+        $track->update();
 
-            $track->delete();
-
-        } else {
-
-            $track->artist_name = $request->artist_name;
-            $track->track_name = $request->track_name;
-            $track->custom_answer = $request->custom_answer;
-            $track->down_rate = $request->down_rate;
-            $track->save();
-
-        }
-
-        return redirect('/admin/tracks');
+        return response()->json($track);
     }
 
     /**
@@ -108,7 +82,5 @@ class TrackController extends Controller
     public function destroy(Track $track)
     {
         $track->delete();
-
-        return redirect('/admin/tracks');
     }
 }

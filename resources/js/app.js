@@ -47,6 +47,7 @@ Vue.component('admin-tracks', require('./components/AdminTracks.vue').default);
 
 // ADMIN
 Vue.component('admin-user-list', require('./components/Admin/users/UserList.vue').default);
+Vue.component('admin-tracks', require('./components/Admin/Tracks.vue').default);
 
 // ANALYTICS
 Vue.component('total-visitors-and-page-views', require('./components/Analytics/TotalVisitorsAndPageViews.vue').default);

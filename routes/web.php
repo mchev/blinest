@@ -83,6 +83,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'mi
 	Route::resource('users', 'UserController');
 
 	Route::get('tracks/duplicates', 'TrackController@duplicates')->name('tracks.duplicates');
+	Route::get('tracks/list', 'TrackController@list')->name('tracks.list');
 	Route::resource('tracks', 'TrackController');
 
 	Route::resource('games', 'GameController');
