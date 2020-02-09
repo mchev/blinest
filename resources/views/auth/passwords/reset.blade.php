@@ -9,7 +9,17 @@
 @endsection
 
 @section('content')
-<div class="container">
+
+    <header class="masthead bg-primary text-white text-center mb-3">
+        <div class="container d-flex align-items-center flex-column">
+
+            <!-- Masthead Heading -->
+            <h1 class="masthead-heading text-uppercase mb-0">Nouveau mot de passe</h1>
+
+        </div>
+    </header>
+
+<div class="container mb-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
