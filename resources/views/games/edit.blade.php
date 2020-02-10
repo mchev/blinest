@@ -29,7 +29,7 @@
       
       </div>
 
-      <admin-tracks :game="{{ $game->toJson() }}"></admin-tracks>
+      <game-edit :game="{{ $game->toJson() }}"></game-edit>
 
     </div>
 

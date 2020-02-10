@@ -74,6 +74,8 @@
 
     export default {
 
+        name: 'track-list',
+
         props: ['project'],
 
         data(){

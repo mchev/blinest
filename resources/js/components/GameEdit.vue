@@ -36,7 +36,7 @@
                         <input type="search" @keyup="searchTracks()" v-model="search" class="form-control" placeholder="Recherche">
                     </div>
 
-                    <div class="col-md-6 text-center">
+                    <div class="col-md-5 text-center">
                         <ul class="pagination">
                             <li v-if="current_page > 1" class="page-item">
                                 <span @click="paginate('prev')" class="page-link">&laquo;</span>
@@ -54,7 +54,7 @@
                         <button v-if="tracks.length" class="btn btn-danger" @click="deleteTracks()">Tout supprimer</button>
                     </div>
 
-                    <div class="col-md-1">
+                    <div class="col-md-2 text-right">
                         <button class="btn btn-info">{{ tracks.length }} / {{ total }}</button>
                     </div>
 
@@ -128,6 +128,8 @@
 
 <script>
     export default {
+
+        name: 'gameEdition',
 
         props: ['game'],
 

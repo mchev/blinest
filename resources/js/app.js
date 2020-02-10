@@ -42,7 +42,7 @@ Vue.component('ranking', require('./components/Ranking.vue').default);
 
 Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);
 
-Vue.component('admin-tracks', require('./components/AdminTracks.vue').default);
+Vue.component('game-edit', require('./components/GameEdit.vue').default);
 
 
 // ADMIN
