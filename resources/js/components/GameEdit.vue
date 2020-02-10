@@ -2,19 +2,19 @@
     <div>
 
         <div class="card">
-            <div class="card-header">Questions</div>
+            <div class="card-header">Gestion des extraits</div>
 
             <div class="card-body">
 
                 <div class="input-group mb-4">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">Chercher dans la bibliothèque</span>
+                        <span class="input-group-text" id="basic-addon1">Ajout depuis la bibliothèque</span>
                     </div>
                     <select v-model="origin" class="form-control">
                         <option value="deezer" selected="selected">Deezer</option>
                         <option value="playlist">Playlist Deezer</option>
                     </select>
-                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Ajouter un titre">
+                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher un titre">
                     <input v-if="origin == 'playlist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
                     <button v-if="origin == 'playlist'" type="button" @click="addPlaylist()" class="btn btn-success">Valider</button>
                 </div>
@@ -85,7 +85,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><button @click="deleteTrack(track)" class="btn btn-outline-danger">Supprimer</button></td>
+                            <td><button @click="deleteTrack(track)" class="btn text-danger"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
                     </tbody>
                 </table>
