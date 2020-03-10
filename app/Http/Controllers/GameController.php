@@ -63,10 +63,12 @@ class GameController extends Controller
 
         $alltime = $game->podium();
         $month = $game->podiumMonth();
+        $week = $game->podiumWeek();
 
         return response()->json([
             'alltime' => $alltime,
-            'month' => $month
+            'month' => $month,
+            'week' => $week
         ]);
     }
 

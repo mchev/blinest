@@ -60,7 +60,7 @@
 
 		            	<div class="card-header">
 
-		            		<h5>Classement</h5>
+		            		<h5>Classement des meilleurs joueurs</h5>
 
 		            	</div>
 

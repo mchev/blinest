@@ -42,7 +42,7 @@
         <div class="container">
 
           <!-- About Section Heading -->
-          <h2 class="page-section-heading text-uppercase">Classement</h2>
+          <h2 class="page-section-heading text-uppercase">Podium</h2>
 
           <!-- Icon Divider -->
           <div class="divider-custom">

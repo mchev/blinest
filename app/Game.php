@@ -72,4 +72,23 @@ class Game extends Model
 
     }
 
+    public function podiumWeek()
+    {
+
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        return $this->hasMany(Score::class, 'game_id')
+            ->whereDate('created_at', '>', Carbon::now()->subWeek()->format('Y-m-d'))
+            ->groupBy('user_id')
+            ->selectRaw( 'user_id, SUM( score ) as score' )
+            ->orderBy('score', 'DESC')
+            ->with(array('user' => function($query) {
+                $query->select('id','name');
+            }))
+            ->take(5)
+            ->get();
+
+    }
+
 }
