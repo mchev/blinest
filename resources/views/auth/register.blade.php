@@ -39,10 +39,12 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-right">Nom d'utilisateur</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
+
+                                <small id="nameHelp" class="form-text text-muted">Le nom qui s'affichera dans les parties avec les autres joueurs.</small>
 
                                 @if ($errors->has('name'))
                                     <span class="invalid-feedback" role="alert">
@@ -50,6 +52,8 @@
                                     </span>
                                 @endif
                             </div>
+
+
                         </div>
 
                         <div class="form-group row">
@@ -57,6 +61,8 @@
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
+
+                                <small id="emailHelp" class="form-text text-muted">Nous ne partagerons jamais votre adresse email avec personne.</small>
 
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" role="alert">
@@ -71,6 +77,8 @@
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+
+                                <small id="passwordHelp" class="form-text text-muted">Conseil : Minimum 8 caractères, Majuscules, Minuscules, Caractères spéciaux, Chiffres.</small>
 
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback" role="alert">
