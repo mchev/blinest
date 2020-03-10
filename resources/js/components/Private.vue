@@ -497,8 +497,16 @@
                     },
                     "1": {
                       "track": [
-                        "Même ma grand mère peut faire mieux!",
-                        "Vas chercher des cotons-tiges!",
+                        "La pluie de tes injures n’atteint pas le parapluie de mon indifférence.",
+                        "Cela semble toujours impossible, jusqu’à ce qu’on le fasse.",
+                        "Peu importe si vous avancez lentement, du moment que vous ne vous arrêtez pas",
+                        "Quand vous aurez épuisé toutes les possibilités, souvenez-vous de ceci: non, vous ne les avez pas toutes épuisées",
+                        "L’échec, c’est ce qui donne à la réussite sa valeur.",
+                        "Pour être un bon vainqueur, il faut être un bon perdant.",
+                        "Celui qui tombe et se relève et bien plus fort que celui qui ne tombe jamais.",
+                        "Ne vous souciez pas du nombre de vos échecs. Vous n’avez qu’à réussir une fois.",
+                        "Il n'y a pas de réussite facile ni d'échecs définitifs.",
+                        "Besoin de cotons-tiges en bambou?",
                         "Tu peux vraiment mieux faire.",
                         "N'importe quoi!",
                         "Revois tes classiques!",
@@ -509,8 +517,16 @@
                         "Faut pas pousser mémé dans les orties!"
                       ],
                       "artist": [
-                        "Même ma grand mère peut faire mieux!",
-                        "Vas chercher des cotons-tiges!",
+                        "La pluie de tes injures n’atteint pas le parapluie de mon indifférence.",
+                        "Cela semble toujours impossible, jusqu’à ce qu’on le fasse.",
+                        "Peu importe si vous avancez lentement, du moment que vous ne vous arrêtez pas",
+                        "Quand vous aurez épuisé toutes les possibilités, souvenez-vous de ceci: non, vous ne les avez pas toutes épuisées",
+                        "L’échec, c’est ce qui donne à la réussite sa valeur.",
+                        "Pour être un bon vainqueur, il faut être un bon perdant.",
+                        "Celui qui tombe et se relève et bien plus fort que celui qui ne tombe jamais.",
+                        "Ne vous souciez pas du nombre de vos échecs. Vous n’avez qu’à réussir une fois.",
+                        "Il n'y a pas de réussite facile ni d'échecs définitifs.",
+                        "Besoin de cotons-tiges en bambou?",
                         "Tu peux vraiment mieux faire.",
                         "N'importe quoi!",
                         "Revois tes classiques!",
@@ -519,7 +535,7 @@
                         "Pendant ce temps, à Vera Cruz....",
                         "J'aurais pas fais ça comme ça...",
                         "Faut pas pousser mémé dans les orties!"
-                      ]
+                       ]
                     },
                     "2": {
                       "track": [
