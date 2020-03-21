@@ -59,7 +59,7 @@ return [
     /*
      * This path will be used to register the necessary routes for the package.
      */
-    'path' => 'websockets',
+    'path' => '/admin/websockets',
 
     /*
      * Dashboard Routes Middleware
@@ -69,8 +69,8 @@ return [
      * the existing middleware. Or, you can simply stick with this list.
      */
     'middleware' => [
-        'admin',
-        Authorize::class,
+        'web',
+        'admin'
     ],
 
     'statistics' => [
