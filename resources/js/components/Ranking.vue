@@ -42,8 +42,8 @@
             Echo.channel('newUserScore-' + this.game.id)
               .listen('UpdateScore', (data) => {
 
-                if (this.users.findIndex(x => x.user_id === data.update.user_id) !== -1 ) {
-                  var index = this.users.findIndex(x => x.user_id === data.update.user_id);
+                if (this.users.findIndex(x => x.user_name === data.update.user_name) !== -1 ) {
+                  var index = this.users.findIndex(x => x.user_name === data.update.user_name);
                   this.users.splice(index, 1);
                 }
 
