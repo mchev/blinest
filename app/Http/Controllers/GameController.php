@@ -228,11 +228,23 @@ class GameController extends Controller
 
         $score = ($request->score) ? $request->score : 0;
 
-        $user = Auth::user();
+        if(Auth::user()) {
+            $user = Auth::user();
+            $user_id = $user->id;
+            $user_name = $user->name;
+        } else {
+            $user_id = null;
+            if ($request->session()->get('guest_name')) {
+                $user_name = $request->session()->get('guest_name');
+            } else {
+                $user_name = 'anonyme_' . random_int(100, 999);
+                $request->session()->put('guest_name', $user_name);
+            }
+        }
 
         $update = [
-            'user_id' => ($user) ? $user->id : null,
-            'user_name' => ($user) ? $user->name : null,
+            'user_id' => $user_id,
+            'user_name' => $user_name,
             'game_id' => $game->id,
             'score' => $score
         ];
