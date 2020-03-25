@@ -54,7 +54,7 @@ class TrackController extends Controller
     public function store(Request $request, Game $game)
     {
 
-        if (!Track::where('provider_item_id', $request->provider_item_id)->where('game_id', $game->id)->exists()) {
+        if (!$track = Track::where('provider_item_id', $request->provider_item_id)->where('game_id', $game->id)->exists()) {
 
             $track = new Track([
                 'user_id' => Auth::user()->id,
@@ -133,7 +133,23 @@ class TrackController extends Controller
      * @param  \App\Track  $track
      * @return \Illuminate\Http\Response
      */
-    public function updateTrackRate(Request $request, Track $track)
+    public function rateUp(Request $request, Track $track)
+    {
+
+        $track->down_rate = $track->down_rate - 1;
+        $track->save();
+
+        return response()->json($track);
+    }
+
+    /**
+     * Update track rate.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Track  $track
+     * @return \Illuminate\Http\Response
+     */
+    public function rateDown(Request $request, Track $track)
     {
 
         $track->down_rate = $track->down_rate + 1;

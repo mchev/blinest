@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Blind-Tests multijoueurs, gratuits et sans inscription')
-@section('description', 'Simple et efficace! Blind-tests multijoueurs, gratuit et sans inscription. Disney, Séries, Films, Années 80, etc.')
+@section('title', 'Blind-Tests multijoueurs - gratuit et sans inscription')
+@section('description', 'Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.')
 
 @section('content')
 

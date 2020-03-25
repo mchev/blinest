@@ -17,21 +17,10 @@
       <div class="container">
 
         <!-- About Section Heading -->
-        <h2 class="page-section-heading text-uppercase">Options</h2>
+        <h2 class="page-section-heading text-uppercase">Ajoutes ton morceau préféré dans la liste</h2>
 
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-          <div class="divider-custom-line"></div>
-          <div class="divider-custom-icon">
-            <i class="fas fa-edit"></i>
-          </div>
-          <div class="divider-custom-line"></div>
-        </div>
-
+        <add-track :game="{{ $game }}"></add-track>
         
-        <a  class="my-2 btn btn-info" href="{{ route('games.edit', $game) }}"><i class="fas fa-edit"></i> Editer la playlist</a>
-        
-
       </div>
     </section>
   @endif

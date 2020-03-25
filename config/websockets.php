@@ -110,13 +110,13 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => '/etc/letsencrypt/live/blinest.com/fullchain.pem',
+        'local_cert' => env('LOCAL_CERT', '/etc/letsencrypt/live/blinest.com/fullchain.pem'),
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => '/etc/letsencrypt/live/blinest.com/privkey.pem',
+        'local_pk' => env('LOCAL_KEY', '/etc/letsencrypt/live/blinest.com/privkey.pem'),
 
         /*
          * Passphrase for your local_cert file.
@@ -124,6 +124,8 @@ return [
         'passphrase' => null,
 
         'verify_peer' => false,
+
+        'cafile' => '/Users/martin/.config/valet/CA/LaravelValetCASelfSigned.pem',
     ],
 
     /*

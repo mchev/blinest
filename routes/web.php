@@ -52,12 +52,15 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/games/{game}/score', 'GameController@score');
 	//Route::get('/home', 'HomeController@index')->name('home');
 
+	Route::get('/stream', 'StreamController@index');
+	Route::post('/stream', 'StreamController@track');
+
 });
 
 
 Route::get('/games/{game}/private', 'GameController@private')->name('games.private');
 Route::get('/games/{game}/tracks/search', 'TrackController@search');
-Route::post('/games/{game}/track', 'GameController@track');
+Route::post('/games/{game}/random/track', 'GameController@track');
 Route::post('/games/{game}/update/score', 'GameController@updateScore')->name('games.update.score');
 Route::get('/games/{game}/podium', 'GameController@podium');
 Route::get('/games/{game}/tracks/delete', 'GameController@deleteTracks');
@@ -71,7 +74,9 @@ Route::resource('/games/{game}/tracks', 'TrackController');
 Route::resource('/games/{game}/rounds', 'RoundController');
 
 Route::post('/tracks/{track}/save/custom/awnser', 'TrackController@updateCustomAnwser');
-Route::post('/tracks/{track}/updatetrackrate', 'TrackController@updateTrackRate');
+
+Route::post('/tracks/{track}/rate/up', 'TrackController@rateUp');
+Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 
 
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {

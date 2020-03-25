@@ -70,9 +70,15 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button class="btn btn-success btn-lg" @click="startGame()" data-dismiss="modal">
-                        <i class="fas fa-play"></i> Rejoindre la partie
+                    <h2>{{ game.title }}</h2>
+                    <button v-if="waiting" class="btn btn-success btn-lg" @click="startGame()">
+                        En attente du prochain morceau...
                     </button>
+                    <p v-if="waiting"><small>Patience, le son arrive dans moins de 30s...</small></p>
+                    <button v-else class="btn btn-success btn-lg" @click="startGame()">
+                        <i class="pr-2 fas fa-play"></i> Rejoindre la partie
+                    </button>
+                    <loader v-if="waiting"></loader>
                 </div>
             </div>
         </div>
@@ -84,18 +90,18 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title">Partie terminée</h5>
+                <h5 class="modal-title">La partie est terminée</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body text-center">
                 <p>Mon score : {{ score }}</p>
-                <button type="button" class="btn btn-success btn-lg" @click="startGame()"><i class="fas fa-play"></i> Nouvelle partie</button>
+                <h3>Nouvelle partie dans</h3>
+                <h1>{{ countdown }}</h1>
             </div>
-            <div class="modal-footer bg-light">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-              <a href="/" class="btn btn-primary">Voir d'autres parties</a>
+            <div class="modal-footer">
+              <a href="/" class="btn btn-primary">Rejoindre d'autres parties</a>
             </div>
           </div>
         </div>
@@ -110,6 +116,11 @@
         props:['game'],
         data() {
             return {
+                player: null,
+                waiting: false,
+                listening: null,
+                ended: null,
+                countdown: 0,
                 answers: [],
                 userAnswer: '',
                 currentTrack: null,
@@ -135,92 +146,124 @@
                 this.counter = 0;
                 this.score = 0;
                 this.answers = [];
+                this.ended = null;
+                this.currentTrack = null;
+
+                // Update answers component
+                this.$emit('updateAnswers', this.answers);
+
 
                 this.sendNewScore();
-                this.hideModal();
+                $('#finnish').modal('hide');
 
-                this.getTrack();
+                if (!this.listening) {
+                    this.listen();
+                    this.listening = true;
+                }
 
             },
 
-            getTrack() {
-                axios.post('/games/' + this.game.id + '/random/track', {answers: this.answers}).then((response) => {
-                    this.currentTrack = response.data;
-                    this.currentTrack.track_score = 0;
-                    this.currentTrack.artist_score = 0;
-                    this.currentTrack.custom_score = 0;
-                    this.currentTrack.bonus_score = 0;
-                    this.playAudio();
-                }).catch((error) => {
-                    console.warn(error);
-                });
+            listen() {
+
+                this.waiting = true;
+
+                Echo.channel('newTrack-' + this.game.id)
+                    .listen('NewTrack', (data) => {
+                        $("#startModal").modal('hide');
+                        if (this.ended) this.startGame();
+                        if (this.currentTrack) this.endTrack();
+                        this.currentTrack = data.track;
+                        this.currentTrack.track_score = 0;
+                        this.currentTrack.artist_score = 0;
+                        this.currentTrack.custom_score = 0;
+                        this.currentTrack.bonus_score = 0;
+                        this.playAudio();
+                        this.waiting = false;
+                    })
+
+                Echo.channel('endGame')
+                    .listen('EndGame', (data) => {
+                        if (this.currentTrack) this.endTrack();
+                        this.endGame();
+                    })
             },
+
 
             playAudio() {
 
                 // Init
+                let vm = this;
+
                 this.percentage = 0;
                 this.placeholder = "Le titre ou l'artiste?";
 
-                let audio = new Audio(this.currentTrack.preview_url);
-                let vm = this;
+                if(this.player) this.player.pause();
 
-                audio.play();
+                this.player = new Audio(this.currentTrack.preview_url);
+                this.player.play();
 
                 // If the file is not available get another track
-                audio.onerror = function() {
+                this.player.onerror = function() {
                     axios.post('/tracks/' + vm.currentTrack.id + '/updatetrackrate').then((response) => {
-                      vm.getTrack();
+                        console.log('La rapport d\'erreur a été envoyé sur la piste défaillante')
                     }).catch((error) => {
                         console.warn(error);
                     });
                 };
 
                 // Get the current audio percentage
-                audio.ontimeupdate = function() {
-                    vm.percentage = 100 * audio.currentTime / audio.duration;
+                this.player.ontimeupdate = function() {
+                    vm.percentage = 100 * vm.player.currentTime / vm.player.duration;
                 };
 
-                // Actions at the end of audio
-                audio.onended = function() {
+            },
 
-                    vm.answers.unshift(vm.currentTrack);
-                    vm.counter++;
-                    vm.$emit('updateAnswers', vm.answers);
 
-                    // UPDATE SCORE
-                    vm.sendNewScore(true);
+            endTrack() {
 
-                    if(vm.counter < vm.game.tracks_number) {
+                // Display the last track on answers
+                this.answers.unshift(this.currentTrack);
 
-                        // GET NEXT TRACK
-                        vm.getTrack();
+                // Increment track counter
+                this.counter++;
 
-                    } else {
+                // Update answers component
+                this.$emit('updateAnswers', this.answers);
 
-                        vm.showModal();
-
-                        // Save score
-                        if (vm.score > 0) {
-                            axios.post('/games/' + vm.game.id + '/score', {score: vm.score}).then((response) => {
-                                console.log(response.data);
-                            }).catch((error) => {
-                                console.warn(error);
-                            });
-                        }
-                    }
-                    
-                }; 
+                // UPDATE SCORE
+                this.sendNewScore(true);
 
             },
 
-            showModal() {
+
+            endGame() {
+
+                this.ended = true;
+                this.countdown = 15;
+                this.countDownTimer();
+
                 $('#finnish').modal('show');
+
+                // Save score
+                if (this.score > 0) {
+                    axios.post('/games/' + this.game.id + '/score', {score: this.score}).then((response) => {
+                        console.log(response.data);
+                    }).catch((error) => {
+                        console.warn(error);
+                    });
+                }
+
             },
 
-            hideModal() {
-                $('#finnish').modal('hide');
+            countDownTimer() {
+                if(this.countdown > 0) {
+                    setTimeout(() => {
+                        this.countdown -= 1
+                        this.countDownTimer()
+                    }, 1000)
+                }
             },
+
 
             sanitize(string) {
               const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźżꓘ·/_,:;!'
@@ -562,7 +605,8 @@
 
         }
 
-    }
+    };
+
 </script>
 
 <style scoped>

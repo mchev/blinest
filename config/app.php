@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://www.blinest.com'),
+    'url' => env('APP_URL', 'https://blinest.com'),
 
     'asset_url' => env('ASSET_URL', null),
 

@@ -1,15 +1,16 @@
 <template>
 
-    <div>
+    <table class="table table-hover">
 
-      <ul class="list-group">
-        <li v-for="user in orderedUsers" class="list-group-item d-flex justify-content-between align-items-center">
-          {{ user.user_name }}
-          <span class="badge badge-primary badge-pill">{{ user.score }}</span>
-        </li>
-      </ul>
+      <tbody>
+        <tr v-for="(user, index) in orderedUsers" :key="user.user_name">
+          <td>{{ index + 1 }}</td>
+          <td>{{ user.user_name }}</td>
+          <td class="text-right"><span class="badge badge-primary badge-pill">{{ user.score }} pts</span></td>
+        </tr>
+      </tbody>
 
-    </div>
+    </table>
 
 </template>
 

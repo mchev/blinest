@@ -30,11 +30,16 @@ window.moment = require('moment');
 
 Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 
+Vue.component('add-track', require('./components/AddTrack.vue').default);
+
+Vue.component('loader', require('./components/Loader.vue').default);
+Vue.component('play', require('./components/Play.vue').default);
+
 
 Vue.component('games', require('./components/Games.vue').default);
 Vue.component('game', require('./components/Game.vue').default);
 Vue.component('multiplayer', require('./components/Multiplayer.vue').default);
-Vue.component('private', require('./components/Private.vue').default);
+//Vue.component('private', require('./components/Private.vue').default);
 Vue.component('chat', require('./components/Chat.vue').default);
 Vue.component('podium', require('./components/Podium.vue').default);
 Vue.component('answers', require('./components/Answers.vue').default);

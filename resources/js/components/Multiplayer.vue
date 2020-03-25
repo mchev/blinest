@@ -8,21 +8,12 @@
             <!-- Masthead Heading -->
             <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
-            <!-- Icon Divider -->
-            <div class="divider-custom divider-light">
-              <div class="divider-custom-line"></div>
-              <div class="divider-custom-icon">
-                <i class="fas fa-star"></i>
-              </div>
-              <div class="divider-custom-line"></div>
-            </div>
-
             <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
           </div>
       </header>
 
-      <private @updateScore="rank($event)" @updateAnswers="answers = $event" :game="game"></private>
+      <play @updateScore="rank($event)" @updateAnswers="answers = $event" :game="game"></play>
 
         <section>
 
@@ -32,11 +23,11 @@
 
                   <div class="card mb-2">
 
-                    <div class="card-header">
-                      <h5>Tu viens d'écouter <span class="float-right">{{ answers.length }}/{{ game.tracks_number }}</span></h5>
+                    <div class="card-header bg-secondary text-white">
+                      <h5>Tu viens d'écouter <span v-if="answers[0]" class="float-right">{{ answers[0].counter }} / {{ answers[0].total }}</span></h5>
                     </div>
 
-                    <div class="card-body card-multiplayer">
+                    <div class="card-body p-0 card-multiplayer">
                       <answers v-if="answers.length > 0" :answers="answers"></answers>
                     </div>
 
@@ -49,11 +40,11 @@
 
                   <div class="card mb-2">
 
-                    <div class="card-header">
+                    <div class="card-header bg-secondary text-white">
                       <h5>Classement</h5>
                     </div>
 
-                    <div class="card-body card-multiplayer">
+                    <div class="card-body p-0 card-multiplayer">
                       <ranking :game="game" :me="user"></ranking>
                     </div>
 
@@ -66,7 +57,7 @@
 
                   <div class="card mb-2">
 
-                    <div class="card-header">
+                    <div class="card-header bg-secondary text-white">
                       <h5>Salon {{ game.title }}</h5>
                     </div>
 

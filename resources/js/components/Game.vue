@@ -22,13 +22,14 @@
           </div>
       </header>
 
-      <private v-on:updateScore="score = $event" @updateAnswers="answers = $event" :game="game"></private>
+      <play v-on:updateScore="score = $event" @updateAnswers="answers = $event" :game="game"></play>
 
       <section>
           <div v-if="answers.length > 0" class="container mt-4">
               <div class="row">
                 <div class="col-md-12">
-                  <button class="btn btn-success">Score : {{ score }} / {{ answers.length }}</button>
+                  <button class="btn btn-success">Score : {{ score }} points</button>
+                  <button class="btn btn-success">Partie en cours : {{ answers[0].counter }} / {{ answers[0].total }}</button>
                 </div>
               </div>
           </div>
