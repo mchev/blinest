@@ -122,6 +122,7 @@
                 ended: null,
                 countdown: 0,
                 answers: [],
+                users: [],
                 userAnswer: '',
                 currentTrack: null,
                 counter: 0,
@@ -146,11 +147,15 @@
                 this.counter = 0;
                 this.score = 0;
                 this.answers = [];
+                this.users = [];
                 this.ended = null;
                 this.currentTrack = null;
 
                 // Update answers component
                 this.$emit('updateAnswers', this.answers);
+
+                // Reset score list
+                this.$emit('updateUsers', this.users);
 
 
                 this.sendNewScore();
@@ -314,7 +319,7 @@
                     if (this.currentTrack.track_score !== 0.5 && customScore >= limit) {
                         this.alertMessage(3, "track");
                     }
-                    if (this.currentTrack.track_score !== 0.5 && customScore >= limit && this.percentage < 20) {
+                    if (this.currentTrack.track_score !== 0.5 && customScore >= limit && this.percentage < 25) {
                         this.alertMessage(4, "track");
                     }
 
@@ -330,7 +335,7 @@
                         if (this.currentTrack.track_score !== 0.5 && titleScore >= limit) {
                             this.alertMessage(3, "track");
                         }
-                        if (this.currentTrack.track_score !== 0.5 && titleScore >= limit && this.percentage < 20) {
+                        if (this.currentTrack.track_score !== 0.5 && titleScore >= limit && this.percentage < 25) {
                             this.alertMessage(4, "track");
                         }
                     } else {
@@ -343,7 +348,7 @@
                         if (this.currentTrack.artist_score !== 0.5 && artistScore >= limit) {
                             this.alertMessage(3, "artist");
                         }
-                        if (this.currentTrack.artist_score !== 0.5 && artistScore >= limit && this.percentage < 20) {
+                        if (this.currentTrack.artist_score !== 0.5 && artistScore >= limit && this.percentage < 25) {
                             this.alertMessage(4, "artist");
                         }
                     }
@@ -368,11 +373,11 @@
                     this.currentTrack.custom_score = (customScore >= limit) ? 1 : 0;
 
 
-                if (this.currentTrack.track_score == 0.5 && this.currentTrack.artist_score == 0.5 && this.percentage < 20) {
+                if (this.currentTrack.track_score == 0.5 && this.currentTrack.artist_score == 0.5 && this.percentage < 25) {
                     this.currentTrack.bonus_score = 0.5;
                 }
 
-                if (this.currentTrack.custom_score == 1 && this.percentage < 20) {
+                if (this.currentTrack.custom_score == 1 && this.percentage < 25) {
                     this.currentTrack.bonus_score = 0.5;
                 }
 

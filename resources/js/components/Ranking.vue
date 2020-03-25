@@ -20,11 +20,11 @@
 
         name:"ranking",
 
-        props:['game', 'me'],
+        props:['game', 'me', 'users'],
 
         data() {
             return {
-              users: []
+              //users: []
             }
         },
 

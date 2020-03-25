@@ -13,7 +13,7 @@
           </div>
       </header>
 
-      <play @updateScore="rank($event)" @updateAnswers="answers = $event" :game="game"></play>
+      <play @updateScore="rank($event)" @updateUsers="users = $event" @updateAnswers="answers = $event" :game="game"></play>
 
         <section>
 
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="card-body p-0 card-multiplayer">
-                      <ranking :game="game" :me="user"></ranking>
+                      <ranking :game="game" :me="user" :users="users"></ranking>
                     </div>
 
                   </div>
@@ -110,6 +110,7 @@
         data() {
             return {
                 answers: [],
+                users: [],
                 scores: []
             }
         },
