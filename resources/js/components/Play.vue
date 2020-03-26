@@ -79,7 +79,7 @@
                         <i class="pr-2 fas fa-play"></i> Rejoindre la partie
                     </button>
                     <loader v-if="waiting"></loader>
-                    <div id="adsgoeshere" style="margin-top: 2rem;" v-html="adsenseContent"></div>
+                    <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
                 </div>
             </div>
         </div>
@@ -100,6 +100,7 @@
                 <p>Mon score : {{ score }}</p>
                 <h3>Nouvelle partie dans</h3>
                 <h1>{{ countdown }}</h1>
+                <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
             </div>
             <div class="modal-footer">
               <a href="/" class="btn btn-primary">Rejoindre d'autres parties</a>
