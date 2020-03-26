@@ -99,6 +99,7 @@ class Stream extends Command
     public function endGame()
     {
         $this->counter = 0;
+        $this->games = Game::has('tracks', '>', $this->tracks_by_game)->get();
 
         broadcast(new EndGame());
 
