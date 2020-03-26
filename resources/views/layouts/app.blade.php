@@ -97,8 +97,6 @@
                 <img alt="" border="0" src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1" />
                 </form>
 
-
-            </div>
         </section>
 
 
@@ -123,6 +121,20 @@
         </section>
 
 
+    </div>
+
+    <!-- StartGame -->
+    <div id="divadsensedisplaynone" style="display:none;">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-6495635642797272"
+             data-ad-slot="6381842577"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
 
     @yield('scripts')
