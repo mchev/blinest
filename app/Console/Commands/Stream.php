@@ -88,7 +88,7 @@ class Stream extends Command
 
             }
 
-            sleep(31);
+            sleep(30);
 
             $this->getTracks($this->games);
 
@@ -103,7 +103,7 @@ class Stream extends Command
 
         broadcast(new EndGame());
 
-        sleep(15);
+        sleep(30);
 
         $this->getTracks($this->games);
 
