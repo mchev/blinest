@@ -155,6 +155,9 @@
                 this.ended = null;
                 this.currentTrack = null;
 
+                this.player = new Audio();
+                this.player.play();
+
                 // Update answers component
                 this.$emit('updateAnswers', this.answers);
 
@@ -206,9 +209,9 @@
                 this.percentage = 0;
                 this.placeholder = "Le titre ou l'artiste?";
 
-                if(this.player) this.player.pause();
+                //if(this.player) this.player.pause();
 
-                this.player = new Audio(this.currentTrack.preview_url);
+                this.player.src = this.currentTrack.preview_url;
                 this.player.play();
 
                 // If the file is not available get another track
