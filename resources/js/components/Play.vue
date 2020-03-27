@@ -251,7 +251,7 @@
             endGame() {
 
                 this.ended = true;
-                this.countdown = 15;
+                this.countdown = 30;
                 this.countDownTimer();
 
                 $('#finnish').modal('show');
