@@ -259,7 +259,7 @@
                 // Save score
                 if (this.score > 0) {
                     axios.post('/games/' + this.game.id + '/score', {score: this.score}).then((response) => {
-                        console.log(response.data);
+                        //console.log(response.data);
                     }).catch((error) => {
                         console.warn(error);
                     });
