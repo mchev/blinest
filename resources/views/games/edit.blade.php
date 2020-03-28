@@ -72,7 +72,7 @@
 
               <div class="row">
 
-                <div class="col-lg-6">
+                <div class="col-md-12">
 
                   <div class="form-group">
                       <label class="btn-file btn btn-primary" for="thumbnail">
@@ -84,64 +84,6 @@
                   @if($game->thumbnail)
                     <img id="thumbnail-img" class="img-fluid img-thumbnail" src="/storage/games/{{ $game->thumbnail }}">
                   @endif
-
-                </div>
-
-                <div class="col-lg-6">
-
-                  <!--
-
-                  <div class="form-group">
-                    <label>Visibilité</label>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="public" id="public1" value="0" {{ $game->public ? '' : 'checked' }}>
-                      <label class="form-check-label" for="public1">
-                        Privé
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="public" id="public2" value="1" {{ $game->public ? 'checked' : '' }}>
-                      <label class="form-check-label" for="public2">
-                        Publique
-                      </label>
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  -->
-
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="1" name="random" id="random" @isset($game->random) checked @endisset>
-                      <label class="form-check-label" for="random">
-                        Lecture aléatoire
-                      </label>
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  <div class="form-group">
-                      <label for="tracks_number">Nombre d'extraits par partie</label>
-                      <input type="number" class="form-control" step="1" id="tracks_number" name="tracks_number" value="{{ $game->tracks_number }}" required/>
-                  </div>
-
-                  <!--
-
-                  <hr>
-
-                  <div class="form-group">
-                      <label for="effect_id">Effets spéciaux</label>
-                      <select name="effect_id" class="form-control">
-                        <option value="0" {{ $game->effect_id == 0 ? 'selected="selected"' : '' }}>Aucun</option>
-                        @foreach($game->effects() as $effect)
-                          <option value="{{ $effect->id }}" {{ $game->effect_id == $effect->id ? 'selected="selected"' : '' }} >{{ $effect->label }}</option>
-                        @endforeach
-                      </select>
-                  </div>
-
-                  -->
 
                 </div>
 

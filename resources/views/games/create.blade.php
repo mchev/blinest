@@ -60,6 +60,11 @@
               @csrf
 
               <div class="form-group">
+                <div class="alert alert-info">Une fois votre partie enregistrée, vous devez ajouter un minimum de 50 extraits pour pouvoir jouer. Toutes les parties comprennent 15 extraits. Vous pouvez partager le lien avec d'autres joueurs.</div>
+                <small>* Tous les champs sont obligatoires</small>
+              </div>
+
+              <div class="form-group">
                   <label for="title">Titre</label>
                   <input type="text" class="form-control" id="title" name="title" required/>
               </div>
@@ -74,49 +79,9 @@
                   <input type="file" class="form-control" id="thumbnail" name="thumbnail" required/>
               </div>
 
-              <hr class="mt-4">
-
-              @if(Auth::user()->is('admin'))
-
-                <div class="form-group">
-                  <label>Visibilité du blind test</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="public" id="public1" value="0" checked>
-                    <label class="form-check-label" for="public1">
-                      Privé
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="public" id="public2" value="1">
-                    <label class="form-check-label" for="public2">
-                      Publique
-                    </label>
-                  </div>
-                </div>
-
-                <hr>
-
-              @endif
-
-
-              <div class="form-group">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="1" name="random" id="random" checked>
-                  <label class="form-check-label" for="random">
-                    Lecture aléatoire
-                  </label>
-                </div>
+              <div class="form-group text-right pt-3">
+                <button type="submit" class="btn btn-primary">Suivant</button>
               </div>
-
-              <hr>
-
-              <div class="form-group">
-                  <label for="tracks_number">Nombre d'extraits par partie</label>
-                  <input type="number" class="form-control" value="12" step="1" id="tracks_number" name="tracks_number" required/>
-              </div>
-
-
-              <button type="submit" class="btn btn-primary">Enregistrer</button>
 
           </form>
 

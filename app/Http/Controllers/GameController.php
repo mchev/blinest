@@ -98,8 +98,6 @@ class GameController extends Controller
             'title' => 'required|max:255|unique:games,title',
             'description' => 'required|max:255',
             'thumbnail' => 'required|file',
-            'random' => 'boolean',
-            'tracks_number' => 'required|integer',
         ]);
 
         $filename = '';
@@ -126,8 +124,8 @@ class GameController extends Controller
             'description' => $request->get('description'),
             'thumbnail' => $filename,
             'public' => 0,
-            'random' => $request->get('random'),
-            'tracks_number' => $request->get('tracks_number'),
+            'random' => 1,
+            'tracks_number' => 15,
             'slug' => $slug
         ]);
 
@@ -321,8 +319,6 @@ class GameController extends Controller
         $request->validate([
             'title' => 'required|max:255|unique:games,title,' . $game->id,
             'description' => 'required|max:255',
-            'random' => 'boolean',
-            'tracks_number' => 'required|integer',
         ]);
 
         $filename = '';
@@ -348,8 +344,6 @@ class GameController extends Controller
 
         $game->title = $request->get('title');
         $game->description = $request->get('description');
-        $game->random = $request->get('random');
-        $game->tracks_number = $request->get('tracks_number');
         $game->slug = $slug;
 
         $game->save();
