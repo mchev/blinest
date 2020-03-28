@@ -24,19 +24,69 @@
 
       <play v-on:updateScore="score = $event" @updateAnswers="answers = $event" :game="game"></play>
 
-      <section>
-          <div v-if="answers.length > 0" class="container mt-4">
-              <div class="row">
-                <div class="col-md-12">
-                  <button class="btn btn-success">Score : {{ score }} points</button>
-                  <button class="btn btn-success">Partie en cours : {{ answers[0].counter }} / {{ answers[0].total }}</button>
+        <section>
+
+              <div class="row mx-0 mt-4">
+
+                <div class="col-lg-5">
+
+                  <div class="card mb-2">
+
+                    <div class="card-header bg-secondary text-white">
+                      <h5>Tu viens d'écouter <span v-if="answers[0]" class="float-right">{{ answers[0].counter }} / {{ answers[0].total }}</span></h5>
+                    </div>
+
+                    <div class="card-body p-0 card-multiplayer">
+                      <answers v-if="answers.length > 0" :answers="answers"></answers>
+                    </div>
+
+                  </div>
+                  
                 </div>
+
+
+                <div class="col-lg-3">
+
+                  <div class="card mb-2">
+
+                    <div class="card-header bg-secondary text-white">
+                      <h5>Classement</h5>
+                    </div>
+
+                    <div class="card-body p-0 card-multiplayer">
+                      <ranking :game="game" :users="users"></ranking>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div class="col-lg-4">
+
+                  <div class="card mb-2">
+
+                    <div class="card-header bg-secondary text-white">
+                      <h5>Salon {{ game.title }}</h5>
+                    </div>
+
+                    <div v-if="user" class="card-body">
+                      <chat :game="game" :user="user"></chat>
+                    </div>
+
+                    <div v-else class="card-body text-center">
+                      <div class="alert alert-info">L'inscription n'est pas obligatoire mais elle te permet d'apparaitre dans le classement, de chatter avec les autres joueur.se.s, d'ajouter des titres aux playlists et de créer des parties privées.</div>
+                      <a href="/register" class="btn btn-success">Créer un compte</a>
+                      <a href="/auth/redirect/facebook" class="btn btn-info mt-2"><i class="fab fa-facebook"></i> Connexion avec Facebook</a>
+                    </div>
+
+                  </div>
+
+                </div>
+
               </div>
-          </div>
-          <div class="container">
-              <answers class="mt-4" v-if="answers.length > 0" :answers="answers"></answers>
-          </div>
-      </section>
+
+        </section>
 
 
       <section class="page-section text-center mb-0">
@@ -69,34 +119,18 @@
 
     export default {
 
-        props:['game'],
+      name: "game",
 
-        data() {
-            return {
-                answers: [],
-                score: 0
-            }
-        },
+      props:['game', 'user'],
 
-        mounted() {
+      data() {
+          return {
+              answers: [],
+              users: [],
+              score: 0
+          }
+      },
 
-        },
+    };
 
-        created() {
-
-        },
-
-        methods: {
-
-            updatePodium() {
-                console.log("Update score");
-            }
-
-        }
-
-    }
 </script>
-
-<style scoped>
-
-</style>

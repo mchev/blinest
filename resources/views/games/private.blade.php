@@ -10,13 +10,9 @@
 
 @section('content')
 
-   @if(Auth::check())
-    <multiplayer :game="{{ $game->toJson() }}" :user="{{ Auth::user()->toJson() }}"></multiplayer>
-  @else
-    <game :game="{{ $game->toJson() }}"></game>
-  @endif
-
-  @if( (Auth::check() && Auth::user()->is('moderator')) || (Auth::check() && Auth::user() == $game->user))
+  <game :game="{{ $game->toJson() }}" :user="{{ Auth::user() ? Auth::user() : 'null' }}"></game>
+  
+  @if( Auth::check() )
     <section class="page-section bg-primary text-white text-center mb-0">
       <div class="container">
 

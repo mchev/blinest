@@ -20,7 +20,7 @@
 
         name:"ranking",
 
-        props:['game', 'me', 'users'],
+        props:['game', 'users'],
 
         data() {
             return {
@@ -63,9 +63,6 @@
 
         }
 
-    }
+    };
+
 </script>
-
-<style scoped>
-
-</style>

@@ -71,10 +71,8 @@ Route::resource('/games', 'GameController');
 Route::get('/profils/{name}', 'UserController@show');
 
 Route::resource('/games/{game}/tracks', 'TrackController');
-Route::resource('/games/{game}/rounds', 'RoundController');
 
 Route::post('/tracks/{track}/save/custom/awnser', 'TrackController@updateCustomAnwser');
-
 Route::post('/tracks/{track}/rate/up', 'TrackController@rateUp');
 Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 
