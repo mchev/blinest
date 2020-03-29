@@ -70,7 +70,7 @@
           <h2>Editeur du site</h2>
 
           <p>Martin Chevignard<br>
-          <a href="https://www.martinchevignard.com" title="Martin Chevignard">www.martinchevignard.com</a>
+          <a href="https://martinchevignard.com" title="Martin Chevignard">martinchevignard.com</a>
 
         </div>
 
