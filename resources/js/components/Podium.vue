@@ -68,11 +68,11 @@
             }
         }
 
-    }
+    };
+
 </script>
 
 <style scoped>
-
 
     .list-group .list-group-item:nth-of-type(1) {
         background:linear-gradient(to right, #BF953F, #FCF6BA, #B38728);

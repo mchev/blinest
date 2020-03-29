@@ -6,7 +6,12 @@
         <tr v-for="(user, index) in orderedUsers" :key="user.user_name">
           <td>{{ index + 1 }}</td>
           <td>{{ user.user_name }}</td>
-          <td class="text-right"><span class="badge badge-primary badge-pill">{{ user.score }} pts</span></td>
+          <td class="text-right">
+            <span v-if="index === 0"><i class="text-gold fas fa-trophy"></i></span>
+            <span v-if="index === 1"><i class="text-silver fas fa-trophy"></i></span>
+            <span v-if="index === 2"><i class="text-bronze fas fa-trophy"></i></span>
+            <span class="badge badge-primary badge-pill">{{ user.score }} pts</span>
+          </td>
         </tr>
       </tbody>
 
@@ -66,3 +71,17 @@
     };
 
 </script>
+
+<style>
+
+.text-gold {
+  color: gold;
+}
+.text-silver {
+  color: silver;
+}
+.text-bronze {
+  color: brown;
+}
+
+</style>
