@@ -19,7 +19,7 @@ class MessagesController extends Controller
     public function index(Request $request)
     {
 
-        $messages = Message::where('game_id', $request->input('game_id'))->where('created_at', '>', Carbon::now()->sub('12 hours'))->orderby('created_at', 'DESC')->limit(10)->get();
+        $messages = Message::where('game_id', $request->input('game_id'))->where('created_at', '>', Carbon::now()->sub('12 hours'))->orderby('created_at', 'DESC')->limit(20)->get();
 
         return response()->json($messages);
 
