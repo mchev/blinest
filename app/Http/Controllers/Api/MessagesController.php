@@ -41,6 +41,6 @@ class MessagesController extends Controller
 
         broadcast(new MessageSent($message));
 
-        return $message->fresh();
+        return $message;
     }
 }
