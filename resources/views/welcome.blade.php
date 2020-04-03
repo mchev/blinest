@@ -5,7 +5,7 @@
 
 @section('content')
 
-<header class="masthead bg-primary text-white text-center">
+<header class="masthead pb-0 bg-primary text-white text-center">
     <div class="container d-flex align-items-center flex-column">
 
       <!-- Masthead Heading -->
@@ -13,6 +13,11 @@
 
       <!-- Masthead Subheading -->
       <p class="masthead-subheading font-weight-light mb-0">Testez votre culture musicale</p>
+
+      <div class="alert alert-info mt-2">
+        <h3>Merci!</h3>
+        Vous êtes nombreux à avoir fais des retours sur l'utilisation du site. Merci beaucoup pour vos remarques et suggestions. On ne pensait pas que vous seriez si nombreux à venir jouer ici!. Du coup, promis, on va faire évoluer tout ça. Sur le temps libre comme d'habitude. En attendant vous pouvez continuer à jouer avec les petits défauts, ça vaut le coup quand même. On vous dit dès que les évolutions arrivent. <strong>Bonne partie!</strong>
+      </div>
 
     </div>
 </header>
