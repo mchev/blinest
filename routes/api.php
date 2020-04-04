@@ -21,6 +21,8 @@ Route::post('/register', 'Api\AuthController@register')->name('register.api');
 
 Route::resource('/games', 'Api\GameController');
 
+Route::get('/search/games', 'Api\SearchController@games')->name('search.games');
+
 Route::middleware('auth:api')->group( function () {
 
 	Route::get('/user', function (Request $request) {

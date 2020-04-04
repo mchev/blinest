@@ -10,14 +10,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
-
             </ul>
 
             <!-- Right Side Of Navbar -->
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav d-flex align-items-center ml-auto">
+
+
                 <!-- Authentication Links -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('releases') }}">Actualités</a>
+                <li class="nav-item mr-4">
+                    <search-games></search-games>
                 </li>
                 @guest
                     <li class="nav-item">
@@ -30,22 +31,25 @@
                     @endif
                 @else
 
-                    @if(Auth::user()->is('admin'))
-                        <li class="nav-item"><a href="{{ route('admin.dashboard.index') }}" class="nav-link">Dashboard</a></li>
-                        <li class="nav-item"><a href="{{ route('admin.users.index') }}" class="nav-link">Utilisateurs</a></li>
-                        <li class="nav-item"><a href="{{ route('admin.tracks.index') }}" class="nav-link">Tracks</a></li>
-                        <li class="nav-item"><a href="{{ route('admin.games.index') }}" class="nav-link">Parties</a></li>
-                    @endif
-
-
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            {{ Auth::user()->name }} <span class="caret"></span>
+                        <a id="navbarDropdown" class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-2x fa-bars"></i>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            @if(Auth::user()->is('admin'))<a class="dropdown-item" href="{{ route('admin.dashboard.index') }}">Administration</a>@endif
-                            <a class="dropdown-item" href="{{ route('games.create') }}">Créer un blind test</a>
+
+                            <a class="dropdown-item disabled" href="#">{{ Auth::user()->name }}</a>
+                            <div class="dropdown-divider"></div>
+
+                            @if(Auth::user()->is('admin'))
+                                <a href="{{ route('admin.dashboard.index') }}" class="dropdown-item">Dashboard</a>
+                                <a href="{{ route('admin.users.index') }}" class="dropdown-item">Utilisateurs</a>
+                                <a href="{{ route('admin.tracks.index') }}" class="dropdown-item">Tracks</a>
+                                <a href="{{ route('admin.games.index') }}" class="dropdown-item">Parties</a>
+                                <div class="dropdown-divider"></div>
+                            @endif
+
+                            <a class="dropdown-item" href="{{ route('releases') }}">Actualités</a>
                             <a class="dropdown-item" href="{{ route('games.me') }}">Mes parties</a>
                             <a class="dropdown-item" href="{{ route('profile') }}">Mon compte</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
@@ -60,6 +64,7 @@
                         </div>
                     </li>
                 @endguest
+
             </ul>
         </div>
     </div>

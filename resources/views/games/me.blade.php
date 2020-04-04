@@ -25,6 +25,8 @@
           <div class="divider-custom-line"></div>
         </div>
 
+        <a href="{{ route('games.create') }}" class="btn btn-success btn-lg">Créer une partie privée</a>
+
       </div>
   </header>
 
