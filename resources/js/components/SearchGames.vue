@@ -38,7 +38,7 @@
       autoComplete(){
         this.results = [];
         if(this.query.length > 2){
-          axios.get('/api/search/games',{params: {query: this.query}}).then(response => {
+          axios.get('/api/games/search',{params: {query: this.query}}).then(response => {
             this.results = response.data.data;
           });
         }

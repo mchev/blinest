@@ -52,10 +52,6 @@
         }
 
     }
-  }
+  };
+  
 </script>
-
-<style scoped>
-
-
-</style>

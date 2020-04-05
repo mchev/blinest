@@ -479,7 +479,7 @@
                         "Non, tu n'as pas épuisé toutes les possibilités",
                         "L’échec, c’est ce qui donne à la réussite sa valeur.",
                         "Pour être un bon vainqueur, il faut être un bon perdant.",
-                        "Celui qui tombe et se relève et bien plus fort que celui qui ne tombe jamais.",
+                        "Celui qui tombe et se relève est bien plus fort que celui qui ne tombe jamais.",
                         "Ne te soucis pas du nombre de tes échecs. Tu n'a qu’à réussir une fois.",
                         "Il n'y a pas de réussite facile ni d'échecs définitifs.",
                         "Besoin de cotons-tiges en bambou?",

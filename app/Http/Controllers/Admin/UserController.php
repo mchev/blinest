@@ -36,9 +36,11 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function table()
     {
-        //
+        $users = User::withCount('scores')->orderBy($order, 'desc')->paginate(20);
+
+        return response()->json($users);
     }
 
     /**

@@ -52,7 +52,6 @@ Vue.component('game-edit', require('./components/GameEdit.vue').default);
 
 
 // ADMIN
-Vue.component('admin-user-list', require('./components/Admin/users/UserList.vue').default);
 Vue.component('admin-tracks', require('./components/Admin/Tracks.vue').default);
 
 // ANALYTICS
