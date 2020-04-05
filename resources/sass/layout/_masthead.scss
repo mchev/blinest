@@ -1,6 +1,6 @@
 .masthead {
   padding-top: calc(4rem + 74px);
-  padding-bottom: 6rem;
+  padding-bottom: 2rem;
   .masthead-heading {
     font-size: 4vh;
     line-height: 2.75rem;
@@ -16,7 +16,7 @@
 @include media-breakpoint-up(lg) {
   .masthead {
     padding-top: calc(2rem + 104px);
-    padding-bottom: 6rem;
+    padding-bottom: 2rem;
     .masthead-heading {
       font-size: 4vh;
       line-height: 3.5rem;

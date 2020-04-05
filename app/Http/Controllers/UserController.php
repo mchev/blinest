@@ -17,8 +17,9 @@ class UserController extends Controller
     public function show($name)
     {
         $user = User::where('name',$name)->first();
+        $scores = $user->scores()->paginate(10);
 
-        return view('users.profile', ["user" => $user]);
+        return view('users.profile', ["user" => $user, "scores" => $scores]);
 
     }
 

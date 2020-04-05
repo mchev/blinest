@@ -40,7 +40,12 @@ class User extends Authenticatable
 
     public function scores()
     {
-        return $this->hasMany(Score::class, 'user_id');
+        return $this->hasMany(Score::class, 'user_id')->orderBy('created_at', 'DESC');
+    }
+
+    public function latestScore()
+    {
+        return $this->hasOne(Score::class, 'user_id')->latest();
     }
 
     /**

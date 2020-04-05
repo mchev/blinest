@@ -18,7 +18,9 @@
 
       @endforeach
 
-      <p>Inscrit.e depuis le {{ date('d/m/Y', strtotime($user->created_at)) }}</p>
+      <p>Inscrit.e depuis le {{ $user->created_at->format('d/m/Y') }}</p>
+
+      <p>Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}</p>
 
 </header>
 
@@ -71,6 +73,43 @@
 
           <h3 class="mt-4">Parties jouées ({{ $user->scores->count() }})</h3>
           <stats-game-type :stats="{{ $user->stats()->toJson() }}" :height="150"></stats-game-type>
+
+        </div>
+
+      </div>
+
+      <div class="row mt-4">
+
+        <div class="col-md-12">
+
+          <h2>Historique des parties</h2>
+
+          {{ $scores->links() }}
+
+          <div class="table-responsive">
+            <table class="table table-striped">
+
+              <thead>
+                <tr>
+                  <th>Parties</th>
+                  <th>Date</th>
+                  <th>Scores</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @foreach($scores as $score)
+                  <tr>
+                    <td><a href="/parties/{{ $score->game->slug }}">{{ $score->game->title }}</a></td>
+                    <td>{{ $score->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $score->score }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+
+            </table>
+          </div>
+
 
         </div>
 
