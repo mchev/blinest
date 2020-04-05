@@ -34,7 +34,7 @@ class MessagesController extends Controller
     public function store(Request $request)
     {
         $message = Message::create([
-            'sender_id'   => $request->input('sender_id'),
+            'sender_id'   => auth()->user()->id,
             'game_id' => $request->input('game_id'),
             'message'     => $request->input('message'),
         ]);
