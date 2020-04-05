@@ -24,11 +24,6 @@ Route::get('/games/search', 'Api\GameController@search')->name('games.search');
 
 Route::middleware('auth:api')->group( function () {
 
-	Route::get('/user', function (Request $request) {
-	    return $request->user();
-	});
-
-
 	// Messages
 	Route::post('/messages', 'Api\MessagesController@index');
 	Route::post('/messages/send', 'Api\MessagesController@store');
