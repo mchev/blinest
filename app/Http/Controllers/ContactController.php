@@ -12,6 +12,14 @@ class ContactController extends Controller
 		return view('contact');
 	}
 
+	public function legal() {
+		return view('legal');
+	}
+	
+	public function confidentialite() {
+		return view('confidentialite');
+	}
+
 	public function send(Request $request)
 	{
 

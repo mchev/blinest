@@ -14,19 +14,13 @@
 Route::get('/', 'GameController@index');
 
 
-// CONTACT FORM
+// STATIQUES
 Route::get('/contact', 'ContactController@index');
 Route::post('/send', 'ContactController@send');
-
+Route::get('/mentions-legales', 'ContactController@legal');
 Route::get('/sitemap.xml', 'SitemapController@index');
+Route::get('/politique-confidentialite', 'ContactController@confidentialite');
 
-Route::get('/mentions-legales', function() {
-	return view('legal');
-});
-
-Route::get('/politique-confidentialite', function() {
-	return view('confidentialite');
-});
 
 Route::get('/releases', 'SpotifyController@releases')->name('releases');
 
