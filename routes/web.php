@@ -72,7 +72,7 @@ Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
 
 	Route::get('/', 'DashboardController@index')->name('dashboard.index');
-	Route::post('/', 'DashboardController@index')->name('dashboard.index');
+	Route::post('/', 'DashboardController@index')->name('post.dashboard.index');
 
 	Route::get('users/table', 'UserController@table')->name('users.table');
 	Route::resource('users', 'UserController');
