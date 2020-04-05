@@ -15,9 +15,7 @@ Route::get('/', 'GameController@index');
 
 
 // CONTACT FORM
-Route::get('/contact', function() {
-	return view('contact');
-});
+Route::get('/contact', 'ContactController@index');
 Route::post('/send', 'ContactController@send');
 
 Route::get('/sitemap.xml', 'SitemapController@index');
