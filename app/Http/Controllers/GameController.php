@@ -326,7 +326,7 @@ class GameController extends Controller
         if ($request->thumbnail) {
 
             $img = Image::make($request->thumbnail)
-                ->resize(150, 150, function ($constraint) {
+                ->resize(300, 300, function ($constraint) {
                     $constraint->aspectRatio();
                 })
                 ->encode('webp');

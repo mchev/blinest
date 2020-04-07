@@ -10,7 +10,7 @@
 
 @section('content')
 
-  @if($game->tracks->count() > 50)
+  @if($game->tracks->count() > 49)
 
     <game :game="{{ $game->toJson() }}" :user="{{ Auth::user() ? Auth::user() : 'null' }}"></game>
 
