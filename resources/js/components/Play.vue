@@ -232,7 +232,7 @@
 
                 this.player.onended = function() {
                     vm.waitingTrack = true;
-                    this.placeholder = 'En attente du prochain titre...';
+                    vm.placeholder = 'En attente du prochain titre...';
                 };
 
             },
