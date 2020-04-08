@@ -13,7 +13,7 @@
           </div>
       </header>
 
-      <play v-on:updateScore="score = $event" @updateAnswers="answers = $event" :game="game"></play>
+      <play v-on:updateScore="score = $event" v-on:updateUsers="users = $event" @updateAnswers="answers = $event" :game="game"></play>
 
         <section>
 

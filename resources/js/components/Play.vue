@@ -120,6 +120,7 @@
             return {
                 player: null,
                 waiting: false,
+                waitingTrack: false,
                 listening: null,
                 ended: null,
                 countdown: 0,
@@ -210,6 +211,7 @@
                 this.placeholder = "Le titre ou l'artiste?";
 
                 //if(this.player) this.player.pause();
+                this.waitingTrack = false;
 
                 this.player.src = this.currentTrack.preview_url;
                 this.player.play();
@@ -226,6 +228,11 @@
                 // Get the current audio percentage
                 this.player.ontimeupdate = function() {
                     vm.percentage = 100 * vm.player.currentTime / vm.player.duration;
+                };
+
+                this.player.onended = function() {
+                    vm.waitingTrack = true;
+                    this.placeholder = 'En attente du prochain titre...';
                 };
 
             },
