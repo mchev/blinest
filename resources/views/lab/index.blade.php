@@ -42,7 +42,7 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div class="tab-pane active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-      @if($labs)
+      @if($labs->count() > 0)
 
         @foreach($labs->pending() as $item)
 
