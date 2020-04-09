@@ -47,6 +47,10 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/stream', 'StreamController@index');
 	Route::post('/stream', 'StreamController@track');
 
+	Route::resource('/lab', 'LabController');
+	Route::get('/lab/{lab}/vote', 'LabController@vote');
+
+
 });
 
 

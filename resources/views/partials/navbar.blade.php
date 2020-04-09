@@ -32,8 +32,8 @@
                 @else
 
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-2x fa-bars"></i>
+                        <a id="navbarDropdown" class="nav-link" title="Menu" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bars"></i>
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -63,6 +63,11 @@
                             </form>
                         </div>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('lab.index') }}" class="nav-link text-warning" title="Le lab"><i class="fas fa-flask"></i></a>
+                    </li>
+
                 @endguest
 
             </ul>
