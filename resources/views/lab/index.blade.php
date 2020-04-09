@@ -25,16 +25,16 @@
 
   <ul class="nav nav-tabs" id="labTabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="tab" href="#pending">Ouverts ({{ $labs->pending()->count() }})</a>
+      <a class="nav-link active" data-toggle="tab" href="#pending">Ouverts (@if($labs) {{ $labs->pending()->count() }} @else 0 @endif)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#planned">Planifiés ({{ $labs->planned()->count() }})</a>
+      <a class="nav-link" data-toggle="tab" href="#planned">Planifiés (@if($labs) {{ $labs->planned()->count() }} @else 0 @endif)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#opened">En cours ({{ $labs->opened()->count() }})</a>
+      <a class="nav-link" data-toggle="tab" href="#opened">En cours (@if($labs) {{ $labs->opened()->count() }} @else 0 @endif)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#closed">Clos ({{ $labs->closed()->count() }})</a>
+      <a class="nav-link" data-toggle="tab" href="#closed">Clos (@if($labs) {{ $labs->closed()->count() }} @else 0 @endif)</a>
     </li>
   </ul>
 
@@ -42,7 +42,7 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div class="tab-pane active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-      @if($labs->count() > 0)
+      @if($labs)
 
         @foreach($labs->pending() as $item)
 
