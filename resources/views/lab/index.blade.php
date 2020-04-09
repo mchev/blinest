@@ -42,31 +42,35 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div class="tab-pane active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-      @foreach($labs->pending() as $item)
+      @if($labs)
 
-        <div class="card mt-3">
-          <div class="card-header"> 
-            <strong>#{{ $item->id }}</strong> <span class="badge 
-              @if($item->type == 'Amélioration') badge-info @endif
-              @if($item->type == 'Idée') badge-success @endif
-              @if($item->type == 'Sécurité') badge-warning @endif
-              @if($item->type == 'BUG') badge-danger @endif
-            ">
-            {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
-            <div class="float-right">
-              {{ $item->voteUp() }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
-              {{ $item->voteDown() }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
+        @foreach($labs->pending() as $item)
+
+          <div class="card mt-3">
+            <div class="card-header"> 
+              <strong>#{{ $item->id }}</strong> <span class="badge 
+                @if($item->type == 'Amélioration') badge-info @endif
+                @if($item->type == 'Idée') badge-success @endif
+                @if($item->type == 'Sécurité') badge-warning @endif
+                @if($item->type == 'BUG') badge-danger @endif
+              ">
+              {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
+              <div class="float-right">
+                {{ $item->voteUp() }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
+                {{ $item->voteDown() }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
+              </div>
+            </div>
+            <div class="card-body"> 
+              {{ $item->body }}
+            </div>
+            <div class="card-footer"> 
+              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
             </div>
           </div>
-          <div class="card-body"> 
-            {{ $item->body }}
-          </div>
-          <div class="card-footer"> 
-            <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
-          </div>
-        </div>
 
-      @endforeach
+        @endforeach
+
+      @endif
     </div>
 
     <div class="tab-pane" id="planned" role="tabpanel" aria-labelledby="planned-tab">
