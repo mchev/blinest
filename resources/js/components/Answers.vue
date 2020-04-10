@@ -8,12 +8,12 @@
 
         <td>
             <div v-if="answer.custom_answer">
-                <strong>{{ answer.custom_answer }} <i v-if="answer.bonus_score !== 0" title="Bonus rapidité" class="text-warning fas fa-fire"></i> <span class="text-success" v-if="answer.custom_score == 1"><i class="fas fa-check"></i></span></strong><br>
+                <strong><a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" title="Ecouter sur Deezer"><img src="/img/deezer.png" class="deezer_icon">{{ answer.custom_answer }}</a> <i v-if="answer.bonus_score !== 0" title="Bonus rapidité" class="text-warning fas fa-fire"></i> <span class="text-success" v-if="answer.custom_score == 1"><i class="fas fa-check"></i></span></strong><br>
                 {{ answer.artist_name }} - {{ answer.track_name }}<br>
                 <i>Bonus artiste : {{ answer.artist_score }} - Bonus titre : {{ answer.track_score }}</i>
             </div>
             <div v-if="!answer.custom_answer">
-                <strong>{{ answer.artist_name }}</strong>
+                <strong><a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" title="Écouter sur Deezer"><img src="/img/deezer.png" class="deezer_icon">{{ answer.artist_name }}</a></strong>
                 <i v-if="answer.bonus_score !== 0" title="Bonus rapidité" class="text-warning fas fa-fire"></i>
                 <br>
                 {{ answer.track_name }}<br>
@@ -76,6 +76,12 @@
 
   .pointer {
     cursor: pointer;
+  }
+
+  .deezer_icon {
+    height: 22px;
+    vertical-align: sub;
+    width: auto;
   }
 
 </style>
