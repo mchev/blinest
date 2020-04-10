@@ -89,7 +89,35 @@ class LabController extends Controller
      */
     public function update(Request $request, Lab $lab)
     {
-        //
+
+        $now = date('Y-m-d H:i:s');
+
+        if ($request->get('action') == "plan") {
+            $lab->planned_at = $now;
+            $lab->opened_at = null;
+            $lab->closed_at = null;
+            $lab->rejected_at = null;
+        }
+        if ($request->get('action') == "open") {
+            $lab->opened_at = $now;
+            $lab->closed_at = null;
+            $lab->rejected_at = null;
+        }
+        if ($request->get('action') == "close") {
+            $lab->closed_at = $now;
+        }
+        if ($request->get('action') == "reject") {
+            $lab->rejected_at = $now;
+        }
+
+        $lab->update();
+
+        if ($request->get('action') == "delete") {
+            $lab->delete();
+        }
+
+        return redirect('/lab')->with('success', 'Le ticket a été modifié');
+
     }
 
     /**

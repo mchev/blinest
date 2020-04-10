@@ -9,38 +9,22 @@ class Lab extends Model
 
 	protected $guarded = [];
 
+    protected $dates = ['planned_at', 'opened_at', 'closed_at', 'rejected_at'];
+
     public function pending()
     {
         return $this->where('parent_id', null)
         			->where('closed_at', null)
         			->where('rejected_at', null)
-        			->where('opened_at', null)
-        			->where('planned_at', null)
         			->get();
-    }
-
-    public function planned()
-    {
-        return $this->where('parent_id', null)
-        			->where('closed_at', null)
-        			->where('rejected_at', null)
-        			->where('opened_at', null)
-        			->where('planned_at', '!=', null);
-    }
-
-    public function opened()
-    {
-        return $this->where('parent_id', null)
-        			->where('closed_at', null)
-        			->where('rejected_at', null)
-        			->where('opened_at', '!=', null);
     }
 
     public function closed()
     {
         return $this->where('parent_id', null)
         			->where('closed_at', '!=', null)
-        			->orWhere('rejected_at', '!=', null);
+        			->orWhere('rejected_at', '!=', null)
+                    ->get();
     }
 
     public function user()

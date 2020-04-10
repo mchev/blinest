@@ -28,12 +28,6 @@
       <a class="nav-link active" data-toggle="tab" href="#pending">Ouverts (@if($labs) {{ $labs->pending()->count() }} @else 0 @endif)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#planned">Planifiés (@if($labs) {{ $labs->planned()->count() }} @else 0 @endif)</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#opened">En cours (@if($labs) {{ $labs->opened()->count() }} @else 0 @endif)</a>
-    </li>
-    <li class="nav-item">
       <a class="nav-link" data-toggle="tab" href="#closed">Clos (@if($labs) {{ $labs->closed()->count() }} @else 0 @endif)</a>
     </li>
   </ul>
@@ -61,10 +55,44 @@
               </div>
             </div>
             <div class="card-body"> 
+
               {{ $item->body }}
+
+              @if(Auth::user()->is('admin'))
+
+                <hr class="my-2"> 
+
+                <form method="post" action="/lab/{{ $item->id }}" class="card">
+
+                  @method('PATCH')
+                  @csrf
+
+                  <select class="form-control" name="action" onchange="this.form.submit()">
+                    <option selected="selected" disabled>Modifier le status...</option>
+                    <option value="plan">Planifier</option>
+                    <option value="open">En cours</option>
+                    <option value="close">Clos</option>
+                    <option value="reject">Rejeter</option>
+                    <option value="delete">Supprimer</option>
+                  </select>
+
+                </form>
+
+              @endif
+
             </div>
             <div class="card-footer"> 
               <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+
+              <div class="float-right">
+
+                @if($item->planned_at) <span class="badge badge-info">Planifié</span> @endif
+                @if($item->opened_at) <span class="badge badge-warning">En cours de développement depuis le {{ $item->opened_at->format('d/m/Y') }}</span> @endif
+                @if($item->closed_at) <span class="badge badge-danger">Fermé le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
+                @if($item->rejected_at) <span class="badge badge-danger">Rejeté le {{ $item->rejected_at->format('d/m/Y') }}</span> @endif
+
+              </div>
+
             </div>
           </div>
 
@@ -73,16 +101,68 @@
       @endif
     </div>
 
-    <div class="tab-pane" id="planned" role="tabpanel" aria-labelledby="planned-tab">
-
-    </div>
-
-    <div class="tab-pane" id="opened" role="tabpanel" aria-labelledby="opened-tab">
-      
-    </div>
-
     <div class="tab-pane" id="closed" role="tabpanel" aria-labelledby="closed-tab">
-      
+      @if($labs)
+
+        @foreach($labs->closed() as $item)
+
+          <div class="card mt-3">
+            <div class="card-header"> 
+              <strong>#{{ $item->id }}</strong> <span class="badge 
+                @if($item->type == 'Amélioration') badge-info @endif
+                @if($item->type == 'Idée') badge-success @endif
+                @if($item->type == 'Sécurité') badge-warning @endif
+                @if($item->type == 'BUG') badge-danger @endif
+              ">
+              {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
+              <div class="float-right">
+                {{ $item->voteUp() }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
+                {{ $item->voteDown() }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
+              </div>
+            </div>
+            <div class="card-body">
+
+              {{ $item->body }}
+
+              @if(Auth::user()->is('admin'))
+
+                <hr class="my-2"> 
+
+                <form method="post" action="/lab/{{ $item->id }}" class="card">
+
+                  @method('PATCH')
+                  @csrf
+
+                  <select class="form-control" name="action" onchange="this.form.submit()">
+                    <option selected="selected" disabled>Modifier le status...</option>
+                    <option value="plan">Planifier</option>
+                    <option value="open">En cours</option>
+                    <option value="close">Clos</option>
+                    <option value="reject">Rejeter</option>
+                    <option value="delete">Supprimer</option>
+                  </select>
+
+                </form>
+
+              @endif
+
+            </div>
+            <div class="card-footer"> 
+              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+
+              <div class="float-right">
+
+                @if($item->closed_at) <span class="badge badge-danger">Fermé le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
+                @if($item->rejected_at) <span class="badge badge-danger">Rejeté le {{ $item->rejected_at->format('d/m/Y') }}</span> @endif
+
+              </div>
+
+            </div>
+          </div>
+
+        @endforeach
+
+      @endif
     </div>
 
   </div>
