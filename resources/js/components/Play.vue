@@ -208,7 +208,7 @@
                 let vm = this;
 
                 this.percentage = 0;
-                this.placeholder = "Le titre ou l'artiste?";
+                this.placeholder = "Le titre et/ou l'artiste?";
 
                 //if(this.player) this.player.pause();
                 this.waitingTrack = false;
@@ -285,8 +285,8 @@
 
 
             sanitize(string) {
-              const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźżꓘ·/_,:;!'
-              const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzzk-------'
+              const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźżЯ·/_,:;!()[]'
+              const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzzr-----------'
               const p = new RegExp(a.split('').join('|'), 'g')
 
               return string.toString().toLowerCase()
@@ -296,6 +296,7 @@
                 .replace('the ','') // Remove pronoums THE/LES
                 .replace('& ','') // Remove pronoums THE/LES
                 .replace('and ','') // Remove AND/&
+                .replace('p!nk','pink') // Special Pink
                 .replace(/\s+/g, '-') // Replace spaces with -
                 .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
                 .replace(/[^\w\-]+/g, '') // Remove all non-word characters
@@ -311,8 +312,22 @@
 
                 var user = this.sanitize(this.userAnswer);
 
-                var titleScore = this.similarity(title, user);
-                var artistScore = this.similarity(artist, user);
+                var titleSimilarity = this.similarity(title, user);
+                var artistSimilarity = this.similarity(artist, user);
+
+                var titleArtistSimilarity = this.similarity(title + ' ' + artist, user);
+                var artistTitleSimilarity = this.similarity(artist + ' ' + title, user);
+
+                if (user.includes(title)) {
+                    titleSimilarity = 1;
+                }
+                if (user.includes(artist)) {
+                    artistSimilarity = 1;
+                }
+                if (user.includes(title) && user.includes(artist)) {
+                    titleSimilarity = 1;
+                    artistSimilarity = 1;
+                }
 
                 if (this.currentTrack.custom_answer) {
                     var custom = this.sanitize(this.currentTrack.custom_answer);
@@ -324,7 +339,7 @@
                 var limit = 0.85;
 
 
-                if (customScore > titleScore || customScore > artistScore) {
+                if (customScore > titleSimilarity || customScore > artistSimilarity) {
 
                     if (this.currentTrack.track_score !== 0.5 && customScore < 0.755) {
                         this.alertMessage(1, "track");
@@ -341,30 +356,60 @@
 
                 } else {
 
-                    if (titleScore > artistScore) {
-                        if (this.currentTrack.track_score !== 0.5 && titleScore < 0.755) {
+                    if (titleArtistSimilarity > titleSimilarity && titleArtistSimilarity > artistSimilarity && titleArtistSimilarity > artistTitleSimilarity) {
+                        if (this.currentTrack.track_score !== 0.5 && titleArtistSimilarity < 0.755) {
                             this.alertMessage(1, "track");
                         }
-                        if (this.currentTrack.track_score !== 0.5 && titleScore >= 0.755 && titleScore < limit) {
+                        if (this.currentTrack.track_score !== 0.5 && titleArtistSimilarity >= 0.755 && titleArtistSimilarity < limit) {
                             this.alertMessage(2, "track");
                         }                
-                        if (this.currentTrack.track_score !== 0.5 && titleScore >= limit) {
+                        if (this.currentTrack.track_score !== 0.5 && titleArtistSimilarity >= limit) {
+                            this.alertMessage(3, "both");
+                        }
+                        if (this.currentTrack.track_score !== 0.5 && titleArtistSimilarity >= limit && this.percentage < 25) {
+                            this.alertMessage(4, "track");
+                        }   
+                    }
+
+                    else if (artistTitleSimilarity > titleSimilarity && artistTitleSimilarity > artistSimilarity &&artistTitleSimilarity > titleArtistSimilarity) {
+                        if (this.currentTrack.track_score !== 0.5 && artistTitleSimilarity < 0.755) {
+                            this.alertMessage(1, "track");
+                        }
+                        if (this.currentTrack.track_score !== 0.5 && artistTitleSimilarity >= 0.755 && artistTitleSimilarity < limit) {
+                            this.alertMessage(2, "track");
+                        }                
+                        if (this.currentTrack.track_score !== 0.5 && artistTitleSimilarity >= limit) {
+                            this.alertMessage(3, "both");
+                        }
+                        if (this.currentTrack.track_score !== 0.5 && artistTitleSimilarity >= limit && this.percentage < 25) {
+                            this.alertMessage(4, "track");
+                        }
+                    }
+
+                    else if (titleSimilarity > artistSimilarity) {
+                        if (this.currentTrack.track_score !== 0.5 && titleSimilarity < 0.755) {
+                            this.alertMessage(1, "track");
+                        }
+                        if (this.currentTrack.track_score !== 0.5 && titleSimilarity >= 0.755 && titleSimilarity < limit) {
+                            this.alertMessage(2, "track");
+                        }                
+                        if (this.currentTrack.track_score !== 0.5 && titleSimilarity >= limit) {
                             this.alertMessage(3, "track");
                         }
-                        if (this.currentTrack.track_score !== 0.5 && titleScore >= limit && this.percentage < 25) {
+                        if (this.currentTrack.track_score !== 0.5 && titleSimilarity >= limit && this.percentage < 25) {
                             this.alertMessage(4, "track");
                         }
                     } else {
-                        if (this.currentTrack.artist_score !== 0.5 && artistScore < 0.755) {
+                        if (this.currentTrack.artist_score !== 0.5 && artistSimilarity < 0.755) {
                             this.alertMessage(1, "artist");
                         }
-                        if (this.currentTrack.artist_score !== 0.5 && artistScore >= 0.755 && artistScore < limit) {
+                        if (this.currentTrack.artist_score !== 0.5 && artistSimilarity >= 0.755 && artistSimilarity < limit) {
                             this.alertMessage(2, "artist");
                         }                
-                        if (this.currentTrack.artist_score !== 0.5 && artistScore >= limit) {
+                        if (this.currentTrack.artist_score !== 0.5 && artistSimilarity >= limit) {
                             this.alertMessage(3, "artist");
                         }
-                        if (this.currentTrack.artist_score !== 0.5 && artistScore >= limit && this.percentage < 25) {
+                        if (this.currentTrack.artist_score !== 0.5 && artistSimilarity >= limit && this.percentage < 25) {
                             this.alertMessage(4, "artist");
                         }
                     }
@@ -379,11 +424,16 @@
                 */
 
                 // SCORE
+                if (titleArtistSimilarity >= limit || artistTitleSimilarity >= limit) {
+                    this.currentTrack.track_score = 0.5;
+                    this.currentTrack.artist_score = 0.5;
+                }
+
                 if (this.currentTrack.track_score !== 0.5)
-                    this.currentTrack.track_score = (titleScore >= limit) ? 0.5 : 0;
+                    this.currentTrack.track_score = (titleSimilarity >= limit || user.includes(title)) ? 0.5 : 0;
 
                 if (this.currentTrack.artist_score !== 0.5)
-                    this.currentTrack.artist_score = (artistScore >= limit) ? 0.5 : 0;
+                    this.currentTrack.artist_score = (artistSimilarity >= limit || user.includes(artist)) ? 0.5 : 0;
 
                 if (this.currentTrack.custom_score !== 1)
                     this.currentTrack.custom_score = (customScore >= limit) ? 1 : 0;
@@ -543,6 +593,11 @@
                       "artist": [
                         "Félicitations tu a l'artiste!",
                         "Tu as trouvé l'artiste!",
+                        "Bravo!"
+                      ],
+                      "both": [
+                        "Félicitations tu a le titre et l'artiste!",
+                        "Tu as trouvé le titre et l'artiste!",
                         "Bravo!"
                       ]
                     },
