@@ -50,8 +50,8 @@
               ">
               {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
               <div class="float-right">
-                {{ $item->voteUp() }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
-                {{ $item->voteDown() }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
+                {{ count($item->voteUp) }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
+                {{ count($item->voteDown) }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
               </div>
             </div>
             <div class="card-body"> 
@@ -116,8 +116,8 @@
               ">
               {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
               <div class="float-right">
-                {{ $item->voteUp() }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
-                {{ $item->voteDown() }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
+                {{ count($item->voteUp) }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
+                {{ count($item->voteDown) }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
               </div>
             </div>
             <div class="card-body">

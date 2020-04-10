@@ -16,6 +16,8 @@ class Lab extends Model
         return $this->where('parent_id', null)
         			->where('closed_at', null)
         			->where('rejected_at', null)
+                    ->withCount('voteUp')
+                    ->orderBy('vote_up_count', 'DESC')
         			->get();
     }
 
@@ -44,12 +46,12 @@ class Lab extends Model
 
     public function voteUp()
     {
-    	return $this->hasMany(LabVotes::class)->where('down', null)->count();
+    	return $this->hasMany(LabVotes::class)->where('down', null);
     }
 
     public function voteDown()
     {
-    	return $this->hasMany(LabVotes::class)->where('up', null)->count();
+    	return $this->hasMany(LabVotes::class)->where('up', null);
     }
 
 }
