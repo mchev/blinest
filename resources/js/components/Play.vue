@@ -131,7 +131,7 @@
                 counter: 0,
                 percentage: 0,
                 score: 0,
-                placeholder: 'Le titre ou l\'artiste?',
+                placeholder: 'Le titre et/ou l\'artiste?',
                 alertContent: '',
                 alertClass: 'alert-primary',
                 adsenseContent: null,

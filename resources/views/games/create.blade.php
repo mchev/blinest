@@ -60,7 +60,8 @@
               @csrf
 
               <div class="form-group">
-                <div class="alert alert-info">Une fois votre partie enregistrée, vous devez ajouter un minimum de 50 extraits pour pouvoir jouer. Toutes les parties comprennent 15 extraits. Vous pouvez partager le lien avec d'autres joueurs.</div>
+                <div class="alert alert-warning">Une fois la partie enregistrée, il faut ajouter un minimum de 50 extraits pour jouer.</div>
+                <div class="alert alert-info">Vérifies que la partie que tu veux créer n'existe pas déjà (Chercher une partie).</div>
                 <small>* Tous les champs sont obligatoires</small>
               </div>
 
