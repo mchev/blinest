@@ -15,6 +15,8 @@
       <p class="masthead-subheading font-weight-light mb-0">Un espace ouvert à tous pour vos suggestions, idées, remontées de bugs.</p>
       <small>Pour signaler une erreur sur un extrait, cliquez sur le pouce rouge dans les résultats de la partie.</small>
 
+      <img src="/img/lab.png" width="200px">
+
       <a href="{{ route('lab.create') }}" class="btn btn-info mt-4">Créer un nouveau ticket</a> 
 
     </div>
