@@ -41,10 +41,8 @@
     <script data-ad-client="ca-pub-6495635642797272" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 
     <!-- Prefetch -->
-    <link rel="dns-prefetch" href="https://stats.pusher.com">
-    <link rel="dns-prefetch" href="https://www.googletagservices.com">
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
