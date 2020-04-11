@@ -58,28 +58,6 @@
 
               {{ $item->body }}
 
-              @if(Auth::user()->is('admin'))
-
-                <hr class="my-2"> 
-
-                <form method="post" action="/lab/{{ $item->id }}" class="card">
-
-                  @method('PATCH')
-                  @csrf
-
-                  <select class="form-control" name="action" onchange="this.form.submit()">
-                    <option selected="selected" disabled>Modifier le status...</option>
-                    <option value="plan">Planifier</option>
-                    <option value="open">En cours</option>
-                    <option value="close">Clos</option>
-                    <option value="reject">Rejeter</option>
-                    <option value="delete">Supprimer</option>
-                  </select>
-
-                </form>
-
-              @endif
-
             </div>
             <div class="card-footer"> 
               <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
@@ -88,8 +66,28 @@
 
                 @if($item->planned_at) <span class="badge badge-info">Planifié</span> @endif
                 @if($item->opened_at) <span class="badge badge-warning">En cours de développement depuis le {{ $item->opened_at->format('d/m/Y') }}</span> @endif
-                @if($item->closed_at) <span class="badge badge-danger">Fermé le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
+                @if($item->closed_at) <span class="badge badge-danger">Clos le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
                 @if($item->rejected_at) <span class="badge badge-danger">Rejeté le {{ $item->rejected_at->format('d/m/Y') }}</span> @endif
+
+                @if(Auth::user()->is('admin'))
+
+                  <form method="post" style="display:inline-block;" action="/lab/{{ $item->id }}" class="card">
+
+                    @method('PATCH')
+                    @csrf
+
+                    <select class="form-control p-0" name="action" onchange="this.form.submit()">
+                      <option selected="selected" disabled>Modifier le status...</option>
+                      <option value="plan">Planifier</option>
+                      <option value="open">En cours</option>
+                      <option value="close">Clos</option>
+                      <option value="reject">Rejeter</option>
+                      <option value="delete">Supprimer</option>
+                    </select>
+
+                  </form>
+
+                @endif
 
               </div>
 
@@ -124,36 +122,34 @@
 
               {{ $item->body }}
 
-              @if(Auth::user()->is('admin'))
-
-                <hr class="my-2"> 
-
-                <form method="post" action="/lab/{{ $item->id }}" class="card">
-
-                  @method('PATCH')
-                  @csrf
-
-                  <select class="form-control" name="action" onchange="this.form.submit()">
-                    <option selected="selected" disabled>Modifier le status...</option>
-                    <option value="plan">Planifier</option>
-                    <option value="open">En cours</option>
-                    <option value="close">Clos</option>
-                    <option value="reject">Rejeter</option>
-                    <option value="delete">Supprimer</option>
-                  </select>
-
-                </form>
-
-              @endif
-
             </div>
             <div class="card-footer"> 
               <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
 
-                @if($item->closed_at) <span class="badge badge-danger">Fermé le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
+                @if($item->closed_at) <span class="badge badge-danger">Clos le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
                 @if($item->rejected_at) <span class="badge badge-danger">Rejeté le {{ $item->rejected_at->format('d/m/Y') }}</span> @endif
+
+                @if(Auth::user()->is('admin'))
+
+                  <form method="post" style="display:inline-block;" action="/lab/{{ $item->id }}" class="card">
+
+                    @method('PATCH')
+                    @csrf
+
+                    <select class="form-control p-0" name="action" onchange="this.form.submit()">
+                      <option selected="selected" disabled>Modifier le status...</option>
+                      <option value="plan">Planifier</option>
+                      <option value="open">En cours</option>
+                      <option value="close">Clos</option>
+                      <option value="reject">Rejeter</option>
+                      <option value="delete">Supprimer</option>
+                    </select>
+
+                  </form>
+
+                @endif
 
               </div>
 

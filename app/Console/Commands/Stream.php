@@ -42,6 +42,14 @@ class Stream extends Command
     protected $counter = 0;
 
     /**
+     * Init tracks
+     *
+     * @var array
+     */
+    protected $tracks = [];
+
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -80,9 +88,10 @@ class Stream extends Command
 
             foreach ($games as $game) {
 
-                $track = Track::inRandomOrder()->where('game_id', $game->id)->first();
+                $track = Track::inRandomOrder()->where('game_id', $game->id)->whereNotIn('id', $this->tracks)->first();
                 $track->counter = $this->counter;
                 $track->total = $this->tracks_by_game;
+                $this->tracks[] = $track->id;
 
                 broadcast(new NewTrack($track));
 
@@ -98,6 +107,7 @@ class Stream extends Command
 
     public function endGame()
     {
+        $this->tracks = [];
         $this->counter = 0;
         $this->games = Game::has('tracks', '>', 50)->get();
 
