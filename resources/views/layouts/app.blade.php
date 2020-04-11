@@ -88,14 +88,7 @@
 
         <section class="p-4 text-center">
 
-                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don.</small></p>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_s-xclick" />
-                <input type="hidden" name="hosted_button_id" value="AP5UHJTLAHBTJ" />
-                <input type="image" src="https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Bouton Faites un don avec PayPal" />
-                <img alt="" border="0" src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1" />
-                </form>
+                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez désactiver le bloqueur de publicité ou <a href="/contact" title="Contact">nous contacter</a> directement.</small></p>
 
         </section>
 
@@ -114,7 +107,7 @@
 
                 <hr>
 
-                <small>Copyright © Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a></small>
+                <small>Copyright © Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/lab" title="Le lab">Le lab</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a></small>
 
             </div>
 
