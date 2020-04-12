@@ -41,11 +41,11 @@
                   <div class="card mb-2">
 
                     <div class="card-header bg-secondary text-white">
-                      <h5>Classement</h5>
+                      <h5>{{ score.user_name }} ({{ score.score }} points)</h5>
                     </div>
 
                     <div class="card-body p-0 card-multiplayer">
-                      <ranking :game="game" :users="users"></ranking>
+                      <ranking :game="game" :users="users" :userScore="score"></ranking>
                     </div>
 
                   </div>

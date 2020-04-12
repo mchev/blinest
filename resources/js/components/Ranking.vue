@@ -3,7 +3,7 @@
     <table class="table table-hover">
 
       <tbody>
-        <tr v-for="(user, index) in orderedUsers" :key="user.user_name">
+        <tr v-for="(user, index) in orderedUsers" :key="user.user_name" :class="{'bg-success' : user.user_name === userScore.user_name}">
           <td>{{ index + 1 }}</td>
           <td>{{ user.user_name }}</td>
           <td class="text-right">            
@@ -27,7 +27,7 @@
 
         name:"ranking",
 
-        props:['game', 'users'],
+        props:['game', 'users', 'userScore'],
 
         data() {
             return {

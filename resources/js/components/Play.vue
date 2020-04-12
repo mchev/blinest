@@ -31,7 +31,7 @@
                         <div class="row my-2">
 
                             <div class="input-group input-group-lg col-md-12">
-                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" autofocus>
+                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :disabled="waitingTrack == 1" autofocus>
                                 <div class="input-group-append">
                                     <button class="btn btn-success" @click="checkResponse()">OK</button>
                                 </div>
@@ -479,10 +479,9 @@
             sendNewScore(end = false) {
 
                 this.countScore(end);
-                this.$emit('updateScore', this.score);
 
                 axios.post('/games/' + this.game.id + '/update/score', {score: this.score}).then((response) => {
-                    //console.log(response.data);
+                    this.$emit('updateScore', response.data);
                 }).catch((error) => {
                     console.warn(error);
                 });
