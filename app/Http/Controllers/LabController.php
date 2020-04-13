@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Mail;
 use App\Lab;
 use App\LabVotes;
 use Illuminate\Http\Request;
@@ -57,6 +58,14 @@ class LabController extends Controller
             ]);
 
             $comment->save();
+            $user = $comment->user;
+
+            Mail::send('emails.lab', $comment->toArray(), function ($message) use ($user) {
+                $message->from('hello@blinest.com');
+                $message->to($user->email);
+                $message->cc('hello@blinest.com');
+                $message->subject('Nouveau commentaire sur le lab');
+            });
 
             return redirect('/lab/' . $lab->id)->with('success', 'La réponse a été enregistrée.');
 
