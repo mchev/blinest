@@ -39,23 +39,49 @@ class LabController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'theme'=>'required',
-            'type'=>'required',
-            'body'=>'required'
-        ]);
 
-        $lab = new Lab([
-            'theme' => $request->get('theme'),
-            'type' => $request->get('type'),
-            'body' => $request->get('body'),
-            'user_id' => auth()->user()->id,
-            'parent_id' => ($request->get('parent_id')) ? $request->get('parent_id') : null
-        ]);
+        if ($request->get('lab_id')) {
 
-        $lab->save();
+            $lab = Lab::find($request->get('lab_id'));
 
-        return redirect('/lab')->with('success', 'Le ticket a été ajouté');
+            $request->validate([
+                'body'=>'required'
+            ]);
+
+            $comment = new Lab([
+                'theme' => $lab->theme,
+                'type' => $lab->type,
+                'body' => $request->get('body'),
+                'user_id' => auth()->user()->id,
+                'parent_id' => $lab->id
+            ]);
+
+            $comment->save();
+
+            return redirect('/lab/' . $lab->id)->with('success', 'La réponse a été enregistrée.');
+
+        } else {
+
+            $request->validate([
+                'theme'=>'required',
+                'type'=>'required',
+                'body'=>'required'
+            ]);
+
+            $lab = new Lab([
+                'theme' => $request->get('theme'),
+                'type' => $request->get('type'),
+                'body' => $request->get('body'),
+                'user_id' => auth()->user()->id,
+                'parent_id' => ($request->get('parent_id')) ? $request->get('parent_id') : null
+            ]);
+
+            $lab->save();
+
+            return redirect('/lab')->with('success', 'Le ticket a été ajouté');
+
+        }
+
     }
 
     /**
@@ -66,7 +92,7 @@ class LabController extends Controller
      */
     public function show(Lab $lab)
     {
-        //
+        return view('lab.show', compact('lab'));
     }
 
     /**
@@ -154,7 +180,11 @@ class LabController extends Controller
 
         }
 
-        return redirect('/lab');
+        if ($lab->parent_id !== null) {
+            return redirect('/lab/' . $lab->parent_id);
+        } else {
+            return redirect('/lab');
+        }
     }
 
 }

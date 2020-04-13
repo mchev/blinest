@@ -36,7 +36,10 @@ class Lab extends Model
 
     public function childs()
     {
-    	return $this->hasMany(Lab::class, 'parent_id', 'id');
+    	return $this->hasMany(Lab::class, 'parent_id', 'id')
+                    ->withCount('voteUp')
+                    ->orderBy('vote_up_count', 'DESC')
+                    ->orderBy('created_at', 'ASC');
     }
 
     public function votes()

@@ -44,13 +44,16 @@
 
           <div class="card mt-3">
             <div class="card-header"> 
-              <strong>#{{ $item->id }}</strong> <span class="badge 
+              <strong>#{{ $item->id }}</strong>
+              <a href="{{ route('lab.show', $item) }}"><i class="far fa-eye"></i></a>
+              <span class="badge 
                 @if($item->type == 'Amélioration') badge-info @endif
                 @if($item->type == 'Idée') badge-success @endif
                 @if($item->type == 'Sécurité') badge-warning @endif
                 @if($item->type == 'BUG') badge-danger @endif
               ">
-              {{ $item->type }}</span> <span class="badge badge-secondary">{{ $item->theme }}</span>
+              {{ $item->type }}</span>
+              <span class="badge badge-secondary">{{ $item->theme }}</span>
               <div class="float-right">
                 {{ count($item->voteUp) }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>
                 {{ count($item->voteDown) }} <a href="/lab/{{ $item->id }}/vote?down=1" class="text-danger"><i class="fas fa-thumbs-down"></i></a>
@@ -65,6 +68,8 @@
               <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
+
+                <a class="badge badge-secondary" href="{{ route('lab.show', $item) }}">{{ count($item->childs) }} @if(count($item->childs) > 1) commentaires @else commentaire @endif</a> 
 
                 @if($item->planned_at) <span class="badge badge-info">Planifié</span> @endif
                 @if($item->opened_at) <span class="badge badge-warning">En cours de développement depuis le {{ $item->opened_at->format('d/m/Y') }}</span> @endif
