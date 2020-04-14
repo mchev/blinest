@@ -59,7 +59,8 @@ class Stream extends Command
         parent::__construct();
 
         // $this->games = Game::where('public', true)->get();
-        $this->games = Game::has('tracks', '>', 49)->get();
+        //$this->games = Game::has('tracks', '>', 49)->get();
+        $this->games = Game::where('public', 1)->get();
 
     }
 
@@ -109,7 +110,8 @@ class Stream extends Command
     {
         $this->tracks = [];
         $this->counter = 0;
-        $this->games = Game::has('tracks', '>', 49)->get();
+        //$this->games = Game::has('tracks', '>', 49)->get();
+        $this->games = Game::where('public', 1)->get();
 
         broadcast(new EndGame());
 

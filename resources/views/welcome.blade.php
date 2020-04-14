@@ -14,6 +14,10 @@
       <!-- Masthead Subheading -->
       <p class="masthead-subheading font-weight-light mb-0">Testez votre culture musicale</p>
 
+      <div class="alert alert-warning">
+        En raison d'une trop grande affluence sur le site, les parties privées ont momentanément été desactivées.<br>On bosse dessus et on revient avec des mises à jour au plus vite. Merci pour votre compréhension.
+      </div>
+
     </div>
 </header>
 

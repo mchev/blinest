@@ -12,7 +12,25 @@
 
   @if($game->tracks->count() > 49)
 
-    <game :game="{{ $game->toJson() }}" :user="{{ Auth::user() ? Auth::user() : 'null' }}"></game>
+    @if(!$game->public)
+
+      <header class="masthead bg-primary text-white text-center pb-2">
+
+          <div class="container d-flex align-items-center flex-column">
+
+            <div class="alert alert-warning">
+              En raison d'une trop grande affluence sur le site, les parties privées ont momentanément été desactivées.<br>On bosse dessus et on revient avec des mises à jour au plus vite. Merci pour votre compréhension.
+            </div>
+
+          </div>
+
+      </header>
+
+    @else
+
+      <game :game="{{ $game->toJson() }}" :user="{{ Auth::user() ? Auth::user() : 'null' }}"></game>
+
+    @endif
 
   @else 
 
