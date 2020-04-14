@@ -98,7 +98,7 @@ class Stream extends Command
 
             }
 
-            sleep(30);
+            sleep(32);
 
             $this->getTracks($this->games);
 
