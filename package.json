@@ -28,11 +28,13 @@
   },
   "dependencies": {
     "chart.js": "^2.9.3",
+    "emoji-mart-vue": "^2.6.6",
     "laravel-echo": "^1.6.1",
     "moment": "^2.24.0",
     "pusher-js": "^4.4.0",
     "vue-chartjs": "^3.5.0",
     "vue-fuse": "^2.2.1",
-    "vue-moment": "^4.1.0"
+    "vue-moment": "^4.1.0",
+    "vue-web-cam": "^1.9.0"
   }
 }

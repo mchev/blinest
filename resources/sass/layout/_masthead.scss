@@ -1,5 +1,5 @@
 .masthead {
-  padding-top: calc(4rem + 74px);
+  padding-top: 2rem;
   padding-bottom: 2rem;
   .masthead-heading {
     font-size: 4vh;
@@ -15,7 +15,7 @@
 
 @include media-breakpoint-up(lg) {
   .masthead {
-    padding-top: calc(2rem + 104px);
+    padding-top: 2rem;
     padding-bottom: 2rem;
     .masthead-heading {
       font-size: 4vh;
@@ -32,4 +32,8 @@
   height: 296px;
   min-height: 296px;
   overflow: auto;
+}
+
+.sidebar {
+  min-height: calc(100vh - 72px);
 }

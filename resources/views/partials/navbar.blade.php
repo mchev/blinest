@@ -1,5 +1,5 @@
-<nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top">
-    <div class="container">
+<nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase">
+    <div class="container-fluid">
         <a class="navbar-brand" href="{{ url('/') }}">
             <img src="/img/logo_svg.svg" alt="{{ config('app.name', 'Laravel') }}">
         </a>

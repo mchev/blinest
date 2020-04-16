@@ -19,7 +19,7 @@ class MessagesController extends Controller
     public function index(Request $request)
     {
 
-        $messages = Message::where('game_id', $request->input('game_id'))->where('created_at', '>', Carbon::now()->sub('12 hours'))->orderby('created_at', 'DESC')->limit(20)->get();
+        $messages = Message::where('game_id', $request->input('game_id'))->orderby('created_at', 'DESC')->limit(30)->get();
 
         return response()->json($messages);
 
@@ -33,14 +33,40 @@ class MessagesController extends Controller
      */
     public function store(Request $request)
     {
-        $message = Message::create([
-            'sender_id'   => auth()->user()->id,
-            'game_id' => $request->input('game_id'),
-            'message'     => $request->input('message'),
-        ]);
 
-        broadcast(new MessageSent($message));
+        if(auth()->user()) {
+            $user = auth()->user();
+            $sender_id = $user->id;
+            $sender_name = $user->name;
+        } else {
+            $sender_id = null;
+            if ($request->session()->get('guest_name')) {
+                $sender_name = $request->session()->get('guest_name');
+            } else {
+                $sender_name = 'anonyme_' . random_int(100, 999);
+                $request->session()->put('guest_name', $sender_name);
+            }
+        }
 
-        return $message;
+
+        if ($request->input('game_id')) {
+
+            $message = Message::create([
+                'sender_id'     => $sender_id,
+                'sender_name'   => $sender_name,
+                'sender_ip'     => $request->ip(),
+                'game_id'       => $request->input('game_id'),
+                'message'       => $request->input('message'),
+            ]);
+
+            broadcast(new MessageSent($message));
+
+            return response()->json('Nouveau message de ' . $message->sender_name);
+
+        } else {
+
+            return response()->json('Salon non identifé.');
+
+        }
     }
 }

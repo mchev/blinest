@@ -23,7 +23,7 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'updateScore', 'slug']]);
+        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'updateScore', 'slug', 'custom']]);
     }
 
 
@@ -160,18 +160,6 @@ class GameController extends Controller
         $game = Game::where('slug', $slug)->firstOrFail();
 
         //return view('games.show', compact('game'));
-        return view('games.private', compact('game'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Game  $game
-     * @return \Illuminate\Http\Response
-     */
-    public function private(Request $request,Game $game)
-    {
-
         return view('games.private', compact('game'));
     }
 

@@ -7,7 +7,7 @@
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 
 // Import variables (overrides Bootstrap defaults)
-@import "base/variables.scss";
+@import "variables.scss";
 
 // Import Bootstrap
 @import "bootstrap/scss/bootstrap.scss";
@@ -25,3 +25,5 @@
 @import "layout/portfolio.scss";
 @import "layout/contact.scss";
 @import "layout/footer.scss";
+
+@import "custom.scss";

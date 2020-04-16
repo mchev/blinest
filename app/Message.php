@@ -8,11 +8,11 @@ class Message extends Model
 {
     protected $fillable = [
         'sender_id',
+        'sender_name',
+        'sender_ip',
         'game_id',
         'message',
     ];
-
-    protected $with = ['sender', 'receiver'];
 
     public function scopeBySender($q, $sender)
     {
@@ -33,4 +33,5 @@ class Message extends Model
     {
         return $this->belongsTo(Game::class, 'game_id')->select(['id', 'title']);
     }
+
 }

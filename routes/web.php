@@ -64,6 +64,12 @@ Route::get('/games/{game}/tracks/delete', 'GameController@deleteTracks');
 Route::get('/parties/{slug}', 'GameController@slug');
 Route::resource('/games', 'GameController');
 
+
+// CUSTOM GAMES
+Route::get('/parties/privees/{game}', 'CustomGameController@index')->name('games.custom.index');
+Route::post('/parties/privees/{game}/start', 'CustomGameController@start')->name('games.custom.start');
+
+
 Route::get('/profils/{name}', 'UserController@show');
 
 Route::resource('/games/{game}/tracks', 'TrackController');

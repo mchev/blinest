@@ -5,7 +5,7 @@
           <div class="col-12" v-for="message in orderedMessages">
             <div class="message" :class="{'from-them': message.sender_id !== user.id}">
               <p>{{ message.message }}</p>
-              <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== user.id"> - {{ message.sender.name }}</span></small>
+              <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== user.id"> - {{ message.sender_name }}</span></small>
             </div>
           </div>
       </div>
@@ -80,7 +80,6 @@
         let app = this
         if (app.newMessage !== '') {
           axios.post('/api/messages/send', {
-            sender_id: app.user.id,
             game_id: app.game.id,
             message: app.newMessage
           }).then((resp) => {
@@ -95,7 +94,8 @@
         return _.orderBy(this.messages, 'created_at', 'asc')
       }
     }
-  }
+  };
+
 </script>
 
 <style scoped>
