@@ -2,11 +2,16 @@
 
     <div class="h-100 d-flex" style="flex-direction: column;">
 
-      <div class="row">
-        {{ usersCount }}
+      <span @click="hideSidebar" class="btn toggle-chat-sidebar badge badge-secondary p-2" title="Masquer le chat">Chat <i class="fas fa-chevron-right"></i></span>
+
+
+      <div class="chat-header p-2 mb-2">
+        <span class="badge badge-secondary p-2 mb-2">En ligne : {{ usersCount }}</span>
+        <span class="badge badge-info p-2 mb-2">Animateur : {{ game.user.name }}</span>
+        <a href="" class="badge badge-info p-2" title="Partager cette page"><i class="fas fa-share-alt"></i></a>
       </div>
 
-      <div class="row d-flex h-100 p-2 message-box" ref="messageBox">
+      <div class="d-flex h-100 p-2 message-box" ref="messageBox">
           <div v-for="message in orderedMessages">
             <div class="message">
               <p><span class="user">{{ message.sender_name }}</span>: {{ message.message }}</p>
@@ -14,7 +19,7 @@
           </div>
       </div>
 
-      <div class="row d-block p-2">
+      <div class="d-block p-2">
 
         <div class="textarea-emoji-picker">
 
@@ -22,6 +27,7 @@
             v-show="showEmojiPicker"
             :showPreview="false"
             :showSearch="false"
+            :i18n="i18n"
             @select="addEmoji"
           />
 
@@ -67,7 +73,7 @@
         loadingMessages: false,
         newMessage: '',
         showEmojiPicker: false,
-        l18n: {
+        i18n: {
           search: 'Recherche',
           notfound: 'Aucune Emoji trouvé',
           categories: {
@@ -77,7 +83,7 @@
             nature: 'Animaux & Nature',
             foods: 'Nourriture & Boisson',
             activity: 'Activités',
-            places: 'Voyage & Endroits',
+            places: 'Voyage & Lieux',
             objects: 'Objets',
             symbols: 'Symboles',
             flags: 'Drapeaux',
@@ -103,6 +109,10 @@
 
     methods: {
 
+      hideSidebar() {
+        $('.sidebar.sidebar-right').toggleClass('hide');
+      },
+
       toggleEmojiPicker () {
         this.showEmojiPicker = !this.showEmojiPicker
       },
@@ -123,10 +133,11 @@
       },
 
       listenForNewMessage() {
-        Echo.channel('newMessage-' + this.game.id)
+        Echo.channel('chat-' + this.game.id)
           .listen('MessageSent', (data) => {
             this.messages.push(data.message)
           })
+        Echo.join('chat-' + this.game.id)
           .here((users) => {
             this.users = users;
             this.usersCount = users.length;
@@ -136,7 +147,7 @@
             this.usersCount = this.usersCount+1;
           })
           .leaving((user) => {
-            this.users.$remove(user);
+            this.users.splice(user.index, 1);
             this.usersCount = this.usersCount-1;
           });
       },
@@ -145,7 +156,7 @@
         let app = this
         app.loadingMessages = true
         app.messages = []
-        axios.post('/api/messages', {
+        axios.post('/messages', {
           game_id: app.game.id
         }).then((resp) => {
           app.messages = resp.data
@@ -157,7 +168,7 @@
         let app = this
         console.log(this.newMessage);
         if (app.newMessage !== '') {
-          axios.post('/api/messages/send', {
+          axios.post('/messages/send', {
             game_id: app.game.id,
             message: app.newMessage
           }).then((resp) => {
@@ -181,6 +192,18 @@
 
 <style scoped>
 
+  .toggle-chat-sidebar {
+    position: absolute;
+    right: 100%;
+    top: 8%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .chat-header {
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+  }
+
   .textarea-emoji-picker {
     position: relative;
     margin: 0 auto;
@@ -200,6 +223,8 @@
     color: #FFF;
     height: 4rem;
     overflow: hidden;
+    font-weight: 100;
+    font-size: inherit;
   }
   .emoji-mart {
     position: absolute;

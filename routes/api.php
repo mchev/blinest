@@ -22,11 +22,8 @@ Route::post('/register', 'Api\AuthController@register')->name('register.api');
 Route::get('/games', 'Api\GameController@index')->name('api.games.index');
 Route::get('/games/search', 'Api\GameController@search')->name('api.games.search');
 
-Route::middleware('auth:api')->group( function () {
 
-	// Messages
-	Route::post('/messages', 'Api\MessagesController@index');
-	Route::post('/messages/send', 'Api\MessagesController@store');
+Route::middleware('auth:api')->group( function () {
 
 	Route::get('/media/search', 'Api\DeezerController@search');
 	Route::get('/deezer/playlist', 'Api\DeezerController@addPlaylist');

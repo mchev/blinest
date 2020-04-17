@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Message;
+use App\Track;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
@@ -12,22 +12,23 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class MessageSent implements ShouldBroadcastNow
+class PauseTrack implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     /**
-     * @var Message
+     * @var Track
      */
-    public $message;
+    public $track;
 
     /**
      * Create a new event instance.
      *
-     * @param Message $message
+     * @param Game $game
+     * @param $track
      */
-    public function __construct(Message $message)
+    public function __construct(Track $track)
     {
-        $this->message = $message;
+        $this->track = $track;
     }
 
     /**
@@ -37,6 +38,6 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('chat-' . $this->message->game_id);
+        return new Channel('game-' . $this->track->game_id);
     }
 }

@@ -60,7 +60,7 @@
     },
     methods: {
       listenForNewMessage() {
-        Echo.channel('newMessage-' + this.game.id)
+        Echo.channel('chat-' + this.game.id)
           .listen('MessageSent', (data) => {
             this.messages.push(data.message)
           })
@@ -69,7 +69,7 @@
         let app = this
         app.loadingMessages = true
         app.messages = []
-        axios.post('/api/messages', {
+        axios.post('/messages', {
           game_id: app.game.id
         }).then((resp) => {
           app.messages = resp.data
@@ -79,7 +79,7 @@
       sendMessage () {
         let app = this
         if (app.newMessage !== '') {
-          axios.post('/api/messages/send', {
+          axios.post('/messages/send', {
             game_id: app.game.id,
             message: app.newMessage
           }).then((resp) => {

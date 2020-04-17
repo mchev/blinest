@@ -1,8 +1,8 @@
 <template>
 
-<div>
+<div class="w-100 text-center">
 
-    <section class="">
+    <section class="w-100">
 
         <div class="container">
 
@@ -142,8 +142,9 @@
             }
         },
         mounted() {
-            $("#startModal").modal('show');
-            this.adsenseContent = document.getElementById('divadsensedisplaynone').innerHTML
+            this.startGame();
+            //$("#startModal").modal('show');
+            //this.adsenseContent = document.getElementById('divadsensedisplaynone').innerHTML
         },
         created() {
             //
@@ -184,9 +185,9 @@
 
                 this.waiting = true;
 
-                Echo.channel('newTrack-' + this.game.id)
-                    .listen('NewTrack', (data) => {
-                        $("#startModal").modal('hide');
+                Echo.channel('game-' + this.game.id)
+                    .listen('PlayTrack', (data) => {
+                        console.log('track event');
                         if (this.ended) this.startGame();
                         if (this.currentTrack) this.endTrack();
                         this.currentTrack = data.track;
@@ -196,6 +197,12 @@
                         this.currentTrack.bonus_score = 0;
                         this.playAudio();
                         this.waiting = false;
+                    })
+                    .listen('PauseTrack', (data) => {
+                        this.player.pause();
+                    })
+                    .listen('ResumeTrack', (data) => {
+                        this.player.play();
                     })
 
                 Echo.channel('endGame')
@@ -235,8 +242,11 @@
                 };
 
                 this.player.onended = function() {
+
                     vm.waitingTrack = true;
                     vm.placeholder = 'En attente du prochain titre...';
+                    vm.endTrack();
+
                 };
 
             },
@@ -255,6 +265,8 @@
 
                 // UPDATE SCORE
                 this.sendNewScore(true);
+
+                this.currentTrack = null;
 
             },
 

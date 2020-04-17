@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use Auth;
-use Image;
-use Spatie\Sitemap\SitemapGenerator;
 use App\Game;
-use App\Round;
-use App\Effect;
 use App\Track;
 use App\Score;
-use App\Events\UpdateScore;
+use App\Events\PlayTrack;
+use App\Events\PauseTrack;
+use App\Events\ResumeTrack;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class CustomGameController extends Controller
 {
@@ -45,7 +41,7 @@ class CustomGameController extends Controller
      * @param  \App\Game  $game
      * @return \Illuminate\Http\Response
      */
-    public function start(Request $request, Game $game)
+    public function fetch(Request $request, Game $game)
     {
 
         if($request->get('random') == 1) {
@@ -54,8 +50,23 @@ class CustomGameController extends Controller
             $tracks = Track::where('game_id', $game->id)->orderBy('created_at')->limit($request->get('tracks_number'))->get();
         }
 
-        return response()->json($tracks);
+        return response()->json($tracks->toArray());
 
+    }
+
+    public function play(Track $track)
+    {
+        broadcast(new PlayTrack($track));
+    }
+
+    public function pause(Track $track)
+    {
+        broadcast(new PauseTrack($track));
+    }
+
+    public function resume(Track $track)
+    {
+        broadcast(new ResumeTrack($track));
     }
 
 }

@@ -67,7 +67,15 @@ Route::resource('/games', 'GameController');
 
 // CUSTOM GAMES
 Route::get('/parties/privees/{game}', 'CustomGameController@index')->name('games.custom.index');
-Route::post('/parties/privees/{game}/start', 'CustomGameController@start')->name('games.custom.start');
+Route::post('/parties/privees/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
+Route::get('/parties/privees/play/{track}', 'CustomGameController@play')->name('games.custom.play');
+Route::get('/parties/privees/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
+Route::get('/parties/privees/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
+
+
+// MESSAGES - CHAT
+Route::post('/messages', 'Api\MessagesController@index');
+Route::post('/messages/send', 'Api\MessagesController@store');
 
 
 Route::get('/profils/{name}', 'UserController@show');
