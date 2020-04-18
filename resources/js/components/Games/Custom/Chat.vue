@@ -2,8 +2,7 @@
 
     <div class="h-100 d-flex" style="flex-direction: column;">
 
-      <span @click="hideSidebar" class="btn toggle-chat-sidebar badge badge-secondary p-2" title="Masquer le chat">Chat <i class="fas fa-chevron-right"></i></span>
-
+      <span @click="hideChatSidebar" class="btn toggle-chat-sidebar badge badge-secondary p-2" title="Masquer le chat">Chat <i class="fas fa-chevron-right"></i></span>
 
       <div class="chat-header p-2 mb-2">
         <span class="badge badge-secondary p-2 mb-2">En ligne : {{ usersCount }}</span>
@@ -109,7 +108,7 @@
 
     methods: {
 
-      hideSidebar() {
+      hideChatSidebar() {
         $('.sidebar.sidebar-right').toggleClass('hide');
       },
 
@@ -198,6 +197,8 @@
     top: 8%;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-right: 0;
   }
 
   .chat-header {

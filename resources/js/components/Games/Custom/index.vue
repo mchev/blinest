@@ -4,32 +4,42 @@
 
         <div class="row h-100">
 
-            <div class="col-md-3 col-lg-2 order-1 py-3 sidebar sidebar-left bg-dark">
+            <div v-if="$userId == game.user_id" class="col-md-3 col-lg-2 order-1 p-0 sidebar sidebar-left">
 
                 <div class="sticky-top sticky-offset text-center">
 
-                    <VideoCam></VideoCam>
+                    <span @click="hideControlsSidebar" class="btn toggle-controls-sidebar badge badge-secondary p-2" title="Masquer le panneau d'animation"><i class="fas fa-chevron-left"></i> Animation</span>
 
-                    <hr>
+                    <div class="sidebar-content">
 
-                    <Controls v-if="tracks" :game="game" :tracks="tracks" v-on:play:track="track = $event"></Controls>
+                        <div class="p-2">
 
-                    <div v-if="!tracks" class="card mb-3">
+                            <VideoCam></VideoCam>
 
-                        <div class="card-body">
+                            <hr>
 
-                            <div class="form-group">
-                                <input type="number" v-model="item.tracks_number" class="form-control">
+                            <Controls v-if="tracks" ref="controls" :game="game" :tracks="tracks" v-on:play:track="track = $event"></Controls>
+
+                            <div v-if="!tracks" class="card mb-3">
+
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <input type="number" v-model="item.tracks_number" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <select v-model="item.random" class="form-control">
+                                            <option value="0">Lecture dans l'ordre de la playlist</option>
+                                            <option value="1">Lecture aléatoire</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="button" @click="fetchTracks" class="btn btn-secondary">Charger une nouvelle partie</button>
+
+                                </div>
+
                             </div>
-
-                            <div class="form-group">
-                                <select v-model="item.random" class="form-control">
-                                    <option value="0">Lecture dans l'ordre de la playlist</option>
-                                    <option value="1">Lecture aléatoire</option>
-                                </select>
-                            </div>
-
-                            <button type="button" @click="fetchTracks" class="btn btn-secondary">Charger les titres de la partie</button>
 
                         </div>
 
@@ -50,7 +60,7 @@
 
                         <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
-                        <Player :game="game" :track="track" v-on:updateScore="score = $event" v-on:updateUsers="users = $event" @updateAnswers="answers = $event"></Player>
+                        <Player :game="game" :track="track" v-on:updateScore="score = $event" v-on:updateUsers="users = $event" v-on:updateAnswers="answers = $event" v-on:game:end="tracks = null" v-on:track:end="$refs.controls.next()"></Player>
 
                     </div>
 
@@ -146,11 +156,18 @@
             }
         },
 
+        mounted() {
+            //console.log(this.$userId);
+        },
+
         methods: {
+
+            hideControlsSidebar() {
+                $('.sidebar.sidebar-left').toggleClass('hide');
+            },
 
             fetchTracks() {
                 axios.post('/parties/privees/' + this.game.id + '/fetch', this.game).then((response) => {
-                    console.log(response.data);
                     this.tracks = response.data;
                     this.$emit('update:tracks', this.tracks);
                 }).catch((error) => {
@@ -166,6 +183,16 @@
 
 <style scoped>
 
+    .toggle-controls-sidebar {
+        position: absolute;
+        left: 100%;
+        top: 8%;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border: 1px solid rgba(255,255,255,0.5);
+        border-left: 0;
+    }
+
     .bg-dark {
         background-color: #636f7b !important;
     }
@@ -177,6 +204,11 @@
     .sidebar {
         background: #61617d;
         transition: all .25s ease;
+        min-height: calc(100vh - 72px);
+    }
+
+    .sidebar-content {
+        overflow-x: hidden;
     }
 
     .sidebar.hide {
@@ -184,8 +216,10 @@
     }
 
     .sidebar-left {
-        font-size: 80%;
         border-right: 1px solid rgba(255,255,255,0.5);
+    }
+    .sidebar-right {
+        border-left: 1px solid rgba(255,255,255,0.5);
     }
 
     .card {

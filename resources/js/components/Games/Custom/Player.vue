@@ -189,7 +189,7 @@
                     .listen('PlayTrack', (data) => {
                         console.log('track event');
                         if (this.ended) this.startGame();
-                        if (this.currentTrack) this.endTrack();
+                        if (this.currentTrack) this.nextTrack();
                         this.currentTrack = data.track;
                         this.currentTrack.track_score = 0;
                         this.currentTrack.artist_score = 0;
@@ -204,12 +204,10 @@
                     .listen('ResumeTrack', (data) => {
                         this.player.play();
                     })
-
-                Echo.channel('endGame')
-                    .listen('EndGame', (data) => {
-                        if (this.currentTrack) this.endTrack();
+                    .listen('StopGame', (data) => {
                         this.endGame();
                     })
+
             },
 
 
@@ -252,7 +250,8 @@
             },
 
 
-            endTrack() {
+
+            nextTrack() {
 
                 // Display the last track on answers
                 this.answers.unshift(this.currentTrack);
@@ -270,14 +269,24 @@
 
             },
 
+            endTrack() {
+
+                this.nextTrack();
+
+                this.$emit('track:end', 1);
+
+            },
+
 
             endGame() {
 
+                this.player.pause();
                 this.ended = true;
                 this.countdown = 30;
                 this.countDownTimer();
 
                 $('#finnish').modal('show');
+                this.$emit('game:end', null);
 
                 // Save score
                 if (this.score > 0) {

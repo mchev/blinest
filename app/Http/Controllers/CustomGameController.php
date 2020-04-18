@@ -9,6 +9,7 @@ use App\Score;
 use App\Events\PlayTrack;
 use App\Events\PauseTrack;
 use App\Events\ResumeTrack;
+use App\Events\StopGame;
 use Illuminate\Http\Request;
 
 class CustomGameController extends Controller
@@ -32,6 +33,7 @@ class CustomGameController extends Controller
     public function index(Request $request, Game $game)
     {
 
+        //dd(auth()->guest(), $request->session());
         return view('games.custom.index', compact('game'));
     }
 
@@ -67,6 +69,11 @@ class CustomGameController extends Controller
     public function resume(Track $track)
     {
         broadcast(new ResumeTrack($track));
+    }
+
+    public function stop(Game $game)
+    {
+        broadcast(new StopGame($game));
     }
 
 }

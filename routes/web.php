@@ -71,6 +71,7 @@ Route::post('/parties/privees/{game}/fetch', 'CustomGameController@fetch')->name
 Route::get('/parties/privees/play/{track}', 'CustomGameController@play')->name('games.custom.play');
 Route::get('/parties/privees/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
 Route::get('/parties/privees/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
+Route::get('/parties/privees/{game}/stop', 'CustomGameController@stop')->name('games.custom.stop');
 
 
 // MESSAGES - CHAT

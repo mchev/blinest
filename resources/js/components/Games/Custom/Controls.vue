@@ -7,7 +7,7 @@
                 <button v-if="paused && playing && !resumed" class="btn btn-success" title="Démarrer" @click="resume"><i class="fas fa-play"></i></button>
                 <button v-if="playing && !paused" class="btn btn-secondary" title="Pause" @click="pause"><i class="fas fa-pause"></i></button>
                 <button class="btn btn-secondary" title="Suivant" @click="next"><i class="fas fa-forward"></i></button>
-                <button class="btn btn-secondary" title="Arret"><i class="fas fa-stop"></i></button>
+                <button class="btn btn-secondary" title="Arret" @click="stop"><i class="fas fa-stop"></i></button>
             </div>
         </div>
         <div class="card-body track-list p-0">
@@ -99,18 +99,22 @@
 
             next() {
 
-                this.track_index++;
-                this.play();
+                if ( this.track_index + 1 == parseInt(this.game.tracks_number) ) {
+                    this.stop();
+                } else {
+                    this.track_index++;
+                    this.play();
+                }
 
             },
 
-            end() {
+            stop() {
 
                 this.resumed = false;
                 this.paused = false;
                 this.playing = false;
 
-                axios.get('/parties/privees/' + this.game.id + '/end').then((resp) => {
+                axios.get('/parties/privees/' + this.game.id + '/stop').then((resp) => {
                     console.log('Fin de la partie');
                 });
 
@@ -126,6 +130,7 @@
     .track-list {
         max-height: 50vh;
         overflow-y: auto;
+        font-size: 80%;
     }
 
     .list-group-item {
@@ -133,6 +138,7 @@
         border: 0;
         border-bottom: 1px solid #CCC;
         text-overflow: ellipsis;
+        word-break: break-all;
         width: 100%;
         overflow: hidden;
         max-height: 2.4rem;
