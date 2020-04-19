@@ -13,6 +13,7 @@
           <div class="col-12">
               <div class="input-group mt-3">
                   <input type="text"
+                          id="chatInput"
                          class="form-control"
                          placeholder=""
                          v-on:keyup.enter="sendMessage"
@@ -62,6 +63,7 @@
       listenForNewMessage() {
         Echo.channel('chat-' + this.game.id)
           .listen('MessageSent', (data) => {
+            $("#chatInput").attr("disabled", false);
             this.messages.push(data.message)
           })
       },
@@ -77,7 +79,8 @@
         })
       },
       sendMessage () {
-        let app = this
+        let app = this;
+        $("#chatInput").attr("disabled", true);
         if (app.newMessage !== '') {
           axios.post('/messages/send', {
             game_id: app.game.id,
