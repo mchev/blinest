@@ -16,14 +16,7 @@
 
                     <div class="col-md-12">
 
-                        <div class="row mt-4">
-
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label><i class="fas fa-volume-up"></i> Volume</label>
-                                    <input type="range" class="form-control-range" id="formControlRange" v-model="volume" min="0" max="1" step="0.01" @change="changeVolume" @input="changeVolume">
-                                </div>
-                            </div>
+                        <div class="row mt-3">
 
                             <div class="col-md-12">
 
@@ -41,6 +34,11 @@
                                 <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :disabled="waitingTrack == 1" autofocus>
                                 <div class="input-group-append">
                                     <button class="btn btn-success" @click="checkResponse()">OK</button>
+
+                                    <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-volume-up"></i></button>
+                                    <div class="dropdown-menu p-2">
+                                        <input type="range" class="form-control-range dropdown-item" id="formControlRange" v-model="volume" min="0" max="1" step="0.01" @change="changeVolume" @input="changeVolume">
+                                    </div>
                                 </div>
                             </div>
 
@@ -105,7 +103,8 @@
                 <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
             </div>
             <div class="modal-footer">
-              <a href="/" class="btn btn-primary">Rejoindre d'autres parties</a>
+              <button type="button" data-dismiss="modal" class="btn btn-primary">Je reste ici</button>
+              <a href="/" class="btn btn-secondary">Rejoindre d'autres parties</a>
             </div>
           </div>
         </div>

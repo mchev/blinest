@@ -14,10 +14,6 @@
       <!-- Masthead Subheading -->
       <p class="masthead-subheading font-weight-light mb-0">Testez votre culture musicale</p>
 
-      <div class="alert alert-warning">
-        En raison d'une trop grande affluence sur le site, les parties privées ont momentanément été desactivées.<br><strong>Un tout nouveau système de parties privées sera en ligne d'ici le vendredi  24 avril.</strong>
-      </div>
-
     </div>
 </header>
 

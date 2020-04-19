@@ -83,7 +83,7 @@
 
   .search-results-list {
     position: absolute;
-    z-index: 2;
+    z-index: 20;
     top: 0;
     left: 0;
   }

@@ -14,9 +14,7 @@
 
                         <div class="p-2">
 
-                            <VideoCam></VideoCam>
-
-                            <hr>
+                            <VideoCam :game="game"></VideoCam>
 
                             <Controls v-if="tracks" ref="controls" :game="game" :tracks="tracks" v-on:play:track="track = $event"></Controls>
 
@@ -51,7 +49,7 @@
                                     <div class="form-group">
                                         <label>Mot de passe</label>
                                         <input type="text" v-model="game.password" @blur="updatePassword" class="form-control">
-                                        <small class="form-text text-muted">Si vide la partie est ouverte à tous.</small>
+                                        <small class="form-text text-muted">Si vide, la partie est ouverte à tous.</small>
                                     </div>
 
                                 </div>
@@ -73,9 +71,10 @@
 
                     <div class="col-md-12">
 
-                        <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
-                        <pre>https://blinest.com/partie/privee/{{ game.id }}</pre>
+                        <span class="badge badge-warning">Partie privée v2.0-beta : <a :href="'https://blinest.com/parties/' + game.slug">https://blinest.com/parties/{{ game.slug }}</a></span>
+
+                        <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
                         <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
@@ -231,7 +230,7 @@
 <style>
 
     .sticky-top {
-        z-index: 10;
+        z-index: 2;
     }
 
     .toggle-controls-sidebar {
@@ -255,7 +254,7 @@
     .sidebar {
         background: #61617d;
         transition: all .25s ease;
-        min-height: calc(100vh - 72px);
+        height: calc(100vh - 72px);
     }
 
     .sidebar-header {
@@ -264,6 +263,7 @@
 
     .sidebar-content {
         overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .sidebar.hide {

@@ -23,3 +23,10 @@ Broadcast::channel('chat-{game}', function ($user) {
     	"name" => $user->name
     );
 });
+
+Broadcast::channel('game-{game}', function ($user) {
+    return array(
+    	"id" => $user->id,
+    	"name" => $user->name
+    );
+});

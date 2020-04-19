@@ -145,7 +145,7 @@ class GameController extends Controller
     {
 
         //return view('games.show', compact('game'));
-        return view('games.private', compact('game'));
+        return view('games.public', compact('game'));
     }
 
     /**
@@ -154,13 +154,38 @@ class GameController extends Controller
      * @param  $slug
      * @return \Illuminate\Http\Response
      */
-    public function slug($slug)
+    public function slug(Request $request, $slug)
     {
 
         $game = Game::where('slug', $slug)->firstOrFail();
 
-        //return view('games.show', compact('game'));
-        return view('games.private', compact('game'));
+
+        if ($game->public) {
+
+            return view('games.public', compact('game'));
+
+        } else {
+
+            if ( $game->password !== '' ) {
+
+                if( $request->get('password') == $game->password ) {
+
+                    return view('games.custom.index', compact('game'));
+
+                } else {
+
+                    return view('games.custom.password', compact('game'));
+
+                }
+
+            } else {
+
+                return view('games.custom.index', compact('game'));
+
+            }
+
+        }
+
     }
 
     /**
