@@ -144,17 +144,17 @@
           .here((users) => {
             this.users = users;
             this.usersCount = users.length;
-            this.owner = users.filter(p => p.id == this.game.user_id);
+            this.owner = this.users.filter(p => p.id == this.game.user_id);
           })
           .joining((user) => {
             this.users.push(user);
             this.usersCount = this.usersCount+1;
-            this.owner = users.filter(p => p.id == this.game.user_id);
+            this.owner = this.users.filter(p => p.id == this.game.user_id);
           })
           .leaving((user) => {
             this.users.splice(user.index, 1);
             this.usersCount = this.usersCount-1;
-            this.owner = users.filter(p => p.id == this.game.user_id);
+            this.owner = this.users.filter(p => p.id == this.game.user_id);
           });
       },
 
