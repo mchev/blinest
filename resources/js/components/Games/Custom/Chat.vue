@@ -4,10 +4,12 @@
 
       <span @click="hideChatSidebar" class="btn toggle-chat-sidebar badge badge-secondary p-2" title="Masquer le chat">Chat <i class="fas fa-chevron-right"></i></span>
 
-      <div class="chat-header p-2 mb-2">
+      <div class="sidebar-header p-2 mb-2">
         <span class="badge badge-secondary p-2 mb-2">En ligne : {{ usersCount }}</span>
-        <span class="badge badge-info p-2 mb-2">Animateur : {{ game.user.name }}</span>
-        <a href="" class="badge badge-info p-2" title="Partager cette page"><i class="fas fa-share-alt"></i></a>
+        <span class="badge badge-info p-2 mb-2">Animateur : {{ game.user.name }} 
+          <span v-if="owner.length">(en ligne)</span>
+          <span v-else>(hors ligne)</span>
+        </span>
       </div>
 
       <div class="d-flex h-100 p-2 message-box" ref="messageBox">
@@ -26,6 +28,7 @@
             v-show="showEmojiPicker"
             :showPreview="false"
             :showSearch="false"
+            :sheetSize="32"
             :i18n="i18n"
             @select="addEmoji"
           />
@@ -66,6 +69,7 @@
       return {
         users: [],
         usersCount: 0,
+        owner: null,
         messages: [],
         chatOpen: false,
         chatUserID: null,
@@ -140,14 +144,17 @@
           .here((users) => {
             this.users = users;
             this.usersCount = users.length;
+            this.owner = users.filter(p => p.id == this.game.user_id);
           })
           .joining((user) => {
             this.users.push(user);
             this.usersCount = this.usersCount+1;
+            this.owner = users.filter(p => p.id == this.game.user_id);
           })
           .leaving((user) => {
             this.users.splice(user.index, 1);
             this.usersCount = this.usersCount-1;
+            this.owner = users.filter(p => p.id == this.game.user_id);
           });
       },
 
@@ -165,7 +172,6 @@
 
       sendMessage () {
         let app = this
-        console.log(this.newMessage);
         if (app.newMessage !== '') {
           axios.post('/messages/send', {
             game_id: app.game.id,
@@ -199,10 +205,6 @@
     border-bottom-right-radius: 0;
     border: 1px solid rgba(255,255,255,0.5);
     border-right: 0;
-  }
-
-  .chat-header {
-    border-bottom: 1px solid rgba(255,255,255,0.5);
   }
 
   .textarea-emoji-picker {

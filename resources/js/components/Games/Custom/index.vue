@@ -25,6 +25,7 @@
                                 <div class="card-body">
 
                                     <div class="form-group">
+                                        <label>Nombre de titres</label>
                                         <input type="number" v-model="item.tracks_number" class="form-control">
                                     </div>
 
@@ -35,7 +36,23 @@
                                         </select>
                                     </div>
 
-                                    <button type="button" @click="fetchTracks" class="btn btn-secondary">Charger une nouvelle partie</button>
+                                    <button type="button" @click="fetchTracks" class="btn btn-success">Charger une nouvelle partie</button>
+
+                                </div>
+
+                            </div>
+
+                            <button type="button" @click="editGame" class="btn btn-secondary btn-block mb-3">Modifier la playlist</button>
+
+                            <div class="card mb-3">
+
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <label>Mot de passe</label>
+                                        <input type="text" v-model="game.password" @blur="updatePassword" class="form-control">
+                                        <small class="form-text text-muted">Si vide la partie est ouverte à tous.</small>
+                                    </div>
 
                                 </div>
 
@@ -57,6 +74,8 @@
                     <div class="col-md-12">
 
                         <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
+
+                        <pre>https://blinest.com/partie/privee/{{ game.id }}</pre>
 
                         <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
@@ -120,6 +139,18 @@
 
         </div>
 
+
+        <div v-if="$userId == game.user_id" class="modal fade" id="editGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-0">
+                        <game-edit v-if="showEditGame" :game="game"></game-edit>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
 </template>
@@ -152,7 +183,8 @@
                 track: null,
                 player: null,
                 users: [],
-                score: 0
+                score: 0,
+                showEditGame: false,
             }
         },
 
@@ -162,12 +194,17 @@
 
         methods: {
 
+            editGame() {
+                this.showEditGame = true;
+                $("#editGame").modal('show');
+            },
+
             hideControlsSidebar() {
                 $('.sidebar.sidebar-left').toggleClass('hide');
             },
 
             fetchTracks() {
-                axios.post('/parties/privees/' + this.game.id + '/fetch', this.game).then((response) => {
+                axios.post('/partie/privee/' + this.game.id + '/fetch', this.game).then((response) => {
                     this.tracks = response.data;
                     this.$emit('update:tracks', this.tracks);
                 }).catch((error) => {
@@ -175,18 +212,32 @@
                 });
             },
 
+            copyUrl() {
+                url = $('#gameUrl').val();
+                url.select();
+                document.execCommand('copy');
+            },
+
+            updatePassword() {
+                axios.post('/partie/privee/' + this.game.id + '/password', {'password': this.game.password});
+            }
+
         }
 
     };
 
 </script>
 
-<style scoped>
+<style>
+
+    .sticky-top {
+        z-index: 10;
+    }
 
     .toggle-controls-sidebar {
         position: absolute;
         left: 100%;
-        top: 8%;
+        top: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         border: 1px solid rgba(255,255,255,0.5);
@@ -207,12 +258,19 @@
         min-height: calc(100vh - 72px);
     }
 
+    .sidebar-header {
+        border-bottom: 1px solid rgba(255,255,255,0.5);
+    }
+
     .sidebar-content {
         overflow-x: hidden;
     }
 
     .sidebar.hide {
         max-width: 0%;
+    }
+    .sidebar.hide .sidebar-content {
+        display: none;
     }
 
     .sidebar-left {

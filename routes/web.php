@@ -66,13 +66,50 @@ Route::resource('/games', 'GameController');
 
 
 // CUSTOM GAMES
-Route::get('/parties/privees/{game}', 'CustomGameController@index')->name('games.custom.index');
-Route::post('/parties/privees/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
-Route::get('/parties/privees/play/{track}', 'CustomGameController@play')->name('games.custom.play');
-Route::get('/parties/privees/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
-Route::get('/parties/privees/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
-Route::get('/parties/privees/{game}/stop', 'CustomGameController@stop')->name('games.custom.stop');
+Route::get('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.index');
+Route::post('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.password.check');
+Route::post('/partie/privee/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
+Route::get('/partie/privee/play/{track}', 'CustomGameController@play')->name('games.custom.play');
+Route::get('/partie/privee/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
+Route::get('/partie/privee/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
+Route::get('/partie/privee/{game}/stop', 'CustomGameController@stop')->name('games.custom.stop');
+Route::post('/partie/privee/{game}/password', 'CustomGameController@password')->name('games.custom.password');
 
+
+// GUEST AUTH FOR BROADCASTING
+Route::post('/broadcasting/auth', function (Illuminate\Http\Request $request) {
+
+	if (Auth::guest()) {
+
+        if ($request->session()->get('guest_id')) {
+
+        	$guest = [
+		    	'id' => $request->session()->get('guest_id'),
+		    	'name' => $request->session()->get('guest_name')
+	    	];
+
+        } else {
+
+        	$guest = [
+		    	'id' => (int) str_replace('.', '', microtime(true)),
+		    	'name' => 'anon_' . random_int(100, 999)
+	    	];
+
+            $request->session()->put('guest_id', $guest['id']);
+            $request->session()->put('guest_name', $guest['name']);
+        }
+
+	    $user = new Illuminate\Auth\GenericUser($guest);
+
+	    request()->setUserResolver(function () use ($user) {
+	        return $user;
+	    });
+
+	}
+
+    return Broadcast::auth(request());
+
+});
 
 // MESSAGES - CHAT
 Route::post('/messages', 'Api\MessagesController@index');
@@ -86,7 +123,6 @@ Route::resource('/games/{game}/tracks', 'TrackController');
 Route::post('/tracks/{track}/save/custom/awnser', 'TrackController@updateCustomAnwser');
 Route::post('/tracks/{track}/rate/up', 'TrackController@rateUp');
 Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
-
 
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
 

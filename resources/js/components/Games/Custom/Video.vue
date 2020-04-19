@@ -16,7 +16,7 @@
         />
 
 
-        <div class="btn-group">
+        <div class="btn-group btn-block">
             <button v-if="video" type="button" class="btn btn-danger" title="Couper la webcam" @click="video = false"><i class="fas fa-video-slash"></i></button>
             <button v-else type="button" class="btn btn-secondary" title="Allumer la webcam" @click="video = true"><i class="fas fa-video"></i></button>
             <button v-if="micro" type="button" class="btn btn-danger" title="Couper le micro" @click="micro = false"><i class="fas fa-microphone-slash"></i></button>

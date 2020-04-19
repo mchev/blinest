@@ -67,8 +67,8 @@
 
                     <div v-else class="card-body text-center">
                       <div class="alert alert-info">L'inscription n'est pas obligatoire mais elle te permet d'apparaitre dans le classement, de chatter avec les autres joueur.se.s, d'ajouter des titres aux playlists et de créer des parties privées.</div>
-                      <a href="/register" class="btn btn-success">Créer un compte</a>
-                      <a href="/auth/redirect/facebook" class="btn btn-info mt-2"><i class="fab fa-facebook"></i> Connexion avec Facebook</a>
+                      <a href="/register" class="btn btn-success mb-2">Créer un compte</a>
+                      <a href="/auth/redirect/facebook" class="btn btn-info mb-2"><i class="fab fa-facebook"></i> Connexion avec Facebook</a>
                     </div>
 
                   </div>

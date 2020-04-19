@@ -12,11 +12,10 @@
         </div>
         <div class="card-body track-list p-0">
             <ol class="list-group text-left">
-                <li v-for="(track, index) in tracks" class="list-group-item p-0" :class="{'bg-success text-white': index === track_index}">
+                <li v-for="(track, index) in tracks" class="list-group-item p-0" :class="{'bg-success text-white': index === track_index}" :title="track.artist_name + ' - ' + track.track_name">
 
-                    <button v-if="index === track_index && playing" class="btn" @click="pause"><i class="fas fa-pause" ></i></button> 
+                    <button v-if="index === track_index && playing && !paused" class="btn" @click="pause"><i class="fas fa-circle-notch fa-spin" ></i></button> 
                     <button v-else class="btn" @click="play(track)"><i class="fas fa-play" ></i></button>
-                    <button v-else class="btn" @click="resume"><i class="fas fa-play" ></i></button>
 
                     <strong>{{ track.artist_name }}</strong> - {{ track.track_name }}
 
@@ -69,7 +68,7 @@
                 this.paused = false;
                 this.resumed = false;
 
-                axios.get('/parties/privees/play/' + this.track.id).then((resp) => {
+                axios.get('/partie/privee/play/' + this.track.id).then((resp) => {
                     console.log('Lancement de la lecture');
                 });
 
@@ -80,7 +79,7 @@
                 this.resumed = false;
                 this.paused = true;
 
-                axios.get('/parties/privees/pause/' + this.track.id).then((resp) => {
+                axios.get('/partie/privee/pause/' + this.track.id).then((resp) => {
                     console.log('Mise en pause de la lecture');
                 });
 
@@ -91,7 +90,7 @@
                 this.resumed = true;
                 this.paused = false;
 
-                axios.get('/parties/privees/resume/' + this.track.id).then((resp) => {
+                axios.get('/partie/privee/resume/' + this.track.id).then((resp) => {
                     console.log('Reprise de la lecture');
                 });
 
@@ -114,7 +113,7 @@
                 this.paused = false;
                 this.playing = false;
 
-                axios.get('/parties/privees/' + this.game.id + '/stop').then((resp) => {
+                axios.get('/partie/privee/' + this.game.id + '/stop').then((resp) => {
                     console.log('Fin de la partie');
                 });
 

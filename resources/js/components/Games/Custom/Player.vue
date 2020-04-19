@@ -18,6 +18,13 @@
 
                         <div class="row mt-4">
 
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label><i class="fas fa-volume-up"></i> Volume</label>
+                                    <input type="range" class="form-control-range" id="formControlRange" v-model="volume" min="0" max="1" step="0.01" @change="changeVolume" @input="changeVolume">
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
 
                                 <div class="progress">
@@ -68,18 +75,13 @@
     <!-- START MODAL -->
     <div class="modal fade" id="startModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
+            <div class="modal-content text-dark">
                 <div class="modal-body text-center">
-                    <h2>{{ game.title }}</h2>
-                    <button v-if="waiting" class="btn btn-success btn-lg" @click="startGame()">
-                        En attente du prochain morceau...
+                    <h3>{{ game.title }}</h3>
+                    <button class="btn btn-success btn-lg mb-2" @click="startGame()">
+                        C'est parti! <i class="fas fa-rocket"></i>
                     </button>
-                    <p v-if="waiting"><small>Patience, le son arrive dans moins de 30s...</small></p>
-                    <button v-else class="btn btn-success btn-lg" @click="startGame()">
-                        <i class="pr-2 fas fa-play"></i> Rejoindre la partie
-                    </button>
-                    <loader v-if="waiting"></loader>
-                    <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
+                    <p>Partie animée par : {{ game.user.name }}</p>
                 </div>
             </div>
         </div>
@@ -139,11 +141,12 @@
                 alertContent: '',
                 alertClass: 'alert-primary',
                 adsenseContent: null,
+                volume: 1,
             }
         },
         mounted() {
-            this.startGame();
-            //$("#startModal").modal('show');
+            //this.startGame();
+            $("#startModal").modal('show');
             //this.adsenseContent = document.getElementById('divadsensedisplaynone').innerHTML
         },
         created() {
@@ -151,6 +154,10 @@
         },
 
         methods: {
+
+            changeVolume() {
+                this.player.volume = this.volume;
+            },
 
             startGame() {
 
@@ -172,6 +179,7 @@
 
 
                 this.sendNewScore();
+                $('#startModal').modal('hide');
                 $('#finnish').modal('hide');
 
                 if (!this.listening) {
