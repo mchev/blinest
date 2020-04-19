@@ -80,9 +80,8 @@ class GameController extends Controller
      */
     public function create()
     {
-        $effects = Effect::all();
 
-        return view('games.create', compact('effects'));
+        return view('games.create');
     }
 
     /**
@@ -95,26 +94,9 @@ class GameController extends Controller
     {
 
         $request->validate([
-            'title' => 'required|max:255|unique:games,title',
+            'title' => 'required|max:30|unique:games,title',
             'description' => 'required|max:255',
-            'thumbnail' => 'required|file',
         ]);
-
-        $filename = '';
-
-        if ($request->thumbnail) {
-
-            $img = Image::make($request->thumbnail)
-                ->resize(150, 150, function ($constraint) {
-                    $constraint->aspectRatio();
-                })
-                ->encode('webp');
-
-            $filename = uniqid() . '.webp';
-
-            Storage::disk('public')->put('games/'.$filename, $img);
-
-        }
 
         $slug = Str::slug($request->get('title'), '-');
 
@@ -122,7 +104,6 @@ class GameController extends Controller
             'user_id' => Auth::user()->id,
             'title' => $request->get('title'),
             'description' => $request->get('description'),
-            'thumbnail' => $filename,
             'public' => 0,
             'random' => 1,
             'tracks_number' => 15,

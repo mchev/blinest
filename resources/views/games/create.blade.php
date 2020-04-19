@@ -60,8 +60,6 @@
               @csrf
 
               <div class="form-group">
-                <div class="alert alert-warning">Une fois la partie enregistrée, il faut ajouter un minimum de 50 extraits pour jouer.</div>
-                <div class="alert alert-info">Vérifies que la partie que tu veux créer n'existe pas déjà (Chercher une partie).</div>
                 <small>* Tous les champs sont obligatoires</small>
               </div>
 
@@ -73,11 +71,6 @@
               <div class="form-group">
                   <label for="description">Description</label>
                   <input type="text" class="form-control" id="description" name="description" required/>
-              </div>
-
-              <div class="form-group">
-                  <label for="thumbnail">Image</label>
-                  <input type="file" class="form-control" id="thumbnail" name="thumbnail" required/>
               </div>
 
               <div class="form-group text-right pt-3">

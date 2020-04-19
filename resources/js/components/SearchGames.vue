@@ -12,7 +12,7 @@
       <ul class="list-group search-results-list w-100" v-if="results.length">
         <li class="list-group-item text-dark text-left" v-for="result in results">
           <a :href="'/parties/' + result.slug">{{ result.title }}</a><br>
-          <span class="badge badge-primary">{{ result.user.name }}</span> <span class="badge badge-info">{{ result.tracks_count }} extraits</span>
+          <span class="badge badge-primary">{{ result.user.name }}</span> <span class="badge badge-info">{{ result.tracks_count }} extraits</span> <span v-if="result.password" class="badge badge-warning" title="Mot de passe"><i class="fas fa-lock"></i></span>
         </li>
       </ul>
 
