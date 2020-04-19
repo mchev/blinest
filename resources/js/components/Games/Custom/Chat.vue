@@ -69,7 +69,7 @@
       return {
         users: [],
         usersCount: 0,
-        owner: null,
+        owner: [],
         messages: [],
         chatOpen: false,
         chatUserID: null,
