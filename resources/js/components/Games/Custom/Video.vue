@@ -2,19 +2,6 @@
 
     <div>
 
-        <vue-web-cam
-            v-if="video"
-            ref="webcam"
-            :device-id="deviceId"
-            width="100%"
-            height="200"
-            @started="onStarted"
-            @stopped="onStopped"
-            @error="onError"
-            @cameras="onCameras"
-            @camera-change="onCameraChange"
-        />
-
 
         <div class="btn-group btn-block">
             <button v-if="video" type="button" class="btn btn-danger" title="Couper la webcam" @click="video = false"><i class="fas fa-video-slash"></i></button>
@@ -29,14 +16,14 @@
 
 <script>
 
-    import { WebCam } from "vue-web-cam";
+    import { Peer } from "simple-peer";
 
     export default {
 
         name: 'videocam',
 
         components: {
-            WebCam
+            Peer
         },
 
         data() {

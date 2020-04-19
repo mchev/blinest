@@ -44,6 +44,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/games/{game}/score', 'GameController@score');
 	//Route::get('/home', 'HomeController@index')->name('home');
 
+	Route::patch('/tracks/{track}', 'TrackController@update');
+
+
 	Route::get('/stream', 'StreamController@index');
 	Route::post('/stream', 'StreamController@track');
 
@@ -120,7 +123,6 @@ Route::get('/profils/{name}', 'UserController@show');
 
 Route::resource('/games/{game}/tracks', 'TrackController');
 
-Route::post('/tracks/{track}/save/custom/awnser', 'TrackController@updateCustomAnwser');
 Route::post('/tracks/{track}/rate/up', 'TrackController@rateUp');
 Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 

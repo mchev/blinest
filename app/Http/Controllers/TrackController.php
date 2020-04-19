@@ -106,23 +106,14 @@ class TrackController extends Controller
      */
     public function update(Request $request, Track $track)
     {
-        //
-    }
 
-    /**
-     * Store a custom anwser.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Game  $game
-     * @return \Illuminate\Http\Response
-     */
-    public function updateCustomAnwser(Request $request, Track $track)
-    {
-
+        $track->artist_name = $request->artist_name;
+        $track->track_name = $request->track_name;
         $track->custom_answer = $request->custom_answer;
-        $track->save();
+        $track->update();
 
         return response()->json($track);
+
     }   
 
 

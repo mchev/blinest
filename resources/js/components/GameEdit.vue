@@ -63,8 +63,8 @@
                 <table class="table table-striped table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Artiste - Titre</th>
+                            <th scope="col">Artiste</th>
+                            <th scope="col">Titre</th>
                             <th scope="col">Aperçu</th>
                             <th scope="col">Réponse personnalisée</th>
                             <th scope="col" class="text-right"></th>
@@ -72,19 +72,12 @@
                     </thead>
                     <tbody>
                         <tr v-for="track in tracks">
-                            <th scope="row">{{ track.id }}</th>
-                            <td>{{ track.artist_name }} - {{ track.track_name }}</td>
-                            <td>
+                            <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.artist_name"></td>
+                            <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.track_name"></td>
+                            <td width="20%">
                                 <audio controls preload="none" :src="track.preview_url"></audio>
                             </td>
-                            <td>
-                                <div class="input-group">
-                                    <input type="text" v-model="track.custom_answer" class="form-control">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-success" @click="saveCustomAnwser(track)" type="button"><i class="fas fa-check"></i></button>
-                                    </div>
-                                </div>
-                            </td>
+                            <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.custom_answer"></td>
                             <td><button @click="deleteTrack(track)" class="btn text-danger"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
                     </tbody>
@@ -289,13 +282,10 @@
                 });
             },
 
-            saveCustomAnwser(track) {
-                console.log(track.custom_answer);
-                axios.post('/tracks/'+track.id+'/save/custom/awnser', track).then((response) => {
+            updateTrack(track) {
+                axios.patch('/tracks/' + track.id, track).then(response => {
                     console.log('Track updated');
-                }).catch((error) => {
-                    console.warn(error);
-                });
+                })
             },
 
             deleteTrack(track) {
@@ -314,7 +304,8 @@
                 });
             }
         }
-    }
+    };
+
 </script>
 
 <style scoped>
