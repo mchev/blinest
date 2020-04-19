@@ -39,6 +39,7 @@
 
           <textarea
             ref="textarea"
+            id="chatInput"
             class="textarea"
             v-model="newMessage"
             @keydown.enter.exact.prevent="sendMessage"
@@ -138,6 +139,7 @@
       listenForNewMessage() {
         Echo.channel('chat-' + this.game.id)
           .listen('MessageSent', (data) => {
+            $("#chatInput").attr("disabled", false);
             this.messages.push(data.message)
           })
         Echo.join('chat-' + this.game.id)
@@ -171,7 +173,8 @@
       },
 
       sendMessage () {
-        let app = this
+        let app = this;
+        $("#chatInput").attr("disabled", true);
         if (app.newMessage !== '') {
           axios.post('/messages/send', {
             game_id: app.game.id,
