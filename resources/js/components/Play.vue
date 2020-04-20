@@ -31,7 +31,7 @@
                         <div class="row my-2">
 
                             <div class="input-group input-group-lg col-md-12">
-                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :disabled="waitingTrack == 1" autofocus id="userInput">
+                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :readonly="waitingTrack == 1" autofocus id="userInput">
                                 <div class="input-group-append">
                                     <button class="btn btn-success" @click="checkResponse()">OK</button>
 
