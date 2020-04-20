@@ -31,9 +31,14 @@
                         <div class="row my-2">
 
                             <div class="input-group input-group-lg col-md-12">
-                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :disabled="waitingTrack == 1" autofocus>
+                                <input type="text" onpaste="return false" v-model="userAnswer" v-on:keyup.enter="checkResponse()" :placeholder="placeholder" class="form-control user-input col-md-12" :disabled="waitingTrack == 1" autofocus id="userInput">
                                 <div class="input-group-append">
                                     <button class="btn btn-success" @click="checkResponse()">OK</button>
+
+                                   <button class="btn btn-secondary" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-volume-up"></i></button>
+                                    <div class="dropdown-menu p-2">
+                                        <input type="range" class="form-control-range dropdown-item" id="formControlRange" v-model="volume" min="0" max="1" step="0.01" @change="changeVolume" @input="changeVolume">
+                                    </div>
                                 </div>
                             </div>
 
@@ -135,6 +140,7 @@
                 alertContent: '',
                 alertClass: 'alert-primary',
                 adsenseContent: null,
+                volume: 1,
             }
         },
         mounted() {
@@ -146,6 +152,10 @@
         },
 
         methods: {
+
+            changeVolume() {
+                this.player.volume = this.volume;
+            },
 
             startGame() {
 
@@ -192,6 +202,7 @@
                         this.currentTrack.bonus_score = 0;
                         this.playAudio();
                         this.waiting = false;
+                        $('#userInput').focus();
                     })
 
                 Echo.channel('endGame')
