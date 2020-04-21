@@ -65,7 +65,7 @@
 
             </div>
             <div class="card-footer"> 
-              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
 
@@ -83,7 +83,7 @@
                     @method('PATCH')
                     @csrf
 
-                    <select class="form-control p-0" name="action" onchange="this.form.submit()">
+                    <select class="badge p-0" name="action" onchange="this.form.submit()">
                       <option selected="selected" disabled>Modifier le status...</option>
                       <option value="plan">Planifier</option>
                       <option value="open">En cours</option>
@@ -131,9 +131,12 @@
 
             </div>
             <div class="card-footer"> 
-              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
+
+                <a class="badge badge-secondary" href="{{ route('lab.show', $item) }}">{{ count($item->childs) }} @if(count($item->childs) > 1) commentaires @else commentaire @endif</a> 
+
 
                 @if($item->closed_at) <span class="badge badge-danger">Clos le {{ $item->closed_at->format('d/m/Y') }}</span> @endif
                 @if($item->rejected_at) <span class="badge badge-danger">Rejeté le {{ $item->rejected_at->format('d/m/Y') }}</span> @endif
