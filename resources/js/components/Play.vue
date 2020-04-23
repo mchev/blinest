@@ -295,25 +295,40 @@
             },
 
 
-            sanitize(string) {
-              const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźżЯ·/_,:;!()[]'
-              const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzzr-----------'
-              const p = new RegExp(a.split('').join('|'), 'g')
+            sanitize(str) {
 
-              return string.toString().toLowerCase()
-                .replace(/ *\([^)]*\) */g, "") // Remove string inside parentheses
-                .replace(/ *\[[^)]*\] */g, "") // Remove string inside brackets
-                .replace('les ','') // Remove pronoums THE/LES
-                .replace('the ','') // Remove pronoums THE/LES
-                .replace('& ','') // Remove pronoums THE/LES
-                .replace('and ','') // Remove AND/&
-                .replace('p!nk','pink') // Special Pink
-                .replace(/\s+/g, '-') // Replace spaces with -
-                .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-                .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-                .replace(/\-\-+/g, '-') // Replace multiple - with single -
-                .replace(/^-+/, '') // Trim - from start of text
-                .replace(/-+$/, '') // Trim - from end of text
+                var map = {
+                    '-'  : '(|)|[|]',
+                    'a' : 'á|à|ã|â|À|Á|Ã|Â',
+                    'e' : 'é|è|ê|É|È|Ê',
+                    'i' : 'í|ì|î|Í|Ì|Î',
+                    'o' : 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
+                    'u' : 'ú|ù|û|ü|Ú|Ù|Û|Ü',
+                    'c' : 'ç|Ç',
+                    'n' : 'ñ|Ñ',
+                    '-' : '&|les|and|the',
+                    'pink' : 'p!nk',
+                    'korn' : 'koяn'
+                };
+                
+                str = str.toLowerCase();
+                str = str.toString().split('.').join("");
+                str = str.toString().split('_').join("");
+                str = str.toString().split('?').join("");
+                str = str.toString().split(' ').join("-");
+                str = str.replace(/ *\([^)]*\) */g, "")
+                        .replace(/ *\[[^)]*\] */g, "")
+                
+                for (var pattern in map) {
+                    str = str.replace(new RegExp(map[pattern], 'g'), pattern);
+                };
+
+                str = str.replace(/\-\-+/g, '-') // Replace multiple - with single -
+                        .replace(/^-+/, '') // Trim - from start of text
+                        .replace(/-+$/, '') // Trim - from end of text
+
+                return str;
+
             },
 
             checkResponse() {
