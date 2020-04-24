@@ -115,18 +115,6 @@
                       <input type="number" class="form-control" step="1" id="tracks_number" name="tracks_number" value="{{ $game->tracks_number }}" required/>
                   </div>
 
-                  <hr>
-
-                  <div class="form-group">
-                      <label for="effect_id">Effets spéciaux</label>
-                      <select name="effect_id" class="form-control">
-                        <option value="0" {{ $game->effect_id == 0 ? 'selected="selected"' : '' }}>Aucun</option>
-                        @foreach($game->effects() as $effect)
-                          <option value="{{ $effect->id }}" {{ $game->effect_id == $effect->id ? 'selected="selected"' : '' }} >{{ $effect->label }}</option>
-                        @endforeach
-                      </select>
-                  </div>
-
                 </div>
 
               </div>

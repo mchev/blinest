@@ -14,30 +14,49 @@
               <div class="input-group mt-3">
                   <input type="text"
                           id="chatInput"
-                         class="form-control"
-                         placeholder=""
-                         v-on:keyup.enter="sendMessage"
-                         aria-label="New message"
-                         aria-describedby="button-addon2" v-model="newMessage">
+                          ref="textarea"
+                          class="form-control"
+                          placeholder=""
+                          v-on:keyup.enter="sendMessage"
+                          aria-label="New message"
+                          aria-describedby="button-addon2"
+                          v-model="newMessage"
+                          v-on:click="hideEmojiPicker">
                   <div class="input-group-append">
-                      <button class="btn btn-outline-secondary"
-                              type="button"
-                              id="button-addon2"
-                              @click="sendMessage">
-                          Envoyer
+                      <button class="btn btn-secondary" :class="{ 'triggered': showEmojiPicker }" @mousedown.prevent="toggleEmojiPicker">
+                          <i class="far fa-smile-wink"></i>
                       </button>
                   </div>
+
+                  <picker
+                    v-show="showEmojiPicker"
+                    :showPreview="false"
+                    :showSearch="false"
+                    :sheetSize="32"
+                    :i18n="i18n"
+                    @select="addEmoji"
+                  />
+
               </div>
           </div>
       </div>
 
     </div>
+
 </template>
 
 <script>
+
+  import { Picker } from 'emoji-mart-vue'
+
   export default {
+
     name: 'ChatApplication',
+
     props: ['game', 'user'],
+
+    components: { Picker },
+
     data: () => {
       return {
         users: [],
@@ -45,7 +64,26 @@
         chatOpen: false,
         chatUserID: null,
         loadingMessages: false,
-        newMessage: ''
+        newMessage: '',
+        showEmojiPicker: false,
+        i18n: {
+          search: 'Recherche',
+          notfound: 'Aucune Emoji trouvé',
+          categories: {
+            search: 'Résultats',
+            recent: 'Favoris',
+            people: 'Smileys & Personnes',
+            nature: 'Animaux & Nature',
+            foods: 'Nourriture & Boisson',
+            activity: 'Activités',
+            places: 'Voyage & Lieux',
+            objects: 'Objets',
+            symbols: 'Symboles',
+            flags: 'Drapeaux',
+            custom: 'Personnalisés',
+          }
+        }
+
       }
     },
     created () {
@@ -60,6 +98,31 @@
       element.scrollTop = element.scrollHeight;
     },
     methods: {
+
+      toggleEmojiPicker () {
+        this.showEmojiPicker = !this.showEmojiPicker
+      },
+
+      hideEmojiPicker() {
+        if (this.showEmojiPicker)
+        this.showEmojiPicker = false;
+      },
+
+      addEmoji (emoji) {
+        const textarea = this.$refs.textarea;
+        const cursorPosition = textarea.selectionEnd
+        const start = this.newMessage.substring(0, textarea.selectionStart)
+        const end = this.newMessage.substring(textarea.selectionStart)
+        const text = start + emoji.native + end
+        this.newMessage = text;
+        textarea.focus();
+        this.toggleEmojiPicker()
+      },
+
+      newline() {
+        this.value = `${this.value}\n`;
+      },
+
       listenForNewMessage() {
         Echo.channel('chat-' + this.game.id)
           .listen('MessageSent', (data) => {
@@ -102,6 +165,31 @@
 </script>
 
 <style scoped>
+
+  .emoji-mart {
+    position: absolute;
+    bottom: 106%;
+    right: 0;
+    left: auto;
+    bottom: 100%;
+    z-index: 40;
+  }
+  .emoji-trigger {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    height: 20px;
+  }
+  .emoji-trigger path {
+    transition: 0.1s all;
+  }
+  .emoji-trigger:hover path {
+    fill: #000000;
+  }
+  .emoji-trigger.triggered path {
+    fill: darken(#FEC84A, 15%);
+  }
 
   .message {
     position: relative;

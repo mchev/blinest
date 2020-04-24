@@ -14,7 +14,7 @@
 
                         <div class="p-2">
 
-                            <VideoCam :game="game"></VideoCam>
+                           
 
                             <Controls v-if="tracks" ref="controls" :game="game" :tracks="tracks" v-on:play:track="track = $event"></Controls>
 
