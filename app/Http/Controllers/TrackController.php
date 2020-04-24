@@ -65,7 +65,6 @@ class TrackController extends Controller
                 'track_name' => $request->track_name,
                 'artwork_url' => $request->artwork_url,
                 'preview_url' => $request->preview_url,
-                'filetype' => $request->filetype
             ]);
 
             $track->save();

@@ -360,10 +360,6 @@
 
                 var user = this.sanitize(this.userAnswer);
 
-                console.log(artist);
-                console.log(title);
-                console.log(user);
-
                 var titleSimilarity = this.similarity(title, user);
                 var artistSimilarity = this.similarity(artist, user);
 
