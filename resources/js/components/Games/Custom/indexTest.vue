@@ -14,6 +14,8 @@
 
                         <div class="p-2">
 
+                           <VideoCam :game="game"></VideoCam>
+
                             <Controls v-if="tracks" ref="controls" :game="game" :tracks="tracks" v-on:play:track="track = $event"></Controls>
 
                             <div v-if="!tracks" class="card mb-3">
@@ -86,7 +88,7 @@
 
                     <div class="row">
 
-                        <div class="col-md-6">
+                        <div class="col">
 
                             <div class="card">
 
@@ -102,7 +104,7 @@
 
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col">
 
                             <div class="card">
 
@@ -115,6 +117,12 @@
                                 </div>
 
                             </div>
+
+                        </div>
+
+                        <div class="col">
+
+                            <Animator :game="game"></Animator>
 
                         </div>
 

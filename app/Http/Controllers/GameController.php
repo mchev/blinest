@@ -169,6 +169,40 @@ class GameController extends Controller
 
     }
 
+    public function test(Request $request, $slug)
+    {
+
+        $game = Game::where('slug', $slug)->firstOrFail();
+
+
+        if ($game->public) {
+
+            return view('games.public', compact('game'));
+
+        } else {
+
+            if ( $game->password !== '' ) {
+
+                if( $request->get('password') == $game->password ) {
+
+                    return view('games.custom.test', compact('game'));
+
+                } else {
+
+                    return view('games.custom.password', compact('game'));
+
+                }
+
+            } else {
+
+                return view('games.custom.test', compact('game'));
+
+            }
+
+        }
+
+    }
+
     /**
      * Display the specified resource.
      *

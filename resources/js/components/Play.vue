@@ -312,6 +312,7 @@
                 };
                 
                 str = str.toLowerCase();
+                str = str.toString().split(',').join("");
                 str = str.toString().split('.').join("");
                 str = str.toString().split('_').join("");
                 str = str.toString().split('?').join("");

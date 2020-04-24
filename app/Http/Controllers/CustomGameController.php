@@ -63,6 +63,39 @@ class CustomGameController extends Controller
 
     }
 
+
+    public function test(Request $request, Game $game)
+    {
+
+        //dd(auth()->guest(), $request->session());
+        if ($game->public) {
+
+            return redirect('/parties/' . $game->slug);
+
+        } else {
+
+            if ( $game->password !== '' ) {
+
+                if( $request->get('password') == $game->password ) {
+
+                    return view('games.custom.test', compact('game'));
+
+                } else {
+
+                    return view('games.custom.password', compact('game'));
+
+                }
+
+            } else {
+
+                return view('games.custom.test', compact('game'));
+
+            }
+
+        }
+
+    }
+
     /**
      * Display the specified resource.
      *

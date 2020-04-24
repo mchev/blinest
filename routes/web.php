@@ -65,10 +65,13 @@ Route::get('/games/{game}/podium', 'GameController@podium');
 Route::get('/games/{game}/tracks/delete', 'GameController@deleteTracks');
 
 Route::get('/parties/{slug}', 'GameController@slug');
+Route::get('/parties/{slug}/test', 'GameController@test');
 Route::resource('/games', 'GameController');
 
 
 // CUSTOM GAMES
+Route::get('/partie/privee/{game}/test', 'CustomGameController@test')->name('games.custom.test');
+
 Route::get('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.index');
 Route::post('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.password.check');
 Route::post('/partie/privee/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');

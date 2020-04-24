@@ -60,6 +60,7 @@ Vue.component('games', require('./components/Games.vue').default);
 Vue.component('game', require('./components/Game.vue').default);
 
 Vue.component('custom-game', require('./components/Games/Custom/index.vue').default);
+Vue.component('test-game', require('./components/Games/Custom/indexTest.vue').default);
 
 Vue.component('chat', require('./components/Chat.vue').default);
 Vue.component('podium', require('./components/Podium.vue').default);

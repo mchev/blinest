@@ -1,10 +1,8 @@
 <template>
   <div class="container">
     <div id='videos'>
-      <video id='localVideo' ref="localVideo" autoplay muted></video>
-      <video id='remoteVideo' ref="localVideo" autoplay></video>
+      <video id='remoteVideo' ref="remoteVideo" autoplay></video>
     </div>
-    <button class="btn btn-secondary" @click="startVideo">Click</button>
   </div>
 </template>
 
@@ -21,7 +19,6 @@
         room: 'visio-' + this.game.id,
         isInitiator: false,
         isStarted: false,
-        isChannelReady: true,
         turnReady: false,
         localStream: {type: Object},
         remoteStream: {type: Object},
@@ -49,12 +46,19 @@
 
         this.socket = Echo.private(this.room)
 
+        Echo.join(this.room)
+          .joining((user) => {
+            console.log('Another peer made a request to join room ' + this.room);
+            console.log('This peer is the initiator of room ' + this.room + '!');
+            this.isChannelReady = true;
+          });
+
         this.socket.listenForWhisper('typing', (message) => {
               console.log('Client received message:', message);
               if (message === 'got user media') {
-                this.maybeStart()
+                 this.maybeStart()
               } else if (message.type === 'offer') {
-                if (!this.isInitiator && !_this.isStarted) {
+                if (!this.isInitiator && !this.isStarted) {
                   this.maybeStart();
                 }
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
@@ -76,93 +80,25 @@
 
     methods: {
 
-      startVideo() {
-
-        if( this.$userId == this.game.user_id ) {
-          this.isInitiator = true;
-        }
-
-        let _this = this;
-
-        if (this.room !== '') {
-          console.log('Create or join room', this.room);
-          //this.socket.emit('create or join', this.room);
-        }
-
-        Echo.join(this.room)
-          .joining((user) => {
-            console.log('Another peer made a request to join room ' + room);
-            console.log('This peer is the initiator of room ' + room + '!');
-            _this.isChannelReady = true;
-          });
-
-        /////////////////////////////////////////////////////////////////
-
-
-        ////////////////////////////////////////////////////////////////////////
-
-        navigator.mediaDevices.getUserMedia(this.constraints).then(this.handleUserMedia, this.handleUserMediaError);
-
-        _this.maybeStart()
-
-        console.log('Getting user media with constraints', this.constraints);
-        if (location.hostname != "localhost") {
-          this.requestTurn('https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913');
-        }
-
-        window.onbeforeunload = function (e) {
-          _this.sendMessage('bye');
-        }
-
-      },
-
       sendMessage(message) {
           
         console.log('Client sending message: ', message);
-        //axios.post('/visio/message', message);
-
         this.socket.whisper('typing', message);
 
       },
 
       maybeStart() {
-        if (!this.isStarted && this.localStream.active === true && this.isChannelReady) {
+        if (!this.isStarted) {
           this.createPeerConnection();
-          this.pc.addStream(this.localStream);
           this.isStarted = true;
-          console.log('isInitiator', this.isInitiator);
-            
-          this.doCall();
-
         }
       },
 
-      handleUserMedia(stream) {
-
-        console.log('Adding local stream.');
-
-        this.$refs.localVideo.srcObject = stream;
-        this.localStream = stream;
-
-        this.sendMessage('got user media');
-
-        console.log("isInitiator(handleUserMedia): ", this.isInitiator);
-
-        if (this.isInitiator) {
-          this.maybeStart();
-        }
-
-      },
-
-      handleUserMediaError(error){
-        console.log('getUserMedia error: ', error);
-      },
-
-      createPeerConnection() {    //创建对等连接并设置回调
+      createPeerConnection() {
         try {
-          this.pc = new RTCPeerConnection(null);
-          this.pc.onicecandidate = this.handleIceCandidate;  //向对等端发送各个ICE候选项
-          this.pc.ontrack = this.handleRemoteStreamAdded;   //处理添加的远端流
+          this.pc = new RTCPeerConnection();
+          this.pc.onicecandidate = this.handleIceCandidate;
+          this.pc.ontrack = this.handleRemoteStreamAdded;
           this.pc.onremovestream = this.handleRemoteStreamRemoved;
           console.log('Created RTCPeerConnnection');
         } catch (e) {
@@ -171,6 +107,7 @@
           return;
         }
       },
+
       handleIceCandidate(event) {
         console.log('handleIceCandidate event: ', event);
         if (event.candidate) {
@@ -183,17 +120,16 @@
           console.log('End of candidates.');
         }
       },
-      handleCreateOfferError(event){
-        console.log('createOffer() error: ', event);
-      },
-      doCall() {
-        console.log('Sending offer to peer');
-        this.pc.createOffer(this.setLocalAndSendMessage, this.handleCreateOfferError);
-      },
+
       doAnswer() {
         console.log('Sending answer to peer.');
-        this.pc.createAnswer(this.setLocalAndSendMessage, null, this.sdpConstraints);
+        this.pc.createAnswer(this.setLocalAndSendMessage, this.handleFailureCallback, this.sdpConstraints);
       },
+
+      handleFailureCallback() {
+        console.log('failure');
+      },
+
       setLocalAndSendMessage(sessionDescription) {
         // Set Opus as the preferred codec in SDP if Opus is present.
         sessionDescription.sdp = this.preferOpus(sessionDescription.sdp);
@@ -201,6 +137,7 @@
         console.log('setLocalAndSendMessage sending message' , sessionDescription);
         this.sendMessage(sessionDescription);
       },
+
       requestTurn(turn_url) {
         let turnExists = false;
         for (let i in this.pc_config.iceServers) {
@@ -232,7 +169,7 @@
 
       handleRemoteStreamAdded(event) {
         console.log('Remote stream added.');
-        this.$refs.remoteVideo.src = window.URL.createObjectURL(event.stream);
+        this.$refs.remoteVideo.srcObject = event.stream;
         this.remoteStream = event.stream;
       },
 
@@ -251,6 +188,7 @@
         // stop();
         // isInitiator = false;
       },
+
       stop() {
         this.isStarted = false;
         // isAudioMuted = false;
@@ -258,6 +196,7 @@
         this.pc.close();
         this.pc = null;
       },
+
       preferOpus(sdp) {
         // Set Opus as the default audio codec if it's present.
         let sdpLines = sdp.split('\r\n');
@@ -287,10 +226,12 @@
         sdp = sdpLines.join('\r\n');
         return sdp;
       },
+
       extractSdp(sdpLine, pattern) {
         let result = sdpLine.match(pattern);
         return result && result.length === 2 ? result[1] : null;
       },
+
       setDefaultCodec(mLine, payload) {
         // Set the selected codec to the first in m line.
         let elements = mLine.split(' ');
@@ -306,6 +247,7 @@
         }
         return newLine.join(' ');
       },
+
       removeCN(sdpLines, mLineIndex) {
         // Strip CN from sdp before CN constraints is ready.
         console.log(sdpLines[mLineIndex]);
@@ -326,6 +268,7 @@
         sdpLines[mLineIndex] = mLineElements.join(' ');
         return sdpLines;
       }
+
     }
   };
 </script>
