@@ -5,45 +5,24 @@
 
 @section('content')
 
-<header class="masthead pb-4 bg-primary text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
-
-      <!-- Masthead Heading -->
-      <h1 class="masthead-heading text-uppercase mb-0">Blind-Test</h1>
-
-      <!-- Masthead Subheading -->
-      <p class="masthead-subheading font-weight-light mb-0">Testez votre culture musicale</p>
-
-    </div>
-</header>
-
 <section class="page-section portfolio" id="portfolio">
-    <div class="container">
 
-      <!-- Portfolio Section Heading -->
-      <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Les quiz musicaux {{ date("Y") }}</h2>
+  <div class="container-fluid">
 
-      <!-- Icon Divider -->
-      <div class="divider-custom">
-        <div class="divider-custom-line"></div>
-        <div class="divider-custom-icon">
-          <i class="fas fa-gamepad"></i>
-        </div>
-        <div class="divider-custom-line"></div>
-      </div>
+    <games :games="{{ $games->toJson() }}"></games>
 
-      <!-- Portfolio Grid Items -->
-      <games :games="{{ $games->toJson() }}"></games>
-      <!-- /.row -->
+  </div>
 
-    </div>
 </section>
 
 <section class="page-section bg-primary text-white mb-0" id="about">
     <div class="container">
 
-      <!-- About Section Heading -->
-      <h2 class="page-section-heading text-center text-uppercase text-white">à propos</h2>
+      <!-- Masthead Heading -->
+      <h1 class="masthead-heading text-center text-uppercase mb-0">Blind-Test</h1>
+
+      <!-- Masthead Subheading -->
+      <p class="masthead-subheading text-center font-weight-light mb-0">Testez votre culture musicale</p>
 
       <!-- Icon Divider -->
       <div class="divider-custom divider-light">

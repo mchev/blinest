@@ -44,16 +44,7 @@
 
     mounted() {
 
-        this.socket = Echo.private(this.room)
-
-        Echo.join(this.room)
-          .joining((user) => {
-            console.log('Another peer made a request to join room ' + this.room);
-            console.log('This peer is the initiator of room ' + this.room + '!');
-            this.isChannelReady = true;
-          });
-
-        this.socket.listenForWhisper('typing', (message) => {
+        Echo.private(this.room).listenForWhisper('typing', (message) => {
               console.log('Client received message:', message);
               if (message === 'got user media') {
                  this.maybeStart()
@@ -81,10 +72,7 @@
     methods: {
 
       sendMessage(message) {
-          
-        console.log('Client sending message: ', message);
-        this.socket.whisper('typing', message);
-
+        Echo.private(this.room).whisper('typing', message);
       },
 
       maybeStart() {
@@ -132,39 +120,9 @@
 
       setLocalAndSendMessage(sessionDescription) {
         // Set Opus as the preferred codec in SDP if Opus is present.
-        sessionDescription.sdp = this.preferOpus(sessionDescription.sdp);
         this.pc.setLocalDescription(sessionDescription);
         console.log('setLocalAndSendMessage sending message' , sessionDescription);
         this.sendMessage(sessionDescription);
-      },
-
-      requestTurn(turn_url) {
-        let turnExists = false;
-        for (let i in this.pc_config.iceServers) {
-          if (this.pc_config.iceServers[i].url.substr(0, 5) === 'turn:') {
-            turnExists = true;
-            this.turnReady = true;
-            break;
-          }
-        }
-        if (!turnExists) {
-          console.log('Getting TURN server from ', turn_url);
-          // No TURN server. Get one from computeengineondemand.appspot.com:
-          let xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function(){
-            if (xhr.readyState === 4 && xhr.status === 200) {
-              let turnServer = JSON.parse(xhr.responseText);
-              console.log('Got TURN server: ', turnServer);
-              this.pc_config.iceServers.push({
-                'url': 'turn:' + turnServer.username + '@' + turnServer.turn,
-                'credential': turnServer.password
-              });
-              this.turnReady = true;
-            }
-          };
-          xhr.open('GET', turn_url, true);
-          xhr.send();
-        }
       },
 
       handleRemoteStreamAdded(event) {
@@ -184,9 +142,9 @@
       },
 
       handleRemoteHangup() {
-//  console.log('Session terminated.');
-        // stop();
-        // isInitiator = false;
+        console.log('Session terminated.');
+        this.stop();
+        this.isInitiator = false;
       },
 
       stop() {
@@ -197,80 +155,10 @@
         this.pc = null;
       },
 
-      preferOpus(sdp) {
-        // Set Opus as the default audio codec if it's present.
-        let sdpLines = sdp.split('\r\n');
-        let mLineIndex;
-        // Search for m line.
-        for (let i = 0; i < sdpLines.length; i++) {
-          if (sdpLines[i].search('m=audio') !== -1) {
-            mLineIndex = i;
-            break;
-          }
-        }
-        if (mLineIndex === null) {
-          return sdp;
-        }
-        // If Opus is available, set it as the default in m line.
-        for (let i = 0; i < sdpLines.length; i++) {
-          if (sdpLines[i].search('opus/48000') !== -1) {
-            let opusPayload = this.extractSdp(sdpLines[i], /:(\d+) opus\/48000/i);
-            if (opusPayload) {
-              sdpLines[mLineIndex] = this.setDefaultCodec(sdpLines[mLineIndex], opusPayload);
-            }
-            break;
-          }
-        }
-        // Remove CN in m line and sdp.
-        sdpLines = this.removeCN(sdpLines, mLineIndex);
-        sdp = sdpLines.join('\r\n');
-        return sdp;
-      },
-
-      extractSdp(sdpLine, pattern) {
-        let result = sdpLine.match(pattern);
-        return result && result.length === 2 ? result[1] : null;
-      },
-
-      setDefaultCodec(mLine, payload) {
-        // Set the selected codec to the first in m line.
-        let elements = mLine.split(' ');
-        let newLine = [];
-        let index = 0;
-        for (let i = 0; i < elements.length; i++) {
-          if (index === 3) { // Format of media starts from the fourth.
-            newLine[index++] = payload; // Put target payload to the first.
-          }
-          if (elements[i] !== payload) {
-            newLine[index++] = elements[i];
-          }
-        }
-        return newLine.join(' ');
-      },
-
-      removeCN(sdpLines, mLineIndex) {
-        // Strip CN from sdp before CN constraints is ready.
-        console.log(sdpLines[mLineIndex]);
-        let mLineElements = sdpLines[mLineIndex].split(' ');
-        // Scan from end for the convenience of removing an item.
-        for (let i = sdpLines.length-1; i >= 0; i--) {
-          let payload = this.extractSdp(sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i);
-          if (payload) {
-            let cnPos = mLineElements.indexOf(payload);
-            if (cnPos !== -1) {
-              // Remove CN payload from m line.
-              mLineElements.splice(cnPos, 1);
-            }
-            // Remove CN line in sdp
-            sdpLines.splice(i, 1);
-          }
-        }
-        sdpLines[mLineIndex] = mLineElements.join(' ');
-        return sdpLines;
-      }
-
     }
+
   };
+
 </script>
 
 <style scoped>

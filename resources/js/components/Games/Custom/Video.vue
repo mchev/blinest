@@ -2,7 +2,6 @@
   <div class="container">
     <div id='videos'>
       <video id='localVideo' ref="localVideo" autoplay muted></video>
-      <video id='remoteVideo' ref="localVideo" autoplay></video>
     </div>
     <button class="btn btn-secondary" @click="startVideo">Click</button>
   </div>
@@ -24,7 +23,6 @@
         isChannelReady: true,
         turnReady: false,
         localStream: {type: Object},
-        remoteStream: {type: Object},
         socket: null,
         pc: {type: Object},
         pc_config: {
@@ -47,30 +45,6 @@
 
     mounted() {
 
-        this.socket = Echo.private(this.room)
-
-        this.socket.listenForWhisper('typing', (message) => {
-              console.log('Client received message:', message);
-              if (message === 'got user media') {
-                this.maybeStart()
-              } else if (message.type === 'offer') {
-                if (!this.isInitiator && !_this.isStarted) {
-                  this.maybeStart();
-                }
-                this.pc.setRemoteDescription(new RTCSessionDescription(message));
-                this.doAnswer();
-              } else if (message.type === 'answer' && this.isStarted) {
-                this.pc.setRemoteDescription(new RTCSessionDescription(message));
-              } else if (message.type === 'candidate' && this.isStarted) {
-                let candidate = new RTCIceCandidate({
-                  sdpMLineIndex: message.label,
-                  candidate: message.candidate
-                });
-                this.pc.addIceCandidate(candidate);
-              } else if (message === 'bye' && this.isStarted) {
-                this.handleRemoteHangup();
-              }
-            });
 
     },
 
@@ -78,9 +52,8 @@
 
       startVideo() {
 
-        if( this.$userId == this.game.user_id ) {
-          this.isInitiator = true;
-        }
+
+        this.isInitiator = true;
 
         let _this = this;
 
@@ -94,9 +67,45 @@
             console.log('Another peer made a request to join room ' + room);
             console.log('This peer is the initiator of room ' + room + '!');
             _this.isChannelReady = true;
+            this.doCall();
           });
 
-        /////////////////////////////////////////////////////////////////
+
+        Echo.private(this.room)
+
+          .listenForWhisper('typing', (message) => {
+
+              console.log('Message pour l\'animateur: ', message);
+
+              if (message === 'got user media') {
+
+                this.maybeStart()
+
+              }
+
+              else if (message.type === 'answer' && this.isStarted) {
+
+                this.pc.setRemoteDescription(new RTCSessionDescription(message));
+
+              }
+
+              else if (message.type === 'candidate' && this.isStarted) {
+
+                let candidate = new RTCIceCandidate({
+                  sdpMLineIndex: message.label,
+                  candidate: message.candidate
+                });
+                this.pc.addIceCandidate(candidate);
+
+              }
+
+              else if (message === 'bye' && this.isStarted) {
+
+                this.handleRemoteHangup();
+
+              }
+
+            });
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -118,23 +127,20 @@
 
       sendMessage(message) {
           
-        console.log('Client sending message: ', message);
-        //axios.post('/visio/message', message);
-
-        this.socket.whisper('typing', message);
+        console.log('Animateur sending message: ', message);
+        Echo.private(this.room).whisper('typing', message);
 
       },
 
       maybeStart() {
+
         if (!this.isStarted && this.localStream.active === true && this.isChannelReady) {
           this.createPeerConnection();
           this.pc.addStream(this.localStream);
-          this.isStarted = true;
-          console.log('isInitiator', this.isInitiator);
-            
+          this.isStarted = true;            
           this.doCall();
-
         }
+
       },
 
       handleUserMedia(stream) {
@@ -228,16 +234,6 @@
           xhr.open('GET', turn_url, true);
           xhr.send();
         }
-      },
-
-      handleRemoteStreamAdded(event) {
-        console.log('Remote stream added.');
-        this.$refs.remoteVideo.src = window.URL.createObjectURL(event.stream);
-        this.remoteStream = event.stream;
-      },
-
-      handleRemoteStreamRemoved(event) {
-        console.log('Remote stream removed. Event: ', event);
       },
 
       hangup() {

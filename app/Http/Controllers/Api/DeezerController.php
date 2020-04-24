@@ -71,7 +71,6 @@ class DeezerController extends Controller
                         'track_name' => $track['title_short'],
                         'artwork_url' => $track['album']['cover_medium'],
                         'preview_url' => $track['preview'],
-                        'filetype' => 'mp3'
                     ]);
 
 

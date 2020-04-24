@@ -23,7 +23,7 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'updateScore', 'slug', 'custom']]);
+        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'updateScore', 'slug', 'custom', 'test']]);
     }
 
 
