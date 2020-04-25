@@ -10,7 +10,7 @@
         <p>Aucune partie privée</p>
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
-    <div v-for="game in games" class="col-md-4 col-lg-3 col-xl-2">
+    <div v-for="game in games" class="col-md-4 col-lg-3">
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">

@@ -10,6 +10,8 @@
 
             <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
+            <p v-if="game.moderators.length > 0" title="Pour devenir modérateur, envois un mail depuis la page contact en précisant quelle partie tu souhaites modérer. Nous étudierons la demande et te tiendrons informé."><small> Modérateurs : <span v-for="moderator in game.moderators" class="badge badge-info mr-1">{{ moderator.name }}</span></small></p>
+
           </div>
       </header>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\User;
+use App\Game;
 use Illuminate\Http\Request;
 
 
@@ -43,49 +44,32 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function search(Request $request)
     {
-        //
+
+        if ($request->get('query')) {
+
+            $users = User::where('name', 'like', '%' . $request->get('query') . '%')
+                        ->orWhere('email', 'like', '%' . $request->get('query') . '%')
+                        ->limit(5)
+                        ->get();
+
+            return response()->json($users);
+        }
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
+    // 3 => Moderator Role
+
+    public function attach(Request $request, User $user)
     {
-        //
+        $user->roles()->attach(3, ['game_id' => $request->get('game_id')]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
+    public function detach(User $user, Game $game)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
+        $user->roles()->wherePivot('game_id', $game->id)->detach(3);
     }
 
     /**

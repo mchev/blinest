@@ -27,9 +27,11 @@
 
     <div class="col-md-4">
 
-      <div class="card">
+      <admin-moderators :game="{{ $game->toJson() }}"></admin-moderators>
 
-        <div class="card-header">
+      <div class="card my-3">
+
+        <div class="card-header bg-secondary text-white">
           {{ $game->title }} - Paramètres
         </div>
 
@@ -131,7 +133,7 @@
 
       <div class="card mt-4">
 
-          <div class="card-header">
+          <div class="card-header bg-secondary text-white">
             Supprimer ce Blind test
           </div>
 

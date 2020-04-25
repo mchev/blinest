@@ -10,7 +10,7 @@ class Game extends Model
 
 	protected $guarded = ['id'];
 
-    protected $with = ['user'];
+    protected $with = ['user', 'moderators'];
 
     public function tracks()
     {
@@ -35,6 +35,11 @@ class Game extends Model
     public function users()
     {
         return $this->hasMany(User::class, 'user_id');
+    }
+
+    public function moderators()
+    {
+        return $this->belongsToMany('App\User', 'role_user')->select('users.name', 'users.id');
     }
 
     public function user()

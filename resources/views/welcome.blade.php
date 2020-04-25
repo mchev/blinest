@@ -7,7 +7,7 @@
 
 <section class="page-section portfolio" id="portfolio">
 
-  <div class="container-fluid">
+  <div class="container">
 
     <games :games="{{ $games->toJson() }}"></games>
 

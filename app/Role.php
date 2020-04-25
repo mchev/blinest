@@ -11,6 +11,6 @@ class Role extends Model
      */
     public function users()
     {
-        return $this->belongsToMany('App\User')->using('App\RoleUser');
+        return $this->belongsToMany('App\User')->using('App\RoleUser')->withTimestamps();
     }
 }

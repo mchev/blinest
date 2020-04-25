@@ -13,6 +13,9 @@
 
 Route::get('/', 'GameController@index');
 
+Route::get('/parties', function() { 
+    return Redirect::to('/', 301); 
+});
 
 // STATIQUES
 Route::get('/contact', 'ContactController@index');
@@ -135,6 +138,10 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'mi
 	Route::post('/', 'DashboardController@index')->name('post.dashboard.index');
 
 	Route::get('users/table', 'UserController@table')->name('users.table');
+
+	Route::get('/users/search', 'UserController@search')->name('users.search');
+	Route::post('/users/{user}/role', 'UserController@attach')->name('users.role.attach');
+	Route::delete('/users/{user}/game/{game}/role', 'UserController@detach')->name('users.role.detach');
 	Route::resource('users', 'UserController');
 
 	Route::get('tracks/duplicates', 'TrackController@duplicates')->name('tracks.duplicates');

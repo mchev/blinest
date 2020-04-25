@@ -2,7 +2,7 @@
     <div>
 
         <div class="card">
-            <div class="card-header">Gestion des extraits</div>
+            <div class="card-header bg-secondary text-white">Gestion des extraits</div>
 
             <div class="card-body">
 
@@ -14,13 +14,13 @@
                         <option value="deezer" selected="selected">Deezer</option>
                         <option value="playlist">Playlist Deezer</option>
                     </select>
-                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher un titre">
+                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher sur deezer">
                     <input v-if="origin == 'playlist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
                     <button v-if="origin == 'playlist'" type="button" @click="addPlaylist()" class="btn btn-success">Valider</button>
                 </div>
 
                 <div class="panel-footer" v-if="results.length">
-                    <ul class="list-group result-list">
+                    <ul class="list-group result-list text-dark">
                         <li class="list-group-item d-flex justify-content-between align-items-center" v-for="result in results">
                             {{ result.artist.name }} - {{ result.title }}
                             <button @click="addtrack(result)" class="btn btn-sm btn-success">Ajouter</button>
@@ -36,7 +36,7 @@
                         <input type="search" @keyup="searchTracks()" v-model="search" class="form-control" placeholder="Recherche">
                     </div>
 
-                    <div class="col-md-5 text-center">
+                    <div class="col-md-7 text-center">
                         <ul class="pagination">
                             <li v-if="current_page > 1" class="page-item">
                                 <span @click="paginate('prev')" class="page-link">&laquo;</span>
@@ -50,9 +50,11 @@
                         </ul>
                     </div>
 
+<!--
                     <div class="col-md-2">
                         <button v-if="tracks.length" class="btn btn-danger" @click="deleteTracks()">Tout supprimer</button>
                     </div>
+-->
 
                     <div class="col-md-2 text-right">
                         <button class="btn btn-info">{{ tracks.length }} / {{ total }}</button>
@@ -67,6 +69,7 @@
                             <th scope="col">Titre</th>
                             <th scope="col">Aperçu</th>
                             <th scope="col">Réponse personnalisée</th>
+                            <th width="8%" scope="col"><i class="fas fa-thumbs-down"></i></th>
                             <th scope="col" class="text-right"></th>
                         </tr>
                     </thead>
@@ -74,10 +77,11 @@
                         <tr v-for="track in tracks">
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.artist_name"></td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.track_name"></td>
-                            <td width="20%">
-                                <audio controls preload="none" :src="track.preview_url"></audio>
+                            <td>
+                                <audio controls preload="none" :src="track.preview_url" style="width:50px"></audio>
                             </td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.custom_answer"></td>
+                            <td><input type="text" class="form-control" v-model="track.down_rate" readonly></td>
                             <td><button @click="deleteTrack(track)" class="btn text-danger"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
                     </tbody>

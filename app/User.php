@@ -53,8 +53,17 @@ class User extends Authenticatable
      */
     public function roles()
     {
-        return $this->belongsToMany('App\Role', 'role_user');
+        return $this->belongsToMany('App\Role', 'role_user')->withTimestamps();
     }
+
+    /**
+     * The roles that belong to the user.
+     */
+    public function role()
+    {
+        return $this->hasMany('App\Role', 'role_user');
+    }
+
 
     /**
      * Check if the user has a role.
@@ -64,6 +73,23 @@ class User extends Authenticatable
         foreach ($this->roles()->get() as $role)
         {
             if ($role->slug == $roleName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Check if the user has a role.
+     */
+    public function isModerator($game)
+    {
+        foreach ($this->roles()->withPivot('game_id')->get() as $role)
+        {
+            if ($role->slug == 'moderator' && $game->id == $role->pivot->game_id)
             {
                 return true;
             }
