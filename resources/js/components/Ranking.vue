@@ -139,9 +139,9 @@
 
             if(this.users.length > 2) {
 
-              var user1 = orderedUsers[0],
-                  user2 = orderedUsers[1],
-                  user3 = orderedUsers[2]
+              var user1 = this.orderedUsers[0],
+                  user2 = this.orderedUsers[1],
+                  user3 = this.orderedUsers[2]
 
               this.podium = [
                 user1, user2, user3
