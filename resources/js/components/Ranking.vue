@@ -40,8 +40,8 @@
                 <div v-if="users && podium" id="podium-box" class="row">
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ users[1].user_name }}<br>
-                            ({{ users[1].score }} points)
+                            {{ orderedUsers[1].user_name }}<br>
+                            ({{ orderedUsers[1].score }} points)
                         </div>
                         <div id="second-step" class="bg-secondary step centerBoth podium-number">
                             2
@@ -49,8 +49,8 @@
                     </div>
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ users[0].user_name }}<br>
-                            ({{ users[0].score }} points)
+                            {{ orderedUsers[0].user_name }}<br>
+                            ({{ orderedUsers[0].score }} points)
                         </div>
                         <div id="first-step" class="bg-secondary step centerBoth podium-number">
                             1
@@ -58,8 +58,8 @@
                     </div>
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ users[2].user_name }}<br>
-                            ({{ users[2].score }} points)
+                            {{ orderedUsers[2].user_name }}<br>
+                            ({{ orderedUsers[2].score }} points)
                         </div>
                         <div id="third-step" class="bg-secondary step centerBoth podium-number">
                             3
