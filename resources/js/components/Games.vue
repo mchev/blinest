@@ -153,7 +153,7 @@
         background-color: #FF9800 !important;
     }
     .hip-hop-rap-fr {
-        background-color: ##ED6F48 !important;
+        background-color: #ED6F48 !important;
     }
 
 </style>
