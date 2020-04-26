@@ -37,7 +37,7 @@
 
                 <div v-if="userScore" class="alert alert-success mt-2">Mon score ({{ userScore.user_name }}) : {{ userScore.score }} points</div>
 
-                <div v-if="podium" id="podium-box" class="row">
+                <div v-if="users && podium" id="podium-box" class="row">
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
                             {{ users[1].user_name }}<br>
