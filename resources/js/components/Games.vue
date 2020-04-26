@@ -152,8 +152,11 @@
     .k-pop {
         background-color: #FF9800 !important;
     }
-    .hip-hop-rap-fr {
+    .rap {
         background-color: #ED6F48 !important;
+    }
+    .kids {
+        background-color: #795749 !important;
     }
 
 </style>
