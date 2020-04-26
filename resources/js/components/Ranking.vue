@@ -40,8 +40,8 @@
                 <div v-if="users && podium" id="podium-box" class="row">
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ orderedUsers[1].user_name }}<br>
-                            ({{ orderedUsers[1].score }} points)
+                            {{ podium[1].user_name }}<br>
+                            ({{ podium[1].score }} points)
                         </div>
                         <div id="second-step" class="bg-secondary step centerBoth podium-number">
                             2
@@ -49,8 +49,8 @@
                     </div>
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ orderedUsers[0].user_name }}<br>
-                            ({{ orderedUsers[0].score }} points)
+                            {{ podium[0].user_name }}<br>
+                            ({{ podium[0].score }} points)
                         </div>
                         <div id="first-step" class="bg-secondary step centerBoth podium-number">
                             1
@@ -58,8 +58,8 @@
                     </div>
                     <div class="col-md-4 step-container m-0 p-0">
                         <div>
-                            {{ orderedUsers[2].user_name }}<br>
-                            ({{ orderedUsers[2].score }} points)
+                            {{ podium[2].user_name }}<br>
+                            ({{ podium[2].score }} points)
                         </div>
                         <div id="third-step" class="bg-secondary step centerBoth podium-number">
                             3
@@ -138,9 +138,19 @@
             this.countDownTimer();
 
             if(this.users.length > 2) {
-              this.podium = true;
+
+              var user1 = orderedUsers[0],
+                  user2 = orderedUsers[1],
+                  user3 = orderedUsers[2]
+
+              this.podium = [
+                user1, user2, user3
+              ];
+
             } else {
+
               this.podium = false;
+
             }
 
             $('#finnish').modal('show');
