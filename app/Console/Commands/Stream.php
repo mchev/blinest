@@ -32,7 +32,7 @@ class Stream extends Command
      *
      * @var int
      */
-    protected $tracks_by_game = 15;
+    protected $tracks_by_game = 15; // 15
 
     /**
      * Init counter
@@ -115,7 +115,7 @@ class Stream extends Command
 
         broadcast(new EndGame());
 
-        sleep(30);
+        sleep(15);
 
         $this->getTracks($this->games);
 

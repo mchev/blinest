@@ -10,7 +10,7 @@
 
                 <div class="row">
 
-                    <div v-if="alertContent" class="alert" :class="alertClass" role="alert">
+                    <div v-if="alertContent" class="alert alert-message" :class="alertClass" role="alert">
                         {{ alertContent }}
                     </div>
 
@@ -87,30 +87,6 @@
                     <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
                 </div>
             </div>
-        </div>
-    </div>
-
-
-    <!-- FINNISH MODAL -->
-    <div class="modal fade" id="finnish" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title">La partie est terminée</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <p>Mon score : {{ score }}</p>
-                <h3>Nouvelle partie dans</h3>
-                <h1>{{ countdown }}</h1>
-                <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
-            </div>
-            <div class="modal-footer">
-              <a href="/" class="btn btn-primary">Rejoindre d'autres parties</a>
-            </div>
-          </div>
         </div>
     </div>
 
@@ -269,10 +245,6 @@
             endGame() {
 
                 this.ended = true;
-                this.countdown = 30;
-                this.countDownTimer();
-
-                $('#finnish').modal('show');
 
                 // Save score
                 if (this.score > 0) {
@@ -285,16 +257,6 @@
 
             },
 
-            countDownTimer() {
-                if(this.countdown > 0) {
-                    setTimeout(() => {
-                        this.countdown -= 1
-                        this.countDownTimer()
-                    }, 1000)
-                }
-            },
-
-
             sanitize(str) {
 
                 var map = {
@@ -302,7 +264,7 @@
                     'a' : 'á|à|ã|â|À|Á|Ã|Â',
                     'e' : 'é|è|ê|É|È|Ê',
                     'i' : 'í|ì|î|Í|Ì|Î',
-                    'o' : 'ó|ò|ô|õ|Ó|Ò|Ô|Õ',
+                    'o' : 'ó|ò|ô|õ|ö|Ó|Ò|Ô|Õ',
                     'u' : 'ú|ù|û|ü|Ú|Ù|Û|Ü',
                     'c' : 'ç|Ç',
                     'n' : 'ñ|Ñ',
@@ -752,7 +714,7 @@
     .answers {
         font-size: 120%;
     }
-    .alert {
+    .alert.alert-message {
         width: 100%;
         z-index: 40;
         position: absolute;
