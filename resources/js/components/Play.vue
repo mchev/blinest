@@ -104,7 +104,6 @@
                 waitingTrack: false,
                 listening: null,
                 ended: null,
-                countdown: 0,
                 answers: [],
                 users: [],
                 userAnswer: '',

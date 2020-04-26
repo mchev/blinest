@@ -86,30 +86,6 @@
     </div>
 
 
-    <!-- FINNISH MODAL -->
-    <div class="modal fade" id="finnish" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title">La partie est terminée</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <p>Mon score : {{ score }}</p>
-                <h3>Nouvelle partie dans</h3>
-                <h1>{{ countdown }}</h1>
-                <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" data-dismiss="modal" class="btn btn-primary">Je reste ici</button>
-              <a href="/" class="btn btn-secondary">Rejoindre d'autres parties</a>
-            </div>
-          </div>
-        </div>
-    </div>
-
 </div>
 
 </template>
@@ -128,7 +104,6 @@
                 waitingTrack: false,
                 listening: null,
                 ended: null,
-                countdown: 0,
                 answers: [],
                 users: [],
                 userAnswer: '',
@@ -290,10 +265,7 @@
 
                 this.player.pause();
                 this.ended = true;
-                this.countdown = 30;
-                this.countDownTimer();
 
-                $('#finnish').modal('show');
                 this.$emit('game:end', null);
 
                 // Save score
@@ -306,16 +278,6 @@
                 }
 
             },
-
-            countDownTimer() {
-                if(this.countdown > 0) {
-                    setTimeout(() => {
-                        this.countdown -= 1
-                        this.countDownTimer()
-                    }, 1000)
-                }
-            },
-
 
             sanitize(str) {
 
