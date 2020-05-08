@@ -16,7 +16,7 @@
 
                       <ul class="list-group text-left">
 
-                        <li v-for="(item,index) in game.scores" v-if="index <= 3" class="list-group-item border-0"><strong><i class="fas fa-star"></i> {{ index + 1  }} {{ item.name }} ({{ item.score.total }} pts)</strong></li>
+                        <li v-for="(item,index) in userList" v-if="index <= 2" class="list-group-item border-0"><strong><i class="fas fa-star"></i> {{ index + 1  }} {{ item.name }} ({{ item.score.total }} pts)</strong></li>
 
                       </ul>
 
@@ -39,7 +39,7 @@
 
         name:"finnish",
 
-        props:['game'],
+        props:['game', 'users'],
 
         data() {
             return {
@@ -64,7 +64,19 @@
           },
 
 
-        }
+        },
+
+        computed: {
+
+          userCpd() {
+            return this.game.user;
+          },
+
+          userList() {
+            return _.orderBy(this.users, 'score.total', 'desc')
+          },
+
+        },
 
     };
 

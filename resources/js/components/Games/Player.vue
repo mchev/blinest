@@ -22,9 +22,9 @@
                             <div class="col-md-12">
 
                                 <div class="progress">
-                                    <transition-group name="list" tag="span" v-if="game.scores">
+                                    <transition-group name="list" tag="span" v-if="users">
                                         <span 
-                                            v-for="item in game.scores"
+                                            v-for="item in users"
                                             v-if="item.score && item.score.total_time"
                                             :key="item.id"
                                             class="bubble" 
@@ -87,7 +87,7 @@
 <script>
     export default {
 
-        props:['game', 'track'],
+        props:['game', 'track', 'users'],
 
         data() {
             return {

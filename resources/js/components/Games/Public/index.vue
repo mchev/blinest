@@ -15,7 +15,7 @@
 
       <div v-if="launched" class="public-game-section d-flex flex-column">
 
-        <game-player @score="countScore" :track="track" :game="game"></game-player>
+        <game-player @score="countScore" :track="track" :game="game" :users="users"></game-player>
 
         <section class="container-fluid d-flex flex-grow-1 pb-5">
 
@@ -40,17 +40,7 @@
 
                 <div class="col-md-4">
 
-                  <div class="card mb-2">
-
-                    <div class="card-header">
-                      <h5>Scores</h5>
-                    </div>
-
-                    <div class="card-body p-0 card-multiplayer">
-                      <game-scores v-if="launched && initscore" :game="game" :track="track"></game-scores>
-                    </div>
-
-                  </div>
+                  <game-scores v-if="launched && initscore" :game="game" :track="track" :users="users"></game-scores>
 
                 </div>
 
@@ -131,7 +121,7 @@
                 <div class="modal-body py-2 text-center">
                   <h2 class="p-0">Fin de partie</h2>
                   <small>Tout le monde lève les mains!</small>
-                  <finnish v-if="finnish" :game="game" class="mt-4"></finnish>
+                  <finnish v-if="finnish" :game="game" :users="users" class="mt-4"></finnish>
                 </div>
             </div>
           </div>
@@ -160,6 +150,7 @@
           return {
               answers: [],
               score: 0,
+              users: null,
               track: null,
               waiting: false,
               launched: false,
@@ -180,7 +171,6 @@
         init() {
 
           this.waiting = true;
-          this.game.users = [];
           this.listen();
 
           // Get the current user
@@ -195,16 +185,16 @@
 
           Echo.join('game-' + this.game.id)
             .here((users) => {
-              this.game.users = users;
-              this.game.usersCount = this.game.users.length;
+              this.users = users;
+              this.usersCount = this.users.length;
             })
             .joining((user) => {
-              this.game.users.push(user);
-              this.game.usersCount = this.game.users.length;
+              this.users.push(user);
+              this.usersCount = this.users.length;
             })
             .leaving((user) => {
-              this.game.users.splice(this.game.users.indexOf(user), 1);
-              this.game.usersCount = this.game.users.length;
+              this.users.splice(this.users.findIndex(f => f.id === user.id), 1);
+              this.usersCount = this.users.length;
             });
 
           Echo.channel('game-' + this.game.id)
@@ -224,12 +214,11 @@
           // Scores
           Echo.private('game-' + this.game.id)
             .listenForWhisper('score', (data) => {
-              if(this.game.scores.findIndex(f => f.id === data.id) !== -1) {
-                Vue.set(this.game.scores, this.game.scores.findIndex(f => f.id === data.id), data);
+              if(this.users.findIndex(f => f.id === data.id) !== -1) {
+                this.$set(this.users, this.users.findIndex(f => f.id === data.id), data);
               } else {
-                this.game.scores.push(data);
+                this.users.push(data);
               }
-              this.game.users = this.game.scores;
             });
 
         },
@@ -253,7 +242,7 @@
           this.finnish = false;
           $("#finnishModal").modal('hide');
           this.answers = [];
-          this.game.user.score = {};
+          this.track.score = {};
           this.score = 0;
           this.track = null;
           this.waiting = true;
@@ -299,48 +288,45 @@
               this.score += (this.track.score.faster_bonus) ? this.track.score.faster_bonus : 0;
           }
 
-          this.game.user.score = event;
 
           // Faster typer
-          if(this.game.user.score.artist_time !== 0 && this.game.user.score.track_time !== 0) {
-            this.game.user.score.total_time = (this.game.user.score.artist_time > this.game.user.score.track_time) ? this.game.user.score.artist_time :  this.game.user.score.track_time;
+          if(this.track.score.artist_time !== 0 && this.track.score.track_time !== 0) {
+            this.track.score.total_time = (this.track.score.artist_time > this.track.score.track_time) ? this.track.score.artist_time :  this.track.score.track_time;
           }
 
-          if(this.game.user.score.custom_time) {
-            this.game.user.score.total_time = this.game.user.score.custom_time;
+          if(this.track.score.custom_time) {
+            this.track.score.total_time = this.track.score.custom_time;
           }
 
 
-          if (this.game.scores && this.game.user.score.total_time !== 0 && !this.game.user.score.faster) {
+          if (this.track.score.total_time !== 0 && !this.track.score.faster_bonus) {
 
             switch (this.countFaster()) {
               case 0:
-                this.game.user.score.faster = 1;
-                this.game.user.score.faster_bonus += 0.5;
                 this.track.score.faster_num = 1;
                 this.track.score.faster_bonus = 0.5;
-                this.score += this.game.user.score.faster_bonus;
+                this.score += this.track.score.faster_bonus;
                 break;
               case 1:
-                this.game.user.score.faster = 2;
-                this.game.user.score.faster_bonus += 0.5;
                 this.track.score.faster_num = 2;
                 this.track.score.faster_bonus = 0.5;
-                this.score += this.game.user.score.faster_bonus;
+                this.score += this.track.score.faster_bonus;
                 break;
               case 2:
-                this.game.user.score.faster = 3;
-                this.game.user.score.faster_bonus += 0.5;
                 this.track.score.faster_num = 3;
                 this.track.score.faster_bonus = 0.5;
-                this.score += this.game.user.score.faster_bonus;
+                this.score += this.track.score.faster_bonus;
                 break;
 
             }
 
           }
 
-          this.game.user.score.total = this.score;
+          this.track.score.total = this.score;
+
+          this.game.user.score = this.track.score;
+
+          Vue.set(this.users, this.users.findIndex(f => f.id === this.game.user.id), this.game.user);
 
           this.initscore = true;
 
@@ -353,13 +339,21 @@
         countFaster() {
 
           var count = 0;
-          for(let i=0; i<this.game.scores.length; i++)
-          if( this.game.scores[i].score && this.game.scores[i].score.faster )
+          for(let i=0; i<this.users.length; i++)
+          if( this.users[i].score && this.users[i].score.faster_bonus )
             count++;
           return count;
                 
         }
 
+
+      },
+
+      computed: {
+
+        orderedUsers: function () {
+          return _.orderBy(this.users, 'score.total', 'desc')
+        }
 
       }
 
