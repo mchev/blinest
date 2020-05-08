@@ -1,0 +1,88 @@
+.darkmode {
+	background-color: #393c3b !important;
+}
+
+.btn-settings {
+	background: #FFF;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0.5rem !important;
+}
+
+.card {
+	border-radius: 0.2rem;
+	border: none;
+}
+
+.card h5 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 200;
+    margin: 0;
+}
+
+.public-game-section .card {
+	min-height: 50vh;
+}
+
+.public-game {
+	position: relative;
+}
+
+
+
+.public-game h1 {
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+.text-gray {
+	color: $gray;
+}
+
+.podium {
+	display: block;
+	position: relative;
+	height: 16vh;
+	width: 100%;
+}
+
+.podium span {
+	display: inline-block;
+	width: calc(100% / 3);
+	min-height: 5vh;
+	background: #CCC;
+	margin-left: -1rem;
+}
+
+.podium span.second {
+	min-height: 80%;
+}
+.podium span.first {
+	min-height: 100%;
+}
+.podium span.third {
+	min-height: 60%;
+}
+
+.bubble {
+	position: absolute;
+	background: #FFF;
+	border-radius: .4em;
+	padding: 2px 4px;
+	bottom: calc(100% + 8px);
+	color: #333;
+}
+
+.bubble:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 16px;
+	width: 0;
+	height: 0;
+	border: 8px solid transparent;
+	border-top-color: #FFF;
+	border-bottom: 0;
+	margin-left: -8px;
+	margin-bottom: -8px;
+}

@@ -10,7 +10,7 @@ use App\Round;
 use App\Effect;
 use App\Track;
 use App\Score;
-use App\Events\UpdateScore;
+use App\Events\ScoreSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -23,7 +23,7 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'updateScore', 'slug', 'custom', 'test']]);
+        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'sendScore', 'slug', 'custom', 'test']]);
     }
 
 
@@ -143,7 +143,7 @@ class GameController extends Controller
 
         if ($game->public) {
 
-            return view('games.public', compact('game'));
+            return view('games.public.index', compact('game'));
 
         } else {
 
@@ -169,79 +169,7 @@ class GameController extends Controller
 
     }
 
-    public function test(Request $request, $slug)
-    {
 
-        $game = Game::where('slug', $slug)->firstOrFail();
-
-
-        if ($game->public) {
-
-            return view('games.public', compact('game'));
-
-        } else {
-
-            if ( $game->password !== '' ) {
-
-                if( $request->get('password') == $game->password ) {
-
-                    return view('games.custom.test', compact('game'));
-
-                } else {
-
-                    return view('games.custom.password', compact('game'));
-
-                }
-
-            } else {
-
-                return view('games.custom.test', compact('game'));
-
-            }
-
-        }
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Game  $game
-     * @return \Illuminate\Http\Response
-     */
-    public function multiplayer(Game $game)
-    {
-
-        return view('games.multiplayer', compact('game'));
-    }
-
-    /**
-     * Get a random track in the game.
-     *
-     * @param  \App\Game  $game
-     * @return \Illuminate\Http\Response
-     */
-    public function track(Request $request,Game $game)
-    {
-
-        if(!empty($request->answers)) {
-
-            $ids = [];
-
-            foreach ($request->answers as $answer) {
-                $ids[] = $answer['id'];
-            }
-
-            $track = Track::inRandomOrder()->where('game_id', $game->id)->whereNotIn('id', $ids)->first();
-
-        } else {
-
-            $track = Track::inRandomOrder()->where('game_id', $game->id)->first();
-
-        }
-
-        return response()->json($track);
-    }
 
     /**
      * Save the user score for this game
@@ -249,35 +177,12 @@ class GameController extends Controller
      * @param  \App\Game  $game
      * @return \Illuminate\Http\Response
      */
-    public function updateScore(Request $request,Game $game)
+    public function sendScore(Request $request, Game $game)
     {
 
-        $score = ($request->score) ? $request->score : 0;
+        $user = $request->get('user');
 
-        if(Auth::user()) {
-            $user = Auth::user();
-            $user_id = $user->id;
-            $user_name = $user->name;
-        } else {
-            $user_id = null;
-            if ($request->session()->get('guest_name')) {
-                $user_name = $request->session()->get('guest_name');
-            } else {
-                $user_name = 'anonyme_' . random_int(100, 999);
-                $request->session()->put('guest_name', $user_name);
-            }
-        }
-
-        $update = [
-            'user_id' => $user_id,
-            'user_name' => $user_name,
-            'game_id' => $game->id,
-            'score' => $score
-        ];
-
-        broadcast(new UpdateScore($update));
-
-        return response()->json($update);
+        broadcast(new ScoreSent( $user, $game ));
 
     }
 
@@ -287,7 +192,7 @@ class GameController extends Controller
      * @param  \App\Game  $game
      * @return \Illuminate\Http\Response
      */
-    public function score(Request $request,Game $game)
+    public function storeScore(Request $request,Game $game)
     {
 
         $game->hit = $game->hit + 1;

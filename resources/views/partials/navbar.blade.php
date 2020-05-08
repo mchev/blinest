@@ -50,7 +50,7 @@
                             @endif
 
                             <a class="dropdown-item" href="{{ route('releases') }}">Actualités</a>
-                            <a class="dropdown-item" href="{{ route('games.me') }}">Mes parties</a>
+                            <a class="dropdown-item" href="{{ route('games.me') }}">Parties privées</a>
                             <a class="dropdown-item" href="{{ route('profile') }}">Mon compte</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();

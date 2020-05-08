@@ -36,13 +36,17 @@ class TrackController extends Controller
             $request->order = (isset($request->order)) ? $request->order : 'down_rate';
 
             if ($request->q) {
+
                 $tracks = Track::where('track_name', 'like', '%' . $request->q . '%')
                             ->orWhere('artist_name', 'like', '%' . $request->q . '%')
                             ->orderBy($request->order, 'DESC')
                             ->with('game')
                             ->paginate($request->paginate);
             } else {
-                $tracks = Track::orderBy($request->order, 'DESC')->with('game')->paginate($request->paginate);
+
+                $tracks = Track::orderBy($request->order, 'DESC')
+                            ->with('game')
+                            ->paginate($request->paginate);
             }
 
             return response()->json($tracks);

@@ -23,8 +23,7 @@ class PlayTrack implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      *
-     * @param Game $game
-     * @param $track
+     * @param Track $track
      */
     public function __construct(Track $track)
     {

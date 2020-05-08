@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Game;
 use App\Track;
-use App\Events\NewTrack;
+use App\Events\PlayTrack;
+use App\Events\EndTrack;
 use App\Events\EndGame;
+use App\Events\NewGame;
 use Illuminate\Console\Command;
 
 class Stream extends Command
@@ -23,7 +25,6 @@ class Stream extends Command
      * @var string
      */
     protected $description = 'Start broadcasting tracks';
-
 
     protected $games;
 
@@ -72,6 +73,8 @@ class Stream extends Command
     public function handle()
     {
 
+        $this->info('Games started');
+
         $this->getTracks($this->games);
 
     }
@@ -94,11 +97,19 @@ class Stream extends Command
                 $track->total = $this->tracks_by_game;
                 $this->tracks[] = $track->id;
 
-                broadcast(new NewTrack($track));
+                broadcast(new PlayTrack($track));
 
             }
 
             sleep(32);
+
+            foreach ($games as $game) {
+
+                broadcast(new EndTrack($game));
+
+            }
+
+            sleep(2);
 
             $this->getTracks($this->games);
 
@@ -106,16 +117,23 @@ class Stream extends Command
 
     }
 
+
     public function endGame()
     {
         $this->tracks = [];
         $this->counter = 0;
-        //$this->games = Game::has('tracks', '>', 49)->get();
-        $this->games = Game::where('public', 1)->get();
 
-        broadcast(new EndGame());
+        foreach ($this->games as $game) {
+            broadcast(new EndGame($game));
+        }
 
         sleep(15);
+
+        $this->games = Game::where('public', 1)->get();
+
+        foreach ($this->games as $game) {
+            broadcast(new NewGame($game));
+        }
 
         $this->getTracks($this->games);
 

@@ -8,6 +8,36 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
+    public function user(Request $request) {
+
+        if(!$request->ajax()){
+
+            abort(404);
+
+        } else {
+
+            if (auth()->user()) {
+
+                $user = [
+                    'id' => auth()->user()->id,
+                    'name' => auth()->user()->name
+                ];
+
+            } else {
+
+                $user = [
+                    'id' => $request->session()->get('guest_id'),
+                    'name' => $request->session()->get('guest_name')
+                ];
+
+            }
+
+            return response()->json($user);
+
+        }
+        
+    }
+
     /**
      * Display the specified resource.
      *

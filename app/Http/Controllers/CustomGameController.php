@@ -6,11 +6,10 @@ use Auth;
 use App\Game;
 use App\Track;
 use App\Score;
-use URLShortener;
 use App\Events\PlayTrack;
 use App\Events\PauseTrack;
 use App\Events\ResumeTrack;
-use App\Events\StopGame;
+use App\Events\EndGame;
 use Illuminate\Http\Request;
 
 class CustomGameController extends Controller
@@ -62,39 +61,7 @@ class CustomGameController extends Controller
         }
 
     }
-
-
-    public function test(Request $request, Game $game)
-    {
-
-        //dd(auth()->guest(), $request->session());
-        if ($game->public) {
-
-            return redirect('/parties/' . $game->slug);
-
-        } else {
-
-            if ( $game->password !== '' ) {
-
-                if( $request->get('password') == $game->password ) {
-
-                    return view('games.custom.test', compact('game'));
-
-                } else {
-
-                    return view('games.custom.password', compact('game'));
-
-                }
-
-            } else {
-
-                return view('games.custom.test', compact('game'));
-
-            }
-
-        }
-
-    }
+    
 
     /**
      * Display the specified resource.
@@ -132,7 +99,7 @@ class CustomGameController extends Controller
 
     public function stop(Game $game)
     {
-        broadcast(new StopGame($game));
+        broadcast(new EndGame($game));
     }
 
     public function password(Request $request, Game $game)

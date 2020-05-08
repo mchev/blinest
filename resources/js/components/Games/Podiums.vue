@@ -1,6 +1,6 @@
 <template>
 
-    <div class="row mt-4">
+    <div class="row mt-4 d-flex justify-content-center">
 
         <div v-if="week.length" class="col-md-4">
             <h4>Top de la semaine</h4>
@@ -36,7 +36,10 @@
 </template>
 
 <script>
+
     export default {
+
+        name: "podiums",
 
         props:['game'],
 
@@ -47,12 +50,17 @@
                 week: {}
             }
         },
+
         mounted() {
-            
-        },
-        created() {
 
             this.getPodium();
+
+            let vm = this;
+            
+            Echo.channel('game-' + this.game.id)
+                .listen('EndGame', (data) => {
+                    setTimeout(function() { vm.getPodium(); }, 2000);
+                });
 
         },
 

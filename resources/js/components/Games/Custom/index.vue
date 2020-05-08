@@ -76,7 +76,8 @@
 
                         <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
 
-                        <Player :game="game" :track="track" v-on:updateScore="score = $event" v-on:updateUsers="users = $event" v-on:updateAnswers="answers = $event" v-on:game:end="tracks = null" v-on:track:end="$refs.controls.next()"></Player>
+                        <game-player @score="countScore" :track="track" :game="game" v-on:track:end="endTrack"></game-player>
+
 
                     </div>
 
@@ -90,12 +91,12 @@
 
                             <div class="card">
 
-                                <div class="card-header bg-secondary text-white">
-                                    <h5>Tu viens d'écouter <span v-if="answers[0]" class="float-right">{{ answers[0].counter }} / {{ answers[0].total }}</span></h5>
+                                <div class="card-header">
+                                    <h5>Tu viens d'écouter <span v-if="answers.length > 0" class="float-right">{{ answers.length }} / {{ tracks.length }}</span></h5>
                                 </div>
 
                                 <div class="card-body p-0 card-multiplayer">
-                                    <answers v-if="answers.length > 0" :answers="answers"></answers>
+                                    <game-answers v-if="answers.length > 0" :answers="answers"></game-answers>
                                 </div>
 
                             </div>
@@ -106,12 +107,12 @@
 
                             <div class="card">
 
-                                <div class="card-header bg-secondary text-white">
+                                <div class="card-header">
                                     <h5>Scores</h5>
                                 </div>
 
                                 <div class="card-body p-0 card-multiplayer">
-                                    <ranking :game="game" :users="users" :userScore="score"></ranking>
+                                    <game-scores v-if="launched && initscore" :game="game" :track="track"></game-scores>
                                 </div>
 
                             </div>
@@ -148,16 +149,52 @@
         </div>
 
 
+
+        <!-- START MODAL -->
+        <div class="modal fade" id="startModal" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                      <div class="modal-body text-center">
+                          <h2>{{ game.title }}</h2>
+                          <button v-if="waiting" class="btn btn-success btn-lg">
+                              En attente du prochain morceau...
+                          </button>
+                          <p v-if="waiting"><small>Patience, le son arrive dans moins de 30s...</small></p>
+                          <button v-else class="btn btn-success btn-lg" @click="init()">
+                              <i class="pr-2 fas fa-play"></i> Rejoindre la partie
+                          </button>
+                          <loader v-if="waiting"></loader>
+                      </div>
+                  </div>
+              </div>
+        </div>
+
+
+        <!-- FINNISH MODAL -->
+        <div class="modal fade" id="finnishModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="card-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                  <div class="modal-body py-2 text-center">
+                    <h2 class="p-0">Fin de partie</h2>
+                    <small>Tout le monde lève les mains!</small>
+                    <finnish v-if="finnish" :game="game" class="mt-4"></finnish>
+                  </div>
+              </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
 
 <script>
 
-    import VideoCam from './Video'
-    import Animator from './Animator'
     import Controls from './Controls'
-    import Player from './Player'
     import Chat from './Chat'
 
     export default {
@@ -165,10 +202,7 @@
         name:"customGame",
 
         components: {
-            VideoCam,
-            Animator,
             Controls,
-            Player,
             Chat
         },
 
@@ -178,20 +212,208 @@
             return {
                 item: this.game,
                 tracks: false,
-                answers: [],
-                track: null,
-                player: null,
-                users: [],
-                score: 0,
                 showEditGame: false,
+
+                answers: [],
+                score: 0,
+                track: null,
+                waiting: false,
+                launched: false,
+                finnish: false,
+                darkmode: this.game.darkmode,
+                initscore: false,
             }
         },
 
         mounted() {
-            //console.log(this.$userId);
+            $("#startModal").modal('show');
         },
 
         methods: {
+
+            init() {
+
+              this.waiting = true;
+              this.game.users = [];
+              this.listen();
+
+              // Get the current user
+              axios.get('/user').then((response) => {
+                this.game.user = response.data;
+                this.launched = true;
+              });
+
+            },
+
+            listen() {
+
+              Echo.join('game-' + this.game.id)
+                .here((users) => {
+                  this.game.users = users;
+                  this.game.usersCount = this.game.users.length;
+                })
+                .joining((user) => {
+                  this.game.users.push(user);
+                  this.game.usersCount = this.game.users.length;
+                })
+                .leaving((user) => {
+                  this.game.users.splice(this.game.users.indexOf(user), 1);
+                  this.game.usersCount = this.game.users.length;
+                });
+
+              Echo.channel('game-' + this.game.id)
+                .listen('PlayTrack', (data) => {
+                  this.playTrack(data);
+                })
+                .listen('EndTrack', (data) => {
+                  this.endTrack();
+                })
+                .listen('NewGame', (data) => {
+                  this.newGame();
+                })
+                .listen('EndGame', (data) => {
+                  this.endGame();
+                });
+
+              // Scores
+              Echo.private('game-' + this.game.id)
+                .listenForWhisper('score', (data) => {
+                  if(this.game.scores.findIndex(f => f.id === data.id) !== -1) {
+                    Vue.set(this.game.scores, this.game.scores.findIndex(f => f.id === data.id), data);
+                  } else {
+                    this.game.scores.push(data);
+                  }
+                  this.game.users = this.game.scores;
+                });
+
+            },
+
+            playTrack(data) {
+              $("#startModal").modal('hide');
+              this.track = data.track;
+              this.waiting = false;
+            },
+
+            endTrack() {
+              if (this.track) {
+                this.answers.unshift(this.track);
+                this.track = null;
+              } else {
+                this.waiting = true;
+              }
+              this.$refs.controls.next()
+            },
+
+            newGame() {
+              this.finnish = false;
+              $("#finnishModal").modal('hide');
+              this.answers = [];
+              this.user.score = {};
+              this.score = 0;
+              this.track = null;
+              this.waiting = true;
+            },
+
+            endGame() {
+              this.finnish = true;
+              $("#startModal").modal('hide');
+              $("#finnishModal").modal('show');
+              this.track = null;
+              this.tracks = false;
+
+              // Save score
+              if (this.score > 0) {
+                  axios.post('/games/' + this.game.id + '/score', {score: this.score}).then((response) => {
+                      //console.log(response.data);
+                  }).catch((error) => {
+                      console.warn(error);
+                  });
+              }
+          
+            },
+
+            countScore(event) {
+
+              this.track.score = event;
+
+              this.score = 0;
+
+              for (var i = 0; i <  this.answers.length; i++) {
+                  this.score += this.answers[i].score.track;
+                  this.score += this.answers[i].score.artist;
+                  this.score += this.answers[i].score.custom;
+                  this.score += this.answers[i].score.bonus;
+                  this.score += (this.answers[i].score.faster_bonus) ? this.answers[i].score.faster_bonus : 0;
+              };
+
+              if (this.track) {
+                  this.score += this.track.score.track;
+                  this.score += this.track.score.artist;
+                  this.score += this.track.score.custom;
+                  this.score += this.track.score.bonus;
+                  this.score += (this.track.score.faster_bonus) ? this.track.score.faster_bonus : 0;
+              }
+
+              this.game.user.score = event;
+
+              // Faster typer
+              if(this.game.user.score.artist_time !== 0 && this.game.user.score.track_time !== 0) {
+                this.game.user.score.total_time = (this.game.user.score.artist_time > this.game.user.score.track_time) ? this.game.user.score.artist_time :  this.game.user.score.track_time;
+              }
+
+              if(this.game.user.score.custom_time) {
+                this.game.user.score.total_time = this.game.user.score.custom_time;
+              }
+
+
+              if (this.game.scores && this.game.user.score.total_time !== 0 && !this.game.user.score.faster) {
+
+                switch (this.countFaster()) {
+                  case 0:
+                    this.game.user.score.faster = 1;
+                    this.game.user.score.faster_bonus += 0.5;
+                    this.track.score.faster_num = 1;
+                    this.track.score.faster_bonus = 0.5;
+                    this.score += this.game.user.score.faster_bonus;
+                    break;
+                  case 1:
+                    this.game.user.score.faster = 2;
+                    this.game.user.score.faster_bonus += 0.5;
+                    this.track.score.faster_num = 2;
+                    this.track.score.faster_bonus = 0.5;
+                    this.score += this.game.user.score.faster_bonus;
+                    break;
+                  case 2:
+                    this.game.user.score.faster = 3;
+                    this.game.user.score.faster_bonus += 0.5;
+                    this.track.score.faster_num = 3;
+                    this.track.score.faster_bonus = 0.5;
+                    this.score += this.game.user.score.faster_bonus;
+                    break;
+
+                }
+
+              }
+
+              this.game.user.score.total = this.score;
+
+              this.initscore = true;
+
+              Echo.private('game-' + this.game.id)
+                .whisper('score', this.game.user);
+
+
+            },
+
+            countFaster() {
+
+              var count = 0;
+              for(let i=0; i<this.game.scores.length; i++)
+              if( this.game.scores[i].score && this.game.scores[i].score.faster )
+                count++;
+              return count;
+                    
+            },
 
             editGame() {
                 this.showEditGame = true;

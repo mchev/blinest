@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Game;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
@@ -11,25 +12,24 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class UpdateScore implements ShouldBroadcastNow
+class NewGame implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /**
-     * @var User
-     */
-    public $update;
 
+    /**
+     * @var Game
+     */
+    public $game;
 
     /**
      * Create a new event instance.
      *
-     * @param Message $message
+     * @param Game $game
      */
-    public function __construct($update)
+    public function __construct(Game $game)
     {
-        $this->update = $update;
+        $this->game = $game;
     }
-
 
     /**
      * Get the channels the event should broadcast on.
@@ -38,6 +38,6 @@ class UpdateScore implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('newUserScore-' . $this->update['game_id']);
+        return new Channel('game-' . $this->game->id);
     }
 }

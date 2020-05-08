@@ -1,5 +1,20 @@
 // Styling for page sections
 
+textarea:active, 
+input:active, 
+textarea:focus, 
+input:focus,
+button:focus,
+button:active,
+button:hover,
+label:focus,
+.btn:active,
+.btn.active
+{
+    outline:0px !important;
+    box-shadow: none !important;
+}
+
 h5, .h5 {
   font-size: 1.1rem;
 }

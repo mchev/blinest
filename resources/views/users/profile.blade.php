@@ -20,7 +20,9 @@
 
       <p>Inscrit.e depuis le {{ $user->created_at->format('d/m/Y') }}</p>
 
-      <p>Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}</p>
+      @if($user->latestScore)
+        <p>Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}</p>
+      @endif
 
 </header>
 
@@ -39,81 +41,90 @@
         <div class="divider-custom-line"></div>
       </div>
 
-      <div class="row">
 
-        <div class="col-md-6">
+      @if($user->latestScore)
 
-          <h3 class="mt-4">Meilleurs scores par parties</h3>
+        <div class="row">
 
-          <div class="table-responsive">
-            <table class="table table-striped">
+          <div class="col-md-6">
 
-              <thead>
-                <tr>
-                  <th>Parties</th>
-                  <th>Scores</th>
-                </tr>
-              </thead>
+            <h3 class="mt-4">Meilleurs scores par parties</h3>
 
-              <tbody>
-                @foreach($user->stats() as $stat)
+            <div class="table-responsive">
+              <table class="table table-striped">
+
+                <thead>
                   <tr>
-                    <td><a href="/parties/{{ $stat->game->slug }}">{{ $stat->game->title }}</a></td>
-                    <td>{{ $stat->score }}</td>
+                    <th>Parties</th>
+                    <th>Scores</th>
                   </tr>
-                @endforeach
-              </tbody>
+                </thead>
 
-            </table>
+                <tbody>
+                  @foreach($user->stats() as $stat)
+                    <tr>
+                      <td><a href="/parties/{{ $stat->game->slug }}">{{ $stat->game->title }}</a></td>
+                      <td>{{ $stat->score }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+
+              </table>
+            </div>
+
+          </div>
+
+          <div class="col-md-6">
+
+            <h3 class="mt-4">Parties jouées ({{ $user->scores->count() }})</h3>
+            <stats-game-type :stats="{{ $user->stats()->toJson() }}" :height="150"></stats-game-type>
+
           </div>
 
         </div>
 
-        <div class="col-md-6">
+        <div class="row mt-4">
 
-          <h3 class="mt-4">Parties jouées ({{ $user->scores->count() }})</h3>
-          <stats-game-type :stats="{{ $user->stats()->toJson() }}" :height="150"></stats-game-type>
+          <div class="col-md-12">
 
-        </div>
+            <h2>Historique des parties</h2>
 
-      </div>
+            {{ $scores->links() }}
 
-      <div class="row mt-4">
+            <div class="table-responsive">
+              <table class="table table-striped">
 
-        <div class="col-md-12">
-
-          <h2>Historique des parties</h2>
-
-          {{ $scores->links() }}
-
-          <div class="table-responsive">
-            <table class="table table-striped">
-
-              <thead>
-                <tr>
-                  <th>Parties</th>
-                  <th>Date</th>
-                  <th>Scores</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                @foreach($scores as $score)
+                <thead>
                   <tr>
-                    <td><a href="/parties/{{ $score->game->slug }}">{{ $score->game->title }}</a></td>
-                    <td>{{ $score->created_at->format('d/m/Y H:i') }}</td>
-                    <td>{{ $score->score }}</td>
+                    <th>Parties</th>
+                    <th>Date</th>
+                    <th>Scores</th>
                   </tr>
-                @endforeach
-              </tbody>
+                </thead>
 
-            </table>
+                <tbody>
+                  @foreach($scores as $score)
+                    <tr>
+                      <td><a href="/parties/{{ $score->game->slug }}">{{ $score->game->title }}</a></td>
+                      <td>{{ $score->created_at->format('d/m/Y H:i') }}</td>
+                      <td>{{ $score->score }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+
+              </table>
+            </div>
+
+
           </div>
 
-
         </div>
 
-      </div>
+      @else
+
+        <p>Aucune partie jouée</p>
+
+      @endif
 
     </div>
 </section>

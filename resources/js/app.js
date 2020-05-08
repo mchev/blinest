@@ -9,14 +9,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-const moment = require('moment')
-require('moment/locale/fr')
-Vue.use(require('vue-moment'), {
-    moment
-})
-
-window.moment = require('moment');
-
+Vue.use(require('vue-moment'));
 
 Vue.directive('click-outside', {
   bind: function (el, binding, vnode) {
@@ -48,27 +41,28 @@ Vue.directive('click-outside', {
 
 Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 
-Vue.component('add-track', require('./components/AddTrack.vue').default);
-
 Vue.component('loader', require('./components/Loader.vue').default);
-Vue.component('play', require('./components/Play.vue').default);
-
 Vue.component('search-games', require('./components/SearchGames.vue').default);
+Vue.component('add-track', require('./components/AddTrack.vue').default);
 
 
 Vue.component('games', require('./components/Games.vue').default);
-Vue.component('game', require('./components/Game.vue').default);
+Vue.component('settings', require('./components/Games/Settings.vue').default);
 
 Vue.component('custom-game', require('./components/Games/Custom/index.vue').default);
-Vue.component('test-game', require('./components/Games/Custom/indexTest.vue').default);
+Vue.component('public-game', require('./components/Games/Public/index.vue').default);
 
-Vue.component('chat', require('./components/Chat.vue').default);
-Vue.component('podium', require('./components/Podium.vue').default);
-Vue.component('answers', require('./components/Answers.vue').default);
-Vue.component('ranking', require('./components/Ranking.vue').default);
+Vue.component('game-player', require('./components/Games/Player.vue').default);
+Vue.component('game-answers', require('./components/Games/Answers.vue').default);
+Vue.component('game-scores', require('./components/Games/Scores.vue').default);
+Vue.component('game-podiums', require('./components/Games/Podiums.vue').default);
+
+Vue.component('finnish', require('./components/Games/Finnish.vue').default);
+
+Vue.component('event-create', require('./components/Events/Create.vue').default);
+
 
 Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);
-
 Vue.component('game-edit', require('./components/GameEdit.vue').default);
 
 

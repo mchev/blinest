@@ -32,6 +32,9 @@ Route::get('/callback/{provider}', 'SocialController@callback');
 
 Auth::routes();
 
+Route::get('/user', 'UserController@user');
+
+
 //dd(Auth::user(), Auth::Guest());
 
 Route::group(['middleware' => ['auth']], function () {
@@ -44,7 +47,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/games/me', 'GameController@me')->name('games.me');
 
 	Route::get('/games/{game}/multiplayer', 'GameController@multiplayer')->name('games.multiplayer');
-	Route::post('/games/{game}/score', 'GameController@score');
+	Route::post('/games/{game}/score', 'GameController@storeScore')->name('games.store.score');
 	//Route::get('/home', 'HomeController@index')->name('home');
 
 	Route::patch('/tracks/{track}', 'TrackController@update');
@@ -59,11 +62,13 @@ Route::group(['middleware' => ['auth']], function () {
 
 });
 
+Route::resource('/events', 'EventController');
+
 
 Route::get('/games/{game}/private', 'GameController@private')->name('games.private');
 Route::get('/games/{game}/tracks/search', 'TrackController@search');
 Route::post('/games/{game}/random/track', 'GameController@track');
-Route::post('/games/{game}/update/score', 'GameController@updateScore')->name('games.update.score');
+Route::post('/games/{game}/send/score', 'GameController@sendScore')->name('games.send.score');
 Route::get('/games/{game}/podium', 'GameController@podium');
 Route::get('/games/{game}/tracks/delete', 'GameController@deleteTracks');
 

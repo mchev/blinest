@@ -10,7 +10,11 @@
 
 @section('content')
 
-  <game :game="{{ $game->toJson() }}" :user="{{ Auth::user() ? Auth::user() : 'null' }}"></game>
+  <section class="public-game">
+
+    <public-game :game="{{ $game }}"></public-game>
+
+  </section>
 
   @if( Auth::check() )
 

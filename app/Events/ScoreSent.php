@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Track;
+use App\Game;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
@@ -12,23 +12,26 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class NewTrack implements ShouldBroadcastNow
+class ScoreSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /**
-     * @var Track
-     */
-    public $track;
+
+    public $user;
+
+    private $game;
 
     /**
      * Create a new event instance.
      *
-     * @param Track $track
+     * @param Game $game
+     * @param $user
      */
-    public function __construct(Track $track)
+    public function __construct($user, Game $game)
     {
-        $this->track = $track;
+        $this->user = $user;
+        $this->game = $game;
     }
+
 
     /**
      * Get the channels the event should broadcast on.
@@ -37,6 +40,6 @@ class NewTrack implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('newTrack-' . $this->track->game_id);
+        return new Channel('game-' . $this->game->id);
     }
 }

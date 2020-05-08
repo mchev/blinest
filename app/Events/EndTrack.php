@@ -12,11 +12,11 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class StopGame implements ShouldBroadcastNow
+class EndTrack implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     /**
-     * @var Game
+     * @var Track
      */
     public $game;
 
@@ -24,7 +24,6 @@ class StopGame implements ShouldBroadcastNow
      * Create a new event instance.
      *
      * @param Game $game
-     * @param $game
      */
     public function __construct(Game $game)
     {
