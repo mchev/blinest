@@ -41,9 +41,10 @@
 
                                     <div class="input-group-append">
                                         <button class="btn btn-settings" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-sliders-h"></i></button>
-                                        <div class="dropdown-menu p-2">
+                                        <div class="dropdown-menu dropdown-menu-right p-2">
                                             <settings :game="game"></settings>
                                         </div>
+                                        <button class="btn btn-secondary btn-valid" @click="checkResponse()">OK</button>
                                     </div>
 
                                 </div>
