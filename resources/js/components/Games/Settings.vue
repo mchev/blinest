@@ -27,7 +27,7 @@
         data() {
             return {
                 volume: 1,
-                darkmode: 0,
+                darkmode: false,
             }
         },
 
@@ -42,6 +42,8 @@
             if(localStorage.getItem('darkmode')) {
                 this.darkmode = localStorage.getItem('darkmode');
                 this.game.darkmode = this.darkmode;
+            } else {
+                this.setDarkMode();
             }
 
         },
@@ -55,6 +57,7 @@
             },
 
             setDarkMode() {
+                //this.darkmode = (this.darkmode == "true") ? 1 : 0;
                 localStorage.setItem('darkmode', this.darkmode);
                 this.game.darkmode = this.darkmode;
             }

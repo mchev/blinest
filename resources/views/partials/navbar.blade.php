@@ -15,11 +15,11 @@
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav d-flex align-items-center ml-auto">
 
-
                 <!-- Authentication Links -->
                 <li class="nav-item mr-4">
                     <search-games></search-games>
                 </li>
+
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -69,6 +69,12 @@
                     </li>
 
                 @endguest
+
+                <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don via liberapay.">
+                    <script src="https://liberapay.com/Blinest/widgets/button.js"></script>
+                    <noscript><a href="https://liberapay.com/Blinest/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+                </li>
+
 
             </ul>
         </div>

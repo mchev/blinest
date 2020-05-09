@@ -74,7 +74,7 @@
 
                         <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
-                        <p class="masthead-subheading font-weight-light mb-0">{{ game.description }}</p>
+                        <p class="masthead-subheading font-weight-light mb-5">{{ game.description }}</p>
 
                         <game-player @score="countScore" :track="track" :game="game" v-on:track:end="endTrack" :users="users"></game-player>
 

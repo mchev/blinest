@@ -1,6 +1,6 @@
 <template>
 
-    <div class="public-game bg-primary">
+    <div class="public-game bg-primary" :class="{darkmode: game.darkmode}">
 
       <header class="masthead text-white text-center pb-2">
           <div class="container d-flex align-items-center flex-column">
@@ -155,7 +155,6 @@
               waiting: false,
               launched: false,
               finnish: false,
-              darkmode: this.game.darkmode,
               initscore: false,
           }
       },
@@ -186,6 +185,7 @@
           Echo.join('game-' + this.game.id)
             .here((users) => {
               this.users = users;
+              console.log(users);
               this.usersCount = this.users.length;
             })
             .joining((user) => {
@@ -353,7 +353,7 @@
 
         orderedUsers: function () {
           return _.orderBy(this.users, 'score.total', 'desc')
-        }
+        },
 
       }
 

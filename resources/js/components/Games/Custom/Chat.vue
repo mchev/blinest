@@ -274,7 +274,7 @@
     padding: 0.3rem;   
     color: white;
     font-weight: 100;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .message .user {
