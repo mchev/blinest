@@ -225,6 +225,11 @@
             init() {
 
               this.waiting = true;
+              
+              if (this.$userId == this.game.user_id) {
+                $("#startModal").modal('hide');
+              }
+              
               this.listen();
 
               // Get the current user
@@ -290,7 +295,9 @@
               } else {
                 this.waiting = true;
               }
-              this.$refs.controls.next()
+              if (this.$userId == this.game.user_id) {
+                this.$refs.controls.next();
+              }
             },
 
             newGame() {
