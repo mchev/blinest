@@ -174,7 +174,7 @@
 
           // Get the current user
           axios.get('/user').then((response) => {
-            this.game.user = response.data;
+            this.game.currentUser = response.data;
             this.launched = true;
           });
 
@@ -324,14 +324,14 @@
 
           this.track.score.total = this.score;
 
-          this.game.user.score = this.track.score;
+          this.game.currentUser.score = this.track.score;
 
-          Vue.set(this.users, this.users.findIndex(f => f.id === this.game.user.id), this.game.user);
+          Vue.set(this.users, this.users.findIndex(f => f.id === this.game.currentUser.id), this.game.currentUser);
 
           this.initscore = true;
 
           Echo.private('game-' + this.game.id)
-            .whisper('score', this.game.user);
+            .whisper('score', this.game.currentUser);
 
 
         },

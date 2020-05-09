@@ -4,9 +4,9 @@
 
     <div class="row" style="min-height: 35vh; max-height: 200px; overflow-y: auto;" ref="messageBox">
         <div class="col-12" v-for="message in orderedMessages">
-          <div class="message" :class="{'from-them': message.sender_id !== game.user.id}">
+          <div class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
             <p>{{ message.message }}</p>
-            <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== game.user.id"> - {{ message.sender_name }}</span></small>
+            <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== game.currentUser.id"> - {{ message.sender_name }}</span></small>
           </div>
         </div>
     </div>

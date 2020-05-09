@@ -154,5 +154,8 @@
     .kids {
         background-color: #795749 !important;
     }
+    .anime-manga {
+        background-color: #647C8D !important;
+    }
 
 </style>

@@ -62,7 +62,7 @@
         computed: {
 
           userCpd() {
-            return this.game.user;
+            return this.game.currentUser;
           },
 
           userList() {
