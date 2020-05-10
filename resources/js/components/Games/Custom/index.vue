@@ -225,10 +225,7 @@
             init() {
 
               this.waiting = true;
-              
-              if (this.$userId == this.game.user_id) {
-                $("#startModal").modal('hide');
-              }
+              $("#startModal").modal('hide');
               
               this.listen();
 

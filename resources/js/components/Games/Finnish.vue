@@ -8,8 +8,8 @@
                 <div class="row d-flex align-items-center justify-content-center">
 
                     <div class="col-xs-12 col-md-5 text-center">
-                      <h1 class="rating-num" v-if="game.user.score">{{ game.user.score.total }} pts</h1>
-                      <i class="fas fa-user"></i> {{ game.user.name }}
+                      <h1 class="rating-num" v-if="game.currentUser.score">{{ game.currentUser.score.total }} pts</h1>
+                      <i class="fas fa-user"></i> {{ game.currentUser.name }}
                     </div>
 
                     <div class="col-xs-12 col-md-7">
