@@ -196,6 +196,7 @@
     position: relative;
     margin: 0 0 10px 0;
     float: right;
+    word-break: break-all;
   }
 
   .message p {

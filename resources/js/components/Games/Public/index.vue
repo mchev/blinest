@@ -185,7 +185,6 @@
           Echo.join('game-' + this.game.id)
             .here((users) => {
               this.users = users;
-              console.log(users);
               this.usersCount = this.users.length;
             })
             .joining((user) => {
