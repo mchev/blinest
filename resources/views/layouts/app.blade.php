@@ -86,7 +86,7 @@
 
         <section class="p-4 text-center">
 
-                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez désactiver le bloqueur de publicité ou <a href="/contact" title="Contact">nous contacter</a> directement.</small></p>
+                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez <a href="https://liberapay.com/Blinest/donate">faire un don</a> ou désactiver le bloqueur de publicité.</small></p>
 
         </section>
 

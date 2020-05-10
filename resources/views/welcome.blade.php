@@ -44,9 +44,10 @@
           <p class="lead"><strong>Comptage des points</strong></p>
           <ul class="lead">
             <li>Trouver l'artiste : 0.5 points</li>
-            <li>Trouver le titre de l'extrait : 0.5 points</li>
+            <li>Trouver le titre : 0.5 points</li>
             <li>Le titre du film ou de la série : 1 point</li>
             <li>Bonus rapidité : 0.5 points</li>
+            <li>Bonus top 3 : 0.5 points</li>
           </ul>
           <p class="lead">Pour éditer le contenu des parties publiques, <a href="/contact" class="text-white" title="Contact">contactez-nous</a> avec vos motivations et devenez modérateur.</p>
         </div>
