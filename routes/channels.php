@@ -30,10 +30,3 @@ Broadcast::channel('game-{game}', function ($user) {
     	"name" => $user->name
     );
 });
-
-Broadcast::channel('visio-{game}', function ($user) {
-    return array(
-    	"id" => $user->id,
-    	"name" => $user->name
-    );
-});

@@ -11,7 +11,7 @@
       <table v-if="userList" class="table table-hover">
 
          <tbody name="table-row" is="transition-group">
-          <tr v-for="(user, index) in userList" :key="user.id" v-if="user.score" :class="{'bg-user': userCpd.id === user.id}">
+          <tr v-for="(user, index) in userList" :key="user.id" v-if="user.id && user.score" :class="{'bg-user': userCpd.id === user.id}">
             <td>{{ index + 1 }}</td>
             <td>
               {{ user.name }}
@@ -43,21 +43,6 @@
         name:"scores",
 
         props:['game', 'track', 'users'],
-
-        data() {
-            return {
-              
-            }
-        },
-
-        mounted() {
-
-        },
-
-        methods: {
-
-
-        },
 
         computed: {
 
