@@ -26,10 +26,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('websockets:clean')->hourly();
         $schedule->command('cache:clear')->hourly();
-        $schedule->command('play')
-                    ->dailyAt('05:00')
-                    ->withoutOverlapping()
-                    ->emailOutputOnFailure('martin.chevignard@gmail.com');
     }
 
     /**
