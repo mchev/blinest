@@ -13,10 +13,15 @@
                     <select v-model="origin" class="form-control">
                         <option value="deezer" selected="selected">Deezer</option>
                         <option value="playlist">Playlist Deezer</option>
+                        <option value="spotify">Spotify</option>
+                        <option value="spotifyplaylist">Playlist Spotify</option>
                     </select>
-                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher sur deezer">
+                    <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher sur Deezer">
+                    <input v-if="origin == 'spotify'" type="search" v-model="query" @keyup="searchFromSpotify" class="form-control" style="width:50%" placeholder="Rechercher sur Spotify">
                     <input v-if="origin == 'playlist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
                     <button v-if="origin == 'playlist'" type="button" @click="addPlaylist()" class="btn btn-success">Valider</button>
+                    <input v-if="origin == 'spotifyplaylist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
+                    <button v-if="origin == 'spotifyplaylist'" type="button" @click="addSpotifyPlaylist()" class="btn btn-success">Valider</button>
                 </div>
 
                 <div class="panel-footer" v-if="results.length">
@@ -102,9 +107,10 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div v-if="playlist.title" class="modal-body">
+              <div v-if="playlist.title" class="modal-body text-center p-1">
                 <h1>{{ playlist.title }} ({{ playlist.nb_tracks }} pistes)</h1>
                 <img class="img-fluid" :src="playlist.picture_medium">
+                <p v-if="playlist.provider === 'spotify'">Max 100 pistes par playlist importées</p>
               </div>
               <div class="modal-footer">
                 <button type="button" @click="storePlaylist()" class="btn btn-primary">
@@ -113,7 +119,7 @@
                     </div>
                     Importer
                 </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-secondary" @click="playlist == null" data-dismiss="modal">Fermer</button>
               </div>
             </div>
           </div>
@@ -225,6 +231,53 @@
 
             },
 
+            searchFromSpotify() {
+
+                this.results = [];
+
+                clearTimeout(this.debounce);
+
+                this.debounce = setTimeout(() => {
+
+                    if (this.query.length > 2) {
+
+                        this.errors = [];
+
+                        axios.get('/api/spotify/search?q=' + this.query).then((response) => {
+
+                            var spotify = response.data.tracks.items;
+
+                            spotify = spotify.filter(obj => obj.preview_url !== null);
+
+                            this.results = spotify.map(function(obj) {
+                                return {
+                                    id: obj.id,
+                                    title: obj.name,
+                                    title_short : obj.name,
+                                    provider: 'spotify',
+                                    artist: {
+                                        name: obj.artists[0].name,
+                                    },
+                                    album: {
+                                        cover_medium: obj.album.images[1].url
+                                    },
+                                    preview: obj.preview_url
+                                }
+                            });
+
+                            console.log(this.results);
+
+
+                        }).catch((error) => {
+                            console.warn(error);
+                        });
+
+                    }
+
+                }, 400)
+
+            },
+
             getTracks() {
                 axios.get(this.page_url).then((response) => {
                     this.tracks = response.data.data;
@@ -245,7 +298,7 @@
                 var post = {
                     'game_id': this.game.id,
                     'provider_item_id': track.id,
-                    'provider': 'deezer',
+                    'provider': (track.provider) ? track.provider : 'deezer',
                     'artist_name': track.artist.name,
                     'track_name': track.title_short,
                     'artwork_url': track.album.cover_medium,
@@ -263,6 +316,7 @@
 
                 axios.get('/api/deezer/playlist?q=' + this.query).then((response) => {
                     this.playlist = response.data;
+                    this.playlist.provider = 'deezer';
                     $('#playlistModal').modal('show');
                 }).catch((error) => {
                     console.warn(error);
@@ -270,14 +324,37 @@
 
             },
 
+            addSpotifyPlaylist() {
+                axios.get('/api/spotify/playlist?q=' + this.query).then((response) => {
+
+                    var spotify = response.data;
+
+                    this.playlist = {
+                        id: spotify.id,
+                        title: spotify.name,
+                        picture_medium: spotify.images[0].url,
+                        nb_tracks: spotify.tracks.total,
+                        tracks: {
+                            data: spotify.tracks.items
+                        },
+                        provider: 'spotify'
+                    }
+
+                    $('#playlistModal').modal('show');
+
+                }).catch((error) => {
+                    console.warn(error);
+                });
+            },
+
             storePlaylist() {
                 this.spinner = true;
                 var params = {
                     'game_id': this.game.id,
-                    'provider': 'deezer',
+                    'provider': this.playlist.provider
                 };
                 let vm = this;
-                axios.post('/api/deezer/store/playlist', {'tracks': this.playlist.tracks.data, 'params': params}).then((response) => {
+                axios.post('/api/'+this.playlist.provider+'/store/playlist', {'tracks': this.playlist.tracks.data, 'params': params}).then((response) => {
                     this.spinner = false;
                     vm.tracks =response.data;
                     $('#playlistModal').modal('hide');

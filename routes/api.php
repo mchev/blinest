@@ -29,4 +29,9 @@ Route::middleware('auth:api')->group( function () {
 	Route::get('/deezer/playlist', 'Api\DeezerController@addPlaylist');
 	Route::post('/deezer/store/playlist', 'Api\DeezerController@storePlaylist');
 
+	Route::get('/spotify/search', 'Api\SpotifyController@search');
+	Route::get('/spotify/playlist', 'Api\SpotifyController@addPlaylist');
+	Route::post('/spotify/store/playlist', 'Api\SpotifyController@storePlaylist');
+
+
 });

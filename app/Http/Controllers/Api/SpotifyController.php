@@ -9,46 +9,55 @@ use App\Http\Controllers\Controller;
 
 class SpotifyController extends Controller
 {
- 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
+
+
+    public function auth()
+    {
+
+        $session = new \SpotifyWebAPI\Session(
+            'fc40ba80665a4cc188e31142bcf55eee',
+            '04d9db07090d4055bb1b07aae3a65c30'
+        );
+
+        $session->requestCredentialsToken();
+        $accessToken = $session->getAccessToken();
+
+        return $accessToken;
+
+    }
+
+
     public function search(Request $request)
     {
 
-        $query = str_replace(' ', '+', $request->q);
 
-        $url = 'https://api.deezer.com/search/track?q=' . $query;
 
-        try {
-            $json = json_decode(file_get_contents($url, false), true);
+        if (isset($request->q) && $request->q !== '') {
+
+            $api = new \SpotifyWebAPI\SpotifyWebAPI();
+            $api->setAccessToken($this->auth());
+
+            $results = $api->search($request->q, 'track', ['market' => 'FR']);
+
+            return response()->json($results);
+
         }
-        catch (Exception $e) {
-            return response()->json($e->getMessage());
-        }
-
-        return response()->json($json);
 
     }
+
 
     public function addPlaylist(Request $request)
     {
 
-        $url = 'https://api.spotify.com/v1/playlists/'. $request->q . '/tracks';
+        $api = new \SpotifyWebAPI\SpotifyWebAPI();
+        $api->setAccessToken($this->auth());
 
-        try {
-            $json = json_decode(file_get_contents($url), true);
-        }
-        catch (Exception $e) {
-            return response()->json($e->getMessage());
-        }
+        $results = $api->getPlaylist($request->q);
 
-        return response()->json($json);
+        return response()->json($results);
 
     }
+
 
     public function storePlaylist(Request $request)
     {
@@ -59,20 +68,19 @@ class SpotifyController extends Controller
             $tracks = [];
 
 
-
             foreach ($request->tracks as $track) {
 
-                if($track['preview']) {
+                if($track['track']['preview_url']) {
 
                     $item = new Track([
                         'user_id' => Auth::user()->id,
                         'game_id' => $request->params['game_id'],
-                        'provider_item_id' => $track['id'],
-                        'provider' => 'deezer',
-                        'artist_name' => $track['artist']['name'],
-                        'track_name' => $track['title_short'],
-                        'artwork_url' => $track['album']['cover_medium'],
-                        'preview_url' => $track['preview'],
+                        'provider_item_id' => $track['track']['id'],
+                        'provider' => $request->params['provider'],
+                        'artist_name' => $track['track']['artists'][0]['name'],
+                        'track_name' => $track['track']['name'],
+                        'artwork_url' => $track['track']['album']['images'][1]['url'],
+                        'preview_url' => $track['track']['preview_url'],
                     ]);
 
 
