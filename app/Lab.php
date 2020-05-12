@@ -26,6 +26,7 @@ class Lab extends Model
         return $this->where('parent_id', null)
         			->where('closed_at', '!=', null)
         			->orWhere('rejected_at', '!=', null)
+                    ->orderBy('vote_up_count', 'DESC')
                     ->get();
     }
 

@@ -303,7 +303,7 @@
               this.finnish = false;
               $("#finnishModal").modal('hide');
               this.answers = [];
-              this.user.score = {};
+              this.game.currentUser.score = {};
               this.score = 0;
               this.track = null;
               this.waiting = true;
