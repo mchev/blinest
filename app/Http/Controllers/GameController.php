@@ -140,6 +140,20 @@ class GameController extends Controller
 
         $game = Game::where('slug', $slug)->firstOrFail();
 
+        if (Auth::guest()) {
+
+            if (!$request->session()->get('guest_id')) {
+
+                $guest = [
+                    'id' => (int) str_replace('.', '', microtime(true)),
+                    'name' => 'anon_' . random_int(100, 999)
+                ];
+
+                $request->session()->put('guest_id', $guest['id']);
+                $request->session()->put('guest_name', $guest['name']);
+            }
+
+        }
 
         if ($game->public) {
 
