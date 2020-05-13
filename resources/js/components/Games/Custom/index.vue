@@ -232,8 +232,12 @@
               // Get the current user
               axios.get('/user').then((response) => {
 
-                this.game.currentUser = response.data;
-                this.launched = true;
+                if(response.data.id == null) {
+                  document.location.reload(true);
+                } else {
+                  this.game.currentUser = response.data;
+                  this.launched = true;
+                }
 
               });
 

@@ -91,15 +91,15 @@ Route::post('/partie/privee/{game}/password', 'CustomGameController@password')->
 
 
 // GUEST AUTH FOR BROADCASTING
-Route::post('/broadcasting/auth', function (Illuminate\Http\Request $request) {
+Route::post('/broadcasting/auth', function() {
 
 	if (Auth::guest()) {
 
-        if ($request->session()->get('guest_id')) {
+        if (Session::get('guest_id')) {
 
         	$guest = [
-		    	'id' => $request->session()->get('guest_id'),
-		    	'name' => $request->session()->get('guest_name')
+		    	'id' => Session::get('guest_id'),
+		    	'name' => Session::get('guest_name')
 	    	];
 
         } else {
@@ -109,8 +109,8 @@ Route::post('/broadcasting/auth', function (Illuminate\Http\Request $request) {
 		    	'name' => 'anon_' . random_int(100, 999)
 	    	];
 
-            $request->session()->put('guest_id', $guest['id']);
-            $request->session()->put('guest_name', $guest['name']);
+            Session::put('guest_id', $guest['id']);
+            Session::put('guest_name', $guest['name']);
         }
 
 	    $user = new Illuminate\Auth\GenericUser($guest);
