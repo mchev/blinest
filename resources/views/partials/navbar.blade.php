@@ -71,7 +71,7 @@
                 @endguest
 
                 <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don via liberapay.">
-                    <script src="https://liberapay.com/Blinest/widgets/button.js"></script>
+                    <script type="application/javascript" src="https://liberapay.com/Blinest/widgets/button.js"></script>
                     <noscript><a href="https://liberapay.com/Blinest/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
                 </li>
 

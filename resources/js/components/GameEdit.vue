@@ -38,7 +38,7 @@
                 <div class="row mb-3">
 
                     <div class="col-md-3">
-                        <input type="search" @keyup="searchTracks()" v-model="search" class="form-control" placeholder="Recherche">
+                        <input type="search" @keyup="searchTracks()" v-model="search" class="form-control" placeholder="Rechercher dans les extraits">
                     </div>
 
                     <div class="col-md-7 text-center">
@@ -70,11 +70,35 @@
                 <table class="table table-striped table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Artiste</th>
-                            <th scope="col">Titre</th>
+                            <th scope="col">
+                                <a href="#" @click="sort('artist_name')">
+                                    Artiste
+                                    <i v-if="currentSort === 'artist_name' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
+                                    <i v-if="currentSort === 'artist_name' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="#" @click="sort('track_name')">
+                                    Titre
+                                    <i v-if="currentSort === 'track_name' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
+                                    <i v-if="currentSort === 'track_name' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
+                                </a>
+                            </th>
                             <th scope="col">Aperçu</th>
-                            <th scope="col">Réponse personnalisée</th>
-                            <th width="8%" scope="col"><i class="fas fa-thumbs-down"></i></th>
+                            <th scope="col">
+                                <a href="#" @click="sort('custom_answer')">
+                                    Réponse personnalisée
+                                    <i v-if="currentSort === 'custom_answer' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
+                                    <i v-if="currentSort === 'custom_answer' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
+                                </a>
+                            </th>
+                            <th width="8%" scope="col">
+                                <a href="#" @click="sort('down_rate')">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    <i v-if="currentSort === 'down_rate' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
+                                    <i v-if="currentSort === 'down_rate' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
+                                </a>
+                            </th>
                             <th scope="col" class="text-right"></th>
                         </tr>
                     </thead>
@@ -151,6 +175,8 @@
                 prev_page_url: '',
                 next_page_url: '',
                 total: 0,
+                currentSort:'down_rate',
+                currentSortDir:'desc',
                 page_url: '/games/' + this.game.id + '/tracks',
                 search: '',
                 search_url: '/games/' + this.game.id + '/tracks/search',
@@ -184,6 +210,22 @@
                 }
             },
 
+            sort:function(s) {
+                //if s == current sort, reverse
+                if(s === this.currentSort) {
+                    this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+                }
+                this.currentSort = s;
+
+                if (this.search.length) {
+                    this.page_url = '/games/' + this.game.id + '/tracks?page=' + this.current_page + '&order=' + this.currentSort + '&direction=' + this.currentSortDir;
+                } else {
+                    this.page_url = '/games/' + this.game.id + '/tracks/search?page=' + this.current_page + '&q=' + this.search + '&order=' + this.currentSort + '&direction=' + this.currentSortDir;
+                }
+
+                this.getTracks();
+            },
+
             paginate(direction) {
                 switch(direction) {
                   case 'prev':
@@ -194,9 +236,9 @@
                     break;
                   default:
                     if (this.search.length) {
-                        this.page_url = '/games/' + this.game.id + '/tracks?page=' + direction;
+                        this.page_url = '/games/' + this.game.id + '/tracks?page=' + direction + '&order=' + this.currentSort + '&direction=' + this.currentSortDir;
                     } else {
-                        this.page_url = '/games/' + this.game.id + '/tracks/search?page=' + direction + '&q=' + this.search;
+                        this.page_url = '/games/' + this.game.id + '/tracks/search?page=' + direction + '&q=' + this.search + '&order=' + this.currentSort + '&direction=' + this.currentSortDir;
                     }
                 }
                 if (this.search.length) {
@@ -402,6 +444,10 @@
     .pagination {
         max-width: 100%;
         overflow: auto;
+    }
+
+    .thead-dark i {
+        vertical-align: text-top;
     }
 
 </style>

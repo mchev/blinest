@@ -19,7 +19,10 @@ class TrackController extends Controller
     public function index(Request $request, Game $game)
     {
 
-        $tracks = $game->tracks()->paginate(20);
+        $order = ($request->get('order')) ? $request->get('order') : 'down_rate';
+        $direction = ($request->get('direction')) ? $request->get('direction') : 'desc';
+
+        $tracks = $game->tracks()->orderBy($order, $direction)->paginate(20);
         return response()->json($tracks);
     }
 
@@ -33,11 +36,15 @@ class TrackController extends Controller
     public function search(Request $request, Game $game)
     {
 
+        $order = ($request->get('order')) ? $request->get('order') : 'down_rate';
+        $direction = ($request->get('direction')) ? $request->get('direction') : 'desc';
+
         $tracks = $game->tracks()->where(function ($query) use ($request) {
                 $query->where('artist_name', 'like', '%' . $request->q . '%')
                       ->orWhere('track_name', 'like', '%' . $request->q . '%')
                       ->orWhere('custom_answer', 'like', '%' . $request->q . '%');
             })
+            ->orderBy($order, $direction)
             ->paginate(20);
 
         return response()->json($tracks);
