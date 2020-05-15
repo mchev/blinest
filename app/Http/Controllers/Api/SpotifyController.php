@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Auth;
 use App\Track;
+use App\Game;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,7 +12,7 @@ class SpotifyController extends Controller
 {
 
 
-    public function auth()
+    public function spotAuth()
     {
 
         $session = new \SpotifyWebAPI\Session(
@@ -35,7 +36,7 @@ class SpotifyController extends Controller
         if (isset($request->q) && $request->q !== '') {
 
             $api = new \SpotifyWebAPI\SpotifyWebAPI();
-            $api->setAccessToken($this->auth());
+            $api->setAccessToken($this->spotAuth());
 
             $results = $api->search($request->q, 'track', ['market' => 'FR']);
 
@@ -50,7 +51,7 @@ class SpotifyController extends Controller
     {
 
         $api = new \SpotifyWebAPI\SpotifyWebAPI();
-        $api->setAccessToken($this->auth());
+        $api->setAccessToken($this->spotAuth());
 
         $results = $api->getPlaylist($request->q);
 
@@ -62,44 +63,52 @@ class SpotifyController extends Controller
     public function storePlaylist(Request $request)
     {
 
+        $game = Game::find($request->params['game_id']);
 
-        try {
+        if (auth()->user()->isModerator($game) ||auth()->user()->id == $game->user_id) {
 
-            $tracks = [];
+            try {
 
-
-            foreach ($request->tracks as $track) {
-
-                if($track['track']['preview_url']) {
-
-                    $item = new Track([
-                        'user_id' => Auth::user()->id,
-                        'game_id' => $request->params['game_id'],
-                        'provider_item_id' => $track['track']['id'],
-                        'provider' => $request->params['provider'],
-                        'artist_name' => $track['track']['artists'][0]['name'],
-                        'track_name' => $track['track']['name'],
-                        'artwork_url' => $track['track']['album']['images'][1]['url'],
-                        'preview_url' => $track['track']['preview_url'],
-                    ]);
+                $tracks = [];
 
 
-                    $item->save();
+                foreach ($request->tracks as $track) {
 
-                    $tracks[] = $item;
+                    if($track['track']['preview_url']) {
+
+                        $item = new Track([
+                            'user_id' => Auth::user()->id,
+                            'game_id' => $request->params['game_id'],
+                            'provider_item_id' => $track['track']['id'],
+                            'provider' => $request->params['provider'],
+                            'artist_name' => $track['track']['artists'][0]['name'],
+                            'track_name' => $track['track']['name'],
+                            'artwork_url' => $track['track']['album']['images'][1]['url'],
+                            'preview_url' => $track['track']['preview_url'],
+                        ]);
+
+
+                        $item->save();
+
+                        $tracks[] = $item;
+
+                    }
 
                 }
 
+                return response()->json($tracks);
+
+            }
+            catch (Exception $e) {
+                return response()->json($e->getMessage());
             }
 
-            return response()->json($tracks);
+            return response()->json($json);
 
-        }
-        catch (Exception $e) {
-            return response()->json($e->getMessage());
-        }
+        } else {
 
-        return response()->json($json);
+            return response()->json("Utilisateur non autorisé.");
+        }
 
     }
 

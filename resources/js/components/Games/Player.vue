@@ -214,7 +214,26 @@
                     'n' : 'ñ|Ñ',
                     '-' : '&|les|and|the',
                     'pink' : 'p!nk',
-                    'korn' : 'koяn'
+                    'korn' : 'koяn',
+                    '1' : 'un',
+                    '2' : 'deux',
+                    '3' : 'trois',
+                    '4' : 'quatre',
+                    '5' : 'cinq',
+                    '6' : 'six',
+                    '7' : 'sept',
+                    '8' : 'huit',
+                    '9' : 'neuf',
+                    '10' : 'dix',
+                    '20' : 'vingt',
+                    '30' : 'trente',
+                    '40' : 'quarante',
+                    '50' : 'cinquante',
+                    '60' : 'soixante',
+                    '70' : 'soixantedix',
+                    '80' : 'quatrevingt',
+                    '90' : 'quatrevingtdix',
+                    '100' : 'cent'
                 };
                 
                 str = str.toLowerCase();

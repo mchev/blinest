@@ -53,43 +53,51 @@ class DeezerController extends Controller
     public function storePlaylist(Request $request)
     {
 
+        $game = Game::find($request->params['game_id']);
 
-        try {
+        if (auth()->user()->isModerator($game) ||auth()->user()->id == $game->user_id) {
 
-            $tracks = [];
+            try {
 
-            foreach ($request->tracks as $track) {
+                $tracks = [];
 
-                if($track['preview']) {
+                foreach ($request->tracks as $track) {
 
-                    $item = new Track([
-                        'user_id' => Auth::user()->id,
-                        'game_id' => $request->params['game_id'],
-                        'provider_item_id' => $track['id'],
-                        'provider' => 'deezer',
-                        'artist_name' => $track['artist']['name'],
-                        'track_name' => $track['title_short'],
-                        'artwork_url' => $track['album']['cover_medium'],
-                        'preview_url' => $track['preview'],
-                    ]);
+                    if($track['preview']) {
+
+                        $item = new Track([
+                            'user_id' => Auth::user()->id,
+                            'game_id' => $request->params['game_id'],
+                            'provider_item_id' => $track['id'],
+                            'provider' => 'deezer',
+                            'artist_name' => $track['artist']['name'],
+                            'track_name' => $track['title_short'],
+                            'artwork_url' => $track['album']['cover_medium'],
+                            'preview_url' => $track['preview'],
+                        ]);
 
 
-                    $item->save();
+                        $item->save();
 
-                    $tracks[] = $item;
+                        $tracks[] = $item;
+
+                    }
 
                 }
 
+                return response()->json($tracks);
+
+            }
+            catch (Exception $e) {
+                return response()->json($e->getMessage());
             }
 
-            return response()->json($tracks);
+            return response()->json($json);
 
-        }
-        catch (Exception $e) {
-            return response()->json($e->getMessage());
-        }
+        } else {
 
-        return response()->json($json);
+            return response()->json("Utilisateur non autorisé.");
+        }
 
     }
 
