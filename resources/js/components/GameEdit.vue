@@ -71,33 +71,40 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">
-                                <a href="#" @click="sort('artist_name')">
+                                <div class="pointer" @click="sort('artist_name')">
                                     Artiste
                                     <i v-if="currentSort === 'artist_name' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
                                     <i v-if="currentSort === 'artist_name' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
-                                </a>
+                                </div>
                             </th>
                             <th scope="col">
-                                <a href="#" @click="sort('track_name')">
+                                <div class="pointer" @click="sort('track_name')">
                                     Titre
                                     <i v-if="currentSort === 'track_name' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
                                     <i v-if="currentSort === 'track_name' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
-                                </a>
+                                </div>
                             </th>
                             <th scope="col">Aperçu</th>
                             <th scope="col">
-                                <a href="#" @click="sort('custom_answer')">
+                                <div class="pointer" @click="sort('custom_answer')">
                                     Réponse personnalisée
                                     <i v-if="currentSort === 'custom_answer' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
                                     <i v-if="currentSort === 'custom_answer' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
-                                </a>
+                                </div>
                             </th>
                             <th width="8%" scope="col">
-                                <a href="#" @click="sort('down_rate')">
+                                <div class="pointer" @click="sort('down_rate')">
                                     <i class="fas fa-thumbs-down"></i>
                                     <i v-if="currentSort === 'down_rate' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
                                     <i v-if="currentSort === 'down_rate' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
-                                </a>
+                                </div>
+                            </th>
+                            <th width="10%" scope="col">
+                                <div class="pointer" @click="sort('created_at')">
+                                    Ajouté le
+                                    <i v-if="currentSort === 'created_at' && currentSortDir === 'desc'" class="fas fa-sort-up"></i>
+                                    <i v-if="currentSort === 'created_at' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
+                                </div>
                             </th>
                             <th scope="col" class="text-right"></th>
                         </tr>
@@ -110,7 +117,8 @@
                                 <audio controls preload="none" :src="track.preview_url" style="width:50px"></audio>
                             </td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.custom_answer"></td>
-                            <td><input type="text" class="form-control" v-model="track.down_rate" readonly></td>
+                            <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.down_rate"></td>
+                            <td>{{ track.created_at | moment("DD/MM/YY")}}</td>
                             <td><button @click="deleteTrack(track)" class="btn text-danger"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
                     </tbody>
