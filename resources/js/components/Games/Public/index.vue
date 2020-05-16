@@ -10,6 +10,8 @@
 
             <p>{{ game.description }}</p>
 
+            <p>modérateur.rice.s : <span class="badge badge-info mr-2" v-for="moderator in game.moderators" key="moderator.id">{{ moderator.name }}</span></p>
+
           </div>
       </header>
 
