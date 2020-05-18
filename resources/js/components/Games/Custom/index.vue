@@ -70,7 +70,7 @@
                     <div class="col-md-12">
 
 
-                        <span class="badge badge-warning">Partie privée v2.0-beta : <a :href="'https://blinest.com/parties/' + game.slug">https://blinest.com/parties/{{ game.slug }}</a></span>
+                        <span class="badge badge-warning">Partie privée v2.1-beta : <a :href="'https://blinest.com/parties/' + game.slug">https://blinest.com/parties/{{ game.slug }}</a></span>
 
                         <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
