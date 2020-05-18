@@ -59,6 +59,14 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('/lab', 'LabController');
 	Route::get('/lab/{lab}/vote', 'LabController@vote');
 
+	// CUSTOM GAMES
+	Route::post('/partie/privee/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
+	Route::get('/partie/privee/{game}/start', 'CustomGameController@start')->name('games.custom.start');
+	Route::get('/partie/privee/play/{track}', 'CustomGameController@play')->name('games.custom.play');
+	Route::get('/partie/privee/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
+	Route::get('/partie/privee/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
+	Route::get('/partie/privee/{game}/stop', 'CustomGameController@stop')->name('games.custom.stop');
+	Route::post('/partie/privee/{game}/password', 'CustomGameController@password')->name('games.custom.password');
 
 });
 
@@ -78,16 +86,9 @@ Route::resource('/games', 'GameController');
 
 
 // CUSTOM GAMES
-Route::get('/partie/privee/{game}/test', 'CustomGameController@test')->name('games.custom.test');
-
 Route::get('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.index');
 Route::post('/partie/privee/{game}', 'CustomGameController@index')->name('games.custom.password.check');
-Route::post('/partie/privee/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
-Route::get('/partie/privee/play/{track}', 'CustomGameController@play')->name('games.custom.play');
-Route::get('/partie/privee/pause/{track}', 'CustomGameController@pause')->name('games.custom.pause');
-Route::get('/partie/privee/resume/{track}', 'CustomGameController@resume')->name('games.custom.resume');
-Route::get('/partie/privee/{game}/stop', 'CustomGameController@stop')->name('games.custom.stop');
-Route::post('/partie/privee/{game}/password', 'CustomGameController@password')->name('games.custom.password');
+
 
 
 // GUEST AUTH FOR BROADCASTING

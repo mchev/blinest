@@ -2,7 +2,8 @@
 
     <div class="card mb-3">
         <div class="card-header">
-            <div class="btn-group btn-block my-2">
+            <button v-if="!start" class="btn btn-info btn-block" @click="newGame()">Signaler le démarrage</button>
+            <div v-else class="btn-group btn-block my-2">
                 <button v-if="!playing" class="btn btn-success" title="Démarrer" @click="play()"><i class="fas fa-play"></i></button>
                 <button v-if="paused && playing && !resumed" class="btn btn-success" title="Démarrer" @click="resume"><i class="fas fa-play"></i></button>
                 <button v-if="playing && !paused" class="btn btn-secondary" title="Pause" @click="pause"><i class="fas fa-pause"></i></button>
@@ -43,6 +44,7 @@
                 playing: false,
                 paused: false,
                 resumed: false,
+                start: false,
             }
         },
 
@@ -57,6 +59,15 @@
         },
 
         methods: {
+
+            newGame() {
+
+                axios.get('/partie/privee/' + this.game.id + '/start').then((resp) => {
+                    console.log('Démarrage d\'une partie');
+                    this.start = true;
+                });
+
+            },
 
             play( track = this.tracks[this.track_index] ) {
 

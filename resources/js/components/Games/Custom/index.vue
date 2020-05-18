@@ -200,19 +200,19 @@
 
         data() {
             return {
-                item: this.game,
-                tracks: false,
-                showEditGame: false,
+              item: this.game,
+              tracks: false,
+              showEditGame: false,
 
-                answers: [],
-                score: 0,
-                users: null,
-                track: null,
-                waiting: false,
-                launched: false,
-                finnish: false,
-                darkmode: this.game.darkmode,
-                initscore: false,
+              // Shared with public games
+              answers: [],
+              score: 0,
+              users: null,
+              track: null,
+              waiting: false,
+              launched: false,
+              finnish: false,
+              initscore: false,
             }
         },
 
@@ -307,7 +307,7 @@
               this.finnish = false;
               $("#finnishModal").modal('hide');
               this.answers = [];
-              this.game.currentUser.score = {};
+              this.track = null;
               this.score = 0;
               this.track = null;
               this.waiting = true;
@@ -429,12 +429,6 @@
                 });
             },
 
-            copyUrl() {
-                url = $('#gameUrl').val();
-                url.select();
-                document.execCommand('copy');
-            },
-
             updatePassword() {
                 axios.post('/partie/privee/' + this.game.id + '/password', {'password': this.game.password});
             }
@@ -504,10 +498,6 @@
     }
     .sidebar-right {
         border-left: 1px solid rgba(255,255,255,0.5);
-    }
-
-    .card {
-        background-color: rgba(255,255,255,0.8);
     }
 
     hr {

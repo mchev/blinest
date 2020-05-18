@@ -9,6 +9,7 @@ use App\Score;
 use App\Events\PlayTrack;
 use App\Events\PauseTrack;
 use App\Events\ResumeTrack;
+use App\Events\NewGame;
 use App\Events\EndGame;
 use Illuminate\Http\Request;
 
@@ -80,6 +81,11 @@ class CustomGameController extends Controller
 
         return response()->json($tracks->toArray());
 
+    }
+
+    public function start(Game $game)
+    {
+        broadcast(new NewGame($game));
     }
 
     public function play(Track $track)
