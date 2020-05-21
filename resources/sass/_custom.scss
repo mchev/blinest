@@ -1,3 +1,25 @@
+.message-text {
+	position: relative;
+}
+
+.message-votes {
+	position: absolute;
+	transition: all .5s ease;
+	display: none;
+	opacity: 0;
+	border-radius: 4px;
+	background: #FFF;
+	padding: 2px 4px;
+	top: 106%;
+	left: 0;
+	z-index: 2;
+}
+
+.message:hover .message-votes {
+	display: block;
+	opacity: 1;
+}
+
 .pointer {
 	cursor: pointer;
 }

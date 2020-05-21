@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\MessageSent;
+use App\Events\MessageDelete;
 use App\Message;
+use App\MessageVote;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -19,7 +21,12 @@ class MessagesController extends Controller
     public function index(Request $request)
     {
 
-        $messages = Message::where('game_id', $request->input('game_id'))->orderby('created_at', 'DESC')->limit(30)->get();
+        $messages = Message::where('game_id', $request->input('game_id'))
+                            ->withCount('reports')
+                            ->having('reports_count', '<', 3)
+                            ->orderby('created_at', 'DESC')
+                            ->limit(30)
+                            ->get();
 
         return response()->json($messages);
 
@@ -69,4 +76,44 @@ class MessagesController extends Controller
 
         }
     }
+
+
+    public function vote(Request $request)
+    {
+
+        if(auth()->user()) {
+
+            if(MessageVote::where('user_id', auth()->user()->id)->where('message_id', $request->message_id)->exists()) {
+
+                return response()->json(array('message', 'Déjà voté'));
+
+            } else {
+
+                $message = Message::findOrfail($request->message_id);
+
+                if ($message) {
+
+                    $vote = MessageVote::create([
+                        'user_id'       => auth()->user()->id,
+                        'message_id'    => $message->id,
+                        'type'          => $request->type
+                    ]);
+
+                    $reports = MessageVote::where('message_id', $message->id)->where('type', 'report')->count();
+
+                    if($reports >= 3) {
+
+                        broadcast(new MessageDelete($message));
+
+                    }
+
+                    return response()->json($vote);
+                }
+
+            }
+
+        }
+
+    }
+
 }

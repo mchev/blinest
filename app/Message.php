@@ -34,4 +34,9 @@ class Message extends Model
         return $this->belongsTo(Game::class, 'game_id')->select(['id', 'title']);
     }
 
+    public function reports()
+    {
+        return $this->hasMany(MessageVote::class, 'message_id')->where('type', 'report');
+    }
+
 }

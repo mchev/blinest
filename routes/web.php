@@ -132,6 +132,7 @@ Route::post('/broadcasting/auth', function() {
 // MESSAGES - CHAT
 Route::post('/messages', 'Api\MessagesController@index');
 Route::post('/messages/send', 'Api\MessagesController@store');
+Route::post('/messages/vote', 'Api\MessagesController@vote');
 
 
 Route::get('/profils/{name}', 'UserController@show');

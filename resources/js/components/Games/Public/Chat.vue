@@ -5,7 +5,10 @@
     <div class="row" style="min-height: 35vh; max-height: 200px; overflow-y: auto;" ref="messageBox">
         <div class="col-12" v-for="message in orderedMessages">
           <div class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
-            <p>{{ message.message }}</p>
+            <p class="message-text">
+              <span @click="rateDown(message.id)" class="message-votes"><i class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i></span>
+              {{ message.message }}
+            </p>
             <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== game.currentUser.id"> - {{ message.sender_name }}</span></small>
           </div>
         </div>
@@ -130,7 +133,11 @@
             $("#chatInput").attr("disabled", false);
             this.messages.push(data.message)
           })
+          .listen('MessageDelete', (data) => {
+            this.messages.splice(this.messages.findIndex(f => f.id === data.id), 1);
+          })
       },
+
       loadMessages () {
         let app = this
         app.loadingMessages = true
@@ -142,6 +149,7 @@
           app.loadingMessages = false
         })
       },
+
       sendMessage () {
         let app = this;
         $("#chatInput").attr("disabled", true);
@@ -154,8 +162,20 @@
             app.newMessage = ''
           })
         }
+      },
+
+      rateDown(message_id) {
+        axios.post('/messages/vote', {
+          message_id: message_id,
+          type: 'report'
+        }).then((resp) => {
+          console.log(resp.data);
+        })
       }
+
+
     },
+
     computed: {
       orderedMessages: function () {
         return _.orderBy(this.messages, 'created_at', 'asc')
