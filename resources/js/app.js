@@ -59,6 +59,8 @@ Vue.component('game-podiums', require('./components/Games/Podiums.vue').default)
 
 Vue.component('finnish', require('./components/Games/Finnish.vue').default);
 
+Vue.component('donate', require('./components/Donate.vue').default);
+
 Vue.component('event-create', require('./components/Events/Create.vue').default);
 
 

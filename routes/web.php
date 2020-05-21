@@ -24,7 +24,6 @@ Route::get('/mentions-legales', 'ContactController@legal');
 Route::get('/sitemap.xml', 'SitemapController@index');
 Route::get('/politique-confidentialite', 'ContactController@confidentialite');
 
-
 Route::get('/releases', 'SpotifyController@releases')->name('releases');
 
 Route::get('/auth/redirect/{provider}', 'SocialController@redirect');
@@ -38,6 +37,10 @@ Route::get('/user', 'UserController@user');
 //dd(Auth::user(), Auth::Guest());
 
 Route::group(['middleware' => ['auth']], function () {
+
+	Route::get('/faire-un-don', 'DonateController@index');
+	Route::post('/donate', 'DonateController@store');
+	Route::get('/thankyou', 'DonateController@thankyou');
 
 	Route::get('/profile', 'ProfileController@index')->name('profile');
 	Route::get('/profile/delete', 'ProfileController@destroy')->name('profile.delete');

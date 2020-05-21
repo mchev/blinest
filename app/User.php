@@ -38,6 +38,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function donations()
+    {
+        return $this->hasMany(UserDonation::class, 'user_id')->orderBy('created_at', 'DESC');
+    }
+
     public function scores()
     {
         return $this->hasMany(Score::class, 'user_id')->orderBy('created_at', 'DESC');

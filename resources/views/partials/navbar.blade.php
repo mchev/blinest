@@ -68,13 +68,11 @@
                         <a href="{{ route('lab.index') }}" class="nav-link text-warning" title="Le lab"><i class="fas fa-flask"></i></a>
                     </li>
 
+                    <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don.">
+                        <a href="/faire-un-don" class="nav-link" title="Faire un don">Soutenir Blinest</a>
+                    </li>
+
                 @endguest
-
-                <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don via liberapay.">
-                    <script type="application/javascript" src="https://liberapay.com/Blinest/widgets/button.js"></script>
-                    <noscript><a href="https://liberapay.com/Blinest/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
-                </li>
-
 
             </ul>
         </div>
