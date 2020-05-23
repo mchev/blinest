@@ -158,12 +158,12 @@
         })
       },
 
-      sendMessage (bot = false) {
+      sendMessage (blinest) {
         let app = this;
         $("#chatInput").attr("disabled", true);
         if (app.newMessage !== '') {
           axios.post('/messages/send', {
-            bot: bot,
+            bot: (blinest == true) ? true : false,
             game_id: app.game.id,
             message: app.newMessage
           }).then((resp) => {
