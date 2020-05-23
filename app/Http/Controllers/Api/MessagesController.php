@@ -69,6 +69,8 @@ class MessagesController extends Controller
 
                 } else {
 
+                    if ($request->input('bot')) $sender_name = 'blinest';
+
                     $message = Message::create([
                         'sender_id'     => $sender_id,
                         'sender_name'   => $sender_name,

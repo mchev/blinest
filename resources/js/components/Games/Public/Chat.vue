@@ -4,12 +4,15 @@
 
     <div class="row" style="min-height: 35vh; max-height: 200px; overflow-y: auto;" ref="messageBox">
         <div class="col-12" v-for="message in orderedMessages">
-          <div class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
+          <div v-if="message.sender_name === 'blinest'">
+            <small>{{ message.message }}</small>
+          </div>
+          <div v-else class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
             <p class="message-text">
               <span class="message-votes">
                 <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
                 <template v-for="moderator in game.moderators">
-                  <i v-if="moderator.id === game.currentUser.id" @click="blockUser(message.sender_id)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
+                  <i v-if="moderator.id === game.currentUser.id" @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
                 </template>
               </span>
               {{ message.message }}
@@ -155,11 +158,12 @@
         })
       },
 
-      sendMessage () {
+      sendMessage (bot = false) {
         let app = this;
         $("#chatInput").attr("disabled", true);
         if (app.newMessage !== '') {
           axios.post('/messages/send', {
+            bot: bot,
             game_id: app.game.id,
             message: app.newMessage
           }).then((resp) => {
@@ -178,10 +182,14 @@
         })
       },
 
-      blockUser(user_id) {
-        axios.get('/moderator/user/' + user_id + '/block').then((resp) => {
-          console.log(resp.data);
-        });
+      blockUser(user_id, user_name) {
+        if (window.confirm("Attention, si tu confirme, l'utilisateur sera banni pendant une heure. Les seuls motifs pour bannir un utilisateur sont le non respect de la loi, les propos haineux, le harcelement, les menaces ou l'usurpation d'identité.")) {
+          axios.get('/moderator/user/' + user_id + '/block').then((resp) => {
+            console.log(resp.data);
+            this.newMessage = "L'utilisateur " + user_name + " a été banni.";
+            this.sendMessage(true);
+          });
+        }
       }
 
     },
