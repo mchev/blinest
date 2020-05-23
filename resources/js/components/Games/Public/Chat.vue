@@ -6,7 +6,12 @@
         <div class="col-12" v-for="message in orderedMessages">
           <div class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
             <p class="message-text">
-              <span @click="rateDown(message.id)" class="message-votes"><i class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i></span>
+              <span class="message-votes">
+                <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
+                <template v-for="moderator in game.moderators">
+                  <i v-if="moderator.id === game.currentUser.id" @click="blockUser(message.sender_id)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
+                </template>
+              </span>
               {{ message.message }}
             </p>
             <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== game.currentUser.id"> - {{ message.sender_name }}</span></small>
@@ -171,8 +176,13 @@
         }).then((resp) => {
           console.log(resp.data);
         })
-      }
+      },
 
+      blockUser(user_id) {
+        axios.get('/moderator/user/' + user_id + '/block').then((resp) => {
+          console.log(resp.data);
+        });
+      }
 
     },
 

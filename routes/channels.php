@@ -30,3 +30,10 @@ Broadcast::channel('game-{game}', function ($user) {
     	"name" => $user->name
     );
 });
+
+Broadcast::channel('moderators', function ($user) {
+    return array(
+    	"id" => $user->id,
+    	"name" => $user->name
+    );
+});

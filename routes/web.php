@@ -142,6 +142,17 @@ Route::resource('/games/{game}/tracks', 'TrackController');
 Route::post('/tracks/{track}/rate/up', 'TrackController@rateUp');
 Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 
+
+// MODERATORS
+Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'moderator.', 'middleware' => 'moderator'], function () {
+
+	Route::get('/', 'DashboardController@index')->name('dashboard.index');
+	Route::get('/user/{user}/block', 'UserController@block');
+
+});
+
+
+// ADMINS
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
 
 	Route::get('/', 'DashboardController@index')->name('dashboard.index');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\MessageSent;
 use App\Events\MessageDelete;
+use App\Game;
 use App\Message;
 use App\MessageVote;
 use Carbon\Carbon;
@@ -58,17 +59,31 @@ class MessagesController extends Controller
 
         if ($request->input('game_id')) {
 
-            $message = Message::create([
-                'sender_id'     => $sender_id,
-                'sender_name'   => $sender_name,
-                'sender_ip'     => $request->ip(),
-                'game_id'       => $request->input('game_id'),
-                'message'       => $request->input('message'),
-            ]);
+            $game = Game::findOrFail($request->input('game_id'));
 
-            broadcast(new MessageSent($message));
+            if ($game) { 
 
-            return response()->json('Nouveau message de ' . $message->sender_name);
+                if (!auth()->user() && $game->public == 1) {
+
+                    return response()->json('Utilisateur non identifé.');
+
+                } else {
+
+                    $message = Message::create([
+                        'sender_id'     => $sender_id,
+                        'sender_name'   => $sender_name,
+                        'sender_ip'     => $request->ip(),
+                        'game_id'       => $request->input('game_id'),
+                        'message'       => $request->input('message'),
+                    ]);
+
+                    broadcast(new MessageSent($message));
+
+                    return response()->json('Nouveau message de ' . $message->sender_name);
+
+                }
+
+            }
 
         } else {
 
