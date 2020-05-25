@@ -148,7 +148,7 @@ Route::post('/tracks/{track}/rate/down', 'TrackController@rateDown');
 // MODERATORS
 Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'moderator.', 'middleware' => 'moderator'], function () {
 
-	Route::get('/', 'DashboardController@index')->name('dashboard.index');
+	Route::get('/', 'DashboardController@index');
 	Route::get('/user/{user}/block', 'UserController@block');
 	Route::get('/tickets', 'TicketController@index');
 	Route::get('/tickets/{ticket}/close', 'TicketController@close');
