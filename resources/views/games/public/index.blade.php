@@ -29,6 +29,13 @@
 
     @endif
 
+    <section class="page-section bg-primary text-white text-center mb-0">
+      <div class="container">
+        <h3>Envoyer un message aux modérateurs</h3>
+        <create-ticket :game="{{ $game }}"></create-ticket>
+      </div>
+    </section>
+
   @endif
 
 @endsection

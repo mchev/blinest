@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('title')
-  Blind-Test - Événements
+  Blind-Test - Modérateurs
 @endsection
 
 @section('description')
-  Tous les événements blind-test. Dans la vrai vie ou en parties privées sur blinest.
+  La page dédiée aux modérateurs de blinest.
 @endsection
 
 @section('content')
@@ -36,7 +36,8 @@
 
   			<div class="col-md-6">
 
-  				<h2>Tableau de bord</h2>
+  				<h2 class="text-center">Le salon des modérateurs</h2>
+  				<p class="text-center">Merci à tous pour votre aide!</p>
 
   				<div class="card bg-info text-white">
 
@@ -52,6 +53,9 @@
 		  				<h5>A quoi correspondent les scores?</h5>
 		  				<p>Un score est enregistré lorsqu'une partie est jouée jusqu'à la fin par un utilisateur dont le score final n'est pas égal à zéro.</p>
 
+		  				<h5>Comment effacer un message sur le chat?</h5>
+		  				<p>Pour être supprimé, un message doit obtenir trois pouces rouges de trois utilisateurs différents.</p>
+
 		  			</div>
 
 		  		</div>
@@ -64,19 +68,11 @@
 
   			</div>
 
-  			<div class="col-md-3 bg-secondary">
-  				<ul class="list-group">
-	  				@foreach($games as $game)
-						<li href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-		  					@foreach($game->moderators as $moderator)
-		  						@if(auth()->user()->id == $moderator->id)
-		  							<h5>{{ $game->title }}</h5>
-		  							<button class="btn btn-info">Editer les extraits</button>
-		  						@endif
-		  					@endforeach
-		  				</li>
-	  				@endforeach
-	  			</ul>
+  			<div class="col-md-3 bg-secondary text-white">
+
+  				<h3>Demandes en cours</h3>
+
+  				<list-ticket></list-ticket>
   			</div>
 
   		</div>

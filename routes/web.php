@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/games/{game}/score', 'GameController@storeScore')->name('games.store.score');
 	//Route::get('/home', 'HomeController@index')->name('home');
 
+	Route::post('/games/{game}/create/ticket', 'ModeratorTicketController@store');
+
 	Route::patch('/tracks/{track}', 'TrackController@update');
 
 
@@ -148,6 +150,8 @@ Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'mode
 
 	Route::get('/', 'DashboardController@index')->name('dashboard.index');
 	Route::get('/user/{user}/block', 'UserController@block');
+	Route::get('/tickets', 'TicketController@index');
+	Route::get('/tickets/{ticket}/close', 'TicketController@close');
 
 });
 

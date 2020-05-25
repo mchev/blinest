@@ -9,7 +9,12 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-Vue.use(require('vue-moment'));
+const moment = require('moment')
+require('moment/locale/fr')
+
+Vue.use(require('vue-moment'), {
+    moment
+})
 
 Vue.directive('click-outside', {
   bind: function (el, binding, vnode) {
@@ -62,6 +67,9 @@ Vue.component('finnish', require('./components/Games/Finnish.vue').default);
 Vue.component('donate', require('./components/Donate.vue').default);
 
 Vue.component('event-create', require('./components/Events/Create.vue').default);
+
+Vue.component('create-ticket', require('./components/Moderators/CreateTicket.vue').default);
+Vue.component('list-ticket', require('./components/Moderators/TicketList.vue').default);
 
 
 Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);
