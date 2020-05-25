@@ -36,8 +36,27 @@
 
   			<div class="col-md-6">
 
-  				<h2 class="text-center">Le salon des modérateurs</h2>
-  				<p class="text-center">Merci à tous pour votre aide!</p>
+  				<h2 class="text-center mb-4">Le salon des modérateurs</h2>
+
+          <div class="card mb-3">
+
+            <div class="card-header">
+              <h5>Prochainement dans cet espace</h5>
+            </div>
+
+            <div class="card-body">
+              <ul>
+                <li>Quelques statistiques</li>
+                <li>Un chat</li>
+                <li>Le module de gestion d'extraits (en plus de celui existant sur la partie)</li>
+                <li>Eventuellement un peu de décoration</li>
+                <li>D'autres idées qui viendront plus tard</li>
+              </ul>
+
+              <q>En attendant le chat, vous pouvez remonter vos commentaires sur cet espace en utilisant le lab ou bien en utilisant la zone contact modérateur sur les parties. <strong>Sinon vous pouvez continuer par mail ça fonctionne très bien aussi.</strong></q>
+            </div>
+
+          </div>
 
   				<div class="card bg-info text-white">
 
@@ -53,18 +72,18 @@
 		  				<h5>A quoi correspondent les scores?</h5>
 		  				<p>Un score est enregistré lorsqu'une partie est jouée jusqu'à la fin par un utilisateur dont le score final n'est pas égal à zéro.</p>
 
-		  				<h5>Comment effacer un message sur le chat?</h5>
-		  				<p>Pour être supprimé, un message doit obtenir trois pouces rouges de trois utilisateurs différents.</p>
+              <h5>Comment effacer un message sur le chat?</h5>
+              <p>Pour être supprimé, un message doit obtenir trois pouces rouges de trois utilisateur.rice.s différent.e.s.</p>
+
+              <h5>D'où viennent les demandes?</h5>
+              <p>Sur chacune des pages correspondant à une partie, se trouve un micro-formulaire de contact (en dessous des podiums). Seul.e.s les utilisateur.rice.s connecté.e.s peuvent avoir accès à ce formulaire.</p>
+
+              <h5>Pourquoi les évolutions sont si longues à venir?</h5>
+              <p>Blinest est un site personnel qui est codé sur le temps libre. Le site n'est pas abandonné mais il peut arriver certaines periodes pendant lesquelles d'autres projets prennent le dessus.</p>
 
 		  			</div>
 
 		  		</div>
-
-  				<ul>
-  					<li>Bloquer un utilisateur</li>
-  					<li>Afficher le track module</li>
-  					<li>Chat</li>
-  				</ul>
 
   			</div>
 

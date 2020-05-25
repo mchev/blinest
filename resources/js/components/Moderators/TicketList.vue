@@ -6,7 +6,7 @@
 
         <div v-if="tickets.length === 0">Aucune demande en cours.</div>
 
-        <div v-else v-for="ticket in tickets" :key="ticket.id" class="card text-dark">
+        <div v-else v-for="ticket in tickets" :key="ticket.id" class="card text-dark mb-2">
 
             <div class="card-body p-2">
                 <span class="badge badge-info">{{ ticket.game.title }}</span><br>
