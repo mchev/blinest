@@ -9,7 +9,7 @@
             </button>
         </div>
 
-        <textarea class="form-control mb-3" v-model="message" placeholder="Le message doit concerner cette partie et doit contenir toutes les informations necessaires pour aider les modérateurs à traiter la demande." required></textarea>
+        <textarea class="form-control mb-3" v-model="message" placeholder="Le message doit concerner cette partie et doit contenir toutes les informations necessaires pour aider les modérateurs à traiter la demande. Il est aussi possible de faire des demandes d'ajout." required></textarea>
 
         <button class="btn btn-success" @click="store"><i class="far fa-paper-plane"></i> Envoyer</button>
 
