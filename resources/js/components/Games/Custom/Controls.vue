@@ -7,11 +7,12 @@
                 <button v-if="!playing" class="btn btn-success" title="Démarrer" @click="play()"><i class="fas fa-play"></i></button>
                 <button v-if="paused && playing && !resumed" class="btn btn-success" title="Démarrer" @click="resume"><i class="fas fa-play"></i></button>
                 <button v-if="playing && !paused" class="btn btn-secondary" title="Pause" @click="pause"><i class="fas fa-pause"></i></button>
-                <button class="btn btn-secondary" title="Suivant" @click="next"><i class="fas fa-forward"></i></button>
+                <button class="btn btn-secondary" title="Suivant" @click="next(false)"><i class="fas fa-forward"></i></button>
                 <button class="btn btn-secondary" title="Arret" @click="stop"><i class="fas fa-stop"></i></button>
+                <button class="btn btn-secondary" title="Voir les extraits" @click="trackList = !trackList"><i class="fas fa-eye"></i></button>
             </div>
         </div>
-        <div class="card-body track-list p-0">
+        <div v-if="trackList" class="card-body track-list p-0">
             <ol class="list-group text-left">
                 <li v-for="(track, index) in tracks" class="list-group-item p-0" :class="{'bg-success text-white': index === track_index}" :title="track.artist_name + ' - ' + track.track_name">
 
@@ -45,6 +46,7 @@
                 paused: false,
                 resumed: false,
                 start: false,
+                trackList: false,
             }
         },
 
@@ -107,13 +109,22 @@
 
             },
 
-            next() {
+            next(wait = true) {
+
+                var cofeebreak = (wait === true) ? 4000 : 0;
+
+                let vm = this;
 
                 if ( this.track_index + 1 == parseInt(this.game.tracks_number) ) {
+
                     this.stop();
+
                 } else {
-                    this.track_index++;
-                    this.play();
+
+                    setTimeout(function(){
+                        vm.track_index++;
+                        vm.play();
+                    }, cofeebreak);
                 }
 
             },
