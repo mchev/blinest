@@ -42,7 +42,7 @@
 
                 <div class="col-md-4">
 
-                  <game-scores v-if="launched && initscore" :game="game" :track="track" :users="users"></game-scores>
+                  <game-scores v-if="launched" :game="game" :track="track" :users="users"></game-scores>
 
                 </div>
 
@@ -152,7 +152,7 @@
           return {
               answers: [],
               score: 0,
-              users: null,
+              users: [],
               track: null,
               waiting: false,
               launched: false,
@@ -181,6 +181,18 @@
               document.location.reload(true);
             } else {
               this.game.currentUser = response.data;
+              this.game.currentUser.score = {
+                  artist: 0,
+                  track: 0,
+                  custom: 0,
+                  bonus: 0,
+                  artist_time: 0,
+                  track_time: 0,
+                  custom_time: 0,
+                  total_time: 0
+              }
+              if(this.users) this.users.splice(this.users.findIndex(f => f.id === this.game.currentUser.id), 1);
+              this.users.push(this.game.currentUser);
               this.launched = true;
             }
 
@@ -275,71 +287,74 @@
 
         countScore(event) {
 
-          this.track.score = event;
-
-          this.score = 0;
-
-          for (var i = 0; i <  this.answers.length; i++) {
-              this.score += this.answers[i].score.track;
-              this.score += this.answers[i].score.artist;
-              this.score += this.answers[i].score.custom;
-              this.score += this.answers[i].score.bonus;
-              this.score += (this.answers[i].score.faster_bonus) ? this.answers[i].score.faster_bonus : 0;
-          };
-
           if (this.track) {
-              this.score += this.track.score.track;
-              this.score += this.track.score.artist;
-              this.score += this.track.score.custom;
-              this.score += this.track.score.bonus;
-              this.score += (this.track.score.faster_bonus) ? this.track.score.faster_bonus : 0;
-          }
+
+            this.track.score = event;
+
+            this.score = 0;
+
+            for (var i = 0; i <  this.answers.length; i++) {
+                this.score += this.answers[i].score.track;
+                this.score += this.answers[i].score.artist;
+                this.score += this.answers[i].score.custom;
+                this.score += this.answers[i].score.bonus;
+                this.score += (this.answers[i].score.faster_bonus) ? this.answers[i].score.faster_bonus : 0;
+            };
+
+            if (this.track) {
+                this.score += this.track.score.track;
+                this.score += this.track.score.artist;
+                this.score += this.track.score.custom;
+                this.score += this.track.score.bonus;
+                this.score += (this.track.score.faster_bonus) ? this.track.score.faster_bonus : 0;
+            }
 
 
-          // Faster typer
-          if(this.track.score.artist_time !== 0 && this.track.score.track_time !== 0) {
-            this.track.score.total_time = (this.track.score.artist_time > this.track.score.track_time) ? this.track.score.artist_time :  this.track.score.track_time;
-          }
+            // Faster typer
+            if(this.track.score.artist_time !== 0 && this.track.score.track_time !== 0) {
+              this.track.score.total_time = (this.track.score.artist_time > this.track.score.track_time) ? this.track.score.artist_time :  this.track.score.track_time;
+            }
 
-          if(this.track.score.custom_time) {
-            this.track.score.total_time = this.track.score.custom_time;
-          }
+            if(this.track.score.custom_time) {
+              this.track.score.total_time = this.track.score.custom_time;
+            }
 
 
-          if (this.track.score.total_time !== 0 && !this.track.score.faster_bonus) {
+            if (this.track.score.total_time !== 0 && !this.track.score.faster_bonus) {
 
-            switch (this.countFaster()) {
-              case 0:
-                this.track.score.faster_num = 1;
-                this.track.score.faster_bonus = 0.5;
-                this.score += this.track.score.faster_bonus;
-                break;
-              case 1:
-                this.track.score.faster_num = 2;
-                this.track.score.faster_bonus = 0.5;
-                this.score += this.track.score.faster_bonus;
-                break;
-              case 2:
-                this.track.score.faster_num = 3;
-                this.track.score.faster_bonus = 0.5;
-                this.score += this.track.score.faster_bonus;
-                break;
+              switch (this.countFaster()) {
+                case 0:
+                  this.track.score.faster_num = 1;
+                  this.track.score.faster_bonus = 0.5;
+                  this.score += this.track.score.faster_bonus;
+                  break;
+                case 1:
+                  this.track.score.faster_num = 2;
+                  this.track.score.faster_bonus = 0.5;
+                  this.score += this.track.score.faster_bonus;
+                  break;
+                case 2:
+                  this.track.score.faster_num = 3;
+                  this.track.score.faster_bonus = 0.5;
+                  this.score += this.track.score.faster_bonus;
+                  break;
+
+              }
 
             }
 
+            this.track.score.total = this.score;
+
+            this.game.currentUser.score = this.track.score;
+
+            Vue.set(this.users, this.users.findIndex(f => f.id === this.game.currentUser.id), this.game.currentUser);
+
+            this.initscore = true;
+
+            Echo.private('game-' + this.game.id)
+              .whisper('score', this.game.currentUser);
+
           }
-
-          this.track.score.total = this.score;
-
-          this.game.currentUser.score = this.track.score;
-
-          Vue.set(this.users, this.users.findIndex(f => f.id === this.game.currentUser.id), this.game.currentUser);
-
-          this.initscore = true;
-
-          Echo.private('game-' + this.game.id)
-            .whisper('score', this.game.currentUser);
-
 
         },
 

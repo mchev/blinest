@@ -92,7 +92,7 @@ class Stream extends Command
 
             foreach ($games as $game) {
 
-                $track = Track::inRandomOrder()->where('game_id', $game->id)->whereNotIn('id', $this->tracks)->first();
+                $track = Track::orderByRaw("RAND()")->where('game_id', $game->id)->whereNotIn('id', $this->tracks)->first();
                 $track->counter = $this->counter;
                 $track->total = $this->tracks_by_game;
                 $this->tracks[] = $track->id;
