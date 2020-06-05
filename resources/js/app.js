@@ -70,6 +70,7 @@ Vue.component('event-create', require('./components/Events/Create.vue').default)
 
 Vue.component('create-ticket', require('./components/Moderators/CreateTicket.vue').default);
 Vue.component('list-ticket', require('./components/Moderators/TicketList.vue').default);
+Vue.component('moderator-chat', require('./components/Moderators/Chat.vue').default);
 
 
 Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);

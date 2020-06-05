@@ -39,23 +39,12 @@
   				<h2 class="text-center mb-4">Le salon des modérateurs</h2>
 
           <div class="card mb-3">
-
             <div class="card-header">
-              <h5>Prochainement dans cet espace</h5>
+              Chat modérateurs
             </div>
-
             <div class="card-body">
-              <ul>
-                <li>Quelques statistiques</li>
-                <li>Un chat</li>
-                <li>Le module de gestion d'extraits (en plus de celui existant sur la partie)</li>
-                <li>Eventuellement un peu de décoration</li>
-                <li>D'autres idées qui viendront plus tard</li>
-              </ul>
-
-              <q>En attendant le chat, vous pouvez remonter vos commentaires sur cet espace en utilisant le lab ou bien en utilisant la zone contact modérateur sur les parties. <strong>Sinon vous pouvez continuer par mail ça fonctionne très bien aussi.</strong></q>
+              <moderator-chat></moderator-chat>
             </div>
-
           </div>
 
   				<div class="card bg-info text-white">

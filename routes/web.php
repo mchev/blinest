@@ -152,6 +152,9 @@ Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'mode
 	Route::get('/user/{user}/block', 'UserController@block');
 	Route::get('/tickets', 'TicketController@index');
 	Route::get('/tickets/{ticket}/close', 'TicketController@close');
+	//Chat
+	Route::get('/chat', 'ChatController@index');
+	Route::post('/chat/send', 'ChatController@store');
 
 });
 
