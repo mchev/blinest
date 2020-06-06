@@ -27,6 +27,7 @@
                 <input type="text"
                         id="chatInput"
                         ref="textarea"
+                        maxlength="255"
                         class="form-control"
                         placeholder=""
                         v-on:keyup.enter="sendMessage"

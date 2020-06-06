@@ -20,6 +20,7 @@
             <div class="input-group mt-3">
                 <input type="text"
                         id="chatInput"
+                        maxlength="255"
                         ref="textarea"
                         class="form-control"
                         placeholder=""

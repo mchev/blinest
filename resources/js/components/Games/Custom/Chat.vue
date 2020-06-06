@@ -40,6 +40,7 @@
           <textarea
             ref="textarea"
             id="chatInput"
+            maxlength="255"
             class="textarea"
             v-model="newMessage"
             @keydown.enter.exact.prevent="sendMessage"
