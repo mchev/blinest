@@ -547,17 +547,17 @@
                     },
                     "3": {
                       "track": [
-                        "Félicitations tu a le titre!",
+                        "Félicitations tu as le titre!",
                         "Tu as trouvé le titre!",
                         "Bravo!"
                       ],
                       "artist": [
-                        "Félicitations tu a l'artiste!",
+                        "Félicitations tu as l'artiste!",
                         "Tu as trouvé l'artiste!",
                         "Bravo!"
                       ],
                       "both": [
-                        "Félicitations tu a le titre et l'artiste!",
+                        "Félicitations tu as le titre et l'artiste!",
                         "Tu as trouvé le titre et l'artiste!",
                         "Bravo!"
                       ]
