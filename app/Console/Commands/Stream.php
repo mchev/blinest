@@ -92,15 +92,17 @@ class Stream extends Command
 
             foreach ($games as $game) {
 
-                /*$track = Track::orderByRaw("RAND()")
+                $track = Track::orderByRaw("RAND()")
                             ->where('game_id', $game->id)
                             ->whereNotIn('id', $this->tracks)
-                            ->first();*/
+                            ->first();
 
+                /*
                 $track = Track::orderBy('hit', 'ASC')
                             ->where('game_id', $game->id)
                             ->whereNotIn('id', $this->tracks)
                             ->first();
+                */
 
                 $track->hit = $track->hit + 1;
                 $track->update();
