@@ -12,7 +12,7 @@
               <span class="message-votes">
                 <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
                 <template v-for="moderator in game.moderators">
-                  <i v-if="moderator.id === game.currentUser.id" @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
+                  <i v-if="moderator.id === game.currentUser.id && message.sender_id !== moderator.id" @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
                 </template>
               </span>
               {{ message.message }}
