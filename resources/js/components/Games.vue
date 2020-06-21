@@ -148,8 +148,11 @@
     .k-pop {
         background-color: #FF9800 !important;
     }
-    .rap {
+    .rap-fr {
         background-color: #ED6F48 !important;
+    }
+    .rap-us {
+        background-color: #29B296 !important;
     }
     .kids {
         background-color: #795749 !important;
@@ -157,5 +160,19 @@
     .anime-manga {
         background-color: #647C8D !important;
     }
+    .electro {
+        background-color: #000000 !important;
+    }
+    .musica-latina {
+        background-color: #E63735 !important;
+    }
+    /*
+    .annees-90 {
+        background-color: #E63735 !important;
+    }
+    .annees-2010 {
+        background-color: #E63735 !important;
+    }
+    */
 
 </style>
