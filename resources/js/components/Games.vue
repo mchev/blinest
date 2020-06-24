@@ -161,7 +161,7 @@
         background-color: #647C8D !important;
     }
     .electro {
-        background-color: #000000 !important;
+        background-color: #2C3C4D !important;
     }
     .musica-latina {
         background-color: #E63735 !important;
@@ -169,10 +169,9 @@
     /*
     .annees-90 {
         background-color: #E63735 !important;
-    }
+    }*/
     .annees-2010 {
-        background-color: #E63735 !important;
+        background-color: #2C3D50 !important;
     }
-    */
 
 </style>
