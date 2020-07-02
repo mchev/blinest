@@ -135,6 +135,7 @@ Route::post('/broadcasting/auth', function() {
 Route::post('/messages', 'Api\MessagesController@index');
 Route::post('/messages/send', 'Api\MessagesController@store');
 Route::post('/messages/vote', 'Api\MessagesController@vote');
+Route::post('/messages/delete', 'Api\MessagesController@delete'); // Moderator middleware
 
 
 Route::get('/profils/{name}', 'UserController@show');

@@ -11,8 +11,9 @@
             <p class="message-text">
               <span class="message-votes">
                 <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
-                <template v-for="moderator in game.moderators">
-                  <i v-if="moderator.id === game.currentUser.id && message.sender_id !== moderator.id" @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
+                <template v-for="moderator in game.moderators" v-if="moderator.id === game.currentUser.id">
+                  <i @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 1 heure"></i>
+                  <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
                 </template>
               </span>
               {{ message.message }}
@@ -143,7 +144,8 @@
             this.messages.push(data.message)
           })
           .listen('MessageDelete', (data) => {
-            this.messages.splice(this.messages.findIndex(f => f.id === data.id), 1);
+            console.log(data);
+            this.messages.splice(this.messages.findIndex(f => f.id === data.message.id), 1);
           })
       },
 
@@ -180,6 +182,14 @@
           type: 'report'
         }).then((resp) => {
           console.log(resp.data);
+        })
+      },
+
+      deleteMessage(message_id) {
+        axios.post('/messages/delete', {
+          message_id: message_id,
+        }).then((resp) => {
+          console.log("Message supprimé");
         })
       },
 

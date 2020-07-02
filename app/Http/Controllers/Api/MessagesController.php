@@ -133,4 +133,17 @@ class MessagesController extends Controller
 
     }
 
+    public function delete(Request $request)
+    {
+
+        if (auth()->user()->is('moderator')) {
+
+            $message = Message::findOrfail($request->message_id);
+            $message->delete();
+            broadcast(new MessageDelete($message));
+
+        }
+
+    }
+
 }
