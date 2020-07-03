@@ -26,10 +26,10 @@ class UserController extends Controller
     {
 
         if (auth()->user()->is('moderator')) {
-            $user->banned_until = now()->addHour();
+            $user->banned_until = now()->addDay();
             $user->update();
 
-            return response()->json('Utilisateur banni pour 1 heure.');
+            return response()->json('Utilisateur banni pour 24 heures.');
         }
     }
 

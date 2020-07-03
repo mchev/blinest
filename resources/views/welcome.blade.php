@@ -9,6 +9,10 @@
 
   <div class="container">
 
+    @if (session('message'))
+        <div class="alert alert-danger">{{ session('message') }}</div>
+    @endif
+
     <games :games="{{ $games->toJson() }}"></games>
 
   </div>
