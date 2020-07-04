@@ -52,7 +52,7 @@ class GameController extends Controller
                     ->limit(10)
                     ->get();
 
-        $online = Game::where('online', 1)->get();
+        $online = Game::where('online', 1)->where('updated_at', '<=', now()->subSeconds(15))->get();
         foreach ($online as $item) {
             $item->online = null;
             $item->update();
@@ -65,8 +65,10 @@ class GameController extends Controller
     public function online(Game $game)
     {
         if (auth()->user()->id == $game->user_id) {
+            
             $game->online = 1;
             $game->update();
+        
         }
     }
 
