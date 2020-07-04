@@ -50,13 +50,9 @@
             }
         },
 
-        computed: {
+        mounted() {
 
-
-        },
-
-        watch: {
-
+            this.online();
 
         },
 
@@ -71,9 +67,17 @@
 
             },
 
-            play( track = this.tracks[this.track_index] ) {
+            online() {
 
-                console.log(track);
+                let vm = this;
+
+                setInterval(function() { 
+                    axios.get('/games/' + vm.game.id + '/online');
+                }, 10000);
+
+            },
+
+            play( track = this.tracks[this.track_index] ) {
 
                 this.track = track;
                 this.track_index = this.tracks.indexOf(track);

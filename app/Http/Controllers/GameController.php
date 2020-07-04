@@ -23,7 +23,7 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'sendScore', 'slug', 'custom', 'test']]);
+        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'sendScore', 'slug', 'custom', 'privateGames']]);
     }
 
 
@@ -39,6 +39,45 @@ class GameController extends Controller
 
         return view('welcome', compact('games', 'counter'));
     }
+
+    public function privateGames()
+    {
+        $games = Game::where('public', 0)
+                    ->where('online', 1)
+                    ->where(function($query) { 
+                        $query->where('password', null)->orWhere('password', '');
+                    })
+                    ->has('tracks', '>' , 20)
+                    ->orderBy('hit', 'DESC')
+                    ->limit(10)
+                    ->get();
+
+        $online = Game::where('online', 1)->get();
+        foreach ($online as $item) {
+            $item->online = null;
+            $item->update();
+        }
+
+
+        return response()->json($games);
+    }
+
+    public function online(Game $game)
+    {
+        if (auth()->user()->id == $game->user_id) {
+            $game->online = 1;
+            $game->update();
+        }
+    }
+
+    public function offline(Game $game)
+    {
+        if (auth()->user()->id == $game->user_id) {
+            $game->online = null;
+            $game->update();
+        }
+    }
+
 
     /**
      * Display a listing of the resource.

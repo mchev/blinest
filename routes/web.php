@@ -47,6 +47,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/profile/stats/games', 'ProfileController@gameStats');
 	Route::post('/profile/update', 'ProfileController@update')->name('profile.update');
 
+	Route::get('/games/{game}/online', 'GameController@online');
+	Route::get('/games/{game}/offline', 'GameController@offline');
+
 	Route::get('/games/me', 'GameController@me')->name('games.me');
 
 	Route::get('/games/{game}/multiplayer', 'GameController@multiplayer')->name('games.multiplayer');
@@ -87,6 +90,8 @@ Route::get('/games/{game}/tracks/delete', 'GameController@deleteTracks');
 
 Route::get('/parties/{slug}', 'GameController@slug');
 Route::get('/parties/{slug}/test', 'GameController@test');
+
+Route::get('/games/privates', 'GameController@privateGames');
 Route::resource('/games', 'GameController');
 
 

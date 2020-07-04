@@ -5,15 +5,29 @@
 
 @section('content')
 
-<section class="page-section portfolio" id="portfolio">
+<section class="portfolio" id="portfolio">
 
-  <div class="container">
+  <div class="container-fluid">
 
-    @if (session('message'))
-        <div class="alert alert-danger">{{ session('message') }}</div>
-    @endif
+    <div class="row">
 
-    <games :games="{{ $games->toJson() }}"></games>
+      <div class="col-md-9 my-3 order-md-2">
+
+        @if (session('message'))
+            <div class="alert alert-danger">{{ session('message') }}</div>
+        @endif
+
+        <games :games="{{ $games->toJson() }}"></games>
+
+      </div>
+
+      <div class="col-md-3 py-3">
+
+        <online-custom-games></online-custom-games>
+
+      </div>
+
+    </div>
 
   </div>
 

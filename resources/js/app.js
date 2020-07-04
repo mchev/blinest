@@ -52,6 +52,7 @@ Vue.component('add-track', require('./components/AddTrack.vue').default);
 
 
 Vue.component('games', require('./components/Games.vue').default);
+Vue.component('online-custom-games', require('./components/OnlineCustomGames.vue').default);
 Vue.component('settings', require('./components/Games/Settings.vue').default);
 
 Vue.component('custom-game', require('./components/Games/Custom/index.vue').default);
