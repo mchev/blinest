@@ -3,7 +3,8 @@
 <div class="row text-center border-right">
 
     <div class="col-md-12">
-        <h2>Parties privées en cours</h2>
+        <h2 class="private-title">Parties privées en cours</h2>
+        <p><small>Pour apparaitre dans cette liste vous devez avoir lancé votre partie et celle-ci ne doit pas être protégée par un mot de passe.</small></p>
     </div>
 
     <div v-if="loadedGames.length == 0" class="col-md-12 text-center">
@@ -85,6 +86,10 @@
 
 
 <style scoped>
+
+    .private-title {
+        font-weight: 100;
+    }
 
     .portfolio-item {
         min-height: 100px;
