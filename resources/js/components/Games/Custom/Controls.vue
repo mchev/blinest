@@ -73,7 +73,7 @@
 
                 setInterval(function() { 
                     axios.get('/games/' + vm.game.id + '/online');
-                }, 10000);
+                }, 5000);
 
             },
 
