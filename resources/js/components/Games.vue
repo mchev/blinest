@@ -51,13 +51,18 @@
 
         data() {
             return {
+                users: [],
+                usersCount: 0,
                 colorCache: {},
                 loadedGames: this.games,
             }
         },
         mounted() {
+
+            
             //this.spinner = false;
         },
+
         created() {
             /*
             axios.get('/api/games').then((response) => {
@@ -166,10 +171,9 @@
     .musica-latina {
         background-color: #E63735 !important;
     }
-    /*
     .annees-90 {
-        background-color: #E63735 !important;
-    }*/
+        background-color: #A998E0 !important;
+    }
     .annees-2010 {
         background-color: #2C3D50 !important;
     }

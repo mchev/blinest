@@ -9,23 +9,39 @@
 
   <div class="container-fluid">
 
-    <div class="row">
+    <div class="row d-flex justify-content-center">
 
-      <div class="col-md-9 my-3 order-md-2">
+      @guest
 
-        @if (session('message'))
-            <div class="alert alert-danger">{{ session('message') }}</div>
-        @endif
+        <div class="col-md-9 my-3 order-md-2">
 
-        <games :games="{{ $games->toJson() }}"></games>
+          @if (session('message'))
+              <div class="alert alert-danger">{{ session('message') }}</div>
+          @endif
 
-      </div>
+          <games :games="{{ $games->toJson() }}"></games>
 
-      <div class="col-md-3 py-3">
+        </div>
 
-        <online-custom-games></online-custom-games>
+      @else
 
-      </div>
+        <div class="col-md-9 my-3 order-md-2">
+
+          @if (session('message'))
+              <div class="alert alert-danger">{{ session('message') }}</div>
+          @endif
+
+          <games :games="{{ $games->toJson() }}"></games>
+
+        </div>
+
+        <div class="col-md-3 py-3">
+
+          <online-custom-games></online-custom-games>
+
+        </div>
+
+      @endguest
 
     </div>
 
