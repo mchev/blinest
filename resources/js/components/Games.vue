@@ -177,5 +177,8 @@
     .annees-2010 {
         background-color: #2C3D50 !important;
     }
+    .halloween {
+        background-color: #EA7A00 !important;
+    }
 
 </style>
