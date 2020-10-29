@@ -13,6 +13,10 @@ h2, h3 {
 	position: relative;
 }
 
+.message-text small {
+	color: #EA7A00;
+}
+
 .message-votes {
 	position: absolute;
 	transition: all .5s ease;
