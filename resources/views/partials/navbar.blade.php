@@ -1,5 +1,6 @@
 <nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase">
     <div class="container-fluid">
+        <img src="/images/halloween_white.png" style="max-height: 5vh; margin-right: 1rem;">
         <a class="navbar-brand" href="{{ url('/') }}">
             <img src="/img/logo_svg.svg" alt="{{ config('app.name', 'Laravel') }}">
         </a>
