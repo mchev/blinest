@@ -17,6 +17,11 @@ class Game extends Model
         return $this->hasMany(Track::class, 'game_id');
     }
 
+    public function pendingTickets()
+    {
+        return $this->hasMany(ModeratorTicket::class, 'game_id')->whereNull('status');
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class, 'game_id');

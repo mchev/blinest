@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Moderator;
 use App\Http\Controllers\Controller;
 
+use App\Game;
 use App\ModeratorTicket;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,13 @@ class TicketController extends Controller
     public function index()
     {
 
-        $tickets = ModeratorTicket::where('status', null)->orderBy('created_at', 'ASC')->get();
+        //$tickets = ModeratorTicket::where('status', null)->orderBy('created_at', 'ASC')->get();
+
+        $tickets = Game::where('public', 1)
+                        ->orderBy('hit', 'DESC')
+                        ->whereHas('pendingTickets')
+                        ->with('pendingTickets')
+                        ->get();
 
         return response()->json($tickets);
         

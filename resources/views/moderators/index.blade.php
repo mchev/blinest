@@ -16,7 +16,7 @@
 
   		<div class="row">
 
-  			<div class="col-md-3 bg-secondary">
+  			<div class="col-lg-3 bg-secondary">
 
   				<ul class="list-group">
 	  				@foreach($games as $game)
@@ -34,20 +34,32 @@
 
   			</div>
 
-  			<div class="col-md-6">
+  			<div class="col-lg-9">
 
   				<h2 class="text-center mb-4">Le salon des modérateurs</h2>
 
           <div class="card mb-3">
             <div class="card-header">
-              Chat modérateurs
+              <h4>Chat modérateurs</h4>
             </div>
             <div class="card-body">
               <moderator-chat></moderator-chat>
             </div>
           </div>
 
-  				<div class="card bg-info text-white">
+          <div class="card bg-info text-white mb-3">
+
+            <div class="card-header">
+              <h4>Demandes à traiter</h4>
+            </div>
+
+            <div class="card-body">
+              <list-ticket></list-ticket>
+            </div>
+
+          </div>
+
+  				<div class="card mb-4">
 
   					<div class="card-header">
   						<h4>FAQ</h4>
@@ -74,13 +86,6 @@
 
 		  		</div>
 
-  			</div>
-
-  			<div class="col-md-3 bg-secondary text-white">
-
-  				<h3>Demandes en cours</h3>
-
-  				<list-ticket></list-ticket>
   			</div>
 
   		</div>

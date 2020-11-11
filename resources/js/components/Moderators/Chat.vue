@@ -11,7 +11,7 @@
             <p class="message-text">
               {{ message.message }}
             </p>
-            <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== $userId"> - {{ message.sender_name }}</span></small>
+            <small>{{ message.created_at | moment("DD/MM HH:mm") }}<span v-if="message.sender_id !== $userId"> - {{ message.sender_name }}</span></small>
           </div>
         </div>
     </div>
