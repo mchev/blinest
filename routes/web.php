@@ -38,6 +38,10 @@ Route::get('/user', 'UserController@user');
 
 Route::group(['middleware' => ['auth']], function () {
 
+	Route::get('/password/reset', function () {
+	    return view('auth.passwords.reset');
+	});
+
 	Route::get('/faire-un-don', 'DonateController@index');
 	Route::post('/donate', 'DonateController@store');
 	Route::get('/thankyou', 'DonateController@thankyou');
