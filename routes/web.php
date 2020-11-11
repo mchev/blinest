@@ -39,7 +39,7 @@ Route::get('/user', 'UserController@user');
 Route::group(['middleware' => ['auth']], function () {
 
 	Route::get('/password/reset', function () {
-	    return view('auth.passwords.reset');
+	    return view('auth.passwords.email');
 	});
 
 	Route::get('/faire-un-don', 'DonateController@index');
