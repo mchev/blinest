@@ -33,14 +33,15 @@ Auth::routes();
 
 Route::get('/user', 'UserController@user');
 
+Route::get('/password/reset', function () {
+    return view('auth.passwords.email');
+});
+
 
 //dd(Auth::user(), Auth::Guest());
 
 Route::group(['middleware' => ['auth']], function () {
 
-	Route::get('/password/reset', function () {
-	    return view('auth.passwords.email');
-	});
 
 	Route::get('/faire-un-don', 'DonateController@index');
 	Route::post('/donate', 'DonateController@store');
