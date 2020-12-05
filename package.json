@@ -35,5 +35,6 @@
     "vue-chartjs": "^3.5.0",
     "vue-moment": "^4.1.0",
     "vue-stripe-checkout": "^3.3.1"
-  }
+  },
+  "name": "blinest"
 }
