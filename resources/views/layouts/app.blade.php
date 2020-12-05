@@ -50,6 +50,16 @@
 <body>
     <div id="app">
 
+        <snowfall>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>❄</span>️️</snowflake>
+            <snowflake><span>🌟</span>️</snowflake>
+        </snowfall>
+
         @include('partials.navbar')
 
 
