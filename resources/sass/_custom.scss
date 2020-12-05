@@ -128,6 +128,8 @@ h3.game-title {
 	padding: 2px 4px;
 	bottom: calc(100% + 8px);
 	color: #333;
+	display: block;
+	line-height: 1;
 }
 
 .bubble:after {
