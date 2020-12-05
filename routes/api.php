@@ -23,15 +23,10 @@ Route::get('/games', 'Api\GameController@index')->name('api.games.index');
 Route::get('/games/search', 'Api\GameController@search')->name('api.games.search');
 
 
-Route::middleware('auth:api')->group( function () {
+Route::get('/media/search', 'Api\DeezerController@search');
+Route::get('/deezer/playlist', 'Api\DeezerController@addPlaylist');
+Route::post('/deezer/store/playlist', 'Api\DeezerController@storePlaylist');
 
-	Route::get('/media/search', 'Api\DeezerController@search');
-	Route::get('/deezer/playlist', 'Api\DeezerController@addPlaylist');
-	Route::post('/deezer/store/playlist', 'Api\DeezerController@storePlaylist');
-
-	Route::get('/spotify/search', 'Api\SpotifyController@search');
-	Route::get('/spotify/playlist', 'Api\SpotifyController@addPlaylist');
-	Route::post('/spotify/store/playlist', 'Api\SpotifyController@storePlaylist');
-
-
-});
+Route::get('/spotify/search', 'Api\SpotifyController@search');
+Route::get('/spotify/playlist', 'Api\SpotifyController@addPlaylist');
+Route::post('/spotify/store/playlist', 'Api\SpotifyController@storePlaylist');
