@@ -8,6 +8,8 @@
       <!-- Masthead Heading -->
       <h1 class="masthead-heading text-uppercase mb-0">Dashboard</h1>
 
+      {{--
+
       <form method="post" enctype="multipart/form-data" action="{{ route('admin.dashboard.index') }}">
 
         @method('POST')
@@ -29,6 +31,8 @@
 
       </form>
 
+      --}}
+
     </div>
 </header>
 
@@ -37,10 +41,11 @@
   <div class="container-fluid">
 
 
-  <div class="row">
+  <div class="row my-4">
 
+{{--
     <!-- Visitors -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-danger shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -57,7 +62,7 @@
     </div>
 
     <!-- PAge Views -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-dark shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -72,10 +77,10 @@
         </div>
       </div>
     </div>
-
+--}}
 
     <!-- Users -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -92,7 +97,7 @@
     </div>
 
     <!-- Games -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -109,7 +114,7 @@
     </div>
 
     <!--Tracks -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -127,7 +132,7 @@
 
 
     <!--Scores -->
-    <div class="col-xl-2 col-md-6 mb-4">
+    <div class="col">
       <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
           <div class="row no-gutters align-items-center">
@@ -148,6 +153,7 @@
 
 </section>
 
+{{--
 <section class="page-section pt-0">
 
   <div class="container-fluid">
@@ -237,5 +243,6 @@
 
 </section>
 
+--}}
 
 @endsection

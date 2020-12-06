@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Game;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 
@@ -15,12 +17,32 @@ class GameController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
-        $games = Game::orderBy('public', 'DESC')->orderBy('hit', 'DESC')->paginate(20);
+        if($request->search) {
 
-        return view('admin.games.index', ['games' => $games]);
+            $search = $request->search;
+
+            $games = Game::orderBy('public', 'DESC')
+                                ->orderBy('hit', 'DESC')
+                                ->where('title', 'like', '%' . $search . '%')
+                                ->orWhere('description', 'like', '%' . $search . '%')
+                                ->orWhereHas('user', function($query) use ($search) {
+                                    $query->where('name', 'like', '%' . $search . '%');
+                                })
+                                ->paginate(20);
+
+        } else {
+
+            $search = '';
+
+            $games = Game::orderBy('public', 'DESC')->orderBy('hit', 'DESC')->paginate(20);
+
+        }
+
+        return view('admin.games.index', compact('games', 'search'));
+
     }
 
     /**
@@ -75,7 +97,40 @@ class GameController extends Controller
      */
     public function update(Request $request, Game $game)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255|unique:games,title,' . $game->id,
+            'description' => 'required|max:255',
+        ]);
+
+        $filename = '';
+
+        if ($request->thumbnail) {
+
+            $img = Image::make($request->thumbnail)
+                ->resize(300, 300, function ($constraint) {
+                    $constraint->aspectRatio();
+                })
+                ->encode('webp');
+
+            $filename = uniqid() . '.webp';
+
+            Storage::disk('public')->put('games/'.$filename, $img);
+
+            $game->thumbnail = $filename;
+
+        }
+
+        // Generate new slug
+        $slug = Str::slug($request->get('title'), '-');
+
+        $game->title = $request->get('title');
+        $game->description = $request->get('description');
+        $game->public = ($request->get('public') == true) ? 1 : 0;
+        $game->slug = $slug;
+
+        $game->save();
+
+        return view('admin.games.edit', compact('game'))->with('success', 'Le blind test a été modifié');
     }
 
     /**

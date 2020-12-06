@@ -47,7 +47,7 @@
             </div><br />
           @endif
 
-          <form method="post" enctype="multipart/form-data" action="{{ route('games.update', $game->id) }}">
+          <form method="post" enctype="multipart/form-data" action="{{ route('admin.games.update', $game) }}">
 
               @method('PATCH')
               @csrf
@@ -97,24 +97,6 @@
                         Publique
                       </label>
                     </div>
-                  </div>
-
-                  <hr>
-
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="1" name="random" id="random" @isset($game->random) checked @endisset>
-                      <label class="form-check-label" for="random">
-                        Lecture aléatoire
-                      </label>
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  <div class="form-group">
-                      <label for="tracks_number">Nombre d'extraits par partie</label>
-                      <input type="number" class="form-control" step="1" id="tracks_number" name="tracks_number" value="{{ $game->tracks_number }}" required/>
                   </div>
 
                 </div>

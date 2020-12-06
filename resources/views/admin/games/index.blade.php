@@ -7,18 +7,27 @@
 
       <!-- Masthead Heading -->
       <h1 class="masthead-heading text-uppercase mb-0">Parties</h1>
+      <p class="masthead-subheading font-weight-light mb-0">{{ $games->total() }} Parties</p>
 
     </div>
 </header>
 
 <section class="page-section portfolio" id="portfolio">
 
-  <div class="container">
+  <div class="container-fluid">
 
     <div class="row m-2">
 
       <div class="col">
-        <strong>{{ $games->total() }} Parties</strong>
+            <form method="GET" action="{{ route('admin.games.index') }}">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" value="{{ $search }}" placeholder="Rechercher..." name="search">
+                  <div class="input-group-append">
+                    <a class="btn btn-secondary" href="{{ route('admin.games.index') }}"><i class="fas fa-times"></i></a>
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                  </div>
+                </div>
+            </form>
       </div>
 
       <div class="col">

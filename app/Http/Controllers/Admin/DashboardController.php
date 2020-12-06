@@ -8,9 +8,9 @@ use App\User;
 use App\Game;
 use App\Track;
 use App\Score;
-use Analytics;
-use Carbon\Carbon;
-use Spatie\Analytics\Period;
+//use Analytics;
+//use Carbon\Carbon;
+//use Spatie\Analytics\Period;
 use Illuminate\Http\Request;
 
 
@@ -31,6 +31,7 @@ class DashboardController extends Controller
         $tracks_count = Track::count();
         $scores_count = Score::count();
 
+/*
         // Analytics
         if ($request->startDate) {
             $startDate = Carbon::parse($request->startDate);
@@ -56,12 +57,13 @@ class DashboardController extends Controller
             $totalVisitors += $date['visitors'];
             $totalPageViews += $date['pageViews'];
         }
-
+*/
         return view('admin.dashboard', [
             'users_count' => $users_count, 
             'games_count' => $games_count, 
             'tracks_count' => $tracks_count,         
             'scores_count' => $scores_count,
+            /*
             'analytics' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
@@ -73,6 +75,7 @@ class DashboardController extends Controller
                 'TopReferrers' => $TopReferrers,
                 'UserTypes' => $UserTypes
             ]
+            */
         ]);
     }
 

@@ -27,9 +27,25 @@ class UserController extends Controller
             $order = "created_at";
         }
 
-        $users = User::withCount('scores')->orderBy($order, 'desc')->paginate(100);
+        if($request->search) {
 
-        return view('admin.users.index', ['users' => $users]);
+            $search = $request->search;
+
+            $users = User::orderBy($order, 'DESC')
+                                ->where('name', 'like', '%' . $search . '%')
+                                ->orWhere('email', 'like', '%' . $search . '%')
+                                ->withCount('scores')
+                                ->paginate(20);
+
+        } else {
+
+            $search = '';
+            $users = User::withCount('scores')->orderBy($order, 'desc')->paginate(20);
+
+        }
+
+        return view('admin.users.index', compact('users', 'search'));
+
     }
 
     /**

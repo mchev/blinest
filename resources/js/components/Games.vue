@@ -180,5 +180,8 @@
     .halloween {
         background-color: #EA7A00 !important;
     }
+    .cest-noel {
+        background-color: #BA1818 !important;
+    }
 
 </style>
