@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use Auth;
 use App\Track;
 use App\Game;
 use Illuminate\Http\Request;
@@ -55,8 +54,9 @@ class DeezerController extends Controller
     {
 
         $game = Game::find($request->params['game_id']);
+        $user = auth()->user();
 
-        if (auth()->user()->isModerator($game) ||auth()->user()->id == $game->user_id) {
+        if ($user->isModerator($game) || $user->id == $game->user_id) {
 
             try {
 
@@ -67,7 +67,7 @@ class DeezerController extends Controller
                     if($track['preview']) {
 
                         $item = new Track([
-                            'user_id' => Auth::user()->id,
+                            'user_id' => $user->id,
                             'game_id' => $request->params['game_id'],
                             'provider_item_id' => $track['id'],
                             'provider' => 'deezer',

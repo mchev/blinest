@@ -37,6 +37,16 @@ Route::get('/user', 'UserController@user');
 
 Route::group(['middleware' => ['auth']], function () {
 
+	// Moderators and owner (from api routes)
+	Route::get('/media/search', 'Api\DeezerController@search');
+	Route::get('/deezer/playlist', 'Api\DeezerController@addPlaylist');
+	Route::post('/deezer/store/playlist', 'Api\DeezerController@storePlaylist');
+
+	Route::get('/spotify/search', 'Api\SpotifyController@search');
+	Route::get('/spotify/playlist', 'Api\SpotifyController@addPlaylist');
+	Route::post('/spotify/store/playlist', 'Api\SpotifyController@storePlaylist');
+
+
 
 	Route::get('/faire-un-don', 'DonateController@index');
 	Route::post('/donate', 'DonateController@store');

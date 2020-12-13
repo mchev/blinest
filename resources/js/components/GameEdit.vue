@@ -269,7 +269,7 @@
 
                         this.errors = [];
 
-                        axios.get('/api/media/search?q=' + this.query).then((response) => {
+                        axios.get('/media/search?q=' + this.query).then((response) => {
                             this.results = response.data.data;
                         }).catch((error) => {
                             console.warn(error);
@@ -293,7 +293,7 @@
 
                         this.errors = [];
 
-                        axios.get('/api/spotify/search?q=' + this.query).then((response) => {
+                        axios.get('/spotify/search?q=' + this.query).then((response) => {
 
                             var spotify = response.data.tracks.items;
 
@@ -364,7 +364,7 @@
 
             addPlaylist() {
 
-                axios.get('/api/deezer/playlist?q=' + this.query).then((response) => {
+                axios.get('/deezer/playlist?q=' + this.query).then((response) => {
                     this.playlist = response.data;
                     this.playlist.provider = 'deezer';
                     $('#playlistModal').modal('show');
@@ -375,7 +375,7 @@
             },
 
             addSpotifyPlaylist() {
-                axios.get('/api/spotify/playlist?q=' + this.query).then((response) => {
+                axios.get('/spotify/playlist?q=' + this.query).then((response) => {
 
                     var spotify = response.data;
 
@@ -404,7 +404,7 @@
                     'provider': this.playlist.provider
                 };
                 let vm = this;
-                axios.post('/api/'+this.playlist.provider+'/store/playlist', {'tracks': this.playlist.tracks.data, 'params': params}).then((response) => {
+                axios.post('/'+this.playlist.provider+'/store/playlist', {'tracks': this.playlist.tracks.data, 'params': params}).then((response) => {
                     this.spinner = false;
                     vm.tracks =response.data;
                     $('#playlistModal').modal('hide');
