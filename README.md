@@ -29,9 +29,10 @@ npm run dev / watch / prod
 
 edit the .env file
 
-```
-composer install --no-dev --optimize-autoloader
-```
+    composer install --no-dev --optimize-autoloader
+    
+    php artisan migrate
+
 
 
 ## SERVER STARTUP
