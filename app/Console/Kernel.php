@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('websockets:clean')->hourly();
-        $schedule->command('cache:clear')->hourly();
+        $schedule->command('websockets:clean')->daily();
+        $schedule->command('cache:clear')->daily();
     }
 
     /**

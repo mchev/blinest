@@ -61,8 +61,10 @@ class Stream extends Command
 
         // $this->games = Game::where('public', true)->get();
         //$this->games = Game::has('tracks', '>', 49)->get();
-        $this->games = Game::where('public', 1)->get();
-
+        if (\Schema::hasTable('games')) {
+            $this->games = Game::where('public', 1)->get();
+        }
+        
     }
 
     /**
