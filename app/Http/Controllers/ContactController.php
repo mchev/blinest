@@ -26,7 +26,7 @@ class ContactController extends Controller
 		$data = array(
 			'from' => $request->from, 
 			'body' => $request->message,
-			'to' => 'hello@blinest.com',
+			'to' => env('APP_EMAIL'), 
 			'subject' => 'Nouveau message depuis le site'
 		);
 

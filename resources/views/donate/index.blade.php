@@ -61,6 +61,9 @@
           <h5>Devenir modérateur</h5>
           <p>Si tu veux t'impliquer encore plus, il est possible de devenir modérateur. Il suffit d'<a class="text-dark" href="/contact">envoyer un mail</a> avec ton pseudo, la partie publique que tu aimerais aider à maintenir et quelques lignes sur tes motivations.</p>
 
+          <h5>Développeur</h5>
+          <p>Blinest est open source. Tout le monde peut participer au développement du site. Le code source est disponible sur <a target="_blank" class="text-dark" href="https://github.com/mchev/blinest">github</a>.</p>
+
         </div>
 
       </div>

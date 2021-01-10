@@ -46,7 +46,7 @@ class DonateController extends Controller
             'amount' => 'required',
         ]);
 
-        \Stripe\Stripe::setApiKey("sk_live_lkTtTsl3rDYR7YimFpzWiS4W00Aw55A9eN");
+        \Stripe\Stripe::setApiKey(env('STRIPE_KEY_SECRET'));
 
         try 
         { 

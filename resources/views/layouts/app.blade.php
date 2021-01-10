@@ -97,7 +97,7 @@
 
         <section class="p-4 text-center">
 
-                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez <a href="/faire-un-don">faire un don</a> ou désactiver le bloqueur de publicité.</small></p>
+                <p><small>Ce site fait avec &#9829; vous est proposé gratuitement.<br> Si vous souhaitez le soutenir vous pouvez <a href="/faire-un-don">faire un don</a>, <a href="https://github.com/mchev/blinest" title="Github">participer au développement</a>, ou désactiver le bloqueur de publicité.</small></p>
 
         </section>
 
@@ -116,7 +116,7 @@
 
                 <hr>
 
-                <small>Copyright © Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/lab" title="Le lab">Le lab</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a></small>
+                <small>Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/lab" title="Le lab">Le lab</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a> - <a href="https://github.com/mchev/blinest" title="Github">Open Source</a></small>
 
             </div>
 
