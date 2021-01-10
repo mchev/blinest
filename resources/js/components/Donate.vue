@@ -75,7 +75,7 @@
     data: () => ({
       loading: false,
       amount: 10,
-      publishableKey: 'pk_live_fzRDxcsWGGIECf7As8JZlELt00tYK4Kz1f', //process.env.PUBLISHABLE_KEY, 
+      publishableKey: process.env.MIX_STRIPE_PUBLISHABLE_KEY, //process.env.PUBLISHABLE_KEY, 
       token: null,
       charge: null,
       error: false,
