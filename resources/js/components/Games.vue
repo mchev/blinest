@@ -185,7 +185,7 @@
     }
     .annees-70 {
         background-color: #64CE1E !important;
-    };
+    }
     .dessin-anime {
         background-color: #EFC700 !important;
     }
