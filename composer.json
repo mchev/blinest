@@ -24,6 +24,7 @@
         "pusher/pusher-php-server": "~3.0",
         "rennokki/larafy": "^1.0",
         "spatie/laravel-analytics": "^3.8",
+        "spatie/laravel-cookie-consent": "^2.12",
         "stripe/stripe-php": "^7.33"
     },
     "require-dev": {

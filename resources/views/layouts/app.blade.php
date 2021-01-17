@@ -122,10 +122,11 @@
 
         </section>
 
-
     </div>
 
     @yield('scripts')
+
+    @include('cookieConsent::index')
 
 </body>
 </html>

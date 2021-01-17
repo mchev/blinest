@@ -18,6 +18,24 @@ h3.game-title {
 }
 */
 
+.cookie-consent {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 1rem;
+	background: $warning;
+	color: $dark;
+}
+button.js-cookie-consent-agree {
+	border:0;
+	background: $success;
+	border-radius: 4px;
+	padding:1rem;
+	float:right;
+	text-transform:uppercase;
+}
+
 .message-text {
 	position: relative;
 }
