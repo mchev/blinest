@@ -10,7 +10,7 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
+    "@fortawesome/fontawesome-free": "^5.15.2",
     "bootstrap": "^4.5.3",
     "browser-sync": "^2.26.13",
     "browser-sync-webpack-plugin": "^2.3.0",
@@ -20,7 +20,7 @@
     "lodash": "^4.17.5",
     "popper.js": "^1.16.1",
     "resolve-url-loader": "^3.1.2",
-    "sass": "^1.26.5",
+    "sass": "^1.32.4",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11"
@@ -34,8 +34,8 @@
     "pusher-js": "^4.4.0",
     "vue-chartjs": "^3.5.0",
     "vue-moment": "^4.1.0",
-    "vue-stripe-checkout": "^3.3.1",
-    "webpack": "^4.45.0"
+    "vue-stripe-checkout": "^3.5.15",
+    "webpack": "^4.46.0"
   },
   "name": "blinest"
 }

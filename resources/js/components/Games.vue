@@ -189,6 +189,9 @@
     .dessin-anime {
         background-color: #EFC700 !important;
     }
+    .saint-valentin {
+        background-color: #E52716 !important;
+    }
 
 
 </style>
