@@ -63,6 +63,7 @@
 
         @include('partials.navbar')
 
+        <div class="alert alert-danger">Le site est actuellement en cours de maintenance suite à un défaut de communication avec le serveur. <br>Les parties et les chats ne fonctionnent donc pas. Le problème devrait être réglé d'ici demain matin.<br>En attendant il y a toujours un bon livre, Netflix, le Scrabble, ou <a href="https://whatthetune.com/">https://whatthetune.com/</a> ;)</div>
 
         @yield('content')
 
