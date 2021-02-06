@@ -50,7 +50,6 @@ import Echo from 'laravel-echo'
 
 window.Pusher = require('pusher-js');
 
-/* Laravel websockets 
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
@@ -60,14 +59,4 @@ window.Echo = new Echo({
     encrypted: true,
     disableStats: false,
     enabledTransports: ['ws', 'wss'],
-});
-
-*/
-
-
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: 'eu',
-    encrypted: true
 });
