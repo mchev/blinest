@@ -9,6 +9,10 @@ composer install
 ```
 
 ```
+php artisan key::generate
+```
+
+```
 npm install
 ```
 
@@ -30,6 +34,8 @@ npm run dev / watch / prod
 edit the .env file
 
     composer install --no-dev --optimize-autoloader
+    
+    php artisan key:generate
     
     php artisan migrate
 
