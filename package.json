@@ -31,7 +31,7 @@
     "emoji-mart-vue": "^2.6.6",
     "laravel-echo": "^1.7.0",
     "moment": "2.24.0",
-    "pusher-js": "^4.4.0",
+    "pusher-js": "^7.0.3",
     "vue-chartjs": "^3.5.0",
     "vue-moment": "^4.1.0",
     "vue-stripe-checkout": "^3.5.15",
