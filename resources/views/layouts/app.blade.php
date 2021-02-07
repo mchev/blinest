@@ -63,6 +63,7 @@
 
         @include('partials.navbar')
 
+        <div class="alert alert-danger">Site en cours de maintenance. Certaines fonctionnalités peuvent ne pas fonctionner correctement.</div>
         @yield('content')
 
         <footer class="footer text-center">
