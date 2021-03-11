@@ -196,7 +196,7 @@
       blockUser(user_id, user_name) {
         if (window.confirm("Attention, si tu confirme, l'utilisateur sera banni pendant une heure. Les seuls motifs pour bannir un utilisateur sont le non respect de la loi, les propos haineux, le harcelement, les menaces ou l'usurpation d'identité.")) {
           axios.get('/moderator/user/' + user_id + '/block').then((resp) => {
-            console.log(resp.data);
+            //console.log(resp.data);
             this.newMessage = "L'utilisateur " + user_name + " a été banni.";
             this.sendMessage(true);
           });

@@ -18,6 +18,8 @@
 
   			<div class="col-lg-3 bg-secondary">
 
+          <moderator-users></moderator-users>
+
   				<ul class="list-group">
 	  				@foreach($games as $game)
 						<li href="#" class="list-group-item list-group-item-action flex-column align-items-start">

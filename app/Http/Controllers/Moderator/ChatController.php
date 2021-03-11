@@ -31,10 +31,8 @@ class ChatController extends Controller
     {
 
         $messages = Message::where('game_id', 11913)
-                            ->withCount('reports')
-                            ->having('reports_count', '<', 3)
                             ->orderby('created_at', 'DESC')
-                            ->limit(100)
+                            ->limit(50)
                             ->get();
 
         return response()->json($messages);

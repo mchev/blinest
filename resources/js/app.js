@@ -69,9 +69,12 @@ Vue.component('donate', require('./components/Donate.vue').default);
 
 Vue.component('event-create', require('./components/Events/Create.vue').default);
 
+
+// MODERATORS
 Vue.component('create-ticket', require('./components/Moderators/CreateTicket.vue').default);
 Vue.component('list-ticket', require('./components/Moderators/TicketList.vue').default);
 Vue.component('moderator-chat', require('./components/Moderators/Chat.vue').default);
+Vue.component('moderator-users', require('./components/Moderators/Users.vue').default);
 
 
 Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);

@@ -24,6 +24,11 @@ class Message extends Model
         $q->where('game_id', $receiver);
     }
 
+    public function game()
+    {
+        return $this->belongsTo(Game::class, 'game_id')->select(['id', 'title']);
+    }
+
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id')->select(['id', 'name']);

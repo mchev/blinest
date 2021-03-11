@@ -65,6 +65,17 @@ class User extends Authenticatable
         return $this->hasOne(Score::class, 'user_id')->latest();
     }
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id')
+                    ->whereHas('game', function($query) {
+                        $query->where('public', 1);
+                    })
+                    ->orderBy('id', 'DESC')
+                    ->with('game')
+                    ->take(6);
+    }
+
     /**
      * The roles that belong to the user.
      */
