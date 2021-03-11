@@ -84,7 +84,6 @@
                         <i class="pr-2 fas fa-play"></i> Rejoindre la partie
                     </button>
                     <loader v-if="waiting"></loader>
-                    <div style="margin-top: 2rem;" v-html="adsenseContent"></div>
                 </div>
             </div>
         </div>
@@ -114,13 +113,11 @@
                 placeholder: 'Le titre et/ou l\'artiste?',
                 alertContent: '',
                 alertClass: 'alert-primary',
-                adsenseContent: null,
                 volume: 1,
             }
         },
         mounted() {
             $("#startModal").modal('show');
-            this.adsenseContent = document.getElementById('divadsensedisplaynone').innerHTML
         },
         created() {
             //
