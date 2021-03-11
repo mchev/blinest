@@ -28,9 +28,8 @@ return [
             'key' => env('PUSHER_APP_KEY'),
             'secret' => env('PUSHER_APP_SECRET'),
             'path' => env('PUSHER_APP_PATH'),
-            'capacity' => null,
-            'enable_client_messages' => true,
-            'enable_statistics' => true,
+            'enable_client_messages' => false,
+            'enable_statistics' => false,
         ],
     ],
 
@@ -110,13 +109,13 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT', null),
+        'local_cert' => null,
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_PK', null),
+        'local_pk' => null,
 
         /*
          * Passphrase for your local_cert file.
