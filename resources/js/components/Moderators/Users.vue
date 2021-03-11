@@ -10,8 +10,14 @@
     <div class="search-results">
 
       <ul class="list-group search-results-list w-100" v-if="users.length">
-        <li class="list-group-item text-light bg-dark text-left" v-for="user in users">
+        <li class="list-group-item text-light bg-dark text-left" v-for="user in users" :key="user.id">
           <span class="pointer text-break" @click="showModal(user)">{{ user.name }}</span>
+        </li>
+      </ul>
+
+      <ul class="list-group search-results-list w-100" v-if="loading">
+        <li class="list-group-item text-light bg-dark text-left">
+          Recherche en cours...
         </li>
       </ul>
 
@@ -32,9 +38,9 @@
 
             <div class="alert alert-warning">
               <p>
-                <strong>Inscrit.e le :</strong> {{ currentUser.created_at | moment("DD/MM/Y H:m") }}<br>
+                <strong>Inscrit.e le :</strong> {{ currentUser.created_at | moment("DD/MM/Y HH:mm") }}<br>
                 <strong>Dernière adresse IP connue :</strong> {{ currentUser.last_login_ip }}<br>
-                <strong>Dernière partie jouée le : </strong> {{ currentUser.latest_score.created_at | moment("DD/MM/Y H:m") }}<br>
+                <strong>Dernière partie jouée le : </strong> {{ currentUser.latest_score.created_at | moment("DD/MM/Y HH:mm") }}<br>
               </p>
             </div>
 
@@ -45,7 +51,7 @@
                   <tr v-for="message in currentUser.messages" :key="message.id">
                     <th>{{ message.game.title }}</th>
                     <td class="text-break">{{ message.message }}</td>
-                    <td>{{ message.created_at | moment("DD/MM/Y H:mm:ss") }}</td>
+                    <td>{{ message.created_at | moment("DD/MM/Y HH:mm:ss") }}</td>
                     <td>
                       <button type="button" class="btn btn-sm text-danger" @click="deleteMessage(message)">
                         <i class="fas fa-trash-alt"></i>
@@ -87,6 +93,7 @@
 
     data: () => {
       return {
+        loading: false,
         search: '',
         users: {},
         currentUser: null
@@ -128,9 +135,11 @@
 
       autoComplete(){
         this.users = {};
+        this.loading = true;
         if(this.search.length > 2){
           axios.post('/moderator/users/search', {search: this.search}).then(response => {
             this.users = response.data.data;
+            this.loading = false;
           });
         }
       }
