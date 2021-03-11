@@ -62,10 +62,6 @@
 
         @include('partials.navbar')
 
-        <div class="alert alert-warning text-center">
-            Le site est actuellement en cours de restauration suite à un <a href="https://www.ovh.com/fr/news/presse/cpl1785.incendie-notre-site-strasbourg">incident sur le serveur</a>.
-        </div> 
-
         @yield('content')
 
         <footer class="footer text-center">
