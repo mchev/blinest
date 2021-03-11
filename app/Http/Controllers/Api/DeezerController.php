@@ -19,7 +19,9 @@ class DeezerController extends Controller
     public function search(Request $request)
     {
 
-        $query = str_replace(' ', '+', $request->q);
+        $query = filter_var ( $request->q, FILTER_SANITIZE_STRING);
+        $query = trim ( $query );
+        $query = str_replace(' ', '+', $query);
 
         $url = 'https://api.deezer.com/search/track?q=' . $query;
 
