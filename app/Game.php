@@ -11,7 +11,6 @@ class Game extends Model
 	protected $guarded = ['id'];
 
     protected $with = ['user', 'moderators'];
-    
 
     public function tracks()
     {
