@@ -21,6 +21,7 @@ class DeezerController extends Controller
 
         $query = filter_var ( $request->q, FILTER_SANITIZE_STRING);
         $query = trim ( $query );
+        $query = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $query);
         $query = str_replace(' ', '+', $query);
 
         $url = 'https://api.deezer.com/search/track?q=' . $query;
