@@ -40,7 +40,7 @@
               <p>
                 <strong>Inscrit.e le :</strong> {{ currentUser.created_at | moment("DD/MM/Y HH:mm") }}<br>
                 <strong>Dernière adresse IP connue :</strong> {{ currentUser.last_login_ip }}<br>
-                <strong>Dernière partie jouée le : </strong> {{ currentUser.latest_score.created_at | moment("DD/MM/Y HH:mm") }}<br>
+                <strong>Dernière partie jouée le : </strong> <span v-if="currentUser.latest_score">{{ currentUser.latest_score.created_at | moment("DD/MM/Y HH:mm") }}</span>
               </p>
             </div>
 
@@ -136,11 +136,13 @@
       autoComplete(){
         this.users = {};
         this.loading = true;
-        if(this.search.length > 2){
+        if(this.search.length > 2) {
           axios.post('/moderator/users/search', {search: this.search}).then(response => {
             this.users = response.data.data;
             this.loading = false;
           });
+        } else {
+          this.loading = false;
         }
       }
       
