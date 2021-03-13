@@ -64,16 +64,17 @@
                         </div>
                     </li>
 
+<!--
                     <li class="nav-item">
                         <a href="{{ route('lab.index') }}" class="nav-link text-warning" title="Le lab"><i class="fas fa-flask"></i></a>
                     </li>
-
+-->
                     <li class="nav-item">
                         <a href="https://github.com/mchev/blinest" target="_blank" class="nav-link text-white" title="Github"><i class="fab fa-github"></i></a>
                     </li>
 
                     <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don.">
-                        <a href="/faire-un-don" class="nav-link" title="Faire un don"><i class="fas fa-donate"></i></a>
+                        <a href="/faire-un-don" class="nav-link" title="Soutenir blinest"><i class="fas fa-donate"></i></a>
                     </li>
 
                 @endguest
