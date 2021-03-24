@@ -92,7 +92,6 @@
 
                   Echo.private('game-' + value.id)
                     .listenForWhisper('counter', (data) => {
-                        console.log(data);
                         value.counter = data;
                         vm.$set(vm.reactiveGames, key, value);
                     });
@@ -112,17 +111,19 @@
 
     .counter {
         position: absolute;
-        background: rgba(255,255,255,0.8);
+        background: hsla(0,0%,100%,.7);
         display: block;
         height: 30px;
         min-width: 30px;
         top: 6px;
         right: 22px;
         z-index: 10;
-        border-radius: 4px;
-        font-weight: bold;
+        border-radius: .5rem;
+        font-weight: 700;
         line-height: 30px;
         text-align: center;
+        padding: 0 0.2rem;
+        color: #2c3e50;
     }
 
     .portfolio-item {
