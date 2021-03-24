@@ -94,9 +94,9 @@
                     .listenForWhisper('counter', (data) => {
                         console.log(data);
                         if(data) {
-                            vm.$set(vm.games.findIndex(f => f.id === value.id), 'counter', data);
+                            vm.$set(vm.games[vm.games.findIndex(f => f.id === value.id)], 'counter', data);
                         } else {
-                            vm.$set(vm.games.findIndex(f => f.id === value.id), 'counter', 0);
+                            vm.$set(vm.games[vm.games.findIndex(f => f.id === value.id)], 'counter', 0);
                         }
                     });
 
