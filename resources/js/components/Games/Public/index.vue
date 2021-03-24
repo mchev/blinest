@@ -215,6 +215,7 @@
             .leaving((user) => {
               this.users.splice(this.users.findIndex(f => f.id === user.id), 1);
               this.usersCount = this.users.length;
+              this.playersCounter(); // Todo prevent for multiple database requests from each users
             });
 
           Echo.channel('game-' + this.game.id)
