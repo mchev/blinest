@@ -23,7 +23,7 @@ class GameController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'podium', 'sendScore', 'slug', 'custom', 'privateGames']]);
+        $this->middleware('auth', ['except' => ['index', 'show', 'track', 'counter', 'podium', 'sendScore', 'slug', 'custom', 'privateGames']]);
     }
 
 
@@ -81,6 +81,11 @@ class GameController extends Controller
     }
 
     public function counter(Request $request, Game $game) {
+
+        $request->validate([
+            'counter' => 'required|integer',
+        ]);
+
         $game->counter = $request->counter;
         $game->update();
     }
