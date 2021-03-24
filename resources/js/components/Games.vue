@@ -91,9 +91,9 @@
                     .listenForWhisper('counter', (data) => {
                         console.log(data);
                         if(data) {
-                            this.$set(value, 'counter', data);
+                            this.$set(this.games, this.games.findIndex(f => f.id === value.id).counter, data);
                         } else {
-                            this.$set(value, 'counter', 0);
+                            this.$set(this.games, this.games.findIndex(f => f.id === value.id).counter, 0);
                         }
                     });
 
