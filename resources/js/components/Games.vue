@@ -2,11 +2,11 @@
 
 <div class="row text-center">
 
-    <div v-if="loadedGames.length == 0" class="col-md-12 text-center">
+    <div v-if="games.length == 0" class="col-md-12 text-center">
         <p>Aucune partie privée</p>
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
-    <div v-for="game in loadedGames" class="col-md-4 col-lg-3">
+    <div v-for="game in games" class="col-md-4 col-lg-3">
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
@@ -54,7 +54,6 @@
                 users: [],
                 usersCount: 0,
                 colorCache: {},
-                loadedGames: this.games,
             }
         },
         mounted() {
@@ -77,7 +76,8 @@
             randomColor(id) {
                 const r = () => Math.floor(256 * Math.random());
                 return this.colorCache[id] || (this.colorCache[id] = `rgb(${r()}, ${r()}, ${r()})`);
-            }
+            },
+
         }
     };
 

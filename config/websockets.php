@@ -108,13 +108,13 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => null,
+        'local_cert' => env('LOCAL_CERT', null),
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => null,
+        'local_pk' => env('LOCAL_KEY', null),
 
         /*
          * Passphrase for your local_cert file.
@@ -123,7 +123,7 @@ return [
 
         'verify_peer' => false,
 
-        'cafile' => '/Users/martin/.config/valet/CA/LaravelValetCASelfSigned.pem',
+        'cafile' => env('LOCAL_CA_VALET'),
     ],
 
     /*

@@ -67,7 +67,6 @@ Vue.component('finnish', require('./components/Games/Finnish.vue').default);
 
 Vue.component('donate', require('./components/Donate.vue').default);
 
-Vue.component('event-create', require('./components/Events/Create.vue').default);
 
 
 // MODERATORS
@@ -84,11 +83,6 @@ Vue.component('game-edit', require('./components/GameEdit.vue').default);
 // ADMIN
 Vue.component('admin-tracks', require('./components/Admin/Tracks.vue').default);
 Vue.component('admin-moderators', require('./components/Admin/Moderators.vue').default);
-
-// ANALYTICS
-Vue.component('total-visitors-and-page-views', require('./components/Analytics/TotalVisitorsAndPageViews.vue').default);
-Vue.component('user-types', require('./components/Analytics/UserTypes.vue').default);
-
 
 
 /**
