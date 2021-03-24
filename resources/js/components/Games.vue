@@ -233,7 +233,7 @@
         background-color: #E52716 !important;
     }
     .love {
-        background-color: ##FE3F5B !important;
+        background-color: #FE3F5B !important;
     }
 
 
