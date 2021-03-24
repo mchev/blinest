@@ -56,7 +56,7 @@
         data() {
             return {
                 users: [],
-                reactiveGames = this.games,
+                reactiveGames: this.games,
                 usersCount: 0,
                 colorCache: {},
             }
