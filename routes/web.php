@@ -33,6 +33,10 @@ Auth::routes();
 
 Route::get('/user', 'UserController@user');
 
+// Players counter (even no auth users)
+Route::post('/games/{game}/counter', 'GameController@counter');
+
+
 //dd(Auth::user(), Auth::Guest());
 
 Route::group(['middleware' => ['auth']], function () {
@@ -59,8 +63,6 @@ Route::group(['middleware' => ['auth']], function () {
 
 	Route::get('/games/{game}/online', 'GameController@online');
 	Route::get('/games/{game}/offline', 'GameController@offline');
-
-	Route::post('/games/{game}/counter', 'GameController@counter');
 
 	Route::get('/games/me', 'GameController@me')->name('games.me');
 
