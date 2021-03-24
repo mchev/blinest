@@ -244,8 +244,12 @@
         },
 
         playersCounter() {
-            Echo.private('game-' + this.game.id)
-              .whisper('counter', this.usersCount);
+
+          axios.post('/games/' + this.game.id + '/counter', {counter: this.usersCount});
+
+          Echo.private('game-' + this.game.id)
+            .whisper('counter', this.usersCount);
+
         },
 
         playTrack(data) {

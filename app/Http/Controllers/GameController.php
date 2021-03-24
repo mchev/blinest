@@ -80,6 +80,10 @@ class GameController extends Controller
         }
     }
 
+    public function counter(Request $request, Game $game) {
+        $game->counter = $request->counter;
+        $game->update();
+    }
 
     /**
      * Display a listing of the resource.
