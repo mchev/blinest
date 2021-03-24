@@ -7,7 +7,7 @@
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
 
-    <div v-for="game in games" class="col-md-4 col-lg-3">
+    <div v-for="game in reactiveGames" class="col-md-4 col-lg-3">
 
         <span v-if="game.counter" class="counter">{{ game.counter }}</span>
         <span v-else class="counter">0</span>
@@ -56,6 +56,7 @@
         data() {
             return {
                 users: [],
+                reactiveGames = this.games,
                 usersCount: 0,
                 colorCache: {},
             }
@@ -88,13 +89,13 @@
 
                 let vm = this;
 
-                $.each(this.games, function(key, value) {
+                $.each(this.reactiveGames, function(key, value) {
 
                   Echo.private('game-' + value.id)
                     .listenForWhisper('counter', (data) => {
                         console.log(data);
                         value.counter = data;
-                        vm.$set(vm.games, key, value);
+                        vm.$set(vm.reactiveGames, key, value);
                     });
 
                 });
