@@ -93,10 +93,8 @@
                   Echo.private('game-' + value.id)
                     .listenForWhisper('counter', (data) => {
                         console.log(data);
-                        if(data) {
-                            value.counter = data;
-                            vm.$set(vm.games, vm.games.findIndex(f => f.id === value.id), value);
-                        }
+                        value.counter = data;
+                        vm.$set(vm.games, key, value);
                     });
 
                 });
