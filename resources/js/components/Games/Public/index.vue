@@ -206,6 +206,7 @@
             .here((users) => {
               this.users = users;
               this.usersCount = this.users.length;
+              this.playersCounter();
             })
             .joining((user) => {
               this.users.push(user);
@@ -240,6 +241,11 @@
               }
             });
 
+        },
+
+        playersCounter() {
+            Echo.private('game-' + this.game.id)
+              .whisper('counter', this.usersCount);
         },
 
         playTrack(data) {

@@ -6,7 +6,10 @@
         <p>Aucune partie privée</p>
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
+
     <div v-for="game in games" class="col-md-4 col-lg-3">
+
+        <span v-if="game.counter" class="counter">{{ game.counter }}</span>
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
@@ -60,6 +63,7 @@
 
             
             //this.spinner = false;
+            this.getPlayersCounter();
         },
 
         created() {
@@ -78,6 +82,26 @@
                 return this.colorCache[id] || (this.colorCache[id] = `rgb(${r()}, ${r()}, ${r()})`);
             },
 
+
+            getPlayersCounter() {
+
+                $.each(this.games, function(key, value) {
+
+                  Echo.private('game-' + value.id)
+                    .listenForWhisper('counter', (data) => {
+                        console.log(data);
+                        if(data) {
+                            this.$set(value, 'counter', data);
+                        } else {
+                            this.$set(value, 'counter', 0);
+                        }
+                    });
+
+                });
+
+            }
+
+
         }
     };
 
@@ -85,6 +109,21 @@
 
 
 <style scoped>
+
+    .counter {
+        position: absolute;
+        background: rgba(255,255,255,0.8);
+        display: block;
+        height: 30px;
+        min-width: 30px;
+        top: 6px;
+        right: 22px;
+        z-index: 10;
+        border-radius: 4px;
+        font-weight: bold;
+        line-height: 30px;
+        text-align: center;
+    }
 
     .portfolio-item {
         min-height: 210px;
