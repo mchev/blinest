@@ -10,6 +10,7 @@
     <div v-for="game in games" class="col-md-4 col-lg-3">
 
         <span v-if="game.counter" class="counter">{{ game.counter }}</span>
+        <span v-else class="counter">0</span>
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
@@ -85,15 +86,17 @@
 
             getPlayersCounter() {
 
+                let vm = this;
+
                 $.each(this.games, function(key, value) {
 
                   Echo.private('game-' + value.id)
                     .listenForWhisper('counter', (data) => {
                         console.log(data);
                         if(data) {
-                            this.$set(this.games, this.games.findIndex(f => f.id === value.id).counter, data);
+                            vm.$set(vm.games, vm.games.findIndex(f => f.id === value.id).counter, data);
                         } else {
-                            this.$set(this.games, this.games.findIndex(f => f.id === value.id).counter, 0);
+                            vm.$set(vm.games, vm.games.findIndex(f => f.id === value.id).counter, 0);
                         }
                     });
 
