@@ -9,8 +9,7 @@
 
     <div v-for="game in reactiveGames" class="col-md-4 col-lg-3">
 
-        <span v-if="game.counter" class="counter">{{ game.counter }}</span>
-        <span v-else class="counter">0</span>
+        <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
