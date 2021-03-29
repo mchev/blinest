@@ -52,9 +52,9 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
-	Route::get('/faire-un-don', 'DonateController@index');
-	Route::post('/donate', 'DonateController@store');
-	Route::get('/thankyou', 'DonateController@thankyou');
+	Route::get('/faire-un-don', 'DonateController@index')->name('donate');
+	Route::post('/donate/success', 'DonateController@success')->name('donate.success');
+	Route::post('/donate/error', 'DonateController@error')->name('donate.error');
 
 	Route::get('/profile', 'ProfileController@index')->name('profile');
 	Route::get('/profile/delete', 'ProfileController@destroy')->name('profile.delete');

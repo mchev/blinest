@@ -22,13 +22,11 @@ class DonateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function thankyou(Request $request)
+    public function error(Request $request)
     {
-        if ($request->session()->has('status')) {
-            return view('donate.thankyou');
-        } else {
-            return redirect('/');
-        }
+        return redirect()->route('donate', [
+            'error' => true,
+        ]);
     }
 
     /**
@@ -37,53 +35,10 @@ class DonateController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function success(Request $request)
     {
 
-        $request->validate([
-            'name' => 'required|max:50',
-            'email' => 'required|email:rfc,dns',
-            'amount' => 'required',
-        ]);
-
-        \Stripe\Stripe::setApiKey(env('STRIPE_KEY_SECRET'));
-
-        try 
-        { 
-            //dd($request->amount);
-            $customer = \Stripe\Customer::create(array(
-                'name' => $request->name,
-                'email' => $request->email,
-                'source' => $request->source,
-            )); 
-
-            // `source` is obtained with Stripe.js; see https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token
-            $charge = \Stripe\Charge::create([
-              'amount' => $request->amount,
-              'currency' => 'eur',
-              //'source' => $request->source,
-              'customer' => $customer->id,
-              'receipt_email' => $request->email,
-              'description' => 'Don à l\'intention de blinest.com',
-            ]);
-
-            $userDonation = new UserDonation([
-                'user_id' => auth()->user()->id,
-                'amount' => $request->amount
-            ]);
-
-            $userDonation->save();
-
-            $request->session()->flash('status', 'Le paiement a été validé!');
-
-            return response()->json($charge);
-
-        }
-
-        catch (\Exception $ex) {
-            flash($ex->getMessage())->error();
-            return redirect('/membership');
-        }
+        return view('donate.thankyou');
 
     }
 
