@@ -55,7 +55,7 @@
       StripeCheckout,
     },
 
-    props: ['user'],
+    props: ['error'],
 
     data: () => ({
       publishableKey: process.env.MIX_STRIPE_PUBLISHABLE_KEY, //process.env.PUBLISHABLE_KEY, 
@@ -69,7 +69,6 @@
       ],
       successURL: 'https://blinest.com/donate/success',
       cancelURL: 'https://blinest.com/donate/error',
-      error: false,
     }),
 
     methods: {
@@ -79,7 +78,7 @@
         this.lineItems = [
           {
             price: 'price_1IaHrSFz8PGMiHyiVwAekGIF', // The id of the one-time price you created in your Stripe dashboard
-            quantity: this.quantity,
+            quantity: parseInt(this.quantity),
           }
         ];
 

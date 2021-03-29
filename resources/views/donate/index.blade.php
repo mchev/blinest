@@ -25,7 +25,7 @@
 
         <div class="col-md-6">
 
-          <donate :user="{{ auth()->user() }}"></donate>
+          <donate :error="{{ $error }}"></donate>
 
         </div>
 
