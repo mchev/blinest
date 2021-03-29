@@ -63,7 +63,7 @@
       quantity: 1,
       lineItems: [
         {
-          price: 'price_1IaHrSFz8PGMiHyiVwAekGIF', // The id of the one-time price you created in your Stripe dashboard
+          price: 'price_1IaHrSFz8PGMiHyirHUcEBPE', // The id of the one-time price you created in your Stripe dashboard
           quantity: 1,
         }
       ],
