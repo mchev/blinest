@@ -25,7 +25,7 @@
 
         <div class="col-md-6">
 
-          <donate :error="{{ $error }}"></donate>
+          <donate :error="{{ $error ?? 0 }}"></donate>
 
         </div>
 
