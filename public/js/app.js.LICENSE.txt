@@ -59,6 +59,12 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
+/**
+ * vue-coerce-props v1.0.0
+ * (c) 2018 Eduardo San Martin Morote <posva13@gmail.com>
+ * @license MIT
+ */
+
 /**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
  * @version 1.16.1
