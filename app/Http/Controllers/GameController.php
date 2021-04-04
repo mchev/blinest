@@ -114,6 +114,7 @@ class GameController extends Controller
         $alltime = $game->podium();
         $month = $game->podiumMonth();
         $week = $game->podiumWeek();
+        $userScore = null;
 
         if(Auth::user()) {
             $userScore = Auth::user()->scores->where('game_id', $game->id)->sum('score');
@@ -124,7 +125,7 @@ class GameController extends Controller
             'alltime' => $alltime,
             'month' => $month,
             'week' => $week,
-            'user_score' => ($userScore) ? $userScore : null,
+            'user_score' => $userScore,
         ]);
     }
 
