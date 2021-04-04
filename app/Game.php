@@ -61,7 +61,7 @@ class Game extends Model
             ->with(array('user' => function($query) {
                 $query->select('id','name');
             }))
-            ->take(5)
+            ->take(10)
             ->get();
     }
 
@@ -79,7 +79,7 @@ class Game extends Model
             ->with(array('user' => function($query) {
                 $query->select('id','name');
             }))
-            ->take(5)
+            ->take(10)
             ->get();
 
     }
@@ -98,7 +98,7 @@ class Game extends Model
             ->with(array('user' => function($query) {
                 $query->select('id','name');
             }))
-            ->take(5)
+            ->take(10)
             ->get();
 
     }

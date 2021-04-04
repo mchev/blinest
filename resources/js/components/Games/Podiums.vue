@@ -1,36 +1,50 @@
 <template>
 
-    <div class="row mt-4 d-flex justify-content-center">
+    <div>
 
-        <div v-if="week.length" class="col-md-4">
-            <h4>Top de la semaine</h4>
-            <ul class="list-group">
-                <li v-for="(user, index) in week" :key="user.id" class="list-group-item text-center">
-                    <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
-                </li>
-            </ul>
+        <div v-if="user_score" class="row my-4">
+            <div class="col text-center">
+                Mon score : {{ user_score }} points
+            </div>
         </div>
 
-        <div v-if="month.length" class="col-md-4">
-            <h4>Top du mois</h4>
-            <ul class="list-group">
-                <li v-for="(user, index) in month" :key="user.id" class="list-group-item text-center">
-                    <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
-                </li>
-            </ul>
+
+        <div class="row mt-4 d-flex justify-content-center">
+
+            <div v-if="week.length" class="col-md-4">
+                <h4>Top de la semaine</h4>
+                <ul class="list-group">
+                    <li v-for="(user, index) in week" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
+                        <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
+                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div v-if="month.length" class="col-md-4">
+                <h4>Top du mois</h4>
+                <ul class="list-group">
+                    <li v-for="(user, index) in month" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
+                        <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
+                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                    </li>
+                </ul>
+            </div>
+
+            
+            <div class="col-md-4">
+                <h4>Tous les temps</h4>
+                <ul class="list-group">
+                    <li v-for="(user, index) in alltime" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
+                        <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
+                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                    </li>
+                </ul>
+            </div>
+
+            
         </div>
 
-        
-        <div class="col-md-4">
-            <h4>Tous les temps</h4>
-            <ul class="list-group">
-                <li v-for="(user, index) in alltime" :key="user.id" class="list-group-item text-center">
-                    <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
-                </li>
-            </ul>
-        </div>
-
-        
     </div>
 
 </template>
@@ -47,7 +61,8 @@
             return {
                 alltime: {},
                 month: {},
-                week: {}
+                week: {},
+                user_score: 0,
             }
         },
 
@@ -70,6 +85,7 @@
                     this.alltime = response.data.alltime;
                     this.month = response.data.month;
                     this.week = response.data.week;
+                    this.user_score = response.data.user_score;
                 }).catch((error) => {
                     console.warn(error);
                 });
@@ -82,17 +98,21 @@
 
 <style scoped>
 
+    .list-group .list-group-item a {
+        color: #2c3e50;
+    }
+
     .list-group .list-group-item:nth-of-type(1) {
-        background:linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+        background:#2ecc71;
     }
     .list-group .list-group-item:nth-of-type(1) a {
         font-weight: bold;
     }
     .list-group .list-group-item:nth-of-type(2) {
-        background:linear-gradient(to right, #D7D7D7, #FFF, #D7D7D7);
+        background:#f1c40f;
     }
     .list-group .list-group-item:nth-of-type(3) {
-        background:linear-gradient(to right, #A77044, #FFF, #A77044);
+        background:#e74c3c;
     }
 
 
