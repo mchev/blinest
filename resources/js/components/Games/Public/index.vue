@@ -84,7 +84,7 @@
             <div class="divider-custom-line"></div>
           </div>
 
-          <h3>Le top 5 de {{ game.title }}</h3>
+          <h3>Le top 10 de {{ game.title }}</h3>
 
           <game-podiums :game="game"></game-podiums>
 
