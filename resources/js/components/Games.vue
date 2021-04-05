@@ -22,7 +22,7 @@
         </div>
         <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
             <div class="text-center text-white">
-                <img class="img-circle" :alt="game.title" v-if="game.thumbnail" :src="'/storage/games/' + game.thumbnail"><br>
+                <img loading="lazy" class="img-circle" :alt="game.title" v-if="game.thumbnail" :src="'/storage/games/' + game.thumbnail"><br>
                 <h3 class="game-title">{{ game.title }}</h3>
             </div>
         </div>
@@ -36,7 +36,7 @@
         </div>
         <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
             <div class="text-center text-white">
-                <img class="img-circle" :alt="game.title" v-if="game.thumbnail" :src="'/storage/games/' + game.thumbnail"><br>
+                <img loading="lazy" class="img-circle" :alt="game.title" v-if="game.thumbnail" :src="'/storage/games/' + game.thumbnail"><br>
                 <h3 class="game-title">{{ game.title }}</h3>
             </div>
         </div>
