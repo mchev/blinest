@@ -8,7 +8,7 @@
             <!-- Masthead Heading -->
             <h1>Blind-Test {{ game.title }}</h1>
 
-            <adsense :position="pubGame"/>
+            <adsense :position="'pubGame'"/>
 
             <p>{{ game.description }}</p>
 
