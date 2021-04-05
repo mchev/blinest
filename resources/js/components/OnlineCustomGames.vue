@@ -3,7 +3,7 @@
 <div class="row text-center border-right">
 
     <div class="col-md-12">
-        <h2 class="private-title">Blind tests privés en cours</h2>
+        <h2 class="private-title">Blind tests privés</h2>
         <p><small>Pour apparaitre dans cette liste vous devez avoir lancé votre partie et celle-ci ne doit pas être protégée par un mot de passe.</small></p>
     </div>
 
