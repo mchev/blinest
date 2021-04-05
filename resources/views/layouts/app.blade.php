@@ -136,11 +136,9 @@
     <!-- Game blinest -->
     <div id="pubGame" style="display:none;">
         <ins class="adsbygoogle"
-             style="display:block"
+             style="display:inline-block;width:728px;height:90px"
              data-ad-client="ca-pub-6495635642797272"
-             data-ad-slot="8419827522"
-             data-ad-format="auto"
-             data-full-width-responsive="true">
+             data-ad-slot="8419827522">
         </ins>
     </div>
 
