@@ -23,6 +23,13 @@
 
         </div>
 
+        <div class="col-md-3 py-3">
+
+          <adsense/>
+
+        </div>
+
+
       @else
 
         <div class="col-md-9 my-3 order-md-2">
@@ -38,6 +45,8 @@
         <div class="col-md-3 py-3">
 
           <online-custom-games></online-custom-games>
+
+          <adsense/>
 
         </div>
 

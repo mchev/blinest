@@ -84,6 +84,8 @@ Vue.component('game-edit', require('./components/GameEdit.vue').default);
 Vue.component('admin-tracks', require('./components/Admin/Tracks.vue').default);
 Vue.component('admin-moderators', require('./components/Admin/Moderators.vue').default);
 
+// ADSENSE
+Vue.component('adsense', require('./components/AdSense.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
