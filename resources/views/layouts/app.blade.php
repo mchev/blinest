@@ -2,7 +2,18 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-58430725-8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-58430725-8');
+    </script>
+
     <script data-ad-client="ca-pub-6495635642797272" async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
     <meta name="google-site-verification" content="e5HQfdzsH7U3iR8urwcghyw0uduK0IMasboHY53pRBs" />
 
     <meta charset="utf-8">
@@ -33,19 +44,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}" defer></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async defer src="https://www.googletagmanager.com/gtag/js?id=UA-58430725-8"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-58430725-8');
-    </script>
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
