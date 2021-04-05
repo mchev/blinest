@@ -5,10 +5,6 @@
 
     RewriteEngine On
 
-
-    RewriteCond %{HTTP_HOST} ^www.blinest.com$ [NC]
-    RewriteRule ^(.*)$ https://blinest.com/$1 [R=301,L]
-
     RewriteCond %{HTTPS} off [OR]
     RewriteCond %{HTTP_HOST} ^www\. [NC]
     RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]

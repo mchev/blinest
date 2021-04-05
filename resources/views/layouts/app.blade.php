@@ -22,6 +22,13 @@
     <meta property="og:image" content="/img/screenshot.jpg" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:description" content="@yield('description')" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:description" content="@yield('description')">
+    <meta name="twitter:title" content="@yield('title')">
+    <meta name="twitter:site" content="@PegaseMartin">
+
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
