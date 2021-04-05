@@ -12,6 +12,8 @@
       gtag('config', 'UA-58430725-8');
     </script>
 
+    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
     <meta name="google-site-verification" content="e5HQfdzsH7U3iR8urwcghyw0uduK0IMasboHY53pRBs" />
 
     <meta charset="utf-8">
@@ -121,8 +123,6 @@
 
     <!-- Sidebar -->
     <div id="pubSidebar" style="display:none;">
-        <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Sidebar Blinest -->
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-client="ca-pub-6495635642797272"
@@ -137,8 +137,6 @@
 
     <!-- Game blinest -->
     <div id="pubGame" style="display:none;">
-        <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Game blinest -->
         <ins class="adsbygoogle"
              style="display:inline-block;width:728px;height:90px"
              data-ad-client="ca-pub-6495635642797272"
