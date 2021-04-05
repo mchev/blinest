@@ -8,6 +8,8 @@
             <!-- Masthead Heading -->
             <h1>Blind-Test {{ game.title }}</h1>
 
+            <adsense :position="pubGame"/>
+
             <p>{{ game.description }}</p>
 
             <p>modérateur.rice.s : <span class="badge badge-info mr-2" v-for="moderator in game.moderators" :key="moderator.id">{{ moderator.name }}</span></p>

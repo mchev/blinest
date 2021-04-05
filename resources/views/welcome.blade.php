@@ -25,7 +25,7 @@
 
         <div class="col-md-3 py-3 border-right">
 
-          <adsense/>
+          <adsense :position="pubSidebar"/>
 
         </div>
 
@@ -46,7 +46,7 @@
 
           <online-custom-games></online-custom-games>
 
-          <adsense/>
+          <adsense :position="pubSidebar"/>
 
         </div>
 

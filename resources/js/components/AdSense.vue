@@ -1,6 +1,6 @@
 <template>
 
-	<div class="google-communication" class="my-4 text-center w-100" v-html="adsenseContent"></div>
+	<div class="google-communication my-4 text-center w-100" v-html="adsenseContent"></div>
 
 </template>
 
@@ -10,6 +10,8 @@
       
       	name: 'AdSense',
 
+      	props: ['position'],
+
 		data() {
 			return {
 				adsenseContent: '',
@@ -17,7 +19,7 @@
 		},
 
       	mounted() {
-      		this.adsenseContent = document.getElementById('adsense').innerHTML;
+      		this.adsenseContent = document.getElementById(this.position).innerHTML;
       	}
 
     };
