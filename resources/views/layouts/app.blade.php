@@ -119,33 +119,34 @@
     @include('cookieConsent::index')
 
 
-    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-
     <!-- Sidebar -->
     <div id="pubSidebar" style="display:none;">
+        <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Sidebar Blinest -->
         <ins class="adsbygoogle"
              style="display:block"
              data-ad-client="ca-pub-6495635642797272"
              data-ad-slot="9771425885"
              data-ad-format="auto"
-             data-full-width-responsive="true">
-         </ins>
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
 
 
     <!-- Game blinest -->
     <div id="pubGame" style="display:none;">
+        <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Game blinest -->
         <ins class="adsbygoogle"
              style="display:inline-block;width:728px;height:90px"
              data-ad-client="ca-pub-6495635642797272"
-             data-ad-slot="8419827522">
-        </ins>
+             data-ad-slot="8419827522"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
-
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-
 
 </body>
 </html>
