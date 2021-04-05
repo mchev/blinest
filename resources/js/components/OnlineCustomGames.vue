@@ -1,6 +1,6 @@
 <template>
 
-<div class="row text-center border-right">
+<div class="row text-center">
 
     <div class="col-md-12">
         <h2 class="private-title">Blind tests privés</h2>

@@ -23,7 +23,7 @@
 
         </div>
 
-        <div class="col-md-3 py-3">
+        <div class="col-md-3 py-3 border-right">
 
           <adsense/>
 
@@ -42,7 +42,7 @@
 
         </div>
 
-        <div class="col-md-3 py-3">
+        <div class="col-md-3 py-3 border-right">
 
           <online-custom-games></online-custom-games>
 

@@ -1,6 +1,6 @@
 <template>
 
-	<div class="google-communication" v-html="adsenseContent"></div>
+	<div class="google-communication" class="my-4" v-html="adsenseContent"></div>
 
 </template>
 
