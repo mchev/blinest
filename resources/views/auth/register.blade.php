@@ -45,6 +45,20 @@
                         @csrf
 
                         <div class="form-group row">
+                            <div class="col-md-8 offset-md-4">
+                                <a href="{{ url('/auth/redirect/facebook') }}" class="btn btn-primary"><i class="fab fa-facebook"></i> Se connecter via Facebook</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-8 offset-md-4">
+                                <a href="{{ url('/auth/redirect/discord') }}" class="btn btn-primary"><i class="fab fa-discord"></i> Se connecter via Discord</a>
+                            </div>
+                        </div>
+
+                        <hr class="border-b border-primary">
+
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Nom d'utilisateur</label>
 
                             <div class="col-md-6">
@@ -107,9 +121,6 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
-
-                                <a href="{{ url('/auth/redirect/facebook') }}" class="btn btn-info"><i class="fab fa-facebook"></i> Connexion avec Facebook</a>
-
                             </div>
                         </div>
                     </form>

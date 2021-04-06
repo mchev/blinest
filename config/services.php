@@ -56,4 +56,10 @@ return [
         'redirect' => env('SPOTIFY_REDIRECT_URI')
     ],
 
+    'discord' => [
+        'client_id' => env('DISCORD_APP_ID'),
+        'client_secret' => env('DISCORD_APP_SECRET'),
+        'redirect' => env('DISCORD_REDIRECT_URI')
+    ],
+
 ];
