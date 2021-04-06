@@ -1,15 +1,15 @@
 <template>
 
-<div class="row text-center">
+<div class="row">
 
     <div class="col-md-12">
-        <h2 class="private-title">Blind tests privés</h2>
+        <h2 class="font-weight-light">Blind tests privés</h2>
         <p><small>Pour apparaitre dans cette liste vous devez avoir lancé votre partie et celle-ci ne doit pas être protégée par un mot de passe.</small></p>
     </div>
 
-    <div v-if="loadedGames.length == 0" class="col-md-12 text-center">
+    <div v-if="loadedGames.length == 0" class="col-md-12">
         <p>Aucune partie en cours</p>
-        <a class="btn btn-success btn-lg" href="/games/create">Créer un blind test</a>
+        <a class="btn btn-sm btn-success btn-lg" href="/games/create">Créer un blind test</a>
     </div>
 
     <div v-for="game in loadedGames" class="col-md-12">
