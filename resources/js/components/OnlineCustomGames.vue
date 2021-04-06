@@ -14,7 +14,7 @@
 
     <div v-for="game in loadedGames" class="col-md-12">
 
-      <a class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug" :style="{backgroundColor: randomColor(game.id)}">
+      <a class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
             <div title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
@@ -93,6 +93,7 @@
 
     .portfolio-item {
         min-height: 100px;
+        background-color: #2c3e50;
     }
     .game-item {
         height: 100px !important;
