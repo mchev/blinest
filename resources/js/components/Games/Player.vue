@@ -174,12 +174,12 @@
 
                 // If the file is not available try again or alert
                 this.game.player.onerror = function() {
-                    if(this.alreadyHadAnError) {
-                        this.alreadyHadAnError = false;
+                    if(vm.alreadyHadAnError) {
+                        vm.alreadyHadAnError = false;
                         alert("Une erreur a eu lieu lors du chargement de l'extrait. Nous préparons l'extrait suivant...");
                     } else {
-                        this.alreadyHadAnError = true;
-                        this.playAudio();
+                        vm.alreadyHadAnError = true;
+                        vm.playAudio();
                     }
                 };
 
