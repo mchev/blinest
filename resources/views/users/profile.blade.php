@@ -18,11 +18,14 @@
 
       @endforeach
 
-      <p>Inscrit.e depuis le {{ $user->created_at->format('d/m/Y') }}</p>
+      <p>
+        Inscrit.e depuis le {{ $user->created_at->format('d/m/Y') }}
 
-      @if($user->latestScore)
-        <p>Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}</p>
-      @endif
+        @if($user->latestScore)
+          <br>
+          Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}
+        @endif
+      </p>
 
 </header>
 
@@ -46,17 +49,18 @@
 
         <div class="row">
 
-          <div class="col-md-6">
-
-            <h3 class="mt-4">Meilleurs scores par parties</h3>
+          <div class="col">
 
             <div class="table-responsive">
-              <table class="table table-striped">
+              <table class="table table-striped text-left">
 
                 <thead>
                   <tr>
                     <th>Parties</th>
-                    <th>Scores</th>
+                    <th>Dernière partie le</th>
+                    <th>Nombre de parties jouées</th>
+                    <th>Meilleur score</th>
+                    <th>Score total</th>
                   </tr>
                 </thead>
 
@@ -64,20 +68,16 @@
                   @foreach($user->stats() as $stat)
                     <tr>
                       <td><a href="/parties/{{ $stat->game->slug }}">{{ $stat->game->title }}</a></td>
-                      <td>{{ $stat->score }}</td>
+                      <td>{{ \Carbon\Carbon::parse($stat->latest)->format('d/m/Y H:i') }}</td>
+                      <td>{{ $stat->total }}</td>
+                      <td>{{ $stat->score }} pts</td>
+                      <td>{{ $stat->scores }} pts</td>
                     </tr>
                   @endforeach
                 </tbody>
 
               </table>
             </div>
-
-          </div>
-
-          <div class="col-md-6">
-
-            <h3 class="mt-4">Parties jouées ({{ $user->scores->count() }})</h3>
-            <stats-game-type :stats="{{ $user->stats()->toJson() }}" :height="150"></stats-game-type>
 
           </div>
 

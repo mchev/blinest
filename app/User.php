@@ -131,9 +131,14 @@ class User extends Authenticatable
     {
 
         $stats = Score::where('user_id', $this->id)
-                    ->selectRaw('game_id, COUNT(*) as total, MAX(score) as score')
+                    ->selectRaw(
+                        'game_id, COUNT(*) as total,
+                        MAX(updated_at) as latest,
+                        MAX(score) as score, 
+                        SUM(score) as scores'
+                    )
                     ->groupBy('game_id')
-                    ->orderBy('score', 'DESC')
+                    ->orderBy('scores', 'DESC')
                     ->with('game')
                     ->get();
 
