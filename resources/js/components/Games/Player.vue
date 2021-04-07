@@ -176,7 +176,8 @@
                 this.game.player.onerror = function() {
                     if(vm.alreadyHadAnError) {
                         vm.alreadyHadAnError = false;
-                        alert("Une erreur a eu lieu lors du chargement de l'extrait. Nous préparons l'extrait suivant...");
+                        vm.waitingTrack = true;
+                        vm.placeholder = "Erreur de lecture. Nous préparons l'extrait suivant...";
                     } else {
                         vm.alreadyHadAnError = true;
                         vm.playAudio();
