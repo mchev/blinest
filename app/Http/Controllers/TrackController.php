@@ -116,6 +116,7 @@ class TrackController extends Controller
         $track->artist_name = $request->artist_name;
         $track->track_name = $request->track_name;
         $track->custom_answer = $request->custom_answer;
+        $track->down_rate = intval($request->down_rate);
         $track->update();
 
         return response()->json($track);
