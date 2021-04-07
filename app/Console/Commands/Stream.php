@@ -94,18 +94,7 @@ class Stream extends Command
 
             foreach ($games as $game) {
 
-
-                $track = Track::orderByRaw("RAND()")
-                            ->where('game_id', $game->id)
-                            ->whereNotIn('id', $this->tracks)
-                            ->first();
-
-                /*
-                $track = Track::orderBy('hit', 'ASC')
-                            ->where('game_id', $game->id)
-                            ->whereNotIn('id', $this->tracks)
-                            ->first();
-                */
+                $track = $this->nextTrack($game);
 
                 $track->hit = $track->hit + 1;
                 $track->update();
@@ -134,6 +123,24 @@ class Stream extends Command
 
     }
 
+    public function nextTrack(Game $game)
+    {
+        $track = Track::orderByRaw("RAND()")
+                    ->where('game_id', $game->id)
+                    ->whereNotIn('id', $this->tracks)
+                    ->first();
+
+        if(@file_get_contents($track->preview_url)) {
+
+            return $track;
+
+        } else {
+
+            $track->delete();
+            return $this->nextTrack($game);
+
+        }
+    }
 
     public function endGame()
     {
