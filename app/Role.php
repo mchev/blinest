@@ -13,4 +13,9 @@ class Role extends Model
     {
         return $this->belongsToMany('App\User')->using('App\RoleUser')->withTimestamps();
     }
+
+    public function game()
+    {
+    	return Game::where('id', $this->pivot->game_id)->first();
+    }
 }

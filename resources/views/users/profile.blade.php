@@ -7,24 +7,27 @@
 @section('content')
 
 <header class="masthead bg-primary text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
+    <div class="container">
 
       <!-- Masthead Heading -->
       <h1 class="masthead-heading text-uppercase mb-0">{{ $user->name }}</h1>
 
       @foreach ($user->roles as $role)
 
-        <div class="badge badge-info m-2">{{ $role->name }}</div>
+        <span class="badge badge-info">{{ $role->name }}@if($role->game()) de {{ $role->game()->title }}@endif</span>
 
       @endforeach
 
-      <p>
+      <p class="mt-4">
         Inscrit.e depuis le {{ $user->created_at->format('d/m/Y') }}
 
         @if($user->latestScore)
           <br>
           Dernière partie jouée le : {{ $user->latestScore->created_at->format('d/m/Y H:i') }}
+          <br>
+          Nombre de parties jouées : {{ $user->scores->count() }}
         @endif
+
       </p>
 
 </header>
