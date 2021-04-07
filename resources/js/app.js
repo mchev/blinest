@@ -48,8 +48,6 @@ Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttrib
 
 Vue.component('loader', require('./components/Loader.vue').default);
 Vue.component('search-games', require('./components/SearchGames.vue').default);
-Vue.component('add-track', require('./components/AddTrack.vue').default);
-
 
 Vue.component('games', require('./components/Games.vue').default);
 Vue.component('online-custom-games', require('./components/OnlineCustomGames.vue').default);
@@ -75,10 +73,7 @@ Vue.component('list-ticket', require('./components/Moderators/TicketList.vue').d
 Vue.component('moderator-chat', require('./components/Moderators/Chat.vue').default);
 Vue.component('moderator-users', require('./components/Moderators/Users.vue').default);
 
-
-Vue.component('stats-game-type', require('./components/User/StatGameType.vue').default);
 Vue.component('game-edit', require('./components/GameEdit.vue').default);
-
 
 // ADMIN
 Vue.component('admin-tracks', require('./components/Admin/Tracks.vue').default);
