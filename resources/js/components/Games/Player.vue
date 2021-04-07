@@ -100,6 +100,7 @@
                 alertClass: 'alert-primary',
                 score: {},
                 speedLimit: 25, // For bonus score
+                alreadyHadAnError: false,
             }
         },
 
@@ -171,13 +172,15 @@
                 this.game.player.src = this.currentTrack.preview_url;
                 this.game.player.play();
 
-                // If the file is not available get another track
+                // If the file is not available try again or alert
                 this.game.player.onerror = function() {
-                    axios.post('/tracks/' + vm.currentTrack.id + '/updatetrackrate').then((response) => {
-                        alert("Une erreur a eu lieu lors du chargement de l'extrait. L'extrait suivant arrive bientôt.")
-                    }).catch((error) => {
-                        console.warn(error);
-                    });
+                    if(this.alreadyHadAnError) {
+                        this.alreadyHadAnError = false;
+                        alert("Une erreur a eu lieu lors du chargement de l'extrait. Nous préparons l'extrait suivant...");
+                    } else {
+                        this.alreadyHadAnError = true;
+                        this.playAudio();
+                    }
                 };
 
                 // Get the current audio percentage
