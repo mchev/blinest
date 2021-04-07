@@ -16,20 +16,7 @@ class ProfileController extends Controller
     public function index()
     {
 
-        $gamesCounter = Score::where('user_id', Auth::user()->id)->count();
-
-        $stats = Score::where('user_id', Auth::user()->id)
-                    ->selectRaw('game_id, COUNT(*) as total, MAX(score) as score')
-                    ->groupBy('game_id')
-                    ->orderBy('score', 'DESC')
-                    ->with('game')
-                    ->get();
-
-        $bestScore = Score::selectRaw('game_id, COUNT(*) as total, MAX(score) as score')
-                    ->groupBy('game_id')
-                    ->get();
-
-        return view('user.profile', compact('gamesCounter', 'stats', 'bestScore'));
+        return view('user.profile');
 
     }
 

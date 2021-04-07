@@ -16,7 +16,7 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->boolean('public')->nullable();
+            $table->boolean('public')->nullable()->index();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();

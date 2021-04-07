@@ -7,14 +7,14 @@
 @section('content')
 
 <header class="masthead bg-primary text-white text-center">
-    <div class="container d-flex align-items-center flex-column">
+    <div class="container">
 
       <!-- Masthead Heading -->
       <h1 class="masthead-heading text-uppercase mb-0">{{ Auth::user()->name }}</h1>
 
       @foreach (Auth::user()->roles as $role)
 
-        {{ $role->name }}
+        <span class="badge badge-info">{{ $role->name }}@if($role->game()) de {{ $role->game()->title }}@endif</span>
 
       @endforeach
 
@@ -48,40 +48,7 @@
         <div class="divider-custom-line"></div>
       </div>
 
-      <h3 class="mt-4">Meilleurs Scores par parties</h3>
-
-      <div class="table-responsive">
-        <table class="table table-striped">
-
-          <thead>
-            <tr>
-              <th>Parties</th>
-              <th>Mon meilleur score</th>
-              <th>Meilleur score</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            @foreach($stats as $stat)
-              <tr>
-                <td><a href="/parties/{{ $stat->game->slug }}">{{ $stat->game->title }}</a></td>
-                <td>{{ $stat->score }}</td>
-                <td>
-                  @foreach($bestScore as $best)
-                    @if($best->game_id == $stat->game_id)
-                      {{ $best->score }}
-                    @endif
-                  @endforeach
-                </td>
-              </tr>
-            @endforeach
-          </tbody>
-
-        </table>
-      </div>
-
-      <h3 class="mt-4">Parties jouées ({{ $gamesCounter }})</h3>
-      <stats-game-type :stats="{{ $stats->toJson() }}" :height="150"></stats-game-type>
+      <a  class="btn btn-primary" href="/profils/{{ Auth::user()->name }}">Voir mes stats</a>
 
     </div>
 </section>
