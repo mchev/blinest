@@ -7,18 +7,27 @@
           <div v-if="message.sender_name === 'blinest'">
             <small>{{ message.message }}</small>
           </div>
-          <div v-else class="message" :class="{'from-them': message.sender_id !== game.currentUser.id}">
-            <p class="message-text">
-              <span class="message-votes">
-                <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
-                <template v-for="moderator in game.moderators" v-if="moderator.id === game.currentUser.id">
-                  <i @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 24 heures"></i>
-                  <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
-                </template>
-              </span>
-              {{ message.message }}
-            </p>
-            <small>{{ message.created_at | moment("HH:mm") }}<span v-if="message.sender_id !== game.currentUser.id"> - {{ message.sender_name }}</span></small>
+          <div v-else class="message">
+            <div class="row">
+              <div class="col-auto d-none d-md-block pr-0">
+                <span class="avatar" :style="'background-color:' + $options.filters.stringToColour(message.sender_name) + ';'">
+                 {{ message.sender_name | initialize }}
+                </span>
+              </div>
+              <div class="col pl-0">
+                <small><b>{{ message.sender_name }}</b> {{ message.created_at | moment("calendar") }}</small>
+                <p class="message-text">
+                  <span class="message-votes">
+                    <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
+                    <template v-for="moderator in game.moderators" v-if="moderator.id === game.currentUser.id">
+                      <i @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 24 heures"></i>
+                      <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
+                    </template>
+                  </span>
+                  {{ message.message }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
     </div>
@@ -209,7 +218,37 @@
       orderedMessages: function () {
         return _.orderBy(this.messages, 'created_at', 'asc')
       }
+    },
+
+    filters: {
+
+      initialize: function(value) {
+        let rgx = new RegExp(/(\p{L}{1})\p{L}+/, 'gu');
+        let initials = [...value.matchAll(rgx)] || [];
+
+        initials = (
+          (initials.shift()?.[1] || '') + (initials.pop()?.[1] || '')
+        ).toUpperCase();
+
+        return initials;
+      },
+
+      stringToColour: function(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        var colour = '#';
+        for (var i = 0; i < 3; i++) {
+          var value = (hash >> (i * 8)) & 0xFF;
+          colour += ('00' + value.toString(16)).substr(-2);
+        }
+        return colour;
+      }
+
     }
+
+
   };
 
 </script>
@@ -243,32 +282,28 @@
 
   .message {
     position: relative;
-    margin: 0 0 10px 0;
-    float: right;
-    word-break: break-all;
+    margin: 0 0 1.2rem 0;
+    word-break: break-word;
   }
 
   .message p {
     margin: 0;
-    padding: 6px 10px;   
-    color: white;
-    background: #0B93F6;
-    border-radius: 4px;
+    padding: 0;
+    font-weight: 100;
+    font-size: 1rem; 
   }
 
-  .message.from-them {
-    float: left;
-  }
-
-  .from-them p {
-    background: #FFF;
-    color: black;
-  }
-
-  .message p:after {
-    content: '';
-    display: block;
-    clear: both;
+  .avatar {
+    display:inline-block;
+    font-size:1em;
+    width:2.5em;
+    height:2.5em;
+    line-height:2.5em;
+    text-align:center;
+    border-radius:50%;
+    vertical-align:middle;
+    margin-right:1em;
+    color:white;
   }
 
 </style>
