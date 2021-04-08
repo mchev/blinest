@@ -75,7 +75,7 @@
                       <td>{{ \Carbon\Carbon::parse($stat->latest)->format('d/m/Y H:i') }}</td>
                       <td>{{ $stat->total }}</td>
                       <td>{{ $stat->score }} pts</td>
-                      <td>{{ $stat->average }} pts</td>
+                      <td>{{ round($stat->average, 1) }} pts</td>
                       <td>{{ $stat->scores }} pts</td>
                     </tr>
                   @endforeach
