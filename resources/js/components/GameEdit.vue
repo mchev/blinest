@@ -108,6 +108,7 @@
                                     <i v-if="currentSort === 'created_at' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
                                 </div>
                             </th>
+                            <th scope="col"></th>
                             <th scope="col" class="text-right"></th>
                         </tr>
                     </thead>
@@ -121,6 +122,7 @@
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.custom_answer"></td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.down_rate"></td>
                             <td>{{ track.created_at | moment("DD/MM/YY")}}</td>
+                            <td><img :src="'/img/' + track.provider + '.png'"></td>
                             <td><button @click="deleteTrack(track)" class="btn text-danger"><i class="far fa-trash-alt"></i></button></td>
                         </tr>
                     </tbody>
@@ -296,7 +298,6 @@
                         this.errors = [];
 
                         axios.get('/api/itunes/search?q=' + this.query).then((response) => {
-                            console.log(response.data.results);
                             this.results = response.data.results.map(function(track) {
                                 return {
                                     id: track.trackId,
