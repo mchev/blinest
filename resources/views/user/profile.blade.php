@@ -68,6 +68,54 @@
         <div class="divider-custom-line"></div>
       </div>
 
+      <div class="card text-dark mb-4">
+
+        <div class="card-header">
+          <h5>Photo de profil</h5>
+        </div>
+
+        <div class="card-body">
+
+          <form method="POST" enctype="multipart/form-data" action="{{ route('profile.picture.upload') }}">
+
+              @csrf
+
+              <div class="form-group row">
+                  <label for="image" class="col-md-4 col-form-label text-md-right">
+                    {{ __('Photo de profil') }}
+
+                    @if(Auth::user()->hasProfilePicture())
+                      <img src="/images/players/{{ Auth::user()->id }}.webp" class="rounded-circle my-4 d-block ml-auto" height="60" width="60">
+                      <a href="{{ route('profile.picture.delete') }}" class="btn btn-sm btn-danger">Supprimer</a>
+                    @endif
+                    
+
+                  </label>
+
+                  <div class="col-md-6 text-left">
+
+                      <small>Sélectionner un fichier pour ajouter ou remplacer la photo de profil</small>
+                      <input id="image" type="file" accept="image/*" class="form-control{{ $errors->has('image') ? ' is-invalid' : '' }}" name="image">
+
+                      @if ($errors->has('image'))
+                          <span class="invalid-feedback" role="alert">
+                              <strong>{{ $errors->first('image') }}</strong>
+                          </span>
+                      @endif
+
+                  </div>
+              </div>
+
+              <div class="form-group">
+                <button type="submit" class="btn btn-success">{{ __('Mettre à jour') }}</button>
+              </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
       <div class="card text-dark">
 
         <div class="card-header">

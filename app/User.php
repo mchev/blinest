@@ -92,6 +92,15 @@ class User extends Authenticatable
         return $this->hasMany('App\Role', 'role_user');
     }
 
+    /**
+     * The roles that belong to the user.
+     */
+    public function hasProfilePicture()
+    {
+        $file = public_path('/images/players/') . $this->id . '.webp';
+        return ( file_exists($file) ) ? true : false;
+    }
+
 
     /**
      * Check if the user has a role.

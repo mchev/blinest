@@ -64,7 +64,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 	// PROFILE PICTURE
 	Route::post('/profile/picture', 'ProfileController@uploadPP')->name('profile.picture.upload');
-	Route::delete('/profile/picture', 'ProfileController@deletePP')->name('profile.picture.delete');
+	Route::get('/profile/picture/delete', 'ProfileController@deletePP')->name('profile.picture.delete');
 
 	Route::get('/games/{game}/online', 'GameController@online');
 	Route::get('/games/{game}/offline', 'GameController@offline');
