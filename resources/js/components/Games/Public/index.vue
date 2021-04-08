@@ -274,7 +274,9 @@
           this.finnish = false;
           $("#finnishModal").modal('hide');
           this.answers = [];
-          this.track.score = {};
+          if(this.track) {
+            this.track.score = {};
+          }
           this.score = 0;
           this.track = null;
           this.waiting = true;
@@ -288,7 +290,7 @@
           this.track = null;
 
           // Save score
-          if (this.score > 0) {
+          if (typeof this.score != "undefined" && this.score > 0) {
               axios.post('/games/' + this.game.id + '/score', {score: this.score}).then((response) => {
                   //console.log(response.data);
               }).catch((error) => {
