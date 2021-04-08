@@ -17,7 +17,7 @@ class Notification
             $color = '3447003';
         }
 
-        return Http::post(config('discord.webhook'), [
+        return Http::post(config('services.discord.webhook'), [
             //'content' => "Test bot blinest!",
             'embeds' => [
                 [
