@@ -69,7 +69,7 @@
             <button v-else @click="ban(currentUser)" class="btn btn-danger" title="Bannir 24h">
               <i class="fas fa-lock"></i> Bloquer 24h
             </button>
-            <a :href="'/profils/' + currentUser.name" class="btn btn-primary">
+            <a :href="'/user/profil/' + currentUser.id" class="btn btn-primary">
               <i class="fas fa-eye"></i> Voir le profil
             </a>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">

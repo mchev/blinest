@@ -65,7 +65,7 @@
 
             </div>
             <div class="card-footer"> 
-              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+              <small>Posté par <a href="/user/profil/{{ $item->user->id }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
 
@@ -131,7 +131,7 @@
 
             </div>
             <div class="card-footer"> 
-              <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+              <small>Posté par <a href="/user/profil/{{ $item->user->id }}">{{ $item->user->name }}</a> @if($item->user->is('admin')) <span class="badge badge-info">admin</span> @endif le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
               <div class="float-right">
 

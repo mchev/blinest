@@ -16,7 +16,7 @@
                 <ul class="list-group">
                     <li v-for="(user, index) in week" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
                         <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
-                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                        <a :href="'/user/profil/' + user.user.id">{{ user.user.name }} <br>({{ user.score }} points)</a>
                     </li>
                 </ul>
             </div>
@@ -26,7 +26,7 @@
                 <ul class="list-group">
                     <li v-for="(user, index) in month" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
                         <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
-                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                        <a :href="'/user/profil/' + user.user.id">{{ user.user.name }} <br>({{ user.score }} points)</a>
                     </li>
                 </ul>
             </div>
@@ -37,7 +37,7 @@
                 <ul class="list-group">
                     <li v-for="(user, index) in alltime" :key="user.id" class="list-group-item d-flex justify-content-start align-items-center text-left">
                         <span class="badge badge-secondary mr-4 badge-pill">{{ index + 1 }}</span>
-                        <a :href="'/profils/' + user.user.name">{{ user.user.name }} <br>({{ user.score }} points)</a>
+                        <a :href="'/user/profil/' + user.user.id">{{ user.user.name }} <br>({{ user.score }} points)</a>
                     </li>
                 </ul>
             </div>

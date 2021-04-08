@@ -157,7 +157,7 @@ Route::post('/messages/vote', 'Api\MessagesController@vote');
 Route::post('/messages/delete', 'Api\MessagesController@delete'); // Moderator middleware
 
 
-Route::get('/profils/{name}', 'UserController@show');
+Route::get('/user/profil/{user}', 'UserController@show')->name('user.profil');
 
 Route::resource('/games/{game}/tracks', 'TrackController');
 

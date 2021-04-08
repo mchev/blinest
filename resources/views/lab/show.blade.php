@@ -38,7 +38,7 @@
 
       </div>
       <div class="card-footer"> 
-        <small>Posté par <a href="/profils/{{ $lab->user->name }}">{{ $lab->user->name }}</a> le {{ $lab->created_at->format('d/m/Y à H:i') }}</small>
+        <small>Posté par <a href="{{ route('user.profil', $lab->user) }}">{{ $lab->user->name }}</a> le {{ $lab->created_at->format('d/m/Y à H:i') }}</small>
 
         <div class="float-right">
 
@@ -83,7 +83,7 @@
           </div>
 
           <div class="card-footer">
-            <small>Posté par <a href="/profils/{{ $item->user->name }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
+            <small>Posté par <a href="{{ route('user.profil', $item->user) }}">{{ $item->user->name }}</a> le {{ $item->created_at->format('d/m/Y à H:i') }}</small>
 
             <div class="float-right">
               {{ count($item->voteUp) }} <a href="/lab/{{ $item->id }}/vote?up=1"><i class="fas fa-thumbs-up"></i></a>

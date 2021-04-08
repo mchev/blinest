@@ -44,13 +44,10 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show($name)
+    public function show(User $user)
     {
-        $user = User::where('name',$name)->first();
         $scores = $user->scores()->paginate(10);
-
         return view('users.profile', ["user" => $user, "scores" => $scores]);
-
     }
 
 

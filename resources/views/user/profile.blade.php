@@ -48,7 +48,7 @@
         <div class="divider-custom-line"></div>
       </div>
 
-      <a  class="btn btn-primary" href="/profils/{{ Auth::user()->name }}">Voir mes stats</a>
+      <a  class="btn btn-primary" href="{{ route('user.profil', Auth::user()) }}">Voir mes stats</a>
 
     </div>
 </section>

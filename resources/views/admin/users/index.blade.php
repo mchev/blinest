@@ -57,7 +57,7 @@
         @foreach ($users as $user)
           <tr>
             <th scope="row">{{ $user->id }}</th>
-            <td><a href="/profils/{{ $user->name }}">{{ $user->name }}</a></td>
+            <td><a href="{{ route('user.profil', $user) }}">{{ $user->name }}</a></td>
             <td>{{ $user->email }}</td>
             <td>{{ date('d/m/Y H:i', strtotime($user->created_at)) }}</td>
             <td>
