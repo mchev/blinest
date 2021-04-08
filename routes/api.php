@@ -30,3 +30,5 @@ Route::post('/deezer/store/playlist', 'Api\DeezerController@storePlaylist');
 Route::get('/spotify/search', 'Api\SpotifyController@search');
 Route::get('/spotify/playlist', 'Api\SpotifyController@addPlaylist');
 Route::post('/spotify/store/playlist', 'Api\SpotifyController@storePlaylist');
+
+Route::get('/itunes/search', 'Api\ItunesController@search');

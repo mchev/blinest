@@ -15,9 +15,11 @@
                         <option value="playlist">Playlist Deezer</option>
                         <option value="spotify">Spotify</option>
                         <option value="spotifyplaylist">Playlist Spotify</option>
+                        <option value="itunes">Apple music</option>
                     </select>
                     <input v-if="origin == 'deezer'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="Rechercher sur Deezer">
                     <input v-if="origin == 'spotify'" type="search" v-model="query" @keyup="searchFromSpotify" class="form-control" style="width:50%" placeholder="Rechercher sur Spotify">
+                    <input v-if="origin == 'itunes'" type="search" v-model="query" @keyup="searchFromItunes" class="form-control" style="width:50%" placeholder="Rechercher sur Apple music">
                     <input v-if="origin == 'playlist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
                     <button v-if="origin == 'playlist'" type="button" @click="addPlaylist()" class="btn btn-success">Valider</button>
                     <input v-if="origin == 'spotifyplaylist'" type="search" v-model="query" @keyup="searchFromDeezer" class="form-control" style="width:50%" placeholder="ID de la playlist">
@@ -271,6 +273,45 @@
 
                         axios.get('/media/search?q=' + this.query).then((response) => {
                             this.results = response.data.data;
+                        }).catch((error) => {
+                            console.warn(error);
+                        });
+
+                    }
+
+                }, 400)
+
+            },
+
+            searchFromItunes() {
+
+                this.results = [];
+
+                clearTimeout(this.debounce);
+
+                this.debounce = setTimeout(() => {
+
+                    if (this.query.length > 2) {
+
+                        this.errors = [];
+
+                        axios.get('/api/itunes/search?q=' + this.query).then((response) => {
+                            console.log(response.data.results);
+                            this.results = response.data.results.map(function(track) {
+                                return {
+                                    id: track.trackId,
+                                    title: track.trackName,
+                                    title_short : track.trackName,
+                                    provider: 'itunes',
+                                    artist: {
+                                        name: track.artistName,
+                                    },
+                                    album: {
+                                        cover_medium: track.artworkUrl100
+                                    },
+                                    preview: track.previewUrl
+                                }
+                            });
                         }).catch((error) => {
                             console.warn(error);
                         });
