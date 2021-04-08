@@ -11,9 +11,7 @@
 
       gtag('config', 'UA-58430725-8');
     </script>
-
-    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-
+    
     <meta name="google-site-verification" content="e5HQfdzsH7U3iR8urwcghyw0uduK0IMasboHY53pRBs" />
 
     <meta charset="utf-8">

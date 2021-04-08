@@ -117,6 +117,7 @@
 
 <!-- Sidebar Ads -->
 <div id="pubSidebar" style="display:none;">
+    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <ins class="adsbygoogle"
          style="display:block"
          data-ad-client="ca-pub-6495635642797272"

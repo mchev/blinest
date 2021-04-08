@@ -41,6 +41,7 @@
 
   <!-- Game blinest -->
   <div id="pubGame" style="display:none;">
+      <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
       <ins class="adsbygoogle"
            style="display:inline-block;width:728px;height:90px"
            data-ad-client="ca-pub-6495635642797272"
@@ -49,5 +50,5 @@
            (adsbygoogle = window.adsbygoogle || []).push({});
       </script>
   </div>
-    
+
 @endsection
