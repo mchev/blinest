@@ -59,7 +59,8 @@ return [
     'discord' => [
         'client_id' => env('DISCORD_APP_ID'),
         'client_secret' => env('DISCORD_APP_SECRET'),
-        'redirect' => env('DISCORD_REDIRECT_URI')
+        'redirect' => env('DISCORD_REDIRECT_URI'),
+        'token' => env('DISCORD_BOT_TOKEN')
     ],
 
 ];

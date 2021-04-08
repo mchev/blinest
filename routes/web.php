@@ -183,6 +183,7 @@ Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'mode
 
 });
 
+Route::get('notification', 'DiscordNotification@notification');
 
 // ADMINS
 Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
