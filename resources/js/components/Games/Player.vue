@@ -110,6 +110,7 @@
             this.game.player = null;
             this.game.player = new Audio();
             // this.game.player.type = 'audio/mpeg'; carefull with itunes m4a files
+            this.game.player.crossOrigin = "anonymous";
             this.game.player.play();
             this.game.player.volume = parseFloat(this.game.volume);
 
