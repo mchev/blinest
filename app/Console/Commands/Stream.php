@@ -137,8 +137,8 @@ class Stream extends Command
         } else {
 
             \App\Discord\Notification::send(
-                "Suppression d'un extrait",
-                "Le titre " . $track->track_name . " de " . $track->artist_name . " a été supprimé de " . $track->game->title,
+                $track->game->title,
+                "Le titre " . $track->track_name . " de " . $track->artist_name . " a été supprimé.",
                 "danger"
             );
 

@@ -56,10 +56,15 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/donate/success', 'DonateController@success')->name('donate.success');
 	Route::post('/donate/error', 'DonateController@error')->name('donate.error');
 
+	// USER PROFILE
 	Route::get('/profile', 'ProfileController@index')->name('profile');
 	Route::get('/profile/delete', 'ProfileController@destroy')->name('profile.delete');
 	Route::get('/profile/stats/games', 'ProfileController@gameStats');
 	Route::post('/profile/update', 'ProfileController@update')->name('profile.update');
+
+	// PROFILE PICTURE
+	Route::post('/profile/picture', 'ProfileController@uploadPP')->name('profile.picture.upload');
+	Route::delete('/profile/picture', 'ProfileController@deletePP')->name('profile.picture.delete');
 
 	Route::get('/games/{game}/online', 'GameController@online');
 	Route::get('/games/{game}/offline', 'GameController@offline');
@@ -91,8 +96,6 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/partie/privee/{game}/password', 'CustomGameController@password')->name('games.custom.password');
 
 });
-
-Route::resource('/events', 'EventController');
 
 
 Route::get('/games/{game}/private', 'GameController@private')->name('games.private');
