@@ -135,6 +135,7 @@ class User extends Authenticatable
                         'game_id, COUNT(*) as total,
                         MAX(updated_at) as latest,
                         MAX(score) as score, 
+                        AVG(score) as average, 
                         SUM(score) as scores'
                     )
                     ->groupBy('game_id')

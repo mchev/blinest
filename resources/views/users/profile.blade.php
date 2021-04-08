@@ -61,8 +61,9 @@
                   <tr>
                     <th>Parties</th>
                     <th>Dernière partie le</th>
-                    <th>Nombre de parties jouées</th>
+                    <th>Parties jouées</th>
                     <th>Meilleur score</th>
+                    <th>Moyenne</th>
                     <th>Score total</th>
                   </tr>
                 </thead>
@@ -74,6 +75,7 @@
                       <td>{{ \Carbon\Carbon::parse($stat->latest)->format('d/m/Y H:i') }}</td>
                       <td>{{ $stat->total }}</td>
                       <td>{{ $stat->score }} pts</td>
+                      <td>{{ $stat->average }} pts</td>
                       <td>{{ $stat->scores }} pts</td>
                     </tr>
                   @endforeach
