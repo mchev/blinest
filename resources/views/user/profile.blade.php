@@ -12,12 +12,6 @@
       <!-- Masthead Heading -->
       <h1 class="masthead-heading text-uppercase mb-0">{{ Auth::user()->name }}</h1>
 
-      @foreach (Auth::user()->roles as $role)
-
-        <span class="badge badge-info">{{ $role->name }}@if($role->game()) de {{ $role->game()->title }}@endif</span>
-
-      @endforeach
-
       <!-- Icon Divider -->
       <div class="divider-custom divider-light">
         <div class="divider-custom-line"></div>
