@@ -115,4 +115,17 @@
     </div>
 </section>
 
+<!-- Sidebar Ads -->
+<div id="pubSidebar" style="display:none;">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6495635642797272"
+         data-ad-slot="9771425885"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+
 @endsection

@@ -39,4 +39,15 @@
 
   @endif
 
+  <!-- Game blinest -->
+  <div id="pubGame" style="display:none;">
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:728px;height:90px"
+           data-ad-client="ca-pub-6495635642797272"
+           data-ad-slot="8419827522"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+    
 @endsection
