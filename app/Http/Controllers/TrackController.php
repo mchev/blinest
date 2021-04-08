@@ -76,6 +76,14 @@ class TrackController extends Controller
 
             $track->save();
 
+            if($game->public === 1) {
+                \App\Discord\Notification::send(
+                    "Ajout d'un extrait",
+                    "Le titre " . $track->track_name . " de " . $track->artist_name . " a été ajouté dans " . $track->game->title,
+                    "success"
+                );
+            }
+
         }
 
         return response()->json($track);
@@ -165,6 +173,15 @@ class TrackController extends Controller
      */
     public function destroy(Game $game, Track $track)
     {
+
+        if($game->public === 1) {
+            \App\Discord\Notification::send(
+                "Suppression d'un extrait",
+                "Le titre " . $track->track_name . " de " . $track->artist_name . " a été supprimé de " . $track->game->title,
+                "danger"
+            );
+        }
+
         $track->delete();
     }
 }
