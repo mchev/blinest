@@ -39,6 +39,10 @@
 
   @endif
 
+@endsection
+
+@section('scripts')
+
   <!-- Game blinest -->
   <div id="pubGame" style="display:none;">
       <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

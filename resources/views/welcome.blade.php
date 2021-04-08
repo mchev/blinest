@@ -115,18 +115,23 @@
     </div>
 </section>
 
-<!-- Sidebar Ads -->
-<div id="pubSidebar" style="display:none;">
-    <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-6495635642797272"
-         data-ad-slot="9771425885"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
+@endsection
+
+
+@section('scripts')
+
+  <!-- Sidebar Ads -->
+  <div id="pubSidebar" style="display:none;">
+      <script async defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-6495635642797272"
+           data-ad-slot="9771425885"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
 
 @endsection

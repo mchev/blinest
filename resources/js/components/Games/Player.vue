@@ -85,6 +85,7 @@
 </template>
 
 <script>
+
     export default {
 
         props:['game', 'track', 'users'],
@@ -108,6 +109,7 @@
 
             this.game.player = null;
             this.game.player = new Audio();
+            this.game.player.type = 'audio/mpeg';
             this.game.player.play();
             this.game.player.volume = parseFloat(this.game.volume);
 

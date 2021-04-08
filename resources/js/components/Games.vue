@@ -208,7 +208,7 @@
     .electro {
         background-color: #2C3C4D !important;
     }
-    .musica-latina {
+    .world {
         background-color: #E63735 !important;
     }
     .annees-90 {
