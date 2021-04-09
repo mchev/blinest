@@ -63,9 +63,18 @@ button.js-cookie-consent-agree {
 }
 
 .card {
-	border-radius: 0.2rem;
 	border: none;
 	background: rgba(255,255,255,0.8);
+}
+
+.card {
+	border-radius: 0.2rem;
+}
+.card-header:first-child {
+	border-radius: 0.2rem 0.2rem 0 0;
+}
+.card-header {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .card h5 {
