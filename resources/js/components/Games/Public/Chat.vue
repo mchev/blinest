@@ -10,7 +10,9 @@
           <div v-else class="message">
             <div class="row">
               <div class="col-auto d-none d-md-block pr-0">
-                <span class="avatar" :style="'background-color:' + $options.filters.stringToColour(message.sender_name) + ';'">
+                <span v-if="hasProfilePicture(message.sender_id)" class="avatar" :style="'background-image: url(/images/players/' + message.sender_id + '.webp);'">
+                </span>
+                <span v-else class="avatar" :style="'background-color:' + $options.filters.stringToColour(message.sender_name) + ';'">
                  {{ message.sender_name | initialize }}
                 </span>
               </div>
@@ -121,6 +123,12 @@
       element.scrollTop = element.scrollHeight;
     },
     methods: {
+
+      hasProfilePicture(user_id) {
+
+        return false;
+
+      },
 
       toggleEmojiPicker () {
         this.showEmojiPicker = !this.showEmojiPicker

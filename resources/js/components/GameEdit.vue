@@ -28,9 +28,18 @@
 
                 <div class="panel-footer" v-if="results.length">
                     <ul class="list-group result-list text-dark">
-                        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="result in results">
-                            {{ result.artist.name }} - {{ result.title }}
-                            <button @click="addtrack(result)" class="btn btn-sm btn-success">Ajouter</button>
+                        <li class="list-group-item text-left" v-for="result in results">
+                            <div class="row w-100">
+                                <div class="col-auto">
+                                    <audio controls preload="none" :src="result.preview" style="width:50px"></audio>
+                                </div>
+                                <div class="col">
+                                    {{ result.artist.name }} - {{ result.title }}
+                                </div>
+                                <div class="col-auto">
+                                    <button @click="addtrack(result)" class="btn btn-sm btn-success">Ajouter</button>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
