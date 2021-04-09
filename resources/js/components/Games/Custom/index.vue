@@ -32,7 +32,7 @@
                                         </select>
                                     </div>
 
-                                    <button type="button" @click="fetchTracks" class="btn btn-success">Charger une nouvelle partie</button>
+                                    <button type="button" @click="fetchTracks" class="btn btn-sm btn-success">Charger une nouvelle partie</button>
 
                                 </div>
 
