@@ -196,7 +196,7 @@
     .rap-fr {
         background-color: #ED6F48 !important;
     }
-    .rap-us {
+    .rap-rnb {
         background-color: #29B296 !important;
     }
     .kids {

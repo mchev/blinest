@@ -366,9 +366,6 @@
                                 }
                             });
 
-                            console.log(this.results);
-
-
                         }).catch((error) => {
                             console.warn(error);
                         });
