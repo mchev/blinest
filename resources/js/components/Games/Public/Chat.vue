@@ -26,7 +26,7 @@
                       <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
                     </template>
                   </span>
-                  {{ message.message }}
+                  <span v-html="$options.filters.linkify(message.message)"></span>
                 </p>
               </div>
             </div>
@@ -223,6 +223,13 @@
     },
 
     filters: {
+
+      linkify: function(text) {
+          var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+          return text.replace(urlRegex, function(url) {
+              return '<a href="' + url + '" target="_blank">' + url + '</a>';
+          });
+      },
 
       initialize: function(value) {
         let rgx = new RegExp(/(\p{L}{1})\p{L}+/, 'gu');
