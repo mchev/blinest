@@ -15,7 +15,7 @@ class SpotifyController extends Controller
     public function spotAuth()
     {
 
-        $session = new \SpotifyWebAPI\Session( env('SPOTIFY_KEY'), env('SPOTIFY_SECRET') );
+        $session = new \SpotifyWebAPI\Session( config('services.spotify.client_id'), config('services.spotify.client_secret') );
         $session->requestCredentialsToken();
         $accessToken = $session->getAccessToken();
 
