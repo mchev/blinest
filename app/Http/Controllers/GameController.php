@@ -15,6 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use App\Exports\PlaylistsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class GameController extends Controller
 {
 
@@ -26,6 +29,10 @@ class GameController extends Controller
         $this->middleware('auth', ['except' => ['index', 'show', 'track', 'counter', 'podium', 'sendScore', 'slug', 'custom', 'privateGames']]);
     }
 
+    public function export(Game $game) 
+    {
+        return Excel::download(new PlaylistsExport($game), $game->slug . '.xlsx');
+    }
 
     /**
      * Display a listing of the resource.

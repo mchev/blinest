@@ -49,10 +49,10 @@
                 <div class="row mb-3">
 
                     <div class="col-md-3">
-                        <input type="search" @keyup="searchTracks()" v-model="search" class="form-control" placeholder="Rechercher dans les extraits">
+                        <input type="search" @keyup="searchTracks()" v-model="search" class="form-control mb-2" placeholder="Rechercher dans les extraits">
                     </div>
 
-                    <div class="col-md-7 text-center">
+                    <div class="col-md-6 text-center">
                         <ul class="pagination">
                             <li v-if="current_page > 1" class="page-item">
                                 <span @click="paginate('prev')" class="page-link">&laquo;</span>
@@ -72,8 +72,9 @@
                     </div>
 -->
 
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-3 text-right">
                         <button class="btn btn-info">{{ tracks.length }} / {{ total }}</button>
+                        <a :href="'/games/' + game.id + '/tracks/export'" class="btn btn-primary"><i class="far fa-file-excel"></i> XLS</a>
                     </div>
 
                 </div>

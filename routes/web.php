@@ -87,6 +87,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('/lab/{lab}/vote', 'LabController@vote');
 
 	// CUSTOM GAMES
+	Route::get('/games/{game}/tracks/export', 'GameController@export');
+
 	Route::post('/partie/privee/{game}/fetch', 'CustomGameController@fetch')->name('games.custom.fetch');
 	Route::get('/partie/privee/{game}/start', 'CustomGameController@start')->name('games.custom.start');
 	Route::get('/partie/privee/play/{track}', 'CustomGameController@play')->name('games.custom.play');
@@ -175,7 +177,6 @@ Route::group(['namespace' => 'Moderator', 'prefix' => 'moderator', 'as' => 'mode
 
 	Route::get('/user/{user}/block', 'UserController@block');
 	Route::get('/user/{user}/unblock', 'UserController@unblock');
-
 
 	Route::post('/users/search', 'UserController@search');
 	Route::get('/tickets', 'TicketController@index');
