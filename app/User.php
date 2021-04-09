@@ -28,6 +28,10 @@ class User extends Authenticatable
         'last_login_ip'
     ];
 
+    protected $appends = [
+        'profile_picture'
+    ];
+
     protected $dates = [
         'banned_until'
     ];
@@ -90,6 +94,12 @@ class User extends Authenticatable
     public function role()
     {
         return $this->hasMany('App\Role', 'role_user');
+    }
+
+    public function getProfilePictureAttribute()
+    {
+        $filename = $this->id . '.webp';
+        return ($this->hasProfilePicture()) ? $filename : false;
     }
 
     /**

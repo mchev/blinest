@@ -14,6 +14,8 @@ class Message extends Model
         'message',
     ];
 
+    protected $appends = ['sender_profile_picture'];
+
     public function scopeBySender($q, $sender)
     {
         $q->where('sender_id', $sender);
@@ -43,5 +45,12 @@ class Message extends Model
     {
         return $this->hasMany(MessageVote::class, 'message_id')->where('type', 'report');
     }
+
+
+    public function getSenderProfilePictureAttribute()
+    {
+        return $this->sender->profile_picture;
+    }
+
 
 }
