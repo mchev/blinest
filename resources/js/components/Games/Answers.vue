@@ -12,13 +12,23 @@
 
                     <template v-if="answer.custom_answer">
                         <strong>
-                            <a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" :title="'Ecouter sur ' + answer.provider"><img :src="'/img/' + answer.provider + '.png'" class="deezer_icon">{{ answer.custom_answer }}</a> 
-                            <i v-if="answer.bonus_score !== 0" title="Bonus rapidité" class="text-warning fas fa-fire"></i>
-                        </strong><br>
+                            <a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" :title="'Ecouter sur ' + answer.provider">
+                                <img :src="'/img/' + answer.provider + '.png'" class="deezer_icon mr-1">
+                                {{ answer.custom_answer }}
+                            </a> 
+                        </strong>
+                        <br>
                         {{ answer.artist_name }} - {{ answer.track_name }}
                     </template>
                     <template v-else>
-                        <strong><a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" title="Écouter sur Deezer"><img src="/img/deezer.png" class="deezer_icon">{{ answer.artist_name }}</a></strong><br>{{ answer.track_name }}
+                        <strong>
+                            <a target="_blank" :href="'https://www.deezer.com/fr/track/' + answer.provider_item_id" :title="'Ecouter sur ' + answer.provider">
+                                <img :src="'/img/' + answer.provider + '.png'" class="deezer_icon mr-1">
+                                {{ answer.artist_name }}
+                            </a>
+                        </strong>
+                        <br>
+                        {{ answer.track_name }}
                     </template>
                     <br>
                     <template v-if="answer.score">
