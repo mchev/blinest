@@ -142,8 +142,10 @@ class TrackController extends Controller
     public function rateUp(Request $request, Track $track)
     {
 
-        $track->down_rate = $track->down_rate - 1;
-        $track->save();
+        if($track->down_rate > 1) {
+            $track->down_rate = $track->down_rate - 1;
+            $track->save();
+        }
 
         return response()->json($track);
     }
