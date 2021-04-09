@@ -46,8 +46,9 @@
 
                                     <div class="form-group">
                                         <label>Mot de passe</label>
-                                        <input type="text" v-model="game.password" @blur="updatePassword" class="form-control">
+                                        <input type="text" v-model="game.password" class="form-control">
                                         <small class="form-text text-muted">Si vide, la partie est ouverte à tous.</small>
+                                        <button class="btn btn-sm btn-primary mt-2" @click="updatePassword">Enregistrer le mot de passe</button>
                                     </div>
 
                                 </div>
@@ -70,7 +71,9 @@
                     <div class="col-md-12">
 
 
-                        <span class="badge badge-warning">Partie privée v2.2-beta : <a :href="'https://blinest.com/parties/' + game.slug">https://blinest.com/parties/{{ game.slug }}</a></span>
+                        <div class="alert alert-info w-50 mx-auto">
+                          Lien de la partie : <a :href="'https://blinest.com/parties/' + game.slug">https://blinest.com/parties/{{ game.slug }}</a>
+                        </div>
 
                         <h1 class="masthead-heading text-uppercase mb-0">Blind-Test {{ game.title }}</h1>
 
@@ -431,6 +434,7 @@
 
             updatePassword() {
                 axios.post('/partie/privee/' + this.game.id + '/password', {'password': this.game.password});
+                alert("Le mot de passe a été enregitré. Bien le noter pour ne pas l'oublier!");
             }
 
         },
