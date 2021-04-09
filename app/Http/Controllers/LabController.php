@@ -17,8 +17,11 @@ class LabController extends Controller
     public function index()
     {
 
-        $labs = Lab::first();
-
+        $labs = Lab::whereNull('parent_id')
+                    ->whereNull('closed_at')
+                    ->whereNull('rejected_at')
+                    ->orderBy('updated_at', 'ASC')
+                    ->get();
         return view('lab.index', compact('labs'));
     }
 
