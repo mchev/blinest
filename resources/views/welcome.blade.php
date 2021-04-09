@@ -25,6 +25,14 @@
 
         <div class="col-md-2 py-3 border-right">
 
+          <div class="mb-4">
+
+            <a class="btn btn-sm btn-primary" href="https://discord.gg/uKyVgcxcFa" target="_blank">Blinest sur <i class="fab fa-discord"></i> Discord</a>
+
+            <hr class="border-b border-primary">
+
+          </div>
+          
           <adsense :position="'pubSidebar'"/>
 
         </div>
