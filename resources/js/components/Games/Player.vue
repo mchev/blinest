@@ -240,6 +240,7 @@
                 var titleArtistSimilarity = this.similarity(title + ' ' + artist, user);
                 var artistTitleSimilarity = this.similarity(artist + ' ' + title, user);
 
+                // Perfect match
                 if (user.includes(title)) {
                     titleSimilarity = 1;
                 }
@@ -258,7 +259,12 @@
                     customScore = 0;
                 }
 
-                var limit = 0.85;
+                // If the word is too small we accept better tolerance
+                if (artist.length > 6) {
+                    var limit = 0.85;
+                } else {
+                    var limit = 0.79;
+                }
 
 
                 if (customScore > titleSimilarity || customScore > artistSimilarity) {
