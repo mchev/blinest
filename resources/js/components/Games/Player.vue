@@ -213,7 +213,9 @@
             sanitize(str) {
 
                 var withoutParentheses = str.replace(/ *\([^)]*\) */g, "");
-                return slugify(withoutParentheses);
+                return slugify(withoutParentheses, {
+                    decamelize: false
+                });
 
                 /*
                 CUSTOM REPLACEMENT
