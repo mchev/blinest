@@ -26,7 +26,7 @@
                       <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
                     </template>
                   </span>
-                  <span v-html="$options.filters.linkify(message.message)"></span>
+                  <span v-html="$options.filters.stringParser(message.message)"></span>
                 </p>
               </div>
             </div>
@@ -73,6 +73,8 @@
 <script>
 
   import { Picker } from 'emoji-mart-vue'
+  const badWords = require('leo-profanity');
+  badWords.loadDictionary('fr');
 
   export default {
 
@@ -224,9 +226,10 @@
 
     filters: {
 
-      linkify: function(text) {
+      stringParser: function(text) {
           var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-          return text.replace(urlRegex, function(url) {
+          var niceText = badWords.clean(text);
+          return niceText.replace(urlRegex, function(url) {
               return '<a href="' + url + '" target="_blank">' + url + '</a>';
           });
       },
