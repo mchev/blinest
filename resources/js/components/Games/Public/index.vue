@@ -182,8 +182,9 @@
             if(response.data.id == null) {
               document.location.reload(true);
             } else {
-              this.game.currentUser = response.data;
-              this.game.currentUser.score = {
+
+              var newUser = response.data;
+              newUser.score = {
                   artist: 0,
                   track: 0,
                   custom: 0,
@@ -193,8 +194,9 @@
                   custom_time: 0,
                   total_time: 0
               }
-              if(this.users) this.users.splice(this.users.findIndex(f => f.id === this.game.currentUser.id), 1);
-              this.users.push(this.game.currentUser);
+              if(this.users) this.users.splice(this.users.findIndex(f => f.id === newUser.id), 1);
+              this.game.currentUser = newUser;
+              this.users.push(newUser);
               this.launched = true;
             }
 
