@@ -8,7 +8,7 @@
             <small>{{ message.message }}</small>
           </div>
           <div v-else class="message">
-            <div class="row">
+            <div class="row" v-if="!muted.includes(message.sender_id)">
               <div class="col-auto d-none d-md-block pr-0">
                 <span v-if="message.sender_profile_picture" class="avatar" :style="'background-image: url(/images/players/' + message.sender_profile_picture + ');'">
                 </span>
@@ -21,6 +21,7 @@
                 <p class="message-text">
                   <span class="message-votes">
                     <i @click="rateDown(message.id)" class="text-danger fas fa-thumbs-down pointer" title="Signaler ce message"></i>
+                    <i @click="mute(message.sender_id)" class="text-danger fas fa-volume-mute pointer" title="Mute (les messages de cet utilisateur n'apparaitrons plus.)"></i>
                     <template v-for="moderator in game.moderators" v-if="moderator.id === game.currentUser.id">
                       <i @click="blockUser(message.sender_id, message.sender_name)" class="text-danger fas fa-ban pointer" title="Bloquer l'utilisateur pour 24 heures"></i>
                       <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
@@ -87,6 +88,7 @@
     data: () => {
       return {
         users: [],
+        muted: [],
         messages: [],
         chatOpen: false,
         chatUserID: null,
@@ -125,6 +127,10 @@
       element.scrollTop = element.scrollHeight;
     },
     methods: {
+
+      mute(user_id) {
+        this.muted.push(user_id);
+      },
 
       toggleEmojiPicker () {
         this.showEmojiPicker = !this.showEmojiPicker
