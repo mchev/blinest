@@ -214,17 +214,18 @@
 
                 var withoutParentheses = str.replace(/ *\([^)]*\) */g, "");
                 return slugify(withoutParentheses, {
-                    decamelize: false
-                });
-
-                /*
-                CUSTOM REPLACEMENT
-                slugify('Foo@unicorn', {
+                    decamelize: false,
                     customReplacements: [
-                        ['@', 'at']
+                        ['The ', ''],
+                        ['the ', ''],
+                        ['Les ', ''],
+                        ['les ', ''],
+                        ['La ', ''],
+                        ['la ', ''],
+                        ['Le ', ''],
+                        ['le ', ''],
                     ]
                 });
-                */
             },
 
             checkResponse() {
