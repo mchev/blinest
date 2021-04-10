@@ -86,6 +86,8 @@
 
 <script>
 
+    const slugify = require('@sindresorhus/slugify');
+
     export default {
 
         props:['game', 'track', 'users'],
@@ -210,60 +212,16 @@
 
             sanitize(str) {
 
-                var map = {
-                    '-'  : '(|)|[|]',
-                    'a' : 'á|à|ã|â|À|Á|Ã|Â',
-                    'b' : 'ß',
-                    'e' : 'é|è|ê|ë|É|È|Ê|Ë',
-                    'i' : 'í|ì|ï|î|Í|Ì|Î',
-                    'o' : 'ó|ò|ô|õ|ö|Ó|Ò|Ô|Õ',
-                    'oe': 'œ',
-                    'u' : 'ú|ù|û|ü|Ú|Ù|Û|Ü',
-                    'c' : 'ç|Ç',
-                    'n' : 'ñ|Ñ',
-                    '-' : '&|les|and|the',
-                    'pink' : 'p!nk',
-                    'korn' : 'koяn',
-                    '1' : 'un',
-                    '2' : 'deux',
-                    '3' : 'trois',
-                    '4' : 'quatre',
-                    '5' : 'cinq',
-                    '6' : 'six',
-                    '7' : 'sept',
-                    '8' : 'huit',
-                    '9' : 'neuf',
-                    '10' : 'dix',
-                    '20' : 'vingt',
-                    '30' : 'trente',
-                    '40' : 'quarante',
-                    '50' : 'cinquante',
-                    '60' : 'soixante',
-                    '70' : 'soixantedix',
-                    '80' : 'quatrevingt',
-                    '90' : 'quatrevingtdix',
-                    '100' : 'cent'
-                };
-                
-                str = str.toLowerCase();
-                str = str.toString().split(',').join("");
-                str = str.toString().split('.').join("");
-                str = str.toString().split('_').join("");
-                str = str.toString().split('?').join("");
-                str = str.toString().split(' ').join("-");
-                str = str.replace(/ *\([^)]*\) */g, "")
-                        .replace(/ *\[[^)]*\] */g, "")
-                
-                for (var pattern in map) {
-                    str = str.replace(new RegExp(map[pattern], 'g'), pattern);
-                };
+                return slugify(str);
 
-                str = str.replace(/\-\-+/g, '-') // Replace multiple - with single -
-                        .replace(/^-+/, '') // Trim - from start of text
-                        .replace(/-+$/, '') // Trim - from end of text
-
-                return str;
-
+                /*
+                CUSTOM REPLACEMENT
+                slugify('Foo@unicorn', {
+                    customReplacements: [
+                        ['@', 'at']
+                    ]
+                });
+                */
             },
 
             checkResponse() {

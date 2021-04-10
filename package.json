@@ -26,6 +26,7 @@
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
+    "@sindresorhus/slugify": "^1.1.0",
     "@vue-stripe/vue-stripe": "^4.1.8",
     "axios": "^0.21",
     "chart.js": "^2.9.3",
