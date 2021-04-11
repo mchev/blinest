@@ -224,7 +224,8 @@
                         ['la ', ''],
                         ['Le ', ''],
                         ['le ', ''],
-                        ['&', 'et'],
+                        [' & ', '-'],
+                        [' et ', '-'],
                         ['.', ''],
                     ]
                 });
@@ -263,11 +264,7 @@
                 }
 
                 // If the word is too small we accept better tolerance
-                if (artist.length > 6) {
-                    var limit = 0.85;
-                } else {
-                    var limit = 0.79;
-                }
+                var limit = 0.79; // old was 0.85
 
 
                 if (customScore > titleSimilarity || customScore > artistSimilarity) {
