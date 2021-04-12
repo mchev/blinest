@@ -22,7 +22,7 @@
         </div>
         <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
             <div class="text-center text-white">
-                <h3 class="game-title">{{ game.title }}</h3>
+                <h3 class="game-title">{{ game.title | badFilter }}</h3>
                 <small>Animateur : {{ game.user.name }}</small>
             </div>
         </div>
@@ -35,6 +35,10 @@
 </template>
 
 <script>
+
+    const badWords = require('leo-profanity');
+    badWords.loadDictionary('fr');
+
     export default {
 
         data() {
@@ -79,7 +83,16 @@
                 });
 
             }
+        },
+
+        filters: {
+
+          badFilter: function(text) {
+              return badWords.clean(text);
+          },
+
         }
+
     };
 
 </script>
