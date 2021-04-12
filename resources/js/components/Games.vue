@@ -62,7 +62,9 @@
         },
 
         created() {
-            this.getPlayersCounter();
+            setTimeout(function () {
+                this.getPlayersCounter();
+            }, 10000);
         },
 
         methods: {
