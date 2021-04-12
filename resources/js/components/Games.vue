@@ -79,7 +79,7 @@
 
                 setTimeout(function () {
 
-                    $.each(this.reactiveGames, function(key, value) {
+                    $.each(vm.reactiveGames, function(key, value) {
 
                       Echo.private('game-' + value.id)
                         .listenForWhisper('counter', (data) => {
