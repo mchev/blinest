@@ -26,7 +26,7 @@ class ContactController extends Controller
 		$data = array(
 			'from' => $request->from, 
 			'body' => $request->message,
-			'to' => env('APP_EMAIL'), 
+			'to' => config('app.email'), 
 			'subject' => 'Nouveau message depuis le site'
 		);
 

@@ -14,6 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Blinest'),
+    'email' => env('APP_EMAIL', 'hello@blinest.com'),
 
     /*
     |--------------------------------------------------------------------------
