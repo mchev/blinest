@@ -235,6 +235,9 @@
     .love {
         background-color: #FE3F5B !important;
     }
+    .pubs-tv {
+        background-color: #434B53 !important;
+    }
 
 
 </style>
