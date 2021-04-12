@@ -77,6 +77,8 @@
 
                 let vm = this;
 
+                // Delay the listener to prevent for unecessaries requests
+
                 setTimeout(function () {
 
                     $.each(vm.reactiveGames, function(key, value) {
@@ -89,7 +91,7 @@
 
                     });
 
-                }, 10000);
+                }, 15000);
 
             }
 
