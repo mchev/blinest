@@ -62,9 +62,7 @@
         },
 
         created() {
-            setTimeout(function () {
-                this.getPlayersCounter();
-            }, 10000);
+            this.getPlayersCounter();
         },
 
         methods: {
@@ -79,15 +77,19 @@
 
                 let vm = this;
 
-                $.each(this.reactiveGames, function(key, value) {
+                setTimeout(function () {
 
-                  Echo.private('game-' + value.id)
-                    .listenForWhisper('counter', (data) => {
-                        value.counter = data;
-                        vm.$set(vm.reactiveGames, key, value);
+                    $.each(this.reactiveGames, function(key, value) {
+
+                      Echo.private('game-' + value.id)
+                        .listenForWhisper('counter', (data) => {
+                            value.counter = data;
+                            vm.$set(vm.reactiveGames, key, value);
+                        });
+
                     });
 
-                });
+                }, 10000);
 
             }
 
