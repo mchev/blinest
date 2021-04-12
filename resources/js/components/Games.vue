@@ -60,22 +60,11 @@
                 colorCache: {},
             }
         },
-        mounted() {
 
-            
-            //this.spinner = false;
+        created() {
             this.getPlayersCounter();
         },
 
-        created() {
-            /*
-            axios.get('/api/games').then((response) => {
-                this.games = response.data;
-            }).catch((error) => {
-                console.warn(error);
-            });
-            */
-        },
         methods: {
 
             randomColor(id) {
