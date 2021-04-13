@@ -215,6 +215,7 @@
                 var withoutParentheses = str.replace(/ *\([^)]*\) */g, "").replace(/ *\[[^)]*\] */g, "");
                 return slugify(withoutParentheses, {
                     decamelize: false,
+                    lowercase: true,
                     customReplacements: [
                         ['The ', ''],
                         ['the ', ''],
@@ -224,11 +225,13 @@
                         ['la ', ''],
                         ['Le ', ''],
                         ['le ', ''],
+                        [' & ', ''],
                         ['&', ''],
                         [' et ', ''],
                         [' Et ', ''],
                         [' and ', ''],
                         [' And ', ''],
+                        [' AND ', ''],
                         ['.', ''],
                     ]
                 });
