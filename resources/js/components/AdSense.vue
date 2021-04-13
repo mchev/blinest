@@ -32,19 +32,15 @@
 
       	mounted() {
 
-          const ad = document.createElement('div')
-          ad.innerHTML = '&nbsp;'
-          ad.className = 'adsbox'
-          document.body.appendChild(ad)
-          window.setTimeout(function() {
-            if (ad.offsetHeight === 0) {
-              this.adBlockEnabled = true
-            }
-            ad.remove()
-          }, 100)
+          let vm = this;
+
+          axios.get('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js')
+            .catch(function (error) {
+              vm.adBlockEnabled = true;
+            });
 
       		this.adsenseContent = document.getElementById(this.position).innerHTML;
-      	}
+      	},
 
     };
 

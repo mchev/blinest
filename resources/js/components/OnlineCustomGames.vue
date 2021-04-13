@@ -50,6 +50,7 @@
 
         data() {
             return {
+                interval: null,
                 colorCache: {},
                 loadedGames: [],
                 displayCustomGames: false,
@@ -61,17 +62,13 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             if (localStorage.displayCustomGames === 'show') {
-              this.displayCustomGames = 'show';
+              this.displayCustomGames = 'show'
+              this.fetch();
+              this.initInterval();
             } else {
               this.displayCustomGames = false;
             }
 
-        },
-        created() {
-
-            this.fetch();
-            this.initInterval();
-            
         },
 
         methods: {
@@ -81,9 +78,12 @@
                 if(this.displayCustomGames) {
                     localStorage.displayCustomGames = false;
                     this.displayCustomGames = false;
+                    clearInterval(this.interval);
                 } else {
                     localStorage.displayCustomGames = 'show';
                     this.displayCustomGames = 'show';
+                    this.fetch();
+                    this.initInterval();
                 }
 
             },
@@ -91,7 +91,7 @@
             initInterval() {
                 let vm = this;
 
-                setInterval(function() {
+                this.interval = setInterval(function() {
                     vm.fetch();
                 }, 10000);
 
