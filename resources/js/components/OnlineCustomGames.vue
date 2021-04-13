@@ -1,32 +1,39 @@
 <template>
 
-<div class="row">
+<div class="w-100 d-block">
 
-    <div class="col-md-12">
-        <h2 class="font-weight-light">Blind tests privés</h2>
-        <p><small>Pour apparaitre dans cette liste vous devez avoir lancé votre partie et celle-ci ne doit pas être protégée par un mot de passe.</small></p>
-    </div>
+    <button class="btn btn-sm btn-primary d-block w-100 text-left mb-2" @click="toggleCustomGames">
+        <span v-if="displayCustomGames"><i class="fas fa-eye"></i> Parties joueurs</span>
+        <span v-else><i class="fas fa-eye-slash"></i> Parties joueurs</span>
+    </button>
 
-    <div v-if="loadedGames.length == 0" class="col-md-12">
-        <p>Aucune partie en cours</p>
-        <a class="btn btn-sm btn-success btn-lg" href="/games/create">Créer un blind test</a>
-    </div>
+    <div class="row my-4" v-show="displayCustomGames">
 
-    <div v-for="game in loadedGames" class="col-md-12">
-
-      <a class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug">
-        <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
-            <div title="Jouer" class="portfolio-item-caption-content text-center text-white">
-                <i class="fas fa-play fa-3x"></i>
-            </div>
+        <div class="col-md-12">
+            <b>Parties privées <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="right" :title="tooltip"></i></b>
         </div>
-        <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
-            <div class="text-center text-white">
-                <h3 class="game-title">{{ game.title | badFilter }}</h3>
-                <small>Animateur : {{ game.user.name }}</small>
-            </div>
+
+        <div v-if="loadedGames.length == 0" class="col-md-12">
+            <p>Aucune partie en cours</p>
         </div>
-      </a>
+
+        <div v-for="game in loadedGames" class="col-md-12">
+
+          <a class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug">
+            <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                <div title="Jouer" class="portfolio-item-caption-content text-center text-white">
+                    <i class="fas fa-play fa-3x"></i>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center h-100 w-100 game-item">
+                <div class="text-center text-white">
+                    <h3 class="game-title">{{ game.title | badFilter }}</h3>
+                    <small>Animateur : {{ game.user.name }}</small>
+                </div>
+            </div>
+          </a>
+
+        </div>
 
     </div>
 
@@ -45,10 +52,20 @@
             return {
                 colorCache: {},
                 loadedGames: [],
+                displayCustomGames: false,
+                tooltip: "Pour apparaitre dans cette liste vous devez avoir lancé votre partie et celle-ci ne doit pas être protégée par un mot de passe.",
             }
         },
         mounted() {
-            //this.spinner = false;
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            if (localStorage.displayCustomGames === 'show') {
+              this.displayCustomGames = 'show';
+            } else {
+              this.displayCustomGames = false;
+            }
+
         },
         created() {
 
@@ -59,9 +76,16 @@
 
         methods: {
 
-            randomColor(id) {
-                const r = () => Math.floor(256 * Math.random());
-                return this.colorCache[id] || (this.colorCache[id] = `rgb(${r()}, ${r()}, ${r()})`);
+            toggleCustomGames() {
+
+                if(this.displayCustomGames) {
+                    localStorage.displayCustomGames = false;
+                    this.displayCustomGames = false;
+                } else {
+                    localStorage.displayCustomGames = 'show';
+                    this.displayCustomGames = 'show';
+                }
+
             },
 
             initInterval() {

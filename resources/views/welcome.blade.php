@@ -11,62 +11,27 @@
 
     <div class="row d-flex justify-content-center">
 
-      @guest
+      <div class="col-md-10 my-3 order-md-2">
 
-        <div class="col-md-10 my-3 order-md-2">
+        @if (session('message'))
+            <div class="alert alert-danger">{{ session('message') }}</div>
+        @endif
 
-          @if (session('message'))
-              <div class="alert alert-danger">{{ session('message') }}</div>
-          @endif
+        <games :games="{{ $games->toJson() }}"></games>
 
-          <games :games="{{ $games->toJson() }}"></games>
+      </div>
 
-        </div>
+      <div class="col-md-2 py-3 border-right">
 
-        <div class="col-md-2 py-3 border-right">
+        <a class="btn btn-sm btn-primary mb-2 d-block text-left" rel="nofollow noopener" href="https://discord.gg/uKyVgcxcFa" target="_blank"><i class="fab fa-discord"></i> Blinest sur Discord</a>
 
-          <div class="mb-4">
-
-            <a class="btn btn-sm btn-primary" rel="nofollow noopener" href="https://discord.gg/uKyVgcxcFa" target="_blank">Blinest sur <i class="fab fa-discord"></i> Discord</a>
-
-            <hr class="border-b border-primary">
-
-          </div>
-          
-          <adsense :position="'pubSidebar'"/>
-
-        </div>
-
-
-      @else
-
-        <div class="col-md-10 my-3 order-md-2">
-
-          @if (session('message'))
-              <div class="alert alert-danger">{{ session('message') }}</div>
-          @endif
-
-          <games :games="{{ $games->toJson() }}"></games>
-
-        </div>
-
-        <div class="col-md-2 py-3 border-right">
-
-          <div class="mb-4">
-
-            <a class="btn btn-sm btn-primary" rel="nofollow noopener" href="https://discord.gg/uKyVgcxcFa" target="_blank">Blinest sur <i class="fab fa-discord"></i> Discord</a>
-
-            <hr class="border-b border-primary">
-
-          </div>
-
+        @auth
           <online-custom-games></online-custom-games>
+        @endauth
 
-          <adsense :position="'pubSidebar'"/>
+        <adsense :position="'pubSidebar'"/>
 
-        </div>
-
-      @endguest
+      </div>
 
     </div>
 
