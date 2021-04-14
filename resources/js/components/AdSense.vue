@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div style="max-width: 100%;">
 
     <div v-if="adBlockEnabled" class="alert alert-info alert-dismissible fade show" role="alert">
       <small>Soutiens Blinest en désactivant ton bloqueur de publicité.</small>
