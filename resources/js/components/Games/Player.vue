@@ -114,13 +114,17 @@
             this.game.player.play();
             this.game.player.volume = parseFloat(this.game.volume);
 
-            Echo.channel('game-' + this.game.id)
-                .listen('PauseTrack', (data) => {
-                    this.game.player.pause();
-                })
-                .listen('ResumeTrack', (data) => {
-                    this.game.player.play();
-                })
+            if (this.game.public != 1)
+
+                Echo.channel('game-' + this.game.id)
+                    .listen('PauseTrack', (data) => {
+                        this.game.player.pause();
+                    })
+                    .listen('ResumeTrack', (data) => {
+                        this.game.player.play();
+                    })
+
+            }
 
         },
 
