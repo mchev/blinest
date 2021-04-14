@@ -121,6 +121,13 @@ class TrackController extends Controller
     public function update(Request $request, Track $track)
     {
 
+        $validated = $request->validate([
+            'artist_name' => 'required|string|max:255',
+            'track_name' => 'required|string|max:255',
+            'custom_answer' => 'string|max:255',
+            'down_rate' => 'integer',
+        ]);
+
         $track->artist_name = $request->artist_name;
         $track->track_name = $request->track_name;
         $track->custom_answer = $request->custom_answer;
