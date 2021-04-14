@@ -124,8 +124,8 @@ class TrackController extends Controller
         $validated = $request->validate([
             'artist_name' => 'required|string|max:255',
             'track_name' => 'required|string|max:255',
-            'custom_answer' => 'string|max:255',
-            'down_rate' => 'integer',
+            'custom_answer' => 'nullable|string|max:255',
+            'down_rate' => 'nullable|integer',
         ]);
 
         $track->artist_name = $request->artist_name;
