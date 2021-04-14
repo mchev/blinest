@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Rennokki\Larafy\Larafy;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class SpotifyController extends Controller
 {
+
+    public function spotAuth()
+    {
+
+        $session = new \SpotifyWebAPI\Session( config('services.spotify.client_id'), config('services.spotify.client_secret') );
+        $session->requestCredentialsToken();
+        $accessToken = $session->getAccessToken();
+
+        return $accessToken;
+
+    }
 
     /**
      * Display a listing of the resource.
@@ -18,21 +28,14 @@ class SpotifyController extends Controller
     public function releases(Request $request)
     {
 
-        $api = new Larafy();
-        $api->setMarket('FR')->setLocale('fr_FR');
+        $api = new \SpotifyWebAPI\SpotifyWebAPI();
+        $api->setAccessToken($this->spotAuth());
 
-        $limit = 16;
-        $offset = 0;
+        $releases = $api->getNewReleases([
+            'country' => 'fr',
+        ]);
 
-        try {
-            // Get new albums releases.
-           $releases = $api->getNewReleases($limit, $offset);
-        } catch(\Rennokki\Larafy\Exceptions\SpotifyAuthorizationException $e) {
-            // invalid ID & Secret provided
-            $e->getAPIResponse(); // Get the JSON API response.
-        }
-
-        $releases = $releases->items;
+        $releases = $releases->albums->items;
 
         return view('releases', compact('releases'));
 
