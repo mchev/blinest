@@ -35,92 +35,132 @@
 
     <div class="col-md-12">
 
-      <div class="card">
+      <div class="card my-3">
 
-        <div class="card-header">
-          {{ $game->title }} - Paramètres
-        </div>
+        <form method="post" enctype="multipart/form-data" action="{{ route('games.update', $game->id) }}">
 
-        <div class="card-body">
+          @method('PATCH')
+          @csrf
 
-          @if ($errors->any())
-            <div class="alert alert-danger">
-              <ul>
-                  @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                  @endforeach
-              </ul>
-            </div><br />
-          @endif
-
-          <form method="post" enctype="multipart/form-data" action="{{ route('games.update', $game->id) }}">
-
-              @method('PATCH')
-              @csrf
-
-              <div class="form-group">
-                  <label for="title">Titre</label>
-                  <input type="text" class="form-control" id="title" name="title" value="{{ $game->title }}" required/>
-              </div>
-
-              <div class="form-group">
-                  <label for="description">Description</label>
-                  <input type="text" class="form-control" id="description" name="description" value="{{ $game->description }}" required/>
-              </div>
-
-              <hr>
-
-              <div class="row">
-
-                <div class="col-md-12">
-
-                  <div class="form-group">
-                      <label class="btn-file btn btn-primary" for="thumbnail">
-                        Modifier l'image
-                        <input type="file" class="form-control" id="thumbnail" name="thumbnail"/>
-                      </label>
-                  </div>
-
-                  @if($game->thumbnail)
-                    <img id="thumbnail-img" class="img-fluid img-thumbnail" src="/storage/games/{{ $game->thumbnail }}">
-                  @endif
-
-                </div>
-
-              </div>
-
-              <hr>
-
-              <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
-
-          </form>
-
-        </div>
-      </div>
-
-
-      <div class="card mt-4">
-
-          <div class="card-header">
-            Supprimer ce Blind test
+          <div class="card-header bg-secondary text-white">
+            Paramètres
           </div>
 
           <div class="card-body">
 
-            <div class="alert alert-danger" role="alert">
-              Si vous décidez de supprimer ce blind test, toutes les musiques et statistiques associées seront définitivement effacées.
+            @if ($errors->any())
+              <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+              </div><br />
+            @endif
+
+            <div class="row">
+
+              <div class="col">
+
+                <div class="form-group">
+                    <label for="title">Titre</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ $game->title }}" required/>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" name="description" value="{{ $game->description }}" placeholder="255 caractères max" required/>
+                </div>
+
+                @if( Auth::user()->is('admin') )
+
+                  <div class="form-group">
+                      <label for="description">Couleur</label>
+                      <input type="text" class="form-control" id="description" name="color" value="{{ $game->color }}" placeholder="Hexadecimal sans le #"/>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="description">Discord Webhook Url</label>
+                      <input type="text" class="form-control" id="description" name="discord_webhook_url" value="{{ $game->discord_webhook_url }}"/>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="{{ $game->public }}" name="public" id="publicCheckDefault" @if($game->public) checked="checked" @endif>
+                      <label class="form-check-label" for="publicCheckDefault">
+                        Partie publique
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="{{ $game->pro }}" name="pro" id="proCheckDefault" @if($game->pro) checked="checked" @endif>
+                      <label class="form-check-label" for="proCheckDefault">
+                        Partie pro
+                      </label>
+                    </div>
+                  </div>
+
+                @endif
+
+              </div>
+
+              <div class="col">
+
+                <div class="custom-file my-3">
+                  <input type="file" name="thumbnail" class="custom-file-input" id="inputGroupFileGameThumbnail" aria-describedby="inputGroupFileAddon01">
+                  <label class="custom-file-label" for="inputGroupFileGameThumbnail">Modifier l'image</label>
+
+                  @if($game->thumbnail)
+                    <img id="thumbnail-img" class="img-fluid img-thumbnail mt-2" src="/storage/games/{{ $game->thumbnail }}">
+                  @endif
+                </div>
+
+              </div>
+
             </div>
 
-            <form method="post" enctype="multipart/form-data" action="{{ route('games.destroy', $game->id) }}">
+          </div>
 
-                @method('DELETE')
-                @csrf
+          <div class="card-footer">
 
-                <button type="submit" class="btn btn-danger">Supprimer (Cette action est irréversible.)</button>
-
-            </form>
+            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
 
           </div>
+
+        </form>
+
+      </div>
+
+
+
+      <div class="card my-3">
+
+        <form method="post" enctype="multipart/form-data" action="{{ route('games.destroy', $game->id) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer définitvement cette partie?');">
+
+            @method('DELETE')
+            @csrf
+
+            <div class="card-header bg-secondary text-white">
+              Supprimer ce Blind test
+            </div>
+
+            <div class="card-body">
+
+              <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Si vous décidez de supprimer ce blind test, <b>tous les scores, musiques et statistiques associés seront DEFINITIVEMENT effacés.</b>
+              </div>
+
+            </div>
+
+            <div class="card-footer">
+
+              <button type="submit" class="btn btn-danger text-uppercase">Supprimer la partie</button>
+
+            </div>
+
+        </form>
 
       </div>
 

@@ -351,13 +351,20 @@ class GameController extends Controller
         }
 
         // Generate new slug
-        $slug = Str::slug($request->get('title'), '-');
+        $slug = Str::slug($request->title, '-');
 
-        $game->title = $request->get('title');
-        $game->description = $request->get('description');
+        $game->title = $request->title;
+        $game->description = $request->description;
         $game->slug = $slug;
 
-        $game->save();
+        if( Auth::user()->is('admin') ) {
+            $game->color = $request->color;
+            $game->discord_webhook_url = $request->discord_webhook_url;
+            $game->public = $request->has('public');
+            $game->pro = $request->has('pro');
+        }
+
+        $game->update();
 
         return view('games.edit', compact('game'))->with('success', 'Le blind test a été modifié');
 
