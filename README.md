@@ -33,16 +33,23 @@ npm run dev / watch / prod
 
 edit the .env file
 
-    composer install --no-dev --optimize-autoloader
+    composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
     
     php artisan key:generate
     
     php artisan migrate
     
     npm install --only=prod
+    
+    npm run prod
+    
+    php artisan config:cache
+    
+    php artisan route:cache
+    
 
+## Daemons
 
-
-## SERVER STARTUP
     php artisan websocket:serve
+    
     php artisan play
