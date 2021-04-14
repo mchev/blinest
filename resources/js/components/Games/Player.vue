@@ -114,7 +114,7 @@
             this.game.player.play();
             this.game.player.volume = parseFloat(this.game.volume);
 
-            if (this.game.public != 1)
+            if (this.game.public != 1) {
 
                 Echo.channel('game-' + this.game.id)
                     .listen('PauseTrack', (data) => {
