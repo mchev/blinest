@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Redis;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +18,14 @@ Route::get('/', 'GameController@index');
 
 Route::get('/parties', function() { 
     return Redirect::to('/', 301); 
+});
+
+Route::get('/check/redis', function() {
+
+	$visits = Redis::incr('visits');
+
+	return $visits;
+
 });
 
 // STATIQUES
