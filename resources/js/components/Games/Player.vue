@@ -252,29 +252,8 @@
                     '1000' : 'mille'
                 };
 
-                var roman = {
-                    '4': 'IV',
-                    '9': 'IX',
-                    '40': 'XL',
-                    '90': 'XC',
-                    '400': 'CD',
-                    '900': 'CM',
-                    '1': 'I',
-                    '5': 'V',
-                    '10': 'X',
-                    '50': 'L',
-                    '100': 'C',
-                    '500': 'D',
-                    '1000': 'M'
-                };
-
                 // Remove () and [] with content
                 str = str.replace(/ *\([^)]*\) */g, "").replace(/ *\[[^)]*\] */g, "");
-
-                // Replace roman numerals to integer
-                for (var pattern in roman) {
-                    str = str.replace(new RegExp(roman[pattern], 'g'), pattern);
-                };
 
                 // Lowercase
                 str = str.toLowerCase();
