@@ -2,12 +2,13 @@
 
 namespace App\Discord;
 
+use App\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class Notification
 {
-    public static function send($title, $description, $color)
+    public static function send(Game $game, $description, $color)
     {
         if($color === 'danger') {
             $color = '15158332';
@@ -17,11 +18,13 @@ class Notification
             $color = '3447003';
         }
 
+        $url = ($game->discord_webhook_url) ? $game->discord_webhook_url : config('services.discord.webhook');
+
         return Http::post(config('services.discord.webhook'), [
             //'content' => "Test bot blinest!",
             'embeds' => [
                 [
-                    'title' => $title,
+                    'title' => $game->title,
                     'description' => $description,
                     'color' => $color,
                 ]

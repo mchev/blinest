@@ -78,7 +78,7 @@ class TrackController extends Controller
 
             if($game->public === 1) {
                 \App\Discord\Notification::send(
-                    $track->game->title,
+                    $track->game,
                     "Le titre " . $track->track_name . " de " . $track->artist_name . " a été ajouté.",
                     "success"
                 );
@@ -185,7 +185,7 @@ class TrackController extends Controller
 
         if($game->public === 1) {
             \App\Discord\Notification::send(
-                $track->game->title,
+                $track->game,
                 "Le titre " . $track->track_name . " de " . $track->artist_name . " a été supprimé.",
                 "danger"
             );
