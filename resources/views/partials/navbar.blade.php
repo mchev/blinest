@@ -70,7 +70,7 @@
                     </li>
 -->
                     <li class="nav-item">
-                        <a href="https://github.com/mchev/blinest" target="_blank" class="nav-link text-white" title="Github"><i class="fab fa-github"></i></a>
+                        <a href="https://github.com/mchev/blinest" rel="nofollow noopener" target="_blank" class="nav-link text-white" title="Github"><i class="fab fa-github"></i></a>
                     </li>
 
                     <li class="nav-item" title="Ce site fait avec ♥ vous est proposé gratuitement. Si vous souhaitez le soutenir (serveur, maintenance, développement) vous pouvez faire un don.">

@@ -20,6 +20,8 @@ Route::get('/parties', function() {
     return Redirect::to('/', 301); 
 });
 
+
+// Url to check if redis is running correctly
 Route::get('/check/redis', function() {
 
 	$visits = Redis::incr('visits');

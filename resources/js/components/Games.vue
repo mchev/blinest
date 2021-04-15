@@ -11,7 +11,7 @@
 
         <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
 
-      <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: randomColor(game.id)}">
+      <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: color(game)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
             <a :href="'/parties/' + game.slug" title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <a v-else class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug" :style="{backgroundColor: randomColor(game.id)}">
+      <a v-else class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug" :style="{backgroundColor: color(game)}">
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
             <div title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
@@ -72,6 +72,13 @@
                 return this.colorCache[id] || (this.colorCache[id] = `rgb(${r()}, ${r()}, ${r()})`);
             },
 
+            color(game) {
+                if(game.color && game.color.length === 6) {
+                    return '#' + game.color;
+                } else {
+                    return this.randomColor(game.id);
+                }
+            },
 
             getPlayersCounter() {
 
@@ -123,10 +130,12 @@
     .portfolio-item {
         min-height: 210px;
     }
+
     .game-item {
         height: 210px !important;
         font-size: 150%;
     }
+    
     .game-title {
         font-size: 1.2rem;
     }
@@ -134,103 +143,13 @@
     a.portfolio-item:hover {
         text-decoration: none;
     }
+
     .img-circle {
         height: 150px;
         width: 150px;
         border-radius: 50%;
         object-fit: cover;
         background: #FFFFFF;
-    }
-
-    .quiz-general {
-        background-color: #F24335 !important;
-    }
-    .annees-2000 {
-        background-color: #B87BFD !important;
-    }
-    .disney {
-        background-color: #9D27B0 !important;
-    }
-    .chanson-francaise {
-        background-color: #6739B6 !important;
-    }
-    .annees-80 {
-        background-color: #3F51B6 !important;
-    }
-    .series-tv {
-        background-color: #02A8F4 !important;
-    }
-    .le-blindtest-mouth {
-        background-color: #2097F3 !important;
-    } 
-    .musiques-de-film {
-        background-color: #01BCD4 !important;
-    }
-    .pop-rock {
-        background-color: #189687 !important;
-    }
-    .jeux-video {
-        background-color: #8AC349 !important;
-    }
-    .youtubeurs {
-        background-color: #4BAF4F !important;
-    }
-    .moustachus {
-        background-color: #CDDC3A !important;
-    }
-    .musique-classique {
-        background-color: #FEC106 !important;
-    }
-    .metal {
-        background-color: #FFEB3C !important;
-    }
-    .k-pop {
-        background-color: #FF9800 !important;
-    }
-    .rap-fr {
-        background-color: #ED6F48 !important;
-    }
-    .rap-rnb {
-        background-color: #29B296 !important;
-    }
-    .kids {
-        background-color: #795749 !important;
-    }
-    .anime-manga {
-        background-color: #647C8D !important;
-    }
-    .electro {
-        background-color: #2C3C4D !important;
-    }
-    .world {
-        background-color: #E63735 !important;
-    }
-    .annees-90 {
-        background-color: #A998E0 !important;
-    }
-    .annees-2010 {
-        background-color: #2C3D50 !important;
-    }
-    .halloween {
-        background-color: #EA7A00 !important;
-    }
-    .cest-noel {
-        background-color: #BA1818 !important;
-    }
-    .annees-70 {
-        background-color: #64CE1E !important;
-    }
-    .dessin-anime {
-        background-color: #EFC700 !important;
-    }
-    .saint-valentin {
-        background-color: #E52716 !important;
-    }
-    .love {
-        background-color: #FE3F5B !important;
-    }
-    .pubs-tv {
-        background-color: #434B53 !important;
     }
 
 
