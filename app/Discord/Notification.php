@@ -20,7 +20,7 @@ class Notification
 
         $url = ($game->discord_webhook_url) ? $game->discord_webhook_url : config('services.discord.webhook');
 
-        return Http::post($url), [
+        return Http::post($url, [
             //'content' => "Test bot blinest!",
             'embeds' => [
                 [
