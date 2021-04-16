@@ -43,6 +43,7 @@
 
                             @if(Auth::user()->is('admin'))
                                 <a href="{{ route('admin.dashboard.index') }}" class="dropdown-item">Dashboard</a>
+                                <a href="/admin/horizon" class="dropdown-item">Horizon</a>
                                 <a href="{{ route('admin.users.index') }}" class="dropdown-item">Utilisateurs</a>
                                 <a href="{{ route('admin.tracks.index') }}" class="dropdown-item">Tracks</a>
                                 <a href="{{ route('admin.games.index') }}" class="dropdown-item">Parties</a>
