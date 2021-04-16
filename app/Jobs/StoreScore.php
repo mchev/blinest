@@ -17,6 +17,8 @@ class StoreScore implements ShouldQueue
 
     protected $score;
 
+    protected $user_id;
+
     protected $game_id;
 
     /**
@@ -24,9 +26,10 @@ class StoreScore implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($score, $game_id)
+    public function __construct($score, $user_id, $game_id)
     {
         $this->score = $score;
+        $this->user_id = $user_id;
         $this->game_id = $game_id;
     }
 
@@ -39,7 +42,7 @@ class StoreScore implements ShouldQueue
     {
         $score = new Score([
             'game_id' => $this->game_id,
-            'user_id' => Auth::user()->id,
+            'user_id' => $this->user_id,
             'score' => $this->score
         ]);
 
