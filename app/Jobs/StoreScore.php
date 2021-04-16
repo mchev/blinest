@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use Auth;
 use App\Score;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
