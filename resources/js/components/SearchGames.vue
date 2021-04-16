@@ -37,10 +37,12 @@
 
       autoComplete(){
         this.results = [];
-        if(this.query.length > 2){
+        if(this.query.length > 2) {
           axios.get('/api/games/search',{params: {query: this.query}}).then(response => {
             this.results = response.data.data;
           });
+        } else {
+          this.results = [];
         }
       }
       
