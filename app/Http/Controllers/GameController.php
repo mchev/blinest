@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use App\Jobs\StoreScore;
+
 use App\Exports\PlaylistsExport;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -278,6 +280,10 @@ class GameController extends Controller
 
         if(Auth::user()) {
 
+            $score = StoreScore::dispatch($request, $game);
+
+            /*
+
             $score = new Score([
                 'game_id' => $game->id,
                 'user_id' => Auth::user()->id,
@@ -285,6 +291,8 @@ class GameController extends Controller
             ]);
 
             $score->save();
+
+            */
 
             return response()->json($score);
 
