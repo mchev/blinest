@@ -49,7 +49,11 @@ class Message extends Model
 
     public function getSenderProfilePictureAttribute()
     {
-        return $this->sender->profile_picture;
+        if ($this->sender && $this->sender->profile_picture) {
+            return $this->sender->profile_picture;
+        } else {
+            return null;
+        }
     }
 
 

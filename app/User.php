@@ -99,7 +99,7 @@ class User extends Authenticatable
     public function getProfilePictureAttribute()
     {
         $filename = $this->id . '.webp';
-        return ($this->hasProfilePicture()) ? $filename : false;
+        return ($this->hasProfilePicture()) ? $filename : null;
     }
 
     /**
