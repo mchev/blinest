@@ -53,3 +53,7 @@ edit the .env file
     php artisan websocket:serve
     
     php artisan play
+    
+    php artisan horizon
+    
+    php artisan queue:work
