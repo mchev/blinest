@@ -280,7 +280,7 @@ class GameController extends Controller
 
         if(Auth::user()) {
 
-            $score = StoreScore::dispatch($request, $game);
+            StoreScore::dispatch($request, $game);
 
             /*
 
@@ -294,7 +294,7 @@ class GameController extends Controller
 
             */
 
-            return response()->json($score);
+            //return response()->json($score);
 
         } else {
 

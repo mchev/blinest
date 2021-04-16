@@ -47,6 +47,5 @@ class StoreScore implements ShouldQueue
 
         $score->save();
 
-        return $score;
     }
 }
