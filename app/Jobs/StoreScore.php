@@ -5,7 +5,6 @@ namespace App\Jobs;
 use Auth;
 use App\Game;
 use App\Score;
-use Illuminate\Http\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,7 +25,7 @@ class StoreScore implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Request $request, Game $game)
+    public function __construct($request, Game $game)
     {
         $this->request = $request;
         $this->game = $game->withoutRelations();
@@ -42,7 +41,7 @@ class StoreScore implements ShouldQueue
         $score = new Score([
             'game_id' => $this->game->id,
             'user_id' => Auth::user()->id,
-            'score' => $this->request->score
+            'score' => $this->request['score']
         ]);
 
         $score->save();
