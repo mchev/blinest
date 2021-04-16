@@ -292,7 +292,7 @@
           this.track = null;
 
           // Save score
-          if (typeof this.score != "undefined" && this.score > 0) {
+          if (this.score && typeof this.score != "undefined" && this.score > 0) {
               axios.post('/games/' + this.game.id + '/score', {score: this.score}).then((response) => {
                   //console.log(response.data);
               }).catch((error) => {
