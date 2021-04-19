@@ -350,6 +350,7 @@ class GameController extends Controller
 
         $game->title = $request->title;
         $game->description = $request->description;
+        $game->password = ($request->password) ? $request->password : null;
         $game->slug = $slug;
 
         if( Auth::user()->is('admin') ) {
@@ -361,7 +362,7 @@ class GameController extends Controller
 
         $game->update();
 
-        return view('games.edit', compact('game'))->with('success', 'Le blind test a été modifié');
+        return redirect()->route('games.edit', compact('game'))->with('success', 'Le blind test a été modifié');
 
     }
 
