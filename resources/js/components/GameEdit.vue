@@ -158,7 +158,6 @@
               <div v-if="playlist.title" class="modal-body text-center p-1">
                 <h1>{{ playlist.title }} ({{ playlist.nb_tracks }} pistes)</h1>
                 <img class="img-fluid" :src="playlist.picture_medium">
-                <p v-if="playlist.provider === 'spotify'">Max 100 pistes par playlist importées</p>
               </div>
               <div class="modal-footer">
                 <button type="button" @click="storePlaylist()" class="btn btn-primary">
