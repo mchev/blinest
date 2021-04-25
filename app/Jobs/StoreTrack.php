@@ -50,7 +50,7 @@ class StoreTrack implements ShouldQueue
         $track = Track::firstOrCreate(
             [
                 'game_id' => $this->game_id, 
-                'provider_item_id', $this->provider_item_id
+                'provider_item_id' => $this->provider_item_id
             ],
             [
                 'user_id' => $this->user_id,
