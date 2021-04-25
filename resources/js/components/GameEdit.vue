@@ -456,15 +456,16 @@
                 };
                 let vm = this;
                 axios.post('/'+this.playlist.provider+'/store/playlist', {'playlist_id': this.playlist.id, 'params': params}).then((response) => {
-                    this.spinner = false;
                     if(response.data.success) {
                         setTimeout(function() {
                             $('#playlistModal').modal('hide');
-                            this.getTracks();
+                            vm.spinner = false;
+                            vm.getTracks();
                         }, 10000);
                     } else {
                         $('#playlistModal').modal('hide');
                         alert("Une erreur à eu lieu lors de l'importation");
+                        this.spinner = false;
                     }
                 }).catch((error) => {
                     console.warn(error);
