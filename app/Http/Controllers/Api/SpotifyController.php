@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Auth;
 use App\Track;
 use App\Game;
+use App\Jobs\StoreTrack;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -46,12 +47,15 @@ class SpotifyController extends Controller
     public function addPlaylist(Request $request)
     {
 
+        // TODO : Parse pagination to store more than 100
+        
         $api = new \SpotifyWebAPI\SpotifyWebAPI();
         $api->setAccessToken($this->spotAuth());
 
         $results = $api->getPlaylist($request->q);
 
         return response()->json($results);
+
 
     }
 
@@ -61,45 +65,50 @@ class SpotifyController extends Controller
 
         $game = Game::find($request->params['game_id']);
 
-        if (auth()->user()->isModerator($game) ||auth()->user()->id == $game->user_id) {
-
-            try {
-
-                $tracks = [];
+        if (auth()->user()->isModerator($game) || auth()->user()->id == $game->user_id) {
 
 
-                foreach ($request->tracks as $track) {
+            $tracks = [];
+            $offset = 0;
+            $run = true;
+            $provider = "spotify";
+            $user_id = auth()->user()->id;
+            $game_id = $game->id;
 
-                    if($track['track']['preview_url']) {
+            $api = new \SpotifyWebAPI\SpotifyWebAPI();
+            $api->setAccessToken($this->spotAuth());
 
-                        $item = new Track([
-                            'user_id' => Auth::user()->id,
-                            'game_id' => $request->params['game_id'],
-                            'provider_item_id' => $track['track']['id'],
-                            'provider' => $request->params['provider'],
-                            'artist_name' => $track['track']['artists'][0]['name'],
-                            'track_name' => $track['track']['name'],
-                            'artwork_url' => $track['track']['album']['images'][1]['url'],
-                            'preview_url' => $track['track']['preview_url'],
-                        ]);
+            while($run) {
 
+                $playlistTracks = $api->getPlaylistTracks($request->playlist_id, ['offset' => $offset]);
 
-                        $item->save();
+                foreach ($playlistTracks->items as $track) {
 
-                        $tracks[] = $item;
+                    if($track->track->preview_url) {
+
+                        $provider_item_id = $track->track->id;
+                        $artist_name = $track->track->artists[0]->name;
+                        $track_name = $track->track->name;
+                        $artwork_url = $track->track->album->images[1]->url;
+                        $preview_url = $track->track->preview_url;
+
+                        StoreTrack::dispatch($user_id, $game_id, $provider_item_id, $provider, $artist_name, $track_name, $artwork_url, $preview_url);
 
                     }
 
                 }
 
-                return response()->json($tracks);
+
+                if($playlistTracks->next) {
+                    $offset+= 100;
+                } else {
+                    $run = false;
+                    return response()->json(['success' =>  true]);
+                }
 
             }
-            catch (Exception $e) {
-                return response()->json($e->getMessage());
-            }
 
-            return response()->json($json);
+            return response()->json(['success' =>  false]);
 
         } else {
 

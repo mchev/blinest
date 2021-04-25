@@ -455,9 +455,13 @@
                     'provider': this.playlist.provider
                 };
                 let vm = this;
-                axios.post('/'+this.playlist.provider+'/store/playlist', {'tracks': this.playlist.tracks.data, 'params': params}).then((response) => {
+                axios.post('/'+this.playlist.provider+'/store/playlist', {'playlist_id': this.playlist.id, 'params': params}).then((response) => {
                     this.spinner = false;
-                    vm.tracks =response.data;
+                    if(response.data.success) {
+                        this.getTracks();
+                    } else {
+                        alert("Une erreur à eu lieu lors de l'importation");
+                    }
                     $('#playlistModal').modal('hide');
                 }).catch((error) => {
                     console.warn(error);
