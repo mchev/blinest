@@ -458,11 +458,14 @@
                 axios.post('/'+this.playlist.provider+'/store/playlist', {'playlist_id': this.playlist.id, 'params': params}).then((response) => {
                     this.spinner = false;
                     if(response.data.success) {
-                        this.getTracks();
+                        setTimeout(function() {
+                            $('#playlistModal').modal('hide');
+                            this.getTracks();
+                        }, 10000);
                     } else {
+                        $('#playlistModal').modal('hide');
                         alert("Une erreur à eu lieu lors de l'importation");
                     }
-                    $('#playlistModal').modal('hide');
                 }).catch((error) => {
                     console.warn(error);
                 });
