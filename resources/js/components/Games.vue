@@ -7,7 +7,7 @@
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
 
-    <div v-for="game in reactiveGames" class="col-md-4 col-lg-3">
+    <div v-for="game in reactiveGames" class="col-md-4 col-lg-2">
 
         <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
 
@@ -128,11 +128,11 @@
     }
 
     .portfolio-item {
-        min-height: 210px;
+        min-height: 150px;
     }
 
     .game-item {
-        height: 210px !important;
+        height: 150px !important;
         font-size: 150%;
     }
     
@@ -145,8 +145,8 @@
     }
 
     .img-circle {
-        height: 150px;
-        width: 150px;
+        height: 100px;
+        width: 100px;
         border-radius: 50%;
         object-fit: cover;
         background: #FFFFFF;
