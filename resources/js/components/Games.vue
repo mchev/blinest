@@ -112,14 +112,14 @@
 
     .counter {
         position: absolute;
-        background: hsla(0,0%,100%,.7);
+        background: hsla(0,0%,100%,.6);
         display: block;
         height: 30px;
         min-width: 30px;
-        top: 6px;
-        right: 22px;
+        top: 3px;
+        right: 18px;
         z-index: 10;
-        border-radius: .5rem;
+        border-radius: .25rem;
         font-weight: 700;
         line-height: 30px;
         text-align: center;
@@ -137,7 +137,7 @@
     }
     
     .game-title {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     a.portfolio-item:hover {
