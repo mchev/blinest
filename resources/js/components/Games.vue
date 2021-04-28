@@ -7,11 +7,12 @@
         <a class="btn btn-success btn-lg" href="/games/create">Créer une partie privée</a>
     </div>
 
-    <div v-for="game in reactiveGames" class="col-md-4 col-lg-2">
-
-        <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
+    <div v-for="game in reactiveGames" class="col-md-4 col-lg-2 pl-1 pr-1 pb-2">
 
       <div v-if="game.user_id == $userId" class="portfolio-item mx-auto" :class="game.slug" :style="{backgroundColor: color(game)}">
+
+        <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
+        
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
             <a :href="'/parties/' + game.slug" title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
@@ -29,6 +30,9 @@
       </div>
 
       <a v-else class="portfolio-item mx-auto" :class="game.slug" :href="'/parties/' + game.slug" :style="{backgroundColor: color(game)}">
+
+        <span v-if="game.counter" class="counter"><i class="fas fa-user-friends"></i> {{ game.counter }}</span>
+
         <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
             <div title="Jouer" class="portfolio-item-caption-content text-center text-white">
                 <i class="fas fa-play fa-3x"></i>
@@ -117,7 +121,7 @@
         height: 30px;
         min-width: 30px;
         top: 3px;
-        right: 18px;
+        right: 3px;
         z-index: 10;
         border-radius: .25rem;
         font-weight: 700;
@@ -129,6 +133,7 @@
 
     .portfolio-item {
         min-height: 150px;
+        margin: 0;
     }
 
     .game-item {
