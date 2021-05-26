@@ -3,7 +3,7 @@
     <div>
 
         <div v-if="success" class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Merci!</strong> Ton message a été envoyé aux modérateur.rice.s. Ils traiterons la demande très bientôt.
+            <strong>Merci!</strong> Ton message a été envoyé aux modérateur.rice.s. Ils traiteront la demande très bientôt.
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
