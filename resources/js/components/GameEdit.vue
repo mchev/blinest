@@ -156,17 +156,18 @@
                 </button>
               </div>
               <div v-if="playlist.title" class="modal-body text-center p-1">
-                <h1>{{ playlist.title }} ({{ playlist.nb_tracks }} pistes)</h1>
+                <h2>{{ playlist.title }}</h2>
+                <p>{{ playlist.nb_tracks }} pistes</p>
                 <img class="img-fluid" :src="playlist.picture_medium">
               </div>
-              <div class="modal-footer">
+              <div class="modal-footer mt-4">
+                <button type="button" class="btn btn-secondary" @click="playlist == null" data-dismiss="modal">Fermer</button>                
                 <button type="button" @click="storePlaylist()" class="btn btn-primary">
                     <div v-if="spinner" class="spinner-border" role="status">
                       <span class="sr-only">Loading...</span>
                     </div>
                     Importer
                 </button>
-                <button type="button" class="btn btn-secondary" @click="playlist == null" data-dismiss="modal">Fermer</button>
               </div>
             </div>
           </div>
@@ -460,7 +461,7 @@
                             $('#playlistModal').modal('hide');
                             vm.spinner = false;
                             vm.getTracks();
-                        }, 10000);
+                        }, 5000);
                     } else {
                         $('#playlistModal').modal('hide');
                         alert("Une erreur à eu lieu lors de l'importation");
@@ -468,6 +469,9 @@
                     }
                 }).catch((error) => {
                     console.warn(error);
+                    $('#playlistModal').modal('hide');
+                    alert("L'importation s'est terminée sans ajouter tous les morceaux.");
+                    this.spinner = false;
                 });
             },
 

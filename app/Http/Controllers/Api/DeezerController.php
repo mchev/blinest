@@ -59,13 +59,25 @@ class DeezerController extends Controller
         $game = Game::find($request->params['game_id']);
         $user = auth()->user();
 
+
+        // GET THE PLAYLIST
+        $url = 'https://api.deezer.com/playlist/'. $request->playlist_id;
+
+        try {
+            $playlist = json_decode(file_get_contents($url, false), true);
+        }
+        catch (Exception $e) {
+            return response()->json($e->getMessage());
+        }
+
+
         if ($user->isModerator($game) || $user->id == $game->user_id) {
 
             try {
 
                 $tracks = [];
 
-                foreach ($request->tracks as $track) {
+                foreach ($playlist['tracks']['data'] as $track) {
 
                     if($track['preview']) {
 
@@ -89,9 +101,13 @@ class DeezerController extends Controller
 
                 }
 
-                return response()->json($tracks);
+                return response()->json([
+                    'tracks' => $tracks,
+                    'success' => true,
+                ]);
 
             }
+            
             catch (Exception $e) {
                 return response()->json($e->getMessage());
             }
