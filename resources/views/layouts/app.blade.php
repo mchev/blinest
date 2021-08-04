@@ -106,7 +106,7 @@
 
                 <hr>
 
-                <small>Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/lab" title="Le lab">Le lab</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a> - <a href="https://github.com/mchev/blinest" rel="nofollow noopener" title="Github">Open Source</a></small>
+                <small>Blinest {{ date("Y") }} - <a href="/contact" title="Contact">Contact</a> - <a href="/mentions-legales" title="Mentions légales">Mentions légales</a> - <a href="/politique-confidentialite" title="Politique de confidentialité">Politique de confidentialité</a> - <a href="https://github.com/mchev/blinest" rel="nofollow noopener" title="Github">Open Source</a></small>
 
             </div>
 
