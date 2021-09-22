@@ -170,7 +170,7 @@
                 let vm = this;
 
                 this.percentage = 0;
-                this.placeholder = "Le titre et/ou l'artiste?";
+                this.placeholder = "Le titre et/ou l'artiste ?";
 
                 //if(this.game.player) this.game.player.pause();
                 this.waitingTrack = false;
@@ -446,7 +446,7 @@
                     // this.placeholder = this.game.placeholder;
 
                     if (this.score.custom == 1) {
-                        this.placeholder = 'L\'artiste et le titre en bonus?';
+                        this.placeholder = 'L\'artiste et le titre en bonus ?';
                     }
                 }
 
@@ -500,8 +500,8 @@
                 let items = {
                     "0": {
                       "afk": [
-                        "Il y a quelqu'un?",
-                        "C'est l'heure de la sieste?",
+                        "Il y a quelqu'un ?",
+                        "C'est l'heure de la sieste ?",
                         "Il faut jouer pour gagner."
                       ]
                     },
@@ -509,85 +509,85 @@
                       "track": [
                         "La pluie de tes injures n’atteint pas le parapluie de mon indifférence.",
                         "Cela semble toujours impossible, jusqu’à ce qu’on le fasse.",
-                        "Peu importe si tu avances lentement, du moment que tu ne t'arrête pas",
+                        "Peu importe si tu avances lentement, du moment que tu ne t'arrêtes pas",
                         "Non, tu n'as pas épuisé toutes les possibilités",
                         "L’échec, c’est ce qui donne à la réussite sa valeur.",
                         "Pour être un bon vainqueur, il faut être un bon perdant.",
                         "Celui qui tombe et se relève est bien plus fort que celui qui ne tombe jamais.",
-                        "Ne te soucis pas du nombre de tes échecs. Tu n'a qu’à réussir une fois.",
-                        "Il n'y a pas de réussite facile ni d'échecs définitifs.",
-                        "Besoin de cotons-tiges en bambou?",
+                        "Ne te soucies pas du nombre de tes échecs. Tu n'as qu’à réussir une fois.",
+                        "Il n'y a pas de réussite facile ni d'échec définitif.",
+                        "Besoin de cotons-tiges en bambou ?",
                         "Tu peux vraiment mieux faire.",
-                        "N'importe quoi!",
-                        "Revois tes classiques!",
-                        "C'est tout ce que ça t'inspire?",
+                        "N'importe quoi !",
+                        "Revois tes classiques !",
+                        "C'est tout ce que ça t'inspire ?",
                         "Tu devrais monter le volume...",
                         "Pendant ce temps, à Vera Cruz....",
-                        "J'aurais pas fais ça comme ça...",
-                        "Faut pas pousser mémé dans les orties!"
+                        "J'aurais pas fait ça comme ça...",
+                        "Faut pas pousser mémé dans les orties !"
                       ],
                       "artist": [
                         "La pluie de tes injures n’atteint pas le parapluie de mon indifférence.",
                         "Cela semble toujours impossible, jusqu’à ce qu’on le fasse.",
-                        "Peu importe si tu avances lentement, du moment que tu ne t'arrête pas",
+                        "Peu importe si tu avances lentement, du moment que tu ne t'arrêtes pas",
                         "Non, tu n'as pas épuisé toutes les possibilités",
                         "L’échec, c’est ce qui donne à la réussite sa valeur.",
                         "Pour être un bon vainqueur, il faut être un bon perdant.",
-                        "Celui qui tombe et se relève et bien plus fort que celui qui ne tombe jamais.",
-                        "Ne te soucis pas du nombre de tes échecs. Tu n'a qu’à réussir une fois.",
-                        "Il n'y a pas de réussite facile ni d'échecs définitifs.",
-                        "Besoin de cotons-tiges en bambou?",
+                        "Celui qui tombe et se relève est bien plus fort que celui qui ne tombe jamais.",
+                        "Ne te soucies pas du nombre de tes échecs. Tu n'as qu’à réussir une fois.",
+                        "Il n'y a pas de réussite facile ni d'échec définitif.",
+                        "Besoin de cotons-tiges en bambou ?",
                         "Tu peux vraiment mieux faire.",
-                        "N'importe quoi!",
-                        "Revois tes classiques!",
-                        "C'est tout ce que ça t'inspire?",
+                        "N'importe quoi !",
+                        "Revois tes classiques !",
+                        "C'est tout ce que ça t'inspire ?",
                         "Tu devrais monter le volume...",
                         "Pendant ce temps, à Vera Cruz....",
-                        "J'aurais pas fais ça comme ça...",
-                        "Faut pas pousser mémé dans les orties!"
+                        "J'aurais pas fait ça comme ça...",
+                        "Faut pas pousser mémé dans les orties !"
                        ]
                     },
                     "2": {
                       "track": [
-                        "Tu y es presque!",
+                        "Tu y es presque !",
                         "La vérité n'est pas loin.",
-                        "Persiste, ça se joue à peu!",
+                        "Persiste, ça se joue à peu !",
                         "Creuse encore, tu es au bout du tunnel."
                       ],
                       "artist": [
-                        "Tu y est presque!",
+                        "Tu y es presque !",
                         "La vérité n'est pas loin.",
-                        "Persiste, ça se joue à peu!",
+                        "Persiste, ça se joue à peu !",
                         "Creuse encore, tu es au bout du tunnel."
                       ]
                     },
                     "3": {
                       "track": [
-                        "Félicitations tu as le titre!",
-                        "Tu as trouvé le titre!",
-                        "Bravo!"
+                        "Félicitations tu as le titre !",
+                        "Tu as trouvé le titre !",
+                        "Bravo !"
                       ],
                       "artist": [
-                        "Félicitations tu as l'artiste!",
-                        "Tu as trouvé l'artiste!",
-                        "Bravo!"
+                        "Félicitations tu as l'artiste !",
+                        "Tu as trouvé l'artiste !",
+                        "Bravo !"
                       ],
                       "both": [
-                        "Félicitations tu as le titre et l'artiste!",
-                        "Tu as trouvé le titre et l'artiste!",
-                        "Bravo!"
+                        "Félicitations tu as le titre et l'artiste !",
+                        "Tu as trouvé le titre et l'artiste !",
+                        "Bravo !"
                       ]
                     },
                     "4": {
                       "track": [
-                        "Dis donc tu es un rapide toi!",
-                        "Quelle vitesse! Quelle puissance!",
-                        "Speeeeeedyy Gonzales!!!"
+                        "Dis donc tu es un rapide toi !",
+                        "Quelle vitesse ! Quelle puissance !",
+                        "Speeeeeedyy Gonzales !!!"
                       ],
                       "artist": [
-                        "Dis donc tu es un rapide toi!",
-                        "Quelle vitesse! Quelle puissance!",
-                        "Speeeeeedyy Gonzales!!!"
+                        "Dis donc tu es un rapide toi !",
+                        "Quelle vitesse! Quelle puissance !",
+                        "Speeeeeedyy Gonzales !!!"
                       ]
                     }
                 }
