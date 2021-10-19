@@ -43,10 +43,8 @@ class GameController extends Controller
      */
     public function index()
     {
-        $counter = Track::count();
         $games = Game::where('public', 1)->orderBy('hit', 'DESC')->get();
-
-        return view('welcome', compact('games', 'counter'));
+        return view('welcome', compact('games'));
     }
 
     public function privateGames()

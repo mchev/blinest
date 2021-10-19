@@ -77,14 +77,6 @@
         </div>
       </div>
 
-      <!-- About Section Button -->
-      <div class="text-center mt-4">
-        <button class="btn btn-xl btn-outline-light">
-          <i class="fas fa-music"></i>
-          {{ $counter }} extraits!
-        </button>
-      </div>
-
     </div>
 </section>
 
