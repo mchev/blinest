@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Redis;
 |
 */
 
-Route::group(['middleware' => ['blockip']], function () {
+//Route::group(['middleware' => ['blockip']], function () {
 
 	Route::get('/', 'GameController@index');
 
@@ -211,4 +211,4 @@ Route::group(['middleware' => ['blockip']], function () {
 
 	});
 
-}); // End blockip middleware
+//}); // End blockip middleware
