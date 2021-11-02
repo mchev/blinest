@@ -275,7 +275,7 @@
 
                 var title = this.sanitize(this.currentTrack.track_name);
                 var artist = this.sanitize(this.currentTrack.artist_name);
-                var acronyme = this.sanitize(this.currentTrack.acronyme);
+                var acronyme = this.currentTrack.acronyme;
 
                 var user = this.sanitize(this.userAnswer);
 
