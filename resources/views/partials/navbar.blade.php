@@ -1,8 +1,7 @@
 <nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url('/') }}">
-            <span style="font-size: 2.3rem" class="mr-1 d-inline-block align-middle p-0">🎃</span>
-            <img loading="lazy" src="/img/logo_svg.svg" alt="{{ config('app.name', 'Laravel') }}">
+            <img loading="lazy" src="/img/logo_svg.svg" alt="{{ config('app.name', 'Blinest') }}">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>

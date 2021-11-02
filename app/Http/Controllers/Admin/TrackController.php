@@ -39,6 +39,7 @@ class TrackController extends Controller
 
                 $tracks = Track::where('track_name', 'like', '%' . $request->q . '%')
                             ->orWhere('artist_name', 'like', '%' . $request->q . '%')
+                            ->orWhere('acronyme', 'like', '%' . $request->q . '%')
                             ->orderBy($request->order, 'DESC')
                             ->with('game')
                             ->paginate($request->paginate);
@@ -68,6 +69,7 @@ class TrackController extends Controller
     public function update(Request $request, Track $track)
     {
 
+        $track->acronyme = $request->acronyme;
         $track->artist_name = $request->artist_name;
         $track->track_name = $request->track_name;
         $track->custom_answer = $request->custom_answer;

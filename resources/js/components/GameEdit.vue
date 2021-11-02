@@ -105,6 +105,7 @@
                                     <i v-if="currentSort === 'custom_answer' && currentSortDir === 'asc'" class="fas fa-sort-down"></i>
                                 </div>
                             </th>
+                            <th scope="col">Acronyme</th>
                             <th width="8%" scope="col">
                                 <div class="pointer" @click="sort('down_rate')">
                                     <i class="fas fa-thumbs-down"></i>
@@ -130,6 +131,7 @@
                             <td>
                                 <audio controls preload="none" :src="track.preview_url" style="width:50px"></audio>
                             </td>
+                            <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.acronyme"></td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.custom_answer"></td>
                             <td><input type="text" class="form-control" @blur="updateTrack(track)" v-model="track.down_rate"></td>
                             <td>{{ track.created_at | moment("DD/MM/YY")}}</td>

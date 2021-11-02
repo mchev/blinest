@@ -42,6 +42,7 @@ class TrackController extends Controller
         $tracks = $game->tracks()->where(function ($query) use ($request) {
                 $query->where('artist_name', 'like', '%' . $request->q . '%')
                       ->orWhere('track_name', 'like', '%' . $request->q . '%')
+                      ->orWhere('acronyme', 'like', '%' . $request->q . '%')
                       ->orWhere('custom_answer', 'like', '%' . $request->q . '%');
             })
             ->orderBy($order, $direction)
@@ -69,6 +70,7 @@ class TrackController extends Controller
                 'provider_item_id' => $request->provider_item_id,
                 'provider' => $request->provider,
                 'artist_name' => $request->artist_name,
+                'acronyme' => $request->acronyme,
                 'track_name' => $request->track_name,
                 'artwork_url' => $request->artwork_url,
                 'preview_url' => $request->preview_url,
@@ -122,12 +124,14 @@ class TrackController extends Controller
     {
 
         $validated = $request->validate([
+            'acronyme' => 'nullable|string|max:10',
             'artist_name' => 'required|string|max:255',
             'track_name' => 'required|string|max:255',
             'custom_answer' => 'nullable|string|max:255',
             'down_rate' => 'nullable|integer',
         ]);
 
+        $track->acronyme = $request->acronyme;
         $track->artist_name = $request->artist_name;
         $track->track_name = $request->track_name;
         $track->custom_answer = $request->custom_answer;
@@ -151,7 +155,7 @@ class TrackController extends Controller
 
         if($track->down_rate > 1) {
             $track->down_rate = $track->down_rate - 1;
-            $track->save();
+            $track->update();
         }
 
         return response()->json($track);
@@ -168,7 +172,7 @@ class TrackController extends Controller
     {
 
         $track->down_rate = $track->down_rate + 1;
-        $track->save();
+        $track->update();
 
         return response()->json($track);
     }
