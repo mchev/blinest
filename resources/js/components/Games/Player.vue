@@ -275,7 +275,7 @@
 
                 var title = this.sanitize(this.currentTrack.track_name);
                 var artist = this.sanitize(this.currentTrack.artist_name);
-                var acronyme = this.currentTrack.acronyme;
+                var acronyme = (this.currentTrack.acronyme) ? this.sanitize(this.currentTrack.acronyme) : null;
 
                 var user = this.sanitize(this.userAnswer);
 
@@ -292,14 +292,14 @@
                 if (user.includes(artist)) {
                     artistSimilarity = 1;
                 }
-                if (user.includes(acronyme)) {
+                if (acronyme && user.includes(acronyme)) {
                     artistSimilarity = 1;
                 }
                 if (user.includes(title) && user.includes(artist)) {
                     titleSimilarity = 1;
                     artistSimilarity = 1;
                 }
-                if (user.includes(title) && user.includes(acronyme)) {
+                if (acronyme && user.includes(title) && user.includes(acronyme)) {
                     titleSimilarity = 1;
                     artistSimilarity = 1;
                 }

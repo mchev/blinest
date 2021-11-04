@@ -124,10 +124,10 @@ class TrackController extends Controller
     {
 
         $validated = $request->validate([
-            'acronyme' => 'nullable|string|max:10',
+            'acronyme' => 'nullable|string|max:40',
             'artist_name' => 'required|string|max:255',
             'track_name' => 'required|string|max:255',
-            'custom_answer' => 'nullable|string|max:255',
+            'custom_answer' => 'nullable|string|max:50',
             'down_rate' => 'nullable|integer',
         ]);
 
