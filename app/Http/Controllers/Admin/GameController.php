@@ -8,7 +8,7 @@ use App\Game;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 
 class GameController extends Controller
 {
@@ -131,6 +131,23 @@ class GameController extends Controller
         $game->save();
 
         return view('admin.games.edit', compact('game'))->with('success', 'Le blind test a été modifié');
+    }
+
+    /**
+     * Delete all games who doesnt have tracks and not updated since 6 months
+     *
+     * @param  \App\Game  $game
+     * @return \Illuminate\Http\Response
+     */
+    public function clean()
+    {
+
+        $games = Game::doesntHave('tracks')
+                    ->whereDate('updated_at', '<', Carbon::now()->subMonths(12)->startOfMonth())
+                    ->where('public', 0)
+                    ->delete();
+
+        return redirect('/admin');
     }
 
     /**

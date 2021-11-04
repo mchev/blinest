@@ -207,6 +207,7 @@ use Illuminate\Support\Facades\Redis;
 		Route::get('tracks/list', 'TrackController@list')->name('tracks.list');
 		Route::resource('tracks', 'TrackController');
 
+		Route::get('games/clean', 'GameController@clean')->name('games.clean');
 		Route::resource('games', 'GameController');
 
 	});

@@ -153,6 +153,25 @@
 
 </section>
 
+<section class="page-section pt-0">
+
+  <div class="container-fluid">
+
+    <div class="row mb-3">
+
+      <div class="col">
+
+        <a href="{{ route('admin.games.clean') }}" class="btn btn-warning">Nettoyer les parties privées</a>
+        <small>Supprime définitivement toutes les parties mises à jours il y a plus d'un an et ne contenant aucun extraits.</small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
 {{--
 <section class="page-section pt-0">
 
