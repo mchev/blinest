@@ -69,6 +69,11 @@ class User extends Authenticatable
         return $this->email === 'johndoe@example.com';
     }
 
+    public function isAdmin()
+    {
+        return $this->admin;
+    }
+
     public function scopeOrderByName($query)
     {
         $query->orderBy('last_name')->orderBy('first_name');

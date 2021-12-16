@@ -14,7 +14,8 @@
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "league/glide-laravel": "^1.0"
+        "league/glide-laravel": "^1.0",
+        "tightenco/ziggy": "^1.4"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
