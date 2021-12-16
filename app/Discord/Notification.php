@@ -11,7 +11,7 @@ class Notification
     public static function send(Game $game, $description, $color)
     {
 
-        if ( $game->discord_webhook_url || config('services.discord.webhook') ) {
+        if ( $game->discord_webhook_url || config('services.discord.webhook') ) {
 
             if($color === 'danger') {
                 $color = '15158332';
