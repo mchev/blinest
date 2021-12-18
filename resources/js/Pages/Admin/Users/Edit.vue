@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Head :title="`${form.first_name} ${form.last_name}`" />
+    <Head :title="`${form.name}`" />
     <div class="flex justify-start mb-8 max-w-3xl">
       <h1 class="text-3xl font-bold">
         <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.users')">Users</Link>
         <span class="text-indigo-400 font-medium">/</span>
-        {{ form.first_name }} {{ form.last_name }}
+        {{ form.name }}
       </h1>
       <img v-if="user.photo" class="block ml-4 w-8 h-8 rounded-full" :src="user.photo" />
     </div>
@@ -13,13 +13,16 @@
     <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
       <form @submit.prevent="update">
         <div class="flex flex-wrap -mb-8 -mr-6 p-8">
-          <text-input v-model="form.first_name" :error="form.errors.first_name" class="pb-8 pr-6 w-full lg:w-1/2" label="First name" />
-          <text-input v-model="form.last_name" :error="form.errors.last_name" class="pb-8 pr-6 w-full lg:w-1/2" label="Last name" />
+          <text-input v-model="form.name" :error="form.errors.name" class="pb-8 pr-6 w-full lg:w-1/2" label="Name" />
           <text-input v-model="form.email" :error="form.errors.email" class="pb-8 pr-6 w-full lg:w-1/2" label="Email" />
           <text-input v-model="form.password" :error="form.errors.password" class="pb-8 pr-6 w-full lg:w-1/2" type="password" autocomplete="new-password" label="Password" />
-          <select-input v-model="form.owner" :error="form.errors.owner" class="pb-8 pr-6 w-full lg:w-1/2" label="Owner">
-            <option :value="true">Yes</option>
-            <option :value="false">No</option>
+          <select-input v-model="form.team_id" :error="form.errors.team_id" class="pb-8 pr-6 w-full lg:w-1/2" label="Team">
+            <option :value="0">Yes</option>
+            <option :value="1">No</option>
+          </select-input>
+          <select-input v-model="form.is_admin" :error="form.errors.is_admin" class="pb-8 pr-6 w-full lg:w-1/2" label="Admin">
+            <option :value="0">No</option>
+            <option :value="1">Yes</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
@@ -60,18 +63,18 @@ export default {
     return {
       form: this.$inertia.form({
         _method: 'put',
-        first_name: this.user.first_name,
-        last_name: this.user.last_name,
+        name: this.user.name,
         email: this.user.email,
         password: '',
-        owner: this.user.owner,
+        team_id: this.user.team_id,
+        is_admin: this.user.is_admin,
         photo: null,
       }),
     }
   },
   methods: {
     update() {
-      this.form.post(route('admin.users', this.user.id), {
+      this.form.post(route('admin.users.update', this.user.id), {
         onSuccess: () => this.form.reset('password', 'photo'),
       })
     },

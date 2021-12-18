@@ -44,7 +44,7 @@
           </td>
           <td class="border-t">
             <Link class="flex items-center px-6 py-4" :href="route('admin.users.edit', user.id)" tabindex="-1">
-              {{ user.owner ? 'Owner' : 'User' }}
+              {{ user.is_admin ? 'Admin' : 'User' }}
             </Link>
           </td>
           <td class="w-px border-t">

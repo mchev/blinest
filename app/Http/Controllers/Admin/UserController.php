@@ -23,8 +23,9 @@ class UserController extends AdminController
                 ->transform(fn ($user) => [
                     'id' => $user->id,
                     'name' => $user->name,
+                    'is_admin' => $user->isAdmin(),
                     'email' => $user->email,
-                    'owner' => $user->owner,
+                    'team' => $user->team,
                     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                     'deleted_at' => $user->deleted_at,
                 ]),
@@ -39,20 +40,18 @@ class UserController extends AdminController
     public function store()
     {
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')],
+            'name' => ['required', 'max:50'],
+            'email' => ['required', 'max:50', 'email:rfc,dns', Rule::unique('users')],
             'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'is_admin' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        Auth::user()->account->users()->create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
+        User::create([
+            'name' => Request::get('name'),
             'email' => Request::get('email'),
             'password' => Request::get('password'),
-            'owner' => Request::get('owner'),
+            'is_admin' => Request::get('is_admin'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('users') : null,
         ]);
 
@@ -64,11 +63,11 @@ class UserController extends AdminController
         return Inertia::render('Admin/Users/Edit', [
             'user' => [
                 'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+                'name' => $user->name,
                 'email' => $user->email,
-                'owner' => $user->owner,
-                'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'team_id' => ($user->team) ? $user->team->id : null,
+                'is_admin' => $user->isAdmin(),
+                'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                 'deleted_at' => $user->deleted_at,
             ],
         ]);
@@ -81,15 +80,15 @@ class UserController extends AdminController
         }
 
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user->id)],
+            'name' => ['required', 'max:50'],
+            'email' => ['required', 'max:50', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
+            'team_id' => ['nullable', 'integer'],
+            'is_admin' => ['boolean'],
             'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        $user->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        $user->update(Request::only('name', 'email', 'team_id', 'is_admin'));
 
         if (Request::file('photo')) {
             $user->update(['photo_path' => Request::file('photo')->store('users')]);

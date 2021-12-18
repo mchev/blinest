@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Head :title="`${form.first_name} ${form.last_name}`" />
+    <Head :title="`${form.name}`" />
     <div class="flex justify-start mb-8 max-w-3xl">
       <h1 class="text-3xl font-bold">
         <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.playlists')">Playlists</Link>
         <span class="text-indigo-400 font-medium">/</span>
-        {{ form.first_name }} {{ form.last_name }}
+        {{ form.name }}
       </h1>
       <img v-if="playlist.photo" class="block ml-4 w-8 h-8 rounded-full" :src="playlist.photo" />
     </div>
@@ -13,13 +13,10 @@
     <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
       <form @submit.prevent="update">
         <div class="flex flex-wrap -mb-8 -mr-6 p-8">
-          <text-input v-model="form.first_name" :error="form.errors.first_name" class="pb-8 pr-6 w-full lg:w-1/2" label="First name" />
-          <text-input v-model="form.last_name" :error="form.errors.last_name" class="pb-8 pr-6 w-full lg:w-1/2" label="Last name" />
-          <text-input v-model="form.email" :error="form.errors.email" class="pb-8 pr-6 w-full lg:w-1/2" label="Email" />
-          <text-input v-model="form.password" :error="form.errors.password" class="pb-8 pr-6 w-full lg:w-1/2" type="password" autocomplete="new-password" label="Password" />
-          <select-input v-model="form.owner" :error="form.errors.owner" class="pb-8 pr-6 w-full lg:w-1/2" label="Owner">
-            <option :value="true">Yes</option>
-            <option :value="false">No</option>
+          <text-input v-model="form.name" :error="form.errors.name" class="pb-8 pr-6 w-full lg:w-1/2" label="First name" />
+          <select-input v-model="form.is_public" :error="form.errors.is_public" class="pb-8 pr-6 w-full lg:w-1/2" label="Public">
+            <option :value="1">Yes</option>
+            <option :value="0">No</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
@@ -29,6 +26,9 @@
         </div>
       </form>
     </div>
+
+    <tracks-editor class="mt-4" :playlist="playlist"/>
+
   </div>
 </template>
 
@@ -41,6 +41,8 @@ import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
 import TrashedMessage from '@/Shared/TrashedMessage'
 
+import TracksEditor from '@/Shared/TracksEditor'
+
 export default {
   components: {
     FileInput,
@@ -50,6 +52,7 @@ export default {
     SelectInput,
     TextInput,
     TrashedMessage,
+    TracksEditor
   },
   layout: AdminLayout,
   props: {
@@ -60,24 +63,21 @@ export default {
     return {
       form: this.$inertia.form({
         _method: 'put',
-        first_name: this.playlist.first_name,
-        last_name: this.playlist.last_name,
-        email: this.playlist.email,
-        password: '',
-        owner: this.playlist.owner,
+        name: this.playlist.name,
+        is_public: this.playlist.is_public,
         photo: null,
       }),
     }
   },
   methods: {
     update() {
-      this.form.post(route('admin.playlists', this.playlist.id), {
+      this.form.post(route('admin.playlists.update', this.playlist), {
         onSuccess: () => this.form.reset('password', 'photo'),
       })
     },
     destroy() {
       if (confirm('Are you sure you want to delete this playlist?')) {
-        this.$inertia.delete(route('admin.playlists', this.playlist.id))
+        this.$inertia.delete(route('admin.playlists.destroy', this.playlist.id))
       }
     },
     restore() {

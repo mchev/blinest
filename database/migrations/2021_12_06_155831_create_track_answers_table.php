@@ -17,7 +17,7 @@ class CreateTrackAnswersTable extends Migration
             $table->id();
             $table->foreignId('track_id')->onDelete('cascade');
             $table->string('key'); // title, artist, featuring, movie, etc.
-            $table->string('value');
+            $table->string('value')->index();
             $table->decimal('score', 3, 1)->default(0.5);
             $table->timestamps();
         });

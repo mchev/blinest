@@ -25,8 +25,7 @@
               <template #default>
                 <div class="group flex items-center cursor-pointer select-none">
                   <div class="mr-1 text-gray-700 group-hover:text-indigo-600 focus:text-indigo-600 whitespace-nowrap">
-                    <span>{{ auth.user.first_name }}</span>
-                    <span class="hidden md:inline">&nbsp;{{ auth.user.last_name }}</span>
+                    <span>{{ auth.user.name }}</span>
                   </div>
                   <icon class="w-5 h-5 fill-gray-700 group-hover:fill-indigo-600 focus:fill-indigo-600" name="cheveron-down" />
                 </div>

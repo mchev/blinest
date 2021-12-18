@@ -31,6 +31,7 @@
         "tailwindcss": "^2.0.3",
         "uuid": "^8.3.2",
         "vue": "^3.2.24",
-        "vue-loader": "^16.2.0"
+        "vue-loader": "^16.2.0",
+        "vue-select": "^4.0.0-beta.1"
     }
 }

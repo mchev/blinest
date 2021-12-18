@@ -8,10 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Jcc\LaravelVote\Traits\Voter;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, Voter;
 
     /**
      * The attributes that are mass assignable.
@@ -40,7 +41,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'owner' => 'boolean',
         'email_verified_at' => 'datetime',
     ];
 
@@ -49,14 +49,14 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function account()
+    public function team()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Team::class);
     }
 
-    public function getNameAttribute()
+    public function playlists()
     {
-        return $this->first_name.' '.$this->last_name;
+        return $this->hasMany(Playlist::class);
     }
 
     public function setPasswordAttribute($password)
@@ -71,12 +71,12 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->admin;
+        return $this->is_admin;
     }
 
     public function scopeOrderByName($query)
     {
-        $query->orderBy('last_name')->orderBy('first_name');
+        $query->orderBy('name');
     }
 
     public function scopeWhereRole($query, $role)
@@ -91,8 +91,7 @@ class User extends Authenticatable
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('last_name', 'like', '%'.$search.'%')
+                $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('email', 'like', '%'.$search.'%');
             });
         })->when($filters['role'] ?? null, function ($query, $role) {

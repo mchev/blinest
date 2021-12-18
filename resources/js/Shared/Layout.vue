@@ -20,13 +20,12 @@
             </dropdown>
           </div>
           <div class="md:text-md flex items-center justify-between p-4 w-full text-sm bg-white border-b md:px-12 md:py-0">
-            <div class="mr-4 mt-1">{{ auth.user.account.name }}</div>
+            <div class="mr-4 mt-1">{{ auth.user.team?.name }}</div>
             <dropdown class="mt-1" placement="bottom-end">
               <template #default>
                 <div class="group flex items-center cursor-pointer select-none">
                   <div class="mr-1 text-gray-700 group-hover:text-indigo-600 focus:text-indigo-600 whitespace-nowrap">
-                    <span>{{ auth.user.first_name }}</span>
-                    <span class="hidden md:inline">&nbsp;{{ auth.user.last_name }}</span>
+                    <span>{{ auth.user.name }}</span>
                   </div>
                   <icon class="w-5 h-5 fill-gray-700 group-hover:fill-indigo-600 focus:fill-indigo-600" name="cheveron-down" />
                 </div>

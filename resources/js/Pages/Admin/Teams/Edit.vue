@@ -65,13 +65,13 @@ export default {
   },
   methods: {
     update() {
-      this.form.post(route('admin.teams', this.team.id), {
+      this.form.post(route('admin.teams.update', this.team.id), {
         onSuccess: () => this.form.reset('password', 'photo'),
       })
     },
     destroy() {
       if (confirm('Are you sure you want to delete this team?')) {
-        this.$inertia.delete(route('admin.teams', this.team.id))
+        this.$inertia.delete(route('admin.teams.destroy', this.team.id))
       }
     },
     restore() {

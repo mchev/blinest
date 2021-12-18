@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "458a4732205df0dcf4fbc22e8f06c9f2",
+    "content-hash": "510160d98a0505ca69886991fa6ff694",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1110,6 +1110,111 @@
                 }
             ],
             "time": "2021-10-03T14:17:12+00:00"
+        },
+        {
+            "name": "jcc/laravel-vote",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jcc/laravel-vote.git",
+                "reference": "d7cc174219b93c200232ed0003e9dc7216d4a4cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jcc/laravel-vote/zipball/d7cc174219b93c200232ed0003e9dc7216d4a4cc",
+                "reference": "d7cc174219b93c200232ed0003e9dc7216d4a4cc",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^5.5|~6.0|~7.0|~8.0",
+                "php": ">=7.2",
+                "symfony/polyfill-php80": "^1.22"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.18",
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^3.5|~4.0|~5.0|~6.0",
+                "phpstan/phpstan": "^0.12.81"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jcc\\LaravelVote\\VoteServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jcc\\LaravelVote\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jcc",
+                    "email": "changejian@gmail.com"
+                }
+            ],
+            "description": "The package helps you to add user based vote system to your model",
+            "support": {
+                "issues": "https://github.com/jcc/laravel-vote/issues",
+                "source": "https://github.com/jcc/laravel-vote/tree/v2.0.0"
+            },
+            "time": "2021-03-14T07:29:21+00:00"
+        },
+        {
+            "name": "jwilsson/spotify-web-api-php",
+            "version": "5.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jwilsson/spotify-web-api-php.git",
+                "reference": "0e78bc2c33ca92d7f5fa772861196f54e0093eef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jwilsson/spotify-web-api-php/zipball/0e78bc2c33ca92d7f5fa772861196f54e0093eef",
+                "reference": "0e78bc2c33ca92d7f5fa772861196f54e0093eef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "~2.4.0",
+                "phpunit/phpunit": "^9.4",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SpotifyWebAPI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Wilsson",
+                    "email": "jonathan.wilsson@gmail.com"
+                }
+            ],
+            "description": "A PHP wrapper for Spotify's Web API.",
+            "homepage": "https://github.com/jwilsson/spotify-web-api-php",
+            "keywords": [
+                "spotify"
+            ],
+            "support": {
+                "issues": "https://github.com/jwilsson/spotify-web-api-php/issues",
+                "source": "https://github.com/jwilsson/spotify-web-api-php/tree/5.0.2"
+            },
+            "time": "2021-12-01T18:34:28+00:00"
         },
         {
             "name": "laravel/framework",

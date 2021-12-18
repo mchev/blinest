@@ -20,8 +20,9 @@
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="pb-4 pt-6 px-6">Name</th>
-          <th class="pb-4 pt-6 px-6">Email</th>
-          <th class="pb-4 pt-6 px-6" colspan="2">Role</th>
+          <th class="pb-4 pt-6 px-6">Owner</th>
+          <th class="pb-4 pt-6 px-6">Tracks</th>
+          <th class="pb-4 pt-6 px-6" colspan="2">Public</th>
         </tr>
         <tr v-for="playlist in playlists" :key="playlist.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
           <td class="border-t">
@@ -33,12 +34,17 @@
           </td>
           <td class="border-t">
             <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
-              {{ playlist.email }}
+              {{ playlist.owner }}
             </Link>
           </td>
           <td class="border-t">
             <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
-              {{ playlist.owner ? 'Owner' : 'Playlist' }}
+              {{ playlist.tracks_count }}
+            </Link>
+          </td>
+          <td class="border-t">
+            <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+              {{ playlist.is_public ? 'Yes' : 'No' }}
             </Link>
           </td>
           <td class="w-px border-t">

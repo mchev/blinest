@@ -38,20 +38,34 @@ class RoomController extends AdminController
     public function store()
     {
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('rooms')],
+            'name' => ['required', 'max:50'],
+            'description' => ['nullable'],
+            'playlist_id' => ['required', 'id'],
             'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'tracks_by_game' => ['required', 'integer'],
             'photo' => ['nullable', 'image'],
+            'is_public' => ['required', 'boolean'],
+            'is_pro' => ['required', 'boolean'],
+            'is_random' => ['required', 'boolean'],
+            'is_active' => ['required', 'boolean'],
+            'is_chat_active' => ['required', 'boolean'],
+            'discord_webhook_url' => ['nullable', 'url'],
+            'color' => ['nullable'],
         ]);
 
-        Auth::room()->account->rooms()->create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
-            'email' => Request::get('email'),
+        Auth::user()->rooms()->create([
+            'name' => Request::get('name'),
+            'description' => Request::get('description'),
+            'playlist_id' => Request::get('playlist_id'),
             'password' => Request::get('password'),
-            'owner' => Request::get('owner'),
+            'tracks_by_game' => Request::get('tracks_by_game'),
+            'is_public' => Request::get('is_public'),
+            'is_pro' => Request::get('is_pro'),
+            'is_random' => Request::get('is_random'),
+            'is_active' => Request::get('is_active'),
+            'is_chat_active' => Request::get('is_chat_active'),
+            'discord_webhook_url' => Request::get('discord_webhook_url'),
+            'color' => Request::get('color'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
         ]);
 

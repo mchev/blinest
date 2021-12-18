@@ -13,9 +13,10 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.startsWith" defer></script>
 
     <script src="{{ mix('/js/app.js') }}" defer></script>
+    @routes
+    
 </head>
 <body class="font-sans leading-none text-gray-700 antialiased">
-    @routes
     @inertia
 </body>
 </html>

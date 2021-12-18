@@ -19,12 +19,13 @@ class CreateRoomsTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->foreignId('playlist_id')->nullable();
-            $table->string('thumbnail_url')->nullable();
+            $table->string('photo_path')->nullable();
             $table->integer('tracks_by_game')->default(15);
             $table->boolean('is_public')->default(false);
             $table->boolean('is_pro')->default(false);
             $table->boolean('is_random')->default(true);
             $table->boolean('is_active')->default(false);
+            $table->boolean('is_chat_active')->default(true);
             $table->string('discord_webhook_url')->nullable();
             $table->string('color')->nullable();
             $table->string('password')->nullable();

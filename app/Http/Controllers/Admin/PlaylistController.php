@@ -23,7 +23,9 @@ class PlaylistController extends AdminController
                 ->transform(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
-                    'owner' => $playlist->owner,
+                    'owner' => $playlist->owner->name,
+                    'is_public' => $playlist->isPublic(),
+                    'tracks_count' => $playlist->tracks()->count(),
                     'photo' => $playlist->photo_path ? URL::route('image', ['path' => $playlist->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                     'deleted_at' => $playlist->deleted_at,
                 ]),
@@ -38,20 +40,14 @@ class PlaylistController extends AdminController
     public function store()
     {
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('playlists')],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'name' => ['required', 'max:50'],
+            'is_public' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        Auth::playlist()->account->playlists()->create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
-            'email' => Request::get('email'),
-            'password' => Request::get('password'),
-            'owner' => Request::get('owner'),
+        Auth::user()->playlists()->create([
+            'name' => Request::get('name'),
+            'is_public' => Request::get('is_public'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('playlists') : null,
         ]);
 
@@ -63,10 +59,9 @@ class PlaylistController extends AdminController
         return Inertia::render('Admin/Playlists/Edit', [
             'playlist' => [
                 'id' => $playlist->id,
-                'first_name' => $playlist->first_name,
-                'last_name' => $playlist->last_name,
-                'email' => $playlist->email,
-                'owner' => $playlist->owner,
+                'name' => $playlist->name,
+                'is_public' => $playlist->is_public,
+                'user_id' => $playlist->user_id,
                 'photo' => $playlist->photo_path ? URL::route('image', ['path' => $playlist->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
                 'deleted_at' => $playlist->deleted_at,
             ],
@@ -80,15 +75,12 @@ class PlaylistController extends AdminController
         }
 
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('playlists')->ignore($playlist->id)],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'name' => ['required', 'max:50'],
+            'is_public' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        $playlist->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        $playlist->update(Request::only('name', 'is_public'));
 
         if (Request::file('photo')) {
             $playlist->update(['photo_path' => Request::file('photo')->store('playlists')]);

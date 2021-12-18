@@ -30,4 +30,24 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'facebook' => [
+        'client_id' => env('FACEBOOK_APP_ID'),
+        'client_secret' => env('FACEBOOK_APP_SECRET'),
+        'redirect' => env('FACEBOOK_APP_REDIRECT'),
+    ],
+
+    'spotify' => [
+        'client_id' => env('SPOTIFY_KEY'),
+        'client_secret' => env('SPOTIFY_SECRET'),
+        'redirect' => env('SPOTIFY_REDIRECT_URI')
+    ],
+
+    'discord' => [
+        'client_id' => env('DISCORD_APP_ID'),
+        'client_secret' => env('DISCORD_APP_SECRET'),
+        'redirect' => env('DISCORD_REDIRECT_URI'),
+        'token' => env('DISCORD_BOT_TOKEN'),
+        'webhook' => env('DISCORD_WEBHOOK_URL')
+    ],
+
 ];

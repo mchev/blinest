@@ -7,6 +7,7 @@ use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\OrganizationsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,6 +134,20 @@ Route::put('contacts/{contact}/restore', [ContactsController::class, 'restore'])
 
 Route::get('reports', [ReportsController::class, 'index'])
     ->name('reports')
+    ->middleware('auth');
+
+// Tracks
+
+Route::get('/playlists/{playlist}/tracks', [TrackController::class, 'index'])
+    ->name('playlists.tracks')
+    ->middleware('auth');
+
+Route::put('tracks/{track}', [TrackController::class, 'update'])
+    ->name('tracks.update')
+    ->middleware('auth');
+
+Route::get('tracks/search', [TrackController::class, 'search'])
+    ->name('tracks.search')
     ->middleware('auth');
 
 // Images

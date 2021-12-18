@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     store() {
-      this.form.post(route('admin.teams'))
+      this.form.post(route('admin.teams.store'))
     },
   },
 }

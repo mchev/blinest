@@ -1,4 +1,4 @@
-# Ping CRM
+# Blinest
 
 A demo application to illustrate how Inertia.js works.
 
