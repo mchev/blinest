@@ -18,7 +18,7 @@ class Track extends Model
 
     public function answers()
     {
-        $this->hasMany(TrackAnswer::class);
+        return $this->hasMany(TrackAnswer::class);
     }
 
     public function scopeFilter($query, array $filters)

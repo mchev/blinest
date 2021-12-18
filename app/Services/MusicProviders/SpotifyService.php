@@ -26,13 +26,14 @@ class SpotifyService
         $response = $this->api->search($term, 'track', ['market' => 'FR']);
         $results = collect($response->tracks->items);
         
-        $tracks = ($results) ? $results->where('is_playable')->map(function ($track) {
+        $tracks = ($results) ? $results->where('is_playable')->where('preview_url')->map(function ($track) {
             return [
                 'provider' => 'spotify',
                 'track_provider_id' => $track->id,
                 'track_provider_url' => $track->external_urls->spotify,
                 'artist_name' => $track->artists[0]->name,
                 'track_name' => $track->name,
+                'album_name' => $track->album->name,
                 'preview_url' => $track->preview_url,
                 'release_date' => Carbon::parse($track->album->release_date)->format('Y-m-d'),
                 'artwork_url' => $track->album->images[2]->url, // 64*64px

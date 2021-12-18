@@ -29,6 +29,7 @@ class AppleMusicService
                 'track_provider_url' => $track['trackViewUrl'],
                 'artist_name' => $track['artistName'],
                 'track_name' => $track['trackName'],
+                'album_name' => $track['collectionName'],
                 'preview_url' => $track['previewUrl'],
                 'release_date' => Carbon::parse($track['releaseDate'])->format('Y-m-d'),
                 'artwork_url' => $track['artworkUrl100'],

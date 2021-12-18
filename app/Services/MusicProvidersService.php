@@ -29,7 +29,9 @@ class MusicProvidersService
 
 		$merged = $itunesTracks->merge($spotifyTracks)->merge($deezerTracks);
 
-		$sorted = $merged->sortBy('track_name');
+		$sorted = $merged->sortBy('track_name')->unique(function($item) {
+			return $item['artist_name'].$item['track_name'];
+		});
 
 		return $sorted->values()->all();;
 	}

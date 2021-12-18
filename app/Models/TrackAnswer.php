@@ -11,7 +11,7 @@ class TrackAnswer extends Model
 
     public function track()
     {
-        $this->belongsTo(Track::class);
+        return $this->belongsTo(Track::class);
     }
     
 }

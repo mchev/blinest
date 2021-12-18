@@ -142,6 +142,14 @@ Route::get('/playlists/{playlist}/tracks', [TrackController::class, 'index'])
     ->name('playlists.tracks')
     ->middleware('auth');
 
+Route::post('/playlists/{playlist}/tracks', [TrackController::class, 'store'])
+    ->name('playlists.tracks.store')
+    ->middleware('auth');
+
+Route::delete('tracks/tracks', [TrackController::class, 'destroy'])
+    ->name('tracks.delete')
+    ->middleware('auth');
+
 Route::put('tracks/{track}', [TrackController::class, 'update'])
     ->name('tracks.update')
     ->middleware('auth');

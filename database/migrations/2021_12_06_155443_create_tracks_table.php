@@ -21,6 +21,7 @@ class CreateTracksTable extends Migration
             $table->string('track_provider_url');
             $table->string('artist_name');
             $table->string('track_name');
+            $table->string('album_name');
             $table->string('preview_url');
             $table->date('release_date')->nullable();
             $table->string('artwork_url');

@@ -21,7 +21,7 @@ class DeezerService
         $collection = Http::get($url)->collect();
 
         $results = (isset($collection['data'])) ? collect($collection['data']) : null;
-
+        
         $tracks = ($results) ? $results->where('readable')->map(function ($track) {
             return [
                 'provider' => 'deezer',
@@ -29,6 +29,7 @@ class DeezerService
                 'track_provider_url' => $track['link'],
                 'artist_name' => $track['artist']['name'],
                 'track_name' => $track['title'],
+                'album_name' => $track['album']['title'],
                 'preview_url' => $track['preview'],
                 'release_date' => null, //$this->getReleaseDate($track['album']['id']), TOO SLOW!!
                 'artwork_url' => $track['album']['cover_medium'],
