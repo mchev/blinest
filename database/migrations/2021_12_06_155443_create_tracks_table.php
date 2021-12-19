@@ -17,8 +17,8 @@ class CreateTracksTable extends Migration
             $table->id();
             $table->foreignId('playlist_id')->onDelete('cascade');
             $table->string('provider');
-            $table->string('track_provider_id');
-            $table->string('track_provider_url');
+            $table->string('provider_id');
+            $table->string('provider_url');
             $table->string('artist_name');
             $table->string('track_name');
             $table->string('album_name');

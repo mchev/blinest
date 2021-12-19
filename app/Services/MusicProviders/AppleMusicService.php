@@ -8,6 +8,7 @@ use Carbon\Carbon;
 class AppleMusicService
 {
 
+
     public function search($term)
     {
 
@@ -25,8 +26,8 @@ class AppleMusicService
         $tracks = ($results) ? $results->where('isStreamable')->map(function ($track) {
             return [
                 'provider' => 'itunes',
-                'track_provider_id' => $track['trackId'],
-                'track_provider_url' => $track['trackViewUrl'],
+                'provider_id' => $track['trackId'],
+                'provider_url' => $track['trackViewUrl'],
                 'artist_name' => $track['artistName'],
                 'track_name' => $track['trackName'],
                 'album_name' => $track['collectionName'],

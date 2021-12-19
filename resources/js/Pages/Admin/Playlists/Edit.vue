@@ -27,7 +27,7 @@
       </form>
     </div>
 
-    <tracks-editor class="mt-4" :playlist="playlist"/>
+    <tracks-manager class="mt-4" :playlist="playlist"/>
 
   </div>
 </template>
@@ -41,7 +41,7 @@ import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
 import TrashedMessage from '@/Shared/TrashedMessage'
 
-import TracksEditor from '@/Shared/TracksEditor'
+import TracksManager from '@/Shared/TracksManager'
 
 export default {
   components: {
@@ -52,7 +52,7 @@ export default {
     SelectInput,
     TextInput,
     TrashedMessage,
-    TracksEditor
+    TracksManager
   },
   layout: AdminLayout,
   props: {

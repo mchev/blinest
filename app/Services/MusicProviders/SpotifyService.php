@@ -2,7 +2,6 @@
 
 namespace App\Services\MusicProviders;
 
-use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class SpotifyService
@@ -29,8 +28,8 @@ class SpotifyService
         $tracks = ($results) ? $results->where('is_playable')->where('preview_url')->map(function ($track) {
             return [
                 'provider' => 'spotify',
-                'track_provider_id' => $track->id,
-                'track_provider_url' => $track->external_urls->spotify,
+                'provider_id' => $track->id,
+                'provider_url' => $track->external_urls->spotify,
                 'artist_name' => $track->artists[0]->name,
                 'track_name' => $track->name,
                 'album_name' => $track->album->name,

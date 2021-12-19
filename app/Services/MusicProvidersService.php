@@ -23,6 +23,9 @@ class MusicProvidersService
 
 	public function search(String $term)
 	{
+
+		// TODO : Pool Requests
+
 		$itunesTracks = $this->itunes->search($term);
 		$spotifyTracks = $this->spotify->search($term);
 		$deezerTracks = $this->deezer->search($term);

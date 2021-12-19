@@ -25,8 +25,8 @@ class DeezerService
         $tracks = ($results) ? $results->where('readable')->map(function ($track) {
             return [
                 'provider' => 'deezer',
-                'track_provider_id' => $track['id'],
-                'track_provider_url' => $track['link'],
+                'provider_id' => $track['id'],
+                'provider_url' => $track['link'],
                 'artist_name' => $track['artist']['name'],
                 'track_name' => $track['title'],
                 'album_name' => $track['album']['title'],

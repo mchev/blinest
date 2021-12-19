@@ -21,12 +21,20 @@ class TrackController extends Controller
                 ->orderBy('track_name')
                 ->filter(Request::only('search'))
                 ->get()
+                ->transform(fn ($track) => [
+                    'id' => $track->id,
+                    'provider' => $track->provider,
+                    'provider_url' => $track->provider_url,
+                    'answers' => $track->answers,
+                    'up_votes' => $track->upVoters()->count(),
+                    'down_votes' => $track->downVoters()->count(),
+                    'created_at' => $track->created_at->format('d/m/Y'),
+                ]),
         ]);
     }
 
     public function search()
     {
-
         return response()->json([
             'filters' => Request::only('term'),
             'tracks' => (new MusicProviders)->search(Request::get('term')),
@@ -40,8 +48,8 @@ class TrackController extends Controller
         // VALIDATE
         Request::validate([
             'provider' => ['required', 'max:50'],
-            'track_provider_id' => ['required', 'max:255'],
-            'track_provider_url' => ['required', 'url', 'max:255'],
+            'provider_id' => ['required', 'max:255'],
+            'provider_url' => ['required', 'url', 'max:255'],
             'artist_name' => ['required', 'max:255'],
             'track_name' => ['required', 'max:255'],
             'album_name' => ['required', 'max:255'],
@@ -54,10 +62,10 @@ class TrackController extends Controller
         $track = $playlist->tracks()->updateOrCreate(
             [
                 'provider' => Request::get('provider'),
-                'track_provider_id' => Request::get('track_provider_id'),
+                'provider_id' => Request::get('provider_id'),
             ],
             [
-                'track_provider_url' => Request::get('track_provider_url'),
+                'provider_url' => Request::get('provider_url'),
                 'artist_name' => Request::get('artist_name'),
                 'track_name' => Request::get('track_name'),
                 'album_name' => Request::get('album_name'),
@@ -76,10 +84,12 @@ class TrackController extends Controller
             ['key' => 'Title'],
             ['value' => Request::get('track_name')]
         );
-        $track->answers()->updateOrCreate(
-            ['key' => 'Album'],
-            ['value' => Request::get('album_name')]
-        );
+        if(Request::get('album_name')) {
+            $track->answers()->updateOrCreate(
+                ['key' => 'Album'],
+                ['value' => Request::get('album_name')]
+            );
+        }
 
         return Redirect::back()->with('Track added');
 
