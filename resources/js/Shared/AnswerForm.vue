@@ -1,69 +1,113 @@
 <template>
 	
-    <select-input v-model="form.key" class="w-2/3 mb-4" label="Type">
-      <option v-for="type in types" :value="type">{{ type }}</option>
-    </select-input>
+    <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
 
-    <text-input v-model="form.value" class="w-2/3 mb-4" label="Answer" />
+        <div class="px-6 py-4">
+            <div class="text-lg">
+              {{ __('Edit Answer') }}
+            </div>
 
-    <text-input type="number" step="0.5" min="0" v-model="form.score" class="w-2/3 mb-4" label="Score" />
+            <div class="flex flex-wrap mt-4">
+
+              <select-input v-model="form.key" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Type')">
+                <option v-for="type in types" :value="type">{{ __(type) }}</option>
+              </select-input>
+
+              <text-input type="number" step="0.5" min="0" v-model="form.score" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Score')" />
+
+              <text-input v-model="form.value" class="pb-8 pr-6 w-full" :label="__('Answer')" />
+
+            </div>
+
+        </div>
+
+        <div class="px-6 py-4 bg-gray-100 text-right">
+            <button class="mr-2" @click="close">
+              {{ __('Cancel') }}
+            </button>
+
+            <button class="btn-indigo ml-2" @click="updateAnswer" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+              {{ __('Update') }}
+            </button>
+        </div>
+
+    </modal>
 
 </template>
 
 <script>
 
+  import { defineComponent } from 'vue'
+  import Modal from '@/Shared/Modal'
   import TextInput from '@/Shared/TextInput'
   import SelectInput from '@/Shared/SelectInput'
 
   export default {
 
+    emits: ['close'],
+
     inheritAttrs: false,
 
     components: {
+      Modal,
       TextInput,
       SelectInput,
     },
 
     props: {
-      answer: {
-        type: Object,
-        default: {
-        	create: true,
-        	key: null,
-        	value: null,
-        	score: 0.5,
-        }
+      show: {
+          default: false
       },
+      maxWidth: {
+          default: '2xl'
+      },
+      closeable: {
+          default: true
+      },
+      answer: {
+          default: false,
+      }
     },
 
     data() {
       return {
         types: ["Artist", "Title", "Album", "Movie", "Show", "Anime", "Cartoon", "Brand", "Acronym"],
-        form: this.$inertia.form(this.answer),
+      }
+    },
+
+    computed: {
+      form() {
+        return this.$inertia.form({
+          key: (this.answer) ? this.anwser.key : 'Artist',
+          value: (this.answer) ? this.anwser.value : '',
+          score: (this.answer) ? this.anwser.score : '0.5',
+        })
       }
     },
 
     methods: {
 
+      close() {
+          this.$emit('close')
+      },
+
       updateAnswer() {
-	      this.form.post(route('tracks.answers.update', this.answer.track_id), {
-	        onSuccess: () => this.$emit('close'),
+	      this.form.put(route('tracks.answers.update', [this.show, this.answer.id]), {
+	        onSuccess: () => this.close()
 	      })
       },
 
       storeAnswer() {
-          axios.delete(route('tracks.delete', track.id))
-            .then(function (response) {
-              track.added = false;
-            })
+        this.form.post(route('tracks.answers.store', this.show), {
+          onSuccess: () => this.close()
+        })
       },
 
       deleteAnswer() {
-          axios.delete(route('tracks.delete', track.id))
-            .then(function (response) {
-              track.added = false;
-            })
-      }
+        this.form.post(route('answers.delete', this.answer), {
+          onSuccess: () => this.close()
+        })
+      },
 
     },
 

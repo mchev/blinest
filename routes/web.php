@@ -8,6 +8,7 @@ use App\Http\Controllers\OrganizationsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TrackController;
+use App\Http\Controllers\TrackAnswerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,16 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+
+
+// Language
+
+Route::get('language/{language}', function ($language) {
+    Session()->put('locale', $language);
+ 
+    return redirect()->back();
+})->name('language');
+
 
 // Dashboard
 
@@ -137,7 +148,6 @@ Route::get('reports', [ReportsController::class, 'index'])
     ->middleware('auth');
 
 // Tracks
-
 Route::get('/playlists/{playlist}/tracks', [TrackController::class, 'index'])
     ->name('playlists.tracks')
     ->middleware('auth');
@@ -156,6 +166,19 @@ Route::put('tracks/{track}', [TrackController::class, 'update'])
 
 Route::get('tracks/search', [TrackController::class, 'search'])
     ->name('tracks.search')
+    ->middleware('auth');
+
+// Tracks Answers
+Route::post('tracks/{track}/answers', [TrackAnswerController::class, 'store'])
+    ->name('tracks.answers.store')
+    ->middleware('auth');
+
+Route::put('tracks/{track}/answers', [TrackAnswerController::class, 'update'])
+    ->name('tracks.answers.update')
+    ->middleware('auth');
+
+Route::delete('answers/{answer}', [TrackAnswerController::class, 'destroy'])
+    ->name('tracks.answers.delete')
     ->middleware('auth');
 
 // Images

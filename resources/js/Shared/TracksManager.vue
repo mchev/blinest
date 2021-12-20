@@ -24,9 +24,9 @@
 
       <table class="mt-4 w-full whitespace-nowrap">
         <tr class="text-left font-bold">
-          <th class="pb-4 pt-6 px-6" colspan="3">Answers</th>
-          <th class="pb-4 pt-6 px-6" colspan="2">Votes</th>
-          <th class="pb-4 pt-6 px-6" colspan="2">Created at</th>
+          <th class="pb-4 pt-6 px-6" colspan="3">{{ __('Answers') }}</th>
+          <th class="pb-4 pt-6 px-6" colspan="2">{{ __('Votes') }}</th>
+          <th class="pb-4 pt-6 px-6" colspan="2">{{ __('Created at') }}</th>
         </tr>
         <tr v-for="track in tracks" :key="track.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
           <td class="border-t">
@@ -41,10 +41,10 @@
           </td>
           <td class="border-t">
             <div class="flex flex-col items-start px-6 py-4 focus:text-indigo-500 text-sm">
-              <div v-for="answer in track.answers" :key="answer.id" @click="editAnswer(answer)" class="cursor-pointer">
+              <div v-for="answer in track.answers" :key="answer.id" @click="editAnswer(track, answer)" class="cursor-pointer">
                 <span class="font-bold">{{ answer.key }}:</span> {{ answer.value}} ({{ answer.score}}pts)
               </div>
-              <button class="text-gray-400" @click="editAnswer"><Icon name="plus" class="inline-block flex-shrink-0 w-4 h-4 fill-gray-400"/> Add an answer</button>
+              <button class="text-gray-400" @click="editAnswer(track)"><Icon name="plus" class="inline-block flex-shrink-0 w-4 h-4 fill-gray-400"/> Add an answer</button>
             </div>
           </td>
           <td class="border-t">
@@ -73,27 +73,7 @@
 
     </div>
 
-    <!-- Delete Account Confirmation Modal -->
-    <dialog-modal :show="editingAnswer" @close="closeModal">
-        <template #title>
-            Edit Answer
-        </template>
-
-        <template #content>
-            <answer-form :answer="selectedAnswer"/>
-        </template>
-
-        <template #footer>
-            <button @click="closeModal">
-                Cancel
-            </button>
-
-            <button class="ml-2" @click="updateAnwser" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                Update
-            </button>
-        </template>
-    </dialog-modal>
-
+    <answer-form :answer="selectedAnswer" :show="editingAnswer" @close="closeModal" max-width="md"/>
 
   </div>
 </template>
@@ -137,7 +117,6 @@
 
     data() {
       return {
-        types: ["Artist", "Title", "Album", "Movie", "Show", "Anime", "Cartoon", "Brand", "Acronym"],
         selectedAnswer: null,
         form: {},
         editingAnswer: false,
@@ -177,9 +156,9 @@
 
     methods: {
 
-      editAnswer(answer) {
+      editAnswer(track, answer = null) {
         this.selectedAnswer = answer;
-        this.editingAnswer = true;
+        this.editingAnswer = track.id;
       },
 
       closeModal() {

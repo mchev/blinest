@@ -17,6 +17,7 @@ createInertiaApp({
     createApp({ render: () => h(App, props) })
       .use(plugin)
       .mixin({ methods: { route: window.route } })
+      .mixin(require('./translation'))
       .mount(el)
   },
 })

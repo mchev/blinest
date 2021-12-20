@@ -19,9 +19,9 @@
               </template>
             </dropdown>
           </div>
-          <div class="md:text-md flex items-center justify-between p-4 w-full text-sm bg-white border-b md:px-12 md:py-0">
+          <div class="md:text-md flex items-center justify-start p-4 w-full text-sm bg-white border-b md:px-12 md:py-0">
             <div class="mr-4 mt-1">Administration</div>
-            <dropdown class="mt-1" placement="bottom-end">
+            <dropdown class="mt-1 ml-auto" placement="bottom-end">
               <template #default>
                 <div class="group flex items-center cursor-pointer select-none">
                   <div class="mr-1 text-gray-700 group-hover:text-indigo-600 focus:text-indigo-600 whitespace-nowrap">
@@ -38,6 +38,7 @@
                 </div>
               </template>
             </dropdown>
+            <language-selector/>
           </div>
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
@@ -59,11 +60,13 @@ import Logo from '@/Shared/Logo'
 import Dropdown from '@/Shared/Dropdown'
 import AdminMenu from '@/Shared/AdminMenu'
 import FlashMessages from '@/Shared/FlashMessages'
+import LanguageSelector from '@/Shared/LanguageSelector'
 
 export default {
   components: {
     Dropdown,
     FlashMessages,
+    LanguageSelector,
     Icon,
     Link,
     Logo,
