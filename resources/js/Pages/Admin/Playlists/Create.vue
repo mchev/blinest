@@ -46,8 +46,7 @@ export default {
     return {
       form: this.$inertia.form({
         name: '',
-        owner: false,
-        is_public: false,
+        is_public: 0,
         photo: null,
       }),
     }

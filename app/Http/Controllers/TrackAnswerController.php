@@ -19,11 +19,11 @@ class TrackAnswerController extends Controller
         Request::validate([
             'key' => ['required', 'string', 'max:50'],
             'value' => ['required', 'max:255'],
-            'score' => ['required', 'decimal', 'min:0'],
+            'score' => ['required', 'numeric', 'min:0'],
         ]);
 
         // STORE
-        $track->anwsers()->create([
+        $track->answers()->create([
             'key' => Request::get('key'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
@@ -40,11 +40,11 @@ class TrackAnswerController extends Controller
         Request::validate([
             'key' => ['required', 'string', 'max:50'],
             'value' => ['required', 'max:255'],
-            'score' => ['required', 'decimal', 'min:0'],
+            'score' => ['required', 'numeric', 'min:0'],
         ]);
 
         // UPDATE
-        $anwser->update([
+        $answer->update([
             'key' => Request::get('key'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
@@ -53,9 +53,9 @@ class TrackAnswerController extends Controller
         return Redirect::back();
     }
 
-    public function destroy(TrackAnswer $anwser)
+    public function destroy(TrackAnswer $answer)
     {
-        $anwser->delete();
+        $answer->delete();
         return Redirect::back();
     }
 

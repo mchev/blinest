@@ -15,12 +15,13 @@ class TrackController extends Controller
 
     public function index(Playlist $playlist)
     {
-        return response()->json([
+        return Redirect::back()->with([
             'filters' => Request::all('search'),
             'tracks' => $playlist->tracks()
                 ->orderBy('track_name')
                 ->filter(Request::only('search'))
-                ->get()
+                ->paginate(10)
+                ->withQueryString()
                 ->transform(fn ($track) => [
                     'id' => $track->id,
                     'provider' => $track->provider,

@@ -19,7 +19,8 @@ class PlaylistController extends AdminController
             'filters' => Request::all('search', 'trashed'),
             'playlists' => Playlist::orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
-                ->get()
+                ->paginate(10)
+                ->withQueryString()
                 ->transform(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
@@ -45,13 +46,13 @@ class PlaylistController extends AdminController
             'photo' => ['nullable', 'image'],
         ]);
 
-        Auth::user()->playlists()->create([
+        $playlist = Auth::user()->playlists()->create([
             'name' => Request::get('name'),
             'is_public' => Request::get('is_public'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('playlists') : null,
         ]);
 
-        return Redirect::route('admin.playlists')->with('success', 'Playlist created.');
+        return Redirect::route('admin.playlists.edit', $playlist)->with('success', 'Playlist created.');
     }
 
     public function edit(Playlist $playlist)
@@ -65,14 +66,27 @@ class PlaylistController extends AdminController
                 'photo' => $playlist->photo_path ? URL::route('image', ['path' => $playlist->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
                 'deleted_at' => $playlist->deleted_at,
             ],
+            'filters' => Request::all('search'),
+            'tracks' => $playlist->tracks()
+                ->orderBy('track_name')
+                ->filter(Request::only('search'))
+                ->paginate(10)
+                ->withQueryString()
+                ->through(fn ($track) => [
+                    'id' => $track->id,
+                    'provider' => $track->provider,
+                    'provider_url' => $track->provider_url,
+                    'preview_url' => $track->preview_url,
+                    'answers' => $track->answers,
+                    'up_votes' => $track->upVoters()->count(),
+                    'down_votes' => $track->downVoters()->count(),
+                    'created_at' => $track->created_at->format('d/m/Y'),
+                ]),
         ]);
     }
 
     public function update(Playlist $playlist)
     {
-        if (App::environment('demo') && $playlist->isDemoPlaylist()) {
-            return Redirect::back()->with('error', 'Updating the demo playlist is not allowed.');
-        }
 
         Request::validate([
             'name' => ['required', 'max:50'],
@@ -86,18 +100,11 @@ class PlaylistController extends AdminController
             $playlist->update(['photo_path' => Request::file('photo')->store('playlists')]);
         }
 
-        if (Request::get('password')) {
-            $playlist->update(['password' => Request::get('password')]);
-        }
-
         return Redirect::back()->with('success', 'Playlist updated.');
     }
 
     public function destroy(Playlist $playlist)
     {
-        if (App::environment('demo') && $playlist->isDemoPlaylist()) {
-            return Redirect::back()->with('error', 'Deleting the demo playlist is not allowed.');
-        }
 
         $playlist->delete();
 

@@ -27,7 +27,7 @@
       </form>
     </div>
 
-    <tracks-manager class="mt-4" :playlist="playlist"/>
+    <tracks-manager class="mt-4" :playlist="playlist" :filters="filters" :tracks="tracks"/>
 
   </div>
 </template>
@@ -57,6 +57,8 @@ export default {
   layout: AdminLayout,
   props: {
     playlist: Object,
+    filters: Object,
+    tracks: Object,
   },
   remember: 'form',
   data() {

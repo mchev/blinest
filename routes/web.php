@@ -178,7 +178,7 @@ Route::put('tracks/{track}/answers', [TrackAnswerController::class, 'update'])
     ->middleware('auth');
 
 Route::delete('answers/{answer}', [TrackAnswerController::class, 'destroy'])
-    ->name('tracks.answers.delete')
+    ->name('answers.delete')
     ->middleware('auth');
 
 // Images
