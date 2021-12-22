@@ -21,7 +21,7 @@ class PlaylistController extends AdminController
                 ->filter(Request::only('search', 'trashed'))
                 ->paginate(10)
                 ->withQueryString()
-                ->transform(fn ($playlist) => [
+                ->through(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
                     'owner' => $playlist->owner->name,

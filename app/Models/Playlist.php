@@ -37,6 +37,11 @@ class Playlist extends Model
         return $this->belongsToMany(Room::class);
     }
 
+    public function hasProviderTrack(string $providerId)
+    {
+        return $this->tracks()->where('provider_id', $providerId);
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

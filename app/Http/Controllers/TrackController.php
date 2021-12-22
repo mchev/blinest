@@ -34,11 +34,29 @@ class TrackController extends Controller
         ]);
     }
 
-    public function search()
+    public function search(Playlist $playlist)
     {
         return response()->json([
             'filters' => Request::only('term'),
-            'tracks' => (new MusicProviders)->search(Request::get('term')),
+            'tracks' => (new MusicProviders)->search(Request::get('term'))
+                ->sortBy('track_name')->unique(function($item) {
+                    return $item['artist_name'].$item['track_name'];
+                })
+                ->values()
+                ->map(function($track) use($playlist) {
+                    return [
+                        'provider' => $track['provider'],
+                        'provider_id' => $track['provider_id'],
+                        'provider_url' => $track['provider_url'],
+                        'artist_name' => $track['artist_name'],
+                        'track_name' => $track['track_name'],
+                        'album_name' => $track['album_name'],
+                        'preview_url' => $track['preview_url'],
+                        'release_date' => $track['release_date'],
+                        'artwork_url' => $track['artwork_url'],
+                        'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
+                    ];
+                }),
         ]);
     }
 
@@ -120,6 +138,7 @@ class TrackController extends Controller
     public function destroy(Track $track)
     {
         $track->delete();
+        return Redirect::back()->with('Track deleted');
     }
 
 }

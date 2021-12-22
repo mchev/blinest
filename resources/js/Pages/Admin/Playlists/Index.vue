@@ -16,7 +16,8 @@
         <span class="hidden md:inline">&nbsp;Playlist</span>
       </Link>
     </div>
-    <div class="bg-white rounded-md shadow overflow-x-auto">
+
+    <card>
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="pb-4 pt-6 px-6">Name</th>
@@ -24,7 +25,7 @@
           <th class="pb-4 pt-6 px-6">Tracks</th>
           <th class="pb-4 pt-6 px-6" colspan="2">Public</th>
         </tr>
-        <tr v-for="playlist in playlists" :key="playlist.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+        <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
           <td class="border-t">
             <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.playlists.edit', playlist.id)">
               <img v-if="playlist.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="playlist.photo" />
@@ -57,7 +58,11 @@
           <td class="px-6 py-4 border-t" colspan="4">No playlists found.</td>
         </tr>
       </table>
-    </div>
+
+      <pagination class="p-8" :links="playlists.links" />
+
+    </card>
+
   </div>
 </template>
 
@@ -69,19 +74,27 @@ import AdminLayout from '@/Shared/AdminLayout'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter'
+import Pagination from '@/Shared/Pagination'
+import Card from '@/Shared/Card'
 
 export default {
+
   components: {
     Head,
     Icon,
     Link,
     SearchFilter,
+    Pagination,
+    Card,
   },
+
   layout: AdminLayout,
+
   props: {
     filters: Object,
-    playlists: Array,
+    playlists: Object,
   },
+
   data() {
     return {
       form: {
@@ -90,6 +103,7 @@ export default {
       },
     }
   },
+
   watch: {
     form: {
       deep: true,
@@ -98,10 +112,12 @@ export default {
       }, 150),
     },
   },
+
   methods: {
     reset() {
       this.form = mapValues(this.form, () => null)
     },
   },
+
 }
 </script>

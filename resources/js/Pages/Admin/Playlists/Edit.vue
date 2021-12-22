@@ -3,20 +3,20 @@
     <Head :title="`${form.name}`" />
     <div class="flex justify-start mb-8 max-w-3xl">
       <h1 class="text-3xl font-bold">
-        <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.playlists')">Playlists</Link>
+        <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.playlists')">{{ __("Playlists") }}</Link>
         <span class="text-indigo-400 font-medium">/</span>
         {{ form.name }}
       </h1>
       <img v-if="playlist.photo" class="block ml-4 w-8 h-8 rounded-full" :src="playlist.photo" />
     </div>
-    <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore"> This playlist has been deleted. </trashed-message>
-    <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
+    <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore">{{ __("This playlist has been deleted.") }}</trashed-message>
+    <card class="max-w-3xl">
       <form @submit.prevent="update">
-        <div class="flex flex-wrap -mb-8 -mr-6 p-8">
+        <div class="flex flex-wrap -mb-8 p-8">
           <text-input v-model="form.name" :error="form.errors.name" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Title')" />
-          <select-input v-model="form.is_public" :error="form.errors.is_public" class="pb-8 pr-6 w-full lg:w-1/2" label="Public">
-            <option :value="1">Yes</option>
-            <option :value="0">No</option>
+          <select-input v-model="form.is_public" :error="form.errors.is_public" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Public')">
+            <option :value="1">{{ __('Yes') }}</option>
+            <option :value="0">{{ __('No') }}</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
@@ -25,9 +25,11 @@
           <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
-    </div>
+    </card>
 
-    <tracks-manager class="mt-4" :playlist="playlist" :filters="filters" :tracks="tracks"/>
+    <card class="my-4">
+      <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks"/>
+    </card>
 
   </div>
 </template>
@@ -35,6 +37,7 @@
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Shared/AdminLayout'
+import Card from '@/Shared/Card'
 import TextInput from '@/Shared/TextInput'
 import FileInput from '@/Shared/FileInput'
 import SelectInput from '@/Shared/SelectInput'
@@ -46,6 +49,7 @@ import TracksManager from '@/Shared/TracksManager'
 export default {
   components: {
     FileInput,
+    Card,
     Head,
     Link,
     LoadingButton,

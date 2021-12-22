@@ -3,8 +3,8 @@
     <slot />
     <teleport v-if="show" to="#dropdown">
       <div>
-        <div style="position: fixed; top: 0; right: 0; left: 0; bottom: 0; z-index: 99998; background: black; opacity: 0.2" @click="show = false" />
-        <div ref="dropdown" style="position: absolute; z-index: 99999" @click.stop="show = !autoClose">
+        <div class="fixed top-0 right-0 left-0 bottom-0 z-[99998] bg-black opacity-20" @click="show = false" />
+        <div ref="dropdown" class="absolute z-[99999] bg-white rounded-lg ring-1 ring-gray-900/10 shadow-lg overflow-hidden p-2 text-sm text-gray-700 font-semibold dark:bg-gray-800 dark:ring-0 dark:highlight-white/5 dark:text-gray-300" @click.stop="show = !autoClose">
           <slot name="dropdown" />
         </div>
       </div>

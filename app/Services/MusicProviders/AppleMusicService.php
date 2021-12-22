@@ -2,6 +2,7 @@
 
 namespace App\Services\MusicProviders;
 
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
@@ -9,8 +10,10 @@ class AppleMusicService
 {
 
 
-    public function search($term)
+    public function search()
     {
+
+        $term = Request::get('term');
 
         $query = filter_var ( $term, FILTER_SANITIZE_STRING);
         $query = trim ( $query );

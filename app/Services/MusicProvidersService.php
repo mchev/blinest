@@ -2,41 +2,29 @@
 
 namespace App\Services;
 
-use App\Services\MusicProviders\AppleMusicService;
-use App\Services\MusicProviders\SpotifyService;
-use App\Services\MusicProviders\DeezerService;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 
 class MusicProvidersService
 {
 
-	protected $itunes;
-	protected $deezer;
-	protected $spotify;
-
-
-	public function __construct()
-	{
-		$this->itunes = new AppleMusicService;
-		$this->spotify = new SpotifyService;
-		$this->deezer = new DeezerService;
-	}
-
 	public function search(String $term)
 	{
 
-		// TODO : Pool Requests
+		$responses = Http::pool(fn (Pool $pool) => [
+		    $pool->get(route('providers.deezer.search', ['term' => $term])),
+		    $pool->get(route('providers.itunes.search', ['term' => $term])),
+		    $pool->get(route('providers.spotify.search', ['term' => $term])),
+		]);
 
-		$itunesTracks = $this->itunes->search($term);
-		$spotifyTracks = $this->spotify->search($term);
-		$deezerTracks = $this->deezer->search($term);
+		$merged = collect();
 
-		$merged = $itunesTracks->merge($spotifyTracks)->merge($deezerTracks);
-
-		$sorted = $merged->sortBy('track_name')->unique(function($item) {
-			return $item['artist_name'].$item['track_name'];
-		});
-
-		return $sorted->values()->all();;
+		foreach($responses as $response) {
+			if($response->ok())
+				$merged = $merged->merge($response->collect());
+		}
+		
+		return $merged;
 	}
 
 }

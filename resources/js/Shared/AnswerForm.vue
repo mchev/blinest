@@ -21,7 +21,7 @@
 
         </div>
 
-        <div class="px-6 py-4 bg-gray-100 text-right">
+        <div class="px-6 py-4 bg-gray-100 dark:bg-gray-900 text-right">
 
             <button v-if="answer && answer.id" class="text-red-400 mx-2" @click="deleteAnswer" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
               {{ __('Delete') }}
@@ -117,6 +117,7 @@
 
       updateAnswer() {
 	      this.form.put(route('tracks.answers.update', [this.show, this.answer.id]), {
+          preserveScroll: true, 
 	        onSuccess: () => {
             this.update();
             this.close();
@@ -126,6 +127,7 @@
 
       storeAnswer() {
         this.form.post(route('tracks.answers.store', this.show), {
+          preserveScroll: true, 
           onSuccess: () => {
             this.update();
             this.close();
@@ -136,10 +138,11 @@
       deleteAnswer() {
         if(confirm()) {
           this.form.delete(route('answers.delete', this.answer), {
-          onSuccess: () => {
-            this.update();
-            this.close();
-          }
+            preserveScroll: true, 
+            onSuccess: () => {
+              this.update();
+              this.close();
+            }
           })
         }
       },

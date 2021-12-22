@@ -2,6 +2,7 @@
 
 namespace App\Services\MusicProviders;
 
+use Illuminate\Support\Facades\Request;
 use Carbon\Carbon;
 
 class SpotifyService
@@ -20,8 +21,11 @@ class SpotifyService
     }
 
 
-    public function search($term)
+    public function search()
     {
+
+        $term = Request::get('term');
+
         $response = $this->api->search($term, 'track', ['market' => 'FR']);
         $results = collect($response->tracks->items);
         
