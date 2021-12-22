@@ -3,8 +3,11 @@
     <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
 
         <div class="px-6 py-4">
-            <div class="text-lg">
+            <div class="text-lg" v-if="answer">
               {{ __('Edit Answer') }}
+            </div>
+            <div class="text-lg" v-else="answer">
+              {{ __('Add Answer') }}
             </div>
 
             <div class="flex flex-wrap mt-4">

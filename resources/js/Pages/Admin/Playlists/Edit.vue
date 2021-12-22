@@ -20,7 +20,7 @@
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
-        <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
+        <div class="flex items-center px-8 py-4 bg-gray-50 dark:bg-gray-900">
           <button v-if="!playlist.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Playlist') }}</button>
           <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">{{ __('Update') }}</loading-button>
         </div>

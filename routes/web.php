@@ -11,6 +11,9 @@ use App\Http\Controllers\TrackController;
 use App\Http\Controllers\TrackAnswerController;
 use Illuminate\Support\Facades\Route;
 
+// Socialite
+use App\Http\Controllers\SocialController;
+
 // Music Providers Services
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
@@ -39,6 +42,14 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+
+// Auth Social Providers
+
+Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
+    ->name('auth.redirect');
+
+Route::get('/callback/{provider}', [SocialController::class, 'callback'])
+    ->name('auth.callback');
 
 
 // Language

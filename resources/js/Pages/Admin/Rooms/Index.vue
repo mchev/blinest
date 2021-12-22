@@ -16,13 +16,13 @@
         <span class="hidden md:inline">&nbsp;Room</span>
       </Link>
     </div>
-    <div class="bg-white rounded-md shadow overflow-x-auto">
+    <card>
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
-          <th class="pb-4 pt-6 px-6">Name</th>
-          <th class="pb-4 pt-6 px-6" colspan="2">Role</th>
+          <th class="pb-4 pt-6 px-6">{{ __("Name") }}</th>
+          <th class="pb-4 pt-6 px-6" colspan="2">{{ __("Role") }}</th>
         </tr>
-        <tr v-for="room in rooms" :key="room.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+        <tr v-for="room in rooms" :key="room.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
           <td class="border-t">
             <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.rooms.edit', room.id)">
               <img v-if="room.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="room.photo" />
@@ -42,10 +42,10 @@
           </td>
         </tr>
         <tr v-if="rooms.length === 0">
-          <td class="px-6 py-4 border-t" colspan="4">No rooms found.</td>
+          <td class="px-6 py-4 border-t" colspan="4">{{ __("No rooms found.") }}</td>
         </tr>
       </table>
-    </div>
+    </card>
   </div>
 </template>
 
@@ -57,6 +57,7 @@ import AdminLayout from '@/Shared/AdminLayout'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter'
+import Card from '@/Shared/Card'
 
 export default {
   components: {
@@ -64,6 +65,7 @@ export default {
     Icon,
     Link,
     SearchFilter,
+    Card,
   },
   layout: AdminLayout,
   props: {

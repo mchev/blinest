@@ -23,6 +23,8 @@ class CreateUsersTable extends Migration
             $table->boolean('is_admin')->default(false);
             $table->string('photo_path', 100)->nullable();
             $table->string('eth_address')->index()->nullable();
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

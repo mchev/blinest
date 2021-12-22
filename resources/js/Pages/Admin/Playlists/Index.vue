@@ -25,7 +25,7 @@
           <th class="pb-4 pt-6 px-6">Tracks</th>
           <th class="pb-4 pt-6 px-6" colspan="2">Public</th>
         </tr>
-        <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
+        <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
           <td class="border-t">
             <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.playlists.edit', playlist.id)">
               <img v-if="playlist.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="playlist.photo" />
@@ -50,7 +50,7 @@
           </td>
           <td class="w-px border-t">
             <Link class="flex items-center px-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
-              <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400" />
+              <icon name="cheveron-right" class="block w-6 h-6" />
             </Link>
           </td>
         </tr>
