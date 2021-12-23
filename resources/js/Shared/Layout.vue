@@ -21,25 +21,8 @@
           </div>
           <div class="md:text-md flex items-center justify-start p-4 w-full text-sm bg-white dark:bg-gray-900 border-b dark:border-gray-600 md:px-12 md:py-0">
             <div class="mr-4 mt-1"><!-- TITLE --></div>
-            <dropdown class="mt-1 ml-auto" placement="bottom-end">
-              <template #default>
-                <div class="group flex items-center cursor-pointer select-none">
-                  <div class="mr-1 whitespace-nowrap">
-                    <span>{{ auth.user.name }}</span>
-                  </div>
-                  <icon class="w-5 h-5" name="cheveron-down" />
-                </div>
-              </template>
-              <template #dropdown>
-                <Link class="block px-6 py-2" :href="`/users/${auth.user.id}/edit`">{{ __('My Profile') }}</Link>
-                <Link class="block px-6 py-2" :href="route('playlists')">{{ __('Playlists') }}</Link>
-                <Link class="block px-6 py-2" href="/users">{{ __('Rooms') }}</Link>
-                <Link class="block px-6 py-2" href="/users">{{ __('Team') }}</Link>
-                <Link class="block px-6 py-2" href="/users">{{ __('Scores') }}</Link>
-                <Link class="block px-6 py-2" href="/logout" method="delete" as="button">{{ __('Logout') }}</Link>
-              </template>
-            </dropdown>
-            <language-selector/>
+            <user-dropdown/>
+            <language-switcher/>
             <darkmode-switcher/>
           </div>
         </div>
@@ -62,14 +45,16 @@ import Logo from '@/Shared/Logo'
 import Dropdown from '@/Shared/Dropdown'
 import MainMenu from '@/Shared/MainMenu'
 import FlashMessages from '@/Shared/FlashMessages'
-import LanguageSelector from '@/Shared/LanguageSelector'
+import UserDropdown from '@/Shared/UserDropdown'
+import LanguageSwitcher from '@/Shared/LanguageSwitcher'
 import DarkmodeSwitcher from '@/Shared/DarkmodeSwitcher'
 
 export default {
   components: {
     Dropdown,
     FlashMessages,
-    LanguageSelector,
+    UserDropdown,
+    LanguageSwitcher,
     DarkmodeSwitcher,
     Icon,
     Link,

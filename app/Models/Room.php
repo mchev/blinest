@@ -27,6 +27,11 @@ class Room extends Model
         return $this->hasOne(Playlist::class);
     }
 
+    public function scopeIsPublic($query)
+    {
+        $query->where('is_public', true);
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
