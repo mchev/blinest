@@ -38,7 +38,7 @@ export default {
     loading: Boolean,
     error: String,
     label: String,
-    modelValue: String,
+    modelValue: String|Number,
     appendIcon: String,
     prependIcon: String,
   },

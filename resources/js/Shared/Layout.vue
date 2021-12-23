@@ -31,9 +31,12 @@
                 </div>
               </template>
               <template #dropdown>
-                <Link class="block px-6 py-2" :href="`/users/${auth.user.id}/edit`">My Profile</Link>
-                <Link class="block px-6 py-2" href="/users">Manage Users</Link>
-                <Link class="block px-6 py-2" href="/logout" method="delete" as="button">Logout</Link>
+                <Link class="block px-6 py-2" :href="`/users/${auth.user.id}/edit`">{{ __('My Profile') }}</Link>
+                <Link class="block px-6 py-2" :href="route('playlists')">{{ __('Playlists') }}</Link>
+                <Link class="block px-6 py-2" href="/users">{{ __('Rooms') }}</Link>
+                <Link class="block px-6 py-2" href="/users">{{ __('Team') }}</Link>
+                <Link class="block px-6 py-2" href="/users">{{ __('Scores') }}</Link>
+                <Link class="block px-6 py-2" href="/logout" method="delete" as="button">{{ __('Logout') }}</Link>
               </template>
             </dropdown>
             <language-selector/>

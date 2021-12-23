@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
 class UsersController extends Controller
@@ -40,24 +41,28 @@ class UsersController extends Controller
     public function store()
     {
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
-            'photo' => ['nullable', 'image'],
+            'name' => ['required', 'max:50', Rule::unique('users')],
+            'email' => ['required', 'max:255', 'email', Rule::unique('users')],
+            'password' => [ 'required', 
+                            'string', 
+                            Password::min(8)
+                                ->mixedCase()
+                                ->numbers()
+                                ->symbols()
+                                ->uncompromised(),
+                            'confirmed'
+            ],
         ]);
 
-        Auth::user()->account->users()->create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
+        $user = User::create([
+            'name' => Request::get('name'),
             'email' => Request::get('email'),
             'password' => Request::get('password'),
-            'owner' => Request::get('owner'),
-            'photo_path' => Request::file('photo') ? Request::file('photo')->store('users') : null,
         ]);
 
-        return Redirect::route('users')->with('success', 'User created.');
+        auth()->login($user);
+
+        return Redirect::route('/');
     }
 
     public function edit(User $user)

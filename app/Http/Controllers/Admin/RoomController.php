@@ -23,7 +23,6 @@ class RoomController extends AdminController
                 ->transform(fn ($room) => [
                     'id' => $room->id,
                     'name' => $room->name,
-                    'owner' => $room->owner,
                     'photo' => $room->photo_path ? URL::route('image', ['path' => $room->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                     'deleted_at' => $room->deleted_at,
                 ]),
@@ -38,9 +37,9 @@ class RoomController extends AdminController
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:50'],
+            'name' => ['required', 'max:50', Rule::unique('rooms')],
             'description' => ['nullable'],
-            'playlist_id' => ['required', 'id'],
+            'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
             'tracks_by_game' => ['required', 'integer'],
             'photo' => ['nullable', 'image'],
@@ -89,20 +88,24 @@ class RoomController extends AdminController
 
     public function update(Room $room)
     {
-        if (App::environment('demo') && $room->isDemoRoom()) {
-            return Redirect::back()->with('error', 'Updating the demo room is not allowed.');
-        }
 
-        Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('rooms')->ignore($room->id)],
+        $room->update(Request::validate([
+            'name' => ['required', 'max:50', Rule::unique('rooms')->ignore($room->id)],
+            'description' => ['nullable'],
+            'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'tracks_by_game' => ['required', 'integer'],
             'photo' => ['nullable', 'image'],
-        ]);
+            'is_public' => ['required', 'boolean'],
+            'is_pro' => ['required', 'boolean'],
+            'is_random' => ['required', 'boolean'],
+            'is_active' => ['required', 'boolean'],
+            'is_chat_active' => ['required', 'boolean'],
+            'discord_webhook_url' => ['nullable', 'url'],
+            'color' => ['nullable'],
+        ]));
 
-        $room->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        //$room->update(Request::only('first_name', 'last_name', 'email', 'owner'));
 
         if (Request::file('photo')) {
             $room->update(['photo_path' => Request::file('photo')->store('rooms')]);
@@ -117,9 +120,6 @@ class RoomController extends AdminController
 
     public function destroy(Room $room)
     {
-        if (App::environment('demo') && $room->isDemoRoom()) {
-            return Redirect::back()->with('error', 'Deleting the demo room is not allowed.');
-        }
 
         $room->delete();
 

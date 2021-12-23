@@ -24,7 +24,6 @@ use App\User;
 	 function createUser($getInfo,$provider){
 
 		 $user = User::where('provider_id', $getInfo->id)->first();
-
 		 $email = User::where('email', $getInfo->email)->first();
 
 		 if (!$user && !$email) {

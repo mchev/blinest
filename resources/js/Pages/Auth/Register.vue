@@ -1,5 +1,5 @@
 <template>
-  <Head title="Login" />
+  <Head title="Register" />
 
   <div class="flex items-center justify-center min-h-screen p-6 bg-indigo-800">
 
@@ -13,19 +13,16 @@
 
         <div class="w-full lg:w-2/3">
 
-          <form class="mt-8 bg-white rounded-lg shadow-xl overflow-hidden" @submit.prevent="login">
+          <form class="mt-8 bg-white rounded-lg shadow-xl overflow-hidden" @submit.prevent="register">
             <div class="px-10 py-12">
               <h1 class="text-center text-3xl font-bold">{{ __('Welcome Back!') }}</h1>
               <div class="mt-6 mx-auto w-24 border-b-2" />
+              <text-input v-model="form.name" :error="form.errors.name" class="mt-10" :label="__('Name')" autofocus autocapitalize="off" />
               <text-input v-model="form.email" :error="form.errors.email" class="mt-10" :label="__('Email')" type="email" autofocus autocapitalize="off" />
               <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" />
-              <label class="flex items-center mt-6 select-none" for="remember">
-                <input id="remember" v-model="form.remember" class="mr-1" type="checkbox" />
-                <span class="text-sm">{{ __('Remember Me') }}</span>
-              </label>
             </div>
             <div class="flex px-10 py-4 bg-gray-100 border-t border-gray-100">
-              <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">{{ __('Login') }}</loading-button>
+              <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">{{ __('Register') }}</loading-button>
             </div>
           </form>
 
@@ -92,15 +89,15 @@ export default {
   data() {
     return {
       form: this.$inertia.form({
-        email: 'johndoe@example.com',
-        password: 'secret',
-        remember: false,
+        name: '',
+        email: '',
+        password: '',
       }),
     }
   },
   methods: {
-    login() {
-      this.form.post('/login')
+    register() {
+      this.form.post(route('register.store'))
     },
   },
 }

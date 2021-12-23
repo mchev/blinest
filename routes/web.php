@@ -1,11 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\ContactsController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\ImagesController;
-use App\Http\Controllers\OrganizationsController;
-use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\TrackAnswerController;
@@ -36,6 +34,14 @@ Route::get('login', [AuthenticatedSessionController::class, 'create'])
     ->name('login')
     ->middleware('guest');
 
+Route::get('register', [UserController::class, 'create'])
+    ->name('user.create')
+    ->middleware('guest');
+
+Route::post('register', [UserController::class, 'store'])
+    ->name('user.store')
+    ->middleware('guest');
+
 Route::post('login', [AuthenticatedSessionController::class, 'store'])
     ->name('login.store')
     ->middleware('guest');
@@ -61,25 +67,13 @@ Route::get('language/{language}', function ($language) {
 })->name('language');
 
 
-// Dashboard
+// Home
 
-Route::get('/', [DashboardController::class, 'index'])
-    ->name('dashboard')
+Route::get('/', [HomeController::class, 'index'])
+    ->name('home')
     ->middleware('auth');
 
 // Users
-
-Route::get('users', [UsersController::class, 'index'])
-    ->name('users')
-    ->middleware('auth');
-
-Route::get('users/create', [UsersController::class, 'create'])
-    ->name('users.create')
-    ->middleware('auth');
-
-Route::post('users', [UsersController::class, 'store'])
-    ->name('users.store')
-    ->middleware('auth');
 
 Route::get('users/{user}/edit', [UsersController::class, 'edit'])
     ->name('users.edit')
@@ -97,13 +91,28 @@ Route::put('users/{user}/restore', [UsersController::class, 'restore'])
     ->name('users.restore')
     ->middleware('auth');
 
+// Playlists
+Route::get('playlists', [PlaylistController::class, 'index'])
+    ->name('playlists');
 
-// Reports
+Route::get('playlists/create', [PlaylistController::class, 'create'])
+    ->name('playlists.create');
 
-Route::get('reports', [ReportsController::class, 'index'])
-    ->name('reports')
-    ->middleware('auth');
+Route::post('playlists', [PlaylistController::class, 'store'])
+    ->name('playlists.store');
 
+Route::get('playlists/{playlist}/edit', [PlaylistController::class, 'edit'])
+    ->name('playlists.edit');
+
+Route::put('playlists/{playlist}', [PlaylistController::class, 'update'])
+    ->name('playlists.update');
+
+Route::delete('playlists/{playlist}', [PlaylistController::class, 'destroy'])
+    ->name('playlists.destroy');
+
+Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
+    ->name('playlists.restore');
+        
 // Tracks
 Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])
     ->name('playlists.tracks')
