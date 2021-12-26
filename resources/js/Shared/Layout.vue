@@ -4,7 +4,7 @@
     <div class="md:flex md:flex-col">
       <div class="md:flex md:flex-col md:h-screen">
         <div class="md:flex md:flex-shrink-0">
-          <div class="flex items-center justify-between px-6 py-4 bg-indigo-900 md:flex-shrink-0 md:justify-center md:w-56">
+          <div class="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-900 md:flex-shrink-0 md:justify-center md:w-56">
             <Link class="mt-1" href="/">
               <logo class="fill-white" width="120" height="28" />
             </Link>
@@ -19,11 +19,15 @@
               </template>
             </dropdown>
           </div>
-          <div class="md:text-md flex items-center justify-start p-4 w-full text-sm bg-white dark:bg-gray-900 border-b dark:border-gray-600 md:px-12 md:py-0">
-            <div class="mr-4 mt-1"><!-- TITLE --></div>
-            <user-dropdown/>
-            <language-switcher/>
-            <darkmode-switcher/>
+          <div class="md:text-md grid grid-cols-2 items center p-4 w-full text-sm bg-white dark:bg-gray-900 dark:border-gray-600 md:px-12 md:py-0">
+            <div class="flex items-center justify-end">
+              <search-rooms/>
+            </div>
+            <div class="flex items-center justify-end">
+              <user-dropdown/>
+              <language-switcher/>
+              <darkmode-switcher/>
+            </div>
           </div>
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
@@ -45,6 +49,7 @@ import Logo from '@/Shared/Logo'
 import Dropdown from '@/Shared/Dropdown'
 import MainMenu from '@/Shared/MainMenu'
 import FlashMessages from '@/Shared/FlashMessages'
+import SearchRooms from '@/Shared/SearchRooms'
 import UserDropdown from '@/Shared/UserDropdown'
 import LanguageSwitcher from '@/Shared/LanguageSwitcher'
 import DarkmodeSwitcher from '@/Shared/DarkmodeSwitcher'
@@ -53,6 +58,7 @@ export default {
   components: {
     Dropdown,
     FlashMessages,
+    SearchRooms,
     UserDropdown,
     LanguageSwitcher,
     DarkmodeSwitcher,

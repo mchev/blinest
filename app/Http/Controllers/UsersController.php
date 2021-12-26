@@ -26,7 +26,6 @@ class UsersController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'owner' => $user->owner,
                     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                     'deleted_at' => $user->deleted_at,
                 ]),
@@ -70,10 +69,8 @@ class UsersController extends Controller
         return Inertia::render('Users/Edit', [
             'user' => [
                 'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+                'name' => $user->name,
                 'email' => $user->email,
-                'owner' => $user->owner,
                 'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
                 'deleted_at' => $user->deleted_at,
             ],
@@ -87,15 +84,13 @@ class UsersController extends Controller
         }
 
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
+            'name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        $user->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        $user->update(Request::only('name', 'email', 'owner'));
 
         if (Request::file('photo')) {
             $user->update(['photo_path' => Request::file('photo')->store('users')]);
@@ -110,10 +105,6 @@ class UsersController extends Controller
 
     public function destroy(User $user)
     {
-        if (App::environment('demo') && $user->isDemoUser()) {
-            return Redirect::back()->with('error', 'Deleting the demo user is not allowed.');
-        }
-
         $user->delete();
 
         return Redirect::back()->with('success', 'User deleted.');

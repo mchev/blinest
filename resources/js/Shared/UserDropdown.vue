@@ -1,5 +1,5 @@
 <template>
-	<dropdown class="mt-1 ml-auto" placement="bottom-end">
+	<dropdown class="mt-1" placement="bottom-end">
 	  <template #default>
 	    <div class="group flex items-center cursor-pointer select-none">
 	      <div class="mr-1 whitespace-nowrap">
@@ -9,13 +9,13 @@
 	    </div>
 	  </template>
 	  <template #dropdown>
-	    <Link class="block px-6 py-2" :href="`/users/${user.id}/edit`">{{ __('My Profile') }}</Link>
+	    <Link class="block px-6 py-2" :href="route('users.edit', user)">{{ __('My Profile') }}</Link>
 	    <Link class="block px-6 py-2" :href="route('playlists')">{{ __('Playlists') }}</Link>
 	    <Link class="block px-6 py-2" href="/users">{{ __('Rooms') }}</Link>
 	    <Link class="block px-6 py-2" href="/users">{{ __('Team') }}</Link>
 	    <Link class="block px-6 py-2" href="/users">{{ __('Scores') }}</Link>
 	    <div class="border-t"/>
-	    <Link v-if="user.admin" class="block px-6 py-2" href="/admin/dashboard">{{ __('Administration') }}</Link>
+	    <Link v-if="user.admin" class="block px-6 py-2" :href="route('admin.dashboard')">{{ __('Administration') }}</Link>
 	    <div class="border-t"/>
 	    <Link class="block px-6 py-2" href="/logout" method="delete" as="button">{{ __('Logout') }}</Link>
 	  </template>
