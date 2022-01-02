@@ -1,8 +1,6 @@
 <nav id="mainNav" class="navbar navbar-expand-lg bg-secondary text-uppercase">
     <div class="container-fluid">
 
-        <img width="50" height="50" class="mr-2" loading="lazy" src="/images/xmas.png" title="Joyeux Noël!">
-
         <a class="navbar-brand" href="{{ url('/') }}">
             <img loading="lazy" src="/img/logo_svg.svg" alt="{{ config('app.name', 'Blinest') }}">
         </a>
