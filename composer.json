@@ -26,7 +26,8 @@
         "pusher/pusher-php-server": "^4.0",
         "socialiteproviders/discord": "^4.1",
         "spatie/laravel-cookie-consent": "^2.12",
-        "stripe/stripe-php": "^7.33"
+        "stripe/stripe-php": "^7.33",
+        "webup/laravel-sendinblue": "^3.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
