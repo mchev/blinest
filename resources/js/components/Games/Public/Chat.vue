@@ -13,7 +13,7 @@
                 <span v-if="message.sender_profile_picture" class="avatar" :style="'background-image: url(/images/players/' + message.sender_profile_picture + ');'">
                 </span>
                 <span v-else class="avatar" :style="'background-color:' + $options.filters.stringToColour(message.sender_name) + ';'">
-                 {{ message.sender_name | initialize }}
+                 {{ message.sender_name | initialize }}
                 </span>
               </div>
               <div class="col pl-0">
@@ -27,7 +27,7 @@
                       <i @click="deleteMessage(message.id)" class="text-danger fas fa-trash pointer" title="Supprimer ce message"></i>
                     </template>
                   </span>
-                  <span v-html="$options.filters.stringParser(message.message)"></span>
+                  {{ $options.filters.stringParser(message.message) }}
                 </p>
               </div>
             </div>
@@ -233,11 +233,7 @@
     filters: {
 
       stringParser: function(text) {
-          var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-          var niceText = badWords.clean(text);
-          return niceText.replace(urlRegex, function(url) {
-              return '<a href="' + url + '" target="_blank">' + url + '</a>';
-          });
+          return badWords.clean(text);
       },
 
       initialize: function(value) {
