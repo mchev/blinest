@@ -11,7 +11,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-indigo" :href="route('admin.rooms.create')">
+      <Link class="btn-blinest" :href="route('admin.rooms.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Room</span>
       </Link>
@@ -22,17 +22,20 @@
           <th class="pb-4 pt-6 px-6">{{ __("Name") }}</th>
           <th class="pb-4 pt-6 px-6" colspan="2">{{ __("Role") }}</th>
         </tr>
-        <tr v-for="room in rooms" :key="room.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
+        <tr v-for="room in rooms.data" :key="room.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
           <td class="border-t">
-            <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.rooms.edit', room.id)">
+            <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.rooms.edit', room.id)">
               <img v-if="room.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="room.photo" />
-              {{ room.name }}
+              <div class="flex flex-col">
+                {{ room.name }}
+                <small class="text-gray-500">{{ room.description }}</small>
+              </div>
               <icon v-if="room.deleted_at" name="trash" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400" />
             </Link>
           </td>
           <td class="border-t">
             <Link class="flex items-center px-6 py-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
-              {{ room.owner ? 'Owner' : 'Room' }}
+              {{ room.owner }}
             </Link>
           </td>
           <td class="w-px border-t">
@@ -45,6 +48,7 @@
           <td class="px-6 py-4 border-t" colspan="4">{{ __("No rooms found.") }}</td>
         </tr>
       </table>
+      <Pagination :links="rooms.links"/>
     </card>
   </div>
 </template>
@@ -53,11 +57,12 @@
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import Icon from '@/Shared/Icon'
 import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Shared/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter'
 import Card from '@/Shared/Card'
+import Pagination from '@/Shared/Pagination'
 
 export default {
   components: {
@@ -66,6 +71,7 @@ export default {
     Link,
     SearchFilter,
     Card,
+    Pagination,
   },
   layout: AdminLayout,
   props: {

@@ -13,7 +13,7 @@ class AdminController extends BaseController
     use DispatchesJobs;
     use ValidatesRequests;
 
-    public function __contruct()
+    public function __construct()
     {
 
         $this->middleware('auth');

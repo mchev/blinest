@@ -11,7 +11,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-indigo" :href="route('admin.playlists.create')">
+      <Link class="btn-blinest" :href="route('admin.playlists.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Playlist</span>
       </Link>
@@ -27,7 +27,7 @@
         </tr>
         <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
           <td class="border-t">
-            <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.playlists.edit', playlist.id)">
+            <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.playlists.edit', playlist.id)">
               <img v-if="playlist.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="playlist.photo" />
               {{ playlist.name }}
               <icon v-if="playlist.deleted_at" name="trash" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400" />
@@ -70,7 +70,7 @@
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import Icon from '@/Shared/Icon'
 import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Shared/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter'

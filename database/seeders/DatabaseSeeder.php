@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Team;
-use App\Models\Contact;
-use App\Models\Organization;
+use App\Models\Category;
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory(5)->create();
+        Category::factory(4)->create();
+        Room::factory(25)->create();
 /*
-        $organizations = Organization::factory(100)
-            ->create(['account_id' => $team->id]);
 
         Contact::factory(100)
             ->create(['account_id' => $team->id])

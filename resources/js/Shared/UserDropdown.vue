@@ -11,11 +11,10 @@
 	  <template #dropdown>
 	    <Link class="block px-6 py-2" :href="route('users.edit', user)">{{ __('My Profile') }}</Link>
 	    <Link class="block px-6 py-2" :href="route('playlists')">{{ __('Playlists') }}</Link>
-	    <Link class="block px-6 py-2" href="/users">{{ __('Rooms') }}</Link>
+	    <Link class="block px-6 py-2" :href="route('rooms')">{{ __('Rooms') }}</Link>
 	    <Link class="block px-6 py-2" href="/users">{{ __('Team') }}</Link>
-	    <Link class="block px-6 py-2" href="/users">{{ __('Scores') }}</Link>
 	    <div class="border-t"/>
-	    <Link v-if="user.admin" class="block px-6 py-2" :href="route('admin.dashboard')">{{ __('Administration') }}</Link>
+	    <Link v-if="user.admin" class="block px-6 py-2 my-2" :href="route('admin.dashboard')">{{ __('Administration') }}</Link>
 	    <div class="border-t"/>
 	    <Link class="block px-6 py-2" href="/logout" method="delete" as="button">{{ __('Logout') }}</Link>
 	  </template>

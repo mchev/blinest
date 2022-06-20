@@ -3,14 +3,14 @@
     <Head :title="`${form.name}`" />
     <div class="flex justify-start mb-8 max-w-3xl">
       <h1 class="text-3xl font-bold">
-        <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.users')">Users</Link>
-        <span class="text-indigo-400 font-medium">/</span>
+        <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.users')">Users</Link>
+        <span class="text-blinest-400 font-medium">/</span>
         {{ form.name }}
       </h1>
       <img v-if="user.photo" class="block ml-4 w-8 h-8 rounded-full" :src="user.photo" />
     </div>
     <trashed-message v-if="user.deleted_at" class="mb-6" @restore="restore"> This user has been deleted. </trashed-message>
-    <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
+    <card>
       <form @submit.prevent="update">
         <div class="flex flex-wrap -mb-8 -mr-6 p-8">
           <text-input v-model="form.name" :error="form.errors.name" class="pb-8 pr-6 w-full lg:w-1/2" label="Name" />
@@ -28,21 +28,22 @@
         </div>
         <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
           <button v-if="!user.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete User</button>
-          <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">Update User</loading-button>
+          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">Update User</loading-button>
         </div>
       </form>
-    </div>
+    </card>
   </div>
 </template>
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Shared/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout'
 import TextInput from '@/Shared/TextInput'
 import FileInput from '@/Shared/FileInput'
 import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
 import TrashedMessage from '@/Shared/TrashedMessage'
+import Card from '@/Shared/Card'
 
 export default {
   components: {
@@ -53,6 +54,7 @@ export default {
     SelectInput,
     TextInput,
     TrashedMessage,
+    Card,
   },
   layout: AdminLayout,
   props: {

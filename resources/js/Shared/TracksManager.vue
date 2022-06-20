@@ -19,7 +19,7 @@
               <div><Icon name="play" @click="play(result.preview_url)" class="flex-shrink-0 mr-2 w-6 h-6 fill-gray-500"/></div>
               <div class="flex-1"><span class="font-bold">{{ result.artist_name }}</span> {{ result.track_name }}</div>
               <div v-if="!result.added" class="self-end">
-                <button @click="addTrack(result)" :disabled="loading" class="btn-indigo" type="button">{{ __("Add") }}</button>
+                <button @click="addTrack(result)" :disabled="loading" class="btn-blinest" type="button">{{ __("Add") }}</button>
               </div>
               <div v-else class="self-end">
                 <button @click="removeTrack(result)" :disabled="loading" class="btn-danger" type="button">{{ __("Remove") }}</button>
@@ -40,17 +40,17 @@
         </tr>
         <tr v-for="track in tracks.data" :key="track.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
           <td class="border-t">
-            <a target="_blank" :href="track.provider_url" class="flex items-center justify-center px-2 py-4 focus:text-indigo-500">
+            <a target="_blank" :href="track.provider_url" class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
               <Icon :name="track.provider" :title="track.provider" class="flex-shrink-0 mr-2 w-6 h-6"/>
             </a>
           </td>
           <td class="border-t">
-            <div class="flex items-center justify-center px-2 py-4 focus:text-indigo-500">
+            <div class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
               <Icon name="play" @click="play(track.preview_url)" class="cursor-pointer flex-shrink-0 mr-2 w-6 h-6"/>
             </div>
           </td>
           <td class="border-t">
-            <div class="flex flex-col items-start px-6 py-4 focus:text-indigo-500 text-sm">
+            <div class="flex flex-col items-start px-6 py-4 focus:text-blinest-500 text-sm">
               <div v-for="answer in track.answers" :key="answer.id" @click="editAnswer(track, answer)" class="break-words whitespace-normal cursor-pointer">
                 <span class="font-bold">{{ __(answer.key) }}:</span> {{ answer.value}} ({{ answer.score}}pts)
               </div>
@@ -58,17 +58,17 @@
             </div>
           </td>
           <td class="border-t">
-              <div class="flex text-center items-start px-6 py-4 focus:text-indigo-500 text-sm">
+              <div class="flex text-center items-start px-6 py-4 focus:text-blinest-500 text-sm">
                 <Icon name="thumb-up" class="flex-shrink-0 mr-2 w-6 h-6 fill-blue-400"/> {{ track.up_votes }}
               </div>
           </td>
           <td class="border-t">
-              <div class="flex text-center items-start px-6 py-4 focus:text-indigo-500 text-sm">
+              <div class="flex text-center items-start px-6 py-4 focus:text-blinest-500 text-sm">
                 <Icon name="thumb-down" class="flex-shrink-0 mr-2 w-6 h-6 fill-gray-400"/> {{ track.down_votes }}
               </div>
           </td>
           <td class="border-t">
-              <div class="flex flex-col items-start px-6 py-4 focus:text-indigo-500 text-sm">
+              <div class="flex flex-col items-start px-6 py-4 focus:text-blinest-500 text-sm">
                 {{ track.created_at }}
               </div>
           </td>

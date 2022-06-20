@@ -21,7 +21,7 @@ module.exports = {
       yellow: colors.yellow,
       green: colors.green,
       gray: colors.slate,
-      indigo: {
+      blinest: {
         100: '#e6e8ff',
         300: '#b2b7ff',
         400: '#7886d7',
@@ -39,7 +39,7 @@ module.exports = {
         sans: ['Cerebri Sans', ...defaultTheme.fontFamily.sans],
       },
       boxShadow: theme => ({
-        outline: '0 0 0 2px ' + theme('colors.indigo.500'),
+        outline: '0 0 0 2px ' + theme('colors.blinest.500'),
       }),
       fill: theme => theme('colors'),
     },
@@ -49,5 +49,5 @@ module.exports = {
       fill: ['focus', 'group-hover'],
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
+
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\PlaylistController;
+
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TrackController;
@@ -90,6 +93,30 @@ Route::delete('users/{user}', [UsersController::class, 'destroy'])
 Route::put('users/{user}/restore', [UsersController::class, 'restore'])
     ->name('users.restore')
     ->middleware('auth');
+
+
+// Rooms
+Route::get('rooms', [RoomController::class, 'index'])
+    ->name('rooms');
+
+Route::get('rooms/create', [RoomController::class, 'create'])
+    ->name('rooms.create');
+
+Route::post('rooms', [RoomController::class, 'store'])
+    ->name('rooms.store');
+
+Route::get('rooms/{room}/edit', [RoomController::class, 'edit'])
+    ->name('rooms.edit');
+
+Route::put('rooms/{room}', [RoomController::class, 'update'])
+    ->name('rooms.update');
+
+Route::delete('rooms/{room}', [RoomController::class, 'destroy'])
+    ->name('rooms.destroy');
+
+Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
+    ->name('rooms.restore');
+
 
 // Playlists
 Route::get('playlists', [PlaylistController::class, 'index'])

@@ -3,8 +3,8 @@
     <Head :title="`${form.name}`" />
     <div class="flex justify-start mb-8 max-w-3xl">
       <h1 class="text-3xl font-bold">
-        <Link class="text-indigo-400 hover:text-indigo-600" :href="route('admin.playlists')">{{ __("Playlists") }}</Link>
-        <span class="text-indigo-400 font-medium">/</span>
+        <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.playlists')">{{ __("Playlists") }}</Link>
+        <span class="text-blinest-400 font-medium">/</span>
         {{ form.name }}
       </h1>
       <img v-if="playlist.photo" class="block ml-4 w-8 h-8 rounded-full" :src="playlist.photo" />
@@ -22,7 +22,7 @@
         </div>
         <div class="flex items-center px-8 py-4 bg-gray-50 dark:bg-gray-900">
           <button v-if="!playlist.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Playlist') }}</button>
-          <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">{{ __('Update') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
     </card>
@@ -36,7 +36,7 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Shared/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout'
 import Card from '@/Shared/Card'
 import TextInput from '@/Shared/TextInput'
 import FileInput from '@/Shared/FileInput'

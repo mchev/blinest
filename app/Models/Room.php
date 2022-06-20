@@ -22,9 +22,14 @@ class Room extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function playlist()
+    public function category()
     {
-        return $this->hasOne(Playlist::class);
+        return $this->belongsTo(Category::class);
+    }
+
+    public function moderators()
+    {
+        return $this->hasMany(Moderator::class);
     }
 
     public function scopeIsPublic($query)
@@ -32,13 +37,16 @@ class Room extends Model
         $query->where('is_public', true);
     }
 
+    public function scopeIsPrivate($query)
+    {
+        $query->where('is_public', false);
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('last_name', 'like', '%'.$search.'%')
-                    ->orWhere('email', 'like', '%'.$search.'%');
+                $query->where('name', 'like', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {

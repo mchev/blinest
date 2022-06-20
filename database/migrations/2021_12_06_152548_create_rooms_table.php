@@ -18,7 +18,7 @@ class CreateRoomsTable extends Migration
             $table->foreignId('user_id');
             $table->string('name');
             $table->string('description')->nullable();
-            $table->foreignId('playlist_id')->nullable();
+            $table->foreignId('category_id')->nullable();
             $table->string('photo_path')->nullable();
             $table->integer('tracks_by_game')->default(15);
             $table->boolean('is_public')->default(false);

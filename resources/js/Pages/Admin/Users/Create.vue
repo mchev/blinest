@@ -2,8 +2,8 @@
   <div>
     <Head title="Create User" />
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-indigo-400 hover:text-indigo-600" href="/users">Users</Link>
-      <span class="text-indigo-400 font-medium">/</span> Create
+      <Link class="text-blinest-400 hover:text-blinest-600" href="/users">Users</Link>
+      <span class="text-blinest-400 font-medium">/</span> Create
     </h1>
     <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
       <form @submit.prevent="store">
@@ -22,7 +22,7 @@
           <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
         <div class="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100">
-          <loading-button :loading="form.processing" class="btn-indigo" type="submit">Create User</loading-button>
+          <loading-button :loading="form.processing" class="btn-blinest" type="submit">Create User</loading-button>
         </div>
       </form>
     </div>
@@ -31,7 +31,7 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Shared/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout'
 import FileInput from '@/Shared/FileInput'
 import TextInput from '@/Shared/TextInput'
 import SelectInput from '@/Shared/SelectInput'

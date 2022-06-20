@@ -4,7 +4,7 @@
     <Head title="Create Room" />
 
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.rooms')">{{ __('Rooms') }}</Link>
+      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('rooms')">{{ __('Rooms') }}</Link>
       <span class="text-blinest-400 font-medium">/</span> {{ __('Create') }}
     </h1>
 
@@ -53,7 +53,7 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
+import Layout from '@/Layouts/AppLayout'
 import FileInput from '@/Shared/FileInput'
 import TextInput from '@/Shared/TextInput'
 import TextareaInput from '@/Shared/TextareaInput'
@@ -80,7 +80,7 @@ export default {
     TextareaInput,
   },
 
-  layout: AdminLayout,
+  layout: Layout,
 
   remember: 'form',
 
@@ -106,7 +106,7 @@ export default {
   methods: {
 
     store() {
-      this.form.post(route('admin.rooms.store'))
+      this.form.post(route('rooms.store'))
     },
 
   },

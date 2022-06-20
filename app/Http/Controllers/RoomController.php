@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Support\Facades\App;
@@ -11,21 +11,19 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
-class RoomController extends AdminController
+class RoomController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Rooms/Index', [
+        return Inertia::render('Rooms/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'rooms' => Room::orderBy('updated_at')
+            'rooms' => Auth::user()->rooms()
+                ->orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
-                ->paginate(10)
-                ->withQueryString()
-                ->through(fn ($room) => [
+                ->get()
+                ->transform(fn ($room) => [
                     'id' => $room->id,
                     'name' => $room->name,
-                    'description' => $room->description,
-                    'owner' => $room->owner,
                     'photo' => $room->photo_path ? URL::route('image', ['path' => $room->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                     'deleted_at' => $room->deleted_at,
                 ]),
@@ -34,7 +32,7 @@ class RoomController extends AdminController
 
     public function create()
     {
-        return Inertia::render('Admin/Rooms/Create');
+        return Inertia::render('Rooms/Create');
     }
 
     public function store()
@@ -71,13 +69,21 @@ class RoomController extends AdminController
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
         ]);
 
-        return Redirect::route('admin.rooms')->with('success', 'Room created.');
+        return Redirect::route('rooms')->with('success', 'Room created.');
     }
 
     public function edit(Room $room)
     {
-        return Inertia::render('Admin/Rooms/Edit', [
-            'room' => $room,
+        return Inertia::render('Rooms/Edit', [
+            'room' => [
+                'id' => $room->id,
+                'first_name' => $room->first_name,
+                'last_name' => $room->last_name,
+                'email' => $room->email,
+                'owner' => $room->owner,
+                'photo' => $room->photo_path ? URL::route('image', ['path' => $room->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'deleted_at' => $room->deleted_at,
+            ],
         ]);
     }
 

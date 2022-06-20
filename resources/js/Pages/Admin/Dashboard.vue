@@ -10,7 +10,7 @@
 
 <script>
 
-  import AdminLayout from '@/Shared/AdminLayout'
+  import AdminLayout from '@/Layouts/AdminLayout'
 
   export default {
 

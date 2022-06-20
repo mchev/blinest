@@ -1,15 +1,56 @@
+<script setup>
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import Layout from '@/Layouts/AppLayout'
+import FileInput from '@/Shared/FileInput'
+import TextInput from '@/Shared/TextInput'
+import TextareaInput from '@/Shared/TextareaInput'
+import SelectInput from '@/Shared/SelectInput'
+import CheckboxInput from '@/Shared/CheckboxInput'
+import LoadingButton from '@/Shared/LoadingButton'
+import Card from '@/Shared/Card'
+
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
+import mapValues from 'lodash/mapValues'
+
+const props = defineProps({
+  room: Object,
+});
+
+const form = useForm({
+        name: props.room.name,
+        description: props.room.description,
+        is_public: props.rooms.is_public,
+        is_pro: false,
+        is_random: true,
+        is_active: true,
+        is_chat_active: true,
+        discord_webhook_url: '',
+        color: '',
+        password: '',
+        tracks_by_game: 15,
+        photo: null,
+      });
+
+
+
+const update = () => {
+      form.put(route('rooms.update', this.room.id));
+    };
+</script>
 <template>
-  <div>
 
     <Head title="Create Room" />
 
+    <Layout>
+
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.rooms')">{{ __('Rooms') }}</Link>
+      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('rooms')">{{ __('Rooms') }}</Link>
       <span class="text-blinest-400 font-medium">/</span> {{ __('Create') }}
     </h1>
 
     <card>
-      <form @submit.prevent="store">
+      <form @submit.prevent="update">
 
         <div class="flex">
 
@@ -42,73 +83,10 @@
         </div>
 
         <div class="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100">
-          <loading-button :loading="form.processing" class="btn-blinest" type="submit">{{ __('Create') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-blinest" type="submit">{{ __('Update') }}</loading-button>
         </div>
 
       </form>
     </card>
-
-  </div>
+</Layout>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import FileInput from '@/Shared/FileInput'
-import TextInput from '@/Shared/TextInput'
-import TextareaInput from '@/Shared/TextareaInput'
-import SelectInput from '@/Shared/SelectInput'
-import CheckboxInput from '@/Shared/CheckboxInput'
-import LoadingButton from '@/Shared/LoadingButton'
-import Card from '@/Shared/Card'
-
-import pickBy from 'lodash/pickBy'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-
-export default {
-
-  components: {
-    FileInput,
-    Head,
-    Link,
-    LoadingButton,
-    Card,
-    SelectInput,
-    CheckboxInput,
-    TextInput,
-    TextareaInput,
-  },
-
-  layout: AdminLayout,
-
-  remember: 'form',
-
-  data() {
-    return {
-      form: this.$inertia.form({
-        name: '',
-        description: '',
-        is_public: false,
-        is_pro: false,
-        is_random: true,
-        is_active: true,
-        is_chat_active: true,
-        discord_webhook_url: '',
-        color: '',
-        password: '',
-        tracks_by_game: 15,
-        photo: null,
-      }),
-    }
-  },
-
-  methods: {
-
-    store() {
-      this.form.post(route('admin.rooms.store'))
-    },
-
-  },
-}
-</script>
