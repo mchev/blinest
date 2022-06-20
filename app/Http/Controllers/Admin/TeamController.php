@@ -19,14 +19,9 @@ class TeamController extends AdminController
             'filters' => Request::all('search', 'trashed'),
             'teams' => Team::orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
-                ->get()
-                ->transform(fn ($team) => [
-                    'id' => $team->id,
-                    'name' => $team->name,
-                    'owner' => $team->owner,
-                    'photo' => $team->photo_path ? URL::route('image', ['path' => $team->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
-                    'deleted_at' => $team->deleted_at,
-                ]),
+                ->withCount('members')
+                ->paginate(10)
+                ->withQueryString(),
         ]);
     }
 

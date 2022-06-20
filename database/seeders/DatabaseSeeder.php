@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        //$team = Team::create(['name' => 'Acme Corporation Team']);
 
         User::factory()->create([
             'name' => 'John Doe',
@@ -26,17 +25,11 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        User::factory(5)->create();
+        User::factory(50)->create();
+        Team::factory(5)->create();
         Category::factory(4)->create();
         Room::factory(25)->create();
-/*
 
-        Contact::factory(100)
-            ->create(['account_id' => $team->id])
-            ->each(function ($contact) use ($organizations) {
-                $contact->update(['organization_id' => $organizations->random()->id]);
-            });
-*/
     }
 
 }

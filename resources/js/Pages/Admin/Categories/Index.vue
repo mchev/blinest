@@ -36,7 +36,7 @@ const reset = () => {
     <h1 class="mb-8 text-3xl font-bold">Categories</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
-      <Link class="btn-indigo" href="/admin/categories/create">
+      <Link class="btn-blinest" href="/admin/categories/create">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Category</span>
       </Link>

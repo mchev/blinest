@@ -37,7 +37,7 @@ const destroy = () => {
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
           <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete Category</button>
-          <loading-button :loading="form.processing" class="btn-indigo ml-auto" type="submit">Update Category</loading-button>
+          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">Update Category</loading-button>
         </div>
       </form>
     </div>

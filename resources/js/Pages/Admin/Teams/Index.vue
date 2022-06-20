@@ -1,97 +1,86 @@
+<script setup>
+import { watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import AdminLayout from '@/Layouts/AdminLayout'
+import Icon from '@/Shared/Icon'
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
+import Pagination from '@/Shared/Pagination'
+import SearchFilter from '@/Shared/SearchFilter'
+
+const props = defineProps({
+  filters: Object,
+  teams: Object,
+})
+
+const form = useForm({
+  search: props.filters.search,
+  trashed: props.filters.trashed,
+})
+
+watch(
+  form,
+  throttle(() => {
+    Inertia.get('/admin/teams', pickBy(form), { remember: 'forget', preserveState: true })
+  }, 150),
+  { deep: true },
+)
+
+const reset = () => {
+  form.reset()
+}
+</script>
 <template>
-  <div>
-    <Head title="Teams" />
+  <Head title="Teams" />
+  <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">Teams</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="mt-4 block text-gray-700">Trashed:</label>
         <select v-model="form.trashed" class="form-select mt-1 w-full">
           <option :value="null" />
           <option value="with">With Trashed</option>
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-blinest" :href="route('admin.teams.create')">
+      <Link class="btn-blinest" href="/admin/teams/create">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Team</span>
       </Link>
     </div>
-    <card>
+    <div class="overflow-x-auto rounded-md bg-white shadow">
       <table class="w-full whitespace-nowrap">
-        <tr class="text-left font-bold">
-          <th class="px-6 pb-4 pt-6">Name</th>
-          <th class="px-6 pb-4 pt-6" colspan="2">Role</th>
-        </tr>
-        <tr v-for="team in teams" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
-          <td class="border-t">
-            <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.teams.edit', team.id)">
-              <img v-if="team.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="team.photo" />
-              {{ team.name }}
-              <icon v-if="team.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
-            </Link>
-          </td>
-          <td class="border-t">
-            <Link class="flex items-center px-6 py-4" :href="route('admin.teams.edit', team.id)" tabindex="-1">
-              {{ team.owner ? 'Owner' : 'Team' }}
-            </Link>
-          </td>
-          <td class="w-px border-t">
-            <Link class="flex items-center px-4" :href="route('admin.teams.edit', team.id)" tabindex="-1">
-              <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
-            </Link>
-          </td>
-        </tr>
-        <tr v-if="teams.length === 0">
-          <td class="border-t px-6 py-4" colspan="4">No teams found.</td>
-        </tr>
+        <thead>
+          <tr class="text-left font-bold">
+            <th class="px-6 pb-4 pt-6">Name</th>
+            <th class="px-6 pb-4 pt-6" colspan="2">Members</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="team in teams.data" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100">
+            <td class="border-t">
+              <Link class="focus:text-indigo-500 flex items-center px-6 py-4" :href="route('admin.teams.edit', team)">
+                {{ team.name }}
+                <icon v-if="team.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
+              </Link>
+            </td>
+            <td class="border-t">
+              <Link class="flex items-center px-6 py-4" :href="route('admin.teams.edit', team)" tabindex="-1">
+                {{ team.members_count }}
+              </Link>
+            </td>
+            <td class="w-px border-t">
+              <Link class="flex items-center px-4" :href="route('admin.teams.edit', team)" tabindex="-1">
+                <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
+              </Link>
+            </td>
+          </tr>
+          <tr v-if="teams.data.length === 0">
+            <td class="border-t px-6 py-4" colspan="4">No teams found.</td>
+          </tr>
+        </tbody>
       </table>
-    </card>
-  </div>
+    </div>
+    <pagination class="mt-6" :links="teams.links" />
+  </AdminLayout>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Shared/Icon'
-import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Layouts/AdminLayout'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Shared/SearchFilter'
-import Card from '@/Shared/Card'
-
-export default {
-  components: {
-    Head,
-    Icon,
-    Link,
-    SearchFilter,
-    Card,
-  },
-  layout: AdminLayout,
-  props: {
-    filters: Object,
-    teams: Array,
-  },
-  data() {
-    return {
-      form: {
-        search: this.filters.search,
-        trashed: this.filters.trashed,
-      },
-    }
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler: throttle(function () {
-        this.$inertia.get(route('admin.teams'), pickBy(this.form), { preserveState: true })
-      }, 150),
-    },
-  },
-  methods: {
-    reset() {
-      this.form = mapValues(this.form, () => null)
-    },
-  },
-}
-</script>

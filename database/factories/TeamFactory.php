@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CategoryFactory extends Factory
+class TeamFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -13,8 +14,10 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
+
         return [
-            'name' => $this->faker->colorName,
+            'name' => $this->faker->company,
+            'user_id' => User::inRandomOrder()->first()->id,
         ];
     }
 }
