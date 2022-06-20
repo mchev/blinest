@@ -2,7 +2,7 @@
   <div>
     <div class="mb-4">
       <Link class="group flex items-center py-3" :href="route('admin.dashboard')">
-        <icon name="dashboard" class="mr-2 w-4 h-4" :class="isUrl('dashboard') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
+        <icon name="dashboard" class="mr-2 h-4 w-4" :class="isUrl('dashboard') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
         <div :class="isUrl('dashboard') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">Dashboard</div>
       </Link>
     </div>

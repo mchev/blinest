@@ -1,157 +1,141 @@
 <template>
-	
-    <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
+  <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
+    <div class="px-6 py-4">
+      <div v-if="answer" class="text-lg">
+        {{ __('Edit Answer') }}
+      </div>
+      <div v-else="answer" class="text-lg">
+        {{ __('Add Answer') }}
+      </div>
 
-        <div class="px-6 py-4">
-            <div class="text-lg" v-if="answer">
-              {{ __('Edit Answer') }}
-            </div>
-            <div class="text-lg" v-else="answer">
-              {{ __('Add Answer') }}
-            </div>
+      <div class="mt-4 flex flex-wrap">
+        <select-input v-model="form.key" :error="form.errors.key" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Type')">
+          <option v-for="type in types" :value="type">{{ __(type) }}</option>
+        </select-input>
 
-            <div class="flex flex-wrap mt-4">
+        <text-input v-model="form.score" type="number" step="0.5" min="0" :error="form.errors.score" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Score')" />
 
-              <select-input v-model="form.key" :error="form.errors.key" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Type')">
-                <option v-for="type in types" :value="type">{{ __(type) }}</option>
-              </select-input>
+        <text-input v-model="form.value" :error="form.errors.value" class="w-full pb-8 pr-6" :label="__('Answer')" />
+      </div>
+    </div>
 
-              <text-input type="number" step="0.5" min="0" v-model="form.score" :error="form.errors.score" class="pb-8 pr-6 w-full lg:w-1/2" :label="__('Score')" />
+    <div class="bg-gray-100 px-6 py-4 text-right dark:bg-gray-900">
+      <button v-if="answer && answer.id" class="mx-2 text-red-400" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteAnswer">
+        {{ __('Delete') }}
+      </button>
 
-              <text-input v-model="form.value" :error="form.errors.value" class="pb-8 pr-6 w-full" :label="__('Answer')" />
+      <button class="btn-blinest mx-2 bg-gray-400" @click="close">
+        {{ __('Close') }}
+      </button>
 
-            </div>
+      <button v-if="answer && answer.id" class="btn-blinest ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="updateAnswer">
+        {{ __('Update') }}
+      </button>
 
-        </div>
-
-        <div class="px-6 py-4 bg-gray-100 dark:bg-gray-900 text-right">
-
-            <button v-if="answer && answer.id" class="text-red-400 mx-2" @click="deleteAnswer" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-              {{ __('Delete') }}
-            </button>
-
-            <button class="btn-blinest bg-gray-400 mx-2" @click="close">
-              {{ __('Close') }}
-            </button>
-
-            <button v-if="answer && answer.id" class="btn-blinest ml-2" @click="updateAnswer" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-              {{ __('Update') }}
-            </button>
-            
-            <button v-else class="btn-blinest ml-2" @click="storeAnswer" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-              {{ __('Add') }}
-            </button>
-            
-        </div>
-
-    </modal>
-
+      <button v-else class="btn-blinest ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="storeAnswer">
+        {{ __('Add') }}
+      </button>
+    </div>
+  </modal>
 </template>
 
 <script>
+import { defineComponent } from 'vue'
+import Modal from '@/Shared/Modal'
+import TextInput from '@/Shared/TextInput'
+import SelectInput from '@/Shared/SelectInput'
 
-  import { defineComponent } from 'vue'
-  import Modal from '@/Shared/Modal'
-  import TextInput from '@/Shared/TextInput'
-  import SelectInput from '@/Shared/SelectInput'
+export default {
+  components: {
+    Modal,
+    TextInput,
+    SelectInput,
+  },
 
-  export default {
+  inheritAttrs: false,
 
-    emits: ['close'],
+  props: {
+    show: {
+      default: false,
+    },
+    maxWidth: {
+      default: '2xl',
+    },
+    closeable: {
+      default: true,
+    },
+    answer: {
+      default: {
+        key: 'Artist',
+        value: '',
+        score: '0.5',
+      },
+    },
+  },
+  emits: ['close'],
 
-    inheritAttrs: false,
+  data() {
+    return {
+      types: ['Artist', 'Title', 'Album', 'Feat.', 'Movie', 'Show', 'Anime', 'Cartoon', 'Brand', 'Acronym'],
+      form: this.$inertia.form({
+        key: 'Artist',
+        value: '',
+        score: '0.5',
+      }),
+    }
+  },
 
-    components: {
-      Modal,
-      TextInput,
-      SelectInput,
+  watch: {
+    answer: {
+      deep: true,
+      handler() {
+        this.form.key = this.answer ? this.answer.key : 'Artist'
+        this.form.value = this.answer ? this.answer.value : ''
+        this.form.score = this.answer ? this.answer.score : '0.5'
+      },
+    },
+  },
+
+  methods: {
+    close() {
+      this.$emit('close')
     },
 
-    props: {
-      show: {
-          default: false
-      },
-      maxWidth: {
-          default: '2xl'
-      },
-      closeable: {
-          default: true
-      },
-      answer: {
-          default: {
-            key: "Artist",
-            value: "",
-            score: "0.5",
-          },
-      }
+    update() {
+      this.$emit('update')
     },
 
-    data() {
-      return {
-        types: ["Artist", "Title", "Album", "Feat.", "Movie", "Show", "Anime", "Cartoon", "Brand", "Acronym"],
-        form: this.$inertia.form({
-            key: 'Artist',
-            value: '',
-            score: '0.5',
-        })
-      }
-    },
-
-    watch: {
-      answer: {
-        deep: true,
-        handler() {
-          this.form.key = (this.answer) ? this.answer.key : "Artist";
-          this.form.value = (this.answer) ? this.answer.value : "";
-          this.form.score = (this.answer) ? this.answer.score : "0.5";
+    updateAnswer() {
+      this.form.put(route('tracks.answers.update', [this.show, this.answer.id]), {
+        preserveScroll: true,
+        onSuccess: () => {
+          this.update()
+          this.close()
         },
-      },
+      })
     },
 
-    methods: {
+    storeAnswer() {
+      this.form.post(route('tracks.answers.store', this.show), {
+        preserveScroll: true,
+        onSuccess: () => {
+          this.update()
+          this.close()
+        },
+      })
+    },
 
-      close() {
-          this.$emit('close')
-      },
-
-      update() {
-          this.$emit('update')
-      },
-
-      updateAnswer() {
-	      this.form.put(route('tracks.answers.update', [this.show, this.answer.id]), {
-          preserveScroll: true, 
-	        onSuccess: () => {
-            this.update();
-            this.close();
-          }
-	      })
-      },
-
-      storeAnswer() {
-        this.form.post(route('tracks.answers.store', this.show), {
-          preserveScroll: true, 
+    deleteAnswer() {
+      if (confirm()) {
+        this.form.delete(route('answers.delete', this.answer), {
+          preserveScroll: true,
           onSuccess: () => {
-            this.update();
-            this.close();
-          }
+            this.update()
+            this.close()
+          },
         })
-      },
-
-      deleteAnswer() {
-        if(confirm()) {
-          this.form.delete(route('answers.delete', this.answer), {
-            preserveScroll: true, 
-            onSuccess: () => {
-              this.update();
-              this.close();
-            }
-          })
-        }
-      },
-
+      }
     },
-
-  }
-
+  },
+}
 </script>

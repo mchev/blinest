@@ -1,51 +1,47 @@
 <template>
-    <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
-        <div class="px-6 py-4">
-            <div class="text-lg">
-                <slot name="title">
-                </slot>
-            </div>
+  <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
+    <div class="px-6 py-4">
+      <div class="text-lg">
+        <slot name="title" />
+      </div>
 
-            <div class="mt-4">
-                <slot name="content">
-                </slot>
-            </div>
-        </div>
+      <div class="mt-4">
+        <slot name="content" />
+      </div>
+    </div>
 
-        <div class="px-6 py-4 bg-gray-100 text-right">
-            <slot name="footer">
-            </slot>
-        </div>
-    </modal>
+    <div class="bg-gray-100 px-6 py-4 text-right">
+      <slot name="footer" />
+    </div>
+  </modal>
 </template>
 
 <script>
-    import { defineComponent } from 'vue'
-    import Modal from './Modal.vue'
+import { defineComponent } from 'vue'
+import Modal from './Modal.vue'
 
-    export default defineComponent({
-        emits: ['close'],
+export default defineComponent({
+  components: {
+    Modal,
+  },
 
-        components: {
-            Modal,
-        },
+  props: {
+    show: {
+      default: false,
+    },
+    maxWidth: {
+      default: '2xl',
+    },
+    closeable: {
+      default: true,
+    },
+  },
+  emits: ['close'],
 
-        props: {
-            show: {
-                default: false
-            },
-            maxWidth: {
-                default: '2xl'
-            },
-            closeable: {
-                default: true
-            },
-        },
-
-        methods: {
-            close() {
-                this.$emit('close')
-            },
-        }
-    })
+  methods: {
+    close() {
+      this.$emit('close')
+    },
+  },
+})
 </script>

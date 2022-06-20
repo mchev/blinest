@@ -1,10 +1,10 @@
 <template>
   <div :class="$attrs.class">
-    <label v-if="label" class="flex items-center cursor-pointer" :for="id">
+    <label v-if="label" class="flex cursor-pointer items-center" :for="id">
       <div class="relative">
-        <input :id="id" v-bind="{ ...$attrs, class: null }" :value="modelValue" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)" type="checkbox" class="sr-only" />
-        <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-        <div class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+        <input :id="id" v-bind="{ ...$attrs, class: null }" :value="modelValue" :checked="modelValue" type="checkbox" class="sr-only" @input="$emit('update:modelValue', $event.target.checked)" />
+        <div class="h-4 w-10 rounded-full bg-gray-400 shadow-inner" />
+        <div class="dot absolute -left-1 -top-1 h-6 w-6 rounded-full bg-white shadow transition" />
       </div>
       <div v-if="label" class="ml-3 font-medium">
         {{ label }}
@@ -46,10 +46,8 @@ export default {
 </script>
 
 <style scoped>
-
-  input:checked ~ .dot {
-    transform: translateX(100%);
-    background-color: #48bb78;
-  }
-
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: #48bb78;
+}
 </style>

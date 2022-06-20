@@ -2,9 +2,9 @@
   <div>
     <Head title="Rooms" />
     <h1 class="mb-8 text-3xl font-bold">Rooms</h1>
-    <div class="flex items-center justify-between mb-6">
+    <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="block mt-4 text-gray-700">Trashed:</label>
+        <label class="mt-4 block text-gray-700">Trashed:</label>
         <select v-model="form.trashed" class="form-select mt-1 w-full">
           <option :value="null" />
           <option value="with">With Trashed</option>
@@ -19,15 +19,15 @@
     <card>
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
-          <th class="pb-4 pt-6 px-6">{{ __("Name") }}</th>
-          <th class="pb-4 pt-6 px-6" colspan="2">{{ __("Role") }}</th>
+          <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+          <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Role') }}</th>
         </tr>
-        <tr v-for="room in rooms" :key="room.id" class="hover:bg-gray-100 dark:hover:bg-gray-700 focus-within:bg-gray-100">
+        <tr v-for="room in rooms" :key="room.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
           <td class="border-t">
             <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.edit', room.id)">
-              <img v-if="room.photo" class="block -my-2 mr-2 w-5 h-5 rounded-full" :src="room.photo" />
+              <img v-if="room.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="room.photo" />
               {{ room.name }}
-              <icon v-if="room.deleted_at" name="trash" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400" />
+              <icon v-if="room.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
             </Link>
           </td>
           <td class="border-t">
@@ -37,12 +37,12 @@
           </td>
           <td class="w-px border-t">
             <Link class="flex items-center px-4" :href="route('rooms.edit', room.id)" tabindex="-1">
-              <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400" />
+              <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
             </Link>
           </td>
         </tr>
         <tr v-if="rooms.length === 0">
-          <td class="px-6 py-4 border-t" colspan="4">{{ __("No rooms found.") }}</td>
+          <td class="border-t px-6 py-4" colspan="4">{{ __('No rooms found.') }}</td>
         </tr>
       </table>
     </card>

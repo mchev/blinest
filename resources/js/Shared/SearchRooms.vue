@@ -1,38 +1,30 @@
 <template>
   <div :class="$attrs.class">
-    <text-input v-model="form.search" prependIcon="search" :placeholder="__('Search') + '...'" />
+    <text-input v-model="form.search" prepend-icon="search" :placeholder="__('Search') + '...'" />
   </div>
 </template>
 
-
 <script>
+import TextInput from '@/Shared/TextInput'
 
-  import TextInput from '@/Shared/TextInput'
+export default {
+  components: {
+    TextInput,
+  },
+  inheritAttrs: false,
 
-  export default {
+  props: {
+    filters: Object,
+  },
 
-    inheritAttrs: false,
+  data() {
+    return {
+      form: {
+        search: '',
+      },
+    }
+  },
 
-    components: {
-      TextInput,
-    },
-
-    props: {
-      filters: Object
-    },
-
-    data() {
-      return {
-        form: {
-          search: '',
-        },
-      }
-    },
-
-    methods: {
-
-    },
-
-  }
-
+  methods: {},
+}
 </script>

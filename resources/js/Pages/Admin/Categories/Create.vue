@@ -19,12 +19,12 @@ const store = () => {
       <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/categories">Categories</Link>
       <span class="text-indigo-400 font-medium">/</span> Create
     </h1>
-    <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
+    <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
       <form @submit.prevent="store">
-        <div class="flex flex-wrap -mb-8 -mr-6 p-8">
-          <text-input v-model="form.name" :error="form.errors.name" class="pb-8 pr-6 w-full lg:w-1/2" label="Name" />
+        <div class="-mb-8 -mr-6 flex flex-wrap p-8">
+          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
         </div>
-        <div class="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100">
+        <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
           <loading-button :loading="form.processing" class="btn-indigo" type="submit">Create Category</loading-button>
         </div>
       </form>
