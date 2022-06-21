@@ -18,38 +18,38 @@
               <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" />
             </div>
             <div class="flex border-t border-gray-100 bg-gray-100 px-10 py-4">
-              <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">{{ __('Register') }}</loading-button>
+              <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Register') }}</loading-button>
             </div>
           </form>
         </div>
 
         <div class="ml-4 mt-8 flex w-full flex-col overflow-hidden rounded-lg bg-white p-6 shadow-xl lg:w-1/3">
-          <a :href="route('auth.redirect', 'facebook')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'facebook')" class="btn-primary my-2">
             <social-icon name="facebook" class="inline-block h-6 w-6" />
             Facebook
           </a>
 
-          <a :href="route('auth.redirect', 'discord')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'discord')" class="btn-primary my-2">
             <social-icon name="discord" class="inline-block h-6 w-6" />
             Discord
           </a>
 
-          <a :href="route('auth.redirect', 'discord')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'discord')" class="btn-primary my-2">
             <social-icon name="instagram" class="inline-block h-6 w-6" />
             Instagram
           </a>
 
-          <a :href="route('auth.redirect', 'discord')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'discord')" class="btn-primary my-2">
             <social-icon name="deezer" class="inline-block h-6 w-6" />
             Deezer
           </a>
 
-          <a :href="route('auth.redirect', 'discord')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'discord')" class="btn-primary my-2">
             <social-icon name="spotify" class="inline-block h-6 w-6" />
             Spotify
           </a>
 
-          <a :href="route('auth.redirect', 'discord')" class="btn-blinest my-2">
+          <a :href="route('auth.redirect', 'discord')" class="btn-primary my-2">
             <social-icon name="metamask" class="inline-block h-6 w-6" />
             Metamask
           </a>

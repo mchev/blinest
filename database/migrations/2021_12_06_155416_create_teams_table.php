@@ -17,6 +17,7 @@ class CreateTeamsTable extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('name');
+            $table->string('photo_path')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

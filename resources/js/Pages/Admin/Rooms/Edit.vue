@@ -15,11 +15,16 @@ import mapValues from 'lodash/mapValues'
 
 const props = defineProps({
   room: Object,
+  room_playlists: Array,
+  categories: Array,
+  available_playlists: Array,
 })
 
 const form = useForm({
+  _method: 'put',
   name: props.room.name,
   description: props.room.description,
+  category_id: props.room.category_id,
   is_public: props.room.is_public,
   is_pro: props.room.is_pro,
   is_random: props.room.is_random,
@@ -30,10 +35,11 @@ const form = useForm({
   password: props.room.assword,
   tracks_by_game: props.room.tracks_by_game,
   photo: props.room.photo,
+  playlists: props.room_playlists,
 })
 
 const update = () => {
-  form.put(route('rooms.update', props.room.id))
+  form.post(route('admin.rooms.update', props.room.id))
 }
 </script>
 <template>
@@ -68,13 +74,23 @@ const update = () => {
           <div class="flex flex-wrap p-8">
             <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6" :label="__('Name')" />
             <textarea-input v-model="form.description" :error="form.errors.description" class="w-full pb-8 pr-6" :label="__('Description')" />
+            <select-input v-model="form.category_id" :error="form.errors.category_id" class="w-full pb-8 pr-6" :label="__('Category')">
+              <option v-for="category in categories" :key="category.id" :value="category.id">
+                {{ category.name }}
+              </option>
+            </select-input>
             <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6" type="file" accept="image/*" :label="__('Photo')" />
             <text-input v-model="form.discord_webhook_url" type="url" :error="form.errors.discord_webhook_url" class="w-full pb-8 pr-6" :label="__('Discord Webhook')" />
+            <select-input v-model="form.playlists" multiple :error="form.errors.playlists" class="w-full pb-8 pr-6" :label="__('Playlists')">
+              <option v-for="playlist in available_playlists" :key="playlist.id" :value="playlist.id">
+                {{ playlist.name }}
+              </option>
+            </select-input>
           </div>
         </div>
 
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <loading-button :loading="form.processing" class="btn-blinest" type="submit">{{ __('Update') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
     </card>

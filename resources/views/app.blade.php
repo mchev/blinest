@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html class="h-full bg-gray-100">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        
+        <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Inertia --}}
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll,NodeList.prototype.forEach,Promise,Object.values,Object.assign" defer></script>
+        <!-- Styles -->
+        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
-    {{-- Ping CRM --}}
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.startsWith" defer></script>
-
-    <script src="{{ mix('/js/app.js') }}" defer></script>
-    @routes
+        <!-- Scripts -->
+        @routes
+        <script src="{{ mix('js/app.js') }}" defer></script>
     
 </head>
-<body class="font-sans leading-none antialiased">
+<body class="font-sans antialiased">
     @inertia
 </body>
 </html>

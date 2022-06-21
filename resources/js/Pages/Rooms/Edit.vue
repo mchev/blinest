@@ -74,7 +74,7 @@ const update = () => {
         </div>
 
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <loading-button :loading="form.processing" class="btn-blinest" type="submit">{{ __('Update') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
     </card>

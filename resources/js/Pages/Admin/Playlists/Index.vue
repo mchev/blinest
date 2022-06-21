@@ -1,6 +1,39 @@
+<script setup>
+import { watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import AdminLayout from '@/Layouts/AdminLayout'
+import Icon from '@/Shared/Icon'
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
+import Pagination from '@/Shared/Pagination'
+import SearchFilter from '@/Shared/SearchFilter'
+
+const props = defineProps({
+  filters: Object,
+  playlists: Object,
+})
+
+const form = useForm({
+  search: props.filters.search,
+  trashed: props.filters.trashed,
+})
+
+watch(
+  form,
+  throttle(() => {
+    Inertia.get('/admin/playlists', pickBy(form), { remember: 'forget', preserveState: true })
+  }, 150),
+  { deep: true },
+)
+
+const reset = () => {
+  form.reset()
+}
+</script>
 <template>
-  <div>
-    <Head title="Playlists" />
+  <Head title="Playlists" />
+  <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">Playlists</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
@@ -11,7 +44,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-blinest" :href="route('admin.playlists.create')">
+      <Link class="btn-primary" :href="route('admin.playlists.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Playlist</span>
       </Link>
@@ -61,59 +94,5 @@
 
       <pagination class="p-8" :links="playlists.links" />
     </card>
-  </div>
+  </AdminLayout>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Shared/Icon'
-import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Layouts/AdminLayout'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Shared/SearchFilter'
-import Pagination from '@/Shared/Pagination'
-import Card from '@/Shared/Card'
-
-export default {
-  components: {
-    Head,
-    Icon,
-    Link,
-    SearchFilter,
-    Pagination,
-    Card,
-  },
-
-  layout: AdminLayout,
-
-  props: {
-    filters: Object,
-    playlists: Object,
-  },
-
-  data() {
-    return {
-      form: {
-        search: this.filters.search,
-        trashed: this.filters.trashed,
-      },
-    }
-  },
-
-  watch: {
-    form: {
-      deep: true,
-      handler: throttle(function () {
-        this.$inertia.get(route('admin.playlists'), pickBy(this.form), { preserveState: true })
-      }, 150),
-    },
-  },
-
-  methods: {
-    reset() {
-      this.form = mapValues(this.form, () => null)
-    },
-  },
-}
-</script>

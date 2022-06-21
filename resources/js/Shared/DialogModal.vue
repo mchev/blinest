@@ -1,3 +1,27 @@
+<script setup>
+import Modal from './Modal.vue'
+
+defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  maxWidth: {
+    type: String,
+    default: '2xl',
+  },
+  closeable: {
+    type: Boolean,
+    default: true,
+  },
+})
+
+const emit = defineEmits(['close'])
+
+const close = () => {
+  emit('close')
+}
+</script>
 <template>
   <modal :show="show" :max-width="maxWidth" :closeable="closeable" @close="close">
     <div class="px-6 py-4">
@@ -15,33 +39,3 @@
     </div>
   </modal>
 </template>
-
-<script>
-import { defineComponent } from 'vue'
-import Modal from './Modal.vue'
-
-export default defineComponent({
-  components: {
-    Modal,
-  },
-
-  props: {
-    show: {
-      default: false,
-    },
-    maxWidth: {
-      default: '2xl',
-    },
-    closeable: {
-      default: true,
-    },
-  },
-  emits: ['close'],
-
-  methods: {
-    close() {
-      this.$emit('close')
-    },
-  },
-})
-</script>

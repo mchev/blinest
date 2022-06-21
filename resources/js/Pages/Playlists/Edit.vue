@@ -22,7 +22,7 @@
         </div>
         <div class="flex items-center bg-gray-50 px-8 py-4 dark:bg-gray-900">
           <button v-if="!playlist.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Playlist') }}</button>
-          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">{{ __('Update') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
     </card>

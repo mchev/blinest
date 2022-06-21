@@ -1,3 +1,33 @@
+<script>
+export default {
+  inheritAttrs: false,
+}
+</script>
+<script setup>
+import { v4 as uuid } from 'uuid'
+import Icon from '@/Shared/Icon'
+
+defineProps({
+  id: {
+    type: String,
+    default() {
+      return `text-input-${uuid()}`
+    },
+  },
+  type: {
+    type: String,
+    default: 'text',
+  },
+  loading: Boolean,
+  error: String,
+  label: String,
+  modelValue: String | Number,
+  appendIcon: String,
+  prependIcon: String,
+})
+
+defineEmits(['update:modelValue'])
+</script>
 <template>
   <div :class="$attrs.class">
     <label v-if="label" class="form-label dark:text-gray-100" :for="id">{{ label }}:</label>
@@ -13,45 +43,3 @@
     <div v-if="error" class="form-error">{{ error }}</div>
   </div>
 </template>
-
-<script>
-import { v4 as uuid } from 'uuid'
-import Icon from '@/Shared/Icon'
-
-export default {
-  components: {
-    Icon,
-  },
-  inheritAttrs: false,
-  props: {
-    id: {
-      type: String,
-      default() {
-        return `text-input-${uuid()}`
-      },
-    },
-    type: {
-      type: String,
-      default: 'text',
-    },
-    loading: Boolean,
-    error: String,
-    label: String,
-    modelValue: String | Number,
-    appendIcon: String,
-    prependIcon: String,
-  },
-  emits: ['update:modelValue'],
-  methods: {
-    focus() {
-      this.$refs.input.focus()
-    },
-    select() {
-      this.$refs.input.select()
-    },
-    setSelectionRange(start, end) {
-      this.$refs.input.setSelectionRange(start, end)
-    },
-  },
-}
-</script>

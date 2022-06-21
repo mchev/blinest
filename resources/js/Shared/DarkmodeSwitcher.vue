@@ -1,3 +1,34 @@
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+import Icon from '@/Shared/Icon'
+import Dropdown from '@/Shared/Dropdown'
+
+const theme = ref(localStorage.theme || 'system')
+
+watch(theme, (newTheme) => {
+  checkTheme(newTheme)
+})
+
+onMounted(() => {
+  checkTheme(theme)
+})
+
+const checkTheme = (theme) => {
+  switch (theme) {
+  case 'dark':
+    localStorage.theme = 'dark'
+    document.documentElement.classList.add('dark')
+    break
+  case 'light':
+    localStorage.theme = 'light'
+    document.documentElement.classList.remove('dark')
+    break
+  case 'system':
+    localStorage.removeItem('theme')
+    break
+  }
+}
+</script>
 <template>
   <div class="ml-4">
     <dropdown class="mt-1 ml-auto" placement="bottom-end">
@@ -25,56 +56,3 @@
     </dropdown>
   </div>
 </template>
-
-<script>
-import { Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Shared/Icon'
-import Dropdown from '@/Shared/Dropdown'
-
-export default {
-  components: {
-    Link,
-    Icon,
-    Dropdown,
-  },
-
-  data() {
-    return {
-      get theme() {
-        return localStorage.getItem('theme') || 'system'
-      },
-      set theme(value) {
-        localStorage.setItem('theme', value)
-      },
-    }
-  },
-
-  watch: {
-    theme(newTheme, oldTheme) {
-      this.checkTheme(newTheme)
-    },
-  },
-
-  mounted() {
-    this.checkTheme(this.theme)
-  },
-
-  methods: {
-    checkTheme(theme) {
-      switch (theme) {
-      case 'dark':
-        localStorage.theme = 'dark'
-        document.documentElement.classList.add('dark')
-        break
-      case 'light':
-        localStorage.theme = 'light'
-        document.documentElement.classList.remove('dark')
-        break
-      case 'system':
-        localStorage.removeItem('theme')
-        break
-      }
-    },
-  },
-}
-</script>

@@ -17,7 +17,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-blinest" :href="route('admin.users.create')">
+      <Link class="btn-primary" :href="route('admin.users.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;User</span>
       </Link>

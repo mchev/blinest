@@ -1,6 +1,48 @@
+<script setup>
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import AdminLayout from '@/Layouts/AdminLayout'
+import Card from '@/Shared/Card'
+import TextInput from '@/Shared/TextInput'
+import FileInput from '@/Shared/FileInput'
+import SelectInput from '@/Shared/SelectInput'
+import LoadingButton from '@/Shared/LoadingButton'
+import TrashedMessage from '@/Shared/TrashedMessage'
+import TracksManager from '@/Shared/TracksManager'
+
+const props = defineProps({
+  playlist: Object,
+  filters: Object,
+  tracks: Object,
+})
+
+const form = useForm({
+  name: props.playlist.name,
+  is_public: props.playlist.is_public,
+  photo: null,
+})
+
+const update = () => {
+  form.put(`/admin/playlists/${props.playlist.id}`, {
+    onSuccess: () => form.reset('password', 'photo'),
+  })
+}
+
+const destroy = () => {
+  if (confirm('Are you sure you want to delete this playlist?')) {
+    Inertia.delete(`/admin/playlists/${props.playlist.id}`)
+  }
+}
+
+const restore = () => {
+  if (confirm('Are you sure you want to restore this playlist?')) {
+    Inertia.put(`/admin/playlists/${props.playlist.id}/restore`)
+  }
+}
+</script>
 <template>
-  <div>
-    <Head :title="`${form.name}`" />
+  <Head :title="`${form.name}`" />
+  <AdminLayout>
     <div class="mb-8 flex max-w-3xl justify-start">
       <h1 class="text-3xl font-bold">
         <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
@@ -22,7 +64,7 @@
         </div>
         <div class="flex items-center bg-gray-50 px-8 py-4 dark:bg-gray-900">
           <button v-if="!playlist.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Playlist') }}</button>
-          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">{{ __('Update') }}</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Update') }}</loading-button>
         </div>
       </form>
     </card>
@@ -30,66 +72,5 @@
     <card class="my-4">
       <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks" />
     </card>
-  </div>
+  </AdminLayout>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import Card from '@/Shared/Card'
-import TextInput from '@/Shared/TextInput'
-import FileInput from '@/Shared/FileInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
-import TrashedMessage from '@/Shared/TrashedMessage'
-
-import TracksManager from '@/Shared/TracksManager'
-
-export default {
-  components: {
-    FileInput,
-    Card,
-    Head,
-    Link,
-    LoadingButton,
-    SelectInput,
-    TextInput,
-    TrashedMessage,
-    TracksManager,
-  },
-  layout: AdminLayout,
-  props: {
-    playlist: Object,
-    filters: Object,
-    tracks: Object,
-  },
-  remember: 'form',
-  data() {
-    return {
-      form: this.$inertia.form({
-        _method: 'put',
-        name: this.playlist.name,
-        is_public: this.playlist.is_public,
-        photo: null,
-      }),
-    }
-  },
-  methods: {
-    update() {
-      this.form.post(route('admin.playlists.update', this.playlist), {
-        onSuccess: () => this.form.reset('password', 'photo'),
-      })
-    },
-    destroy() {
-      if (confirm('Are you sure you want to delete this playlist?')) {
-        this.$inertia.delete(route('admin.playlists.destroy', this.playlist.id))
-      }
-    },
-    restore() {
-      if (confirm('Are you sure you want to restore this playlist?')) {
-        this.$inertia.put(route('admin.playlists.restore', this.playlist.id))
-      }
-    },
-  },
-}
-</script>

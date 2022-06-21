@@ -5,15 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 
 class Team extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
+    protected $appends = [
+        'photo',
+    ];
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
+    }
+
+    public function getPhotoAttribute()
+    {
+        return $this->photo_path ? URL::route('image', ['path' => $this->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null;
     }
     
     public function owner()
@@ -23,16 +33,14 @@ class Team extends Model
 
     public function members()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', '%'.$search.'%')
-                    ->orWhere('last_name', 'like', '%'.$search.'%')
-                    ->orWhere('email', 'like', '%'.$search.'%');
+                $query->where('name', 'like', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {

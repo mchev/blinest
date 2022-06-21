@@ -1,17 +1,8 @@
-<template>
-  <div>Admin</div>
-</template>
-
-<script>
+<script setup>
 import AdminLayout from '@/Layouts/AdminLayout'
-
-export default {
-  metaInfo: { title: 'Administration' },
-
-  components: {},
-
-  layout: AdminLayout,
-
-  props: {},
-}
 </script>
+<template>
+  <AdminLayout>
+    <div>Admin</div>
+  </AdminLayout>
+</template>

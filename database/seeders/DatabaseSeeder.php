@@ -30,6 +30,12 @@ class DatabaseSeeder extends Seeder
         Category::factory(4)->create();
         Room::factory(25)->create();
 
+        foreach(Team::all() as $team) {
+            $user = User::find($team->user_id);
+            $user->team_id = $team->id;
+            $user->update();
+        };
+
     }
 
 }

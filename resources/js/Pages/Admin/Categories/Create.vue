@@ -25,7 +25,7 @@ const store = () => {
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
         </div>
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <loading-button :loading="form.processing" class="btn-blinest" type="submit">Create Category</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary" type="submit">Create Category</loading-button>
         </div>
       </form>
     </div>

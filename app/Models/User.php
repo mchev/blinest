@@ -51,7 +51,7 @@ class User extends Authenticatable
 
     public function team()
     {
-        return $this->belongsTo(Team::class);
+        return $this->hasOne(Team::class);
     }
 
     public function playlists()
@@ -90,6 +90,11 @@ class User extends Authenticatable
             case 'user': return $query->where('owner', false);
             case 'owner': return $query->where('owner', true);
         }
+    }
+
+    public function scopeOwnsTeam($query)
+    {
+        return Team::where('user_id', $query->first()->id)->exists();
     }
 
     public function scopeFilter($query, array $filters)

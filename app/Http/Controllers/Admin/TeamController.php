@@ -27,27 +27,26 @@ class TeamController extends AdminController
 
     public function create()
     {
+        if(Auth::user()->ownsTeam())
+            return redirect()->back()->with('error', 'You already own a team.');
+
         return Inertia::render('Admin/Teams/Create');
     }
 
     public function store()
     {
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('teams')],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'name' => ['required', 'max:50', Rule::unique('teams')->whereNull('deleted_at')],
             'photo' => ['nullable', 'image'],
         ]);
 
-        Auth::team()->account->teams()->create([
-            'first_name' => Request::get('first_name'),
-            'last_name' => Request::get('last_name'),
-            'email' => Request::get('email'),
-            'password' => Request::get('password'),
-            'owner' => Request::get('owner'),
+        $team = Auth::user()->team()->create([
+            'name' => Request::get('name'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('teams') : null,
+        ]);
+
+        Auth::user()->update([
+            'team_id' => $team->id,
         ]);
 
         return Redirect::route('admin.teams')->with('success', 'Team created.');
@@ -58,11 +57,10 @@ class TeamController extends AdminController
         return Inertia::render('Admin/Teams/Edit', [
             'team' => [
                 'id' => $team->id,
-                'first_name' => $team->first_name,
-                'last_name' => $team->last_name,
-                'email' => $team->email,
-                'owner' => $team->owner,
-                'photo' => $team->photo_path ? URL::route('image', ['path' => $team->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'name' => $team->name,
+                'user_id' => $team->user_id,
+                'photo' => $team->photo,
+                'members' => $team->members,
                 'deleted_at' => $team->deleted_at,
             ],
         ]);
@@ -70,27 +68,17 @@ class TeamController extends AdminController
 
     public function update(Team $team)
     {
-        if (App::environment('demo') && $team->isDemoTeam()) {
-            return Redirect::back()->with('error', 'Updating the demo team is not allowed.');
-        }
 
         Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('teams')->ignore($team->id)],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
+            'name' => ['required', 'max:50', Rule::unique('teams')->ignore($team->id)->whereNull('deleted_at')],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        $team->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        $team->update(Request::only('name', 'user_id'));
 
         if (Request::file('photo')) {
             $team->update(['photo_path' => Request::file('photo')->store('teams')]);
-        }
-
-        if (Request::get('password')) {
-            $team->update(['password' => Request::get('password')]);
         }
 
         return Redirect::back()->with('success', 'Team updated.');
@@ -98,19 +86,13 @@ class TeamController extends AdminController
 
     public function destroy(Team $team)
     {
-        if (App::environment('demo') && $team->isDemoTeam()) {
-            return Redirect::back()->with('error', 'Deleting the demo team is not allowed.');
-        }
-
         $team->delete();
-
         return Redirect::back()->with('success', 'Team deleted.');
     }
 
     public function restore(Team $team)
     {
         $team->restore();
-
         return Redirect::back()->with('success', 'Team restored.');
     }
 }

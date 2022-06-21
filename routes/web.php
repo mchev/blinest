@@ -20,6 +20,8 @@ use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
 
+use App\Events\TrackPlayed;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,6 +32,12 @@ use App\Services\MusicProviders\SpotifyService;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/broadcast/rooms/{room}', function (App\Models\Room $room) {
+    broadcast(new TrackPlayed($room));
+    //TrackPlayed::dispach($room);
+});
+
 
 // Auth
 
@@ -104,6 +112,9 @@ Route::get('rooms/create', [RoomController::class, 'create'])
 
 Route::post('rooms', [RoomController::class, 'store'])
     ->name('rooms.store');
+
+Route::get('rooms/{room}', [RoomController::class, 'show'])
+    ->name('rooms.show');
 
 Route::get('rooms/{room}/edit', [RoomController::class, 'edit'])
     ->name('rooms.edit');

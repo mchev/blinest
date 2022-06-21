@@ -18,7 +18,7 @@
                 <span class="font-bold">{{ result.artist_name }}</span> {{ result.track_name }}
               </div>
               <div v-if="!result.added" class="self-end">
-                <button :disabled="loading" class="btn-blinest" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
+                <button :disabled="loading" class="btn-primary" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
               </div>
               <div v-else class="self-end">
                 <button :disabled="loading" class="btn-danger" type="button" @click="removeTrack(result)">{{ __('Remove') }}</button>

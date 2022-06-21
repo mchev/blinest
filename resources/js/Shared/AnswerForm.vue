@@ -24,15 +24,15 @@
         {{ __('Delete') }}
       </button>
 
-      <button class="btn-blinest mx-2 bg-gray-400" @click="close">
+      <button class="btn-primary mx-2 bg-gray-400" @click="close">
         {{ __('Close') }}
       </button>
 
-      <button v-if="answer && answer.id" class="btn-blinest ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="updateAnswer">
+      <button v-if="answer && answer.id" class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="updateAnswer">
         {{ __('Update') }}
       </button>
 
-      <button v-else class="btn-blinest ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="storeAnswer">
+      <button v-else class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="storeAnswer">
         {{ __('Add') }}
       </button>
     </div>

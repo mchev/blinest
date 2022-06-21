@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Room;
+use App\Models\Category;
+use App\Models\Playlist;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -78,15 +80,19 @@ class RoomController extends AdminController
     {
         return Inertia::render('Admin/Rooms/Edit', [
             'room' => $room,
+            'room_playlists' => $room->playlists()->pluck('id'),
+            'categories' => Category::orderBy('name')->get(),
+            'available_playlists' => Playlist::isPublic()->get()->merge(Auth::user()->playlists),
         ]);
     }
 
     public function update(Room $room)
     {
 
-        $room->update(Request::validate([
+        Request::validate([
             'name' => ['required', 'max:50', Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
+            'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
             'tracks_by_game' => ['required', 'integer'],
@@ -98,9 +104,11 @@ class RoomController extends AdminController
             'is_chat_active' => ['required', 'boolean'],
             'discord_webhook_url' => ['nullable', 'url'],
             'color' => ['nullable'],
-        ]));
+        ]);
 
-        //$room->update(Request::only('first_name', 'last_name', 'email', 'owner'));
+        $room->playlists()->sync(Request::input('playlists'));
+
+        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_game', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 
         if (Request::file('photo')) {
             $room->update(['photo_path' => Request::file('photo')->store('rooms')]);
@@ -127,4 +135,17 @@ class RoomController extends AdminController
 
         return Redirect::back()->with('success', 'Room restored.');
     }
+
+    public function attachPlaylist(Room $room, Playlist $playlist)
+    {
+        $room->playlists()->attach($playlist);
+        return Redirect::back();
+    }
+
+    public function detachPlaylist(Room $room, Playlist $playlist)
+    {
+        $room->playlists()->detach($playlist);
+        return Redirect::back();
+    }
+
 }

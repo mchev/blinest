@@ -11,7 +11,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-blinest" :href="route('rooms.create')">
+      <Link class="btn-primary" :href="route('rooms.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Room</span>
       </Link>

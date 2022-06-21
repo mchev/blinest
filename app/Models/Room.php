@@ -27,6 +27,11 @@ class Room extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function playlists()
+    {
+        return $this->belongsToMany(Playlist::class);
+    }
+
     public function moderators()
     {
         return $this->hasMany(Moderator::class);

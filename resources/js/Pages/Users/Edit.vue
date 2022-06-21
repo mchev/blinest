@@ -20,7 +20,7 @@
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
           <button v-if="!user.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete User</button>
-          <loading-button :loading="form.processing" class="btn-blinest ml-auto" type="submit">Update User</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">Update User</loading-button>
         </div>
       </form>
     </div>

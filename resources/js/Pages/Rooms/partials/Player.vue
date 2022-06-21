@@ -1,17 +1,18 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const track = ref({
-  src: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview124/v4/8a/1e/03/8a1e0314-b2f1-2ac0-cff5-7298164da844/mzaf_10401051262985820957.plus.aac.p.m4a',
+const props = defineProps({
+  track: String
 })
-const audio = ref(new Audio())
+
+const audio = new Audio()
 const loading = ref(true)
 const error = ref(null)
 const percent = ref(0)
 const duration = ref(0)
 
 onMounted(() => {
-  play()
+  //play()
 })
 
 onUnmounted(() => {
@@ -22,43 +23,45 @@ const emit = defineEmits(['track:ended', 'track:paused', 'track:stopped'])
 
 const play = () => {
   loading.value = true
-  audio.value.src = track.value.src
+  audio.src = props.track.src
 
-  audio.value.addEventListener('loadeddata', () => {
-    duration.value = audio.value.duration
+  audio.addEventListener('loadeddata', () => {
+    duration.value = audio.duration
   })
 
-  audio.value.addEventListener('error', () => {
-    error.value = audio.value.error.message
+  audio.addEventListener('error', () => {
+    error.value = audio.error.message
   })
 
-  audio.value.addEventListener('canplaythrough', () => {
+  audio.addEventListener('canplaythrough', () => {
     loading.value = false
   })
 
-  audio.value.addEventListener('canplaythrough', () => {
-    audio.value.play()
+  audio.addEventListener('canplaythrough', () => {
+    audio.play()
   })
 
-  audio.value.addEventListener('timeupdate', () => {
-    percent.value = parseInt((100 / duration.value) * (audio.value.currentTime + 0.25))
+  audio.addEventListener('timeupdate', () => {
+    percent.value = parseInt((100 / duration.value) * (audio.currentTime + 0.25))
+    console.log(percent.value)
   })
 
-  audio.value.addEventListener('ended', () => {
+  audio.addEventListener('ended', () => {
     console.log('Finnish!')
-    emit('track:ended', track)
+    emit('track:ended', props.track)
   })
 }
 
 const pause = () => {
-  audio.value.pause()
-  emit('track:paused', track)
+  audio.pause()
+  emit('track:paused', props.track)
 }
 
 const stop = () => {
-  audio.value.currentTime = 0
-  audio.value.pause()
-  emit('track:stopped', track)
+  audio.pause()
+  audio.currentTime = 0
+  audio.pause()
+  emit('track:stopped', props.track)
 }
 </script>
 <template>

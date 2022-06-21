@@ -22,9 +22,9 @@ class Playlist extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function isPublic()
+    public function scopeIsPublic($query)
     {
-        return $this->is_public;
+        $query->where('is_public', TRUE);
     }
 
     public function tracks()

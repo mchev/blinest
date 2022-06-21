@@ -11,7 +11,7 @@
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-blinest" :href="route('playlists.create')">
+      <Link class="btn-primary" :href="route('playlists.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Playlist</span>
       </Link>
