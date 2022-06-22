@@ -1,6 +1,6 @@
 module.exports = {
   content: ['./resources/**/*.blade.php', './resources/**/*.js', './resources/**/*.vue'],
-  darkMode: 'class', // or 'media' or 'class' or false
+  //darkMode: 'media', // or 'media' or 'class' or false
   theme: {
     extend: {
       colors: {
@@ -16,5 +16,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }

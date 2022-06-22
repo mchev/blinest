@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Redis;
 
 class Room extends Model
 {
@@ -12,9 +13,18 @@ class Room extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $appends = [
+        'counter',
+    ];
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
+    }
+
+    public function getCounterAttribute()
+    {
+        return Redis::exists('presence-rooms.'.$this->id) ? count(Redis::get('presence-rooms.'.$this->id)) : 0;
     }
 
     public function owner()

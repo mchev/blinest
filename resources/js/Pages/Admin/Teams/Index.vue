@@ -48,8 +48,8 @@ const reset = () => {
         <span class="hidden md:inline">&nbsp;Team</span>
       </Link>
     </div>
-    <div class="overflow-x-auto rounded-md bg-white shadow">
-      <table class="w-full whitespace-nowrap">
+    <div class="overflow-x-auto rounded-md bg-white dark:bg-gray-500 shadow">
+      <table class="w-full whitespace-nowrap dark:text-gray-300">
         <thead>
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6">Name</th>
@@ -57,7 +57,7 @@ const reset = () => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="team in teams.data" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100">
+          <tr v-for="team in teams.data" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:focus-within:bg-gray-600 dark:hover:bg-gray-600">
             <td class="border-t">
               <Link class="focus:text-indigo-500 flex items-center px-6 py-4" :href="route('admin.teams.edit', team)">
                 {{ team.name }}
@@ -71,7 +71,7 @@ const reset = () => {
             </td>
             <td class="w-px border-t">
               <Link class="flex items-center px-4" :href="route('admin.teams.edit', team)" tabindex="-1">
-                <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
+                <icon name="cheveron-right" class="block h-6 w-6" />
               </Link>
             </td>
           </tr>

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Room;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,16 +14,17 @@ class TrackPlayed implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $room;
+    public $data;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Room $room)
+    public function __construct($data)
     {
-        $this->room = $room;
+        $this->data = $data;
+        //dd($this->data);
     }
 
     /**
@@ -34,6 +34,7 @@ class TrackPlayed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('rooms.' . $this->room->id);
+        return new Channel('rooms.' . $this->data['room']->id);
     }
+
 }

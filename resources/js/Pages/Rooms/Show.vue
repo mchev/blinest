@@ -17,10 +17,6 @@ onMounted(() => {
     })
     .joining((user) => {})
     .leaving((user) => {})
-
-  Echo.channel(channel).listen('TrackPlayed', (e) => {
-    console.log(e)
-  })
 })
 
 onUnmounted(() => {
@@ -44,8 +40,14 @@ const trackStopped = (track) => {
 <template>
   <Head title="Create Room" />
   <Layout>
-    <h2>{{ room.name }}</h2>
-    <Player :track="track" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+    <article class="prose">
+      <h2>{{ room.name }}</h2>
+      <ul>
+        <li>Find a way to only start when there is users</li>
+        <li>Player : listen for users when right anwsers (display avatar instead of username?)</li>
+      </ul>
+    </article>
+    <Player :room="room" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
     <!--     
     Scores
     Team scores

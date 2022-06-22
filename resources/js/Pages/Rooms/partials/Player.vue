@@ -1,29 +1,41 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-
 const props = defineProps({
-  track: String
+  room: Object,
 })
 
+const channel = `rooms.${props.room.id}`
 const audio = new Audio()
+const track = ref(null)
 const loading = ref(true)
+const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
 const duration = ref(0)
 
 onMounted(() => {
-  //play()
+  Echo.channel(channel).listen('TrackPlayed', (e) => {
+    console.log(e)
+    track.value = e.data.track
+    play()
+  })
 })
 
 onUnmounted(() => {
-  stop()
+  Echo.leave(`rooms.${props.room.id}`)
 })
 
 const emit = defineEmits(['track:ended', 'track:paused', 'track:stopped'])
 
 const play = () => {
+  if (isPlaying.value) {
+    stop()
+  }
+
   loading.value = true
-  audio.src = props.track.src
+  isPlaying.value = true
+
+  audio.src = track.value.preview_url
 
   audio.addEventListener('loadeddata', () => {
     duration.value = audio.duration
@@ -31,6 +43,7 @@ const play = () => {
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
+    isPlaying.value = false
   })
 
   audio.addEventListener('canplaythrough', () => {
@@ -38,16 +51,22 @@ const play = () => {
   })
 
   audio.addEventListener('canplaythrough', () => {
-    audio.play()
+    let playPromise = audio.play()
+
+    // If a user gesture is needed (https://developer.chrome.com/blog/play-returns-promise/)
+    if (playPromise !== undefined) {
+      playPromise.catch(function (error) {
+        console.error('Need to handle when the user come directly to a room.')
+      })
+    }
   })
 
   audio.addEventListener('timeupdate', () => {
     percent.value = parseInt((100 / duration.value) * (audio.currentTime + 0.25))
-    console.log(percent.value)
   })
 
   audio.addEventListener('ended', () => {
-    console.log('Finnish!')
+    isPlaying.value = false
     emit('track:ended', props.track)
   })
 }
@@ -59,18 +78,16 @@ const pause = () => {
 
 const stop = () => {
   audio.pause()
-  audio.currentTime = 0
-  audio.pause()
   emit('track:stopped', props.track)
 }
 </script>
 <template>
-  <div id="player" class="bg-teal-200 h-8 w-full rounded-full">
-    <div v-if="error">
+  <div id="player" class="flex h-8 w-full items-center justify-center rounded-full bg-teal-200">
+    <div v-if="error" class="text-red-500">
       {{ error }}
     </div>
     <div v-else-if="loading" class="h-8 w-full animate-pulse rounded-full bg-green-600 dark:bg-green-300" />
-    <div v-else class="shine from-teal-300 to-teal-400 h-8 rounded-full bg-gradient-to-br transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    <div v-else class="shine h-8 rounded-full bg-gradient-to-br from-teal-300 to-teal-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
   </div>
 
   <button type="button" @click="play">Play</button>

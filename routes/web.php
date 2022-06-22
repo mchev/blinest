@@ -20,8 +20,6 @@ use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
 
-use App\Events\TrackPlayed;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,7 +32,12 @@ use App\Events\TrackPlayed;
 */
 
 Route::get('/broadcast/rooms/{room}', function (App\Models\Room $room) {
-    broadcast(new TrackPlayed($room));
+    $track = App\Models\Track::inRandomOrder()->first();
+    $data = collect([
+        'room' => $room,
+        'track' => $track,
+    ]);
+    broadcast(new App\Events\TrackPlayed($data));
     //TrackPlayed::dispach($room);
 });
 

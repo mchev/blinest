@@ -51,6 +51,7 @@ const reset = () => {
     </div>
 
     <card>
+    <div class="overflow-x-auto rounded-md bg-white shadow">
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="px-6 pb-4 pt-6">Name</th>
@@ -93,6 +94,7 @@ const reset = () => {
       </table>
 
       <pagination class="p-8" :links="playlists.links" />
+    </div>
     </card>
   </AdminLayout>
 </template>

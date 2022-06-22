@@ -70,7 +70,7 @@ const reset = () => {
             </td>
             <td class="w-px border-t">
               <Link class="flex items-center px-4" :href="`/admin/categories/${category.id}/edit`" tabindex="-1">
-                <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
+                <icon name="cheveron-right" class="block h-6 w-6" />
               </Link>
             </td>
           </tr>
