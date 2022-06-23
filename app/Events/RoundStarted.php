@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Round;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,20 +11,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TrackPlayed implements ShouldBroadcast
+class RoundStarted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
+    public $round;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct(Round $round)
     {
-        $this->data = $data;
+        $this->round = $round;
     }
 
     /**
@@ -33,7 +34,6 @@ class TrackPlayed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('rooms.' . $this->data['room_id']);
+        return new Channel('rooms.'.$this->round->room->id);
     }
-
 }

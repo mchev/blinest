@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/inertia-vue3'
 import Layout from '@/Layouts/AppLayout'
 import Player from './partials/Player.vue'
@@ -17,14 +18,21 @@ onMounted(() => {
     })
     .joining((user) => {})
     .leaving((user) => {})
+
+  Echo.channel(channel).listen('RoundStarted', (round) => {
+    console.warn('Round started');
+  })
+
+  Echo.channel(channel).listen('RoundFinished', (round) => {
+    console.warn('Round finished');
+    // Get scores
+    // Wait for new round
+  })
+
 })
 
 onUnmounted(() => {
-  Echo.leave(`rooms.${props.room.id}`)
-})
-
-const track = ref({
-  src: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview124/v4/8a/1e/03/8a1e0314-b2f1-2ac0-cff5-7298164da844/mzaf_10401051262985820957.plus.aac.p.m4a',
+  Echo.leave(channel)
 })
 
 const trackEnded = (track) => {

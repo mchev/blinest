@@ -15,13 +15,21 @@ const duration = ref(0)
 
 onMounted(() => {
   Echo.channel(channel).listen('TrackPlayed', (e) => {
-    console.log(e)
+    console.log('Track played');
+    console.log(e.data);
     track.value = e.data.track
     play()
+  })
+  Echo.channel(channel).listen('TrackEnded', (e) => {
+    console.log('Track ended');
+    stop()
   })
 })
 
 onUnmounted(() => {
+  if (isPlaying.value) {
+    stop()
+  }
   Echo.leave(`rooms.${props.room.id}`)
 })
 
@@ -67,6 +75,7 @@ const play = () => {
 
   audio.addEventListener('ended', () => {
     isPlaying.value = false
+    loading.value = true
     emit('track:ended', props.track)
   })
 }

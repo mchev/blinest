@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
+import Room from './Room.vue'
 
 defineProps({
   rooms: Object,
@@ -7,8 +8,6 @@ defineProps({
 </script>
 <template>
   <div class="flex flex-wrap">
-    <Link :href="`/rooms/${room.id}`" v-for="room in rooms" :key="room.id" class="mr-4 flex h-32 w-32 items-center justify-center rounded-lg bg-gray-100 p-8 shadow">
-      {{ room.name }}
-    </Link>
+    <Room v-for="room in rooms" :key="room.id" :room="room" />
   </div>
 </template>

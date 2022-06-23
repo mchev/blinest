@@ -31,17 +31,6 @@ use App\Services\MusicProviders\SpotifyService;
 |
 */
 
-Route::get('/broadcast/rooms/{room}', function (App\Models\Room $room) {
-    $track = App\Models\Track::inRandomOrder()->first();
-    $data = collect([
-        'room' => $room,
-        'track' => $track,
-    ]);
-    broadcast(new App\Events\TrackPlayed($data));
-    //TrackPlayed::dispach($room);
-});
-
-
 // Auth
 
 Route::get('login', [AuthenticatedSessionController::class, 'create'])

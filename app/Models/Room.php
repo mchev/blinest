@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,18 +14,27 @@ class Room extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $appends = [
-        'counter',
-    ];
-
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function getCounterAttribute()
+    protected function getCounterAttribute()
     {
-        return Redis::exists('presence-rooms.'.$this->id) ? count(Redis::get('presence-rooms.'.$this->id)) : 0;
+        return Redis::exists('presence-rooms.'.$this->id.':members') 
+            ? count(json_decode(Redis::get('presence-rooms.'.$this->id.':members'))) 
+            : 0;
+    }
+
+    public function scopeIsPlaying()
+    {
+        return Redis::exists('rooms.'.$this->id.'.playing') ? Redis::get('rooms.'.$this->id.'.playing') : false;
+    }
+
+    public function startRound()
+    {
+        $round = $this->rounds()->create();
+        $round->start();
     }
 
     public function owner()
@@ -40,6 +50,16 @@ class Room extends Model
     public function playlists()
     {
         return $this->belongsToMany(Playlist::class);
+    }
+
+    public function tracks()
+    {
+        return Track::whereIn('playlist_id', $this->playlists()->pluck('id'));
+    }
+
+    public function rounds()
+    {
+        return $this->hasMany(Round::class);
     }
 
     public function moderators()
