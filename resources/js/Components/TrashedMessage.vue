@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import Icon from '@/Shared/Icon'
+import Icon from '@/Components/Icon'
 
 export default {
   components: {

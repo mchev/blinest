@@ -26,10 +26,10 @@
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import Layout from '@/Layouts/AppLayout'
-import FileInput from '@/Shared/FileInput'
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
+import FileInput from '@/Components/FileInput'
+import TextInput from '@/Components/TextInput'
+import SelectInput from '@/Components/SelectInput'
+import LoadingButton from '@/Components/LoadingButton'
 
 export default {
   components: {

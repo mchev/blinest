@@ -23,8 +23,8 @@
 
 <script>
 import { Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Shared/Icon'
-import Dropdown from '@/Shared/Dropdown'
+import Icon from '@/Components/Icon'
+import Dropdown from '@/Components/Dropdown'
 
 export default {
   components: {

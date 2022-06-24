@@ -5,14 +5,23 @@ import Rooms from './partials/Rooms'
 
 defineProps({
   categories: Object,
+  private_rooms: Object,
 })
 </script>
 <template>
   <Head title="Home" />
   <Layout>
-    <div v-for="category in categories" :key="category.id">
-      <h2>{{ category.name }}</h2>
-      <rooms :rooms="category.public_rooms" />
-    </div>
+    <section v-for="category in categories" :key="category.id">
+      <div class="relative">
+        <h2 class="mb-2 mt-4 text-2xl sm:text-3xl lg:text-4xl">{{ category.name }}</h2>
+        <rooms :rooms="category.public_rooms" />
+      </div>
+    </section>
+    <section>
+      <div class="relative">
+        <h2 class="mb-2 mt-4 text-2xl sm:text-3xl lg:text-4xl">{{ __('My rooms') }}</h2>
+        <rooms :rooms="private_rooms" />
+      </div>
+    </section>
   </Layout>
 </template>

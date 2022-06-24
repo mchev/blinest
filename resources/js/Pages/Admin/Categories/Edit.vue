@@ -2,8 +2,8 @@
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import TextInput from '@/Shared/TextInput'
-import LoadingButton from '@/Shared/LoadingButton'
+import TextInput from '@/Components/TextInput'
+import LoadingButton from '@/Components/LoadingButton'
 
 const props = defineProps({
   category: Object,

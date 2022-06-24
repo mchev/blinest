@@ -3,10 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\Round;
+use App\Models\Track;
 use App\Events\TrackEnded;
 use Illuminate\Console\Command;
 
-class Countdown extends Command
+class TrackCountdown extends Command
 {
     /**
      * The name and signature of the console command.
@@ -29,19 +30,20 @@ class Countdown extends Command
      */
     public function handle()
     {
-        // Get the room model
+        // Get room and track models
         $round = Round::find($this->argument('round'));
+        $track = Track::find($round->tracks[$round->current - 1]);
 
-        // Track play time
+        // Pause while the track is playing
         sleep($this->option('sleep'));
 
         // Broadcast the TrackEnded event
-        broadcast( new TrackEnded($round) );
+        broadcast( new TrackEnded($round, $track) );
 
-        // Sleep before playing the next track
+        // Pause before playing the next track
         sleep(2);
 
-        // Play next
+        // Play
         $round->playNextTrack();
     }
 }

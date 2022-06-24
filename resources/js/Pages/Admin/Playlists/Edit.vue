@@ -2,13 +2,13 @@
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import Card from '@/Shared/Card'
-import TextInput from '@/Shared/TextInput'
-import FileInput from '@/Shared/FileInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
-import TrashedMessage from '@/Shared/TrashedMessage'
-import TracksManager from '@/Shared/TracksManager'
+import Card from '@/Components/Card'
+import TextInput from '@/Components/TextInput'
+import FileInput from '@/Components/FileInput'
+import SelectInput from '@/Components/SelectInput'
+import LoadingButton from '@/Components/LoadingButton'
+import TrashedMessage from '@/Components/TrashedMessage'
+import TracksManager from '@/Components/TracksManager'
 
 const props = defineProps({
   playlist: Object,

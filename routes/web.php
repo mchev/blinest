@@ -120,6 +120,9 @@ Route::delete('rooms/{room}', [RoomController::class, 'destroy'])
 Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
     ->name('rooms.restore');
 
+Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
+    ->name('rooms.joined');
+
 
 // Playlists
 Route::get('playlists', [PlaylistController::class, 'index'])

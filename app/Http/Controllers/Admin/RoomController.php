@@ -28,7 +28,7 @@ class RoomController extends AdminController
                     'name' => $room->name,
                     'description' => $room->description,
                     'owner' => $room->owner,
-                    'photo' => $room->photo_path ? URL::route('image', ['path' => $room->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                    'photo' => $room->photo,
                     'deleted_at' => $room->deleted_at,
                 ]),
         ]);
@@ -111,7 +111,7 @@ class RoomController extends AdminController
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_game', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 
         if (Request::file('photo')) {
-            $room->update(['photo_path' => Request::file('photo')->store('rooms')]);
+            $room->updatePhoto(Request::file('photo'));
         }
 
         if (Request::get('password')) {
@@ -124,6 +124,7 @@ class RoomController extends AdminController
     public function destroy(Room $room)
     {
 
+        $room->deletePhoto();
         $room->delete();
 
         return Redirect::back()->with('success', 'Room deleted.');

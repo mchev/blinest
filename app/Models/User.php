@@ -8,10 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use App\Http\Traits\HasPicture;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -43,6 +44,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'photo',
+    ];
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
@@ -68,9 +73,14 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
     }
 
-    public function isDemoUser()
+    public function isRoomOwner(Room $room)
     {
-        return $this->email === 'johndoe@example.com';
+        return $this->user_id === $room->user_id;
+    }
+
+    public function hasRoomControl(Room $room)
+    {
+        return $this->isRoomOwner($room);
     }
 
     public function isAdmin()

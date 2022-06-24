@@ -1,11 +1,11 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import FileInput from '@/Shared/FileInput'
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
-import Card from '@/Shared/Card'
+import FileInput from '@/Components/FileInput'
+import TextInput from '@/Components/TextInput'
+import SelectInput from '@/Components/SelectInput'
+import LoadingButton from '@/Components/LoadingButton'
+import Card from '@/Components/Card'
 
 const form = useForm({
   name: '',

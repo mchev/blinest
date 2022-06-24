@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Round;
+use App\Models\Track;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -16,15 +17,17 @@ class TrackEnded implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $round;
+    public $track;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Round $round)
+    public function __construct(Round $round, Track $track)
     {
         $this->round = $round;
+        $this->track = $track;
     }
 
     /**

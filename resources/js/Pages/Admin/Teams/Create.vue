@@ -1,13 +1,12 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import FileInput from '@/Shared/FileInput'
-import TextInput from '@/Shared/TextInput'
-import LoadingButton from '@/Shared/LoadingButton'
+import FileInput from '@/Components/FileInput'
+import TextInput from '@/Components/TextInput'
+import LoadingButton from '@/Components/LoadingButton'
 
 const form = useForm({
   name: '',
-  photo: null,
 })
 
 const store = () => {
@@ -25,7 +24,6 @@ const store = () => {
       <form @submit.prevent="store">
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8" label="Name" />
-          <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8" type="file" accept="image/*" label="Photo" />
         </div>
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
           <loading-button :loading="form.processing" class="btn-primary" type="submit">Create Team</loading-button>

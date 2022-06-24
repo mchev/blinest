@@ -51,13 +51,13 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Shared/Icon'
+import Icon from '@/Components/Icon'
 import pickBy from 'lodash/pickBy'
 import Layout from '@/Layouts/AppLayout'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Shared/SearchFilter'
-import Card from '@/Shared/Card'
+import SearchFilter from '@/Components/SearchFilter'
+import Card from '@/Components/Card'
 
 export default {
   components: {

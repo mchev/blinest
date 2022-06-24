@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TextInput from '@/Shared/TextInput'
+import TextInput from '@/Components/TextInput'
 
 export default {
   components: {

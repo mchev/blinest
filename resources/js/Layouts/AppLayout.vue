@@ -1,13 +1,13 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
-import Logo from '@/Shared/Logo'
-import Dropdown from '@/Shared/Dropdown'
-import MainMenu from '@/Shared/MainMenu'
-import FlashMessages from '@/Shared/FlashMessages'
-import SearchRooms from '@/Shared/SearchRooms'
-import UserDropdown from '@/Shared/UserDropdown'
-import LanguageSwitcher from '@/Shared/LanguageSwitcher'
-import DarkmodeSwitcher from '@/Shared/DarkmodeSwitcher'
+import Logo from '@/Components/Logo'
+import Dropdown from '@/Components/Dropdown'
+import MainMenu from '@/Components/MainMenu'
+import FlashMessages from '@/Components/FlashMessages'
+import SearchRooms from '@/Components/SearchRooms'
+import UserDropdown from '@/Components/UserDropdown'
+import LanguageSwitcher from '@/Components/LanguageSwitcher'
+import DarkmodeSwitcher from '@/Components/DarkmodeSwitcher'
 
 defineProps({
   auth: Object,
@@ -47,7 +47,7 @@ defineProps({
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <main-menu class="hidden w-56 flex-shrink-0 overflow-y-auto bg-blinest-800 p-12 md:block" />
-          <div class="px-4 py-8 dark:bg-gray-600 dark:text-gray-100 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
+          <div class="px-4 py-4 dark:bg-gray-600 dark:text-gray-100 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
             <flash-messages />
             <slot />
           </div>

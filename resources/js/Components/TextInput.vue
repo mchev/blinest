@@ -5,7 +5,7 @@ export default {
 </script>
 <script setup>
 import { v4 as uuid } from 'uuid'
-import Icon from '@/Shared/Icon'
+import Icon from '@/Components/Icon'
 
 defineProps({
   id: {

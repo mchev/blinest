@@ -37,12 +37,10 @@ class TeamController extends AdminController
     {
         Request::validate([
             'name' => ['required', 'max:50', Rule::unique('teams')->whereNull('deleted_at')],
-            'photo' => ['nullable', 'image'],
         ]);
 
         $team = Auth::user()->team()->create([
             'name' => Request::get('name'),
-            'photo_path' => Request::file('photo') ? Request::file('photo')->store('teams') : null,
         ]);
 
         Auth::user()->update([
@@ -78,7 +76,7 @@ class TeamController extends AdminController
         $team->update(Request::only('name', 'user_id'));
 
         if (Request::file('photo')) {
-            $team->update(['photo_path' => Request::file('photo')->store('teams')]);
+            $team->updatePhoto(Request::file('photo'));
         }
 
         return Redirect::back()->with('success', 'Team updated.');
@@ -86,6 +84,7 @@ class TeamController extends AdminController
 
     public function destroy(Team $team)
     {
+        $team->deletePhoto();
         $team->delete();
         return Redirect::back()->with('success', 'Team deleted.');
     }

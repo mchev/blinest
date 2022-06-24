@@ -7,7 +7,9 @@ defineProps({
 })
 </script>
 <template>
-  <div class="flex flex-wrap">
-    <Room v-for="room in rooms" :key="room.id" :room="room" />
-  </div>
+  <ul class="flex gap-2 w-full flex-wrap">
+    <li v-for="room in rooms" :key="room.id" class="flex w-full md:w-1/3 lg:w-1/6">
+      <Room :room="room" />
+    </li>
+  </ul>
 </template>

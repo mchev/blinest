@@ -3,11 +3,11 @@ import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import Icon from '@/Shared/Icon'
+import Icon from '@/Components/Icon'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
-import Pagination from '@/Shared/Pagination'
-import SearchFilter from '@/Shared/SearchFilter'
+import Pagination from '@/Components/Pagination'
+import SearchFilter from '@/Components/SearchFilter'
 
 const props = defineProps({
   filters: Object,

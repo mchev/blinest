@@ -26,7 +26,7 @@ class UsersController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                    'photo' => $user->photo,
                     'deleted_at' => $user->deleted_at,
                 ]),
         ]);
@@ -71,7 +71,7 @@ class UsersController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'photo' => $user->photo,
                 'deleted_at' => $user->deleted_at,
             ],
         ]);
@@ -93,7 +93,7 @@ class UsersController extends Controller
         $user->update(Request::only('name', 'email', 'owner'));
 
         if (Request::file('photo')) {
-            $user->update(['photo_path' => Request::file('photo')->store('users')]);
+            $user->updatePhoto(Request::file('photo'));
         }
 
         if (Request::get('password')) {
@@ -105,6 +105,7 @@ class UsersController extends Controller
 
     public function destroy(User $user)
     {
+        $user->deletePicture();
         $user->delete();
 
         return Redirect::back()->with('success', 'User deleted.');

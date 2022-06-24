@@ -38,12 +38,12 @@
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
 import AdminLayout from '@/Layouts/AdminLayout'
-import TextInput from '@/Shared/TextInput'
-import FileInput from '@/Shared/FileInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
-import TrashedMessage from '@/Shared/TrashedMessage'
-import Card from '@/Shared/Card'
+import TextInput from '@/Components/TextInput'
+import FileInput from '@/Components/FileInput'
+import SelectInput from '@/Components/SelectInput'
+import LoadingButton from '@/Components/LoadingButton'
+import TrashedMessage from '@/Components/TrashedMessage'
+import Card from '@/Components/Card'
 
 export default {
   components: {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Link } from '@inertiajs/inertia-vue3'
 
 const props = defineProps({
@@ -15,11 +15,22 @@ onMounted(() => {
     infos.value = e.data;
   })
 })
+
+onUnmounted(() => {
+  Echo.leave(channel)
+})
 </script>
 <template>
-  <Link :href="`/rooms/${room.id}`" class="mr-4 flex flex-col h-32 w-32 items-center justify-center rounded-lg bg-gray-100 p-8 shadow dark:bg-gray-500">
-    {{ room.name }}
-    <span v-if="infos">Users : {{ infos.users_count}}</span>
-    <span v-if="infos">Track {{ infos.current_track_index }} / {{ infos.tracks_count }}</span>
+  <Link :href="`/rooms/${room.id}`" class="flex w-full flex-col relative items-center justify-center rounded-sm bg-gray-100 shadow dark:bg-gray-500 hover:scale-110 transition ease-in-out duration-100">
+    <article class="relative overflow-hidden">
+      <picture>
+        <img :src="room.photo" :alt="room.name">
+      </picture>
+      <h3 class="font-bold">{{ room.name }}</h3>
+      <div class="absolute top-1 right-2 w-auto rounded-sm font-bold">
+        {{ infos ? infos.users_count : room.users_count }}
+      </div>
+      <span>Track {{ infos ? infos.current_track_index : room.current_track_index }} / {{ infos ? infos.tracks_count : room.tracks_by_game }}</span>
+    </article>
   </Link>
 </template>

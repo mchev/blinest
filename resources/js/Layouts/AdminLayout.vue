@@ -1,12 +1,12 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
-import Logo from '@/Shared/Logo'
-import Dropdown from '@/Shared/Dropdown'
-import AdminMenu from '@/Shared/AdminMenu'
-import FlashMessages from '@/Shared/FlashMessages'
-import UserDropdown from '@/Shared/UserDropdown'
-import LanguageSwitcher from '@/Shared/LanguageSwitcher'
-import DarkmodeSwitcher from '@/Shared/DarkmodeSwitcher'
+import Logo from '@/Components/Logo'
+import Dropdown from '@/Components/Dropdown'
+import AdminMenu from '@/Components/AdminMenu'
+import FlashMessages from '@/Components/FlashMessages'
+import UserDropdown from '@/Components/UserDropdown'
+import LanguageSwitcher from '@/Components/LanguageSwitcher'
+import DarkmodeSwitcher from '@/Components/DarkmodeSwitcher'
 
 defineProps({
   auth: Object,

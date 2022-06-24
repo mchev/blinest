@@ -86,13 +86,13 @@
 import { Head, Link } from '@inertiajs/inertia-vue3'
 
 import { v4 as uuid } from 'uuid'
-import Icon from '@/Shared/Icon'
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import DialogModal from '@/Shared/DialogModal'
-import Pagination from '@/Shared/Pagination'
+import Icon from '@/Components/Icon'
+import TextInput from '@/Components/TextInput'
+import SelectInput from '@/Components/SelectInput'
+import DialogModal from '@/Components/DialogModal'
+import Pagination from '@/Components/Pagination'
 
-import AnswerForm from '@/Shared/AnswerForm'
+import AnswerForm from '@/Components/AnswerForm'
 
 import pickBy from 'lodash/pickBy'
 import mapValues from 'lodash/mapValues'

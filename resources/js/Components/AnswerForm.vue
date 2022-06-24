@@ -41,9 +41,9 @@
 
 <script>
 import { defineComponent } from 'vue'
-import Modal from '@/Shared/Modal'
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
+import Modal from '@/Components/Modal'
+import TextInput from '@/Components/TextInput'
+import SelectInput from '@/Components/SelectInput'
 
 export default {
   components: {

@@ -31,16 +31,6 @@ class Round extends Model
         'finished_at',
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-
-        self::creating(function($model) {
-            $model->user_id = Auth::user()->id;
-            $model->tracks = $model->room->tracks()->inRandomOrder()->take($model->room->tracks_by_game)->pluck('id');
-        });
-    }
-
     protected function playing(): Attribute
     {
         return Attribute::make(
@@ -51,34 +41,39 @@ class Round extends Model
 
     public function start()
     {
-        broadcast(new RoundStarted($this));
-        $this->playing = true;
-        $this->playNextTrack();
+        if (!empty($this->tracks)) {
+            broadcast(new RoundStarted($this));
+            $this->playing = 1;
+            $this->playNextTrack();
+        }
     }
 
     public function stop()
     { 
         //$this->finished_at = Carbon::now();
-        $this->playing = false;
+        $this->playing = 0;
         broadcast(new RoundFinished($this));
     }
 
     public function playNextTrack()
     {
 
-        if($this->current === count($this->tracks))
+        if($this->current === count($this->tracks)) {
             $this->stop();
-            // if ($this->room->counter > 0) 
-            //     $this->start();
-
-        else if(!empty($this->tracks)) {
+            // $this->room()->startRound();
+            // $this->room->startRound();
+            if ($this->room->users_count > 0) {
+                //run_background_process('round:countdown', $this->room->id);
+            }
+        }
+        else {
 
             $this->increment('current');
 
             $data = [
                 'room_id' => $this->room->id,
                 'round_id' => $this->id,
-                'users_count' => $this->room->counter,
+                'users_count' => $this->room->users_count,
                 'tracks_count' => count($this->tracks),
                 'current_track_index' => $this->current,
                 'track' => Track::select('id', 'preview_url')->find($this->tracks[$this->current - 1]),

@@ -16,7 +16,6 @@ const duration = ref(0)
 onMounted(() => {
   Echo.channel(channel).listen('TrackPlayed', (e) => {
     console.log('Track played');
-    console.log(e.data);
     track.value = e.data.track
     play()
   })
@@ -36,7 +35,8 @@ onUnmounted(() => {
 const emit = defineEmits(['track:ended', 'track:paused', 'track:stopped'])
 
 const play = () => {
-  if (isPlaying.value) {
+  
+  if (isPlaying) {
     stop()
   }
 

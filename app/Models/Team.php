@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\URL;
+use App\Http\Traits\HasPicture;
 
 class Team extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasPicture;
 
     protected $appends = [
         'photo',
@@ -19,11 +21,6 @@ class Team extends Model
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
-    }
-
-    public function getPhotoAttribute()
-    {
-        return $this->photo_path ? URL::route('image', ['path' => $this->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null;
     }
     
     public function owner()

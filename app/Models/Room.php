@@ -6,34 +6,57 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use App\Http\Traits\HasPicture;
 
 class Room extends Model
 {
     
     use HasFactory;
     use SoftDeletes;
+    use HasPicture;
+
+    protected $appends = [
+        'photo',
+        'users_count',
+        'current_track_index',
+    ];
 
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    protected function getCounterAttribute()
+    protected function getUsersCountAttribute()
     {
         return Redis::exists('presence-rooms.'.$this->id.':members') 
             ? count(json_decode(Redis::get('presence-rooms.'.$this->id.':members'))) 
             : 0;
     }
 
+    protected function getCurrentTrackIndexAttribute()
+    {
+        if ($this->rounds()->exists()) {
+            if ($this->rounds()->latest()->first()->current != count($this->rounds()->latest()->first()->tracks))
+                return $this->rounds()->latest()->first()->current;
+        }
+        return 0;
+    }
+
     public function scopeIsPlaying()
     {
-        return Redis::exists('rooms.'.$this->id.'.playing') ? Redis::get('rooms.'.$this->id.'.playing') : false;
+        return Redis::exists('rooms.'.$this->id.'.playing') 
+            ? Redis::get('rooms.'.$this->id.'.playing') 
+            : false;
     }
 
     public function startRound()
     {
-        $round = $this->rounds()->create();
+        $round = $this->rounds()->create([
+            'user_id' => Auth::user()->id,
+            'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_game)->pluck('id'),
+        ]);
         $round->start();
     }
 
