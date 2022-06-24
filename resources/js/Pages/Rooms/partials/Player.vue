@@ -91,7 +91,7 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="flex h-8 w-full items-center justify-center rounded-full bg-teal-200">
+  <div id="player" class="flex h-8 w-full items-center rounded-full bg-teal-200">
     <div v-if="error" class="text-red-500">
       {{ error }}
     </div>

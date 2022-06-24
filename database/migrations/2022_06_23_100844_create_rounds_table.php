@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('rounds', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id');
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->nullable();
             $table->json('tracks');
             $table->integer('current')->default(0);
             $table->timestamp('finished_at')->nullable();

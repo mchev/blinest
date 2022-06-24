@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Log;
+
 class Round extends Model
 {
     use HasFactory;
@@ -50,7 +52,7 @@ class Round extends Model
 
     public function stop()
     { 
-        //$this->finished_at = Carbon::now();
+        $this->update(['finished_at' => Carbon::now()]);
         $this->playing = 0;
         broadcast(new RoundFinished($this));
     }
@@ -60,10 +62,8 @@ class Round extends Model
 
         if($this->current === count($this->tracks)) {
             $this->stop();
-            // $this->room()->startRound();
-            // $this->room->startRound();
             if ($this->room->users_count > 0) {
-                //run_background_process('round:countdown', $this->room->id);
+                run_background_process('round:countdown', $this->room->id);
             }
         }
         else {

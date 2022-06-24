@@ -14,7 +14,7 @@ class TrackCountdown extends Command
      *
      * @var string
      */
-    protected $signature = 'track:countdown {round} {--sleep=10}';
+    protected $signature = 'track:countdown {round} {--sleep=30}';
 
     /**
      * The console command description.
