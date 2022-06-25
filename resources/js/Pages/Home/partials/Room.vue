@@ -16,9 +16,6 @@ onMounted(() => {
   Echo.channel(channel).listen('TrackPlayed', (e) => {
     infos.value = e.data
   })
-  Echo.channel(channel).listen('TrackEnded', (e) => {
-    track.value = e.track
-  })
   Echo.channel(channel).listen('RoundFinished', () => {
     infos.value.current_track_index = 0
   })
@@ -33,8 +30,7 @@ onUnmounted(() => {
     <article>
       <div class="relative overflow-hidden">
         <picture class="w-full h-auto">
-          <img v-if="track?.artwork_url" :src="track.artwork_url" :alt="room.name"/>
-          <img v-else :src="room.photo" :alt="room.name" />
+          <img :src="room.photo" :alt="room.name" />
         </picture>
         <div class="absolute top-1 right-2 w-auto rounded-sm font-bold">
           <div class="flex items-center">

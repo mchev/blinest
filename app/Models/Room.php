@@ -30,9 +30,8 @@ class Room extends Model
 
     protected function getUsersCountAttribute()
     {
-        return Redis::exists('presence-rooms.'.$this->id.':members') 
-            ? count(json_decode(Redis::get('presence-rooms.'.$this->id.':members'))) 
-            : 0;
+        $response = pusher()->get( '/channels/presence-rooms.'.$this->id.'/users' );
+        return count($response->users);
     }
 
     protected function getCurrentTrackIndexAttribute()

@@ -20,7 +20,10 @@ class CreateRoomsTable extends Migration
             $table->string('description')->nullable();
             $table->foreignId('category_id')->nullable();
             $table->string('photo_path')->nullable();
-            $table->integer('tracks_by_game')->default(15);
+            $table->integer('tracks_by_game')->unsigned()->default(15);
+            $table->integer('track_duration')->unsigned()->default(30);
+            $table->integer('pause_between_tracks')->unsigned()->default(0);
+            $table->integer('pause_between_rounds')->unsigned()->default(10);
             $table->boolean('is_public')->default(false);
             $table->boolean('is_pro')->default(false);
             $table->boolean('is_random')->default(true);

@@ -3,6 +3,18 @@
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\PhpExecutableFinder;
 
+if (! function_exists('pusher')) {
+    function pusher()
+    {
+        return new Pusher\Pusher(
+            config('broadcasting.connections.pusher.key'), 
+            config('broadcasting.connections.pusher.secret'), 
+            config('broadcasting.connections.pusher.app_id'),
+            config('broadcasting.connections.pusher.options'),
+        );
+    }
+}
+
 /**
  * Execute some artisan command in a new console
  */

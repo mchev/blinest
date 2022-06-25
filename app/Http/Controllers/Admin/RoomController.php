@@ -46,7 +46,10 @@ class RoomController extends AdminController
             'description' => ['nullable'],
             'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
-            'tracks_by_game' => ['required', 'integer'],
+            'tracks_by_game' => ['required', 'integer', 'min:1', 'max:50'],
+            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
+            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
+            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
             'photo' => ['nullable', 'image'],
             'is_public' => ['required', 'boolean'],
             'is_pro' => ['required', 'boolean'],
@@ -63,6 +66,9 @@ class RoomController extends AdminController
             'playlist_id' => Request::get('playlist_id'),
             'password' => Request::get('password'),
             'tracks_by_game' => Request::get('tracks_by_game'),
+            'track_duration' => Request::get('track_duration'),
+            'pause_between_tracks' => Request::get('pause_between_tracks'),
+            'pause_between_rounds' => Request::get('pause_between_rounds'),
             'is_public' => Request::get('is_public'),
             'is_pro' => Request::get('is_pro'),
             'is_random' => Request::get('is_random'),
@@ -95,7 +101,10 @@ class RoomController extends AdminController
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
-            'tracks_by_game' => ['required', 'integer'],
+            'tracks_by_game' => ['required', 'integer', 'min:1', 'max:50'],
+            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
+            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
+            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
             'photo' => ['nullable', 'image'],
             'is_public' => ['required', 'boolean'],
             'is_pro' => ['required', 'boolean'],
@@ -108,7 +117,7 @@ class RoomController extends AdminController
 
         $room->playlists()->sync(Request::input('playlists'));
 
-        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_game', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
+        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_game', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 
         if (Request::file('photo')) {
             $room->updatePhoto(Request::file('photo'));

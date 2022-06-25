@@ -37,8 +37,5 @@
         "vue": "^3.2.37",
         "vue-loader": "^17.0.0",
         "vue-select": "^4.0.0-beta.1"
-    },
-    "dependencies": {
-        "socket.io-client": "^2.3.0"
     }
 }

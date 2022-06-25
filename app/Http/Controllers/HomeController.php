@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Pusher\Pusher;
 
 class HomeController extends Controller
 {

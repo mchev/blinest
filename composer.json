@@ -8,15 +8,13 @@
         "php": "^8.0.2",
         "ext-exif": "*",
         "ext-gd": "*",
-        "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.2",
         "jwilsson/spotify-web-api-php": "^5.0",
-        "laravel/framework": "^9.0",
-        "laravel/horizon": "^5.9",
-        "laravel/sanctum": "^2.11",
+        "laravel/framework": "^9.11",
+        "laravel/sanctum": "^2.14.1",
         "laravel/socialite": "^5.2",
-        "laravel/tinker": "^2.5",
+        "laravel/tinker": "^2.7",
         "league/glide-laravel": "^1.0",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.0",
@@ -25,13 +23,12 @@
         "tightenco/ziggy": "^1.4"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
-        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10"
+        "phpunit/phpunit": "^9.5.10",
+        "spatie/laravel-ignition": "^1.0"
     },
     "autoload": {
         "psr-4": {

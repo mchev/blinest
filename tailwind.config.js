@@ -14,9 +14,19 @@ module.exports = {
           900: '#191e38',
         },
       },
+      keyframes: {
+        shaking: {
+          '0%': { transform: 'translate(0, 0) rotate(0deg)' },
+          '25%': { transform: 'translate(2px, 2px) rotate(0.1deg)' },
+          '50%': { transform: 'translate(0, 0) rotate(0eg)' },
+          '75%': { transform: 'translate(-2px, 2px) rotate(-0.1deg)' },
+          '100%': { transform: 'translate(0, 0) rotate(0deg)' },
+        },
+      },
+      animation: {
+        'shake': 'shaking .2s cubic-bezier(.36,.07,.19,.97) infinite',
+      },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('@tailwindcss/typography')],
 }

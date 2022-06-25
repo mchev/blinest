@@ -4,8 +4,8 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/inertia-vue3'
 import Layout from '@/Layouts/AppLayout'
 import Spinner from '@/Components/Spinner.vue'
-import Modal from '@/Components/Modal.vue'
 import Player from './partials/Player.vue'
+import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 
 const props = defineProps({
   room: Object,
@@ -14,7 +14,6 @@ const props = defineProps({
 const channel = `rooms.${props.room.id}`
 const joined = ref(false)
 const roundFinished = ref(false)
-const roundFinishedModal = ref(false)
 
 onMounted(() => {
   Echo.join(channel)
@@ -43,13 +42,11 @@ const listenRounds = () => {
   Echo.channel(channel).listen('RoundStarted', (round) => {
     console.warn('Round started')
     roundFinished.value = false
-    roundFinishedModal.value = false
   })
 
   Echo.channel(channel).listen('RoundFinished', (round) => {
     console.warn('Round finished')
     roundFinished.value = true
-    roundFinishedModal.value = true
     // Get scores
     // Wait for new round
   })
@@ -75,18 +72,16 @@ const trackStopped = (track) => {
 
     <Transition name="slide-fade">
       <div v-if="joined">
+
         <article class="prose dark:prose-invert">
           <h2>{{ room.name }}</h2>
-          <ul>
-            <li>Find a way to only start when there is users</li>
-            <li>Player : listen for users when right anwsers (display avatar instead of username?)</li>
-          </ul>
         </article>
 
-        <Player :room="room" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+        <Player class="my-4" :room="room" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
       </div>
     </Transition>
 
-    <Modal :show="roundFinishedModal" @close="roundFinishedModal = false"> Test </Modal>
+    <FinishedRoundModal :show="roundFinished" @close="roundFinished = false"/>
+
   </Layout>
 </template>

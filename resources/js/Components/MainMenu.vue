@@ -12,34 +12,29 @@ const isUrl = (...urls) => {
 </script>
 <template>
   <div>
-    <div class="mb-4">
-      <Link class="group flex items-center py-3" :href="route('users.edit', $page.props.auth.user)">
-        <icon name="dashboard" class="mr-2 h-4 w-4" :class="isUrl('users') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
-        <div :class="isUrl('users') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">{{ __('My Profile') }}</div>
+    <div class="mb-6">
+      <Link class="group flex items-center" :href="route('users.edit', $page.props.auth.user)">
+        <div :class="isUrl('users') ? 'font-bold' : 'font-normal'">{{ __('My Profile') }}</div>
       </Link>
     </div>
-    <div class="mb-4">
-      <Link class="group flex items-center py-3" :href="route('playlists')">
-        <icon name="office" class="mr-2 h-4 w-4" :class="isUrl('playlists') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
-        <div :class="isUrl('playlists') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">{{ __('Playlists') }}</div>
+    <div class="mb-6">
+      <Link class="group flex items-center" :href="route('playlists')">
+        <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">{{ __('Playlists') }}</div>
       </Link>
     </div>
-    <div class="mb-4">
-      <Link class="group flex items-center py-3" :href="route('rooms')">
-        <icon name="users" class="mr-2 h-4 w-4" :class="isUrl('rooms') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
-        <div :class="isUrl('rooms') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">{{ __('Rooms') }}</div>
+    <div class="mb-6">
+      <Link class="group flex items-center" :href="route('rooms')">
+        <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
       </Link>
     </div>
-    <div class="mb-4">
-      <Link class="group flex items-center py-3" href="/reports">
-        <icon name="printer" class="mr-2 h-4 w-4" :class="isUrl('reports') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
-        <div :class="isUrl('reports') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">{{ __('Team') }}</div>
+    <div class="mb-6">
+      <Link class="group flex items-center" href="/reports">
+        <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Team') }}</div>
       </Link>
     </div>    
-    <div class="mb-4">
-      <Link class="group flex items-center py-3" href="/reports">
-        <icon name="printer" class="mr-2 h-4 w-4" :class="isUrl('reports') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" />
-        <div :class="isUrl('reports') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">{{ __('Rankings') }}</div>
+    <div class="mb-6">
+      <Link class="group flex items-center" href="/reports">
+        <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Rankings') }}</div>
       </Link>
     </div>
   </div>

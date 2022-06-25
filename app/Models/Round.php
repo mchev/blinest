@@ -36,7 +36,7 @@ class Round extends Model
     protected function playing(): Attribute
     {
         return Attribute::make(
-            get: fn () => Redis::set('rooms.'.$this->room->id.'.playing'),
+            get: fn () => Redis::get('rooms.'.$this->room->id.'.playing'),
             set: fn ($value) => Redis::set('rooms.'.$this->room->id.'.playing', $value),
         )->withoutObjectCaching();
     }
@@ -63,7 +63,9 @@ class Round extends Model
         if($this->current === count($this->tracks)) {
             $this->stop();
             if ($this->room->users_count > 0) {
-                run_background_process('round:countdown', $this->room->id);
+                run_background_process('round:countdown', 
+                    $this->room->id . ' --sleep=' . $this->room->pause_beteen_rounds
+                );
             }
         }
         else {
@@ -80,7 +82,9 @@ class Round extends Model
             ];
 
             broadcast(new TrackPlayed($data));
-            run_background_process('track:countdown', $this->id);
+            run_background_process('track:countdown', 
+                $this->id . ' --sleep=' . $this->room->track_duration
+            );
 
         }
         
