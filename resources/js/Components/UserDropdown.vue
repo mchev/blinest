@@ -1,5 +1,5 @@
 <template>
-  <dropdown class="mt-1" placement="bottom-end">
+  <dropdown placement="bottom-end">
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">

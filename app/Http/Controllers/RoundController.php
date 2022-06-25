@@ -16,6 +16,10 @@ class RoundController extends Controller
     public function check(Round $round, Track $track)
     {
 
+        if ($round->tracks[$round->current - 1] != $track->id) {
+            return response()->json('Too late.');
+        }
+
         Request::validate([
             'text' => 'required|string|min:2',
         ]);

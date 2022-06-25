@@ -1,11 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import TextInput from '@/Components/TextInput.vue'
 
 const props = defineProps({
   data: Object,
 })
 
+const input = ref(null)
 const track = ref(props.data.track)
 const text = ref('')
 
@@ -16,18 +17,34 @@ watch(
   },
 )
 
+onMounted(() => {
+  focus()
+})
+
+const focus = () => {
+  input.value.focus()
+}
+
 const check = () => {
   if (text.value.length) {
-    axios.post(`/rounds/${props.data.round_id}/tracks/${track.value.id}/check`, {text : text.value}).then((response) => {
+    axios.post(`/rounds/${props.data.round_id}/tracks/${track.value.id}/check`, { text: text.value }).then((response) => {
       console.log(response)
       text.value = ''
+      focus()
     })
   }
 }
 </script>
 <template>
-  <form @submit.prevent="check" class="flex items-center">
-    <TextInput v-model="text" type="text" autofocus />
-    <button class="btn-primary">Send</button>
+  <form @submit.prevent="check" class="flex w-full items-center justify-center">
+    <div class="flex items-center">
+      <input ref="input" v-model="text" type="text" class="h-12 rounded-l-md border-none text-gray-600 p-2 uppercase" autofocus />
+      <button type="submit" class="btn-send h-12">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <title>{{ __('Send') }}</title>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+      </button>
+    </div>
   </form>
 </template>

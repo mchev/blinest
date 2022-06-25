@@ -89,7 +89,7 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="flex h-10 w-full items-center overflow-hidden rounded-lg bg-teal-200" :class="{ 'animate-shake': shaking }">
+  <div id="player" class="flex h-10 w-full items-center overflow-hidden rounded-lg bg-teal-200">
     <div v-if="error" class="text-red-500">
       {{ error }}
     </div>

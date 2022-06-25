@@ -79,7 +79,7 @@ const trackStopped = (track) => {
       <h2>{{ __('Loading') }}...</h2>
     </div>
 
-    <Transition name="slide-fade">
+    <Transition name="slide-right">
       <div v-if="joined">
 
         <article class="prose dark:prose-invert">
@@ -88,7 +88,9 @@ const trackStopped = (track) => {
 
         <Player class="my-4" :room="room" :channel="channel" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
 
-        <UserInput v-if="data" class="my-4" :data="data"/>
+        <Transition name="slide-top">
+          <UserInput v-if="data" class="my-4" :data="data"/>
+        </Transition>
 
       </div>
     </Transition>

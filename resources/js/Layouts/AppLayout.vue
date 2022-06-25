@@ -7,7 +7,7 @@ import FlashMessages from '@/Components/FlashMessages'
 import SearchRooms from '@/Components/SearchRooms'
 import UserDropdown from '@/Components/UserDropdown'
 import LanguageSwitcher from '@/Components/LanguageSwitcher'
-import DarkmodeSwitcher from '@/Components/DarkmodeSwitcher'
+import Volume from '@/Components/Volume'
 
 defineProps({
   auth: Object,
@@ -39,9 +39,9 @@ defineProps({
               <search-rooms />
             </div>
             <div class="flex items-center justify-end">
-              <user-dropdown />
-              <language-switcher />
-              <darkmode-switcher />
+              <UserDropdown class="mr-4" />
+              <LanguageSwitcher class="mr-4" />
+              <Volume/>
             </div>
           </div>
         </div>
