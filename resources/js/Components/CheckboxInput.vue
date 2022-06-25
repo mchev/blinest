@@ -28,7 +28,7 @@ export default {
     },
     error: String,
     label: String,
-    modelValue: Boolean,
+    modelValue: [Boolean, Number],
   },
   emits: ['update:modelValue'],
   methods: {

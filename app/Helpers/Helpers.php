@@ -1,7 +1,6 @@
 <?php
 
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\PhpExecutableFinder;
+use Illuminate\Support\Facades\Log;
 
 if (! function_exists('pusher')) {
     function pusher()
@@ -12,22 +11,6 @@ if (! function_exists('pusher')) {
             config('broadcasting.connections.pusher.app_id'),
             config('broadcasting.connections.pusher.options'),
         );
-    }
-}
-
-/**
- * Execute some artisan command in a new console
- */
-if (! function_exists('run_background_process')) {
-    function run_background_process($command, $data)
-    {
-        $phpBinaryFinder = new PhpExecutableFinder();
-        $phpBinaryPath = $phpBinaryFinder->find();
-        // (['php', 'artisan', 'foo:bar', 'json data'])
-        $process = new Process ([$phpBinaryPath, base_path('artisan'), $command, $data]); 
-        //Run process in background 
-        $process->setoptions(['create_new_console' => true]);
-        $process->start();
     }
 }
 

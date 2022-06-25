@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/inertia-vue3'
 import Layout from '@/Layouts/AppLayout'
 import Spinner from '@/Components/Spinner.vue'
 import Player from './partials/Player.vue'
+import UserInput from './partials/UserInput.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 
 const props = defineProps({
@@ -13,6 +14,7 @@ const props = defineProps({
 
 const channel = `rooms.${props.room.id}`
 const joined = ref(false)
+const data = ref(null)
 const roundFinished = ref(false)
 
 onMounted(() => {
@@ -41,15 +43,22 @@ const userHasJoinedTheChannel = () => {
 const listenRounds = () => {
   Echo.channel(channel).listen('RoundStarted', (round) => {
     console.warn('Round started')
+    round.value = round
     roundFinished.value = false
   })
 
   Echo.channel(channel).listen('RoundFinished', (round) => {
     console.warn('Round finished')
+    round.value = null
     roundFinished.value = true
     // Get scores
     // Wait for new round
   })
+
+  Echo.channel(channel).listen('TrackPlayed', (e) => {
+    data.value = e.data
+  })
+
 }
 
 const trackEnded = (track) => {
@@ -77,7 +86,10 @@ const trackStopped = (track) => {
           <h2>{{ room.name }}</h2>
         </article>
 
-        <Player class="my-4" :room="room" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+        <Player class="my-4" :room="room" :channel="channel" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+
+        <UserInput v-if="data" class="my-4" :data="data"/>
+
       </div>
     </Transition>
 

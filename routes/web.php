@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoundController;
 use App\Http\Controllers\PlaylistController;
 
 use App\Http\Controllers\ImagesController;
@@ -122,6 +123,10 @@ Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
 
 Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
     ->name('rooms.joined');
+
+// Rounds
+Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
+    ->name('rounds.track.check');
 
 
 // Playlists

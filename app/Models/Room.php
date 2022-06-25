@@ -55,7 +55,7 @@ class Room extends Model
         $round = $this->rounds()->create([
             // When using symphony process we loose auth and guest could also launch rounds
             'user_id' => Auth::check() ? Auth::user()->id : null, 
-            'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_game)->pluck('id'),
+            'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->pluck('id'),
         ]);
         $round->start();
     }

@@ -2,25 +2,24 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 const props = defineProps({
   room: Object,
+  channel: String,
 })
 
-const channel = `rooms.${props.room.id}`
 const audio = new Audio()
 const track = ref(null)
 const loading = ref(true)
 const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
-const duration = ref(0)
 const shaking = ref(false)
 
 onMounted(() => {
-  Echo.channel(channel).listen('TrackPlayed', (e) => {
+  Echo.channel(props.channel).listen('TrackPlayed', (e) => {
     console.log('Track played')
     track.value = e.data.track
     play()
   })
-  Echo.channel(channel).listen('TrackEnded', (e) => {
+  Echo.channel(props.channel).listen('TrackEnded', (e) => {
     console.log('Track ended')
     stop()
   })
@@ -33,7 +32,7 @@ onUnmounted(() => {
   Echo.leave(`rooms.${props.room.id}`)
 })
 
-const emit = defineEmits(['track:ended', 'track:paused', 'track:stopped'])
+const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped'])
 
 const play = () => {
   if (isPlaying) {
@@ -44,10 +43,6 @@ const play = () => {
   isPlaying.value = true
 
   audio.src = track.value.preview_url
-
-  audio.addEventListener('loadeddata', () => {
-    duration.value = audio.duration
-  })
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
@@ -70,7 +65,7 @@ const play = () => {
   })
 
   audio.addEventListener('timeupdate', () => {
-    percent.value = parseInt((100 / duration.value) * (audio.currentTime + 0.25))
+    percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
     shaking.value = percent.value > 85 ? true : false
   })
 

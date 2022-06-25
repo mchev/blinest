@@ -24,10 +24,10 @@ class TrackEnded implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Round $round, Track $track)
+    public function __construct(Round $round)
     {
         $this->round = $round;
-        $this->track = $track;
+        $this->track = Track::find($this->round->tracks[$this->round->current - 1]);
     }
 
     /**

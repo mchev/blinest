@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Events\RoundStarted;
 use App\Events\RoundFinished;
 use App\Events\TrackPlayed;
-
+use App\Jobs\ProcessTrackPlayed;
+use App\Jobs\ProcessRoundFinished;
 use App\Models\Track;
+
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,9 +65,8 @@ class Round extends Model
         if($this->current === count($this->tracks)) {
             $this->stop();
             if ($this->room->users_count > 0) {
-                run_background_process('round:countdown', 
-                    $this->room->id . ' --sleep=' . $this->room->pause_beteen_rounds
-                );
+                ProcessRoundFinished::dispatch($this->room)
+                    ->delay(now()->addSeconds($this->room->pause_beteen_rounds));
             }
         }
         else {
@@ -81,10 +82,12 @@ class Round extends Model
                 'track' => Track::select('id', 'preview_url')->find($this->tracks[$this->current - 1]),
             ];
 
+            // Event
             broadcast(new TrackPlayed($data));
-            run_background_process('track:countdown', 
-                $this->id . ' --sleep=' . $this->room->track_duration
-            );
+
+            // Job
+            ProcessTrackPlayed::dispatch($this)
+                ->delay(now()->addSeconds($this->room->track_duration));
 
         }
         

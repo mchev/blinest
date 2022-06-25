@@ -33,8 +33,11 @@ const form = useForm({
   discord_webhook_url: props.room.discord_webhook_url,
   color: props.room.color,
   password: props.room.assword,
-  tracks_by_game: props.room.tracks_by_game,
-  photo: props.room.photo,
+  tracks_by_round: props.room.tracks_by_round,
+  track_duration: props.room.track_duration,
+  pause_between_tracks: props.room.pause_between_tracks,
+  pause_between_rounds: props.room.pause_between_rounds,
+  photo: null,
   playlists: props.room_playlists,
 })
 
@@ -48,7 +51,7 @@ const update = () => {
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-blinest-400 hover:text-blinest-600" :href="route('rooms')">{{ __('Rooms') }}</Link>
-      <span class="font-medium text-blinest-400">/</span> {{ __('Create') }}
+      <span class="font-medium text-blinest-400">/</span> {{ __('Edit') }}
     </h1>
 
     <card>
@@ -57,7 +60,13 @@ const update = () => {
           <div class="flex w-1/3 flex-col border-r p-8">
             <p class="mb-6 font-bold">{{ __('Options') }}</p>
 
-            <text-input v-model="form.tracks_by_game" :error="form.errors.tracks_by_game" type="number" step="1" min="1" max="100" class="pb-6" :label="__('Tracks by game')" />
+            <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="100" class="pb-6" :label="__('Tracks by round')" />
+
+            <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="pb-6" :label="__('Track duration')" />
+
+            <text-input v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" type="number" step="1" min="0" max="60" class="pb-6" :label="__('Pause between tracks')" />
+
+            <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="pb-6" :label="__('Pause between rounds')" />
 
             <text-input v-model="form.color" type="color" :error="form.errors.color" class="pb-6" :label="__('Color')" />
 

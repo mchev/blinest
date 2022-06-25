@@ -23,7 +23,10 @@ const form = useForm({
   discord_webhook_url: '',
   color: '',
   password: '',
-  tracks_by_game: 15,
+  tracks_by_round: 15,
+  track_duration: 30,
+  pause_between_tracks: 0,
+  pause_between_rounds: 10,
   photo: null,
 })
 
@@ -45,8 +48,13 @@ const store = () => {
           <div class="flex w-1/3 flex-col border-r p-8">
             <p class="mb-6 font-bold">{{ __('Options') }}</p>
 
-            <text-input v-model="form.tracks_by_game" :error="form.errors.tracks_by_game" type="number" step="1" min="1" max="100" class="pb-6" :label="__('Tracks by game')" />
+            <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="100" class="pb-6" :label="__('Tracks by round')" />
 
+            <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="pb-6" :label="__('Track duration')" />
+
+            <text-input v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" type="number" step="1" min="0" max="60" class="pb-6" :label="__('Pause between tracks')" />
+
+            <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="pb-6" :label="__('Pause between rounds')" />
             <text-input v-model="form.color" type="color" :error="form.errors.color" class="pb-6" :label="__('Color')" />
 
             <checkbox-input v-model="form.is_public" :error="form.errors.is_public" class="pb-6" :label="__('Public')" />
