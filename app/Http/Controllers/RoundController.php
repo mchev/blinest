@@ -24,22 +24,38 @@ class RoundController extends Controller
             'text' => 'required|string|min:2',
         ]);
 
-        $lev = [];
+        $input = Request::input('text');
+
+        $keys = [];
+        $values = [];
+        $ids = [];
+        $scores = [];
+        $similarities = [];
 
         foreach($track->answers as $answer) {
-            $lev[] = [
-                'lev' => levenshtein(strtolower(Request::input('text')), strtolower($answer->value)),
-                'key' => $answer->key,
-                'value' => $answer->value,
-            ];
+
+            // Similarity in percent
+            $similarity = similarity($input, $answer->value);
+
+            //if($similarity > 80) {
+                $keys[] = $answer->type->name;
+                $values[] = $answer->value;
+                $ids[] = $answer->id;
+                $scores[] = $answer->score;
+                $similarities[] = $similarity;
+            //}
+
         }
 
-        dd($lev);
-
-        $message = "Bravo! Tu as trouvé le titre.";
+        $score = array_sum($scores);
 
         return response()->json([
-            'message' => $message,
+            'keys' => $keys,
+            'values' => $values,
+            'similarities' => $similarities,
+            'ids' => $ids,
+            'scores' => $scores,
+            'score' => $score,
         ], 200);
 
     }

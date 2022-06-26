@@ -59,5 +59,13 @@ const isUrl = (...urls) => {
         <div :class="isUrl('rooms') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">Rooms</div>
       </Link>
     </div>
+    <div class="mb-4">
+      <Link class="group flex items-center py-3" :href="route('admin.answer_types.index')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" :class="isUrl('answer_types') ? 'fill-white' : 'fill-blinest-400 group-hover:fill-white'" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+        </svg>
+        <div :class="isUrl('answer_types') ? 'text-white' : 'text-blinest-300 group-hover:text-white'">Answer Types</div>
+      </Link>
+    </div>
   </div>
 </template>

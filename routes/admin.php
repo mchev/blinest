@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\PlaylistController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\Admin\AnswerTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,4 +116,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 	// Categories
 	Route::resource('categories', CategoryController::class)
 		->except('show');
+
+	// Answer Types
+	Route::resource('answer_types', AnswerTypeController::class)
+		->except('show');
+
 });

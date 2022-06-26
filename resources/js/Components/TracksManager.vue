@@ -50,7 +50,7 @@
           <td class="border-t">
             <div class="flex flex-col items-start px-6 py-4 text-sm focus:text-blinest-500">
               <div v-for="answer in track.answers" :key="answer.id" class="cursor-pointer whitespace-normal break-words" @click="editAnswer(track, answer)">
-                <span class="font-bold">{{ __(answer.key) }}:</span> {{ answer.value }} ({{ answer.score }}pts)
+                <span class="font-bold">{{ __(answer.type.name) }}:</span> {{ answer.value }} ({{ answer.score }}pts)
               </div>
               <button class="text-gray-400" @click="editAnswer(track)"><Icon name="plus" class="inline-block h-4 w-4 flex-shrink-0 fill-gray-400" />{{ __('Add an answer') }}</button>
             </div>

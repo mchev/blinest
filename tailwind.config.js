@@ -1,6 +1,5 @@
 module.exports = {
   content: ['./resources/**/*.blade.php', './resources/**/*.js', './resources/**/*.vue'],
-  //darkMode: 'media', // or 'media' or 'class' or false
   theme: {
     extend: {
       colors: {

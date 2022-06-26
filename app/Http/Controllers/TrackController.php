@@ -96,16 +96,16 @@ class TrackController extends Controller
 
         // ANSWERS
         $track->answers()->updateOrCreate(
-            ['key' => 'Artist'],
+            ['answer_type_id' => 1], // Artist
             ['value' => Request::get('artist_name')]
         );
         $track->answers()->updateOrCreate(
-            ['key' => 'Title'],
+            ['answer_type_id' => 2], // Title
             ['value' => Request::get('track_name')]
         );
         if(Request::get('album_name')) {
             $track->answers()->updateOrCreate(
-                ['key' => 'Album'],
+                ['answer_type_id' => 3], // Album
                 ['value' => Request::get('album_name')]
             );
         }

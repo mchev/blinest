@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTrackAnswersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateTrackAnswersTable extends Migration
      */
     public function up()
     {
-        Schema::create('track_answers', function (Blueprint $table) {
+        Schema::create('answer_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('track_id')->onDelete('cascade');
-            $table->string('answer_type_id');
-            $table->string('value')->index();
-            $table->decimal('score', 3, 1)->default(0.5);
+            $table->string('name');
+            $table->string('pronoun', 6)->nullable();
+            $table->text('svg_icon')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateTrackAnswersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('track_answers');
+        Schema::dropIfExists('answer_types');
     }
-}
+};

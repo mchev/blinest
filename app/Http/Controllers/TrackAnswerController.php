@@ -17,14 +17,14 @@ class TrackAnswerController extends Controller
     {
         // VALIDATE
         Request::validate([
-            'key' => ['required', 'string', 'max:50'],
+            'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
             'score' => ['required', 'numeric', 'min:0'],
         ]);
 
         // STORE
         $track->answers()->create([
-            'key' => Request::get('key'),
+            'answer_type_id' => Request::get('answer_type_id'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
         ]);
@@ -34,18 +34,18 @@ class TrackAnswerController extends Controller
     }
 
 
-    public function update(Track $track, TrackAnswer $answer)
+    public function update(Track $track, TrackAnswer $trackAnswer)
     {
         // VALIDATE
         Request::validate([
-            'key' => ['required', 'string', 'max:50'],
+            'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
             'score' => ['required', 'numeric', 'min:0'],
         ]);
 
         // UPDATE
-        $answer->update([
-            'key' => Request::get('key'),
+        $trackAnswer->update([
+            'answer_type_id' => Request::get('answer_type_id'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
         ]);

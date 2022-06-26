@@ -6,19 +6,18 @@ import AdminMenu from '@/Components/AdminMenu'
 import FlashMessages from '@/Components/FlashMessages'
 import UserDropdown from '@/Components/UserDropdown'
 import LanguageSwitcher from '@/Components/LanguageSwitcher'
-import DarkmodeSwitcher from '@/Components/DarkmodeSwitcher'
 
 defineProps({
   auth: Object,
 })
 </script>
 <template>
-  <div class="text-gray-700 dark:text-gray-100">
+  <div>
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
-        <div class="md:flex md:flex-shrink-0">
-          <div class="flex items-center justify-between bg-blinest-900 px-6 py-4 md:w-56 md:flex-shrink-0 md:justify-center">
+        <div class="md:flex md:flex-shrink-0 text-white">
+          <div class="flex items-center justify-between px-6 py-4 md:w-56 md:flex-shrink-0 md:justify-center">
             <Link class="mt-1" href="/">
               <logo class="fill-white" width="120" height="28" />
             </Link>
@@ -27,26 +26,25 @@ defineProps({
                 <svg class="h-6 w-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" /></svg>
               </template>
               <template #dropdown>
-                <div class="mt-2 rounded bg-blinest-800 px-8 py-4 shadow-lg">
+                <div class="mt-2 rounded px-8 py-4 shadow-lg">
                   <admin-menu />
                 </div>
               </template>
             </dropdown>
           </div>
-          <div class="md:text-md items center grid w-full grid-cols-2 bg-white p-4 text-sm dark:border-gray-600 dark:bg-gray-900 md:px-12 md:py-0">
+          <div class="md:text-md items center grid w-full grid-cols-2 p-4 text-sm md:px-12 md:py-0">
             <div class="text-md flex items-center justify-end uppercase text-yellow-500">
               {{ __('Administration') }}
             </div>
             <div class="flex items-center justify-end">
               <user-dropdown />
               <language-switcher />
-              <darkmode-switcher />
             </div>
           </div>
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
-          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto bg-blinest-800 p-12 md:block" />
-          <div class="px-4 py-8 dark:bg-gray-600 dark:text-gray-100 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
+          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto p-12 md:block" />
+          <div class="px-4 py-8 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
             <flash-messages />
             <slot />
           </div>

@@ -10,7 +10,7 @@ class TrackAnswer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'key',
+        'answer_type_id',
         'value',
         'score',
     ];
@@ -19,9 +19,18 @@ class TrackAnswer extends Model
         'score' => 'float',
     ];
 
+    protected $with = [
+        'type',
+    ];
+
     public function track()
     {
         return $this->belongsTo(Track::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(AnswerType::class, 'answer_type_id');
     }
     
 }

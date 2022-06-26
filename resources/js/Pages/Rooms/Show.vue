@@ -4,8 +4,11 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/inertia-vue3'
 import Layout from '@/Layouts/AppLayout'
 import Spinner from '@/Components/Spinner.vue'
+
 import Player from './partials/Player.vue'
 import UserInput from './partials/UserInput.vue'
+import Answers from './partials/Answers.vue'
+import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 
 const props = defineProps({
@@ -14,16 +17,23 @@ const props = defineProps({
 
 const channel = `rooms.${props.room.id}`
 const joined = ref(false)
+const users = ref(null)
 const data = ref(null)
 const roundFinished = ref(false)
 
 onMounted(() => {
   Echo.join(channel)
-    .here((users) => {
-      userHasJoinedTheChannel()
+    .here((usersHere) => {
+      console.log(usersHere)
+      users.value = usersHere
+      joining()
     })
-    .joining((user) => {})
-    .leaving((user) => {})
+    .joining((user) => {
+      users.value.push(user)
+    })
+    .leaving((user) => {
+      users.value = users.value.filter(u => (u.id !== user.id))
+    })
     .error((error) => {
       console.error(error)
     })
@@ -33,7 +43,7 @@ onUnmounted(() => {
   Echo.leave(channel)
 })
 
-const userHasJoinedTheChannel = () => {
+const joining = () => {
   axios.get(`/rooms/${props.room.id}/joined`).then(() => {
     joined.value = true
     listenRounds()
@@ -56,6 +66,7 @@ const listenRounds = () => {
   })
 
   Echo.channel(channel).listen('TrackPlayed', (e) => {
+    console.log(e)
     data.value = e.data
   })
 
@@ -82,15 +93,19 @@ const trackStopped = (track) => {
     <Transition name="slide-right">
       <div v-if="joined">
 
-        <article class="prose dark:prose-invert">
+        <article class="prose dark:prose-invert mb-4">
           <h2>{{ room.name }}</h2>
         </article>
 
-        <Player class="my-4" :room="room" :channel="channel" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+        <div class="mb-8">
+          <Player :room="room" :channel="channel" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
+          <UserInput :data="data"/>
+        </div>
 
-        <Transition name="slide-top">
-          <UserInput v-if="data" class="my-4" :data="data"/>
-        </Transition>
+        <div class="flex w-full gap-8">
+          <Answers class="w-full md:w-1/2" :users="users"/>
+          <Ranking class="w-full md:w-1/2" :users="users" :data="data"/>
+        </div>
 
       </div>
     </Transition>

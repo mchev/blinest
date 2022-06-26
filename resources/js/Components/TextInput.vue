@@ -30,7 +30,7 @@ defineEmits(['update:modelValue'])
 </script>
 <template>
   <div :class="$attrs.class">
-    <label v-if="label" class="form-label dark:text-gray-100" :for="id">{{ label }}:</label>
+    <label v-if="label" class="form-label" :for="id">{{ label }}:</label>
     <div class="relative">
       <Icon v-if="prependIcon" :name="prependIcon" class="pointer-events-none absolute top-1/2 left-3 z-10 mr-2 h-5 w-5 flex-shrink-0 -translate-y-1/2 transform fill-gray-500" />
       <input :id="id" ref="input" v-bind="{ ...$attrs, class: null }" class="form-input" :class="{ error: error, 'pl-10': prependIcon, 'pr-10': appendIcon }" :type="type" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />

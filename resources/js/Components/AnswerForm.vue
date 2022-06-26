@@ -76,7 +76,7 @@ export default {
 
   data() {
     return {
-      types: ['Artist', 'Title', 'Album', 'Feat.', 'Movie', 'Show', 'Anime', 'Cartoon', 'Brand', 'Acronym'],
+      types: ['Artist', 'Title', 'Album', 'Année', 'Feat.', 'Movie', 'Show', 'Anime', 'Cartoon', 'Brand', 'Acronym'],
       form: this.$inertia.form({
         key: 'Artist',
         value: '',

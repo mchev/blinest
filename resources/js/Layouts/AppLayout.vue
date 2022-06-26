@@ -14,7 +14,7 @@ defineProps({
 })
 </script>
 <template>
-  <div class="text-gray-700 dark:text-gray-100">
+  <div class="text-gray-700">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
@@ -47,7 +47,7 @@ defineProps({
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <main-menu class="hidden w-auto flex-shrink-0 overflow-y-auto p-12 md:w-56 md:block" />
-          <div class="px-4 py-4 dark:text-gray-100 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
+          <div class="px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
             <flash-messages />
             <slot />
           </div>

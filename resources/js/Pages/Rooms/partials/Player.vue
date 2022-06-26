@@ -65,7 +65,7 @@ const play = () => {
   })
 
   audio.addEventListener('timeupdate', () => {
-    percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
+    percent.value = parseInt((100 / (props.room.track_duration)) * (audio.currentTime + 0.25))
     shaking.value = percent.value > 85 ? true : false
   })
 
@@ -89,13 +89,13 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="flex h-10 w-full items-center overflow-hidden rounded-lg bg-teal-200">
+  <div id="player" class="flex h-10 w-full items-center overflow-hidden rounded-t-lg bg-teal-200">
     <div v-if="error" class="text-red-500">
       {{ error }}
     </div>
-    <div v-else-if="loading" class="flex h-10 w-full animate-pulse items-center justify-center rounded-lg bg-teal-500">
+    <div v-else-if="loading" class="flex h-10 w-full animate-pulse items-center justify-center rounded-t-lg bg-teal-500">
       {{ __('Loading') }}
     </div>
-    <div v-else class="shine h-10 rounded-lg bg-gradient-to-br from-teal-300 to-teal-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    <div v-else class="shine h-10 rounded-t-lg bg-gradient-to-br from-teal-300 to-teal-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
   </div>
 </template>
