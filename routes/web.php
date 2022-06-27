@@ -9,7 +9,7 @@ use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TrackAnswerController;
 use App\Http\Controllers\TrackController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UserController;
 // Socialite
 use App\Services\MusicProviders\AppleMusicService;
 // Music Providers Services
@@ -73,20 +73,20 @@ Route::get('/', [HomeController::class, 'index'])
 
 // Users
 
-Route::get('users/{user}/edit', [UsersController::class, 'edit'])
+Route::get('me', [UserController::class, 'show'])
+    ->name('users.show')
+    ->middleware('auth');
+
+Route::put('me/edit', [UserController::class, 'edit'])
     ->name('users.edit')
     ->middleware('auth');
 
-Route::put('users/{user}', [UsersController::class, 'update'])
+Route::put('me', [UserController::class, 'update'])
     ->name('users.update')
     ->middleware('auth');
 
-Route::delete('users/{user}', [UsersController::class, 'destroy'])
+Route::delete('me/destroy', [UserController::class, 'destroy'])
     ->name('users.destroy')
-    ->middleware('auth');
-
-Route::put('users/{user}/restore', [UsersController::class, 'restore'])
-    ->name('users.restore')
     ->middleware('auth');
 
 // Rooms

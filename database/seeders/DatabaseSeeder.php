@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'John Doe',
             'email' => 'johndoe@example.com',
             'password' => 'secret',
-            'is_admin' => true,
+            'is_administrator' => true,
         ]);
 
         Category::factory()->create([

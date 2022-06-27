@@ -13,8 +13,8 @@ const isUrl = (...urls) => {
 <template>
   <div class="text-neutral-100">
     <div class="mb-6">
-      <Link class="group flex items-center" :href="route('users.edit', $page.props.auth.user)">
-        <div :class="isUrl('users') ? 'font-bold' : 'font-normal'">{{ __('My Profile') }}</div>
+      <Link class="group flex items-center" href="/me">
+        <div :class="isUrl('me') ? 'font-bold' : 'font-normal'">{{ __('My Profile') }}</div>
       </Link>
     </div>
     <div class="mb-6">

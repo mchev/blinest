@@ -80,12 +80,14 @@ class User extends Authenticatable
 
     public function isAdministrator()
     {
-        return $this->is_admin;
+        return $this->is_administrator;
     }
 
-    public function isModerator(Room $room)
+    public function isModerator(Room $room = null)
     {
-        return $room->moderators()->where('user_id', $this->id)->exists();
+        return $room
+            ? $room->moderators()->where('user_id', $this->id)->exists()
+            : Moderator::where('user_id', $this->id)->exists();
     }
 
     public function isRoomOwner(Room $room)
@@ -103,14 +105,6 @@ class User extends Authenticatable
         $query->orderBy('name');
     }
 
-    public function scopeWhereRole($query, $role)
-    {
-        switch ($role) {
-            case 'user': return $query->where('owner', false);
-            case 'owner': return $query->where('owner', true);
-        }
-    }
-
     public function scopeOwnsTeam($query)
     {
         return Team::where('user_id', $query->first()->id)->exists();
@@ -123,8 +117,6 @@ class User extends Authenticatable
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('email', 'like', '%'.$search.'%');
             });
-        })->when($filters['role'] ?? null, function ($query, $role) {
-            $query->whereRole($role);
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();

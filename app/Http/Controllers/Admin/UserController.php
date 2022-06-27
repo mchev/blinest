@@ -23,7 +23,7 @@ class UserController extends AdminController
                 ->through(fn ($user) => [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'is_admin' => $user->isAdmin(),
+                    'is_administrator' => $user->isAdministrator(),
                     'email' => $user->email,
                     'team' => $user->team,
                     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
