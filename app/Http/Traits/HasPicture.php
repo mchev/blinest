@@ -4,7 +4,6 @@ namespace App\Http\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 trait HasPicture
 {

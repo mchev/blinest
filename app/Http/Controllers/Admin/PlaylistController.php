@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\AnswerType;
 use App\Models\Playlist;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PlaylistController extends AdminController
@@ -67,6 +66,7 @@ class PlaylistController extends AdminController
                 'deleted_at' => $playlist->deleted_at,
             ],
             'filters' => Request::all('search'),
+            'answer_types' => AnswerType::all(),
             'tracks' => $playlist->tracks()
                 ->orderBy('track_name')
                 ->filter(Request::only('search'))
@@ -87,7 +87,6 @@ class PlaylistController extends AdminController
 
     public function update(Playlist $playlist)
     {
-
         Request::validate([
             'name' => ['required', 'max:50'],
             'is_public' => ['required', 'boolean'],
@@ -105,7 +104,6 @@ class PlaylistController extends AdminController
 
     public function destroy(Playlist $playlist)
     {
-
         $playlist->delete();
 
         return Redirect::back()->with('success', 'Playlist deleted.');

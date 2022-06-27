@@ -2,24 +2,20 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoundController;
-use App\Http\Controllers\PlaylistController;
-
-use App\Http\Controllers\ImagesController;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\TrackController;
-use App\Http\Controllers\TrackAnswerController;
-use Illuminate\Support\Facades\Route;
-
-// Socialite
 use App\Http\Controllers\SocialController;
-
-// Music Providers Services
+use App\Http\Controllers\TrackAnswerController;
+use App\Http\Controllers\TrackController;
+use App\Http\Controllers\UsersController;
+// Socialite
 use App\Services\MusicProviders\AppleMusicService;
+// Music Providers Services
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,15 +57,13 @@ Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
 Route::get('/callback/{provider}', [SocialController::class, 'callback'])
     ->name('auth.callback');
 
-
 // Language
 
 Route::get('language/{language}', function ($language) {
     Session()->put('locale', $language);
- 
+
     return redirect()->back();
 })->name('language');
-
 
 // Home
 
@@ -94,7 +88,6 @@ Route::delete('users/{user}', [UsersController::class, 'destroy'])
 Route::put('users/{user}/restore', [UsersController::class, 'restore'])
     ->name('users.restore')
     ->middleware('auth');
-
 
 // Rooms
 Route::get('rooms', [RoomController::class, 'index'])
@@ -128,6 +121,9 @@ Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
 Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
     ->name('rounds.track.check');
 
+// Controls
+Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
+    ->name('rounds.stop');
 
 // Playlists
 Route::get('playlists', [PlaylistController::class, 'index'])
@@ -150,7 +146,7 @@ Route::delete('playlists/{playlist}', [PlaylistController::class, 'destroy'])
 
 Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
     ->name('playlists.restore');
-        
+
 // Tracks
 Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])
     ->name('playlists.tracks')
@@ -190,7 +186,6 @@ Route::delete('answers/{answer}', [TrackAnswerController::class, 'destroy'])
 Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
-
 
 // Music providers
 Route::get('providers/deezer/search', [DeezerService::class, 'search'])

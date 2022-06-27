@@ -2,29 +2,23 @@
 
 namespace App\Models;
 
-use App\Events\RoundStarted;
 use App\Events\RoundFinished;
+use App\Events\RoundStarted;
 use App\Events\TrackPlayed;
-use App\Jobs\ProcessTrackPlayed;
 use App\Jobs\ProcessRoundFinished;
-use App\Models\Track;
-
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Jobs\ProcessTrackPlayed;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
-use Carbon\Carbon;
-
-use Illuminate\Support\Facades\Log;
 
 class Round extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'current', 
-        'finished_at'
+        'current',
+        'finished_at',
+        'is_playing',
     ];
 
     protected $casts = [
@@ -35,51 +29,53 @@ class Round extends Model
         'finished_at',
     ];
 
-    protected function playing(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => Redis::get('rooms.'.$this->room->id.'.playing'),
-            set: fn ($value) => Redis::set('rooms.'.$this->room->id.'.playing', $value),
-        )->withoutObjectCaching();
-    }
-
     public function start()
     {
-        if (!empty($this->tracks)) {
+        if (! empty($this->tracks)) {
             broadcast(new RoundStarted($this));
-            $this->playing = 1;
+            $this->update(['is_playing' => true]);
             $this->playNextTrack();
         }
     }
 
     public function stop()
-    { 
-        $this->update(['finished_at' => Carbon::now()]);
-        $this->playing = 0;
+    {
+        $this->update([
+            'is_playing' => false,
+            'finished_at' => Carbon::now(),
+        ]);
         broadcast(new RoundFinished($this));
     }
 
     public function playNextTrack()
     {
+        // The round can be stopped manually
+        if ($this->finished_at) {
+            return;
+        }
 
-        if($this->current === count($this->tracks)) {
+        // All tracks has been played
+        if ($this->current === count($this->tracks)) {
             $this->stop();
             if ($this->room->users_count > 0) {
                 ProcessRoundFinished::dispatch($this->room)
                     ->delay(now()->addSeconds($this->room->pause_beteen_rounds));
             }
-        }
-        else {
 
+            // Else play next track
+        } else {
             $this->increment('current');
 
             $track = Track::find($this->tracks[$this->current - 1]);
             $trackb = [
                 'id' => $track->id,
                 'preview_url' => $track->preview_url,
-                'answers' => $track->answers->map(function($answer) {
-                    return __($answer->type->name);
-                })
+                'answers' => $track->answers->map(function ($answer) {
+                    return [
+                        'id' => $answer->id,
+                        'name' => $answer->type->name,
+                    ];
+                }),
             ];
 
             $data = [
@@ -97,9 +93,12 @@ class Round extends Model
             // Job
             ProcessTrackPlayed::dispatch($this)
                 ->delay(now()->addSeconds($this->room->track_duration));
-
         }
-        
+    }
+
+    public function userScore(User $user)
+    {
+        return floatval($user->scores()->where('round_id', $this->id)->sum('score'));
     }
 
     public function room()
@@ -112,4 +111,8 @@ class Round extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
+    }
 }

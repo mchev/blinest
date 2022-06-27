@@ -89,13 +89,13 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="flex h-10 w-full items-center overflow-hidden rounded-t-lg bg-teal-200">
+  <div id="player" class="flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
     <div v-if="error" class="text-red-500">
       {{ error }}
     </div>
-    <div v-else-if="loading" class="flex h-10 w-full animate-pulse items-center justify-center rounded-t-lg bg-teal-500">
+    <div v-else-if="loading" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
       {{ __('Loading') }}
     </div>
-    <div v-else class="shine h-10 rounded-t-lg bg-gradient-to-br from-teal-300 to-teal-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    <div v-else class="shine h-4 rounded-r-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
   </div>
 </template>

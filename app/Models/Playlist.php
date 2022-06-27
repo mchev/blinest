@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Playlist extends Model
 {
-    
     use HasFactory;
     use SoftDeletes;
 
@@ -22,9 +21,14 @@ class Playlist extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function moderators()
+    {
+        return $this->morphMany(Moderator::class, 'moderable');
+    }
+
     public function scopeIsPublic($query)
     {
-        $query->where('is_public', TRUE);
+        $query->where('is_public', true);
     }
 
     public function tracks()
@@ -47,7 +51,7 @@ class Playlist extends Model
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%');
-            })->orWhereRelation('owner', function($query) use ($search) {
+            })->orWhereRelation('owner', function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
@@ -58,5 +62,4 @@ class Playlist extends Model
             }
         });
     }
-
 }

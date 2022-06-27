@@ -2,27 +2,26 @@
 
 namespace App\Events;
 
-use App\Models\Round;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RoundStarted implements ShouldBroadcast
+class NewScore implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $round;
+    public $score;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Round $round)
+    public function __construct(array $score)
     {
-        $this->round = $round;
+        $this->score = $score;
     }
 
     /**
@@ -32,6 +31,6 @@ class RoundStarted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('rooms.'.$this->round->room->id);
+        return new Channel('rooms.'.$this->score['room_id']);
     }
 }

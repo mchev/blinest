@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Team;
 use App\Models\Category;
 use App\Models\Room;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         $this->call([
             AnswerTypesSeeder::class,
         ]);
@@ -47,12 +46,10 @@ class DatabaseSeeder extends Seeder
         //Category::factory(4)->create();
         Room::factory(50)->create();
 
-        foreach(Team::all() as $team) {
+        foreach (Team::all() as $team) {
             $user = User::find($team->user_id);
             $user->team_id = $team->id;
             $user->update();
-        };
-
+        }
     }
-
 }

@@ -14,11 +14,11 @@ defineProps({
 })
 </script>
 <template>
-  <div class="text-gray-700">
+  <div class="text-neutral-700">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
-        <div class="md:flex md:flex-shrink-0">
+        <div class="md:flex md:flex-shrink-0 text-neutral-100">
           <div class="flex items-center justify-between px-12 py-3 md:w-56 md:flex-shrink-0">
             <Link class="mt-1" href="/">
               <logo class="fill-white" width="120" height="28" />

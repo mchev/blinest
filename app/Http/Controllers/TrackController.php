@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Playlist;
 use App\Models\Track;
+use App\Services\MusicProvidersService as MusicProviders;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Inertia\Inertia;
-
-use App\Services\MusicProvidersService as MusicProviders;
 
 class TrackController extends Controller
 {
-
     public function index(Playlist $playlist)
     {
         return Redirect::back()->with([
@@ -39,11 +36,11 @@ class TrackController extends Controller
         return response()->json([
             'filters' => Request::only('term'),
             'tracks' => (new MusicProviders)->search(Request::get('term'))
-                ->sortBy('track_name')->unique(function($item) {
+                ->sortBy('track_name')->unique(function ($item) {
                     return $item['artist_name'].$item['track_name'];
                 })
                 ->values()
-                ->map(function($track) use($playlist) {
+                ->map(function ($track) use ($playlist) {
                     return [
                         'provider' => $track['provider'],
                         'provider_id' => $track['provider_id'],
@@ -59,7 +56,6 @@ class TrackController extends Controller
                 }),
         ]);
     }
-
 
     public function store(Playlist $playlist)
     {
@@ -103,7 +99,7 @@ class TrackController extends Controller
             ['answer_type_id' => 2], // Title
             ['value' => Request::get('track_name')]
         );
-        if(Request::get('album_name')) {
+        if (Request::get('album_name')) {
             $track->answers()->updateOrCreate(
                 ['answer_type_id' => 3], // Album
                 ['value' => Request::get('album_name')]
@@ -111,9 +107,7 @@ class TrackController extends Controller
         }
 
         return Redirect::back()->with('Track added');
-
     }
-
 
     public function update(Room $room)
     {
@@ -138,7 +132,7 @@ class TrackController extends Controller
     public function destroy(Track $track)
     {
         $track->delete();
+
         return Redirect::back()->with('Track deleted');
     }
-
 }

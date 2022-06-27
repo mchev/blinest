@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Traits\HasPicture;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\URL;
-use App\Http\Traits\HasPicture;
 
 class Team extends Model
 {
@@ -22,7 +21,7 @@ class Team extends Model
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
-    
+
     public function owner()
     {
         return $this->belongsTo(User::class);
@@ -47,5 +46,4 @@ class Team extends Model
             }
         });
     }
-
 }

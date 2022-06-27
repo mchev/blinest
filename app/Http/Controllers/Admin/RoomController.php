@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Room;
 use App\Models\Category;
 use App\Models\Playlist;
-use Illuminate\Support\Facades\App;
+use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -94,7 +92,6 @@ class RoomController extends AdminController
 
     public function update(Room $room)
     {
-
         Request::validate([
             'name' => ['required', 'max:50', Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
@@ -132,7 +129,6 @@ class RoomController extends AdminController
 
     public function destroy(Room $room)
     {
-
         $room->deletePhoto();
         $room->delete();
 
@@ -149,13 +145,14 @@ class RoomController extends AdminController
     public function attachPlaylist(Room $room, Playlist $playlist)
     {
         $room->playlists()->attach($playlist);
+
         return Redirect::back();
     }
 
     public function detachPlaylist(Room $room, Playlist $playlist)
     {
         $room->playlists()->detach($playlist);
+
         return Redirect::back();
     }
-
 }

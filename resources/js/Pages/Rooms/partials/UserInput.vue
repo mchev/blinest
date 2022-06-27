@@ -41,9 +41,9 @@ const check = () => {
     <div class="flex items-center w-full">
       <input ref="input" v-model="text" type="text" class="flex-grow h-14 text-2xl rounded-bl-md border-none text-gray-600 p-2 uppercase focus:outline-none focus:shadow-none focus:ring-0" placeholder="Une idée?" autofocus />
       <button type="submit" class="btn-send h-14">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
           <title>{{ __('Send') }}</title>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
         </svg>
       </button>
     </div>

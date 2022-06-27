@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 const props = defineProps({
     show: {
-        type: Boolean,
+        type: [Boolean, Number],
         default: false,
     },
     maxWidth: {

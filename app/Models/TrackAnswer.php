@@ -32,5 +32,9 @@ class TrackAnswer extends Model
     {
         return $this->belongsTo(AnswerType::class, 'answer_type_id');
     }
-    
+
+    public function scores()
+    {
+        return $this->hasMany(Score::class, 'answer_id');
+    }
 }

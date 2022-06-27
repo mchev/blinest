@@ -13,6 +13,7 @@ import TracksManager from '@/Components/TracksManager'
 const props = defineProps({
   playlist: Object,
   filters: Object,
+  answer_types: Object,
   tracks: Object,
 })
 
@@ -70,7 +71,7 @@ const restore = () => {
     </card>
 
     <card class="my-4">
-      <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks" />
+      <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
     </card>
   </AdminLayout>
 </template>

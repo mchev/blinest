@@ -9,8 +9,8 @@
       </div>
 
       <div class="mt-4 flex flex-wrap">
-        <select-input v-model="form.key" :error="form.errors.key" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Type')">
-          <option v-for="type in types" :value="type">{{ __(type) }}</option>
+        <select-input v-model="form.answer_type_id" :error="form.errors.answer_type_id" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Type')">
+          <option v-for="type in answer_types" :value="type.id">{{ __(type.name) }}</option>
         </select-input>
 
         <text-input v-model="form.score" type="number" step="0.5" min="0" :error="form.errors.score" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Score')" />
@@ -64,6 +64,7 @@ export default {
     closeable: {
       default: true,
     },
+    answer_types: Object,
     answer: {
       default: {
         key: 'Artist',
@@ -76,9 +77,8 @@ export default {
 
   data() {
     return {
-      types: ['Artist', 'Title', 'Album', 'Année', 'Feat.', 'Movie', 'Show', 'Anime', 'Cartoon', 'Brand', 'Acronym'],
       form: this.$inertia.form({
-        key: 'Artist',
+        answer_type_id: 1,
         value: '',
         score: '0.5',
       }),
@@ -89,7 +89,7 @@ export default {
     answer: {
       deep: true,
       handler() {
-        this.form.key = this.answer ? this.answer.key : 'Artist'
+        this.form.answer_type_id = this.answer ? this.answer.answer_type_id : 1
         this.form.value = this.answer ? this.answer.value : ''
         this.form.score = this.answer ? this.answer.score : '0.5'
       },

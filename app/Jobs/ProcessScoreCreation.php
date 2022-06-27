@@ -2,27 +2,30 @@
 
 namespace App\Jobs;
 
-use App\Models\Round;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessTrackPlayed implements ShouldQueue
+class ProcessScoreCreation implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $round;
+    public $user;
+
+    public $score;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Round $round)
+    public function __construct(User $user, array $score)
     {
-        $this->round = $round;
+        $this->user = $user;
+        $this->score = $score;
     }
 
     /**
@@ -32,12 +35,6 @@ class ProcessTrackPlayed implements ShouldQueue
      */
     public function handle()
     {
-
-        // Broadcast the TrackEnded event
-        broadcast(new \App\Events\TrackEnded($this->round));
-
-        // Pause between next tracks
-        ProcessTrackEnded::dispatch($this->round)
-            ->delay(now()->addSeconds($this->round->room->pause_beteen_tracks));
+        $this->user->scores()->create($this->score);
     }
 }

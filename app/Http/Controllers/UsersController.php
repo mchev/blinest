@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
@@ -42,14 +41,14 @@ class UsersController extends Controller
         Request::validate([
             'name' => ['required', 'max:50', Rule::unique('users')],
             'email' => ['required', 'max:255', 'email', Rule::unique('users')],
-            'password' => [ 'required', 
-                            'string', 
-                            Password::min(8)
-                                ->mixedCase()
-                                ->numbers()
-                                ->symbols()
-                                ->uncompromised(),
-                            'confirmed'
+            'password' => ['required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed',
             ],
         ]);
 

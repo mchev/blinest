@@ -1,15 +1,16 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import Card from '@/Components/Card.vue'
 
 const props = defineProps({
   users: Array,
+  channel: String,
   data: Object,
 })
 
 const me = usePage().props.value.auth.user
-console.log(me)
+const scores = ref([])
 const userList = ref(props?.users)
 
 watch(
@@ -18,6 +19,26 @@ watch(
     userList.value = value
   },
 )
+
+onMounted(() => {
+  Echo.channel(props.channel).listen('NewScore', (e) => {
+    console.log(e)
+    scores.value.push(e.score)
+
+    let index = userList.value.findIndex(x => x.id === e.score.user_id);
+
+    userList.value[index].score.total = e.score.total
+    userList.value[index].score.points = e.score.points
+    userList.value[index].score.answers.push(...e.score.answers)
+
+    console.log(userList.value)
+  })
+})
+
+onUnmounted(() => {
+  Echo.leave(props.channel)
+})
+
 </script>
 <template>
   <Card>
@@ -25,15 +46,22 @@ watch(
       <h3 class="text-xl font-bold">Classement</h3>
     </template>
 
-    <ul>
-      <li v-for="user in userList" :key="user.id" class="border-b px-2 py-4" :class="{ 'bg-neutral-200': me.id === user.id }">
-        {{ user.name }}
-        <div class="flex items-center">
-          <span v-if="data" v-for="answer in data.track.answers" class="mr-1 rounded bg-neutral-400 p-1 text-[10px] uppercase text-white">
-            {{ __(answer) }}
-          </span>
+    <div class="overflow-y-scroll">
+      <transition-group name="flip-list" tag="ul">
+        <li v-for="user in userList" :key="user.id" class="flex justify-between border-b px-2 py-4" :class="{ 'bg-neutral-200': me.id === user.id }">
+          <div>
+          {{ user.name }}
+          <div class="flex items-center">
+            <span v-if="data" v-for="answer in data.track.answers" class="mr-1 rounded px-1 text-[10px] font-bold uppercase text-neutral-500 text-white" :class="user?.score?.answers.includes(answer.id) ? 'bg-purple-300' : 'bg-neutral-300'">
+              {{ __(answer.name) }}
+            </span>
+          </div>
         </div>
-      </li>
-    </ul>
+        <div>
+          {{ user?.score ? user.score.total : 0 }} <sup>PTS</sup>
+        </div>
+        </li>
+      </transition-group>
+    </div>
   </Card>
 </template>

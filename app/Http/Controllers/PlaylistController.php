@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Playlist;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PlaylistController extends Controller
@@ -88,7 +86,6 @@ class PlaylistController extends Controller
 
     public function update(Playlist $playlist)
     {
-
         Request::validate([
             'name' => ['required', 'max:50'],
             'is_public' => ['required', 'boolean'],
@@ -106,7 +103,6 @@ class PlaylistController extends Controller
 
     public function destroy(Playlist $playlist)
     {
-
         $playlist->delete();
 
         return Redirect::back()->with('success', 'Playlist deleted.');

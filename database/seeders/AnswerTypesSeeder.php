@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\AnswerType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class AnswerTypesSeeder extends Seeder
@@ -70,7 +69,5 @@ class AnswerTypesSeeder extends Seeder
             'pronoun' => 'the',
             'svg_icon' => '',
         ]);
-
     }
-
 }

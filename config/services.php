@@ -39,7 +39,7 @@ return [
     'spotify' => [
         'client_id' => env('SPOTIFY_KEY'),
         'client_secret' => env('SPOTIFY_SECRET'),
-        'redirect' => env('SPOTIFY_REDIRECT_URI')
+        'redirect' => env('SPOTIFY_REDIRECT_URI'),
     ],
 
     'discord' => [
@@ -47,7 +47,7 @@ return [
         'client_secret' => env('DISCORD_APP_SECRET'),
         'redirect' => env('DISCORD_REDIRECT_URI'),
         'token' => env('DISCORD_BOT_TOKEN'),
-        'webhook' => env('DISCORD_WEBHOOK_URL')
+        'webhook' => env('DISCORD_WEBHOOK_URL'),
     ],
 
 ];

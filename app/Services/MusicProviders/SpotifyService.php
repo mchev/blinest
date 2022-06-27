@@ -2,33 +2,28 @@
 
 namespace App\Services\MusicProviders;
 
-use Illuminate\Support\Facades\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 class SpotifyService
 {
-
     protected $api;
 
     public function __construct()
     {
-
         $this->api = new \SpotifyWebAPI\SpotifyWebAPI();
-        $session = new \SpotifyWebAPI\Session( config('services.spotify.client_id'), config('services.spotify.client_secret') );
+        $session = new \SpotifyWebAPI\Session(config('services.spotify.client_id'), config('services.spotify.client_secret'));
         $session->requestCredentialsToken();
         $this->api->setAccessToken($session->getAccessToken());
-
     }
-
 
     public function search()
     {
-
         $term = Request::get('term');
 
         $response = $this->api->search($term, 'track', ['market' => 'FR']);
         $results = collect($response->tracks->items);
-        
+
         $tracks = ($results) ? $results->where('is_playable')->where('preview_url')->map(function ($track) {
             return [
                 'provider' => 'spotify',
@@ -46,42 +41,33 @@ class SpotifyService
         return $tracks;
     }
 
-
     public function addPlaylist(Request $request)
     {
-
         $results = $this->api->getPlaylist($request->q);
+
         return response()->json($results);
-
     }
-
 
     public function storePlaylist(Request $request)
     {
-
         $game = Game::find($request->params['game_id']);
 
         if (auth()->user()->isModerator($game) || auth()->user()->id == $game->user_id) {
-
-
             $tracks = [];
             $offset = 0;
             $run = true;
-            $provider = "spotify";
+            $provider = 'spotify';
             $user_id = auth()->user()->id;
             $game_id = $game->id;
 
             $api = new \SpotifyWebAPI\SpotifyWebAPI();
             $api->setAccessToken($this->spotAuth());
 
-            while($run) {
-
+            while ($run) {
                 $playlistTracks = $api->getPlaylistTracks($request->playlist_id, ['offset' => $offset]);
 
                 foreach ($playlistTracks->items as $track) {
-
-                    if($track->track->preview_url) {
-
+                    if ($track->track->preview_url) {
                         $provider_item_id = $track->track->id;
                         $artist_name = $track->track->artists[0]->name;
                         $track_name = $track->track->name;
@@ -89,28 +75,21 @@ class SpotifyService
                         $preview_url = $track->track->preview_url;
 
                         StoreTrack::dispatch($user_id, $game_id, $provider_item_id, $provider, $artist_name, $track_name, $artwork_url, $preview_url);
-
                     }
-
                 }
 
-
-                if($playlistTracks->next) {
-                    $offset+= 100;
+                if ($playlistTracks->next) {
+                    $offset += 100;
                 } else {
                     $run = false;
+
                     return response()->json(['success' =>  true]);
                 }
-
             }
 
             return response()->json(['success' =>  false]);
-
         } else {
-
-            return response()->json("Utilisateur non autorisé.");
+            return response()->json('Utilisateur non autorisé.');
         }
-
     }
-
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Category;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
@@ -69,8 +68,8 @@ class CategoryController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
-                'rooms_count' => $category->rooms()->count()
-            ]
+                'rooms_count' => $category->rooms()->count(),
+            ],
         ]);
     }
 

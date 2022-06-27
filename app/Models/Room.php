@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Http\Traits\HasPicture;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
-use App\Http\Traits\HasPicture;
 
 class Room extends Model
 {
-    
     use HasFactory;
     use SoftDeletes;
     use HasPicture;
@@ -30,31 +28,39 @@ class Room extends Model
 
     protected function getUsersCountAttribute()
     {
-        $response = pusher()->get( '/channels/presence-rooms.'.$this->id.'/users' );
+        $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
+
         return count($response->users);
     }
 
     protected function getCurrentTrackIndexAttribute()
     {
         if ($this->rounds()->exists()) {
-            if ($this->rounds()->latest()->first()->current != count($this->rounds()->latest()->first()->tracks))
+            if ($this->rounds()->latest()->first()->current != count($this->rounds()->latest()->first()->tracks)) {
                 return $this->rounds()->latest()->first()->current;
+            }
         }
+
         return 0;
     }
 
     public function scopeIsPlaying()
     {
-        return Redis::exists('rooms.'.$this->id.'.playing') 
-            ? Redis::get('rooms.'.$this->id.'.playing') 
+        return Redis::exists('rooms.'.$this->id.'.playing')
+            ? Redis::get('rooms.'.$this->id.'.playing')
             : false;
+    }
+
+    public function currentRound()
+    {
+        return $this->rounds()->latest()->whereNull('finished_at');
     }
 
     public function startRound()
     {
         $round = $this->rounds()->create([
             // When using symphony process we loose auth and guest could also launch rounds
-            'user_id' => Auth::check() ? Auth::user()->id : null, 
+            'user_id' => Auth::check() ? Auth::user()->id : null,
             'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->pluck('id'),
         ]);
         $round->start();
@@ -63,6 +69,11 @@ class Room extends Model
     public function owner()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function moderators()
+    {
+        return $this->morphMany(Moderator::class, 'moderable');
     }
 
     public function category()
@@ -83,11 +94,6 @@ class Room extends Model
     public function rounds()
     {
         return $this->hasMany(Round::class);
-    }
-
-    public function moderators()
-    {
-        return $this->hasMany(Moderator::class);
     }
 
     public function scopeIsPublic($query)

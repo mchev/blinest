@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends AdminController
@@ -16,5 +15,4 @@ class DashboardController extends AdminController
     {
         return Inertia::render('Admin/Dashboard');
     }
-
 }

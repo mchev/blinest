@@ -78,7 +78,7 @@
 
     <pagination class="p-8" :links="tracks.links" />
 
-    <answer-form :answer="selectedAnswer" :show="editingAnswer" max-width="md" @close="closeModal" @update="form.update" />
+    <answer-form :answer="selectedAnswer" :answer_types="answer_types" :show="editingAnswer" max-width="md" @close="closeModal" @update="form.update" />
   </div>
 </template>
 
@@ -115,6 +115,10 @@ export default {
   props: {
     playlist: {
       type: Object,
+    },
+    answer_types: {
+      type: Object,
+      default: {},
     },
     tracks: {
       type: Object,

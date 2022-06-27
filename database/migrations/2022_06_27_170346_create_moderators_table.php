@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rounds', function (Blueprint $table) {
+        Schema::create('moderators', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id');
-            $table->foreignId('user_id')->nullable();
-            $table->json('tracks');
-            $table->integer('current')->default(0);
-            $table->boolean('is_playing')->default(0);
-            $table->timestamp('finished_at')->nullable();
+            $table->foreignId('user_id');
+            $table->morphs('moderable');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rounds');
+        Schema::dropIfExists('moderators');
     }
 };

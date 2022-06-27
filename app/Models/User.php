@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Http\Traits\HasPicture;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
-use App\Http\Traits\HasPicture;
 
 class User extends Authenticatable
 {
@@ -68,24 +68,34 @@ class User extends Authenticatable
         return $this->hasMany(Room::class);
     }
 
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
     }
 
+    public function isAdministrator()
+    {
+        return $this->is_admin;
+    }
+
+    public function isModerator(Room $room)
+    {
+        return $room->moderators()->where('user_id', $this->id)->exists();
+    }
+
     public function isRoomOwner(Room $room)
     {
-        return $this->user_id === $room->user_id;
+        return $this->id === $room->owner->id;
     }
 
     public function hasRoomControl(Room $room)
     {
-        return $this->isRoomOwner($room);
-    }
-
-    public function isAdmin()
-    {
-        return $this->is_admin;
+        return $this->isRoomOwner($room) || $this->isModerator($room) || $this->isAdministrator();
     }
 
     public function scopeOrderByName($query)

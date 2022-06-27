@@ -13,7 +13,7 @@ class AnswerType extends Model
     {
         return $this->hasMany(Answer::class);
     }
-    
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
@@ -22,5 +22,4 @@ class AnswerType extends Model
             });
         });
     }
-    
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\AnswerType;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;

@@ -9,6 +9,7 @@ import Player from './partials/Player.vue'
 import UserInput from './partials/UserInput.vue'
 import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
+import Controls from './partials/Controls.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 
 const props = defineProps({
@@ -16,6 +17,7 @@ const props = defineProps({
 })
 
 const channel = `rooms.${props.room.id}`
+const round = ref(null)
 const joined = ref(false)
 const users = ref(null)
 const data = ref(null)
@@ -32,7 +34,7 @@ onMounted(() => {
       users.value.push(user)
     })
     .leaving((user) => {
-      users.value = users.value.filter(u => (u.id !== user.id))
+      users.value = users.value.filter((u) => u.id !== user.id)
     })
     .error((error) => {
       console.error(error)
@@ -51,35 +53,21 @@ const joining = () => {
 }
 
 const listenRounds = () => {
-  Echo.channel(channel).listen('RoundStarted', (round) => {
+  Echo.channel(channel).listen('RoundStarted', (e) => {
     console.warn('Round started')
-    round.value = round
+    round.value = e.round
     roundFinished.value = false
   })
 
-  Echo.channel(channel).listen('RoundFinished', (round) => {
+  Echo.channel(channel).listen('RoundFinished', (e) => {
     console.warn('Round finished')
     round.value = null
     roundFinished.value = true
-    // Get scores
-    // Wait for new round
   })
 
   Echo.channel(channel).listen('TrackPlayed', (e) => {
-    console.log(e)
     data.value = e.data
   })
-
-}
-
-const trackEnded = (track) => {
-  // console.log('Track ended.')
-}
-const trackPaused = (track) => {
-  // console.log('Track paused.')
-}
-const trackStopped = (track) => {
-  // console.log('Track stopped.')
 }
 </script>
 <template>
@@ -92,25 +80,24 @@ const trackStopped = (track) => {
 
     <Transition name="slide-right">
       <div v-if="joined">
-
-        <article class="prose dark:prose-invert mb-4">
+        <article class="prose mb-4 dark:prose-invert">
           <h2>{{ room.name }}</h2>
         </article>
 
         <div class="mb-8">
-          <Player :room="room" :channel="channel" @track:ended="trackEnded" @track:paused="trackPaused" @track:stopped="trackStopped" />
-          <UserInput :data="data"/>
+          <Player :room="room" :channel="channel" />
+          <UserInput :data="data" />
         </div>
 
-        <div class="flex w-full gap-8">
-          <Answers class="w-full md:w-1/2" :users="users"/>
-          <Ranking class="w-full md:w-1/2" :users="users" :data="data"/>
+        <div class="grid md:grid-cols-2 md:gap-8">
+          <Answers class="mb-8" :users="users" :channel="channel" />
+          <Ranking class="mb-8" :users="users" :channel="channel" :data="data" />
         </div>
 
+        <Controls :channel="channel" :room="room" :round="round"/>
       </div>
     </Transition>
 
-    <FinishedRoundModal :show="roundFinished" @close="roundFinished = false"/>
-
+    <FinishedRoundModal :show="roundFinished" @close="roundFinished = false" />
   </Layout>
 </template>

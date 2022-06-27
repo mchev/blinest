@@ -19,6 +19,11 @@ class Track extends Model
         return $this->hasMany(TrackAnswer::class);
     }
 
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
@@ -27,5 +32,4 @@ class Track extends Model
             });
         });
     }
-
 }

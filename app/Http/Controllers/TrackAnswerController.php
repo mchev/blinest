@@ -6,13 +6,9 @@ use App\Models\Track;
 use App\Models\TrackAnswer;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Inertia\Inertia;
-
-use App\Services\MusicProvidersService as MusicProviders;
 
 class TrackAnswerController extends Controller
 {
-
     public function store(Track $track)
     {
         // VALIDATE
@@ -30,9 +26,7 @@ class TrackAnswerController extends Controller
         ]);
 
         return Redirect::back();
-
     }
-
 
     public function update(Track $track, TrackAnswer $trackAnswer)
     {
@@ -56,7 +50,7 @@ class TrackAnswerController extends Controller
     public function destroy(TrackAnswer $answer)
     {
         $answer->delete();
+
         return Redirect::back();
     }
-
 }

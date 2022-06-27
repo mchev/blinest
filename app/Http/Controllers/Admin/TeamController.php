@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Team;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -27,8 +25,9 @@ class TeamController extends AdminController
 
     public function create()
     {
-        if(Auth::user()->ownsTeam())
+        if (Auth::user()->ownsTeam()) {
             return redirect()->back()->with('error', 'You already own a team.');
+        }
 
         return Inertia::render('Admin/Teams/Create');
     }
@@ -66,7 +65,6 @@ class TeamController extends AdminController
 
     public function update(Team $team)
     {
-
         Request::validate([
             'name' => ['required', 'max:50', Rule::unique('teams')->ignore($team->id)->whereNull('deleted_at')],
             'user_id' => ['required', 'integer', 'exists:users,id'],
@@ -86,12 +84,14 @@ class TeamController extends AdminController
     {
         $team->deletePhoto();
         $team->delete();
+
         return Redirect::back()->with('success', 'Team deleted.');
     }
 
     public function restore(Team $team)
     {
         $team->restore();
+
         return Redirect::back()->with('success', 'Team restored.');
     }
 }
