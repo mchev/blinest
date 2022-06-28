@@ -27,7 +27,7 @@ class RoomController extends Controller
 
     public function start(Room $room)
     {
-        (Auth::user()->hasRoomControl())
+        (Auth::user()->hasRoomControl($room))
             ? $room->startRound()
             : abort(403);
     }

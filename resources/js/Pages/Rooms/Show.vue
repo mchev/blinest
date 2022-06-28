@@ -86,7 +86,7 @@ const listenRounds = () => {
 
         <div class="mb-8">
           <Player :room="room" :channel="channel" />
-          <UserInput :data="data" />
+          <UserInput :data="data" :channel="channel" />
         </div>
 
         <div class="grid md:grid-cols-2 md:gap-8">

@@ -20,7 +20,7 @@
             <option :value="0">Yes</option>
             <option :value="1">No</option>
           </select-input>
-          <select-input v-model="form.is_admin" :error="form.errors.is_admin" class="w-full pb-8 pr-6 lg:w-1/2" label="Admin">
+          <select-input v-model="form.is_administrator" :error="form.errors.is_administrator" class="w-full pb-8 pr-6 lg:w-1/2" label="Admin">
             <option :value="0">No</option>
             <option :value="1">Yes</option>
           </select-input>
@@ -69,7 +69,7 @@ export default {
         email: this.user.email,
         password: '',
         team_id: this.user.team_id,
-        is_admin: this.user.is_admin,
+        is_administrator: this.user.is_administrator,
         photo: null,
       }),
     }

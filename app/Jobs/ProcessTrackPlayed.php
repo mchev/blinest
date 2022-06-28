@@ -32,12 +32,15 @@ class ProcessTrackPlayed implements ShouldQueue
      */
     public function handle()
     {
+        if ($this->round->isPlaying()) {
 
-        // Broadcast the TrackEnded event
-        broadcast(new \App\Events\TrackEnded($this->round));
+            // Broadcast the TrackEnded event
+            broadcast(new \App\Events\TrackEnded($this->round));
 
-        // Pause between next tracks
-        ProcessTrackEnded::dispatch($this->round)
-            ->delay(now()->addSeconds($this->round->room->pause_beteen_tracks));
+            // Pause between next tracks
+            $this->round->load('room');
+            ProcessTrackEnded::dispatch($this->round)
+                ->delay(now()->addSeconds($this->round->room->pause_between_tracks));
+        }
     }
 }

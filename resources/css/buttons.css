@@ -1,10 +1,13 @@
 .btn-primary {
   @apply flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium text-xs uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out;
 }
-
 .btn-danger {
   @apply px-6 py-3 rounded bg-red-500 text-white text-sm leading-4 font-bold whitespace-nowrap hover:bg-red-400 focus:bg-red-400;
 }
+.btn-secondary {
+  @apply flex items-center px-6 py-2.5 bg-purple-600 text-white font-medium text-xs uppercase rounded-full shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out;
+}
+
 
 .btn-send {
   @apply flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium text-xs rounded-br-md uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out;

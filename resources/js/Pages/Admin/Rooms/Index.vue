@@ -1,6 +1,40 @@
+<script setup>
+import { watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import AdminLayout from '@/Layouts/AdminLayout'
+import Icon from '@/Components/Icon'
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
+import Pagination from '@/Components/Pagination'
+import SearchFilter from '@/Components/SearchFilter'
+import Card from '@/Components/Card'
+
+const props = defineProps({
+  filters: Object,
+  rooms: Object,
+})
+
+const form = useForm({
+  search: props.filters.search,
+  trashed: props.filters.trashed,
+})
+
+watch(
+  form,
+  throttle(() => {
+    Inertia.get('/admin/rooms', pickBy(form), { remember: 'forget', preserveState: true })
+  }, 150),
+  { deep: true },
+)
+
+const reset = () => {
+  form.reset()
+}
+</script>
 <template>
-  <div>
     <Head title="Rooms" />
+    <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">Rooms</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
@@ -16,7 +50,8 @@
         <span class="hidden md:inline">&nbsp;Room</span>
       </Link>
     </div>
-    <card>
+    <Card>
+      <div class="overflow-x-auto">
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
@@ -48,56 +83,8 @@
           <td class="border-t px-6 py-4" colspan="4">{{ __('No rooms found.') }}</td>
         </tr>
       </table>
-      <Pagination :links="rooms.links" />
-    </card>
-  </div>
+    </div>
+    </Card>
+        <Pagination :links="rooms.links" />
+</AdminLayout>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Components/Icon'
-import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Layouts/AdminLayout'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Components/SearchFilter'
-import Card from '@/Components/Card'
-import Pagination from '@/Components/Pagination'
-
-export default {
-  components: {
-    Head,
-    Icon,
-    Link,
-    SearchFilter,
-    Card,
-    Pagination,
-  },
-  layout: AdminLayout,
-  props: {
-    filters: Object,
-    rooms: Array,
-  },
-  data() {
-    return {
-      form: {
-        search: this.filters.search,
-        trashed: this.filters.trashed,
-      },
-    }
-  },
-  watch: {
-    form: {
-      deep: true,
-      handler: throttle(function () {
-        this.$inertia.get(route('admin.rooms'), pickBy(this.form), { preserveState: true })
-      }, 150),
-    },
-  },
-  methods: {
-    reset() {
-      this.form = mapValues(this.form, () => null)
-    },
-  },
-}
-</script>

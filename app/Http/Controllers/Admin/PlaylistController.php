@@ -7,7 +7,6 @@ use App\Models\Playlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class PlaylistController extends AdminController
@@ -23,10 +22,16 @@ class PlaylistController extends AdminController
                 ->through(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
-                    'owner' => $playlist->owner->name,
-                    'is_public' => $playlist->isPublic(),
+                    'owner' => [
+                        'id' => $playlist->owner->id,
+                        'name' => $playlist->owner->name,
+                    ],
+                    'moderators' => $playlist->moderators->map(fn ($moderator) => [
+                        'id' => $moderator->id,
+                        'name' => $moderator->name,
+                    ]),
                     'tracks_count' => $playlist->tracks()->count(),
-                    'photo' => $playlist->photo_path ? URL::route('image', ['path' => $playlist->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                    'is_public' => $playlist->isPublic(),
                     'deleted_at' => $playlist->deleted_at,
                 ]),
         ]);
@@ -42,13 +47,11 @@ class PlaylistController extends AdminController
         Request::validate([
             'name' => ['required', 'max:50'],
             'is_public' => ['required', 'boolean'],
-            'photo' => ['nullable', 'image'],
         ]);
 
         $playlist = Auth::user()->playlists()->create([
             'name' => Request::get('name'),
             'is_public' => Request::get('is_public'),
-            'photo_path' => Request::file('photo') ? Request::file('photo')->store('playlists') : null,
         ]);
 
         return Redirect::route('admin.playlists.edit', $playlist)->with('success', 'Playlist created.');
@@ -62,7 +65,6 @@ class PlaylistController extends AdminController
                 'name' => $playlist->name,
                 'is_public' => $playlist->is_public,
                 'user_id' => $playlist->user_id,
-                'photo' => $playlist->photo_path ? URL::route('image', ['path' => $playlist->photo_path, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
                 'deleted_at' => $playlist->deleted_at,
             ],
             'filters' => Request::all('search'),
@@ -90,14 +92,9 @@ class PlaylistController extends AdminController
         Request::validate([
             'name' => ['required', 'max:50'],
             'is_public' => ['required', 'boolean'],
-            'photo' => ['nullable', 'image'],
         ]);
 
         $playlist->update(Request::only('name', 'is_public'));
-
-        if (Request::file('photo')) {
-            $playlist->update(['photo_path' => Request::file('photo')->store('playlists')]);
-        }
 
         return Redirect::back()->with('success', 'Playlist updated.');
     }

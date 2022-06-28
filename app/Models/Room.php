@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
 
 class Room extends Model
 {
@@ -44,16 +43,14 @@ class Room extends Model
         return 0;
     }
 
-    public function scopeIsPlaying()
-    {
-        return Redis::exists('rooms.'.$this->id.'.playing')
-            ? Redis::get('rooms.'.$this->id.'.playing')
-            : false;
-    }
-
     public function currentRound()
     {
-        return $this->rounds()->latest()->whereNull('finished_at');
+        return $this->rounds()->latest()->whereNull('finished_at')->where('is_playing', true);
+    }
+
+    public function scopeIsPlaying()
+    {
+        return $this->currentRound()->exists();
     }
 
     public function startRound()
@@ -61,7 +58,7 @@ class Room extends Model
         $round = $this->rounds()->create([
             // When using symphony process we loose auth and guest could also launch rounds
             'user_id' => Auth::check() ? Auth::user()->id : null,
-            'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->pluck('id'),
+            'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->distinct()->pluck('id'),
         ]);
         $round->start();
     }

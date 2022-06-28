@@ -12,10 +12,17 @@ use Illuminate\Support\Facades\Request;
 
 class RoundController extends Controller
 {
-    public function pause(Room $room, Round $round)
+    public function pause(Round $round)
     {
         (Auth::user()->hasRoomControl($round->room))
-            ? $room->pauseRound()
+            ? $round->pause()
+            : abort(403, 'Unauthorized action.');
+    }
+
+    public function resume(Round $round)
+    {
+        (Auth::user()->hasRoomControl($round->room))
+            ? $round->resume()
             : abort(403, 'Unauthorized action.');
     }
 
@@ -38,8 +45,8 @@ class RoundController extends Controller
 
             $total = $round->userScore(Auth::user());
             $input = sanitizeString(Request::input('text'));
-            $answers = [];
             $points = 0;
+            $good_answers = [];
 
             foreach ($track->answers as $answer) {
                 $value = sanitizeString($answer->value);
@@ -50,18 +57,19 @@ class RoundController extends Controller
                     $similarity = levenshtein($input, $value);
                 }
 
-                $response[] = [
-                    'type' => $answer->type->name,
-                    'value' => $answer->value,
-                    'similarity' => $similarity,
-                    'compared' => $input.' => '.$value,
-                    'score' => $answer->score,
-                    'placeholder' => '',
-                    'message' => '',
-                ];
+                // $response[] = [
+                //     'type' => $answer->type->name,
+                //     'value' => $answer->value,
+                //     'similarity' => $similarity,
+                //     'compared' => $input.' => '.$value,
+                //     'score' => $answer->score,
+                //     'placeholder' => '',
+                //     'message' => '',
+                // ];
 
-                if ($similarity < 4) {
+                if ($similarity < 3) {
                     $answers[] = $answer->id;
+                    $good_answers[] = $answer;
                     $points += $answer->score;
 
                     // Broadcast score
@@ -85,8 +93,10 @@ class RoundController extends Controller
 
             // Generate message
 
-            // Return message to user ?
-            //return response()->json($response, 200);
+            // Return message to user
+            return response()->json([
+                'good_answers' => $good_answers,
+            ], 200);
         }
     }
 }

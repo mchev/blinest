@@ -4,7 +4,7 @@
     <teleport v-if="show" to="#dropdown">
       <div>
         <div class="fixed top-0 right-0 left-0 bottom-0 z-[99998] bg-black opacity-20" @click="show = false" />
-        <div ref="dropdown" class="dark:highlight-white/5 absolute z-[99999] overflow-hidden rounded-lg bg-white p-2 text-sm font-semibold text-gray-700 shadow-lg ring-1 ring-gray-900/10 dark:bg-gray-800 dark:text-gray-300 dark:ring-0" @click.stop="show = !autoClose">
+        <div ref="dropdown" class="dark:highlight-white/5 absolute z-[99999] overflow-hidden rounded-lg p-2 text-sm font-semibold shadow-lg ring-1 bg-neutral-800 text-neutral-100" @click.stop="show = !autoClose">
           <slot name="dropdown" />
         </div>
       </div>

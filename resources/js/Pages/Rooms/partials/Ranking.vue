@@ -22,16 +22,14 @@ watch(
 
 onMounted(() => {
   Echo.channel(props.channel).listen('NewScore', (e) => {
-    console.log(e)
     scores.value.push(e.score)
-
     let index = userList.value.findIndex(x => x.id === e.score.user_id);
-
     userList.value[index].score.total = e.score.total
     userList.value[index].score.points = e.score.points
     userList.value[index].score.answers.push(...e.score.answers)
-
-    console.log(userList.value)
+  })
+  Echo.channel(props.channel).listen('TrackPlayed', () => {
+    userList.value.find(x => x.id === me.id).score.answers = []
   })
 })
 

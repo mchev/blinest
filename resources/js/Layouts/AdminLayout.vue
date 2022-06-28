@@ -12,7 +12,7 @@ defineProps({
 })
 </script>
 <template>
-  <div>
+  <div class="text-neutral-700">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">

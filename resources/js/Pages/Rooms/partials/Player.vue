@@ -23,6 +23,12 @@ onMounted(() => {
     console.log('Track ended')
     stop()
   })
+  Echo.channel(props.channel).listen('TrackPaused', () => {
+    pause()
+  })
+  Echo.channel(props.channel).listen('TrackResumed', () => {
+    resume()
+  })
 })
 
 onUnmounted(() => {
@@ -51,9 +57,6 @@ const play = () => {
 
   audio.addEventListener('canplaythrough', () => {
     loading.value = false
-  })
-
-  audio.addEventListener('canplaythrough', () => {
     let playPromise = audio.play()
 
     // If a user gesture is needed (https://developer.chrome.com/blog/play-returns-promise/)
@@ -80,6 +83,10 @@ const play = () => {
 const pause = () => {
   audio.pause()
   emit('track:paused', props.track)
+}
+
+const resume = () => {
+  audio.play()
 }
 
 const stop = () => {

@@ -1,3 +1,107 @@
+<script setup>
+import { ref, watch } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import Icon from '@/Components/Icon.vue'
+import TextInput from '@/Components/TextInput.vue'
+import SelectInput from '@/Components/SelectInput.vue'
+import Pagination from '@/Components/Pagination.vue'
+import AnswerForm from '@/Components/AnswerForm.vue'
+import MiniPlayer from '@/Components/MiniPlayer.vue'
+import Dropdown from '@/Components/Dropdown.vue'
+import pickBy from 'lodash/pickBy'
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
+
+const props = defineProps({
+  playlist: Object,
+  answer_types: Object,
+  tracks: Object,
+  filters: {
+    type: Object,
+    default: {
+      search: '',
+    },
+  },
+})
+
+const form = useForm({
+  search: props.filters.search,
+})
+const selectedAnswer = ref(null)
+const creatingAnswer = ref(false)
+const editingAnswer = ref(false)
+const search_online = ref('')
+const search = ref('')
+const loading = ref(false)
+const results = ref([])
+
+watch(
+  search_online,
+  debounce(() => {
+    fecthMusicProviders()
+  }, 300)
+)
+
+watch(
+  form,
+  throttle(() => {
+    Inertia.get(route('admin.playlists.edit', props.playlist), pickBy(form), {
+      preserveScroll: true,
+      preserveState: true,
+    })
+  }, 150),
+  { deep: true },
+)
+
+const fecthMusicProviders = () => {
+  if (search_online.value.length > 1) {
+    loading.value = true
+    axios.get(route('tracks.search', props.playlist.id) + '?term=' + search_online.value).then((response) => {
+      results.value = response.data.tracks
+      loading.value = false
+    })
+  } else {
+    results.value = []
+  }
+}
+
+const createAnswer = (track) => {
+  creatingAnswer.value = track.id
+}
+
+const editAnswer = (track, answer = null) => {
+  selectedAnswer.value = answer
+  editingAnswer.value = track.id
+}
+
+const closeModal = () => {
+  creatingAnswer.value = false
+  editingAnswer.value = false
+}
+
+const addTrack = (track) => {
+  Inertia.post(route('playlists.tracks.store', props.playlist.id), track, {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: () => {
+      fecthMusicProviders()
+    },
+  })
+}
+
+const removeTrack = (track) => {
+  let id = track.added ? track.added.id : track.id
+
+  Inertia.delete(route('tracks.delete', id), {
+    preserveScroll: true,
+    preserveState: true,
+    onSuccess: () => {
+      fecthMusicProviders()
+    },
+  })
+}
+</script>
 <template>
   <div>
     <div class="-mb-8 flex flex-wrap p-8">
@@ -7,36 +111,46 @@
       </div>
 
       <!-- Search on streaming platforms -->
-      <div class="relative w-full p-2 lg:w-2/3">
-        <text-input v-model="search_online" prepend-icon="plus" :loading="loading" :placeholder="__('Add from streaming platforms')" />
-        <ul v-if="results.length" class="top-100 absolute left-2 right-2 mt-1 max-h-60 w-full overflow-y-auto rounded border border-gray-200 bg-white text-gray-700 shadow">
-          <li v-for="result in results" class="relative cursor-pointer border-b border-gray-200 px-1 py-2 hover:bg-gray-100 hover:text-gray-900">
-            <div class="flex items-center">
-              <div><Icon :name="result.provider" :title="result.provider" class="mr-2 h-6 w-6 flex-shrink-0 fill-gray-500" /></div>
-              <div><Icon name="play" class="mr-2 h-6 w-6 flex-shrink-0 fill-gray-500" @click="play(result.preview_url)" /></div>
-              <div class="flex-1">
-                <span class="font-bold">{{ result.artist_name }}</span> {{ result.track_name }}
-              </div>
-              <div v-if="!result.added" class="self-end">
-                <button :disabled="loading" class="btn-primary" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
-              </div>
-              <div v-else class="self-end">
-                <button :disabled="loading" class="btn-danger" type="button" @click="removeTrack(result)">{{ __('Remove') }}</button>
-              </div>
+      <dropdown placement="bottom-start" :auto-close="false">
+        <template #default>
+          <div class="group flex cursor-pointer select-none items-center">
+            <div class="mr-1 whitespace-nowrap">
+              <text-input v-model="search_online" prepend-icon="plus" append-icon="cheveron-down" :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </template>
+        <template #dropdown v-show="results.length">
+          <ul v-if="results.length" class="max-h-60 max-w-50 overflow-y-auto">
+            <li v-for="result in results" class="relative cursor-pointer border-b border-gray-200 px-1 py-2 hover:bg-gray-100 hover:text-gray-900">
+              <div class="flex items-center">
+                <div><Icon :name="result.provider" :title="result.provider" class="mr-2 h-6 w-6 flex-shrink-0 fill-gray-500" /></div>
+                <div>
+                  <mini-player :key="`mini-player-results-${result.id}`" :track="result" />
+                </div>
+                <div class="flex-1">
+                  <span class="font-bold">{{ result.artist_name }}</span> {{ result.track_name }}
+                </div>
+                <div v-if="!result.added" class="self-end">
+                  <button :disabled="loading" class="btn-primary" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
+                </div>
+                <div v-else class="self-end">
+                  <button :disabled="loading" class="btn-danger" type="button" @click="removeTrack(result)">{{ __('Remove') }}</button>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </dropdown>
     </div>
 
-    <div class="mx-4">
+    <div class="mx-4 overflow-x-auto">
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
           <th class="px-6 pb-4 pt-6" colspan="3">{{ __('Answers') }}</th>
           <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Votes') }}</th>
           <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Created at') }}</th>
         </tr>
-        <tr v-for="track in tracks.data" :key="track.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <tr v-for="track in tracks.data" :key="track.id" class="hover:bg-neutral-200">
           <td class="border-t">
             <a target="_blank" :href="track.provider_url" class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
               <Icon :name="track.provider" :title="track.provider" class="mr-2 h-6 w-6 flex-shrink-0" />
@@ -44,7 +158,7 @@
           </td>
           <td class="border-t">
             <div class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
-              <Icon name="play" class="mr-2 h-6 w-6 flex-shrink-0 cursor-pointer" @click="play(track.preview_url)" />
+              <mini-player :key="`mini-player-list-${track.id}`" :track="track" />
             </div>
           </td>
           <td class="border-t">
@@ -52,7 +166,7 @@
               <div v-for="answer in track.answers" :key="answer.id" class="cursor-pointer whitespace-normal break-words" @click="editAnswer(track, answer)">
                 <span class="font-bold">{{ __(answer.type.name) }}:</span> {{ answer.value }} ({{ answer.score }}pts)
               </div>
-              <button class="text-gray-400" @click="editAnswer(track)"><Icon name="plus" class="inline-block h-4 w-4 flex-shrink-0 fill-gray-400" />{{ __('Add an answer') }}</button>
+              <button class="text-gray-400" @click="createAnswer(track)"><Icon name="plus" class="inline-block h-4 w-4 flex-shrink-0 fill-gray-400" />{{ __('Add an answer') }}</button>
             </div>
           </td>
           <td class="border-t">
@@ -67,7 +181,7 @@
             </div>
           </td>
           <td class="border-t">
-            <Icon name="delete" class="mr-2 h-6 w-6 flex-shrink-0 cursor-pointer fill-red-400" />
+            <Icon name="delete" @click="removeTrack(track)" class="mr-2 h-6 w-6 flex-shrink-0 cursor-pointer fill-red-400" />
           </td>
         </tr>
         <tr v-if="tracks.length === 0">
@@ -78,142 +192,6 @@
 
     <pagination class="p-8" :links="tracks.links" />
 
-    <answer-form :answer="selectedAnswer" :answer_types="answer_types" :show="editingAnswer" max-width="md" @close="closeModal" @update="form.update" />
+    <answer-form v-if="creatingAnswer || (editingAnswer && selectedAnswer)" :answer="selectedAnswer" :answer_types="answer_types" :show="editingAnswer || creatingAnswer" max-width="md" @close="closeModal" />
   </div>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-
-import { v4 as uuid } from 'uuid'
-import Icon from '@/Components/Icon'
-import TextInput from '@/Components/TextInput'
-import SelectInput from '@/Components/SelectInput'
-import DialogModal from '@/Components/DialogModal'
-import Pagination from '@/Components/Pagination'
-
-import AnswerForm from '@/Components/AnswerForm'
-
-import pickBy from 'lodash/pickBy'
-import mapValues from 'lodash/mapValues'
-import debounce from 'lodash/debounce'
-import throttle from 'lodash/throttle'
-
-export default {
-  components: {
-    Head,
-    Link,
-    Icon,
-    TextInput,
-    SelectInput,
-    DialogModal,
-    Pagination,
-    AnswerForm,
-  },
-  inheritAttrs: false,
-
-  props: {
-    playlist: {
-      type: Object,
-    },
-    answer_types: {
-      type: Object,
-      default: {},
-    },
-    tracks: {
-      type: Object,
-      default: {},
-    },
-    filters: {
-      type: Object,
-      default: {
-        search: '',
-      },
-    },
-  },
-
-  data() {
-    return {
-      selectedAnswer: null,
-      form: {
-        search: this.filters.search,
-      },
-      editingAnswer: false,
-      search_online: '',
-      search: '',
-      loading: false,
-      results: [],
-      player: new Audio(),
-    }
-  },
-
-  watch: {
-    search_online: {
-      handler: debounce(function () {
-        this.fecthMusicProviders()
-      }, 300),
-    },
-    form: {
-      deep: true,
-      handler: throttle(function () {
-        this.$inertia.get(route('admin.playlists.edit', this.playlist), pickBy(this.form), {
-          preserveScroll: true,
-          preserveState: true,
-        })
-      }, 150),
-    },
-  },
-
-  methods: {
-    fecthMusicProviders() {
-      let vm = this
-      if (vm.search_online.length > 1) {
-        vm.loading = true
-        axios.get(route('tracks.search', this.playlist.id) + '?term=' + vm.search_online).then(function (response) {
-          vm.results = response.data.tracks
-          vm.loading = false
-        })
-      } else {
-        vm.results = []
-      }
-    },
-
-    editAnswer(track, answer = null) {
-      this.selectedAnswer = answer
-      this.editingAnswer = track.id
-    },
-
-    closeModal() {
-      this.editingAnswer = false
-    },
-
-    play(track) {
-      this.player.pause()
-      this.player.src = track
-      this.player.play()
-    },
-
-    addTrack(track) {
-      this.$inertia.post(route('playlists.tracks.store', this.playlist), track, {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-          this.fecthMusicProviders()
-        },
-      })
-    },
-
-    removeTrack(track) {
-      let id = track.added ? track.added.id : track.id
-
-      this.$inertia.delete(route('tracks.delete', id), {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-          this.fecthMusicProviders()
-        },
-      })
-    },
-  },
-}
-</script>

@@ -8,6 +8,7 @@ import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 import Pagination from '@/Components/Pagination'
 import SearchFilter from '@/Components/SearchFilter'
+import Card from '@/Components/Card'
 
 const props = defineProps({
   filters: Object,
@@ -41,7 +42,8 @@ const reset = () => {
         <span class="hidden md:inline">&nbsp;Answer Type</span>
       </Link>
     </div>
-    <div class="overflow-x-auto rounded-md bg-white shadow">
+    <Card>
+    <div class="overflow-x-auto">
       <table class="w-full whitespace-nowrap">
         <thead>
           <tr class="text-left font-bold">
@@ -79,6 +81,7 @@ const reset = () => {
         </tbody>
       </table>
     </div>
+  </Card>
     <pagination class="mt-6" :links="answer_types.links" />
   </AdminLayout>
 </template>

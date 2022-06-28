@@ -43,7 +43,7 @@ class UserController extends AdminController
             'name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email:rfc,dns', Rule::unique('users')],
             'password' => ['nullable'],
-            'is_admin' => ['required', 'boolean'],
+            'is_administrator' => ['required', 'boolean'],
             'photo' => ['nullable', 'image'],
         ]);
 
@@ -51,7 +51,7 @@ class UserController extends AdminController
             'name' => Request::get('name'),
             'email' => Request::get('email'),
             'password' => Request::get('password'),
-            'is_admin' => Request::get('is_admin'),
+            'is_administrator' => Request::get('is_administrator'),
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('users') : null,
         ]);
 
@@ -66,7 +66,7 @@ class UserController extends AdminController
                 'name' => $user->name,
                 'email' => $user->email,
                 'team_id' => ($user->team) ? $user->team->id : null,
-                'is_admin' => $user->isAdmin(),
+                'is_administrator' => $user->isAdministrator(),
                 'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                 'deleted_at' => $user->deleted_at,
             ],
@@ -83,12 +83,12 @@ class UserController extends AdminController
             'name' => ['required', 'max:50'],
             'email' => ['required', 'max:50', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
             'team_id' => ['nullable', 'integer'],
-            'is_admin' => ['boolean'],
+            'is_administrator' => ['required', 'boolean'],
             'password' => ['nullable'],
             'photo' => ['nullable', 'image'],
         ]);
 
-        $user->update(Request::only('name', 'email', 'team_id', 'is_admin'));
+        $user->update(Request::only('name', 'email', 'team_id', 'is_administrator'));
 
         if (Request::file('photo')) {
             $user->update(['photo_path' => Request::file('photo')->store('users')]);

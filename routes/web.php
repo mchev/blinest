@@ -124,6 +124,16 @@ Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'che
 // Controls
 Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
     ->name('rounds.stop');
+Route::post('rooms/{room}/start', [RoomController::class, 'start'])
+    ->name('rounds.start');
+Route::post('rounds/{round}/track/resume', [RoundController::class, 'resume'])
+    ->name('rounds.track.resume');
+Route::post('rounds/{round}/track/pause', [RoundController::class, 'pause'])
+    ->name('rounds.track.pause');
+Route::post('rounds/{round}/track/prev', [RoundController::class, 'prevTrack'])
+    ->name('rounds.track.prev');
+Route::post('rounds/{round}/track/next', [RoundController::class, 'nextTrack'])
+    ->name('rounds.track.next');
 
 // Playlists
 Route::get('playlists', [PlaylistController::class, 'index'])
@@ -173,12 +183,12 @@ Route::post('tracks/{track}/answers', [TrackAnswerController::class, 'store'])
     ->name('tracks.answers.store')
     ->middleware('auth');
 
-Route::put('tracks/{track}/answers', [TrackAnswerController::class, 'update'])
+Route::put('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'update'])
     ->name('tracks.answers.update')
     ->middleware('auth');
 
-Route::delete('answers/{answer}', [TrackAnswerController::class, 'destroy'])
-    ->name('answers.delete')
+Route::delete('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'destroy'])
+    ->name('tracks.answers.delete')
     ->middleware('auth');
 
 // Images

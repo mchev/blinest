@@ -17,11 +17,7 @@ const props = defineProps({
   tracks: Object,
 })
 
-const form = useForm({
-  name: props.playlist.name,
-  is_public: props.playlist.is_public,
-  photo: null,
-})
+const form = useForm(props.playlist)
 
 const update = () => {
   form.put(`/admin/playlists/${props.playlist.id}`, {
@@ -50,7 +46,6 @@ const restore = () => {
         <span class="font-medium text-blinest-400">/</span>
         {{ form.name }}
       </h1>
-      <img v-if="playlist.photo" class="ml-4 block h-8 w-8 rounded-full" :src="playlist.photo" />
     </div>
     <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore">{{ __('This playlist has been deleted.') }}</trashed-message>
     <card class="max-w-3xl">
@@ -61,7 +56,6 @@ const restore = () => {
             <option :value="1">{{ __('Yes') }}</option>
             <option :value="0">{{ __('No') }}</option>
           </select-input>
-          <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
         <div class="flex items-center bg-gray-50 px-8 py-4 dark:bg-gray-900">
           <button v-if="!playlist.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Playlist') }}</button>
@@ -71,6 +65,9 @@ const restore = () => {
     </card>
 
     <card class="my-4">
+      <template #header>
+        <h3 class="text-xl font-bold">Gestion des extraits</h3>
+      </template>
       <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
     </card>
   </AdminLayout>

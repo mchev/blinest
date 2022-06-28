@@ -15,7 +15,7 @@ class TrackAnswerController extends Controller
         Request::validate([
             'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
-            'score' => ['required', 'numeric', 'min:0'],
+            'score' => ['required', 'numeric', 'min:0', 'max:99'],
         ]);
 
         // STORE
@@ -28,17 +28,17 @@ class TrackAnswerController extends Controller
         return Redirect::back();
     }
 
-    public function update(Track $track, TrackAnswer $trackAnswer)
+    public function update(Track $track, TrackAnswer $answer)
     {
         // VALIDATE
         Request::validate([
             'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
-            'score' => ['required', 'numeric', 'min:0'],
+            'score' => ['required', 'numeric', 'min:0', 'max:99'],
         ]);
 
         // UPDATE
-        $trackAnswer->update([
+        $answer->update([
             'answer_type_id' => Request::get('answer_type_id'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
@@ -47,7 +47,7 @@ class TrackAnswerController extends Controller
         return Redirect::back();
     }
 
-    public function destroy(TrackAnswer $answer)
+    public function destroy(Track $track, TrackAnswer $answer)
     {
         $answer->delete();
 

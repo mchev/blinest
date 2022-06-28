@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Events\RoundFinished;
 use App\Events\RoundStarted;
+use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
+use App\Events\TrackResumed;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Carbon\Carbon;
@@ -36,6 +38,18 @@ class Round extends Model
             $this->update(['is_playing' => true]);
             $this->playNextTrack();
         }
+    }
+
+    public function pause()
+    {
+        $this->update(['is_playing' => false]);
+        broadcast(new TrackPaused($this->room));
+    }
+
+    public function resume()
+    {
+        $this->update(['is_playing' => true]);
+        broadcast(new TrackResumed($this->room));
     }
 
     public function stop()
@@ -94,6 +108,11 @@ class Round extends Model
             ProcessTrackPlayed::dispatch($this)
                 ->delay(now()->addSeconds($this->room->track_duration));
         }
+    }
+
+    public function isPlaying()
+    {
+        return $this->is_playing;
     }
 
     public function userScore(User $user)

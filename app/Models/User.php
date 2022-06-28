@@ -83,21 +83,38 @@ class User extends Authenticatable
         return $this->is_administrator;
     }
 
-    public function isModerator(Room $room = null)
+    public function isRoomModerator(Room $room = null)
     {
         return $room
             ? $room->moderators()->where('user_id', $this->id)->exists()
             : Moderator::where('user_id', $this->id)->exists();
     }
 
+    public function isPlaylistModerator(Playlist $playlist = null)
+    {
+        return $playlist
+            ? $playlist->moderators()->where('user_id', $this->id)->exists()
+            : Moderator::where('user_id', $this->id)->exists();
+    }
+
     public function isRoomOwner(Room $room)
     {
-        return $this->id === $room->owner->id;
+        return $this->id === $room->user_id;
+    }
+
+    public function isPlaylistOwner(Playlist $playlist)
+    {
+        return $this->id === $playlist->user_id;
     }
 
     public function hasRoomControl(Room $room)
     {
-        return $this->isRoomOwner($room) || $this->isModerator($room) || $this->isAdministrator();
+        return $this->isRoomOwner($room) || $this->isRoomModerator($room) || $this->isAdministrator();
+    }
+
+    public function canEditPlaylist(Playlist $playlist)
+    {
+        return $this->isPlaylistOwner($playlist) || $this->isPlaylistModerator($playlist) || $this->isAdministrator();
     }
 
     public function scopeOrderByName($query)
