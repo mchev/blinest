@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('moderators', function (Blueprint $table) {
+        Schema::create('moderables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->morphs('moderable');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('moderators');
+        Schema::dropIfExists('moderables');
     }
 };

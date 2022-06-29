@@ -3,8 +3,8 @@
     <div class="flex w-full rounded bg-white shadow">
       <dropdown :auto-close="false" class="rounded-l border-r px-4 hover:bg-gray-100 focus:z-10 focus:border-white focus:ring md:px-6" placement="bottom-start">
         <template #default>
-          <div class="flex items-baseline">
-            <span class="hidden text-gray-700 md:inline">Filter</span>
+          <div class="flex items-baseline self-center">
+            <span class="hidden text-gray-700 md:inline">{{ __('Filter') }}</span>
             <svg class="h-2 w-2 fill-gray-700 md:ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 961.243 599.998">
               <path d="M239.998 239.999L0 0h961.243L721.246 240c-131.999 132-240.28 240-240.624 239.999-.345-.001-108.625-108.001-240.624-240z" />
             </svg>
@@ -16,9 +16,9 @@
           </div>
         </template>
       </dropdown>
-      <input class="relative w-full rounded-r px-6 py-3 focus:shadow-outline" autocomplete="off" type="text" name="search" placeholder="Search…" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
+      <input class="focus:shadow-outline relative w-full rounded-r px-6 py-3" autocomplete="off" type="text" name="search" :placeholder="__('Search…')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
     </div>
-    <button class="ml-3 text-sm text-gray-500 hover:text-gray-700 focus:text-blinest-500" type="button" @click="$emit('reset')">Reset</button>
+    <button class="ml-3 text-sm text-gray-500 hover:text-gray-700 focus:text-blinest-500" type="button" @click="$emit('reset')">{{ __('Reset') }}</button>
   </div>
 </template>
 

@@ -40,19 +40,19 @@ onUnmounted(() => {
     <template #header>
       <div class="flex items-center justify-between">
         <h3 class="text-xl font-bold">Playlist</h3>
-        <span v-if="round" class="text-neutral-500 font-bold text-xl"><span class="text-neutral-700">{{ round.current + 1 }}</span> / {{ round.tracks.length + 1 }}</span>
+        <span v-if="round" class="text-xl font-bold text-neutral-500"><span class="text-neutral-700">{{ round.current + 1 }}</span> / {{ round.tracks.length + 1 }}</span>
       </div>
     </template>
 
     <ul class="h-96 overflow-y-scroll">
-      <li v-for="track in tracks" :key="track.id" class="flex mb-2 border-b">
+      <li v-for="track in tracks" :key="track.id" class="mb-2 flex border-b">
         <div class="p-2">
-          <img :src="track.artwork_url" :alt="track.album_name" class="rounded h-20 w-auto">
+          <img :src="track.artwork_url" :alt="track.album_name" class="h-20 w-auto rounded" />
         </div>
-        <div class="p-2 flex-grow">
+        <div class="flex-grow p-2">
           <transition-group name="flip-list" tag="ul">
-            <li v-for="answer in track.answers" :key="answer.id" class="text-sm mb-1 flex items-start">
-              <span class="flex-shrink-0 mr-1 rounded text-neutral-500 bg-neutral-300 px-1 font-bold text-[10px] uppercase text-white">{{ __(answer.type.name) }}</span> {{ answer.value }}
+            <li v-for="answer in track.answers" :key="answer.id" class="mb-1 flex items-start text-sm">
+              <span class="mr-1 flex-shrink-0 rounded bg-neutral-300 px-1 text-[10px] font-bold uppercase text-neutral-500 text-white">{{ __(answer.type.name) }}</span> {{ answer.value }}
             </li>
           </transition-group>
         </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -32,6 +33,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'email',
         'remember_token',
     ];
 
@@ -83,18 +85,28 @@ class User extends Authenticatable
         return $this->is_administrator;
     }
 
-    public function isRoomModerator(Room $room = null)
+    public function moderatedRooms()
     {
-        return $room
-            ? $room->moderators()->where('user_id', $this->id)->exists()
-            : Moderator::where('user_id', $this->id)->exists();
+        return $this->morphedByMany(Room::class, 'moderable');
     }
 
-    public function isPlaylistModerator(Playlist $playlist = null)
+    public function moderatedPlaylists()
     {
-        return $playlist
-            ? $playlist->moderators()->where('user_id', $this->id)->exists()
-            : Moderator::where('user_id', $this->id)->exists();
+        return $this->morphedByMany(Playlist::class, 'moderable');
+    }
+
+    public function isRoomModerator(Room $room)
+    {
+        return $this->whereHas('moderatedRooms', function (Builder $query) use ($room) {
+            $query->where('rooms.id', $room->id);
+        })->exists();
+    }
+
+    public function isPlaylistModerator(Playlist $playlist)
+    {
+        return $this->whereHas('moderatedPlaylists', function (Builder $query) use ($playlist) {
+            $query->where('playlists.id', $playlist->id);
+        })->exists();
     }
 
     public function isRoomOwner(Room $room)

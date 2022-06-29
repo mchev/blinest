@@ -1,63 +1,67 @@
-<template>
-  <button type="button" @click="show = true">
-    <slot />
-    <teleport v-if="show" to="#dropdown">
-      <div>
-        <div class="fixed top-0 right-0 left-0 bottom-0 z-[99998] bg-black opacity-20" @click="show = false" />
-        <div ref="dropdown" class="dark:highlight-white/5 absolute z-[99999] overflow-hidden rounded-lg p-2 text-sm font-semibold shadow-lg ring-1 bg-neutral-800 text-neutral-100" @click.stop="show = !autoClose">
-          <slot name="dropdown" />
-        </div>
-      </div>
-    </teleport>
-  </button>
-</template>
-
-<script>
+<script setup>
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { createPopper } from '@popperjs/core'
 
-export default {
-  props: {
-    placement: {
-      type: String,
-      default: 'bottom-end',
-    },
-    autoClose: {
-      type: Boolean,
-      default: true,
-    },
+const props = defineProps({
+  placement: {
+    type: String,
+    default: 'bottom-end',
   },
-  data() {
-    return {
-      show: false,
-    }
+  autoClose: {
+    type: Boolean,
+    default: true,
   },
-  watch: {
-    show(show) {
-      if (show) {
-        this.$nextTick(() => {
-          this.popper = createPopper(this.$el, this.$refs.dropdown, {
-            placement: this.placement,
-            modifiers: [
-              {
-                name: 'preventOverflow',
-                options: {
-                  altBoundary: true,
-                },
-              },
-            ],
-          })
-        })
-      } else if (this.popper) {
-        setTimeout(() => this.popper.destroy(), 100)
-      }
-    },
-  },
-  mounted() {
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.show = false
-      }
+})
+
+const show = ref(false)
+const dropdown = ref(null)
+const popper = ref(null)
+const root = ref(null)
+const emit = defineEmits(['closed'])
+
+watch(show, (show) => {
+  if (show) {
+    nextTick(() => {
+      popper.value = createPopper(root.value, dropdown.value, {
+        placement: props.placement,
+        modifiers: [
+          {
+            name: 'preventOverflow',
+            options: {
+              altBoundary: true,
+            },
+          },
+        ],
+      })
     })
-  },
-}
+  } else if (popper.value) {
+    setTimeout(() => {
+      popper.value.destroy()
+      emit('closed')
+    }, 100)
+  }
+})
+
+onMounted(() => {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      show.value = false
+    }
+  })
+})
 </script>
+<template>
+  <div ref="root">
+    <button type="button" class="flex h-full" @click="show = true">
+      <slot />
+      <teleport v-if="show" to="#dropdown">
+        <div>
+          <div class="fixed top-0 right-0 left-0 bottom-0 z-[99998] bg-black opacity-10" @click="show = false" />
+          <div ref="dropdown" class="absolute z-[99999] overflow-hidden rounded-lg bg-neutral-800 text-sm font-semibold text-neutral-100 shadow-lg" @click.stop="show = !autoClose">
+            <slot name="dropdown" />
+          </div>
+        </div>
+      </teleport>
+    </button>
+  </div>
+</template>

@@ -75,9 +75,9 @@ const reset = () => {
               </Link>
             </td>
             <td class="border-t">
-              <ul>
+              <ul class="flex items-center px-6 py-4 text-sm">
                 <li v-for="moderator in playlist.moderators" :key="moderator.id">
-                  <Link class="flex items-center px-6 py-4" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
+                  <Link class="m-1 rounded bg-neutral-200 p-1" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
                     {{ moderator.name }}
                   </Link>
                 </li>

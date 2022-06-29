@@ -94,7 +94,7 @@ const listenRounds = () => {
           <Ranking class="mb-8" :users="users" :channel="channel" :data="data" />
         </div>
 
-        <Controls :channel="channel" :room="room" :round="round"/>
+        <Controls :channel="channel" :room="room" :round="round" />
       </div>
     </Transition>
 

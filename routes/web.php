@@ -4,10 +4,13 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TrackAnswerController;
+// Moderation
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\UserController;
 // Socialite
@@ -156,6 +159,18 @@ Route::delete('playlists/{playlist}', [PlaylistController::class, 'destroy'])
 
 Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
     ->name('playlists.restore');
+
+// Moderation
+
+Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
+    ->name('playlists.moderators.attach');
+Route::delete('playlists/{playlist}/moderators/detach', [PlaylistModeratorController::class, 'detach'])
+    ->name('playlists.moderators.detach');
+
+Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, 'attach'])
+    ->name('rooms.moderators.attach');
+Route::delete('rooms/{room}/moderators/detach', [RoomModeratorController::class, 'detach'])
+    ->name('rooms.moderators.detach');
 
 // Tracks
 Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])

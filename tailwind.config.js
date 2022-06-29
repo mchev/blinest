@@ -1,7 +1,12 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: ['./resources/**/*.blade.php', './resources/**/*.js', './resources/**/*.vue'],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['Poppins', ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         blinest: {
           100: '#e6e8ff',

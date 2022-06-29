@@ -18,7 +18,7 @@ class CreatePlaylistsTable extends Migration
             $table->string('name');
             $table->foreignId('user_id');
             $table->boolean('is_public')->default(false);
-            $table->string('photo_path', 100)->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

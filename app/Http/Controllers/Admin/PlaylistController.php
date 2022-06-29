@@ -22,6 +22,7 @@ class PlaylistController extends AdminController
                 ->through(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
+                    'description' => $playlist->description,
                     'owner' => [
                         'id' => $playlist->owner->id,
                         'name' => $playlist->owner->name,
@@ -63,9 +64,16 @@ class PlaylistController extends AdminController
             'playlist' => [
                 'id' => $playlist->id,
                 'name' => $playlist->name,
+                'desription' => $playlist->desription,
                 'is_public' => $playlist->is_public,
                 'user_id' => $playlist->user_id,
                 'deleted_at' => $playlist->deleted_at,
+                'owner' => $playlist->owner,
+                'moderators' => $playlist->moderators,
+                'rooms' => $playlist->rooms->map(fn ($room) => [
+                    'id' => $room->id,
+                    'name' => $room->name,
+                ]),
             ],
             'filters' => Request::all('search'),
             'answer_types' => AnswerType::all(),
@@ -91,10 +99,11 @@ class PlaylistController extends AdminController
     {
         Request::validate([
             'name' => ['required', 'max:50'],
+            'description' => ['nullable'],
             'is_public' => ['required', 'boolean'],
         ]);
 
-        $playlist->update(Request::only('name', 'is_public'));
+        $playlist->update(Request::only('name', 'description', 'is_public'));
 
         return Redirect::back()->with('success', 'Playlist updated.');
     }

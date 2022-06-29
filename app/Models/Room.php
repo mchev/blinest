@@ -70,7 +70,7 @@ class Room extends Model
 
     public function moderators()
     {
-        return $this->morphMany(Moderator::class, 'moderable');
+        return $this->morphToMany(User::class, 'moderable')->withTimestamps();
     }
 
     public function category()

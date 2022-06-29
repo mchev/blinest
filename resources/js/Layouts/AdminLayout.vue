@@ -16,7 +16,7 @@ defineProps({
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
-        <div class="md:flex md:flex-shrink-0 text-white">
+        <div class="text-white md:flex md:flex-shrink-0">
           <div class="flex items-center justify-between px-6 py-4 md:w-56 md:flex-shrink-0 md:justify-center">
             <Link class="mt-1" href="/">
               <logo class="fill-white" width="120" height="28" />
@@ -37,8 +37,8 @@ defineProps({
               {{ __('Administration') }}
             </div>
             <div class="flex items-center justify-end">
-              <user-dropdown />
-              <language-switcher />
+              <UserDropdown class="mr-4" />
+              <LanguageSwitcher />
             </div>
           </div>
         </div>

@@ -31,7 +31,7 @@ const isUrl = (...urls) => {
       <Link class="group flex items-center" href="/reports">
         <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Team') }}</div>
       </Link>
-    </div>    
+    </div>
     <div class="mb-6">
       <Link class="group flex items-center" href="/reports">
         <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Rankings') }}</div>

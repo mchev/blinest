@@ -48,7 +48,7 @@ const reset = () => {
         <span class="hidden md:inline">&nbsp;Team</span>
       </Link>
     </div>
-    <div class="overflow-x-auto rounded-md bg-white dark:bg-gray-500 shadow">
+    <div class="overflow-x-auto rounded-md bg-white shadow dark:bg-gray-500">
       <table class="w-full whitespace-nowrap dark:text-gray-300">
         <thead>
           <tr class="text-left font-bold">
@@ -59,7 +59,7 @@ const reset = () => {
         <tbody>
           <tr v-for="team in teams.data" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:focus-within:bg-gray-600 dark:hover:bg-gray-600">
             <td class="border-t">
-              <Link class="focus:text-indigo-500 flex items-center px-6 py-4" :href="route('admin.teams.edit', team)">
+              <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.teams.edit', team)">
                 {{ team.name }}
                 <icon v-if="team.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>

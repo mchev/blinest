@@ -6,17 +6,12 @@ const props = defineProps({
   show: Boolean,
 })
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 
 const close = () => {
-  emit('close');
+  emit('close')
 }
-
 </script>
 <template>
-
-    <Modal :show="show" @close="close">
-      Round finished
-    </Modal>
-
+  <Modal :show="show" @close="close"> Round finished </Modal>
 </template>

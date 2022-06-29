@@ -41,7 +41,7 @@ onUnmounted(() => {
 const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped'])
 
 const play = () => {
-  if (isPlaying) {
+  if (isPlaying.value) {
     stop()
   }
 
@@ -68,7 +68,7 @@ const play = () => {
   })
 
   audio.addEventListener('timeupdate', () => {
-    percent.value = parseInt((100 / (props.room.track_duration)) * (audio.currentTime + 0.25))
+    percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
     shaking.value = percent.value > 85 ? true : false
   })
 

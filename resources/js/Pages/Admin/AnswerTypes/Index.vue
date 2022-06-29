@@ -43,45 +43,45 @@ const reset = () => {
       </Link>
     </div>
     <Card>
-    <div class="overflow-x-auto">
-      <table class="w-full whitespace-nowrap">
-        <thead>
-          <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6">Name</th>
-            <th class="px-6 pb-4 pt-6">Pronoun</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">Icon</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="answer_type in answer_types.data" :key="answer_type.id" class="focus-within:bg-gray-100 hover:bg-gray-100">
-            <td class="border-t">
-              <Link class="focus:text-indigo-500 flex items-center px-6 py-4" :href="`/admin/answer_types/${answer_type.id}/edit`">
-                {{ answer_type.name }}
-              </Link>
-            </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
-                {{ answer_type.pronoun }}
-              </Link>
-            </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
-                <span v-html="answer_type.svg_icon"/>
-              </Link>
-            </td>
-            <td class="w-px border-t">
-              <Link class="flex items-center px-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
-                <icon name="cheveron-right" class="block h-6 w-6" />
-              </Link>
-            </td>
-          </tr>
-          <tr v-if="answer_types.data.length === 0">
-            <td class="border-t px-6 py-4" colspan="4">No answer_types found.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </Card>
+      <div class="overflow-x-auto">
+        <table class="w-full whitespace-nowrap">
+          <thead>
+            <tr class="text-left font-bold">
+              <th class="px-6 pb-4 pt-6">Name</th>
+              <th class="px-6 pb-4 pt-6">Pronoun</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">Icon</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="answer_type in answer_types.data" :key="answer_type.id" class="focus-within:bg-gray-100 hover:bg-gray-100">
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="`/admin/answer_types/${answer_type.id}/edit`">
+                  {{ answer_type.name }}
+                </Link>
+              </td>
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
+                  {{ answer_type.pronoun }}
+                </Link>
+              </td>
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
+                  <span v-html="answer_type.svg_icon" />
+                </Link>
+              </td>
+              <td class="w-px border-t">
+                <Link class="flex items-center px-4" :href="`/admin/answer_types/${answer_type.id}/edit`" tabindex="-1">
+                  <icon name="cheveron-right" class="block h-6 w-6" />
+                </Link>
+              </td>
+            </tr>
+            <tr v-if="answer_types.data.length === 0">
+              <td class="border-t px-6 py-4" colspan="4">No answer_types found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Card>
     <pagination class="mt-6" :links="answer_types.links" />
   </AdminLayout>
 </template>

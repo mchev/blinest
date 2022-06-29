@@ -26,7 +26,7 @@ class PlaylistController extends Controller
                         'id' => $playlist->owner->id,
                         'name' => $playlist->owner->name,
                     ],
-                    'moderators' => $playlist->moderators()->map(fn ($moderator) => [
+                    'moderators' => $playlist->moderators->map(fn ($moderator) => [
                         'id' => $moderator->id,
                         'name' => $moderator->name,
                     ]),

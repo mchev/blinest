@@ -96,7 +96,7 @@ const deleteAnswer = () => {
       </div>
 
       <div class="flex items-center justify-between bg-neutral-800 px-2 py-4 text-right">
-        <button v-if="answer && answer.id" class="mx-2 text-red-400" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteAnswer">
+        <button v-if="answer && answer.id" type="button" class="mx-2 text-red-400" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteAnswer">
           {{ __('Delete') }}
         </button>
 
@@ -105,11 +105,11 @@ const deleteAnswer = () => {
             {{ __('Close') }}
           </button>
 
-          <button type="submit" v-if="answer && answer.id" class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          <button v-if="answer && answer.id" type="submit" class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ __('Update') }}
           </button>
 
-          <button type="submit" v-else class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          <button v-else type="submit" class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ __('Add') }}
           </button>
         </div>

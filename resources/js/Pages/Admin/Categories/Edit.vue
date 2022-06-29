@@ -27,7 +27,7 @@ const destroy = () => {
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/categories">Categories</Link>
-      <span class="text-indigo-400 font-medium">/</span>
+      <span class="font-medium text-indigo-400">/</span>
       {{ form.name }}
     </h1>
     <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">

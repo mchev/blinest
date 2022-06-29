@@ -30,7 +30,7 @@ const destroy = () => {
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/answer_types">Answer Types</Link>
-      <span class="text-indigo-400 font-medium">/</span>
+      <span class="font-medium text-indigo-400">/</span>
       {{ form.name }}
     </h1>
     <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
@@ -39,7 +39,7 @@ const destroy = () => {
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Name')" />
           <text-input v-model="form.pronoun" :error="form.errors.pronoun" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Pronoun')" />
           <textarea-input v-model="form.svg_icon" :error="form.errors.svg_icon" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('SVG Icon')" />
-          <span v-html="form.svg_icon"/>
+          <span v-html="form.svg_icon" />
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
           <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete Answer Type</button>

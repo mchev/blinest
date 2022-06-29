@@ -8,7 +8,6 @@ const props = defineProps({
   round: [Object, Boolean],
 })
 
-
 const stopRound = () => {
   axios.post(`/rounds/${props.round.id}/stop`)
 }
@@ -28,7 +27,6 @@ const playPreviousTrack = () => {
 const playNextTrack = () => {
   axios.post(`/rounds/${props.round.id}/track/next`)
 }
-
 </script>
 <template>
   <Card>

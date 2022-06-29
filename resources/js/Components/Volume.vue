@@ -13,8 +13,6 @@ import Dropdown from '@/Components/Dropdown'
         </div>
       </div>
     </template>
-    <template #dropdown>
-      Volume
-    </template>
+    <template #dropdown> Volume </template>
   </dropdown>
 </template>

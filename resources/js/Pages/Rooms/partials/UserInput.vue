@@ -47,7 +47,7 @@ const check = () => {
 }
 </script>
 <template>
-  <form @submit.prevent="check" class="flex w-full items-center justify-center">
+  <form class="flex w-full items-center justify-center" @submit.prevent="check">
     <div class="flex w-full items-center">
       <input ref="input" v-model="text" type="text" class="h-14 flex-grow rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" placeholder="Une idée?" autofocus />
       <button type="submit" class="btn-send h-14">
@@ -59,8 +59,6 @@ const check = () => {
     </div>
   </form>
   <ul class="mt-2 flex gap-2">
-    <li v-for="answer in answers" :key="answer.id" class="rounded-lg bg-teal-500 text-neutral-100 py-1 px-2 flex items-center">
-      <span v-if="answer.type.svg_icon" v-html="answer.type.svg_icon" class="mr-1" /> {{ answer.value }}
-    </li>
+    <li v-for="answer in answers" :key="answer.id" class="flex items-center rounded-lg bg-teal-500 py-1 px-2 text-neutral-100"><span v-if="answer.type.svg_icon" class="mr-1" v-html="answer.type.svg_icon" /> {{ answer.value }}</li>
   </ul>
 </template>
