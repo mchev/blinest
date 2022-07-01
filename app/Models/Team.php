@@ -32,6 +32,35 @@ class Team extends Model
         return $this->hasMany(User::class);
     }
 
+    public function teamInvitations()
+    {
+        return $this->hasMany(TeamInvitation::class);
+    }
+
+    public function removeUser(User $user)
+    {
+        if ($user->team_id === $this->id) {
+            $user->forceFill([
+                'team_id' => null,
+            ])->save();
+        }
+
+        $this->users()->detach($user);
+    }
+
+    public function purge()
+    {
+        $this->owner()->where('team_id', $this->id)
+                ->update(['team_id' => null]);
+
+        $this->members()->where('team_id', $this->id)
+                ->update(['team_id' => null]);
+
+        $this->members()->detach();
+
+        $this->delete();
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

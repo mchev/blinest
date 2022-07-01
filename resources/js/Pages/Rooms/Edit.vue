@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
+import AppLayout from '@/Layouts/AppLayout'
 import FileInput from '@/Components/FileInput'
 import TextInput from '@/Components/TextInput'
 import TextareaInput from '@/Components/TextareaInput'
@@ -43,15 +43,15 @@ const form = useForm({
 })
 
 const update = () => {
-  form.post(route('admin.rooms.update', props.room.id))
+  form.post(route('rooms.update', props.room.id))
 }
 </script>
 <template>
   <Head :title="__('Edit Room')" />
 
-  <AdminLayout>
+  <AppLayout>
     <h1 class="mb-8 text-3xl font-bold">
-      <Link :href="route('admin.rooms')">{{ __('Rooms') }}</Link> / {{ room.name }}
+      <Link :href="route('rooms.index')">{{ __('Rooms') }}</Link> / {{ room.name }}
     </h1>
 
     <div class="flex flex-wrap gap-4">
@@ -98,12 +98,7 @@ const update = () => {
               <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pause between rounds')" />
             </div>
 
-            <text-input v-model="form.color" type="color" :error="form.errors.color" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Color')" />
-
             <div class="flex w-full flex-wrap">
-              <checkbox-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Public')" />
-              <checkbox-input v-model="form.is_pro" :error="form.errors.is_pro" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pro')" />
-              <checkbox-input v-model="form.is_active" :error="form.errors.is_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Active')" />
               <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Chatbox')" />
               <checkbox-input v-model="form.password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
             </div>
@@ -115,22 +110,8 @@ const update = () => {
             <loading-button :loading="form.processing" class="btn-primary ml-auto" form="optionsForm" type="submit">{{ __('Update') }}</loading-button>
           </template>
         </Card>
-
-        <PlaylistsManager class="mb-4" :room="room" :playlists="available_playlists" />
-        
-        <Card class="mb-4">
-          <template #header>
-            <h2 class="text-xl font-bold">{{ __('Discord') }}</h2>
-          </template>
-          <form @submit.prevent="update" id="discordForm" class="flex flex-wrap">
-            <text-input v-model="form.discord_webhook_url" type="url" :error="form.errors.discord_webhook_url" class="mb-4 w-full" :label="__('Webhook')" />
-          </form>
-
-          <template #footer>
-            <loading-button :loading="form.processing" class="btn-primary ml-auto" form="discordForm" type="submit">{{ __('Update') }}</loading-button>
-          </template>
-        </Card>
+        <PlaylistsManager :room="room" :playlists="available_playlists" />
       </div>
     </div>
-  </AdminLayout>
+  </AppLayout>
 </template>

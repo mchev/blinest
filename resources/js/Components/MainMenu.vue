@@ -23,7 +23,7 @@ const isUrl = (...urls) => {
       </Link>
     </div>
     <div class="mb-6">
-      <Link class="group flex items-center" :href="route('rooms')">
+      <Link class="group flex items-center" :href="route('rooms.index')">
         <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
       </Link>
     </div>

@@ -7,7 +7,7 @@ import Card from '@/Components/Card.vue'
 import debounce from 'lodash/debounce'
 
 const props = defineProps({
-  playlist: Object,
+  room: Object,
 })
 
 const search = ref('')
@@ -33,7 +33,7 @@ const attach = (user) => {
     .transform((data) => ({
       user_id: user.id,
     }))
-    .post(`/playlists/${props.playlist.id}/moderators/attach`, {
+    .post(`/rooms/${props.room.id}/moderators/attach`, {
       preserveScroll: true,
     })
 }
@@ -43,7 +43,7 @@ const detach = (user) => {
     .transform((data) => ({
       user_id: user.id,
     }))
-    .delete(`/playlists/${props.playlist.id}/moderators/detach`, {
+    .delete(`/rooms/${props.room.id}/moderators/detach`, {
       preserveScroll: true,
     })
 }
@@ -71,8 +71,8 @@ const detach = (user) => {
       </template>
     </dropdown>
 
-    <ul v-if="playlist.moderators.length">
-      <li v-for="moderator in playlist.moderators" :key="moderator.id" class="flex items-center rounded p-3 hover:bg-neutral-200">
+    <ul v-if="room.moderators && room.moderators.length">
+      <li v-for="moderator in room.moderators" :key="moderator.id" class="flex items-center rounded p-3 hover:bg-neutral-200">
         <img v-if="moderator.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="moderator.photo" />
         {{ moderator.name }}
         <button class="ml-auto text-red-500" :title="__('Remove')" @click="detach(moderator)">

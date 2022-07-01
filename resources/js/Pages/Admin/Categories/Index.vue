@@ -53,9 +53,9 @@ const reset = () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories.data" :key="category.id" class="focus-within:bg-gray-100 hover:bg-gray-100">
+            <tr v-for="category in categories.data" :key="category.id" class="hover:bg-gray-100">
               <td class="border-t">
-                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="`/admin/categories/${category.id}/edit`">
+                <Link class="flex items-center px-6 py-4" :href="`/admin/categories/${category.id}/edit`">
                   {{ category.name }}
                   <icon v-if="category.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
                 </Link>
@@ -82,7 +82,7 @@ const reset = () => {
           </tbody>
         </table>
       </div>
+      <Pagination :links="categories.links" />
     </Card>
-    <pagination class="mt-6" :links="categories.links" />
   </AdminLayout>
 </template>

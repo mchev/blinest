@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
+import AppLayout from '@/Layouts/AppLayout'
 import Icon from '@/Components/Icon'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
@@ -23,7 +23,7 @@ const form = useForm({
 watch(
   form,
   throttle(() => {
-    Inertia.get('/admin/playlists', pickBy(form), { remember: 'forget', preserveState: true })
+    Inertia.get('/playlists', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )
@@ -34,7 +34,7 @@ const reset = () => {
 </script>
 <template>
   <Head title="Playlists" />
-  <AdminLayout>
+  <AppLayout>
     <h1 class="mb-8 text-3xl font-bold">Playlists</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
@@ -45,7 +45,7 @@ const reset = () => {
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-primary" :href="route('admin.playlists.create')">
+      <Link class="btn-primary" :href="route('playlists.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Playlist</span>
       </Link>
@@ -63,38 +63,38 @@ const reset = () => {
           </tr>
           <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-neutral-200">
             <td class="border-t">
-              <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.playlists.edit', playlist.id)">
+              <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('playlists.edit', playlist.id)">
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 {{ playlist.name }}
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('admin.users.edit', playlist.owner.id)" tabindex="-1">
+              <Link class="flex items-center px-6 py-4" :href="route('users.edit', playlist.owner.id)" tabindex="-1">
                 {{ playlist.owner.name }}
               </Link>
             </td>
             <td class="border-t">
-              <ul class="flex items-center px-6 py-4 text-sm">
-                <li v-for="moderator in playlist.moderators" :key="moderator.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
+              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
+                <ul class="flex items-center px-6 py-4 text-sm">
+                  <li v-for="moderator in playlist.moderators" :key="moderator.id" class="m-1 rounded bg-neutral-300 p-1 hover:underline">
                     {{ moderator.name }}
-                  </Link>
-                </li>
-              </ul>
+                  </li>
+                </ul>
+              </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 {{ playlist.tracks_count }}
               </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 {{ playlist.is_public ? 'Yes' : 'No' }}
               </Link>
             </td>
             <td class="w-px border-t">
-              <Link class="flex items-center px-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+              <Link class="flex items-center px-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 <icon name="cheveron-right" class="block h-6 w-6" />
               </Link>
             </td>
@@ -104,8 +104,8 @@ const reset = () => {
           </tr>
         </table>
 
-        <Pagination :links="playlists.links"/>
+        <Pagination :links="playlists.links" />
       </div>
     </Card>
-  </AdminLayout>
+  </AppLayout>
 </template>

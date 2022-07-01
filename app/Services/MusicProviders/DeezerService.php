@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Request;
 
 class DeezerService
 {
-    public function search()
+    public function searchTrack()
     {
         $term = Request::get('term');
 

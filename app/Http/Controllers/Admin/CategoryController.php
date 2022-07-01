@@ -22,7 +22,7 @@ class CategoryController extends Controller
             'categories' => Category::orderBy('name')
                 ->filter(Request::only('search', 'trashed'))
                 ->withCount('publicRooms', 'privateRooms')
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString(),
         ]);
     }

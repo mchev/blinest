@@ -55,20 +55,77 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
+    // TEAM
+
     public function team()
     {
         return $this->hasOne(Team::class);
     }
+
+    public function scopeOwnsTeam($query)
+    {
+        return Team::where('user_id', $query->first()->id)->exists();
+    }
+
+    // PLAYLIST
 
     public function playlists()
     {
         return $this->hasMany(Playlist::class);
     }
 
+    public function moderatedPlaylists()
+    {
+        return $this->morphedByMany(Playlist::class, 'moderable');
+    }
+
+    public function isPlaylistOwner(Playlist $playlist)
+    {
+        return $this->id === $playlist->user_id;
+    }
+
+    public function isPlaylistModerator(Playlist $playlist)
+    {
+        return $this->whereHas('moderatedPlaylists', function (Builder $query) use ($playlist) {
+            $query->where('playlists.id', $playlist->id);
+        })->exists();
+    }
+
+    public function canEditPlaylist(Playlist $playlist)
+    {
+        return $this->isPlaylistOwner($playlist) || $this->isPlaylistModerator($playlist) || $this->isAdministrator();
+    }
+
+    // ROOM
+
     public function rooms()
     {
         return $this->hasMany(Room::class);
     }
+
+    public function moderatedRooms()
+    {
+        return $this->morphedByMany(Room::class, 'moderable');
+    }
+
+    public function isRoomModerator(Room $room)
+    {
+        return $this->whereHas('moderatedRooms', function (Builder $query) use ($room) {
+            $query->where('rooms.id', $room->id);
+        })->exists();
+    }
+
+    public function isRoomOwner(Room $room)
+    {
+        return $this->id === $room->user_id;
+    }
+
+    public function hasRoomControl(Room $room)
+    {
+        return $this->isRoomOwner($room) || $this->isRoomModerator($room) || $this->isAdministrator();
+    }
+
+    // SCORES
 
     public function scores()
     {
@@ -85,58 +142,9 @@ class User extends Authenticatable
         return $this->is_administrator;
     }
 
-    public function moderatedRooms()
-    {
-        return $this->morphedByMany(Room::class, 'moderable');
-    }
-
-    public function moderatedPlaylists()
-    {
-        return $this->morphedByMany(Playlist::class, 'moderable');
-    }
-
-    public function isRoomModerator(Room $room)
-    {
-        return $this->whereHas('moderatedRooms', function (Builder $query) use ($room) {
-            $query->where('rooms.id', $room->id);
-        })->exists();
-    }
-
-    public function isPlaylistModerator(Playlist $playlist)
-    {
-        return $this->whereHas('moderatedPlaylists', function (Builder $query) use ($playlist) {
-            $query->where('playlists.id', $playlist->id);
-        })->exists();
-    }
-
-    public function isRoomOwner(Room $room)
-    {
-        return $this->id === $room->user_id;
-    }
-
-    public function isPlaylistOwner(Playlist $playlist)
-    {
-        return $this->id === $playlist->user_id;
-    }
-
-    public function hasRoomControl(Room $room)
-    {
-        return $this->isRoomOwner($room) || $this->isRoomModerator($room) || $this->isAdministrator();
-    }
-
-    public function canEditPlaylist(Playlist $playlist)
-    {
-        return $this->isPlaylistOwner($playlist) || $this->isPlaylistModerator($playlist) || $this->isAdministrator();
-    }
-
     public function scopeOrderByName($query)
     {
         $query->orderBy('name');
-    }
-
-    public function scopeOwnsTeam($query)
-    {
-        return Team::where('user_id', $query->first()->id)->exists();
     }
 
     public function scopeFilter($query, array $filters)

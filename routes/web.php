@@ -7,6 +7,7 @@ use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModeratorController;
+use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TrackAnswerController;
@@ -74,51 +75,43 @@ Route::get('/', [HomeController::class, 'index'])
     ->name('home')
     ->middleware('auth');
 
-// Users
+// Me
 
 Route::get('me', [UserController::class, 'show'])
-    ->name('users.show')
+    ->name('me.show')
     ->middleware('auth');
 
 Route::put('me/edit', [UserController::class, 'edit'])
-    ->name('users.edit')
+    ->name('me.edit')
     ->middleware('auth');
 
 Route::put('me', [UserController::class, 'update'])
-    ->name('users.update')
+    ->name('me.update')
     ->middleware('auth');
 
 Route::delete('me/destroy', [UserController::class, 'destroy'])
-    ->name('users.destroy')
+    ->name('me.destroy')
+    ->middleware('auth');
+
+// Users
+Route::get('users/{user}', [UserController::class, 'show'])
+    ->name('users.show')
     ->middleware('auth');
 
 // Rooms
-Route::get('rooms', [RoomController::class, 'index'])
-    ->name('rooms');
-
-Route::get('rooms/create', [RoomController::class, 'create'])
-    ->name('rooms.create');
-
-Route::post('rooms', [RoomController::class, 'store'])
-    ->name('rooms.store');
-
-Route::get('rooms/{room}', [RoomController::class, 'show'])
-    ->name('rooms.show');
-
-Route::get('rooms/{room}/edit', [RoomController::class, 'edit'])
-    ->name('rooms.edit');
-
-Route::put('rooms/{room}', [RoomController::class, 'update'])
-    ->name('rooms.update');
-
-Route::delete('rooms/{room}', [RoomController::class, 'destroy'])
-    ->name('rooms.destroy');
-
 Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
     ->name('rooms.restore');
 
 Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
     ->name('rooms.joined');
+
+Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
+    ->name('rooms.playlists.attach');
+
+Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
+    ->name('rooms.playlists.detach');
+
+Route::resource('rooms', RoomController::class);
 
 // Rounds
 Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
@@ -213,11 +206,11 @@ Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->name('image');
 
 // Music providers
-Route::get('providers/deezer/search', [DeezerService::class, 'search'])
-    ->name('providers.deezer.search');
+Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])
+    ->name('providers.deezer.search.track');
 
-Route::get('providers/itunes/search', [AppleMusicService::class, 'search'])
-    ->name('providers.itunes.search');
+Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTrack'])
+    ->name('providers.itunes.search.track');
 
-Route::get('providers/spotify/search', [SpotifyService::class, 'search'])
-    ->name('providers.spotify.search');
+Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
+    ->name('providers.spotify.search.track');

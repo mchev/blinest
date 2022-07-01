@@ -10,9 +10,9 @@ class MusicProvidersService
     public function search(string $term)
     {
         $responses = Http::pool(fn (Pool $pool) => [
-            $pool->get(route('providers.deezer.search', ['term' => $term])),
-            $pool->get(route('providers.itunes.search', ['term' => $term])),
-            $pool->get(route('providers.spotify.search', ['term' => $term])),
+            $pool->get(route('providers.deezer.search.track', ['term' => $term])),
+            $pool->get(route('providers.itunes.search.track', ['term' => $term])),
+            $pool->get(route('providers.spotify.search.track', ['term' => $term])),
         ]);
 
         $merged = collect();

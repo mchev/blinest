@@ -18,7 +18,7 @@ class UserController extends AdminController
             'filters' => Request::all('search', 'role', 'trashed'),
             'users' => User::orderByName()
                 ->filter(Request::only('search', 'role', 'trashed'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($user) => [
                     'id' => $user->id,

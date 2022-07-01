@@ -81,7 +81,7 @@ const reset = () => {
           </tbody>
         </table>
       </div>
+      <Pagination :links="answer_types.links" />
     </Card>
-    <pagination class="mt-6" :links="answer_types.links" />
   </AdminLayout>
 </template>

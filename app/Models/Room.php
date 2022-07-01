@@ -65,12 +65,12 @@ class Room extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id')->select('id', 'name');
     }
 
     public function moderators()
     {
-        return $this->morphToMany(User::class, 'moderable')->withTimestamps();
+        return $this->morphToMany(User::class, 'moderable')->select('users.id', 'users.name')->withTimestamps();
     }
 
     public function category()

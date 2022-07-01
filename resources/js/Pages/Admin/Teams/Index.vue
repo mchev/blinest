@@ -6,6 +6,7 @@ import AdminLayout from '@/Layouts/AdminLayout'
 import Icon from '@/Components/Icon'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
+import Card from '@/Components/Card'
 import Pagination from '@/Components/Pagination'
 import SearchFilter from '@/Components/SearchFilter'
 
@@ -48,39 +49,41 @@ const reset = () => {
         <span class="hidden md:inline">&nbsp;Team</span>
       </Link>
     </div>
-    <div class="overflow-x-auto rounded-md bg-white shadow dark:bg-gray-500">
-      <table class="w-full whitespace-nowrap dark:text-gray-300">
-        <thead>
-          <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6">Name</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">Members</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="team in teams.data" :key="team.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:focus-within:bg-gray-600 dark:hover:bg-gray-600">
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.teams.edit', team)">
-                {{ team.name }}
-                <icon v-if="team.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
-              </Link>
-            </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('admin.teams.edit', team)" tabindex="-1">
-                {{ team.members_count }}
-              </Link>
-            </td>
-            <td class="w-px border-t">
-              <Link class="flex items-center px-4" :href="route('admin.teams.edit', team)" tabindex="-1">
-                <icon name="cheveron-right" class="block h-6 w-6" />
-              </Link>
-            </td>
-          </tr>
-          <tr v-if="teams.data.length === 0">
-            <td class="border-t px-6 py-4" colspan="4">No teams found.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <pagination class="mt-6" :links="teams.links" />
+    <Card>
+      <div class="overflow-x-auto">
+        <table class="w-full whitespace-nowrap">
+          <thead>
+            <tr class="text-left font-bold">
+              <th class="px-6 pb-4 pt-6">Name</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">Members</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="team in teams.data" :key="team.id" class="hover:bg-neutral-200">
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.teams.edit', team)">
+                  {{ team.name }}
+                  <icon v-if="team.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
+                </Link>
+              </td>
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4" :href="route('admin.teams.edit', team)" tabindex="-1">
+                  {{ team.members_count }}
+                </Link>
+              </td>
+              <td class="w-px border-t">
+                <Link class="flex items-center px-4" :href="route('admin.teams.edit', team)" tabindex="-1">
+                  <icon name="cheveron-right" class="block h-6 w-6" />
+                </Link>
+              </td>
+            </tr>
+            <tr v-if="teams.data.length === 0">
+              <td class="border-t px-6 py-4" colspan="4">No teams found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <Pagination :links="teams.links" />
+    </Card>
   </AdminLayout>
 </template>

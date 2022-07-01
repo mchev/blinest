@@ -17,7 +17,7 @@ class SpotifyService
         $this->api->setAccessToken($session->getAccessToken());
     }
 
-    public function search()
+    public function searchTrack()
     {
         $term = Request::get('term');
 

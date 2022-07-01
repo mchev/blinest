@@ -17,16 +17,26 @@ class RoomController extends AdminController
     {
         return Inertia::render('Admin/Rooms/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'rooms' => Room::orderBy('updated_at')
+            'rooms' => Room::orderBy('is_public', 'DESC')
+                ->orderBy('name')
                 ->filter(Request::only('search', 'trashed'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($room) => [
                     'id' => $room->id,
+                    'photo' => $room->photo,
                     'name' => $room->name,
                     'description' => $room->description,
                     'owner' => $room->owner,
-                    'photo' => $room->photo,
+                    'moderators' => $room->moderators->map(fn ($moderator) => [
+                        'id' => $moderator->id,
+                        'name' => $moderator->name,
+                    ]),
+                    'playlists' => $room->playlists->map(fn ($playlist) => [
+                        'id' => $playlist->id,
+                        'name' => $playlist->name,
+                    ]),
+                    'is_public' => $room->is_public,
                     'deleted_at' => $room->deleted_at,
                 ]),
         ]);
@@ -58,7 +68,7 @@ class RoomController extends AdminController
             'color' => ['nullable'],
         ]);
 
-        Auth::user()->rooms()->create([
+        $room = Auth::user()->rooms()->create([
             'name' => Request::get('name'),
             'description' => Request::get('description'),
             'playlist_id' => Request::get('playlist_id'),
@@ -77,15 +87,16 @@ class RoomController extends AdminController
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
         ]);
 
-        return Redirect::route('admin.rooms')->with('success', 'Room created.');
+        return Redirect::route('admin.rooms.edit', $room)->with('success', 'Room created.');
     }
 
     public function edit(Room $room)
     {
         return Inertia::render('Admin/Rooms/Edit', [
             'room' => $room,
-            'room_playlists' => $room->playlists()->pluck('id'),
             'categories' => Category::orderBy('name')->get(),
+            'moderators' => $room->moderators,
+            'playlists' => $room->playlists,
             'available_playlists' => Playlist::isPublic()->get()->merge(Auth::user()->playlists),
         ]);
     }
@@ -140,19 +151,5 @@ class RoomController extends AdminController
         $room->restore();
 
         return Redirect::back()->with('success', 'Room restored.');
-    }
-
-    public function attachPlaylist(Room $room, Playlist $playlist)
-    {
-        $room->playlists()->attach($playlist);
-
-        return Redirect::back();
-    }
-
-    public function detachPlaylist(Room $room, Playlist $playlist)
-    {
-        $room->playlists()->detach($playlist);
-
-        return Redirect::back();
     }
 }

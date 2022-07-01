@@ -18,7 +18,7 @@ class TeamController extends AdminController
             'teams' => Team::orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
                 ->withCount('members')
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString(),
         ]);
     }

@@ -20,6 +20,7 @@
         "pusher/pusher-php-server": "^7.0",
         "socialiteproviders/discord": "^4.1",
         "symfony/process": "^6.1",
+        "symfony/sendinblue-mailer": "^6.1",
         "tightenco/ziggy": "^1.4"
     },
     "require-dev": {

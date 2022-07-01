@@ -52,7 +52,7 @@
         </tr>
       </table>
 
-      <pagination class="p-8" :links="users.links" />
+      <Pagination :links="users.links" />
     </card>
   </div>
 </template>

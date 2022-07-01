@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
+import AppLayout from '@/Layouts/AppLayout'
 import Icon from '@/Components/Icon'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
@@ -23,7 +23,7 @@ const form = useForm({
 watch(
   form,
   throttle(() => {
-    Inertia.get('/admin/rooms', pickBy(form), { remember: 'forget', preserveState: true })
+    Inertia.get('/rooms', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )
@@ -34,7 +34,7 @@ const reset = () => {
 </script>
 <template>
   <Head title="Rooms" />
-  <AdminLayout>
+  <AppLayout>
     <h1 class="mb-8 text-3xl font-bold">Rooms</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
@@ -45,7 +45,7 @@ const reset = () => {
           <option value="only">Only Trashed</option>
         </select>
       </search-filter>
-      <Link class="btn-primary" :href="route('admin.rooms.create')">
+      <Link class="btn-primary" :href="route('rooms.create')">
         <span>Create</span>
         <span class="hidden md:inline">&nbsp;Room</span>
       </Link>
@@ -55,53 +55,53 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
             <th class="px-2 pb-4 pt-6">{{ __('Name') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Owner') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Moderators') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
-            <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Public') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
+            <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
           </tr>
           <tr v-for="room in rooms.data" :key="room.id" class="hover:bg-neutral-200">
             <td class="border-t">
-              <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)">
+              <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)">
                 <img v-if="room.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.photo" />
                 <div class="flex flex-col">
                   {{ room.name }}
-                  <small class="text-gray-500 truncate max-w-[18rem]">{{ room.description }}</small>
+                  <small class="max-w-[18rem] truncate text-gray-500">{{ room.description }}</small>
                 </div>
                 <icon v-if="room.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
-                <img v-if="room.owner.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.owner.photo" />
-                {{ room.owner.name }}
+              <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                <ul class="flex items-center px-2 py-4 text-sm">
+                  <li v-for="moderator in room.moderators" :key="moderator.id" class="m-1 rounded bg-neutral-300 p-1">
+                    {{ moderator.name }}
+                  </li>
+                </ul>
               </Link>
             </td>
             <td class="border-t">
               <ul class="flex items-center px-2 py-4 text-sm">
-                <li v-for="moderator in room.moderators" :key="moderator.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
-                    {{ moderator.name }}
-                  </Link>
-                </li>
-              </ul>
-            </td>
-            <td class="border-t">
-              <ul class="flex items-center px-2 py-4 text-sm">
                 <li v-for="playlist in room.playlists" :key="playlist.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                     {{ playlist.name }}
                   </Link>
                 </li>
               </ul>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
-                <span class="m-1 rounded px-2 py-1" :class="room.is_public ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.is_public ? __('Yes') : __('No') }}</span>
+              <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                {{ rooms.rounds_count }}
+              </Link>
+            </td>
+            <td class="border-t">
+              <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                <span class="m-1 rounded px-2 py-1" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.password ? __('No') : __('Yes') }}</span>
+                <small v-if="room.password" class="text-xs text-neutral-500">{{ __('Password protected') }}</small>
               </Link>
             </td>
             <td class="w-px border-t">
-              <Link class="flex items-center px-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
+              <Link class="flex items-center px-4" :href="route('rooms.edit', room.id)" tabindex="-1">
                 <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
               </Link>
             </td>
@@ -113,5 +113,5 @@ const reset = () => {
       </div>
       <Pagination :links="rooms.links" />
     </Card>
-  </AdminLayout>
+  </AppLayout>
 </template>

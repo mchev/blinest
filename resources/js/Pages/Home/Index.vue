@@ -12,9 +12,9 @@ defineProps({
   <Head title="Home" />
   <Layout>
     <section v-for="category in categories" :key="category.id">
-      <div v-if="category.public_rooms.length" class="relative">
+      <div v-if="category.rooms.length" class="relative">
         <h2 class="text-1xl mb-2 mt-6 font-bold sm:text-2xl lg:text-3xl">{{ category.name }}</h2>
-        <rooms :rooms="category.public_rooms" />
+        <rooms :rooms="category.rooms" />
       </div>
     </section>
     <section>

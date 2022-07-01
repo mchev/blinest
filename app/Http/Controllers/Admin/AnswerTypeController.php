@@ -21,7 +21,7 @@ class AnswerTypeController extends Controller
             'filters' => Request::all('search'),
             'answer_types' => AnswerType::orderBy('name')
                 ->filter(Request::only('search'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString(),
         ]);
     }

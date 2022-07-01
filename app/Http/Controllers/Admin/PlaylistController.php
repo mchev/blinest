@@ -7,17 +7,18 @@ use App\Models\Playlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PlaylistController extends AdminController
 {
     public function index()
     {
-        return Inertia::render('Admin/Playlists/Index', [
+        return Inertia::render('Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
             'playlists' => Playlist::orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($playlist) => [
                     'id' => $playlist->id,
@@ -40,13 +41,13 @@ class PlaylistController extends AdminController
 
     public function create()
     {
-        return Inertia::render('Admin/Playlists/Create');
+        return Inertia::render('Playlists/Create');
     }
 
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:50'],
+            'name' => ['required', 'max:50', 'unique:playlists'],
             'is_public' => ['required', 'boolean'],
         ]);
 
@@ -60,7 +61,7 @@ class PlaylistController extends AdminController
 
     public function edit(Playlist $playlist)
     {
-        return Inertia::render('Admin/Playlists/Edit', [
+        return Inertia::render('Playlists/Edit', [
             'playlist' => [
                 'id' => $playlist->id,
                 'name' => $playlist->name,
@@ -98,7 +99,7 @@ class PlaylistController extends AdminController
     public function update(Playlist $playlist)
     {
         Request::validate([
-            'name' => ['required', 'max:50'],
+            'name' => ['required', 'max:50', Rule::unique('playlists')->ignore($playlist->id)],
             'description' => ['nullable'],
             'is_public' => ['required', 'boolean'],
         ]);

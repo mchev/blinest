@@ -9,10 +9,7 @@
       </div>
     </template>
     <template #dropdown>
-      <Link class="block px-6 py-2" :href="route('users.edit', user)">{{ __('My Profile') }}</Link>
-      <Link class="block px-6 py-2" :href="route('playlists')">{{ __('Playlists') }}</Link>
-      <Link class="block px-6 py-2" :href="route('rooms')">{{ __('Rooms') }}</Link>
-      <Link class="block px-6 py-2" href="/users">{{ __('Team') }}</Link>
+      <Link class="block px-6 py-2" href="/me">{{ __('My Profile') }}</Link>
       <div class="border-t" />
       <Link v-if="user.admin" class="my-2 block px-6 py-2" :href="route('admin.dashboard')">{{ __('Administration') }}</Link>
       <div class="border-t" />
