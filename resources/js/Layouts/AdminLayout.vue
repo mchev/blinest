@@ -1,11 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
-import Logo from '@/Components/Logo'
-import Dropdown from '@/Components/Dropdown'
-import AdminMenu from '@/Components/AdminMenu'
-import FlashMessages from '@/Components/FlashMessages'
-import UserDropdown from '@/Components/UserDropdown'
-import LanguageSwitcher from '@/Components/LanguageSwitcher'
+import Logo from '@/Components/Logo.vue'
+import Dropdown from '@/Components/Dropdown.vue'
+import AdminMenu from '@/Components/AdminMenu.vue'
+import FlashMessages from '@/Components/FlashMessages.vue'
+import UserDropdown from '@/Components/UserDropdown.vue'
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 
 defineProps({
   auth: Object,

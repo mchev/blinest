@@ -1,5 +1,5 @@
 <script setup>
-import Dropdown from '@/Components/Dropdown'
+import Dropdown from '@/Components/Dropdown.vue'
 
 defineProps({
   modelValue: String,

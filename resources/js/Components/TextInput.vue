@@ -1,6 +1,6 @@
 <script setup>
 import { v4 as uuid } from 'uuid'
-import Icon from '@/Components/Icon'
+import Icon from '@/Components/Icon.vue'
 
 defineProps({
   id: {

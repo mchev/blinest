@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import Icon from '@/Components/Icon'
-import Dropdown from '@/Components/Dropdown'
+import Icon from '@/Components/Icon.vue'
+import Dropdown from '@/Components/Dropdown.vue'
 
 const theme = ref(localStorage.theme || 'system')
 

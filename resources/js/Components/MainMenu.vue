@@ -1,6 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/inertia-vue3'
-import Icon from '@/Components/Icon'
+import Icon from '@/Components/Icon.vue'
 
 const isUrl = (...urls) => {
   let currentUrl = usePage().url.value.substr(1)
@@ -11,7 +11,7 @@ const isUrl = (...urls) => {
 }
 </script>
 <template>
-  <div class="text-neutral-100">
+  <div>
     <div class="mb-6">
       <Link class="group flex items-center" href="/me">
         <div :class="isUrl('me') ? 'font-bold' : 'font-normal'">{{ __('My Profile') }}</div>
@@ -28,8 +28,8 @@ const isUrl = (...urls) => {
       </Link>
     </div>
     <div class="mb-6">
-      <Link class="group flex items-center" href="/reports">
-        <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Team') }}</div>
+      <Link class="group flex items-center" :href="route('teams.index')">
+        <div :class="isUrl('teams') ? 'font-bold' : 'font-normal'">{{ __('Team') }}</div>
       </Link>
     </div>
     <div class="mb-6">

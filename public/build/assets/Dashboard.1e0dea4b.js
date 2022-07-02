@@ -1,0 +1,1 @@
+import{_ as t}from"./AdminLayout.2b3919b1.js";import{o as a,c as o,w as e,a as r}from"./app.6178a65b.js";import"./Icon.b321052c.js";import"./plugin-vue_export-helper.21dcd24c.js";import"./LanguageSwitcher.06c97ed0.js";const s=r("div",null,"Admin",-1),u={__name:"Dashboard",setup(_){return(c,i)=>(a(),o(t,null,{default:e(()=>[s]),_:1}))}};export{u as default};

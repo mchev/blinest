@@ -1,0 +1,1 @@
+import{o as e,b as o,F as l,y as t,d as a}from"./app.6178a65b.js";import c from"./Room.46f169f0.js";const m={class:"flex w-full flex-wrap gap-3"},p={__name:"Rooms",props:{rooms:Object},setup(s){return(n,u)=>(e(),o("ul",m,[(e(!0),o(l,null,t(s.rooms,r=>(e(),o("li",{key:r.id,class:"flex w-full md:w-1/3 lg:w-1/6"},[a(c,{room:r},null,8,["room"])]))),128))]))}};export{p as default};

@@ -1,3 +1,10 @@
+<script setup>
+import { Link, usePage } from '@inertiajs/inertia-vue3'
+import Icon from '@/Components/Icon.vue'
+import Dropdown from '@/Components/Dropdown.vue'
+
+const user = usePage().props.value.auth.user
+</script>
 <template>
   <dropdown placement="bottom-end">
     <template #default>
@@ -17,22 +24,3 @@
     </template>
   </dropdown>
 </template>
-
-<script>
-import { Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Components/Icon'
-import Dropdown from '@/Components/Dropdown'
-
-export default {
-  components: {
-    Dropdown,
-    Icon,
-    Link,
-  },
-  data() {
-    return {
-      user: this.$page.props.auth.user,
-    }
-  },
-}
-</script>

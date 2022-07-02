@@ -1,7 +1,7 @@
 <script setup>
 import { Head } from '@inertiajs/inertia-vue3'
-import Layout from '@/Layouts/AppLayout'
-import Rooms from './partials/Rooms'
+import Layout from '@/Layouts/AppLayout.vue'
+import Rooms from './partials/Rooms.vue'
 
 defineProps({
   categories: Object,

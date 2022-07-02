@@ -5,7 +5,7 @@ export default {
 </script>
 <script setup>
 import { useAttrs } from 'vue'
-import Icon from '@/Shared/Icon'
+import Icon from '@/Shared/Icon.vue'
 
 const props = defineProps({
   field: {

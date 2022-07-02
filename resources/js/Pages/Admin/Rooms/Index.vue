@@ -2,13 +2,13 @@
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import Icon from '@/Components/Icon'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
-import Pagination from '@/Components/Pagination'
-import SearchFilter from '@/Components/SearchFilter'
-import Card from '@/Components/Card'
+import Pagination from '@/Components/Pagination.vue'
+import SearchFilter from '@/Components/SearchFilter.vue'
+import Card from '@/Components/Card.vue'
 
 const props = defineProps({
   filters: Object,

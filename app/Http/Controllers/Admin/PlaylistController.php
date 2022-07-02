@@ -14,7 +14,7 @@ class PlaylistController extends AdminController
 {
     public function index()
     {
-        return Inertia::render('Playlists/Index', [
+        return Inertia::render('Admin/Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
             'playlists' => Playlist::orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
@@ -41,7 +41,7 @@ class PlaylistController extends AdminController
 
     public function create()
     {
-        return Inertia::render('Playlists/Create');
+        return Inertia::render('Admin/Playlists/Create');
     }
 
     public function store()
@@ -61,7 +61,7 @@ class PlaylistController extends AdminController
 
     public function edit(Playlist $playlist)
     {
-        return Inertia::render('Playlists/Edit', [
+        return Inertia::render('Admin/Playlists/Edit', [
             'playlist' => [
                 'id' => $playlist->id,
                 'name' => $playlist->name,

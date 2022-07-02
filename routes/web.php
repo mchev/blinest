@@ -9,16 +9,21 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
-use App\Http\Controllers\SocialController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrackAnswerController;
+
 // Moderation
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\UserController;
+
 // Socialite
-use App\Services\MusicProviders\AppleMusicService;
+use App\Http\Controllers\SocialController;
+
 // Music Providers Services
+use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -97,6 +102,9 @@ Route::delete('me/destroy', [UserController::class, 'destroy'])
 Route::get('users/{user}', [UserController::class, 'show'])
     ->name('users.show')
     ->middleware('auth');
+
+// Teams
+Route::resource('teams', TeamController::class);
 
 // Rooms
 Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])

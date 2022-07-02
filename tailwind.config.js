@@ -1,7 +1,11 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  content: ['./resources/**/*.blade.php', './resources/**/*.js', './resources/**/*.vue'],
+  content: [
+    './resources/**/*.blade.php', 
+    './resources/**/*.js', 
+    './resources/**/*.vue',
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -32,5 +36,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }

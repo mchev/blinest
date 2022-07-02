@@ -1,9 +1,9 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/inertia-vue3'
-import Logo from '@/Components/Logo'
-import TextInput from '@/Components/TextInput'
-import LoadingButton from '@/Components/LoadingButton'
-import SocialIcon from '@/Components/SocialIcon'
+import Logo from '@/Components/Logo.vue'
+import TextInput from '@/Components/TextInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import SocialIcon from '@/Components/SocialIcon.vue'
 
 const form = useForm({
   email: 'johndoe@example.com',

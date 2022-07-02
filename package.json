@@ -1,17 +1,11 @@
 {
     "private": true,
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
+        "dev": "vite",
+        "build": "vite build",
         "fix:eslint": "eslint --ext .js,.vue resources/js/ --fix",
         "fix:prettier": "prettier --write --loglevel warn 'resources/js/**/*.vue'",
-        "fix-code-style": "npm run fix:prettier && npm run fix:eslint",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production",
-        "heroku-postbuild": "npm run prod"
+        "fix-code-style": "npm run fix:prettier && npm run fix:eslint"
     },
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.0",
@@ -24,18 +18,21 @@
         "eslint-plugin-vue": "^9.1.1",
         "howler": "^2.2.3",
         "laravel-echo": "^1.12.0",
-        "laravel-mix": "^6.0.49",
+        "laravel-vite-plugin": "^0.2.4",
         "lodash": "^4.17.21",
-        "postcss": "^8.4.4",
-        "postcss-import": "^12.0.1",
+        "postcss": "^8.4.14",
+        "postcss-import": "^14.0.1",
         "postcss-nesting": "^7.0.1",
         "prettier": "^2.7.1",
         "prettier-plugin-tailwindcss": "^0.1.11",
         "pusher-js": "^7.1.1-beta",
         "tailwindcss": "^3.1.3",
         "uuid": "^8.3.2",
+        "vite": "^2.9.13",
         "vue": "^3.2.37",
-        "vue-loader": "^17.0.0",
-        "vue-select": "^4.0.0-beta.1"
+        "vue-loader": "^17.0.0"
+    },
+    "dependencies": {
+        "@vitejs/plugin-vue": "^2.3.3"
     }
 }

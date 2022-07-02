@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { useForm } from '@inertiajs/inertia-vue3'
-import TextInput from '@/Components/TextInput'
+import TextInput from '@/Components/TextInput.vue'
 import throttle from 'lodash/throttle'
 import pickBy from 'lodash/pickBy'
 

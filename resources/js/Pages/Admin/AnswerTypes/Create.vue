@@ -1,10 +1,10 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import TextInput from '@/Components/TextInput'
-import TextareaInput from '@/Components/TextareaInput'
-import LoadingButton from '@/Components/LoadingButton'
-import Card from '@/Components/Card'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import TextInput from '@/Components/TextInput.vue'
+import TextareaInput from '@/Components/TextareaInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import Card from '@/Components/Card.vue'
 
 const form = useForm({
   name: null,

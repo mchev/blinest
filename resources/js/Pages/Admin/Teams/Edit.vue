@@ -1,12 +1,12 @@
 <script setup>
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import TextInput from '@/Components/TextInput'
-import SelectInput from '@/Components/SelectInput'
-import FileInput from '@/Components/FileInput'
-import LoadingButton from '@/Components/LoadingButton'
-import TrashedMessage from '@/Components/TrashedMessage'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import TextInput from '@/Components/TextInput.vue'
+import SelectInput from '@/Components/SelectInput.vue'
+import FileInput from '@/Components/FileInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import TrashedMessage from '@/Components/TrashedMessage.vue'
 
 const props = defineProps({
   team: Object,

@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import Layout from '@/Layouts/AppLayout'
-import Card from '@/Components/Card'
+import Layout from '@/Layouts/AppLayout.vue'
+import Card from '@/Components/Card.vue'
 
 defineProps({
   user: Object,
@@ -10,14 +10,14 @@ defineProps({
 <template>
   <Head :title="user.name" />
   <Layout>
-    <div class="flex text-neutral-100">
+    <div class="flex">
       <div class="mr-4 border-r pr-4">
         <figure>
           <img :src="user.photo" :alt="user.name" class="w-full rounded" />
         </figure>
 
         <h2 class="mt-2 text-xl font-bold">{{ user.name }}</h2>
-        <p class="text-xs text-neutral-300">{{ user.email }}</p>
+        <p class="text-xs text-neutral-400">{{ user.email }}</p>
 
         <ul class="my-8">
           <li class="mb-4 flex flex-col">

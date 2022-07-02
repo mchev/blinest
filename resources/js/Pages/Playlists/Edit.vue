@@ -1,16 +1,16 @@
 <script setup>
 import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
-import AppLayout from '@/Layouts/AppLayout'
-import Card from '@/Components/Card'
-import TextInput from '@/Components/TextInput'
-import TextareaInput from '@/Components/TextareaInput'
-import SelectInput from '@/Components/SelectInput'
-import LoadingButton from '@/Components/LoadingButton'
-import TrashedMessage from '@/Components/TrashedMessage'
-import TracksManager from '@/Components/Playlists/TracksManager'
-import ModeratorsManager from '@/Components/Playlists/ModeratorsManager'
-import RoomsList from '@/Components/Playlists/RoomsList'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import Card from '@/Components/Card.vue'
+import TextInput from '@/Components/TextInput.vue'
+import TextareaInput from '@/Components/TextareaInput.vue'
+import SelectInput from '@/Components/SelectInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import TrashedMessage from '@/Components/TrashedMessage.vue'
+import TracksManager from '@/Components/Playlists/TracksManager.vue'
+import ModeratorsManager from '@/Components/Playlists/ModeratorsManager.vue'
+import RoomsList from '@/Components/Playlists/RoomsList.vue'
 
 const props = defineProps({
   playlist: Object,

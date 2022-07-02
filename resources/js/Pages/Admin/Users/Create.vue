@@ -31,11 +31,11 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import AdminLayout from '@/Layouts/AdminLayout'
-import FileInput from '@/Components/FileInput'
-import TextInput from '@/Components/TextInput'
-import SelectInput from '@/Components/SelectInput'
-import LoadingButton from '@/Components/LoadingButton'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import FileInput from '@/Components/FileInput.vue'
+import TextInput from '@/Components/TextInput.vue'
+import SelectInput from '@/Components/SelectInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
 
 export default {
   components: {

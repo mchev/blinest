@@ -61,10 +61,10 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import Logo from '@/Components/Logo'
-import TextInput from '@/Components/TextInput'
-import LoadingButton from '@/Components/LoadingButton'
-import SocialIcon from '@/Components/SocialIcon'
+import Logo from '@/Components/Logo.vue'
+import TextInput from '@/Components/TextInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import SocialIcon from '@/Components/SocialIcon.vue'
 
 export default {
   components: {

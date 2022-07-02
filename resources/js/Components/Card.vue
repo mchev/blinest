@@ -1,5 +1,5 @@
 <template>
-  <section class="flex flex-col rounded-md bg-neutral-100 text-neutral-800 shadow">
+  <section class="flex flex-col rounded-md bg-neutral-100 text-neutral-700 shadow">
     <header v-if="$slots.header" class="mb-2 flex h-16 min-h-fit flex-wrap items-center border-b-2 p-2">
       <slot name="header" />
     </header>

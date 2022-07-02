@@ -59,14 +59,14 @@
 
 <script>
 import { Head, Link } from '@inertiajs/inertia-vue3'
-import Icon from '@/Components/Icon'
+import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
-import AdminLayout from '@/Layouts/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Components/SearchFilter'
-import Pagination from '@/Components/Pagination'
-import Card from '@/Components/Card'
+import SearchFilter from '@/Components/SearchFilter.vue'
+import Pagination from '@/Components/Pagination.vue'
+import Card from '@/Components/Card.vue'
 
 export default {
   components: {

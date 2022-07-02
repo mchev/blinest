@@ -1,20 +1,26 @@
-import './bootstrap'
+import './bootstrap';
+import Translation from './translation';
+import '../css/app.css';
 import { createApp, h } from 'vue'
 import { InertiaProgress } from '@inertiajs/progress'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
-// APP
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+
 createInertiaApp({
-  resolve: (name) => require(`./Pages/${name}`),
-  title: (title) => `${title} - Blinest`,
-  setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .mixin({ methods: { route: window.route } })
-      .mixin(require('./translation'))
-      .mount(el)
-  },
-})
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    setup({ el, app, props, plugin }) {
+        return createApp({ render: () => h(app, props) })
+            .use(plugin)
+            .use(ZiggyVue, Ziggy)
+            .mixin(Translation)
+            .mount(el);
+    },
+});
+
 
 // PROGRESS
 InertiaProgress.init()

@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/inertia-vue3'
-import Layout from '@/Layouts/AppLayout'
+import Layout from '@/Layouts/AppLayout.vue'
 import Spinner from '@/Components/Spinner.vue'
 
 import Player from './partials/Player.vue'

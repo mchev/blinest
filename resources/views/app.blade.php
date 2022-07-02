@@ -12,12 +12,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700&display=swap" rel="stylesheet"> 
 
-        <!-- Styles -->
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-        <!-- Scripts -->
+        @vite('resources/js/app.js')
         @routes
-        <script src="{{ mix('js/app.js') }}" defer></script>
     
 </head>
 <body class="font-sans antialiased bg-neutral-900">
