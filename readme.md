@@ -1,18 +1,53 @@
 # Blinest
 
+## Developpement
+
+### Requirements
+
+Blinest use Websockets a lot. So you will have to install soketi globaly :
+https://docs.soketi.app/getting-started/installation/cli-installation
+
+Then go to your working directory and :
+
 ```
-laravel-echo-server start
+composer install
+```
+
+```
+php artisan key::generate
+```
+
+```
+npm install
+```
+
+```
+php artisan migrate:fresh --seed
+```
+
+### Start developing
+```
+npm run dev
+```
+```
+soketi start
 ```
 ```
 php artisan queue:work
 ```
+
+## Production
+
+
+## Roadmap
+
 - Parties
 	- Facile
 	- Speed
 	- Mélomane
 
 - Affichage des scores
-- Affichage des réponses
+- ✅ Affichage des réponses
 - Avatar sur la timeline quand bonne réponse
 - Parametrer les bonnes réponses sur la room pour affichage timeline ?
 - Bloquer des noms reservés à l'inscription
@@ -22,4 +57,4 @@ php artisan queue:work
 - Migration DB
 - Team
 - Rankings
-- Recherche
+- ✅ Recherche
