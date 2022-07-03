@@ -9,21 +9,17 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\TrackAnswerController;
-
-// Moderation
-use App\Http\Controllers\TrackController;
-use App\Http\Controllers\UserController;
-
-// Socialite
 use App\Http\Controllers\SocialController;
-
+use App\Http\Controllers\TeamController;
+// Moderation
+use App\Http\Controllers\TrackAnswerController;
+use App\Http\Controllers\TrackController;
+// Socialite
+use App\Http\Controllers\UserController;
 // Music Providers Services
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,6 +114,9 @@ Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'at
 
 Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
     ->name('rooms.playlists.detach');
+
+Route::post('rooms/{room}/message', [RoomController::class, 'newMessage'])
+    ->name('rooms.message.store');
 
 Route::resource('rooms', RoomController::class);
 

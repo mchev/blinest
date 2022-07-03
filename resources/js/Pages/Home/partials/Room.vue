@@ -28,13 +28,11 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.id}`" class="relative flex w-full flex-col items-center justify-center rounded-sm bg-gray-100 shadow transition duration-100 ease-in-out hover:z-10 hover:scale-110 dark:bg-gray-500">
+  <Link :href="`/rooms/${room.id}`" class="relative flex w-full h-48 flex-col items-center justify-center rounded bg-neutral-800 bg-cover bg-center shadow transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo});`">
     <article class="h-full w-full">
-      <div class="relative overflow-hidden">
-        <picture class="h-auto w-full">
-          <img :src="room.photo" :alt="room.name" />
-        </picture>
-        <div class="absolute top-1 right-2 w-auto font-bold">
+      <div class="relative">
+        <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
+        <div class="absolute top-1 left-2 w-auto font-bold">
           <div class="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -51,7 +49,7 @@ onUnmounted(() => {
           </Transition>
         </div>
       </div>
-      <div class="flex items-center justify-between bg-gray-800 p-2 text-sm uppercase text-gray-100">
+      <div class="absolute bottom-0 rounded-b w-full flex items-center justify-between bg-gray-800 p-2 text-sm uppercase text-gray-100">
         {{ room.name }}
         <div class="flex items-center">{{ infos ? infos.current_track_index : room.current_track_index }} / {{ infos ? infos.tracks_count : room.tracks_by_round }}</div>
       </div>

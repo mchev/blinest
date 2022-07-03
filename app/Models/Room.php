@@ -63,6 +63,11 @@ class Room extends Model
         $round->start();
     }
 
+    public function messages()
+    {
+        return $this->morphMany(Message::class, 'messagable');
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id')->select('id', 'name');

@@ -32,3 +32,11 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
         ],
     ];
 });
+
+Broadcast::channel('chat-room.{id}', function ($user) {
+    return [
+        'id' => $user->id,
+        'name' => $user->name,
+        'team' => $user->team,
+    ];
+});

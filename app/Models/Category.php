@@ -19,7 +19,8 @@ class Category extends Model
             ->withCount('rounds')
             ->orderBy('is_public', 'DESC')
             ->orderBy('rounds_count', 'DESC')
-            ->orderBy('name');
+            ->orderBy('name')
+            ->with('owner');
     }
 
     public function publicRooms()

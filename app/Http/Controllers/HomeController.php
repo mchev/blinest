@@ -16,7 +16,7 @@ class HomeController extends Controller
             'categories' => Category::with(['rooms' => function ($query) {
                 $query->filter(Request::only('search'));
             }])->get(),
-            'private_rooms' => Auth::user()->rooms()
+            'private_rooms' => Auth::user()->rooms()->with('owner')
                 ->filter(Request::only('search'))
                 ->get(),
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
@@ -46,7 +47,12 @@ class RoomController extends Controller
     public function show(Room $room)
     {
         return Inertia::render('Rooms/Show', [
-            'room' => $room,
+            'room' => [
+                'id' => $room->id,
+                'name' => $room->name,
+                'moderators' => $room->moderators,
+                'latest_messages' => $room->messages()->latest()->limit(30)->get()
+            ],
         ]);
     }
 
@@ -169,5 +175,20 @@ class RoomController extends Controller
         (Auth::user()->hasRoomControl($room))
             ? $room->startRound()
             : abort(403);
+    }
+
+    public function newMessage(Room $room)
+    {
+        Request::validate([
+            'body' => ['required'],
+        ]);
+
+        $message = $room->messages()->create([
+            'user_id' => Auth::user()->id,
+            'user_ip' => Request::ip(),
+            'body' => Request::input('body'),
+        ]);
+
+        broadcast(new NewMessage($message));
     }
 }

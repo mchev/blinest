@@ -132,6 +132,12 @@ class User extends Authenticatable
         return $this->hasMany(Score::class);
     }
 
+    // CHAT
+    public function messages()
+    {
+        return $this->morphMany(Message::class, 'messagable');
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;

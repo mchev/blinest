@@ -13,13 +13,13 @@ defineProps({
   <Layout>
     <section v-for="category in categories" :key="category.id">
       <div v-if="category.rooms.length" class="relative">
-        <h2 class="text-1xl mb-2 mt-6 font-bold sm:text-2xl lg:text-3xl">{{ category.name }}</h2>
+        <h2 class="text-xl mt-2 font-bold text-neutral-500 lg:text-2xl">{{ category.name }}</h2>
         <rooms :rooms="category.rooms" />
       </div>
     </section>
     <section>
       <div class="relative">
-        <h2 class="mb-2 mt-4 text-2xl sm:text-3xl lg:text-4xl">{{ __('My rooms') }}</h2>
+        <h2 class="text-xl mt-2 font-bold text-neutral-500 lg:text-2xl">{{ __('My rooms') }}</h2>
         <rooms :rooms="private_rooms" />
       </div>
     </section>

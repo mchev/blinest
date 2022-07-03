@@ -13,7 +13,13 @@ class Team extends Model
     use SoftDeletes;
     use HasPicture;
 
+    /**
+     * Max members allowed by teams
+     */
+    public $seats = 8;
+
     protected $appends = [
+        'seats',
         'photo',
     ];
 
@@ -22,9 +28,14 @@ class Team extends Model
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
+    public function getSeatsAttribute()
+    {
+        return $this->seats;
+    }
+
     public function owner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id')->select('id', 'name');
     }
 
     public function members()

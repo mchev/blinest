@@ -11,28 +11,23 @@ const isUrl = (...urls) => {
 }
 </script>
 <template>
-  <div>
-    <div class="mb-6">
-      <Link class="group flex items-center" href="/me">
-        <div :class="isUrl('me') ? 'font-bold' : 'font-normal'">{{ __('My Profile') }}</div>
-      </Link>
-    </div>
-    <div class="mb-6">
+  <div class="flex flex-col md:flex-row items-end gap-6">
+    <div class="">
       <Link class="group flex items-center" :href="route('playlists')">
         <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">{{ __('Playlists') }}</div>
       </Link>
     </div>
-    <div class="mb-6">
+    <div class="">
       <Link class="group flex items-center" :href="route('rooms.index')">
         <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
       </Link>
     </div>
-    <div class="mb-6">
+    <div class="">
       <Link class="group flex items-center" :href="route('teams.index')">
         <div :class="isUrl('teams') ? 'font-bold' : 'font-normal'">{{ __('Team') }}</div>
       </Link>
     </div>
-    <div class="mb-6">
+    <div class="">
       <Link class="group flex items-center" href="/reports">
         <div :class="isUrl('reports') ? 'font-bold' : 'font-normal'">{{ __('Rankings') }}</div>
       </Link>

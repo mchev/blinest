@@ -16,7 +16,7 @@ import Volume from '@/Components/Volume.vue'
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
         <div class="md:flex md:flex-shrink-0">
-          <div class="flex items-center justify-between px-12 py-3 md:w-56 md:flex-shrink-0">
+          <div class="flex items-center justify-between px-12 py-2 md:flex-shrink-0">
             <Link class="mt-1" href="/">
               <logo class="fill-white" width="120" height="28" />
             </Link>
@@ -31,11 +31,14 @@ import Volume from '@/Components/Volume.vue'
               </template>
             </dropdown>
           </div>
-          <div class="md:text-md items center grid w-full grid-cols-2 p-4 text-sm md:px-12 md:py-0">
-            <div class="flex items-center justify-end">
+          <div class="md:text-md items-center grid w-full grid-cols-2 p-4 text-sm md:px-12 md:py-0">
+
+            <main-menu class="hidden w-auto md:flex" />
+
+<!--             <div class="flex items-center justify-end">
               <search-rooms />
             </div>
-            <div class="flex items-center justify-end">
+ -->            <div class="flex items-center justify-end">
               <UserDropdown class="mr-4" />
               <LanguageSwitcher class="mr-4" />
               <Volume />
@@ -43,7 +46,6 @@ import Volume from '@/Components/Volume.vue'
           </div>
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
-          <main-menu class="hidden w-auto flex-shrink-0 overflow-y-auto p-12 md:block md:w-56" />
           <Transition name="slide-right" appear>
             <div v-if="$slots.default" class="px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
               <flash-messages />
