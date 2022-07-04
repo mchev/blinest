@@ -1,10 +1,9 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3'
 import Room from './Room.vue'
-import 'vue3-carousel/dist/carousel.css'
-import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 defineProps({
+  id: String | Number,
   rooms: Object,
 })
 
@@ -25,21 +24,13 @@ const breakpoints = {
 }
 </script>
 <template>
-  <Carousel :settings="settings" :breakpoints="breakpoints">
-    <Slide v-for="room in rooms" :key="room.id">
-      <Room :room="room" />
-    </Slide>
-    <template #addons>
-      <Navigation />
-<!--       <Pagination />
- -->    </template>
-  </Carousel>
+  <div class="grid md:grid-cols-4 xl:grid-cols-5 gap-4">
+    <Room :room="room" v-for="room in rooms" :key="room.id" />
+  </div>
 </template>
 
 <style scoped>
-  
-  .carousel__slide {
-    margin: 1.5rem;
-  }
-
+.carousel__slide {
+  margin: 1.5rem;
+}
 </style>

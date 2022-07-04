@@ -2,6 +2,7 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import Card from '@/Components/Card.vue'
+import Icon from '@/Components/Icon.vue'
 
 const props = defineProps({
   users: Array,
@@ -48,10 +49,15 @@ onUnmounted(() => {
 <template>
   <Card>
     <template #header>
-      <h3 class="text-xl font-bold">Classement</h3>
+      <div class="flex items-center justify-between w-full">
+        <h3 class="text-xl font-bold">Classement</h3>
+        <button type="button" @click="showPodiumModal" :title="__('Show rankings for this room')">
+          <Icon name="podium" class="h-8 w-8 mr-2" />
+        </button>
+      </div>
     </template>
 
-    <div class="h-64 md:h-80 2xl:h-96 overflow-y-scroll">
+    <div class="h-64 overflow-y-scroll md:h-80 2xl:h-96">
       <transition-group name="flip-list" tag="ul">
         <li v-for="user in userList" :key="user.id" class="flex justify-between border-b px-2 py-4" :class="{ 'bg-neutral-200': me.id === user.id }">
           <div>

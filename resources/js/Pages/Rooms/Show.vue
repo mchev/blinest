@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { Head } from '@inertiajs/inertia-vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
+import Icon from '@/Components/Icon.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
@@ -82,8 +83,8 @@ const listenRounds = () => {
     <Transition name="slide-right">
       <div v-if="joined" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="prose mb-4 dark:prose-invert">
-            <h2>{{ room.name }}</h2>
+          <article class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">{{ room.name }}</h2>
           </article>
 
           <div class="mb-4 md:mb-8">

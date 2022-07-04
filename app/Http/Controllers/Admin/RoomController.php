@@ -50,7 +50,7 @@ class RoomController extends AdminController
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:50', Rule::unique('rooms')],
+            'name' => ['required', 'max:30', Rule::unique('rooms')],
             'description' => ['nullable'],
             'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
@@ -104,7 +104,7 @@ class RoomController extends AdminController
     public function update(Room $room)
     {
         Request::validate([
-            'name' => ['required', 'max:50', Rule::unique('rooms')->ignore($room->id)],
+            'name' => ['required', 'max:30', Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
@@ -122,8 +122,6 @@ class RoomController extends AdminController
             'discord_webhook_url' => ['nullable', 'url'],
             'color' => ['nullable'],
         ]);
-
-        $room->playlists()->sync(Request::input('playlists'));
 
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 
