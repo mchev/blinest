@@ -23,8 +23,10 @@ onMounted(() => {
     round.value = e.round
     tracks.value = []
   })
-
-  Echo.channel(props.channel).listen('TrackEnded', (e) => {
+  .listen('TrackPlayed', (e) => {
+    round.value = e.round
+  })
+  .listen('TrackEnded', (e) => {
     tracks.value.unshift(e.track)
     round.value = e.round
   })
@@ -39,7 +41,7 @@ onUnmounted(() => {
     <template #header>
       <div class="flex items-center justify-between w-full">
         <h3 class="text-xl font-bold">Playlist</h3>
-        <span v-if="round" class="text-xl font-bold text-neutral-500"><span class="text-neutral-700">{{ round.current + 1 }}</span> / {{ round.tracks.length + 1 }}</span>
+        <span v-if="round" class="text-xl font-bold text-neutral-500"><span class="text-neutral-700">{{ round.current }}</span> / {{ round.tracks.length + 1 }}</span>
       </div>
     </template>
 

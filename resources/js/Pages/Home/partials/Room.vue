@@ -7,19 +7,23 @@ const props = defineProps({
 })
 
 const channel = `rooms.${props.room.id}`
-const infos = ref(null)
+const track = ref(null)
+const round = ref(null)
 const playing = ref(false)
 
 // Todo : better presence reactivity
 
 onMounted(() => {
-  Echo.channel(channel).listen('TrackPlayed', (e) => {
-    infos.value = e.data
+  Echo.channel(channel)
+  .listen('TrackPlayed', (e) => {
+    props.room.value = e.room
+    round.value = e.round
+    track.value = e.track
     playing.value = true
   })
-  Echo.channel(channel).listen('RoundFinished', () => {
+  .listen('RoundFinished', () => {
     playing.value = false
-    if (infos.value) infos.value.current_track_index = 0
+    round.value.current = 0
   })
 })
 
@@ -36,7 +40,7 @@ onUnmounted(() => {
           <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
-          {{ infos ? infos.users_count : room.users_count }}
+          {{ room.users_count }}
         </div>
       </div>
       <div class="absolute bottom-2 right-2 w-auto">
@@ -50,7 +54,7 @@ onUnmounted(() => {
 
       <div class="absolute bottom-0 flex w-full items-center justify-between rounded-b bg-gray-800 p-2 text-sm uppercase text-gray-100">
         {{ room.name }}
-        <div class="flex items-center">{{ infos ? infos.current_track_index : room.current_track_index }} / {{ infos ? infos.tracks_count : room.tracks_by_round }}</div>
+        <div class="flex items-center">{{ round ? round.current : 0 }} / {{ room.tracks_by_round }}</div>
       </div>
     </article>
   </Link>

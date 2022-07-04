@@ -28,6 +28,7 @@ class TrackPlayed implements ShouldBroadcast
     public function __construct(Round $round, Track $track)
     {
         $this->round = $round;
+        $this->round->load('room');
         $this->room = $round->room;
         $this->track = [
             'id' => $track->id,
