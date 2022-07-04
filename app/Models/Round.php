@@ -79,30 +79,10 @@ class Round extends Model
             // Else play next track
         } else {
             $this->increment('current');
-
             $track = Track::find($this->tracks[$this->current - 1]);
-            $trackb = [
-                'id' => $track->id,
-                'preview_url' => $track->preview_url,
-                'answers' => $track->answers->map(function ($answer) {
-                    return [
-                        'id' => $answer->id,
-                        'name' => $answer->type->name,
-                    ];
-                }),
-            ];
-
-            $data = [
-                'room_id' => $this->room->id,
-                'round_id' => $this->id,
-                'users_count' => $this->room->users_count,
-                'tracks_count' => count($this->tracks),
-                'current_track_index' => $this->current,
-                'track' => $trackb,
-            ];
 
             // Event
-            broadcast(new TrackPlayed($data));
+            broadcast(new TrackPlayed($this, $track));
 
             // Job
             ProcessTrackPlayed::dispatch($this)

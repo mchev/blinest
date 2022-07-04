@@ -15,7 +15,7 @@ class Message extends Model
         'messagable_type',
         'user_ip',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     protected $with = [
@@ -24,7 +24,7 @@ class Message extends Model
 
     protected $appends = [
         'channel',
-        'time'
+        'time',
     ];
 
     public function messagable()
@@ -39,9 +39,10 @@ class Message extends Model
             ->select('users.id', 'users.name', 'users.team_id');
     }
 
-    public function getChannelAttribute() : String
+    public function getChannelAttribute(): string
     {
         $model = Str::lower(Str::afterLast($this->messagable_type, '\\'));
+
         return 'chat-'.$model.'.'.$this->messagable_id;
     }
 

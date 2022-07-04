@@ -50,8 +50,9 @@ class RoomController extends Controller
             'room' => [
                 'id' => $room->id,
                 'name' => $room->name,
+                'track_duration' => $room->track_duration,
                 'moderators' => $room->moderators,
-                'latest_messages' => $room->messages()->latest()->limit(30)->get()
+                'latest_messages' => $room->messages()->latest()->limit(30)->get(),
             ],
         ]);
     }

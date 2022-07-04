@@ -14,28 +14,29 @@ const percent = ref(0)
 const shaking = ref(false)
 
 onMounted(() => {
-  Echo.channel(props.channel).listen('TrackPlayed', (e) => {
-    console.log('Track played')
-    track.value = e.data.track
-    play()
-  })
-  Echo.channel(props.channel).listen('TrackEnded', (e) => {
-    console.log('Track ended')
-    stop()
-  })
-  Echo.channel(props.channel).listen('TrackPaused', () => {
-    pause()
-  })
-  Echo.channel(props.channel).listen('TrackResumed', () => {
-    resume()
-  })
+  Echo.channel(props.channel)
+    .listen('TrackPlayed', (e) => {
+      console.log('Track played')
+      track.value = e.track
+      play()
+    })
+    .listen('TrackEnded', (e) => {
+      console.log('Track ended')
+      stop()
+    })
+    .listen('TrackPaused', () => {
+      pause()
+    })
+    .listen('TrackResumed', () => {
+      resume()
+    })
 })
 
 onUnmounted(() => {
   if (isPlaying.value) {
     stop()
   }
-  Echo.leave(`rooms.${props.room.id}`)
+  Echo.leave(props.channel)
 })
 
 const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped'])
@@ -58,13 +59,6 @@ const play = () => {
   audio.addEventListener('canplaythrough', () => {
     loading.value = false
     let playPromise = audio.play()
-
-    // If a user gesture is needed (https://developer.chrome.com/blog/play-returns-promise/)
-    if (playPromise !== undefined) {
-      playPromise.catch(function (error) {
-        console.error('Need to handle when the user come directly to a room.')
-      })
-    }
   })
 
   audio.addEventListener('timeupdate', () => {

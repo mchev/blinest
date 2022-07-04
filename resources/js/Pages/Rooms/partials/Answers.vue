@@ -25,7 +25,6 @@ onMounted(() => {
   })
 
   Echo.channel(props.channel).listen('TrackEnded', (e) => {
-    console.log(e)
     tracks.value.unshift(e.track)
     round.value = e.round
   })
@@ -38,13 +37,13 @@ onUnmounted(() => {
 <template>
   <Card>
     <template #header>
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between w-full">
         <h3 class="text-xl font-bold">Playlist</h3>
         <span v-if="round" class="text-xl font-bold text-neutral-500"><span class="text-neutral-700">{{ round.current + 1 }}</span> / {{ round.tracks.length + 1 }}</span>
       </div>
     </template>
 
-    <ul class="h-96 overflow-y-scroll">
+    <ul class="h-64 md:h-80 2xl:h-96 overflow-y-scroll">
       <li v-for="track in tracks" :key="track.id" class="mb-2 flex border-b">
         <div class="p-2">
           <img :src="track.artwork_url" :alt="track.album_name" class="h-20 w-auto rounded" />

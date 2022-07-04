@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\Round;
+use App\Models\Track;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -12,16 +14,31 @@ class TrackPlayed implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
+    public $room;
+
+    public $round;
+
+    public $track;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct(Round $round, Track $track)
     {
-        $this->data = $data;
+        $this->round = $round;
+        $this->room = $round->room;
+        $this->track = [
+            'id' => $track->id,
+            'preview_url' => $track->preview_url,
+            'answers' => $track->answers->map(function ($answer) {
+                return [
+                    'id' => $answer->id,
+                    'name' => $answer->type->name,
+                ];
+            }),
+        ];
     }
 
     /**
@@ -31,6 +48,6 @@ class TrackPlayed implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('rooms.'.$this->data['room_id']);
+        return new Channel('rooms.'.$this->round['room_id']);
     }
 }
