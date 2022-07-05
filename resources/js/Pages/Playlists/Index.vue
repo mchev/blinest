@@ -56,7 +56,6 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6">Name</th>
-            <th class="px-6 pb-4 pt-6">Owner</th>
             <th class="px-6 pb-4 pt-6">Moderators</th>
             <th class="px-6 pb-4 pt-6">Tracks</th>
             <th class="px-6 pb-4 pt-6" colspan="2">Public</th>
@@ -67,11 +66,6 @@ const reset = () => {
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 {{ playlist.name }}
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
-              </Link>
-            </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('users.edit', playlist.owner.id)" tabindex="-1">
-                {{ playlist.owner.name }}
               </Link>
             </td>
             <td class="border-t">

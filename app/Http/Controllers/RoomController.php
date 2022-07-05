@@ -21,7 +21,6 @@ class RoomController extends Controller
             'rooms' => Auth::user()->rooms()
                 ->orderBy('is_public', 'DESC')
                 ->orderBy('name')
-                ->withCount('rounds')
                 ->filter(Request::only('search', 'trashed'))
                 ->paginate(5)
                 ->withQueryString()
@@ -31,6 +30,7 @@ class RoomController extends Controller
                     'name' => $room->name,
                     'description' => $room->description,
                     'password' => $room->password,
+                    'rounds_count' => $room->rounds()->count(),
                     'moderators' => $room->moderators->map(fn ($moderator) => [
                         'id' => $moderator->id,
                         'name' => $moderator->name,
@@ -59,50 +59,24 @@ class RoomController extends Controller
 
     public function create()
     {
-        return Inertia::render('Rooms/Create');
+        return Inertia::render('Rooms/Create', [
+            'categories' => Category::orderBy('name')->select('id', 'name')->get(),
+        ]);
     }
 
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:50', Rule::unique('rooms')],
-            'description' => ['nullable'],
-            'playlist_id' => ['nullable', 'id'],
-            'password' => ['nullable'],
-            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:50'],
-            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
-            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
-            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
-            'photo' => ['nullable', 'image'],
-            'is_public' => ['required', 'boolean'],
-            'is_pro' => ['required', 'boolean'],
-            'is_random' => ['required', 'boolean'],
-            'is_active' => ['required', 'boolean'],
-            'is_chat_active' => ['required', 'boolean'],
-            'discord_webhook_url' => ['nullable', 'url'],
-            'color' => ['nullable'],
+            'name' => ['required', 'max:25', Rule::unique('rooms')],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
 
-        Auth::user()->rooms()->create([
+        $room = Auth::user()->rooms()->create([
             'name' => Request::get('name'),
-            'description' => Request::get('description'),
-            'playlist_id' => Request::get('playlist_id'),
-            'password' => Request::get('password'),
-            'tracks_by_round' => Request::get('tracks_by_round'),
-            'track_duration' => Request::get('track_duration'),
-            'pause_between_tracks' => Request::get('pause_between_tracks'),
-            'pause_between_rounds' => Request::get('pause_between_rounds'),
-            'is_public' => Request::get('is_public'),
-            'is_pro' => Request::get('is_pro'),
-            'is_random' => Request::get('is_random'),
-            'is_active' => Request::get('is_active'),
-            'is_chat_active' => Request::get('is_chat_active'),
-            'discord_webhook_url' => Request::get('discord_webhook_url'),
-            'color' => Request::get('color'),
-            'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
+            'category_id' => Request::get('category_id'),
         ]);
 
-        return Redirect::route('admin.rooms')->with('success', 'Room created.');
+        return Redirect::route('rooms.edit', $room)->with('success', 'Room created.');
     }
 
     public function edit(Room $room)
@@ -119,7 +93,7 @@ class RoomController extends Controller
     public function update(Room $room)
     {
         Request::validate([
-            'name' => ['required', 'max:50', Rule::unique('rooms')->ignore($room->id)],
+            'name' => ['required', 'max:25', Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
@@ -137,8 +111,6 @@ class RoomController extends Controller
             'discord_webhook_url' => ['nullable', 'url'],
             'color' => ['nullable'],
         ]);
-
-        $room->playlists()->sync(Request::input('playlists'));
 
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 

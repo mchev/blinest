@@ -14,9 +14,13 @@ class Score extends Model
         return $this->belongsTo(User::class)->select('id', 'name');
     }
 
+    public function team()
+    {
+        return $this->belongsTo(Team::class)->select('id', 'name');
+    }
+
     public function round()
     {
         return $this->belongsTo(Round::class);
     }
-    
 }

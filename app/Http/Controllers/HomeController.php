@@ -15,9 +15,11 @@ class HomeController extends Controller
             'filters' => Request::all('search'),
             'categories' => Category::with(['rooms' => function ($query) {
                 $query->whereHas('playlists')
+                    ->whereNull('password')
                     ->filter(Request::only('search'));
             }])->get(),
             'private_rooms' => Auth::user()->rooms()->with('owner')
+                ->whereHas('playlists')
                 ->filter(Request::only('search'))
                 ->get(),
         ]);

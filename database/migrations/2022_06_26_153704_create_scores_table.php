@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('scores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('team_id')->nullable();
             $table->foreignId('round_id');
             $table->foreignId('track_id');
             $table->foreignId('answer_id');

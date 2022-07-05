@@ -83,6 +83,7 @@ class RoundController extends Controller
 
                     // Store the score in database
                     ProcessScoreCreation::dispatch(Auth::user(), [
+                        'team_id' => Auth::user()?->team?->id,
                         'round_id' => $round->id,
                         'track_id' => $track->id,
                         'answer_id' => $answer->id,

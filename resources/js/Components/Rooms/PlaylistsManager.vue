@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { Link, useForm } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Card from '@/Components/Card.vue'
@@ -40,24 +40,36 @@ const detach = (playlist) => {
       <h3 class="text-xl font-bold">{{ __('Playlists') }}</h3>
     </template>
 
-    <dropdown placement="bottom-start" class="mb-2 border-b pb-2" @closed="search = ''">
-      <template #default>
-        <button type="button" class="btn-secondary">{{ __('Attach a playlist') }}</button>
-      </template>
-      <template #dropdown>
-        <ul v-if="playlists && playlists.length" class="max-w-50 max-h-80 overflow-y-auto">
-          <li v-for="playlist in playlists" :key="playlist.id" class="flex items-center p-2">
-            <span class="mr-4">{{ playlist.name }}</span>
-            <button class="ml-auto flex items-center rounded-full bg-blue-500 py-1 px-2 text-xs uppercase" :title="__('Add')" @click="attach(playlist)">
-              <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
-              {{ __('Attach') }}
-            </button>
-          </li>
-        </ul>
-      </template>
-    </dropdown>
+    <p class="mb-4 flex items-start rounded bg-neutral-200 p-2 text-sm text-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+      {{ __('The room must be associated with one or more playlists to work.') }}<br>
+      {{ __('It is possible to use the official Blinest playlists or to create your own playlists.') }}
+    </p>
+
+    <div class="flex items-center mb-2 border-b pb-2">
+      <dropdown placement="bottom-start" class="mr-2" @closed="search = ''">
+        <template #default>
+          <button type="button" class="btn-secondary">{{ __('Attach a playlist') }}</button>
+        </template>
+        <template #dropdown>
+          <ul v-if="playlists && playlists.length" class="max-w-50 max-h-80 overflow-y-auto">
+            <li v-for="playlist in playlists" :key="playlist.id" class="flex items-center p-2">
+              <span class="mr-4">{{ playlist.name }}</span>
+              <button class="ml-auto flex items-center rounded-full bg-blue-500 py-1 px-2 text-xs uppercase" :title="__('Add')" @click="attach(playlist)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                {{ __('Attach') }}
+              </button>
+            </li>
+          </ul>
+        </template>
+      </dropdown>
+
+      <Link href="/playlists/create" class="btn-secondary">{{ __('Create a playlist') }}</Link>
+    </div>
 
     <ul v-if="room.playlists && room.playlists.length">
       <li v-for="playlist in room.playlists" :key="playlist.id" class="flex items-center rounded p-3 hover:bg-neutral-200">

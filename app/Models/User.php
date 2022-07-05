@@ -135,10 +135,10 @@ class User extends Authenticatable
     public function scoreByRoom(Room $room)
     {
         return $this->scores()
-            ->whereRelation('round', function($query) use ($room) {
+            ->whereRelation('round', function ($query) use ($room) {
                 $query->where('room_id', $room->id);
             })
-            ->selectRaw("created_at, user_id, SUM(score) as total");
+            ->selectRaw('created_at, user_id, SUM(score) as total');
     }
 
     public function weekScoreByRoom(Room $room)

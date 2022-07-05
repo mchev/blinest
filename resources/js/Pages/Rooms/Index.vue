@@ -35,19 +35,10 @@ const reset = () => {
 <template>
   <Head title="Rooms" />
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">Rooms</h1>
     <div class="mb-6 flex items-center justify-between">
-      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="mt-4 block text-gray-700">Trashed:</label>
-        <select v-model="form.trashed" class="form-select mt-1 w-full">
-          <option :value="null" />
-          <option value="with">With Trashed</option>
-          <option value="only">Only Trashed</option>
-        </select>
-      </search-filter>
+      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset"/>
       <Link class="btn-primary" :href="route('rooms.create')">
-        <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Room</span>
+        {{ __('Create a room') }}
       </Link>
     </div>
     <Card>
@@ -81,17 +72,18 @@ const reset = () => {
               </Link>
             </td>
             <td class="border-t">
-              <ul class="flex items-center px-2 py-4 text-sm">
+              <ul v-if="room.playlists.length" class="flex items-center px-2 py-4 text-sm">
                 <li v-for="playlist in room.playlists" :key="playlist.id">
                   <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                     {{ playlist.name }}
                   </Link>
                 </li>
               </ul>
+              <span v-else class="text-xs text-neutral-500">{{ __('No playlist') }}</span>
             </td>
             <td class="border-t">
               <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
-                {{ rooms.rounds_count }}
+                {{ room.rounds_count }}
               </Link>
             </td>
             <td class="border-t">

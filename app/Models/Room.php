@@ -101,10 +101,21 @@ class Room extends Model
     public function scores()
     {
         return $this->hasManyThrough(Score::class, Round::class)
-            ->selectRaw("scores.created_at, scores.user_id, SUM(scores.score) as total")
+            ->selectRaw('scores.created_at, scores.user_id, SUM(scores.score) as total')
             ->with('user')
             ->groupBy('scores.user_id')
             ->orderBy('total', 'DESC');
+    }
+
+    public function teamsScores()
+    {
+        return $this->hasManyThrough(Score::class, Round::class)
+            ->whereNotNull('scores.team_id')
+            ->selectRaw('scores.created_at, scores.team_id, SUM(scores.score) as total')
+            ->with('team')
+            ->groupBy('scores.team_id')
+            ->orderBy('total', 'DESC')
+            ->limit(10);
     }
 
     public function weekScores()

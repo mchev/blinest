@@ -58,12 +58,7 @@ const restore = () => {
           <form id="playlistForm" class="p-4" @submit.prevent="update">
             <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Title')" />
             <textarea-input v-model="form.description" :error="form.errors.description" class="mb-4 w-full" :label="__('Description')" />
-            <select-input v-model="form.is_public" :error="form.errors.is_public" class="mb-4 w-full" :label="__('Public')">
-              <option :value="1">{{ __('Yes') }}</option>
-              <option :value="0">{{ __('No') }}</option>
-            </select-input>
             <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full" :label="__('Owner')">
-              <option :value="playlist.owner.id">{{ playlist.owner.name }}</option>
               <option v-for="moderator in playlist.moderators" :value="moderator.id">{{ moderator.name }}</option>
             </select-input>
             <small>{{ __('You can transfer the playlist management to a moderator.') }}</small>

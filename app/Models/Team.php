@@ -59,6 +59,20 @@ class Team extends Model
         $this->users()->detach($user);
     }
 
+    public function scores()
+    {
+        return $this->hasMany(Score::class);
+    }
+
+    public function scoreByRoom(Room $room)
+    {
+        return $this->scores()
+            ->whereRelation('round', function ($query) use ($room) {
+                $query->where('room_id', $room->id);
+            })
+            ->selectRaw('created_at, team_id, SUM(score) as total');
+    }
+
     public function purge()
     {
         $this->owner()->where('team_id', $this->id)
