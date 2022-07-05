@@ -8,6 +8,7 @@ use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
+use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TeamController;
@@ -119,6 +120,10 @@ Route::post('rooms/{room}/message', [RoomController::class, 'newMessage'])
     ->name('rooms.message.store');
 
 Route::resource('rooms', RoomController::class);
+
+// Ranking
+Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
+    ->name('rooms.scores.index');
 
 // Rounds
 Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])

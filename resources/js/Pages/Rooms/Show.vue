@@ -83,7 +83,7 @@ const listenRounds = () => {
     <Transition name="slide-right">
       <div v-if="joined" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="flex justify-between items-center mb-4">
+          <article class="mb-4 flex items-center justify-between">
             <h2 class="text-xl font-bold">{{ room.name }}</h2>
           </article>
 
@@ -94,7 +94,7 @@ const listenRounds = () => {
 
           <div class="grid md:grid-cols-2 md:gap-8">
             <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
-            <Ranking class="mb-4 md:mb-8" :users="users" :channel="channel" :data="data" />
+            <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
           <button class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
@@ -104,13 +104,13 @@ const listenRounds = () => {
           </button>
         </div>
 
-        <div v-if="showSidebar" class="flex h-96 w-full flex-shrink-0 flex-col border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5 rounded-tl">
+        <div v-if="showSidebar" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>
     </Transition>
 
     <FinishedRoundModal :show="roundFinished" @close="roundFinished = false" />
-    <UserGestureModal/>
+    <UserGestureModal />
   </RoomLayout>
 </template>

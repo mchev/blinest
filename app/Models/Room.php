@@ -98,6 +98,35 @@ class Room extends Model
         return $this->hasMany(Round::class);
     }
 
+    public function scores()
+    {
+        return $this->hasManyThrough(Score::class, Round::class)
+            ->selectRaw("scores.created_at, scores.user_id, SUM(scores.score) as total")
+            ->with('user')
+            ->groupBy('scores.user_id')
+            ->orderBy('total', 'DESC');
+    }
+
+    public function weekScores()
+    {
+        return $this->scores()
+            ->where('scores.created_at', '>=', now()->subDays(7))
+            ->limit(10);
+    }
+
+    public function monthScores()
+    {
+        return $this->scores()
+            ->where('scores.created_at', '>=', now()->subDays(30))
+            ->limit(10);
+    }
+
+    public function lifetimeScores()
+    {
+        return $this->scores()
+            ->limit(10);
+    }
+
     public function scopeIsPublic($query)
     {
         $query->where('is_public', true);
