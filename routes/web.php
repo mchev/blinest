@@ -12,6 +12,7 @@ use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamRequestController;
 // Moderation
 use App\Http\Controllers\TrackAnswerController;
 use App\Http\Controllers\TrackController;
@@ -101,7 +102,15 @@ Route::get('users/{user}', [UserController::class, 'show'])
     ->middleware('auth');
 
 // Teams
+Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);
+Route::post('teams/{team}/request/cancel', [TeamRequestController::class, 'cancel']);
+Route::post('teams/requests/{teamRequest}/accept', [TeamRequestController::class, 'accept']);
+Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
+
 Route::resource('teams', TeamController::class);
+
+// Notifications
+Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
 
 // Rooms
 Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
@@ -122,6 +131,9 @@ Route::post('rooms/{room}/message', [RoomController::class, 'newMessage'])
 Route::resource('rooms', RoomController::class);
 
 // Ranking
+Route::get('rankings', [RankingController::class, 'index'])
+    ->name('rankings.index');
+
 Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
     ->name('rooms.scores.index');
 

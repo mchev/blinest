@@ -43,9 +43,9 @@ class Team extends Model
         return $this->hasMany(User::class);
     }
 
-    public function teamInvitations()
+    public function requests()
     {
-        return $this->hasMany(TeamInvitation::class);
+        return $this->hasMany(TeamRequest::class);
     }
 
     public function removeUser(User $user)

@@ -43,6 +43,9 @@ const scrollToBottom = () => {
 <template>
 
 <div class="flex flex-col h-full">
+  <div class="flex">
+    Alarme modos
+  </div>
   <div ref="messenger" class="flex-1 overflow-y-scroll flex flex-col-reverse p-2">
     <Message v-for="message in messages" :key="message.id" :message="message"/>
   </div>

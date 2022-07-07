@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                         'name' => $request->user()->name,
                         'admin' => $request->user()->isAdministrator(),
                         'team' => $request->user()->team,
+                        'notifications' => $request->user()->unreadNotifications,
                     ] : null,
                 ];
             },

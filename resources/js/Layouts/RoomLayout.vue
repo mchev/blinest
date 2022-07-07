@@ -7,7 +7,6 @@ import FlashMessages from '@/Components/FlashMessages.vue'
 import SearchRooms from '@/Components/SearchRooms.vue'
 import UserDropdown from '@/Components/UserDropdown.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
-import Volume from '@/Components/Volume.vue'
 
 </script>
 <template>
@@ -41,7 +40,6 @@ import Volume from '@/Components/Volume.vue'
  -->            <div class="flex items-center justify-end">
               <UserDropdown class="mr-4" />
               <LanguageSwitcher class="mr-4" />
-              <Volume />
             </div>
           </div>
         </div>

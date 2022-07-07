@@ -59,12 +59,22 @@ class User extends Authenticatable
 
     public function team()
     {
-        return $this->hasOne(Team::class);
+        return $this->belongsTo(Team::class, 'team_id');
+    }
+
+    public function hasTeam()
+    {
+        return $this->team()->exists();
     }
 
     public function scopeOwnsTeam($query)
     {
         return Team::where('user_id', $query->first()->id)->exists();
+    }
+
+    public function teamRequests()
+    {
+        return $this->hasMany(TeamRequest::class);
     }
 
     // PLAYLIST
@@ -132,6 +142,12 @@ class User extends Authenticatable
         return $this->hasMany(Score::class);
     }
 
+    public function scopeTotalScore()
+    {
+        $this->scores()
+            ->selectRaw('SUM(score) as total');
+    }
+
     public function scoreByRoom(Room $room)
     {
         return $this->scores()
@@ -177,6 +193,16 @@ class User extends Authenticatable
     public function scopeOrderByName($query)
     {
         $query->orderBy('name');
+    }
+
+    public function scopePublicModerators($query)
+    {
+        $query->whereRelation('moderatedRooms', fn ($room) => $room->where('is_public', true));
+    }
+
+    public function isPublicModerator()
+    {
+        $this->publicModerators()->exists();
     }
 
     public function scopeFilter($query, array $filters)
