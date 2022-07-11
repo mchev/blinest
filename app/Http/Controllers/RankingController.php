@@ -17,14 +17,12 @@ class RankingController extends Controller
                 ->whereHas('scores')
                 ->withSum('scores as score', 'score')
                 ->orderBy('score', 'DESC')
-                ->limit(5)
-                ->get(),
+                ->paginate(5),
             'bestTeams' => Team::select('id', 'name')
                 ->whereHas('scores')
                 ->withSum('scores as score', 'score')
                 ->orderBy('score', 'DESC')
-                ->limit(5)
-                ->get(),
+                ->paginate(5),
         ]);
     }
 
