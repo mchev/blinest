@@ -67,7 +67,7 @@ class RoomController extends Controller
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:25', Rule::unique('rooms')],
+            'name' => ['required', 'max:25', 'alpha_dash', Rule::unique('rooms')],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
 
@@ -93,7 +93,7 @@ class RoomController extends Controller
     public function update(Room $room)
     {
         Request::validate([
-            'name' => ['required', 'max:25', Rule::unique('rooms')->ignore($room->id)],
+            'name' => ['required', 'max:25', 'alpha_dash', Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],

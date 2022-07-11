@@ -15,16 +15,14 @@ class CreateTracksTable extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->foreignId('playlist_id')->onDelete('cascade');
             $table->string('provider');
             $table->string('provider_id');
-            $table->string('provider_url');
-            $table->string('artist_name');
-            $table->string('track_name');
-            $table->string('album_name');
+            $table->string('provider_url')->nullable();
             $table->string('preview_url');
-            $table->date('release_date')->nullable();
             $table->string('artwork_url');
+            $table->integer('counter')->nullable();
             $table->timestamps();
         });
     }

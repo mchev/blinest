@@ -79,9 +79,8 @@ class PlaylistController extends AdminController
             'filters' => Request::all('search'),
             'answer_types' => AnswerType::all(),
             'tracks' => $playlist->tracks()
-                ->orderBy('track_name')
                 ->filter(Request::only('search'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($track) => [
                     'id' => $track->id,

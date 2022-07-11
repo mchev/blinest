@@ -57,8 +57,7 @@ const reset = () => {
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6">Name</th>
             <th class="px-6 pb-4 pt-6">Moderators</th>
-            <th class="px-6 pb-4 pt-6">Tracks</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">Public</th>
+            <th class="px-6 pb-4 pt-6" colspan="2">Tracks</th>
           </tr>
           <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-neutral-200">
             <td class="border-t">
@@ -80,11 +79,6 @@ const reset = () => {
             <td class="border-t">
               <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 {{ playlist.tracks_count }}
-              </Link>
-            </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
-                {{ playlist.is_public ? 'Yes' : 'No' }}
               </Link>
             </td>
             <td class="w-px border-t">

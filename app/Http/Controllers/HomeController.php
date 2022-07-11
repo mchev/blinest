@@ -14,7 +14,8 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
             'categories' => Category::with(['rooms' => function ($query) {
-                $query->whereHas('playlists')
+                $query->isPublic()
+                    ->whereHas('playlists')
                     ->whereNull('password')
                     ->filter(Request::only('search'));
             }])->get(),

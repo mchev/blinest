@@ -24,7 +24,7 @@ class UserController extends Controller
                 'photo' => $user->photo,
                 'created_at' => $user->created_at->format('d/m/Y H:i'),
                 'created_at_from_now' => $user->created_at->diffForHumans(),
-                'latest_round_at' => $user->scores()->latest()->first()->round?->created_at->format('d/m/Y H:i'),
+                'latest_round_at' => $user->scores()->latest()->first()?->round?->created_at->format('d/m/Y H:i'),
             ],
         ]);
     }

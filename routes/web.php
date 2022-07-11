@@ -106,6 +106,7 @@ Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);
 Route::post('teams/{team}/request/cancel', [TeamRequestController::class, 'cancel']);
 Route::post('teams/requests/{teamRequest}/accept', [TeamRequestController::class, 'accept']);
 Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
+Route::post('teams/{team}/leave', [TeamController::class, 'leave']);
 
 Route::resource('teams', TeamController::class);
 

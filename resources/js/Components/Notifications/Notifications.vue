@@ -30,7 +30,7 @@ onMounted(() => {
 			</div>
 		</template>
 		<template #dropdown>
-			<div class="p-2">
+			<div class="p-2 font-light">
 				<ul v-if="notifications.length">
 					<li v-for="notification in notifications" :key="notification.id" class="p-2 bg-neutral-700 rounded my-2">
 						<NewTeamRequest v-if="notification.type === 'App\\Notifications\\NewTeamRequest'" :notification="notification"/>

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('room_id');
             $table->foreignId('user_id')->nullable();
-            $table->json('tracks');
+            $table->json('tracks')->nullable();
             $table->integer('current')->default(0);
             $table->boolean('is_playing')->default(0);
             $table->timestamp('finished_at')->nullable();

@@ -17,7 +17,7 @@ class PlaylistController extends Controller
             'playlists' => Auth::user()->playlists()
                 ->orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
-                ->paginate(10)
+                ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($playlist) => [
                     'id' => $playlist->id,
@@ -79,9 +79,8 @@ class PlaylistController extends Controller
                 ],
                 'filters' => Request::all('search'),
                 'tracks' => $playlist->tracks()
-                    ->orderBy('track_name')
                     ->filter(Request::only('search'))
-                    ->paginate(10)
+                    ->paginate(5)
                     ->withQueryString()
                     ->through(fn ($track) => [
                         'id' => $track->id,
@@ -119,6 +118,10 @@ class PlaylistController extends Controller
     public function destroy(Playlist $playlist)
     {
         if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
+            if ($playlist->is_public && $playlist->has('rooms')) {
+                return Redirect::back()->with('error', 'Impossible de supprimer une playlist qui est publique et qui est associée à une room.');
+            }
+
             $playlist->delete();
 
             return Redirect::back()->with('success', 'Playlist deleted.');
