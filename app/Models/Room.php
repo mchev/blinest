@@ -35,7 +35,7 @@ class Room extends Model
     protected function getCurrentTrackIndexAttribute()
     {
         if ($this->rounds()->exists()) {
-            if ($this->rounds()->latest()->first()->current != count($this->rounds()->latest()->first()->tracks)) {
+            if ($this->rounds()->latest()->first()->is_playing) {
                 return $this->rounds()->latest()->first()->current;
             }
         }
