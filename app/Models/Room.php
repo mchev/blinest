@@ -30,7 +30,7 @@ class Room extends Model
         // $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
 
         // return count($response->users);
-        return 0;
+        return 1;
     }
 
     protected function getCurrentTrackIndexAttribute()

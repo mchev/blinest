@@ -10,7 +10,7 @@ import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 <template>
 	<div class="md:flex md:flex-shrink-0">
 		<div class="flex items-center justify-between px-12 py-2 md:flex-shrink-0">
-			<Link class="mt-1" href="/">
+			<Link class="mt-1" :href="route('home')">
 				<logo class="fill-white" width="120" height="28" />
 			</Link>
 			<dropdown class="md:hidden" placement="bottom-end">
