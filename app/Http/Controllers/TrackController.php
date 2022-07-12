@@ -49,7 +49,7 @@ class TrackController extends Controller
                         'track_name' => $track['track_name'],
                         'album_name' => $track['album_name'],
                         'preview_url' => $track['preview_url'],
-                        'release_date' => $track['release_date'],
+                        // 'release_date' => $track['release_date'],
                         'artwork_url' => $track['artwork_url'],
                         'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
                     ];
@@ -69,7 +69,7 @@ class TrackController extends Controller
             'track_name' => ['required', 'max:255'],
             'album_name' => ['required', 'max:255'],
             'preview_url' => ['required', 'max:255'],
-            'release_date' => ['nullable', 'date'],
+            // 'release_date' => ['nullable', 'date'],
             'artwork_url' => ['required'],
         ]);
 
@@ -81,11 +81,11 @@ class TrackController extends Controller
             ],
             [
                 'provider_url' => Request::get('provider_url'),
-                'artist_name' => Request::get('artist_name'),
-                'track_name' => Request::get('track_name'),
-                'album_name' => Request::get('album_name'),
+                // 'artist_name' => Request::get('artist_name'),
+                // 'track_name' => Request::get('track_name'),
+                // 'album_name' => Request::get('album_name'),
                 'preview_url' => Request::get('preview_url'),
-                'release_date' => Request::get('release_date'),
+                // 'release_date' => Request::get('release_date'),
                 'artwork_url' => Request::get('artwork_url'),
             ]
         );
@@ -107,26 +107,6 @@ class TrackController extends Controller
         }
 
         return Redirect::back()->with('Track added');
-    }
-
-    public function update(Room $room)
-    {
-        if (App::environment('demo') && $room->isDemoRoom()) {
-            return Redirect::back()->with('error', 'Updating the demo room is not allowed.');
-        }
-
-        Request::validate([
-            'first_name' => ['required', 'max:50'],
-            'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('rooms')->ignore($room->id)],
-            'password' => ['nullable'],
-            'owner' => ['required', 'boolean'],
-            'photo' => ['nullable', 'image'],
-        ]);
-
-        $room->update(Request::only('first_name', 'last_name', 'email', 'owner'));
-
-        return Redirect::back()->with('success', 'Room updated.');
     }
 
     public function destroy(Track $track)

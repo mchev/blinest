@@ -138,11 +138,7 @@ return [
     |
     */
 
-    'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
-    ],
+    'reserved' => 'The :attribute field is not valid.',
 
     /*
     |--------------------------------------------------------------------------

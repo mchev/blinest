@@ -86,7 +86,13 @@ class User extends Authenticatable
 
     public function moderatedPlaylists()
     {
-        return $this->morphedByMany(Playlist::class, 'moderable');
+        return $this->morphedByMany(Playlist::class, 'moderable')->where('playlists.user_id', '!=', $this->id);
+    }
+
+    public function allPlaylists()
+    {
+        return $this->playlists()->select('playlists.*')
+            ->union($this->moderatedPlaylists()->select('playlists.*'));
     }
 
     public function isPlaylistOwner(Playlist $playlist)

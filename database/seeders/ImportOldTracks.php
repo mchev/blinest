@@ -12,8 +12,10 @@ class ImportOldTracks extends Seeder
 {
     public function run()
     {
+        $count = OldTrack::count();
+        $bar = $this->command->getOutput()->createProgressBar($count);
 
-        OldTrack::chunk(1000, function ($tracks) {
+        OldTrack::chunk(1000, function ($tracks) use($bar) {
 
             DB::beginTransaction();
 
@@ -73,7 +75,11 @@ class ImportOldTracks extends Seeder
 
             DB::commit();
 
+            $bar->advance(1000);
+
         });
 
+        $bar->finish();
+        $this->command->line('');
     }
 }

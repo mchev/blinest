@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('rounds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id');
+            $table->foreignId('room_id')->constrained('rooms');
             $table->foreignId('user_id')->nullable();
             $table->json('tracks')->nullable();
             $table->integer('current')->default(0);

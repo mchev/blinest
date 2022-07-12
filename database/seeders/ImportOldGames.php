@@ -12,7 +12,11 @@ class ImportOldGames extends Seeder
 {
     public function run()
     {
-        OldGame::whereHas('tracks')->chunk(500, function ($games) {
+
+        $count = OldGame::count();
+        $bar = $this->command->getOutput()->createProgressBar($count);
+
+        OldGame::whereHas('tracks')->chunk(500, function ($games) use ($bar) {
             $rooms = $games->map(fn ($game) => [
                 'id' => $game->id,
                 'user_id' => $game->user_id,
@@ -86,6 +90,11 @@ class ImportOldGames extends Seeder
                 ['user_id', 'moderable_type', 'moderable_id']
             );
 
+            $bar->advance(500);
+
         });
+
+        $bar->finish();
+        $this->command->line('');
     }
 }

@@ -16,7 +16,7 @@ class CreateTracksTable extends Migration
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->foreignId('playlist_id')->onDelete('cascade');
+            $table->foreignId('playlist_id')->constrained('playlists')->onDelete('cascade');
             $table->string('provider');
             $table->string('provider_id');
             $table->string('provider_url')->nullable();

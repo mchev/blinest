@@ -15,9 +15,9 @@ class CreateTrackAnswersTable extends Migration
     {
         Schema::create('track_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('track_id')->onDelete('cascade');
+            $table->foreignId('track_id')->constrained('tracks')->onDelete('cascade');
             $table->string('answer_type_id');
-            $table->string('value')->index();
+            $table->string('value');
             $table->decimal('score', 3, 1)->default(0.5);
             $table->timestamps();
         });

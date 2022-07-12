@@ -10,7 +10,10 @@ class ImportOldUsers extends Seeder
 {
     public function run()
     {
-        OldUser::chunk(500, function ($users) {
+        $count = OldUser::count();
+        $bar = $this->command->getOutput()->createProgressBar($count);
+
+        OldUser::chunk(500, function ($users) use ($bar) {
             $formatedUsers = $users->map(fn ($user) => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -26,10 +29,17 @@ class ImportOldUsers extends Seeder
                 ['id'],
                 ['name', 'email', 'password', 'provider', 'provider_id', 'created_at', 'updated_at']
             );
+
+            $bar->advance(500);
+
         });
 
         User::find(1)->update([
             'is_administrator' => true,
         ]);
+
+        $bar->finish();
+        $this->command->line('');
+
     }
 }

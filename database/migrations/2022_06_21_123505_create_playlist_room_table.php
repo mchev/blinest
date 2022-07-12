@@ -14,8 +14,8 @@ class CreatePlaylistRoomTable extends Migration
     public function up()
     {
         Schema::create('playlist_room', function (Blueprint $table) {
-            $table->foreignId('playlist_id');
-            $table->foreignId('room_id')->onDelete('cascade');
+            $table->foreignId('playlist_id')->constrained('playlists')->onDelete('cascade');
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
             $table->timestamps();
         });
     }

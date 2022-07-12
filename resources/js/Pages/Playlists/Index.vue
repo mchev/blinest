@@ -37,17 +37,18 @@ const reset = () => {
   <AppLayout>
     <h1 class="mb-8 text-3xl font-bold">{{ __('Playlists') }}</h1>
     <div class="mb-6 flex items-center justify-between">
-      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset"/>
+      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" :href="route('playlists.create')">
         <span>{{ __('Create a playlist') }}</span>
       </Link>
     </div>
 
-    <Card>
+    <Card class="my-4">
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Owner') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Moderators') }}</th>
           </tr>
           <tr v-for="playlist in playlists.data" :key="playlist.id">
@@ -56,9 +57,14 @@ const reset = () => {
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 <div class="flex flex-col">
                   {{ playlist.name }}
-                  <small class="text-xs truncate">{{ playlist.description }}</small>
+                  <small class="truncate text-xs max-w-md">{{ playlist.description }}</small>
                 </div>
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
+              </Link>
+            </td>
+            <td class="border-t border-neutral-500">
+              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
+                {{ playlist.owner.name }}
               </Link>
             </td>
             <td class="border-t border-neutral-500">

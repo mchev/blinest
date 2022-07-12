@@ -127,9 +127,5 @@ return [
     'uploaded'             => 'Le fichier du champ :attribute n\'a pu être téléversé.',
     'url'                  => 'Le format de l\'URL de :attribute n\'est pas valide.',
     'uuid'                 => 'Le champ :attribute doit être un UUID valide',
-    'custom'               => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
-    ],
+    'reserved'             => 'Le champ :attribute n\'est pas valide.',
 ];

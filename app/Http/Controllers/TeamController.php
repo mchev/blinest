@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Rules\Reserved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -43,7 +44,7 @@ class TeamController extends Controller
         }
 
         $request->validate([
-            'name' => ['required', 'max:30', 'unique:teams'],
+            'name' => ['required', 'max:30', 'unique:teams', 'alpha_dash', new Reserved],
         ]);
 
         $team = Team::create([

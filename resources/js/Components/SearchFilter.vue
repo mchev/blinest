@@ -29,7 +29,7 @@ defineEmits(['update:modelValue', 'reset'])
           </div>
         </template>
       </dropdown>
-      <input class="relative px-6 py-3 w-full rounded-r focus:shadow-outline" :class="{'rounded-l': !$slots.default}" autocomplete="off" type="text" name="search" :placeholder="__('Search…')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
+      <input class="relative px-6 py-3 w-full rounded-r focus:shadow-outline text-neutral-600" :class="{'rounded-l': !$slots.default}" autocomplete="off" type="text" name="search" :placeholder="__('Search…')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
     </div>
     <button class="ml-3 text-sm" type="button" @click="$emit('reset')">{{ __('Reset') }}</button>
   </div>

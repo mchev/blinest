@@ -143,7 +143,7 @@ const removeTrack = (track) => {
         </dropdown>
       </div>
 
-      <div class="mx-4 overflow-x-auto">
+      <div v-if="tracks.data.length" class="mx-4 overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6" colspan="2"></th>
@@ -189,6 +189,10 @@ const removeTrack = (track) => {
             <td class="border-t px-6 py-4" colspan="4">{{ __('No tracks found') }}.</td>
           </tr>
         </table>
+      </div>
+
+      <div v-else class="p-2">
+        {{ __('Aucun extrait') }}
       </div>
 
       <pagination class="p-8" :links="tracks.links" />

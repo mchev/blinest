@@ -22,7 +22,7 @@ const props = defineProps({
           <section class="mb-4">
             <h3 class="mb-4 text-3xl font-bold text-white">{{ __('Best players all categories') }}</h3>
             <ul class="flex items-center justify-center">
-              <li v-for="(user, index) in bestUsers" :key="user.id" class="flex flex-col items-center m-4">
+              <li v-for="(user, index) in bestUsers.data" :key="user.id" class="flex flex-col items-center m-4">
                 <div class="relative">
                   <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
                   <img :src="user.photo" class="mb-2 h-20 w-20 rounded-full" />
@@ -35,7 +35,7 @@ const props = defineProps({
           <section class="mb-4">
             <h3 class="mb-4 text-3xl font-bold text-white">{{ __('Best teams all categories') }}</h3>
             <ul class="flex items-center justify-center">
-              <li v-for="(team, index) in bestTeams" :key="team.id" class="flex flex-col items-center m-4">
+              <li v-for="(team, index) in bestTeams.data" :key="team.id" class="flex flex-col items-center m-4">
                 <div class="relative">
                   <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
                   <img :src="team.photo" class="mb-2 h-20 w-20 rounded-full" />

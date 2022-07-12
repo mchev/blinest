@@ -55,9 +55,21 @@ defineProps({
           </Link>
         </header>
 
-        <Card>
+        <Card class="my-4">
           <template #header>
             <h2 class="text-xl font-bold">{{ __('My scores') }}</h2>
+          </template>
+        </Card>
+
+        <Card class="my-4">
+          <template #header>
+            <h2 class="text-xl font-bold">{{ __('Playlist moderation') }}</h2>
+          </template>
+        </Card>
+
+        <Card class="my-4">
+          <template #header>
+            <h2 class="text-xl font-bold">{{ __('Room modération') }}</h2>
           </template>
         </Card>
       </div>

@@ -25,13 +25,6 @@ class DatabaseSeeder extends Seeder
             ImportOldScores::class,
         ]);
 
-        // User::factory()->create([
-        //     'name' => 'John Doe',
-        //     'email' => 'johndoe@example.com',
-        //     'password' => 'secret',
-        //     'is_administrator' => true,
-        // ]);
-
         Category::factory()->create([
             'name' => 'Genre musical',
         ]);
@@ -45,10 +38,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Divers',
         ]);
 
-        //User::factory(50)->create();
-        Team::factory(5)->create();
-        //Category::factory(4)->create();
-        //Room::factory(50)->create();
+        // User::factory(50)->create();
+        // Team::factory(5)->create();
+        // Category::factory(4)->create();
+        // Room::factory(50)->create();
 
         // foreach (Team::all() as $team) {
         //     $user = User::find($team->user_id);
