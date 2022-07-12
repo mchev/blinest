@@ -1,16 +1,10 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
-import TextareaInput from '@/Components/TextareaInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
-import CheckboxInput from '@/Components/CheckboxInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
-import pickBy from 'lodash/pickBy'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
 
 defineProps({
   categories: Object,
@@ -32,16 +26,16 @@ const store = () => {
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">{{ __('Rooms') }}</h2>
-          <p class="font-light text-gray-500 dark:text-gray-400 sm:text-xl">Invite tes amis en privé, ou partage tes playlists en laissant ta room ouverte pour que tout le monde puisse jouer.<br><br> Tu pourra configurer les options à l'étape suivante.</p>
-          <div class="mt-16 flex justify-center">
-            <text-input v-model="form.name" :error="form.errors.name" class="text-xl" :placeholder="__('Room name')" />
-          </div>
+          <p class="font-light text-gray-500 dark:text-gray-400 sm:text-xl">Invite tes amis en privé, ou partage tes playlists en laissant ta room ouverte pour que tout le monde puisse jouer.</p>
           <div class="mt-6 flex justify-center">
             <SelectInput v-model="form.category_id" :error="form.errors.category_id" class="text-xl md:w-1/2" :label="__('Category')">
               <option v-for="category in categories" :key="category.id" :value="category.id">
                 {{ category.name }}
               </option>
             </SelectInput>
+          </div>
+          <div class="mt-16 flex justify-center">
+            <text-input v-model="form.name" :error="form.errors.name" class="text-xl" :placeholder="__('Room name')" />
           </div>
           <div class="my-8 flex justify-center">
             <loading-button :loading="form.processing" class="btn-primary btn-lg" type="submit">{{ __('Create the room') }}</loading-button>

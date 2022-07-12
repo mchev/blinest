@@ -47,6 +47,7 @@ const play = () => {
   }
 
   loading.value = true
+  error.value = null
   isPlaying.value = true
 
   audio.src = track.value.preview_url

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('round_id');
             $table->foreignId('track_id');
             $table->foreignId('answer_id');
-            $table->decimal('score', 3, 1);
+            $table->decimal('score', 7, 1);
             $table->timestamps();
         });
     }

@@ -33,21 +33,13 @@ const reset = () => {
 }
 </script>
 <template>
-  <Head title="Playlists" />
+  <Head :title="__('Playlists')" />
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">Playlists</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Playlists') }}</h1>
     <div class="mb-6 flex items-center justify-between">
-      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="mt-4 block text-gray-700">Trashed:</label>
-        <select v-model="form.trashed" class="form-select mt-1 w-full">
-          <option :value="null" />
-          <option value="with">With Trashed</option>
-          <option value="only">Only Trashed</option>
-        </select>
-      </search-filter>
+      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset"/>
       <Link class="btn-primary" :href="route('playlists.create')">
-        <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Playlist</span>
+        <span>{{ __('Create a playlist') }}</span>
       </Link>
     </div>
 
@@ -55,40 +47,37 @@ const reset = () => {
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6">Name</th>
-            <th class="px-6 pb-4 pt-6">Moderators</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">Tracks</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+            <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Moderators') }}</th>
           </tr>
-          <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-neutral-200">
-            <td class="border-t">
+          <tr v-for="playlist in playlists.data" :key="playlist.id">
+            <td class="border-t border-neutral-500">
               <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('playlists.edit', playlist.id)">
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
-                {{ playlist.name }}
+                <div class="flex flex-col">
+                  {{ playlist.name }}
+                  <small class="text-xs truncate">{{ playlist.description }}</small>
+                </div>
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>
             </td>
-            <td class="border-t">
+            <td class="border-t border-neutral-500">
               <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 <ul class="flex items-center px-6 py-4 text-sm">
-                  <li v-for="moderator in playlist.moderators" :key="moderator.id" class="m-1 rounded bg-neutral-300 p-1 hover:underline">
+                  <li v-for="moderator in playlist.moderators" :key="moderator.id" class="badge">
                     {{ moderator.name }}
                   </li>
                 </ul>
               </Link>
             </td>
-            <td class="border-t">
-              <Link class="flex items-center px-6 py-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
-                {{ playlist.tracks_count }}
-              </Link>
-            </td>
-            <td class="w-px border-t">
+            <td class="w-px border-t border-neutral-500">
               <Link class="flex items-center px-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 <icon name="cheveron-right" class="block h-6 w-6" />
               </Link>
             </td>
           </tr>
           <tr v-if="playlists.length === 0">
-            <td class="border-t px-6 py-4" colspan="4">No playlists found.</td>
+            <td class="border-t border-neutral-500 px-6 py-4" colspan="4">No playlists found.</td>
           </tr>
         </table>
 

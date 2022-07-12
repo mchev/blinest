@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Playlist;
+use App\Models\AnswerType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -17,21 +18,17 @@ class PlaylistController extends Controller
             'playlists' => Auth::user()->playlists()
                 ->orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
+                ->with('moderators')
                 ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($playlist) => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
-                    'owner' => [
-                        'id' => $playlist->owner->id,
-                        'name' => $playlist->owner->name,
-                    ],
+                    'description' => $playlist->description,
                     'moderators' => $playlist->moderators->map(fn ($moderator) => [
                         'id' => $moderator->id,
                         'name' => $moderator->name,
                     ]),
-                    'tracks_count' => $playlist->tracks()->count(),
-                    'is_public' => $playlist->isPublic(),
                     'deleted_at' => $playlist->deleted_at,
                 ]),
         ]);
@@ -46,12 +43,10 @@ class PlaylistController extends Controller
     {
         Request::validate([
             'name' => ['required', 'max:50'],
-            'is_public' => ['required', 'boolean'],
         ]);
 
         $playlist = Auth::user()->playlists()->create([
             'name' => Request::get('name'),
-            'is_public' => Request::get('is_public'),
         ]);
 
         $playlist->moderators()->attach(Auth::user());
@@ -67,10 +62,8 @@ class PlaylistController extends Controller
                     'id' => $playlist->id,
                     'name' => $playlist->name,
                     'desription' => $playlist->desription,
-                    'is_public' => $playlist->is_public,
-                    'user_id' => $playlist->user_id,
                     'deleted_at' => $playlist->deleted_at,
-                    'owner' => $playlist->owner,
+                    'user_id' => $playlist->user_id,
                     'moderators' => $playlist->moderators,
                     'rooms' => $playlist->rooms->map(fn ($room) => [
                         'id' => $room->id,
@@ -78,14 +71,15 @@ class PlaylistController extends Controller
                     ]),
                 ],
                 'filters' => Request::all('search'),
+                'answer_types' => AnswerType::all(),
                 'tracks' => $playlist->tracks()
                     ->filter(Request::only('search'))
+                    ->with('answers')
                     ->paginate(5)
                     ->withQueryString()
                     ->through(fn ($track) => [
                         'id' => $track->id,
                         'provider' => $track->provider,
-                        'provider_url' => $track->provider_url,
                         'preview_url' => $track->preview_url,
                         'answers' => $track->answers,
                         //'up_votes' => $track->upVoters()->count(),
@@ -122,6 +116,8 @@ class PlaylistController extends Controller
                 return Redirect::back()->with('error', 'Impossible de supprimer une playlist qui est publique et qui est associée à une room.');
             }
 
+            $playlist->moderators()->delete();
+            $playlist->tracks()->delete();
             $playlist->delete();
 
             return Redirect::back()->with('success', 'Playlist deleted.');
@@ -130,14 +126,4 @@ class PlaylistController extends Controller
         return abort(403, 'Unauthorized action.');
     }
 
-    public function restore(Playlist $playlist)
-    {
-        if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
-            $playlist->restore();
-
-            return Redirect::back()->with('success', 'Playlist restored.');
-        }
-
-        return abort(403, 'Unauthorized action.');
-    }
 }

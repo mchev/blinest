@@ -54,7 +54,7 @@ const detach = (user) => {
       <h3 class="text-xl font-bold">{{ __('Moderators') }}</h3>
     </template>
 
-    <dropdown placement="bottom-start" class="mb-2 border-b pb-2" @closed="search = ''">
+    <dropdown placement="bottom-start" class="mb-2 pb-2" @closed="search = ''">
       <template #default>
         <text-input v-model="search" prepend-icon="search" append-icon="cheveron-down" :loading="searching" :placeholder="__('Add a moderator')" />
       </template>
@@ -72,7 +72,7 @@ const detach = (user) => {
     </dropdown>
 
     <ul v-if="playlist.moderators.length">
-      <li v-for="moderator in playlist.moderators" :key="moderator.id" class="flex items-center rounded p-3 hover:bg-neutral-200">
+      <li v-for="moderator in playlist.moderators" :key="moderator.id" class="flex items-center rounded p-3">
         <img v-if="moderator.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="moderator.photo" />
         {{ moderator.name }}
         <button class="ml-auto text-red-500" :title="__('Remove')" @click="detach(moderator)">

@@ -21,7 +21,7 @@ class HomeController extends Controller
             }])->get(),
             'private_rooms' => Auth::user()->rooms()
                 ->with('owner')
-                ->whereNull('is_public')
+                ->where('is_public', false)
                 ->whereHas('playlists')
                 ->filter(Request::only('search'))
                 ->get(),

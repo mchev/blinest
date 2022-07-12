@@ -35,6 +35,7 @@ const reset = () => {
 <template>
   <Head title="Rooms" />
   <AppLayout>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Rooms') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset"/>
       <Link class="btn-primary" :href="route('rooms.create')">
@@ -51,7 +52,7 @@ const reset = () => {
             <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
             <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
           </tr>
-          <tr v-for="room in rooms.data" :key="room.id" class="hover:bg-neutral-200">
+          <tr v-for="room in rooms.data" :key="room.id">
             <td class="border-t">
               <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)">
                 <img v-if="room.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.photo" />
@@ -65,21 +66,21 @@ const reset = () => {
             <td class="border-t">
               <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
                 <ul class="flex items-center px-2 py-4 text-sm">
-                  <li v-for="moderator in room.moderators" :key="moderator.id" class="m-1 rounded bg-neutral-300 p-1">
+                  <li v-for="moderator in room.moderators" :key="moderator.id" class="badge">
                     {{ moderator.name }}
                   </li>
                 </ul>
               </Link>
             </td>
             <td class="border-t">
-              <ul v-if="room.playlists.length" class="flex items-center px-2 py-4 text-sm">
-                <li v-for="playlist in room.playlists" :key="playlist.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('playlists.edit', playlist.id)" tabindex="-1">
+              <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                <ul v-if="room.playlists.length" class="flex items-center px-2 py-4 text-sm">
+                  <li v-for="playlist in room.playlists" :key="playlist.id" class="badge">
                     {{ playlist.name }}
-                  </Link>
-                </li>
-              </ul>
-              <span v-else class="text-xs text-neutral-500">{{ __('No playlist') }}</span>
+                  </li>
+                </ul>
+                <span v-else class="text-xs text-neutral-500">{{ __('No playlist') }}</span>
+              </Link>
             </td>
             <td class="border-t">
               <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
@@ -88,7 +89,7 @@ const reset = () => {
             </td>
             <td class="border-t">
               <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
-                <span class="m-1 rounded px-2 py-1" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.password ? __('No') : __('Yes') }}</span>
+                <span class="badge" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.password ? __('No') : __('Yes') }}</span>
                 <small v-if="room.password" class="text-xs text-neutral-500">{{ __('Password protected') }}</small>
               </Link>
             </td>

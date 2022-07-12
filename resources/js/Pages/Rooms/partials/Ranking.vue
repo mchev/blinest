@@ -61,9 +61,9 @@ onUnmounted(() => {
         </div>
       </template>
 
-      <div class="h-64 overflow-y-scroll md:h-80 2xl:h-96">
+      <div class="h-64 overflow-y-scroll md:h-80 2xl:h-96 pr-2">
         <transition-group name="flip-list" tag="ul">
-          <li v-for="user in userList" :key="user.id" class="flex justify-between border-b px-2 py-4" :class="{ 'bg-neutral-200': me.id === user.id }">
+          <li v-for="user in userList" :key="user.id" class="flex justify-between border-b border-neutral-600 px-2 py-4 rounded" :class="{ 'bg-neutral-700': me.id === user.id }">
             <div>
               {{ user.name }}
               <div class="flex items-center">

@@ -47,7 +47,7 @@ watch(
 watch(
   form,
   throttle(() => {
-    Inertia.get(route('admin.playlists.edit', props.playlist), pickBy(form), {
+    Inertia.get(route('playlists.edit', props.playlist), pickBy(form), {
       preserveScroll: true,
       preserveState: true,
     })
@@ -146,11 +146,12 @@ const removeTrack = (track) => {
       <div class="mx-4 overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6" colspan="3">{{ __('Answers') }}</th>
+            <th class="px-6 pb-4 pt-6" colspan="2"></th>
+            <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Votes') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Created at') }}</th>
           </tr>
-          <tr v-for="track in tracks.data" :key="track.id" class="hover:bg-neutral-200">
+          <tr v-for="track in tracks.data" :key="track.id">
             <td class="border-t">
               <a target="_blank" :href="track.provider_url" class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
                 <Icon :name="track.provider" :title="track.provider" class="mr-2 h-6 w-6 flex-shrink-0" />

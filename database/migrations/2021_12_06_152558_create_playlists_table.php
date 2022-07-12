@@ -20,7 +20,6 @@ class CreatePlaylistsTable extends Migration
             $table->boolean('is_public')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

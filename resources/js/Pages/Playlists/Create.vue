@@ -10,25 +10,25 @@ const form = useForm({
 })
 
 const store = () => {
-  form.post('/playlists')
+  form.post(route('playlists.store'))
 }
 </script>
 <template>
   <Head title="Create Playlist" />
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('playlists')">{{ __('Playlists') }}</Link>
-      <span class="font-medium text-blinest-400">/</span> {{ __('Create') }}
-    </h1>
-    <Card>
-      <form @submit.prevent="store">
-        <div class="-mb-8 -mr-6 flex flex-wrap p-8">
-          <TextInput v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
+    <form @submit.prevent="store">
+      <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
+        <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
+          <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">{{ __('Playlists') }}</h2>
+          <p class="font-light text-gray-500 dark:text-gray-400 sm:text-xl">Si tu connais déjà par coeur les playlists publiques ou que tu souhaites créer quelque chose d'unique c'est ici que ça se passe.</p>
+          <div class="mt-16 flex justify-center">
+            <text-input v-model="form.name" :error="form.errors.name" class="text-xl" :placeholder="__('Playlist name')" required />
+          </div>
+          <div class="my-8 flex justify-center">
+            <loading-button :loading="form.processing" class="btn-primary btn-lg" type="submit">{{ __('Create the playlist') }}</loading-button>
+          </div>
         </div>
-        <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <LoadingButton :loading="form.processing" class="btn-primary" type="submit">{{ __('Create Playlist') }}</LoadingButton>
-        </div>
-      </form>
-    </Card>
+      </div>
+    </form>
   </AppLayout>
 </template>

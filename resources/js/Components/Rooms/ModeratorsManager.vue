@@ -54,7 +54,7 @@ const detach = (user) => {
       <h3 class="text-xl font-bold">{{ __('Moderators') }}</h3>
     </template>
 
-    <dropdown placement="bottom-start" class="mb-2 border-b pb-2" @closed="search = ''">
+    <dropdown placement="bottom-start" class="mb-2 pb-2" @closed="search = ''">
       <template #default>
         <text-input v-model="search" prepend-icon="search" append-icon="cheveron-down" :loading="searching" :placeholder="__('Add a moderator')" />
       </template>

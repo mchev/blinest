@@ -2,6 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import 'custom';
 @import 'buttons';
 @import 'form';
 @import 'transitions';

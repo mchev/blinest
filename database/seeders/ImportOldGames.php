@@ -44,6 +44,18 @@ class ImportOldGames extends Seeder
                 'updated_at' => $game->updated_at,
             ]);
 
+            $roomModerator = $games->map(fn ($game) => [
+                'user_id' => $game->user_id,
+                'moderable_type' => 'App\Models\Room',
+                'moderable_id' => $game->id,
+            ]);
+
+            $playlistModerator = $games->map(fn ($game) => [
+                'user_id' => $game->user_id,
+                'moderable_type' => 'App\Models\Playlist',
+                'moderable_id' => $game->id,
+            ]);
+
             Room::upsert(
                 $rooms->toArray(),
                 ['id'],
@@ -61,6 +73,19 @@ class ImportOldGames extends Seeder
                 ['id'],
                 ['playlist_id', 'room_id', 'created_at', 'updated_at']
             );
+
+            DB::table('moderables')->upsert(
+                $roomModerator->toArray(),
+                ['id'],
+                ['user_id', 'moderable_type', 'moderable_id']
+            );
+
+            DB::table('moderables')->upsert(
+                $playlistModerator->toArray(),
+                ['id'],
+                ['user_id', 'moderable_type', 'moderable_id']
+            );
+
         });
     }
 }

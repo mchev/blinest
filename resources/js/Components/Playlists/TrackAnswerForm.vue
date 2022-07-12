@@ -95,7 +95,7 @@ const deleteAnswer = () => {
         </div>
       </div>
 
-      <div class="flex items-center justify-between bg-neutral-800 px-2 py-4 text-right">
+      <div class="flex items-center justify-between px-2 py-4 text-right">
         <button v-if="answer && answer.id" type="button" class="mx-2 text-red-400" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteAnswer">
           {{ __('Delete') }}
         </button>

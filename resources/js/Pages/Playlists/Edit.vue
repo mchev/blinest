@@ -43,7 +43,7 @@ const restore = () => {
 <template>
   <Head :title="`${form.name}`" />
   <AppLayout>
-    <h1 class="mb-4 text-3xl font-bold text-teal-600">
+    <h1 class="mb-4 text-3xl font-bold">
       <Link :href="route('playlists')">{{ __('Playlists') }}</Link>
       <span class="font-medium"> / </span>
       {{ form.name }}
@@ -61,7 +61,7 @@ const restore = () => {
             <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full" :label="__('Owner')">
               <option v-for="moderator in playlist.moderators" :value="moderator.id">{{ moderator.name }}</option>
             </select-input>
-            <small>{{ __('You can transfer the playlist management to a moderator.') }}</small>
+            <small>{{ __('Transfer the playlist management to a moderator.') }}</small>
           </form>
           <template #footer>
             <button v-if="!playlist.deleted_at" class="text-sm text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete') }}</button>

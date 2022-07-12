@@ -1,0 +1,7 @@
+@layer components {
+
+  .badge {
+    @apply m-1 bg-neutral-600 text-xs py-1 px-2 rounded;
+  }
+
+}
