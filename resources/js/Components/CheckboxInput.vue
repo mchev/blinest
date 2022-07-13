@@ -3,8 +3,8 @@
     <label v-if="label" class="flex cursor-pointer items-center" :for="id">
       <div class="relative">
         <input :id="id" v-bind="{ ...$attrs, class: null }" :value="modelValue" :checked="modelValue" type="checkbox" class="sr-only" @input="$emit('update:modelValue', $event.target.checked)" />
-        <div class="h-4 w-10 rounded-full bg-gray-400 shadow-inner" />
-        <div class="dot absolute -left-1 -top-1 h-6 w-6 rounded-full bg-white shadow transition" />
+        <div class="h-4 w-10 rounded-full bg-neutral-500 shadow-inner" />
+        <div class="dot absolute -left-1 -top-1 h-6 w-6 rounded-full bg-neutral-200 shadow transition" />
       </div>
       <div v-if="label" class="ml-3 font-medium">
         {{ label }}
@@ -48,6 +48,6 @@ export default {
 <style scoped>
 input:checked ~ .dot {
   transform: translateX(100%);
-  background-color: #48bb78;
+  background-color: rgb(13, 148, 136);
 }
 </style>

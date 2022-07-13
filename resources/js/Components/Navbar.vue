@@ -1,11 +1,14 @@
 <script setup>
-import { Link } from '@inertiajs/inertia-vue3'
+import { Link, usePage } from '@inertiajs/inertia-vue3'
 import Logo from '@/Components/Logo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import MainMenu from '@/Components/MainMenu.vue'
 import UserDropdown from '@/Components/UserDropdown.vue'
 import Notifications from '@/Components/Notifications/Notifications.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
+
+const user = usePage().props.value.auth?.user
+
 </script>
 <template>
 	<div class="md:flex md:flex-shrink-0">
@@ -19,18 +22,18 @@ import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 				</template>
 				<template #dropdown>
 					<div class="mt-2 rounded px-8 py-4 shadow-lg">
-						<main-menu />
+						<MainMenu v-if="user" />
 					</div>
 				</template>
 			</dropdown>
 		</div>
 		<div class="md:text-md grid w-full grid-cols-2 items-center p-4 text-sm md:px-12 md:py-0">
-			<main-menu class="hidden w-auto md:flex" />
+			<main-menu class="hidden w-auto md:flex" v-if="user" />
 
 			<div class="flex items-center justify-end">
-				<Notifications class="mr-4" />
-				<UserDropdown class="mr-4" />
-				<LanguageSwitcher class="mr-4" />
+				<Notifications class="mr-4" v-if="user"/>
+				<UserDropdown class="mr-4" v-if="user"/>
+				<LanguageSwitcher class="mr-4"/>
 			</div>
 		</div>
 	</div>

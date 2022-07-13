@@ -15,8 +15,7 @@ class ImportOldTracks extends Seeder
         $count = OldTrack::count();
         $bar = $this->command->getOutput()->createProgressBar($count);
 
-        OldTrack::chunk(1000, function ($tracks) use($bar) {
-
+        OldTrack::chunk(1000, function ($tracks) use ($bar) {
             DB::beginTransaction();
 
             $newTracks = $tracks->map(fn ($track) => [
@@ -76,7 +75,6 @@ class ImportOldTracks extends Seeder
             DB::commit();
 
             $bar->advance(1000);
-
         });
 
         $bar->finish();

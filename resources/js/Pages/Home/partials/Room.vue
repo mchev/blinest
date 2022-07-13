@@ -9,17 +9,20 @@ const props = defineProps({
 const channel = `rooms.${props.room.id}`
 const track = ref(null)
 const round = ref(null)
-const playing = ref(false)
+const playing = ref(props.room.is_playing)
 
 // Todo : better presence reactivity
 
 onMounted(() => {
   Echo.channel(channel)
+  .listen('RoundStarted', (e) => {
+    playing.value = true
+    round.value = e.round
+  })
   .listen('TrackPlayed', (e) => {
     props.room.value = e.room
     round.value = e.round
     track.value = e.track
-    playing.value = true
   })
   .listen('RoundFinished', () => {
     playing.value = false

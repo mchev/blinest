@@ -11,16 +11,14 @@ class ImportOldScores extends Seeder
 {
     public function run()
     {
-
         $count = OldUser::count();
         $bar = $this->command->getOutput()->createProgressBar($count);
 
         OldUser::chunk(500, function ($users) use ($bar) {
             $users = $users->map(function ($user) {
-
                 $scores = $user->scores()
                     ->whereRelation('game', function ($query) {
-                        $query->has("tracks");
+                        $query->has('tracks');
                     })
                     ->groupBy('game_id')
                     ->selectRaw('user_id, game_id as round_id, SUM(score) as score')
@@ -28,7 +26,7 @@ class ImportOldScores extends Seeder
 
                 $rounds = $user->scores()
                     ->whereRelation('game', function ($query) {
-                        $query->has("tracks");
+                        $query->has('tracks');
                     })
                     ->groupBy('game_id')
                     ->selectRaw('game_id as id, game_id as room_id, updated_at as finished_at')
@@ -45,11 +43,9 @@ class ImportOldScores extends Seeder
                     ['id'],
                     ['user_id', 'round_id', 'score']
                 );
-
             });
 
             $bar->advance(500);
-
         });
 
         $bar->finish();

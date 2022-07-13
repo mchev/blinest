@@ -3,14 +3,14 @@
     <label v-if="label" class="form-label">{{ label }}:</label>
     <div class="form-input p-0" :class="{ error: errors.length }">
       <input ref="file" type="file" :accept="accept" class="hidden" @change="change" />
-      <div v-if="!modelValue" class="p-2">
-        <button type="button" class="rounded-sm bg-gray-500 px-4 py-1 text-xs font-medium text-white hover:bg-gray-700" @click="browse">{{ __('Browse') }}</button>
+      <div v-if="!modelValue" class="px-2">
+        <button type="button" class="rounded-sm bg-neutral-500 px-4 py-1 text-xs font-medium text-white hover:bg-neutral-700" @click="browse">{{ __('Browse') }}</button>
       </div>
       <div v-else class="flex items-center justify-between p-2">
         <div class="flex-1 pr-1">
-          {{ modelValue.name }} <span class="text-xs text-gray-500">({{ filesize(modelValue.size) }})</span>
+          {{ modelValue.name }} <span class="text-xs text-neutral-500">({{ filesize(modelValue.size) }})</span>
         </div>
-        <button type="button" class="rounded-sm bg-gray-500 px-4 py-1 text-xs font-medium text-white hover:bg-gray-700" @click="remove">{{ __('Remove') }}</button>
+        <button type="button" class="rounded-sm bg-neutral-500 px-4 py-1 text-xs font-medium text-white hover:bg-neutral-700" @click="remove">{{ __('Remove') }}</button>
       </div>
     </div>
     <div v-if="errors.length" class="form-error">{{ errors[0] }}</div>

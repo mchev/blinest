@@ -31,7 +31,6 @@ class ImportOldUsers extends Seeder
             );
 
             $bar->advance(500);
-
         });
 
         User::find(1)->update([
@@ -40,6 +39,5 @@ class ImportOldUsers extends Seeder
 
         $bar->finish();
         $this->command->line('');
-
     }
 }

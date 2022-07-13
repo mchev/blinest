@@ -49,6 +49,8 @@ php artisan queue:work
 - TODO :
 	- ✅ Affichage des scores
 	- ✅ Affichage des réponses
+	- Rooms Images : mosaics from album (to prevent random images from users)
+	- Rooms Images : custom for pro
 	- Avatar sur la timeline quand bonne réponse
 	- Parametrer les bonnes réponses sur la room pour affichage timeline ?
 	- ✅ Bloquer des noms reservés à l'inscription

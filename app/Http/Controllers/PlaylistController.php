@@ -45,7 +45,7 @@ class PlaylistController extends Controller
     public function store()
     {
         Request::validate([
-            'name' => ['required', 'max:50', 'alpha_dash', new Reserved, 'unique:playlists'],
+            'name' => ['required', 'max:50', new Reserved, 'unique:playlists'],
         ]);
 
         $playlist = Auth::user()->playlists()->create([
@@ -99,7 +99,7 @@ class PlaylistController extends Controller
     {
         if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
             Request::validate([
-                'name' => ['required', 'max:50', 'alpha_dash', new Reserved, Rule::unique('playlists')->ignore($playlist->id)],
+                'name' => ['required', 'max:50', new Reserved, Rule::unique('playlists')->ignore($playlist->id)],
                 'description' => ['nullable'],
                 'user_id' => ['required', 'integer', 'exists:users,id'],
             ]);

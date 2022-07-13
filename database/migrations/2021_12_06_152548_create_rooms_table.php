@@ -29,6 +29,7 @@ class CreateRoomsTable extends Migration
             $table->boolean('is_random')->default(true);
             $table->boolean('is_active')->default(false);
             $table->boolean('is_chat_active')->default(true);
+            $table->boolean('is_playing')->default(false);
             $table->string('discord_webhook_url')->nullable();
             $table->string('color')->nullable();
             $table->string('password')->nullable();

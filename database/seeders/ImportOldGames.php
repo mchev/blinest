@@ -12,7 +12,6 @@ class ImportOldGames extends Seeder
 {
     public function run()
     {
-
         $count = OldGame::count();
         $bar = $this->command->getOutput()->createProgressBar($count);
 
@@ -91,7 +90,6 @@ class ImportOldGames extends Seeder
             );
 
             $bar->advance(500);
-
         });
 
         $bar->finish();

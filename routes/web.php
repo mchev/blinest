@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\PlaylistController;
@@ -60,7 +59,7 @@ Route::get('/', [HomeController::class, 'index'])
 // Me
 
 Route::get('me', [UserController::class, 'show'])
-    ->name('me.show')
+    ->name('me')
     ->middleware('auth');
 
 Route::put('me/edit', [UserController::class, 'edit'])

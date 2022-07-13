@@ -36,6 +36,7 @@ class Round extends Model
         if (! empty($this->tracks)) {
             broadcast(new RoundStarted($this));
             $this->update(['is_playing' => true]);
+            $this->room()->update(['is_playing' => true]);
             $this->playNextTrack();
         }
     }
@@ -58,6 +59,7 @@ class Round extends Model
             'is_playing' => false,
             'finished_at' => Carbon::now(),
         ]);
+        $this->room()->update(['is_playing' => false]);
         broadcast(new RoundFinished($this));
     }
 

@@ -74,7 +74,7 @@ const update = () => {
             </div>
           </form>
           <template #footer>
-            <button v-if="!room.deleted_at" class="text-sm text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete') }}</button>
+            <button v-if="!room.deleted_at" class="text-sm text-red-500 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete') }}</button>
             <loading-button :loading="form.processing" class="btn-primary ml-auto" form="roomForm" type="submit">{{ __('Update') }}</loading-button>
           </template>
         </Card>
