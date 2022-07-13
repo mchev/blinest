@@ -5,6 +5,7 @@
 ### Requirements
 
 Blinest use Websockets a lot. So you will have to install soketi globaly :
+
 https://docs.soketi.app/getting-started/installation/cli-installation
 
 Then go to your working directory and :
@@ -41,20 +42,20 @@ php artisan queue:work
 
 ## Roadmap
 
-- Parties
+- New rooms
 	- Facile
 	- Speed
-	- Mélomane
 
-- Affichage des scores
-- ✅ Affichage des réponses
-- Avatar sur la timeline quand bonne réponse
-- Parametrer les bonnes réponses sur la room pour affichage timeline ?
-- Bloquer des noms reservés à l'inscription
-- Modération
-- Room control
-- Chat
-- Migration DB
-- Team
-- Rankings
-- ✅ Recherche
+- TODO :
+	- ✅ Affichage des scores
+	- ✅ Affichage des réponses
+	- Avatar sur la timeline quand bonne réponse
+	- Parametrer les bonnes réponses sur la room pour affichage timeline ?
+	- ✅ Bloquer des noms reservés à l'inscription
+	- Modération
+	- Room control
+	- Chat
+	- ✅ Migration DB
+	- Team
+	- Rankings
+	- ✅ Recherche

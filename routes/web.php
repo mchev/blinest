@@ -35,27 +35,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Auth
-
-Route::get('login', [AuthenticatedSessionController::class, 'create'])
-    ->name('login')
-    ->middleware('guest');
-
-Route::get('register', [UserController::class, 'create'])
-    ->name('user.create')
-    ->middleware('guest');
-
-Route::post('register', [UserController::class, 'store'])
-    ->name('user.store')
-    ->middleware('guest');
-
-Route::post('login', [AuthenticatedSessionController::class, 'store'])
-    ->name('login.store')
-    ->middleware('guest');
-
-Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
-
 // Auth Social Providers
 
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
@@ -239,3 +218,5 @@ Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTr
 
 Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
     ->name('providers.spotify.search.track');
+
+require __DIR__.'/auth.php';

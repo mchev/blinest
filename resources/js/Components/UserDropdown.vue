@@ -20,7 +20,7 @@ const user = usePage().props.value.auth.user
       <div class="border-t" />
       <Link v-if="user.admin" class="my-2 block px-6 py-2" :href="route('admin.dashboard')">{{ __('Administration') }}</Link>
       <div class="border-t" />
-      <Link class="block px-6 py-2" href="/logout" method="delete" as="button">{{ __('Logout') }}</Link>
+      <Link class="block px-6 py-2" href="/logout" method="post" as="button">{{ __('Logout') }}</Link>
     </template>
   </dropdown>
 </template>

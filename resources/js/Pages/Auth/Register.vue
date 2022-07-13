@@ -1,3 +1,24 @@
+<script setup>
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import Logo from '@/Components/Logo.vue'
+import TextInput from '@/Components/TextInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
+import SocialIcon from '@/Components/SocialIcon.vue'
+
+const form = useForm({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    terms: false,
+});
+const submit = () => {
+    form.post(route('register'), {
+        onFinish: () => form.reset('password', 'password_confirmation'),
+    });
+};
+</script>
 <template>
   <Head title="Register" />
 
@@ -13,9 +34,10 @@
             <div class="px-10 py-12">
               <h1 class="text-center text-3xl font-bold">{{ __('Welcome Back!') }}</h1>
               <div class="mx-auto mt-6 w-24 border-b-2" />
-              <text-input v-model="form.name" :error="form.errors.name" class="mt-10" :label="__('Name')" autofocus autocapitalize="off" />
-              <text-input v-model="form.email" :error="form.errors.email" class="mt-10" :label="__('Email')" type="email" autofocus autocapitalize="off" />
-              <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" />
+              <text-input v-model="form.name" :error="form.errors.name" class="mt-10" :label="__('Name')" autofocus autocapitalize="off" required/>
+              <text-input v-model="form.email" :error="form.errors.email" class="mt-10" :label="__('Email')" type="email" autofocus autocapitalize="off" required />
+              <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" required/>
+              <text-input v-model="form.password_confirmation" :error="form.errors.password_confirmation" class="mt-6" :label="__('Confirm password')" type="password" required autocomplete="new-password"/>
             </div>
             <div class="flex border-t border-gray-100 bg-gray-100 px-10 py-4">
               <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Register') }}</loading-button>
@@ -58,36 +80,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
-import Logo from '@/Components/Logo.vue'
-import TextInput from '@/Components/TextInput.vue'
-import LoadingButton from '@/Components/LoadingButton.vue'
-import SocialIcon from '@/Components/SocialIcon.vue'
-
-export default {
-  components: {
-    Head,
-    Link,
-    LoadingButton,
-    Logo,
-    TextInput,
-    SocialIcon,
-  },
-  data() {
-    return {
-      form: this.$inertia.form({
-        name: '',
-        email: '',
-        password: '',
-      }),
-    }
-  },
-  methods: {
-    register() {
-      this.form.post(route('register.store'))
-    },
-  },
-}
-</script>

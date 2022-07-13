@@ -1,11 +1,11 @@
 import './bootstrap';
-import Translation from './translation';
 import '../css/app.css';
 import { createApp, h } from 'vue'
 import { InertiaProgress } from '@inertiajs/progress'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import Translation from './translation';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
