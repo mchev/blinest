@@ -24,8 +24,8 @@ class HomeController extends Controller
                         ->withCount('rounds')
                         ->orderByDesc('is_public')
                         ->orderByDesc('rounds_count')
-                        ->paginate(5, ['*'], 'cat' . $category->id)
-                        ->withQueryString()
+                        ->paginate(5, ['*'], 'cat'.$category->id)
+                        ->withQueryString(),
                 ];
             }),
             'private_rooms' => Auth::user()->rooms()

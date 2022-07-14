@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewMessage;
+use App\Jobs\GenerateRoomMosaic;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
@@ -164,5 +165,12 @@ class RoomController extends Controller
         ]);
 
         broadcast(new NewMessage($message));
+    }
+
+    public function generateMosaic(Room $room)
+    {
+        if ($room->tracks()->count() > $room->tracks_by_round) {
+            GenerateRoomMosaic::dispatch($room);
+        }
     }
 }

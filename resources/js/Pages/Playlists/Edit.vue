@@ -1,6 +1,6 @@
 <script setup>
 import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -21,6 +21,8 @@ const props = defineProps({
 })
 
 const form = useForm(props.playlist)
+
+const user = usePage().props.value.auth.user
 
 const update = () => {
   form.put(`/playlists/${props.playlist.id}`, {
@@ -50,7 +52,7 @@ const restore = () => {
     </h1>
 
     <div class="flex flex-wrap gap-4">
-      <div class="flex w-full flex-col xl:w-1/4">
+      <div v-if="user.id === playlist.user_id" class="flex w-full flex-col xl:w-1/4">
         <Card class="mb-4">
           <template #header>
             <h3 class="text-xl font-bold">Playlist</h3>

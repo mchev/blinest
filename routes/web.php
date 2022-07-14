@@ -107,6 +107,9 @@ Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, '
 Route::post('rooms/{room}/message', [RoomController::class, 'newMessage'])
     ->name('rooms.message.store');
 
+Route::get('rooms/{room}/generate/mosaic', [RoomController::class, 'generateMosaic'])
+    ->name('rooms.generate.mosaic');
+
 Route::resource('rooms', RoomController::class);
 
 // Ranking

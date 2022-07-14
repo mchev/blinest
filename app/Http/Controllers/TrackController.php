@@ -33,48 +33,57 @@ class TrackController extends Controller
 
     public function search(Playlist $playlist)
     {
-        return response()->json([
-            'filters' => Request::only('term'),
-            'tracks' => (new MusicProviders)->search(Request::get('term'))
-                ->sortBy('track_name')->unique(function ($item) {
-                    return $item['artist_name'].$item['track_name'];
-                })
-                ->values()
-                ->map(function ($track) use ($playlist) {
-                    return [
-                        'provider' => $track['provider'],
-                        'provider_id' => $track['provider_id'],
-                        'provider_url' => $track['provider_url'],
-                        'artist_name' => $track['artist_name'],
-                        'track_name' => $track['track_name'],
-                        'album_name' => $track['album_name'],
-                        'preview_url' => $track['preview_url'],
-                        // 'release_date' => $track['release_date'],
-                        'artwork_url' => $track['artwork_url'],
-                        'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
-                    ];
-                }),
-        ]);
+        if (Auth::user()->id === $playlist->owner->id
+                || Auth::user()->isPlaylistModerator($playlist)
+                || Auth::user()->isAdministrator()
+            ) {
+            return response()->json([
+                'filters' => Request::only('term'),
+                'tracks' => (new MusicProviders)->search(Request::get('term'))
+                    ->sortBy('track_name')->unique(function ($item) {
+                        return $item['artist_name'].$item['track_name'];
+                    })
+                    ->values()
+                    ->map(function ($track) use ($playlist) {
+                        return [
+                            'provider' => $track['provider'],
+                            'provider_id' => $track['provider_id'],
+                            'provider_url' => $track['provider_url'],
+                            'artist_name' => $track['artist_name'],
+                            'track_name' => $track['track_name'],
+                            'album_name' => $track['album_name'],
+                            'preview_url' => $track['preview_url'],
+                            // 'release_date' => $track['release_date'],
+                            'artwork_url' => $track['artwork_url'],
+                            'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
+                        ];
+                    }),
+            ]);
+        }
     }
 
     public function store(Playlist $playlist)
     {
+        if (Auth::user()->id === $playlist->owner->id
+                || Auth::user()->isPlaylistModerator($playlist)
+                || Auth::user()->isAdministrator()
+            ) {
 
         // VALIDATE
-        Request::validate([
-            'provider' => ['required', 'max:50'],
-            'provider_id' => ['required', 'max:255'],
-            'provider_url' => ['required', 'url', 'max:255'],
-            'artist_name' => ['required', 'max:255'],
-            'track_name' => ['required', 'max:255'],
-            'album_name' => ['required', 'max:255'],
-            'preview_url' => ['required', 'max:255'],
-            // 'release_date' => ['nullable', 'date'],
-            'artwork_url' => ['required'],
-        ]);
+            Request::validate([
+                'provider' => ['required', 'max:50'],
+                'provider_id' => ['required', 'max:255'],
+                'provider_url' => ['required', 'url', 'max:255'],
+                'artist_name' => ['required', 'max:255'],
+                'track_name' => ['required', 'max:255'],
+                'album_name' => ['required', 'max:255'],
+                'preview_url' => ['required', 'max:255'],
+                // 'release_date' => ['nullable', 'date'],
+                'artwork_url' => ['required'],
+            ]);
 
-        // TRACK
-        $track = $playlist->tracks()->updateOrCreate(
+            // TRACK
+            $track = $playlist->tracks()->updateOrCreate(
             [
                 'provider' => Request::get('provider'),
                 'provider_id' => Request::get('provider_id'),
@@ -90,29 +99,35 @@ class TrackController extends Controller
             ]
         );
 
-        // ANSWERS
-        $track->answers()->updateOrCreate(
+            // ANSWERS
+            $track->answers()->updateOrCreate(
             ['answer_type_id' => 1], // Artist
             ['value' => Request::get('artist_name')]
         );
-        $track->answers()->updateOrCreate(
+            $track->answers()->updateOrCreate(
             ['answer_type_id' => 2], // Title
             ['value' => Request::get('track_name')]
         );
-        if (Request::get('album_name')) {
-            $track->answers()->updateOrCreate(
+            if (Request::get('album_name')) {
+                $track->answers()->updateOrCreate(
                 ['answer_type_id' => 3], // Album
                 ['value' => Request::get('album_name')]
             );
-        }
+            }
 
-        return Redirect::back()->with('Track added');
+            return Redirect::back()->with('Track added');
+        }
     }
 
     public function destroy(Track $track)
     {
-        $track->delete();
+        if (Auth::user()->id === $playlist->owner->id
+                || Auth::user()->isPlaylistModerator($playlist)
+                || Auth::user()->isAdministrator()
+            ) {
+            $track->delete();
 
-        return Redirect::back()->with('Track deleted');
+            return Redirect::back()->with('Track deleted');
+        }
     }
 }

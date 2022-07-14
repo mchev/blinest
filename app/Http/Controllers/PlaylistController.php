@@ -59,7 +59,10 @@ class PlaylistController extends Controller
 
     public function edit(Playlist $playlist)
     {
-        if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
+        if (Auth::user()->id === $playlist->owner->id
+                || Auth::user()->isPlaylistModerator($playlist)
+                || Auth::user()->isAdministrator()
+            ) {
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
                     'id' => $playlist->id,

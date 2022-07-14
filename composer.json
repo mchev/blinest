@@ -10,6 +10,7 @@
         "ext-gd": "*",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.2",
+        "intervention/image": "^2.7",
         "jwilsson/spotify-web-api-php": "^5.0",
         "laravel/framework": "^9.11",
         "laravel/horizon": "^5.9",
