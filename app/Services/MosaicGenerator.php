@@ -9,12 +9,12 @@ class MosaicGenerator
     /**
      * @param $images An array of image urls
      */
-    public function generate(array $images, int $width = 300, int $height = 300, int $rows = 3, int $cols = 5)
+    public function generate(array $images, int $width = 300, int $height = 225, int $rows = 2, int $cols = 5)
     {
 
         // Items sizes
-        $itemWidth = $width / $cols;
-        $itemHeight = $height / $rows;
+        $itemWidth = round($width / $cols);
+        $itemHeight = round($height / $rows);
 
         // Offsets
         $offsetY = 0;

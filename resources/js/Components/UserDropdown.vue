@@ -18,9 +18,8 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <span>{{ user.name }}</span>
+          <img :src="user.photo" class="w-10 h-10 rounded-full" :alt="user.name">
         </div>
-        <icon class="h-5 w-5" name="cheveron-down" />
       </div>
     </template>
     <template #dropdown>

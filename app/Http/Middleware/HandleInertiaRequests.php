@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
                     'user' => $request->user() ? [
                         'id' => $request->user()->id,
                         'name' => $request->user()->name,
+                        'photo' => $request->user()->photo,
                         'admin' => $request->user()->isAdministrator(),
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,

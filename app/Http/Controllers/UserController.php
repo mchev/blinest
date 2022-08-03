@@ -76,9 +76,7 @@ class UserController extends Controller
 
     public function markNotificationAsRead($id)
     {
-        Auth::user()->notifications()->where('id', $id)->update([
-            'read_at' => now(),
-        ]);
+        Auth::user()->notifications()->find($id)->markAsRead();
 
         return Redirect::back();
     }

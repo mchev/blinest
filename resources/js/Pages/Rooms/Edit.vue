@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
@@ -44,6 +46,31 @@ const form = useForm({
 const update = () => {
   form.post(route('rooms.update', props.room.id))
 }
+
+const mosaicForm = useForm({})
+const generatingMosaic = ref(false)
+
+const generateMosaic = () => {
+  mosaicForm.post(route('rooms.generate.mosaic', props.room.id), {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: () => {
+      generatingMosaic.value = true
+    },
+  })
+}
+
+onMounted(() => {
+  Echo.private(`rooms.${props.room.id}`)
+    .listen('MosaicGenerated', (e) => {
+      console.log(e.room)
+      generatingMosaic.value = false
+    })
+})
+
+onUnmounted(() => {
+  Echo.leave(`rooms.${props.room.id}`)
+})
 </script>
 <template>
   <Head :title="__('Edit Room')" />
@@ -69,7 +96,11 @@ const update = () => {
                     {{ category.name }}
                   </option>
                 </select-input>
-                <file-input v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
+                <file-input v-if="room.is_pro || room.is_public" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
+                <div v-else>
+                  <button type="button" class="btn-secondary" v-if="!generatingMosaic" @click="generateMosaic">{{ __('Generate a new thumbnail') }}</button>
+                  <LoadingButton v-else :loading="true" class="text-xs text-yellow-600">{{ __('Generating new thumbnail') }}</LoadingButton>
+                </div>
               </div>
             </div>
           </form>
@@ -88,13 +119,25 @@ const update = () => {
           </template>
           <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
             <div class="flex w-full flex-wrap">
-              <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="100" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Tracks by round')" />
+              <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
+              >
+              <input id="tracks_by_round-range" type="range" min="1" max="30" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Track duration')" />
+              <label for="track_duration-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
+              >
+              <input id="track_duration-range" type="range" min="5" max="30" v-model="form.track_duration" :error="form.errors.track_duration" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <text-input v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" type="number" step="1" min="0" max="60" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pause between tracks')" />
+              <label for="pause_between_tracks-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                >{{ __('Pause between tracks') }} : <span class="font-bold">{{ form.pause_between_tracks }} {{ __('seconds') }}</span></label
+              >
+              <input id="pause_between_tracks-range" type="range" min="0" max="30" v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pause between rounds')" />
+              <label for="pause_between_rounds-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+                >{{ __('Pause between tracks') }} : <span class="font-bold">{{ form.pause_between_rounds }} {{ __('seconds') }}</span></label
+              >
+              <input id="pause_between_rounds-range" type="range" min="0" max="60" v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
             </div>
 
             <div class="flex w-full flex-wrap">

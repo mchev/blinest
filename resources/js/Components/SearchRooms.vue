@@ -6,12 +6,12 @@ import TextInput from '@/Components/TextInput.vue'
 import throttle from 'lodash/throttle'
 import pickBy from 'lodash/pickBy'
 
-defineProps({
+const props = defineProps({
   filters: Object,
 })
 
 const form = useForm({
-  search: '',
+  search: props?.filters?.search,
 })
 
 watch(
@@ -24,6 +24,6 @@ watch(
 </script>
 <template>
   <div :class="$attrs.class">
-    <text-input v-model="form.search" prepend-icon="search" :placeholder="__('Search') + '...'" />
+    <text-input class="text-sm" v-model="form.search" prepend-icon="search" :placeholder="__('Search') + '...'" />
   </div>
 </template>

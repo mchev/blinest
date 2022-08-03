@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\MosaicGenerated;
 use App\Models\Room;
 use App\Services\MosaicGenerator;
 use Illuminate\Bus\Queueable;
@@ -16,14 +17,17 @@ class GenerateRoomMosaic implements ShouldQueue
 
     public $room;
 
+    public $number;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Room $room)
+    public function __construct(Room $room, int $number = 10)
     {
         $this->room = $room;
+        $this->number = $number;
     }
 
     /**
@@ -36,13 +40,19 @@ class GenerateRoomMosaic implements ShouldQueue
         $tracks = $this->room
             ->tracks()
             ->inRandomOrder()
-            ->take(15)
+            ->take($this->number)
             ->distinct()
             ->pluck('artwork_url')
             ->toArray();
 
         $image = (new MosaicGenerator())->generate($tracks);
 
-        $image->save(public_path('/images/rooms/'.$this->room->id.'.jpg'), 100);
+        $image->save(public_path('/images/rooms/'.$this->room->id.'.webp'), 100);
+
+        $this->room->update([
+            'mosaic_path' => '/images/rooms/'.$this->room->id.'.webp',
+        ]);
+
+        broadcast(new MosaicGenerated($this->room));
     }
 }

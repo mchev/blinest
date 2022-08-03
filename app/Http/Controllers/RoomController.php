@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewMessage;
-use App\Jobs\GenerateRoomMosaic;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
+use App\Models\User;
+use App\Notifications\NewRoomAlert;
 use App\Rules\Reserved;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -24,6 +25,7 @@ class RoomController extends Controller
                 ->orderBy('is_public', 'DESC')
                 ->orderBy('name')
                 ->filter(Request::only('search', 'trashed'))
+                ->with('moderators', 'playlists', 'category')
                 ->paginate(5)
                 ->withQueryString()
                 ->through(fn ($room) => [
@@ -37,6 +39,7 @@ class RoomController extends Controller
                         'id' => $moderator->id,
                         'name' => $moderator->name,
                     ]),
+                    'category' => $room->category,
                     'playlists' => $room->playlists->map(fn ($playlist) => [
                         'id' => $playlist->id,
                         'name' => $playlist->name,
@@ -167,10 +170,18 @@ class RoomController extends Controller
         broadcast(new NewMessage($message));
     }
 
+    public function alert(Room $room)
+    {
+        $moderators = User::publicModerators()->get();
+        foreach ($moderators as $moderator) {
+            $moderator->notify(new NewRoomAlert($room, Auth::user()));
+        }
+    }
+
     public function generateMosaic(Room $room)
     {
-        if ($room->tracks()->count() > $room->tracks_by_round) {
-            GenerateRoomMosaic::dispatch($room);
-        }
+        $room->generateMosaic();
+
+        return redirect()->back();
     }
 }

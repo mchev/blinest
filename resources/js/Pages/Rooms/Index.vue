@@ -48,6 +48,7 @@ const reset = () => {
           <tr class="text-left font-bold">
             <th class="px-2 pb-4 pt-6">{{ __('Name') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Moderators') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Category') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
             <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
@@ -70,6 +71,11 @@ const reset = () => {
                     {{ moderator.name }}
                   </li>
                 </ul>
+              </Link>
+            </td>
+            <td class="border-t">
+              <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                {{ room.category.name }}
               </Link>
             </td>
             <td class="border-t">

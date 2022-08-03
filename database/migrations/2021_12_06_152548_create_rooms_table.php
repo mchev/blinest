@@ -20,6 +20,7 @@ class CreateRoomsTable extends Migration
             $table->string('description')->nullable();
             $table->foreignId('category_id')->nullable();
             $table->string('photo_path')->nullable();
+            $table->string('mosaic_path')->nullable();
             $table->integer('tracks_by_round')->unsigned()->default(15);
             $table->integer('track_duration')->unsigned()->default(30);
             $table->integer('pause_between_tracks')->unsigned()->default(0);
