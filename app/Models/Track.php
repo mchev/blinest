@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVote\Traits\Votable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Track extends Model
 {
     use HasFactory, Votable;
+
+    protected $appends = ['track_url'];
 
     public function playlist()
     {
@@ -23,6 +26,20 @@ class Track extends Model
     public function scores()
     {
         return $this->hasMany(Score::class);
+    }
+
+    protected function getTrackUrlAttribute()
+    {
+        switch ($this->provider) {
+            case 'deezer':
+                return 'https://www.deezer.com/track/' . $this->provider_id;
+            case 'spotify':
+                return 'https://open.spotify.com/track/' . $this->provider_id;
+            case 'itunes':
+                return 'https://www.deezer.com/fr/track/' . $this->provider_id;
+            default:
+                return null;
+        }
     }
 
     public function scopeFilter($query, array $filters)

@@ -37,6 +37,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function() {
+    dd(App\Models\Track::first()->track_url);
+});
+
 // Auth Social Providers
 
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
