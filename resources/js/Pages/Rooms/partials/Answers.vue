@@ -1,4 +1,5 @@
 <script setup>
+import { Inertia } from '@inertiajs/inertia'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -32,11 +33,24 @@ onMounted(() => {
       tracks.value.unshift(e.track)
       round.value = e.round
     })
+    .listen('TrackVoted', (e) => {
+      let index = tracks.value.findIndex((x) => x.id === e.track.id)
+      tracks.value[index].downvotes = e.track.downvotes
+      tracks.value[index].upvotes = e.track.upvotes
+    })
 })
 
 onUnmounted(() => {
   Echo.leave(props.channel)
 })
+
+const voteTrackDown = (track) => {
+  axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/downvote`)
+}
+
+const voteTrackUp = (track) => {
+  axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/upvote`)
+}
 </script>
 <template>
   <Card>
@@ -61,17 +75,11 @@ onUnmounted(() => {
                 <span class="mr-1 flex-shrink-0 rounded bg-neutral-500 px-1 text-[10px] font-bold uppercase text-neutral-300 text-white">{{ __(answer.type.name) }}</span> {{ answer.value }}
               </li>
             </transition-group>
-            <div class="flex flex-col justify-between items-end">
-              <a v-if="track.track_url" class="text-xs flex items-center opacity-50 hover:opacity-90 whitespace-nowrap" :href="track.track_url" target="_blank" :title="__('Listen on') + ' ' + track.provider">
-                {{ __('Listen on') }} <Icon :name="track.provider" class="ml-1 w-5 h-5"/>
-              </a>
-              <div class="flex items-center">
-                <button @click="voteDown(track)">
-                  <Icon name="thumb-down" class="ml-2 w-5 h-5 fill-red-600"/>
-                </button>
-                <button @click="voteUp(track)">
-                  <Icon name="thumb-up" class="ml-2 w-5 h-5 fill-teal-600"/>
-                </button>
+            <div class="flex flex-col items-end justify-between">
+              <a v-if="track.track_url" class="flex items-center whitespace-nowrap text-xs opacity-50 hover:opacity-90" :href="track.track_url" target="_blank" :title="__('Listen on') + ' ' + track.provider"> {{ __('Listen on') }} <Icon :name="track.provider" class="ml-1 h-5 w-5" /> </a>
+              <div class="flex items-center text-xs">
+                <button @click="voteTrackUp(track)" class="mr-2 flex items-center"><Icon name="thumb-up" class="mr-1 h-5 w-5 fill-teal-600" /> {{ track.upvotes }}</button>
+                <button @click="voteTrackDown(track)" class="flex items-center"><Icon name="thumb-down" class="mr-1 h-5 w-5 fill-red-600" /> {{ track.downvotes }}</button>
               </div>
             </div>
           </div>

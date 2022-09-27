@@ -37,3 +37,10 @@ if (! function_exists('translations')) {
         return json_decode(file_get_contents($json), true);
     }
 }
+
+if (! function_exists('formatVoteNumbers')) {
+    function formatVoteNumbers(int $votes)
+    {
+        return ($votes >= 1000) ? round($votes/1000, 1) . "k" : $votes;
+    }
+}

@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function() {
-    dd(App\Models\Track::find(2006752)->track_url);
+    dd(App\Models\Track::withCount(['upvoters', 'downvoters'])->with('answers')->find(2006752));
 });
 
 // Auth Social Providers
@@ -226,6 +226,14 @@ Route::put('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'up
 
 Route::delete('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'destroy'])
     ->name('tracks.answers.delete')
+    ->middleware('auth');
+
+// Tracks Votes
+Route::post('rooms/{room}/tracks/{track}/downvote', [TrackController::class, 'downvote'])
+    ->name('tracks.downvote')
+    ->middleware('auth');
+Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
+    ->name('tracks.upvote')
     ->middleware('auth');
 
 // Images

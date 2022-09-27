@@ -11,7 +11,11 @@ class Track extends Model
 {
     use HasFactory, Votable;
 
-    protected $appends = ['track_url'];
+    protected $appends = [
+        'track_url',
+        'downvotes',
+        'upvotes'
+    ];
 
     public function playlist()
     {
@@ -28,18 +32,32 @@ class Track extends Model
         return $this->hasMany(Score::class);
     }
 
-    protected function getTrackUrlAttribute()
+    public function getTrackUrlAttribute()
     {
-        switch ($this->provider) {
-            case 'deezer':
-                return 'https://www.deezer.com/track/' . $this->provider_id;
-            case 'spotify':
-                return 'https://open.spotify.com/track/' . $this->provider_id;
-            case 'itunes':
-                return 'https://music.apple.com/fr/search?term=' . implode(' ', $this->answers->map(fn($answer) => $answer->value)->toArray());
-            default:
-                return null;
+        if($this->provider_url) {
+            return $this->provider_url;
+        } else {
+            switch ($this->provider) {
+                case 'deezer':
+                    return 'https://www.deezer.com/track/' . $this->provider_id;
+                case 'spotify':
+                    return 'https://open.spotify.com/track/' . $this->provider_id;
+                case 'itunes':
+                    return 'https://music.apple.com/fr/search?term=' . implode(' ', $this->answers->map(fn($answer) => $answer->value)->toArray());
+                default:
+                    return null;
+            }
         }
+    }
+
+    public function getUpvotesAttribute()
+    {
+        return formatVoteNumbers($this->totalUpvotes());
+    }
+
+    public function getDownvotesAttribute()
+    {
+        return formatVoteNumbers($this->totalDownvotes());
     }
 
     public function scopeFilter($query, array $filters)
