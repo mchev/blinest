@@ -20,6 +20,6 @@ class CleanOldMessages implements ShouldQueue
      */
     public function handle()
     {
-        Message::where('created_at', '>', now()->subDays(15))->delete();
+        Message::whereDate('created_at', '<=', now()->subDays(15))->forceDelete();
     }
 }

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Overtrue\LaravelVote\Traits\Votable;
 
 class Track extends Model
 {
-    use HasFactory;
+    use HasFactory, Votable;
 
     public function playlist()
     {

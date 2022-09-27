@@ -30,8 +30,9 @@ onMounted(() => {
     .listen('NewScore', (e) => {
       scores.value.push(e.score)
       let index = userList.value.findIndex((x) => x.id === e.score.user_id)
-      userList.value[index].score.total = e.score.total
-      userList.value[index].score.points = e.score.points
+      userList.value[index].score = e.score
+      // userList.value[index].score.total = e.score.total
+      // userList.value[index].score.points = e.score.points
       userList.value[index].score.answers.push(...e.score.answers)
     })
     .listen('TrackPlayed', (e) => {

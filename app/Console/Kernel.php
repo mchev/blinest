@@ -20,7 +20,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new CleanOldMessages)->dailyAt('06:00');
         $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30');
-        $schedule->job(new ProcessRoomsMosaics)->dailyAt('07:00');
+        // $schedule->job(new ProcessRoomsMosaics)->dailyAt('07:00');
+        $schedule->command('ban:delete-expired')->everyMinute();
     }
 
     /**

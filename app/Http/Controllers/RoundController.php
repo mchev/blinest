@@ -39,6 +39,7 @@ class RoundController extends Controller
     public function check(Round $round, Track $track)
     {
         if (! $round->finished_at && $round->tracks[$round->current - 1] === $track->id) {
+
             Request::validate([
                 'text' => 'required|string|min:2',
             ]);
@@ -47,56 +48,81 @@ class RoundController extends Controller
             $input = sanitizeString(Request::input('text'));
             $points = 0;
             $good_answers = [];
+            $almost_answers = [];
+            $bad_answers = [];
 
             foreach ($track->answers as $answer) {
-                $value = sanitizeString($answer->value);
 
-                if (str_contains($input, $value)) {
-                    $similarity = 0;
-                } else {
-                    $similarity = levenshtein($input, $value);
-                }
+                if(!Auth::user()->scores()->where('round_id', $round->id)->where('answer_id', $answer->id)->exists()) {
 
-                // $response[] = [
-                //     'type' => $answer->type->name,
-                //     'value' => $answer->value,
-                //     'similarity' => $similarity,
-                //     'compared' => $input.' => '.$value,
-                //     'score' => $answer->score,
-                //     'placeholder' => '',
-                //     'message' => '',
-                // ];
+                    $value = sanitizeString($answer->value);
 
-                if ($similarity < 3) {
-                    $answers[] = $answer->id;
-                    $good_answers[] = $answer;
-                    $points += $answer->score;
+                    if (str_contains($input, $value)) {
+                        $similarity = 0;
+                    } else {
+                        $similarity = levenshtein($input, $value);
+                    }
 
-                    // Broadcast score
-                    broadcast(new NewScore([
-                        'room_id' => $round->room->id,
-                        'user_id' => Auth::user()->id,
-                        'answers' => $answers,
-                        'points' => $points,
-                        'total' => $total + $points,
-                    ]));
+                    // Good
+                    if ($similarity < 3) {
+                        $answers[] = $answer->id;
+                        $good_answers[] = $answer;
+                        $points += $answer->score;
 
-                    // Store the score in database
-                    ProcessScoreCreation::dispatch(Auth::user(), [
-                        'team_id' => Auth::user()?->team?->id,
-                        'round_id' => $round->id,
-                        'track_id' => $track->id,
-                        'answer_id' => $answer->id,
-                        'score' => $answer->score,
-                    ]);
+                        // Broadcast score
+                        broadcast(new NewScore([
+                            'room_id' => $round->room->id,
+                            'user_id' => Auth::user()->id,
+                            'answers' => $answers,
+                            'points' => $points,
+                            'total' => $total + $points,
+                        ]));
+
+                        // Store the score in database
+                        ProcessScoreCreation::dispatch(Auth::user(), [
+                            'team_id' => Auth::user()?->team?->id,
+                            'round_id' => $round->id,
+                            'track_id' => $track->id,
+                            'answer_id' => $answer->id,
+                            'score' => $answer->score,
+                        ]);
+                    } 
+
+                    // Almost
+                    if ($similarity <= 4) {
+                        $almost_answers[] = $answer;
+                    }
+
+                    // Nope
+                    if ($similarity > 4) {
+                        $bad_answers[] = $answer;
+                    }
+
                 }
             }
 
             // Generate message
+            if (count($good_answers)) {
+                $message = [
+                    'type' => 'success',
+                    'body' => "Félicitation tu as trouvé " . $good_answers[0]->type->name
+                ];
+            } elseif (count($almost_answers)) {
+                $message = [
+                    'type' => 'success',
+                    'body' => "Presque " . $almost_answers[0]->type->name . "!"
+                ];
+            } else {
+                $message = [
+                    'type' => 'success',
+                    'body' => "Pas du tout"
+                ];
+            }
 
             // Return message to user
             return response()->json([
                 'good_answers' => $good_answers,
+                'message' => $message,
             ], 200);
         }
     }

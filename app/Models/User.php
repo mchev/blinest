@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
+use Cog\Contracts\Ban\Bannable as BannableContract;
+use Cog\Laravel\Ban\Traits\Bannable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,10 +12,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Overtrue\LaravelVote\Traits\Voter;
 
-class User extends Authenticatable
+class User extends Authenticatable implements BannableContract
 {
-    use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
 
     /**
      * The attributes that are mass assignable.
@@ -208,7 +211,7 @@ class User extends Authenticatable
 
     public function isPublicModerator()
     {
-        $this->publicModerators()->exists();
+        return $this->moderatedRooms()->where('is_public', true)->exists();
     }
 
     public function scopeFilter($query, array $filters)

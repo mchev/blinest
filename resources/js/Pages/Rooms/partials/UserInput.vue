@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Controls from './Controls.vue'
@@ -13,6 +13,7 @@ const track = ref(null)
 const room = ref(null)
 const round = ref(null)
 const text = ref('')
+const message = ref(null)
 const answers = ref([])
 
 onMounted(() => {
@@ -38,16 +39,29 @@ const check = () => {
   if (text.value.length > 1 && track.value) {
     axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value }).then((response) => {
       answers.value.push(...response.data.good_answers)
+      showMessage(response.data.message)
       focus()
     })
   }
   text.value = ''
 }
+
+const showMessage = (data) => {
+  message.value = data
+  setTimeout(() => {
+    message.value = null
+  }, 1500)
+}
 </script>
 <template>
   <form class="flex w-full items-center justify-center" @submit.prevent="check">
-    <div class="flex w-full items-center">
-      <input ref="input" v-model="text" type="text" class="h-14 flex-grow rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0 w-full" placeholder="Une idée?" autofocus />
+    <div class="relative flex w-full items-center">
+      <blockquote v-if="message" class="absolute bottom-full right-0 flex translate-y-[-80%] translate-x-[-50%] items-center rounded-lg bg-teal-600 py-1 px-2 text-neutral-100">
+        {{ message.body }}
+        <div class="absolute left-5 top-full h-full h-0 w-full w-0 translate-y-[-50%] border-t-[13px] border-l-[13px] border-r-[13px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
+      </blockquote>
+
+      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" placeholder="Une idée?" autofocus />
 
       <dropdown v-if="round" :autoClose="false" placement="bottom-end">
         <template #default>
@@ -63,14 +77,14 @@ const check = () => {
       </dropdown>
 
       <button type="submit" class="btn-send h-14">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-6 h-6">
           <title>{{ __('Send') }}</title>
-          <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>
       </button>
     </div>
   </form>
   <ul class="mt-2 flex gap-2">
-    <li v-for="answer in answers" :key="answer.id" class="flex items-center rounded-lg bg-teal-500 py-1 px-2 text-neutral-100"><span v-if="answer.type.svg_icon" class="mr-1" v-html="answer.type.svg_icon" /> {{ answer.value }}</li>
+    <li v-for="answer in answers" :key="answer.id" class="flex items-center rounded-lg bg-teal-600 py-1 px-2 text-neutral-100"><span v-if="answer.type.svg_icon" class="mr-1" v-html="answer.type.svg_icon" /> {{ answer.value }}</li>
   </ul>
 </template>

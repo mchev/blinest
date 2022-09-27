@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Overtrue\LaravelVote\Traits\Votable;
 
 class Message extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, Votable;
 
     protected $hidden = [
         'messagable_id',
@@ -25,6 +27,7 @@ class Message extends Model
     protected $appends = [
         'channel',
         'time',
+        'reports',
     ];
 
     public function messagable()
@@ -46,8 +49,17 @@ class Message extends Model
         return 'chat-'.$model.'.'.$this->messagable_id;
     }
 
-    public function getTimeAttribute()
+    public function getReportsAttribute(): int
     {
-        return $this->created_at->format('H:i');
+        return $this->totalDownvotes();
+    }
+
+    public function getTimeAttribute(): string
+    {
+        if ($this->created_at->format('Y-m-d') >= now()->format('Y-m-d')) {
+            return $this->created_at->format('H:i');
+        }
+
+        return $this->created_at->diffForHumans();
     }
 }

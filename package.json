@@ -13,6 +13,7 @@
         "@inertiajs/progress": "^0.2.7",
         "@popperjs/core": "^2.11.0",
         "@tailwindcss/typography": "^0.5.2",
+        "@vitejs/plugin-vue": "^2.3.3",
         "autoprefixer": "^10.4.7",
         "eslint": "^8.18.0",
         "eslint-plugin-vue": "^9.1.1",
@@ -31,7 +32,6 @@
         "vite": "^2.9.13",
         "vue": "^3.2.37",
         "vue-loader": "^17.0.0",
-        "@vitejs/plugin-vue": "^2.3.3",
         "vue3-carousel": "^0.1.40"
     }
 }

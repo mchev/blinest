@@ -19,17 +19,18 @@ watch(
 )
 
 onMounted(() => {
-  Echo.channel(props.channel).listen('RoundStarted', (e) => {
-    round.value = e.round
-    tracks.value = []
-  })
-  .listen('TrackPlayed', (e) => {
-    round.value = e.round
-  })
-  .listen('TrackEnded', (e) => {
-    tracks.value.unshift(e.track)
-    round.value = e.round
-  })
+  Echo.channel(props.channel)
+    .listen('RoundStarted', (e) => {
+      round.value = e.round
+      tracks.value = []
+    })
+    .listen('TrackPlayed', (e) => {
+      round.value = e.round
+    })
+    .listen('TrackEnded', (e) => {
+      tracks.value.unshift(e.track)
+      round.value = e.round
+    })
 })
 
 onUnmounted(() => {
@@ -39,13 +40,15 @@ onUnmounted(() => {
 <template>
   <Card>
     <template #header>
-      <div class="flex items-center justify-between w-full">
+      <div class="flex w-full items-center justify-between">
         <h3 class="text-xl font-bold">Playlist</h3>
-        <span v-if="round" class="text-xl font-bold text-neutral-500"><span class="text-neutral-700">{{ round.current }}</span> / {{ round.tracks.length + 1 }}</span>
+        <span v-if="round" class="text-xl font-bold text-neutral-500"
+          ><span class="text-neutral-700">{{ round.current }}</span> / {{ round.tracks.length }}</span
+        >
       </div>
     </template>
 
-    <ul class="h-64 md:h-80 2xl:h-96 pr-2 overflow-y-scroll">
+    <ul class="h-64 overflow-y-scroll pr-2 md:h-80 2xl:h-96">
       <li v-for="track in tracks" :key="track.id" class="mb-2 flex rounded bg-neutral-900 opacity-70">
         <div class="p-2">
           <img :src="track.artwork_url" :alt="track.album_name" class="h-20 w-auto rounded" />

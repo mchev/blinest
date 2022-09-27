@@ -20,6 +20,6 @@ class CleanEmptyPlaylists implements ShouldQueue
      */
     public function handle()
     {
-        Playlist::doesntHave('tracks')->where('created_at', '>', now()->subDays(15))->delete();
+        Playlist::doesntHave('tracks')->whereDate('created_at', '<=', now()->subDays(30))->delete();
     }
 }

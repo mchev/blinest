@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('eth_address')->index()->nullable();
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
+            $table->timestamp('banned_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

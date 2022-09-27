@@ -56,7 +56,7 @@ php artisan queue:work
 	- ✅ Bloquer des noms reservés à l'inscription
 	- Modération
 	- Room control
-	- Chat
+	- ✅ Chat
 	- ✅ Migration DB
 	- Team
 	- Rankings

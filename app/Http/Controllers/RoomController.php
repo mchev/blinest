@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewMessage;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
@@ -57,6 +56,7 @@ class RoomController extends Controller
                 'name' => $room->name,
                 'track_duration' => $room->track_duration,
                 'moderators' => $room->moderators,
+                'is_chat_active' => $room->is_chat_active,
                 'latest_messages' => $room->messages()->latest()->limit(30)->get(),
             ],
         ]);
@@ -153,21 +153,6 @@ class RoomController extends Controller
         (Auth::user()->hasRoomControl($room))
             ? $room->startRound()
             : abort(403);
-    }
-
-    public function newMessage(Room $room)
-    {
-        Request::validate([
-            'body' => ['required'],
-        ]);
-
-        $message = $room->messages()->create([
-            'user_id' => Auth::user()->id,
-            'user_ip' => Request::ip(),
-            'body' => Request::input('body'),
-        ]);
-
-        broadcast(new NewMessage($message));
     }
 
     public function alert(Room $room)

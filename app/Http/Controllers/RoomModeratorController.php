@@ -10,7 +10,7 @@ class RoomModeratorController extends Controller
 {
     public function attach(Request $request, Room $room)
     {
-        if (Auth::user()->id === $room->owner->id || Auth::user()->isAdministrator()) {
+        if (Auth::user()->isRoomOwner($room) || Auth::user()->isAdministrator()) {
             $room->moderators()->syncWithoutDetaching($request->user_id);
         } else {
             abort(403, 'Unauthorized action.');
@@ -21,7 +21,7 @@ class RoomModeratorController extends Controller
 
     public function detach(Request $request, Room $room)
     {
-        if (Auth::user()->id === $room->owner->id || Auth::user()->isAdministrator()) {
+        if (Auth::user()->isRoomOwner($room) || Auth::user()->isAdministrator()) {
             $room->moderators()->detach($request->user_id);
         } else {
             abort(403, 'Unauthorized action.');

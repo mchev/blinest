@@ -2,17 +2,20 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TeamController;
-use App\Http\Controllers\TeamRequestController;
 // Moderation
+use App\Http\Controllers\TeamRequestController;
+// Tracks
 use App\Http\Controllers\TrackAnswerController;
 use App\Http\Controllers\TrackController;
 // Socialite
@@ -104,9 +107,14 @@ Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'at
 Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
     ->name('rooms.playlists.detach');
 
-Route::post('rooms/{room}/message', [RoomController::class, 'newMessage'])
+// Rooms Messages
+Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
     ->name('rooms.message.store');
 
+Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
+    ->name('rooms.message.report');
+
+// Rooms alerts
 Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
     ->name('rooms.alert');
 
@@ -173,6 +181,14 @@ Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, '
     ->name('rooms.moderators.attach');
 Route::delete('rooms/{room}/moderators/detach', [RoomModeratorController::class, 'detach'])
     ->name('rooms.moderators.detach');
+
+Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
+    ->name('moderation.message.destroy');
+Route::post('moderation/users/{user}/ban', [ModerationController::class, 'banUser'])
+    ->name('moderation.user.ban');
+Route::post('moderation/users/{user}/unban', [ModerationController::class, 'unbanUser'])
+    ->name('moderation.user.unban');
+
 
 // Tracks
 Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])

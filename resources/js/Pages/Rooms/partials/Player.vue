@@ -51,6 +51,7 @@ const play = () => {
   isPlaying.value = true
 
   audio.src = track.value.preview_url
+  audio.crossOrigin = "anonymous"
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
@@ -91,6 +92,7 @@ const stop = () => {
 }
 </script>
 <template>
+
   <div id="player" class="flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
     <div v-if="error" class="text-red-500">
       {{ error }}

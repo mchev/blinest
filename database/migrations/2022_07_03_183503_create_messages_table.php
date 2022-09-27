@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('user_ip');
             $table->text('body');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
