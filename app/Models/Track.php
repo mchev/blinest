@@ -36,7 +36,7 @@ class Track extends Model
             case 'spotify':
                 return 'https://open.spotify.com/track/' . $this->provider_id;
             case 'itunes':
-                return 'https://www.deezer.com/fr/track/' . $this->provider_id;
+                return 'https://music.apple.com/fr/search?term=' . implode(' ', $this->answers->map(fn($answer) => $answer->value)->toArray());
             default:
                 return null;
         }

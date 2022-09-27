@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function() {
-    dd(App\Models\Track::first()->track_url);
+    dd(App\Models\Track::find(2006752)->track_url);
 });
 
 // Auth Social Providers
