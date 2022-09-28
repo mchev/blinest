@@ -1,3 +1,9 @@
+<script>
+// use normal <script> to declare options
+export default {
+  inheritAttrs: false
+}
+</script>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -6,6 +12,7 @@ import Controls from './Controls.vue'
 
 const props = defineProps({
   channel: String,
+  currentTime: Number,
 })
 
 const input = ref(null)
@@ -37,7 +44,7 @@ const focus = () => {
 
 const check = () => {
   if (text.value.length > 1 && track.value) {
-    axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value }).then((response) => {
+    axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value, currentTime: props.currentTime }).then((response) => {
       answers.value.push(...response.data.good_answers)
       showMessage(response.data.message)
       focus()

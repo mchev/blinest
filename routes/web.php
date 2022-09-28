@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function() {
+Route::get('/test', function () {
     dd(App\Models\Track::withCount(['upvoters', 'downvoters'])->with('answers')->find(2006752));
 });
 
@@ -192,7 +192,6 @@ Route::post('moderation/users/{user}/ban', [ModerationController::class, 'banUse
     ->name('moderation.user.ban');
 Route::post('moderation/users/{user}/unban', [ModerationController::class, 'unbanUser'])
     ->name('moderation.user.unban');
-
 
 // Tracks
 Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])

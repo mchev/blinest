@@ -7,7 +7,6 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
-use Inertia\Inertia;
 
 class ModerationController extends Controller
 {
@@ -21,13 +20,13 @@ class ModerationController extends Controller
 
     public function banUser(User $user)
     {
-        if(Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
-            if(!$user->isPublicModerator() && !$user->isAdministrator()) {
+        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
+            if (! $user->isPublicModerator() && ! $user->isAdministrator()) {
                 $user->ban([
                     'expired_at' => Request::input('expired_at') ?? null,
-                    'comment' => Request::input('comment') ?? null
+                    'comment' => Request::input('comment') ?? null,
                 ]);
-            } 
+            }
         }
 
         return redirect()->back();
@@ -35,8 +34,8 @@ class ModerationController extends Controller
 
     public function unbanUser(User $user)
     {
-        if(Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
+        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
             $user->unban();
-        } 
+        }
     }
 }

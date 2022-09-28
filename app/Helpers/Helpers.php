@@ -21,9 +21,7 @@ if (! function_exists('sanitizeString')) {
         $string = preg_replace("/\([^)]+\)/", '', $string);
 
         // Slugify to clean special characters
-        $string = Str::slug($string, ' ');
-
-        return $string;
+        return Str::slug($string, ' ');
     }
 }
 
@@ -41,6 +39,6 @@ if (! function_exists('translations')) {
 if (! function_exists('formatVoteNumbers')) {
     function formatVoteNumbers(int $votes)
     {
-        return ($votes >= 1000) ? round($votes/1000, 1) . "k" : $votes;
+        return ($votes >= 1000) ? round($votes / 1000, 1).'k' : $votes;
     }
 }

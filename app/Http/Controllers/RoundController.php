@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Jobs\ProcessScoreCreation;
+use App\Models\Score;
 use App\Models\Round;
 use App\Models\Track;
 use Illuminate\Support\Facades\Auth;
@@ -39,22 +40,20 @@ class RoundController extends Controller
     public function check(Round $round, Track $track)
     {
         if (! $round->finished_at && $round->tracks[$round->current - 1] === $track->id) {
-
             Request::validate([
                 'text' => 'required|string|min:2',
             ]);
 
             $total = $round->userScore(Auth::user());
             $input = sanitizeString(Request::input('text'));
-            $points = 0;
+            $score = 0;
+            $answers = [];
             $good_answers = [];
             $almost_answers = [];
             $bad_answers = [];
 
             foreach ($track->answers as $answer) {
-
-                if(!Auth::user()->scores()->where('round_id', $round->id)->where('answer_id', $answer->id)->exists()) {
-
+                if (! Auth::user()->scores()->where('round_id', $round->id)->where('answer_id', $answer->id)->exists()) {
                     $value = sanitizeString($answer->value);
 
                     if (str_contains($input, $value)) {
@@ -65,28 +64,45 @@ class RoundController extends Controller
 
                     // Good
                     if ($similarity < 3) {
-                        $answers[] = $answer->id;
                         $good_answers[] = $answer;
-                        $points += $answer->score;
+                        $score += $answer->score;
 
-                        // Broadcast score
-                        broadcast(new NewScore([
-                            'room_id' => $round->room->id,
-                            'user_id' => Auth::user()->id,
-                            'answers' => $answers,
-                            'points' => $points,
-                            'total' => $total + $points,
-                        ]));
+                        // Score order
+                        $order = Score::where('round_id', $round->id)
+                            ->where('track_id', $track->id)
+                            ->where('answer_id', $answer->id)
+                            ->count() + 1;
+                        if($order < 4) $score += 0.5;
+
+                        // Bonus speed (10% of the room track duration)
+                        $speedBonus = (Request::input('currentTime') < ($round->room->track_duration * 0.2));
+                        if($speedBonus) $score += 0.5;
+
+                        $answers[] = [
+                            'id' => $answer->id,
+                            'order' => $order,
+                            'speedBonus' => $speedBonus,
+                            'name' => $answer->type->name
+                        ];
 
                         // Store the score in database
-                        ProcessScoreCreation::dispatch(Auth::user(), [
+                        Auth::user()->scores()->create([
                             'team_id' => Auth::user()?->team?->id,
                             'round_id' => $round->id,
                             'track_id' => $track->id,
                             'answer_id' => $answer->id,
-                            'score' => $answer->score,
+                            'score' => $score,
+                            'time' => Request::input('currentTime')
                         ]);
-                    } 
+                        // ProcessScoreCreation::dispatch(Auth::user(), [
+                        //     'team_id' => Auth::user()?->team?->id,
+                        //     'round_id' => $round->id,
+                        //     'track_id' => $track->id,
+                        //     'answer_id' => $answer->id,
+                        //     'score' => $answer->score,
+                        //     'time' => Request::input('currentTime')
+                        // ]);
+                    }
 
                     // Almost
                     if ($similarity <= 4) {
@@ -97,25 +113,35 @@ class RoundController extends Controller
                     if ($similarity > 4) {
                         $bad_answers[] = $answer;
                     }
-
                 }
             }
 
             // Generate message
             if (count($good_answers)) {
+
+                // Broadcast score
+                broadcast(new NewScore([
+                    'room_id' => $round->room->id,
+                    'user_id' => Auth::user()->id,
+                    "track_id" => $track->id,
+                    'answers' => $answers,
+                    'points' => $score,
+                    'total' => $total + $score,
+                ]));
+
                 $message = [
                     'type' => 'success',
-                    'body' => "Félicitation tu as trouvé " . $good_answers[0]->type->name
+                    'body' => 'Félicitation tu as trouvé '.$good_answers[0]->type->name,
                 ];
             } elseif (count($almost_answers)) {
                 $message = [
                     'type' => 'success',
-                    'body' => "Presque " . $almost_answers[0]->type->name . "!"
+                    'body' => 'Presque '.$almost_answers[0]->type->name.'!',
                 ];
             } else {
                 $message = [
                     'type' => 'success',
-                    'body' => "Pas du tout"
+                    'body' => 'Pas du tout',
                 ];
             }
 

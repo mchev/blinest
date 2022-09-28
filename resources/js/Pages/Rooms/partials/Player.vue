@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+
 const props = defineProps({
   room: Object,
   channel: String,
 })
+
+const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped', 'track:currentTime'])
 
 const audio = new Audio()
 const track = ref(null)
@@ -39,8 +42,6 @@ onUnmounted(() => {
   Echo.leave(props.channel)
 })
 
-const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped'])
-
 const play = () => {
   if (isPlaying.value) {
     stop()
@@ -51,7 +52,7 @@ const play = () => {
   isPlaying.value = true
 
   audio.src = track.value.preview_url
-  audio.crossOrigin = "anonymous"
+  audio.crossOrigin = 'anonymous'
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
@@ -64,6 +65,7 @@ const play = () => {
   })
 
   audio.addEventListener('timeupdate', () => {
+    emit('track:currentTime', audio.currentTime)
     percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
     shaking.value = percent.value > 85 ? true : false
   })
@@ -92,7 +94,6 @@ const stop = () => {
 }
 </script>
 <template>
-
   <div id="player" class="flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
     <div v-if="error" class="text-red-500">
       {{ error }}

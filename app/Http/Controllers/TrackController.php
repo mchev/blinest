@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TrackVoted;
 use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\Track;
-use App\Events\TrackVoted;
 use App\Services\MusicProvidersService as MusicProviders;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TrackController extends Controller
 {
@@ -145,5 +145,4 @@ class TrackController extends Controller
         Auth::user()->upvote($track);
         broadcast(new TrackVoted($room, $track));
     }
-
 }

@@ -17,10 +17,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('team_id')->index()->nullable();
-            $table->foreignId('round_id');
-            $table->foreignId('track_id');
-            $table->foreignId('answer_id');
+            $table->foreignId('round_id')->index();
+            $table->foreignId('track_id')->index();
+            $table->foreignId('answer_id')->index();
             $table->decimal('score', 7, 1);
+            $table->decimal('time', 8, 6)->nullable();
+            $table->smallInteger('order')->nullable();
+            $table->boolean('bonus')->nullable();
             $table->timestamps();
         });
     }

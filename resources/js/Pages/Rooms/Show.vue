@@ -25,6 +25,7 @@ const users = ref(null)
 const data = ref(null)
 const roundFinished = ref(false)
 const showSidebar = ref(true)
+const currentTime = ref(0)
 
 onMounted(() => {
   Echo.join(channel)
@@ -88,8 +89,8 @@ const listenRounds = () => {
           </article>
 
           <div class="mb-4 md:mb-8">
-            <Player :room="room" :channel="channel" />
-            <UserInput :channel="channel" />
+            <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
+            <UserInput :channel="channel" :currentTime="currentTime" />
           </div>
 
           <div class="grid md:grid-cols-2 md:gap-8">

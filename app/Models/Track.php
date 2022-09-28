@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVote\Traits\Votable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Track extends Model
 {
@@ -14,7 +13,7 @@ class Track extends Model
     protected $appends = [
         'track_url',
         'downvotes',
-        'upvotes'
+        'upvotes',
     ];
 
     public function playlist()
@@ -34,16 +33,16 @@ class Track extends Model
 
     public function getTrackUrlAttribute()
     {
-        if($this->provider_url) {
+        if ($this->provider_url) {
             return $this->provider_url;
         } else {
             switch ($this->provider) {
                 case 'deezer':
-                    return 'https://www.deezer.com/track/' . $this->provider_id;
+                    return 'https://www.deezer.com/track/'.$this->provider_id;
                 case 'spotify':
-                    return 'https://open.spotify.com/track/' . $this->provider_id;
+                    return 'https://open.spotify.com/track/'.$this->provider_id;
                 case 'itunes':
-                    return 'https://music.apple.com/fr/search?term=' . implode(' ', $this->answers->map(fn($answer) => $answer->value)->toArray());
+                    return 'https://music.apple.com/fr/search?term='.implode(' ', $this->answers->map(fn ($answer) => $answer->value)->toArray());
                 default:
                     return null;
             }
