@@ -31,7 +31,8 @@ const cancelRequest = (team) => {
           <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">{{ __('Teams') }}</h2>
           <p class="font-light text-gray-500 dark:text-gray-400 sm:text-xl">Rejoins une team et partages tes scores avec les autres membres pour exploser les compteurs!</p>
           <div class="my-6 flex justify-center">
-            <Link href="/teams/create" class="btn-primary btn-lg">{{ __('Create a team') }}</Link>
+            <Link v-if="!user.team" href="/teams/create" class="btn-primary btn-lg">{{ __('Create a team') }}</Link>
+            <Link v-else :href="route('teams.show', user.team.id)" class="btn-primary btn-lg">{{ __('Show my team') }}</Link>
           </div>
           <div class="mt-16 flex justify-center">
             <TextInput v-model="searchForm.search" :placeholder="__('Search a team')" />

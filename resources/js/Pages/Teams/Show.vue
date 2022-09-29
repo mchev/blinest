@@ -12,15 +12,23 @@ const props = defineProps({
   team: Object,
   score: Number,
   members: Object,
+  user: Object,
 })
 
 const memberList = props.members.sort((a, b) => b.score - a.score)
-const user = usePage().props.value.auth.user
 
 const leave = () => {
   if (confirm('Are you sure?')) {
     Inertia.post(`/teams/${props.team.id}/leave`)
   }
+}
+
+const sendRequest = (team) => {
+  Inertia.post(`/teams/${team.id}/request`)
+}
+
+const cancelRequest = (team) => {
+  Inertia.post(`/teams/${team.id}/request/cancel`)
 }
 
 const switchOwner = (member) => {
@@ -74,8 +82,13 @@ const switchOwner = (member) => {
           </li>
         </ul>
       </Card>
-      <div class="flex items-center gap-6">
-        <button type="button" class="btn-danger my-6" @click="leave">{{ __('Leave the team') }}</button>
+      <div class="my-6 flex items-center gap-6">
+        <button v-if="members.find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
+        <div v-else>
+          <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>
+          <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
+          <button v-else type="button" @click="sendRequest(team)" class="btn-secondary mx-auto my-6">{{ __('Send a join request') }}</button>
+        </div>
         <Share :url="route('teams.show', team)" />
       </div>
     </div>

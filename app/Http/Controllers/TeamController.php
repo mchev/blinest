@@ -13,10 +13,6 @@ class TeamController extends Controller
 {
     public function index()
     {
-        if (Auth::user()->hasTeam()) {
-            return redirect()->route('teams.show', Auth::user()->team->id);
-        }
-
         return Inertia::render('Teams/Index', [
             'teams' => Team::orderBy('created_at', 'DESC')
                 ->with('owner')
@@ -80,6 +76,12 @@ class TeamController extends Controller
                 'photo' => $member->photo,
                 'score' => $member->scores()->where('team_id', $team->id)->sum('score'),
             ])->sortBy('score'),
+            'user' => [
+                'id' => Auth::user()->id,
+                'team' => Auth::user()->team,
+                'pending_requests' => Auth::user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
+                'declined_requests' => Auth::user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
+            ],
         ]);
     }
 
@@ -89,10 +91,14 @@ class TeamController extends Controller
             return redirect()->back()->with('error', "Impossible de quitter ta propre team, tu dois d'abord donner les droits à un autre membre.");
         }
 
-        Auth::user()->update([
-            'team_id' => null,
-        ]);
-
-        return redirect()->back()->with('success', 'Tu ne fais maintenant plus parti de la team '.$team->name);
+        if ($team->members()->where('id', Auth::user()->id)->exists()) {
+            Auth::user()->update([
+                'team_id' => null,
+            ]);
+            return redirect()->route('teams.index')->with('success', 'Tu ne fais maintenant plus parti de la team '.$team->name);
+        } else {
+            return redirect()->back()->with('error', 'Tu ne fais pas parti de cette team.');
+        }
+        
     }
 }

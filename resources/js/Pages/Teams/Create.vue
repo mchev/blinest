@@ -24,7 +24,7 @@ const store = () => {
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
           <TextInput v-model="form.name" :error="form.errors.name" class="w-full pb-8" :label="__('Name')" />
         </div>
-        <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
+        <div class="flex items-center justify-end px-8 py-4">
           <LoadingButton :loading="form.processing" class="btn-primary" type="submit">{{ __('Create Team') }}</LoadingButton>
         </div>
       </form>
