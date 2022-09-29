@@ -92,6 +92,7 @@ Route::post('teams/{team}/request/cancel', [TeamRequestController::class, 'cance
 Route::post('teams/requests/{teamRequest}/accept', [TeamRequestController::class, 'accept']);
 Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
 Route::post('teams/{team}/leave', [TeamController::class, 'leave']);
+Route::post('teams/{team}/owner/{user}', [TeamController::class, 'switchOwner']);
 
 Route::resource('teams', TeamController::class);
 

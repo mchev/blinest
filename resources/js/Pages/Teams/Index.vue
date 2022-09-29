@@ -54,7 +54,7 @@ const cancelRequest = (team) => {
                 <img class="mx-auto mb-4 h-36 w-36 rounded-full" :src="team.photo" :alt="team.name" />
               </div>
               <h3 class="mb-1 truncate text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                <a href="#">{{ team.name }}</a>
+                <Link :href="route('teams.show', team.id)">{{ team.name }}</Link>
               </h3>
               <p>@{{ team.owner.name }}</p>
               <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>

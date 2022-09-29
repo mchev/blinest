@@ -66,9 +66,14 @@ onUnmounted(() => {
 
       <div class="h-64 overflow-y-scroll pr-2 md:h-80 2xl:h-96">
         <transition-group name="flip-list" tag="ul">
-          <li v-for="user in userList" :key="user.id" class="flex justify-between rounded border-b border-neutral-600 px-2 py-4" :class="{ 'bg-neutral-700': me.id === user.id }">
-            <div>
-              {{ user.name }}
+          <li v-for="(user, index) in userList" :key="user.id" class="flex items-center rounded border-b border-neutral-600 px-2 py-4" :class="{ 'bg-neutral-700': me.id === user.id }">
+            <div class="font-bold text-xl justify-center items-center flex px-4">
+              {{ index + 1 }}
+            </div>
+            <div class="flex flex-grow flex-col">
+              <div class="mb-2">
+                {{ user.name }} <sup v-if="user.team" class="text-[9px] uppercase">[{{ user.team.name }}]</sup>
+              </div>
               <div class="flex items-center">
                 <span v-for="userAnswer in user.score.answers" v-if="user.score" class="relative mr-3 flex items-center rounded bg-purple-300 px-1 text-[10px] font-bold uppercase text-neutral-500 text-white">
                   <span v-if="userAnswer.speedBonus" class="mr-1 text-orange-500">

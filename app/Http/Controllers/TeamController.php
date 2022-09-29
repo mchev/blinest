@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Team;
 use App\Rules\Reserved;
 use Illuminate\Http\Request;
@@ -37,6 +38,15 @@ class TeamController extends Controller
             : Inertia::render('Teams/Create');
     }
 
+    public function switchOwner(Team $team, User $user)
+    {
+        if($team->owner->id === Auth::user()->id) {
+            $team->update([
+                'user_id' => $user->id
+            ]);
+        }
+    }
+
     public function store(Request $request)
     {
         if (Auth::user()->hasTeam()) {
@@ -63,7 +73,7 @@ class TeamController extends Controller
     {
         return Inertia::render('Teams/Show', [
             'team' => $team,
-            'score' => $team->scores()->sum('score'),
+            'score' => floatval($team->scores()->sum('score')),
             'members' => $team->members->map(fn ($member) => [
                 'id' => $member->id,
                 'name' => $member->name,
