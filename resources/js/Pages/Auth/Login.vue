@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { Head, useForm } from '@inertiajs/inertia-vue3'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import Logo from '@/Components/Logo.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -36,7 +36,8 @@ const login = () => {
             </label>
           </div>
           <div class="flex px-10 py-4">
-            <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Login') }}</loading-button>
+            <Link class="btn-secondary ml-auto mr-2" :href="route('register')">{{ __('Register') }}</Link>
+            <loading-button :loading="form.processing" class="btn-primary" type="submit">{{ __('Login') }}</loading-button>
           </div>
         </form>
       </Card>

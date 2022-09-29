@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             ImportOldUsers::class,
             ImportOldGames::class,
             ImportOldTracks::class,
-            //ImportOldScores::class,
+            ImportOldScores::class,
         ]);
     }
 }
