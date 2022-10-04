@@ -50,6 +50,11 @@ class Room extends Model
         return 0;
     }
 
+    protected function getPhotoPathAttribute()
+    {
+        return $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
+    }
+
     public function currentRound()
     {
         return $this->rounds()->latest()->whereNull('finished_at')->where('is_playing', true);

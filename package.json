@@ -2,7 +2,9 @@
     "private": true,
     "scripts": {
         "dev": "vite",
+        "dev:ssr": "node public/build/ssr.js",
         "build": "vite build",
+        "build:ssr": "vite build --ssr",
         "fix:eslint": "eslint --ext .js,.vue resources/js/ --fix",
         "fix:prettier": "prettier --write --loglevel warn 'resources/js/**/*.vue'",
         "fix-code-style": "npm run fix:prettier && npm run fix:eslint"
@@ -32,5 +34,9 @@
         "vue": "^3.2.37",
         "vue-loader": "^17.0.0",
         "vue3-carousel": "^0.1.40"
+    },
+    "dependencies": {
+        "@inertiajs/server": "^0.1.0",
+        "@vue/server-renderer": "^3.2.40"
     }
 }

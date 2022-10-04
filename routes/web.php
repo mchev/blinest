@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
@@ -57,6 +58,13 @@ Route::get('language/{language}', function ($language) {
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
+
+// Contact
+
+Route::get('/contact', [ContactController::class, 'index'])
+    ->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])
+    ->name('contact.send');
 
 Route::middleware('auth')->group(function () {
 

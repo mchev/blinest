@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
+import Footer from '@/Components/Footer.vue'
 
 const props = defineProps({
   session: Object,
@@ -28,6 +29,7 @@ watch(
             <div v-if="$slots.default" class="px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
               <flash-messages />
               <slot />
+              <Footer/>
             </div>
           </Transition>
         </div>

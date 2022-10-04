@@ -14,7 +14,7 @@ const user = usePage().props.value.auth?.user
 <template>
 	<div class="md:flex md:flex-shrink-0">
 		<div class="flex w-full items-center justify-between px-4 py-2 md:flex-shrink-0 md:px-12">
-			<Link class="mt-1" :href="route('home')">
+			<Link class="mt-1" :href="route('home')" title="Blinest">
 				<logo class="fill-white" width="120" height="28" />
 			</Link>
 

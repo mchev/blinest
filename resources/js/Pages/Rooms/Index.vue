@@ -95,7 +95,7 @@ const reset = () => {
             </td>
             <td class="border-t">
               <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
-                <span class="badge" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.password ? __('No') : __('Yes') }}</span>
+                <span class="badge" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-600'">{{ room.password ? __('No') : __('Yes') }}</span>
                 <small v-if="room.password" class="text-xs text-neutral-500">{{ __('Password protected') }}</small>
               </Link>
             </td>
