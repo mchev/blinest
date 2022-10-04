@@ -26,7 +26,7 @@ watch(
         <Navbar/>
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right" appear>
-            <div v-if="$slots.default" class="px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
+            <div v-if="$slots.default" class="flex flex-col px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4 justify-between" scroll-region>
               <flash-messages />
               <slot />
               <Footer/>

@@ -23,8 +23,12 @@ const user = usePage().props.value.auth?.user
 			<div class="flex items-center justify-end">
 				<Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-4 W-4" /></Link>
 				<Notifications class="mr-4" v-if="user" />
-				<LanguageSwitcher :class="user ? 'mr-4' : ''" />
+				<LanguageSwitcher class="mr-4" />
 				<UserDropdown v-if="user" />
+				<div v-if="!user" class="flex gap-4 uppercase">
+					<Link :href="route('login')" :title="__('Login')">{{ __('Login') }}</Link>
+					<Link :href="route('register')" :title="__('Register')">{{ __('Register') }}</Link>
+				</div>
 			</div>
 		</div>
 	</div>
