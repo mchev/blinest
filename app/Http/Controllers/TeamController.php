@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Team;
+use App\Models\User;
 use App\Rules\Reserved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,9 +36,9 @@ class TeamController extends Controller
 
     public function switchOwner(Team $team, User $user)
     {
-        if($team->owner->id === Auth::user()->id) {
+        if ($team->owner->id === Auth::user()->id) {
             $team->update([
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
         }
     }
@@ -95,10 +95,10 @@ class TeamController extends Controller
             Auth::user()->update([
                 'team_id' => null,
             ]);
+
             return redirect()->route('teams.index')->with('success', 'Tu ne fais maintenant plus parti de la team '.$team->name);
         } else {
             return redirect()->back()->with('error', 'Tu ne fais pas parti de cette team.');
         }
-        
     }
 }

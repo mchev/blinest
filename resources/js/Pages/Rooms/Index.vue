@@ -35,14 +35,14 @@ const reset = () => {
 <template>
   <Head title="Rooms" />
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">{{ __('Rooms') }}</h1>
-    <div class="mb-6 flex items-center justify-between">
-      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset"/>
+    <h1 v-if="rooms && rooms.data.length" class="mb-8 text-3xl font-bold">{{ __('Rooms') }}</h1>
+    <div v-if="rooms && rooms.data.length" class="mb-6 flex items-center justify-between">
+      <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" :href="route('rooms.create')">
         {{ __('Create a room') }}
       </Link>
     </div>
-    <Card>
+    <Card v-if="rooms && rooms.data.length">
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
@@ -105,12 +105,23 @@ const reset = () => {
               </Link>
             </td>
           </tr>
-          <tr v-if="rooms.length === 0">
+          <tr v-if="rooms && rooms.data.length === 0">
             <td class="border-t px-2 py-4" colspan="6">{{ __('No rooms found.') }}</td>
           </tr>
         </table>
       </div>
       <Pagination :links="rooms.links" />
     </Card>
+    <div v-else class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
+      <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
+        <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">{{ __('Rooms') }}</h2>
+        <p class="text-lg">"Si à 50 ans on n'a pas de Room sur Blinest, on a raté sa vie." <br><small class="text-xs italic">Auteur inconnu.</small></p>
+        <div class="my-8 flex justify-center">
+          <Link class="btn-primary btn-lg" :href="route('rooms.create')">
+            {{ __('Create my first room') }}
+          </Link>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>

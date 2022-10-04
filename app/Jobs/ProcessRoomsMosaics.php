@@ -20,10 +20,16 @@ class ProcessRoomsMosaics implements ShouldQueue
      */
     public function handle()
     {
-        Room::whereHas('playlists')->whereNull('mosaic_path')->chunk(500, function ($rooms) {
+        Room::isPublic()->chunk(500, function ($rooms) {
             foreach ($rooms as $room) {
                 $room->generateMosaic();
             }
         });
+
+        // Room::whereHas('playlists')->whereNull('mosaic_path')->chunk(500, function ($rooms) {
+        //     foreach ($rooms as $room) {
+        //         $room->generateMosaic();
+        //     }
+        // });
     }
 }

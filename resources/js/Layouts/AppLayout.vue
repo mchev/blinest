@@ -1,6 +1,20 @@
 <script setup>
+import { ref, watch } from 'vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
+
+const props = defineProps({
+  session: Object,
+})
+
+const authModalIsOpen = ref(false)
+
+watch(
+  () => props.session,
+  (session) => {
+    authModalIsOpen.value = !!sessions?.requireAuth;
+  }
+)
 
 </script>
 <template>

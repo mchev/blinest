@@ -37,10 +37,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    dd(App\Models\Track::withCount(['upvoters', 'downvoters'])->with('answers')->find(2006752));
-});
-
 // Auth Social Providers
 
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
@@ -60,196 +56,183 @@ Route::get('language/{language}', function ($language) {
 // Home
 
 Route::get('/', [HomeController::class, 'index'])
-    ->name('home')
-    ->middleware('auth');
+    ->name('home');
 
-// Me
+Route::middleware('auth')->group(function () {
 
-Route::get('me', [UserController::class, 'show'])
-    ->name('me')
-    ->middleware('auth');
+    // Me
 
-Route::put('me/edit', [UserController::class, 'edit'])
-    ->name('me.edit')
-    ->middleware('auth');
+    Route::get('me', [UserController::class, 'show'])
+        ->name('me');
 
-Route::put('me', [UserController::class, 'update'])
-    ->name('me.update')
-    ->middleware('auth');
+    Route::put('me/edit', [UserController::class, 'edit'])
+        ->name('me.edit');
 
-Route::delete('me/destroy', [UserController::class, 'destroy'])
-    ->name('me.destroy')
-    ->middleware('auth');
+    Route::put('me', [UserController::class, 'update'])
+        ->name('me.update');
 
-// Users
-Route::get('users/{user}', [UserController::class, 'show'])
-    ->name('users.show')
-    ->middleware('auth');
+    Route::delete('me/destroy', [UserController::class, 'destroy'])
+        ->name('me.destroy');
 
-// Teams
-Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);
-Route::post('teams/{team}/request/cancel', [TeamRequestController::class, 'cancel']);
-Route::post('teams/requests/{teamRequest}/accept', [TeamRequestController::class, 'accept']);
-Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
-Route::post('teams/{team}/leave', [TeamController::class, 'leave']);
-Route::post('teams/{team}/owner/{user}', [TeamController::class, 'switchOwner']);
+    // Users
+    Route::get('users/{user}', [UserController::class, 'show'])
+        ->name('users.show');
 
-Route::resource('teams', TeamController::class);
+    // Teams
+    Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);
+    Route::post('teams/{team}/request/cancel', [TeamRequestController::class, 'cancel']);
+    Route::post('teams/requests/{teamRequest}/accept', [TeamRequestController::class, 'accept']);
+    Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
+    Route::post('teams/{team}/leave', [TeamController::class, 'leave']);
+    Route::post('teams/{team}/owner/{user}', [TeamController::class, 'switchOwner']);
 
-// Notifications
-Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
+    Route::resource('teams', TeamController::class);
 
-// Rooms
-Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
-    ->name('rooms.restore');
+    // Notifications
+    Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
 
-Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
-    ->name('rooms.joined');
+    // Rooms
+    Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
+        ->name('rooms.restore');
 
-Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
-    ->name('rooms.playlists.attach');
+    Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
+        ->name('rooms.joined');
 
-Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
-    ->name('rooms.playlists.detach');
+    Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
+        ->name('rooms.playlists.attach');
 
-// Rooms Messages
-Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
-    ->name('rooms.message.store');
+    Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
+        ->name('rooms.playlists.detach');
 
-Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
-    ->name('rooms.message.report');
+    // Rooms Messages
+    Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
+        ->name('rooms.message.store');
 
-// Rooms alerts
-Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
-    ->name('rooms.alert');
+    Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
+        ->name('rooms.message.report');
 
-Route::post('rooms/{room}/generate/mosaic', [RoomController::class, 'generateMosaic'])
-    ->name('rooms.generate.mosaic');
+    // Rooms alerts
+    Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
+        ->name('rooms.alert');
 
-Route::resource('rooms', RoomController::class);
+    Route::post('rooms/{room}/generate/mosaic', [RoomController::class, 'generateMosaic'])
+        ->name('rooms.generate.mosaic');
 
-// Ranking
-Route::get('rankings', [RankingController::class, 'index'])
-    ->name('rankings.index');
+    Route::resource('rooms', RoomController::class)->middleware('auth');
 
-Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
-    ->name('rooms.scores.index');
+    // Ranking
+    Route::get('rankings', [RankingController::class, 'index'])
+        ->name('rankings.index');
 
-// Rounds
-Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
-    ->name('rounds.track.check');
+    Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
+        ->name('rooms.scores.index');
 
-// Controls
-Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
-    ->name('rounds.stop');
-Route::post('rooms/{room}/start', [RoomController::class, 'start'])
-    ->name('rounds.start');
-Route::post('rounds/{round}/track/resume', [RoundController::class, 'resume'])
-    ->name('rounds.track.resume');
-Route::post('rounds/{round}/track/pause', [RoundController::class, 'pause'])
-    ->name('rounds.track.pause');
-Route::post('rounds/{round}/track/prev', [RoundController::class, 'prevTrack'])
-    ->name('rounds.track.prev');
-Route::post('rounds/{round}/track/next', [RoundController::class, 'nextTrack'])
-    ->name('rounds.track.next');
+    // Rounds
+    Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
+        ->name('rounds.track.check');
 
-// Playlists
-Route::get('playlists', [PlaylistController::class, 'index'])
-    ->name('playlists');
+    // Controls
+    Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
+        ->name('rounds.stop');
+    Route::post('rooms/{room}/start', [RoomController::class, 'start'])
+        ->name('rounds.start');
+    Route::post('rounds/{round}/track/resume', [RoundController::class, 'resume'])
+        ->name('rounds.track.resume');
+    Route::post('rounds/{round}/track/pause', [RoundController::class, 'pause'])
+        ->name('rounds.track.pause');
+    Route::post('rounds/{round}/track/prev', [RoundController::class, 'prevTrack'])
+        ->name('rounds.track.prev');
+    Route::post('rounds/{round}/track/next', [RoundController::class, 'nextTrack'])
+        ->name('rounds.track.next');
 
-Route::get('playlists/create', [PlaylistController::class, 'create'])
-    ->name('playlists.create');
+    // Playlists
+    Route::get('playlists', [PlaylistController::class, 'index'])
+        ->name('playlists');
 
-Route::post('playlists', [PlaylistController::class, 'store'])
-    ->name('playlists.store');
+    Route::get('playlists/create', [PlaylistController::class, 'create'])
+        ->name('playlists.create');
 
-Route::get('playlists/{playlist}/edit', [PlaylistController::class, 'edit'])
-    ->name('playlists.edit');
+    Route::post('playlists', [PlaylistController::class, 'store'])
+        ->name('playlists.store');
 
-Route::put('playlists/{playlist}', [PlaylistController::class, 'update'])
-    ->name('playlists.update');
+    Route::get('playlists/{playlist}/edit', [PlaylistController::class, 'edit'])
+        ->name('playlists.edit');
 
-Route::delete('playlists/{playlist}', [PlaylistController::class, 'destroy'])
-    ->name('playlists.destroy');
+    Route::put('playlists/{playlist}', [PlaylistController::class, 'update'])
+        ->name('playlists.update');
 
-Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
-    ->name('playlists.restore');
+    Route::delete('playlists/{playlist}', [PlaylistController::class, 'destroy'])
+        ->name('playlists.destroy');
 
-// Moderation
+    Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
+        ->name('playlists.restore');
 
-Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
-    ->name('playlists.moderators.attach');
-Route::delete('playlists/{playlist}/moderators/detach', [PlaylistModeratorController::class, 'detach'])
-    ->name('playlists.moderators.detach');
+    // Moderation
 
-Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, 'attach'])
-    ->name('rooms.moderators.attach');
-Route::delete('rooms/{room}/moderators/detach', [RoomModeratorController::class, 'detach'])
-    ->name('rooms.moderators.detach');
+    Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
+        ->name('playlists.moderators.attach');
+    Route::delete('playlists/{playlist}/moderators/detach', [PlaylistModeratorController::class, 'detach'])
+        ->name('playlists.moderators.detach');
 
-Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
-    ->name('moderation.message.destroy');
-Route::post('moderation/users/{user}/ban', [ModerationController::class, 'banUser'])
-    ->name('moderation.user.ban');
-Route::post('moderation/users/{user}/unban', [ModerationController::class, 'unbanUser'])
-    ->name('moderation.user.unban');
+    Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, 'attach'])
+        ->name('rooms.moderators.attach');
+    Route::delete('rooms/{room}/moderators/detach', [RoomModeratorController::class, 'detach'])
+        ->name('rooms.moderators.detach');
 
-// Tracks
-Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])
-    ->name('playlists.tracks')
-    ->middleware('auth');
+    Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
+        ->name('moderation.message.destroy');
+    Route::post('moderation/users/{user}/ban', [ModerationController::class, 'banUser'])
+        ->name('moderation.user.ban');
+    Route::post('moderation/users/{user}/unban', [ModerationController::class, 'unbanUser'])
+        ->name('moderation.user.unban');
 
-Route::post('playlists/{playlist}/tracks', [TrackController::class, 'store'])
-    ->name('playlists.tracks.store')
-    ->middleware('auth');
+    // Tracks
+    Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])
+        ->name('playlists.tracks');
 
-Route::delete('tracks/{track}', [TrackController::class, 'destroy'])
-    ->name('tracks.delete')
-    ->middleware('auth');
+    Route::post('playlists/{playlist}/tracks', [TrackController::class, 'store'])
+        ->name('playlists.tracks.store');
 
-Route::put('tracks/{track}', [TrackController::class, 'update'])
-    ->name('tracks.update')
-    ->middleware('auth');
+    Route::delete('tracks/{track}', [TrackController::class, 'destroy'])
+        ->name('tracks.delete');
 
-Route::get('playlists/{playlist}/tracks/search', [TrackController::class, 'search'])
-    ->name('tracks.search')
-    ->middleware('auth');
+    Route::put('tracks/{track}', [TrackController::class, 'update'])
+        ->name('tracks.update');
 
-// Tracks Answers
-Route::post('tracks/{track}/answers', [TrackAnswerController::class, 'store'])
-    ->name('tracks.answers.store')
-    ->middleware('auth');
+    Route::get('playlists/{playlist}/tracks/search', [TrackController::class, 'search'])
+        ->name('tracks.search');
 
-Route::put('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'update'])
-    ->name('tracks.answers.update')
-    ->middleware('auth');
+    // Tracks Answers
+    Route::post('tracks/{track}/answers', [TrackAnswerController::class, 'store'])
+        ->name('tracks.answers.store');
 
-Route::delete('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'destroy'])
-    ->name('tracks.answers.delete')
-    ->middleware('auth');
+    Route::put('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'update'])
+        ->name('tracks.answers.update');
 
-// Tracks Votes
-Route::post('rooms/{room}/tracks/{track}/downvote', [TrackController::class, 'downvote'])
-    ->name('tracks.downvote')
-    ->middleware('auth');
-Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
-    ->name('tracks.upvote')
-    ->middleware('auth');
+    Route::delete('tracks/{track}/answers/{answer}', [TrackAnswerController::class, 'destroy'])
+        ->name('tracks.answers.delete');
+
+    // Tracks Votes
+    Route::post('rooms/{room}/tracks/{track}/downvote', [TrackController::class, 'downvote'])
+        ->name('tracks.downvote');
+    Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
+        ->name('tracks.upvote');
+
+    // Music providers
+    Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])
+        ->name('providers.deezer.search.track');
+
+    Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTrack'])
+        ->name('providers.itunes.search.track');
+
+    Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
+        ->name('providers.spotify.search.track');
+}); // End Auth middleware
 
 // Images
 
 Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
-
-// Music providers
-Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])
-    ->name('providers.deezer.search.track');
-
-Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTrack'])
-    ->name('providers.itunes.search.track');
-
-Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
-    ->name('providers.spotify.search.track');
 
 require __DIR__.'/auth.php';

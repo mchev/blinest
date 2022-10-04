@@ -14,7 +14,6 @@ const loading = ref(true)
 const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
-const shaking = ref(false)
 
 onMounted(() => {
   Echo.channel(props.channel)
@@ -36,9 +35,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (isPlaying.value) {
-    stop()
-  }
+  stop()
   Echo.leave(props.channel)
 })
 
@@ -67,13 +64,11 @@ const play = () => {
   audio.addEventListener('timeupdate', () => {
     emit('track:currentTime', audio.currentTime)
     percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
-    shaking.value = percent.value > 85 ? true : false
   })
 
   audio.addEventListener('ended', () => {
     isPlaying.value = false
     loading.value = true
-    shaking.value = false
     emit('track:ended', props.track)
   })
 }
@@ -88,7 +83,6 @@ const resume = () => {
 }
 
 const stop = () => {
-  shaking.value = false
   audio.pause()
   emit('track:stopped', props.track)
 }

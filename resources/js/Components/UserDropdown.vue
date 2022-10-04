@@ -26,12 +26,12 @@ const isUrl = (...urls) => {
       <ul>
         <li>
           <Link :href="route('me')" class="m-4 flex pl-2" :class="isUrl('me') ? 'font-bold' : 'font-normal'">
-            {{ __('My profile') }}
+            {{ __('My account') }}
           </Link>
         </li>
         <li>
-          <Link :href="route('playlists')" class="m-4 flex pl-2" :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">
-            {{ __('Playlists') }}
+          <Link :href="route('teams.index')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
+            {{ __('Teams') }}
           </Link>
         </li>
         <li>
@@ -40,8 +40,8 @@ const isUrl = (...urls) => {
           </Link>
         </li>
         <li>
-          <Link :href="route('teams.index')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
-            {{ __('Teams') }}
+          <Link :href="route('playlists')" class="m-4 flex pl-2" :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">
+            {{ __('Playlists') }}
           </Link>
         </li>
         <li>

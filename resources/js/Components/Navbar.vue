@@ -21,9 +21,9 @@ const user = usePage().props.value.auth?.user
 			<SearchRooms class="mt-1 hidden md:flex" />
 
 			<div class="flex items-center justify-end">
-				<Link :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-4 W-4" /></Link>
+				<Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-4 W-4" /></Link>
 				<Notifications class="mr-4" v-if="user" />
-				<LanguageSwitcher class="mr-4" />
+				<LanguageSwitcher :class="user ? 'mr-4' : ''" />
 				<UserDropdown v-if="user" />
 			</div>
 		</div>

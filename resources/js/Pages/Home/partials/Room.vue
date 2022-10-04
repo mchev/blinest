@@ -11,23 +11,29 @@ const track = ref(null)
 const round = ref(null)
 const playing = ref(props.room.is_playing)
 
+const userCounter = ref(0)
+
 // Todo : better presence reactivity
 
 onMounted(() => {
   Echo.channel(channel)
-  .listen('RoundStarted', (e) => {
-    playing.value = true
-    round.value = e.round
-  })
-  .listen('TrackPlayed', (e) => {
-    props.room.value = e.room
-    round.value = e.round
-    track.value = e.track
-  })
-  .listen('RoundFinished', () => {
-    playing.value = false
-    round.value.current = 0
-  })
+    .listen('RoundStarted', (e) => {
+      userCounter.value = e.round.room.users_count
+      playing.value = true
+      round.value = e.round
+    })
+    .listen('TrackPlayed', (e) => {
+      props.room.value = e.room
+      userCounter.value = e.room.users_count
+      round.value = e.round
+      track.value = e.track
+    })
+    .listen('RoundFinished', (e) => {
+      userCounter.value = e.round.room.users_count
+      playing.value = false
+      round.value = e.round
+      round.value.current = 0
+    })
 })
 
 onUnmounted(() => {
@@ -35,19 +41,17 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 shadow bg-cover bg-center shadow transition duration-100 ease-in-out hover:z-10 hover:scale-110 grayscale-[30%] hover:grayscale-0" :style="`background-image: url(${room.mosaic});`">
+  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center shadow shadow grayscale-[30%] transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${room.photo_path || room.mosaic});`">
     <article class="relative h-full w-full">
       <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
-      <div class="absolute ease-in-out top-0 left-0 pl-2 pr-4 py-2 w-auto text-sm bg-neutral-800/90 rounded-br-full hover:scale-110" :title="__('Players')">
+      <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-purple-800/90 py-1 px-2 text-sm ease-in-out hover:scale-110" :title="__('Players')">
         <div class="flex items-center">
           <Transition name="slide-fade">
-            <svg v-if="playing" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-pulse mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <title>{{ __('Round in progress') }}</title>
-              <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+            <svg v-if="playing" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="mr-2 h-5 w-5 animate-[spin_3s_linear_infinite]">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </Transition>
-
-          {{ room.users_count }}
+          <span class="font-bold text-neutral-300">{{ userCounter }}</span>
         </div>
       </div>
 

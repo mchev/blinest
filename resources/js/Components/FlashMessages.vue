@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex justify-center">
     <div v-if="$page.props.flash.success && show" class="mb-8 flex max-w-3xl items-center justify-between rounded bg-green-500">
       <div class="flex items-center">
         <svg class="ml-4 mr-2 h-4 w-4 flex-shrink-0 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><polygon points="0 11 2 9 7 14 18 3 20 5 7 18" /></svg>

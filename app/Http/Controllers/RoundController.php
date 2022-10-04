@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Jobs\ProcessScoreCreation;
-use App\Models\Score;
 use App\Models\Round;
+use App\Models\Score;
 use App\Models\Track;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -72,17 +72,21 @@ class RoundController extends Controller
                             ->where('track_id', $track->id)
                             ->where('answer_id', $answer->id)
                             ->count() + 1;
-                        if($order < 4) $score += 0.5;
+                        if ($order < 4) {
+                            $score += 0.5;
+                        }
 
                         // Bonus speed (10% of the room track duration)
                         $speedBonus = (Request::input('currentTime') < ($round->room->track_duration * 0.15));
-                        if($speedBonus) $score += 0.5;
+                        if ($speedBonus) {
+                            $score += 0.5;
+                        }
 
                         $answers[] = [
                             'id' => $answer->id,
                             'order' => $order,
                             'speedBonus' => $speedBonus,
-                            'name' => $answer->type->name
+                            'name' => $answer->type->name,
                         ];
 
                         // Store the score in database
@@ -92,7 +96,7 @@ class RoundController extends Controller
                             'track_id' => $track->id,
                             'answer_id' => $answer->id,
                             'score' => $score,
-                            'time' => Request::input('currentTime')
+                            'time' => Request::input('currentTime'),
                         ]);
                         // ProcessScoreCreation::dispatch(Auth::user(), [
                         //     'team_id' => Auth::user()?->team?->id,
@@ -123,7 +127,7 @@ class RoundController extends Controller
                 broadcast(new NewScore([
                     'room_id' => $round->room->id,
                     'user_id' => Auth::user()->id,
-                    "track_id" => $track->id,
+                    'track_id' => $track->id,
                     'answers' => $answers,
                     'points' => $score,
                     'total' => $total + $score,

@@ -17,7 +17,7 @@ defineProps({
         <rooms :rooms="category.rooms" :id="category.id" />
       </div>
     </section>
-    <section v-if="private_rooms.data.length">
+    <section v-if="private_rooms && private_rooms.data.length">
       <div class="relative">
         <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">{{ __('My rooms') }}</h2>
         <rooms :rooms="private_rooms" id="private" />

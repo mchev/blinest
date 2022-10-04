@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index() 
     {
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
@@ -28,7 +28,7 @@ class HomeController extends Controller
                         ->withQueryString(),
                 ];
             }),
-            'private_rooms' => Auth::user()->rooms()
+            'private_rooms' => Auth::user() ? Auth::user()->rooms()
                 ->with('owner')
                 ->where('is_public', false)
                 ->whereHas('playlists')
@@ -36,7 +36,7 @@ class HomeController extends Controller
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
                 ->paginate(5, ['*'], 'private')
-                ->withQueryString(),
+                ->withQueryString() : null,
         ]);
     }
 }

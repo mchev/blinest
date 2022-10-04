@@ -23,6 +23,7 @@ class RoundFinished implements ShouldBroadcast
     public function __construct(Round $round)
     {
         $this->round = $round;
+        $this->round->load('room');
     }
 
     /**

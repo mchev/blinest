@@ -13,13 +13,13 @@ const isUrl = (...urls) => {
 <template>
   <div class="flex flex-col md:flex-row items-end gap-6">
     <div class="">
-      <Link class="group flex items-center" :href="route('playlists')">
-        <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">{{ __('Playlists') }}</div>
+      <Link class="group flex items-center" :href="route('rooms.index')">
+        <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
       </Link>
     </div>
     <div class="">
-      <Link class="group flex items-center" :href="route('rooms.index')">
-        <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
+      <Link class="group flex items-center" :href="route('playlists')">
+        <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">{{ __('Playlists') }}</div>
       </Link>
     </div>
     <div class="">
