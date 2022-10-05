@@ -8,6 +8,7 @@ import SearchRooms from '@/Components/SearchRooms.vue'
 import UserDropdown from '@/Components/UserDropdown.vue'
 import Notifications from '@/Components/Notifications/Notifications.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
+import SocialIcon from '@/Components/SocialIcon.vue'
 
 const user = usePage().props.value.auth?.user
 </script>
@@ -22,6 +23,9 @@ const user = usePage().props.value.auth?.user
 
 			<div class="flex items-center justify-end">
 				<Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-4 W-4" /></Link>
+				<a href="https://discord.com/invite/uKyVgcxcFa" target="_blank" :title="__('Join the Blinest community on Discord')" class="mr-4">
+					<SocialIcon name="discord" class="h-5 w-5"/>
+				</a>
 				<Notifications class="mr-4" v-if="user" />
 				<LanguageSwitcher class="mr-4" />
 				<UserDropdown v-if="user" />

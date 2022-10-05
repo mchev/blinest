@@ -84,18 +84,22 @@ const listenRounds = () => {
     <Transition name="slide-right">
       <div v-if="joined" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="mb-4 flex items-center justify-between">
-            <h2 class="text-xl font-bold">{{ room.name }}</h2>
+          <article class="mb-4 flex items-center">
+            <h2 class="mr-8 text-xl font-bold">{{ room.name }}</h2>
           </article>
 
           <div class="mb-4 md:mb-8">
             <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
-            <UserInput :channel="channel" :currentTime="currentTime" />
+            <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>
 
           <div class="grid md:grid-cols-2 md:gap-8">
             <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
+          </div>
+
+          <div class="mx-auto mb-2 flex flex-wrap items-center gap-4 text-sm">
+            <span v-for="moderator in room.moderators" class="flex items-center" :class="{'text-teal-500 font-bold': users.find(x => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full"/> {{ moderator.name }}</span>
           </div>
 
           <button v-if="room.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">

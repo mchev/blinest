@@ -6,28 +6,30 @@ export default {
 </script>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { usePage } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Controls from './Controls.vue'
 
 const props = defineProps({
+  room: Object,
   channel: String,
   currentTime: Number,
 })
 
 const input = ref(null)
 const track = ref(null)
-const room = ref(null)
 const round = ref(null)
 const text = ref('')
 const message = ref(null)
 const answers = ref([])
+const user = usePage().props.value.auth.user
 
 onMounted(() => {
   focus()
 
   Echo.channel(props.channel).listen('TrackPlayed', (e) => {
-    room.value = e.room
+    props.room.value = e.room
     round.value = e.round
     track.value = e.track
     answers.value = []
@@ -70,7 +72,7 @@ const showMessage = (data) => {
 
       <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" placeholder="Une idée?" autofocus />
 
-      <dropdown v-if="round" :autoClose="false" placement="bottom-end">
+      <dropdown v-if="round && props.room.moderators.find(x => user.id === x.id)" :autoClose="false" placement="bottom-end">
         <template #default>
           <button type="button" class="h-14 bg-white p-4 text-neutral-500">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -79,7 +81,7 @@ const showMessage = (data) => {
           </button>
         </template>
         <template #dropdown>
-          <Controls :channel="channel" :room="room" :round="round" />
+          <Controls :channel="channel" :room="props.room" :round="round" />
         </template>
       </dropdown>
 

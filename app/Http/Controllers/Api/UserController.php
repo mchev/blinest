@@ -12,10 +12,11 @@ class UserController extends Controller
     {
         return response()->json([
             'filters' => Request::all('search'),
-            'users' => User::orderBy('name')
-                ->select('id', 'name')
+            'users' => User::query()
                 ->filter(Request::only('search'))
-                ->paginate(10)
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->paginate(20)
                 ->withQueryString(),
         ]);
     }

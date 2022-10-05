@@ -4,14 +4,22 @@ import Layout from '@/Layouts/AppLayout.vue'
 import Rooms from './partials/Rooms.vue'
 
 defineProps({
+  filters: Object,
   categories: Object,
   private_rooms: Object,
+  top_rooms: Array,
 })
 </script>
 <template>
   <Head title="Home" />
   <Layout>
-    <section v-for="category in categories" :key="category.id">
+    <section v-if="!filters.search">
+      <div v-if="top_rooms" class="relative mb-4">
+        <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">TOP 5</h2>
+        <rooms :rooms="top_rooms" />
+      </div>
+    </section>
+    <section v-if="categories.length" v-for="category in categories" :key="category.id">
       <div v-if="category.rooms.data.length" class="relative mb-4">
         <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">{{ category.name }}</h2>
         <rooms :rooms="category.rooms" :id="category.id" />

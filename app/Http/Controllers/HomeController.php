@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -13,6 +14,14 @@ class HomeController extends Controller
     {
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
+            'top_rooms' => Room::isPublic()
+                ->with('owner')
+                ->whereHas('playlists')
+                ->whereNull('password')
+                ->withCount('rounds')
+                ->orderByDesc('rounds_count')
+                ->limit(5)
+                ->get(),
             'categories' => Category::all()->map(function ($category) {
                 return [
                     'id' => $category->id,

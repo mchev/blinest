@@ -171,10 +171,10 @@ const removeTrack = (track) => {
               </div>
             </td>
             <td class="border-t">
-              <div class="flex items-start px-6 py-4 text-center text-sm"><Icon name="thumb-up" class="mr-2 h-6 w-6 flex-shrink-0 fill-teal-600" /> {{ track.up_votes }}</div>
+              <div class="flex items-start px-6 py-4 text-center text-sm"><Icon name="thumb-up" class="mr-2 h-6 w-6 flex-shrink-0" /> {{ track.up_votes }}</div>
             </td>
             <td class="border-t">
-              <div class="flex items-start px-6 py-4 text-center text-sm focus:text-blinest-500"><Icon name="thumb-down" class="mr-2 h-6 w-6 flex-shrink-0 fill-neutral-400" /> {{ track.down_votes }}</div>
+              <div class="flex items-start px-6 py-4 text-center text-sm focus:text-blinest-500"><Icon name="thumb-down" class="mr-2 h-6 w-6 flex-shrink-0" /> {{ track.down_votes }}</div>
             </td>
             <td class="border-t">
               <div class="flex flex-col items-start px-6 py-4 text-sm focus:text-blinest-500">

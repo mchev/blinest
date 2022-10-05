@@ -20,6 +20,7 @@ class Room extends Model
         'mosaic',
         'users_count',
         'current_track_index',
+        'photo_src'
     ];
 
     public function resolveRouteBinding($value, $field = null)
@@ -50,9 +51,9 @@ class Room extends Model
         return 0;
     }
 
-    protected function getPhotoPathAttribute()
+    protected function getPhotoSrcAttribute()
     {
-        return $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
+        return $this->photo_path ? $this->photo_path : $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
     }
 
     public function currentRound()

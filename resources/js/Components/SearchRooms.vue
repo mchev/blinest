@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm, usePage } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import throttle from 'lodash/throttle'
 import pickBy from 'lodash/pickBy'
@@ -11,7 +11,7 @@ const props = defineProps({
 })
 
 const form = useForm({
-  search: props?.filters?.search,
+  search: usePage().props.value?.filters?.search
 })
 
 watch(
@@ -24,6 +24,6 @@ watch(
 </script>
 <template>
   <div :class="$attrs.class">
-    <text-input class="text-sm" v-model="form.search" prepend-icon="search" :placeholder="__('Search a room') + '...'" />
+    <text-input class="text-sm" v-model="form.search" prepend-icon="search" :placeholder="__('Search') + '...'" />
   </div>
 </template>

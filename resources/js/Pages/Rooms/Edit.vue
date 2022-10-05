@@ -34,6 +34,7 @@ const form = useForm({
   is_chat_active: props.room.is_chat_active,
   discord_webhook_url: props.room.discord_webhook_url,
   color: props.room.color,
+  has_password: props.room.password ? true : false,
   password: props.room.password,
   tracks_by_round: props.room.tracks_by_round,
   track_duration: props.room.track_duration,
@@ -142,10 +143,10 @@ onUnmounted(() => {
 
             <div class="flex w-full flex-wrap">
               <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Chatbox')" />
-              <checkbox-input v-model="form.password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
+              <checkbox-input v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
             </div>
 
-            <text-input v-show="form.password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
+            <text-input v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
           </form>
 
           <template #footer>

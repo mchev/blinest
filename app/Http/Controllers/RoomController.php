@@ -123,8 +123,10 @@ class RoomController extends Controller
             $room->updatePhoto(Request::file('photo'));
         }
 
-        if (Request::get('password')) {
+        if (Request::get('has_password')) {
             $room->update(['password' => Request::get('password')]);
+        } else {
+            $room->update(['password' => null]);
         }
 
         return Redirect::back()->with('success', 'Room updated.');

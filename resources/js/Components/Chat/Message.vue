@@ -43,7 +43,10 @@ const report = () => {
       <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
       {{ message.user.name }} <sup v-if="user.team" class="mx-1 text-[9px] uppercase">[{{ user.team.name }}]</sup> :
     </button>
-    <span v-else class="mr-1 font-bold" :class="{ 'text-red-500': room.moderators.find((x) => x.id === message.user.id) }"> {{ message.user.name }} : </span>
+    <span v-else class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
+      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
+      {{ message.user.name }} <sup v-if="user.team" class="mx-1 text-[9px] uppercase">[{{ user.team.name }}]</sup> :
+    </span>
     <span class="">{{ message.body }}</span>
     <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
   </div>
