@@ -14,6 +14,7 @@ const loading = ref(true)
 const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
+const usersWithAllAnswers = ref([])
 
 onMounted(() => {
   Echo.channel(props.channel)
@@ -24,6 +25,7 @@ onMounted(() => {
     })
     .listen('TrackEnded', (e) => {
       console.log('Track ended')
+      usersWithAllAnswers.value = []
       stop()
     })
     .listen('TrackPaused', () => {
@@ -31,6 +33,9 @@ onMounted(() => {
     })
     .listen('TrackResumed', () => {
       resume()
+    })
+    .listen('UserHasFoundAllTheAnswers', (e) => {
+      usersWithAllAnswers.value.push(e.user)
     })
 })
 
@@ -88,13 +93,19 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
-    <div v-if="error" class="text-red-500">
+  <div id="player" class="flex h-4 w-full items-center rounded-t-lg bg-purple-200 relative">
+    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers">
+      <li v-for="user in usersWithAllAnswers" class="absolute bg-teal-600 p-1 text-white -top-8 rounded text-xs" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
+        {{ user.name }}
+        <div class="absolute left-1 top-full h-full h-0 w-full w-0 translate-y-[-50%] border-t-[8px] mt-1 border-l-[8px] border-r-[8px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
+      </li>
+    </transition-group>
+    <div v-if="error" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg text-red-500">
       {{ error }}
     </div>
     <div v-else-if="loading" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
       {{ __('Loading') }}
     </div>
-    <div v-else class="shine h-4 rounded-r-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    <div v-else class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
   </div>
 </template>

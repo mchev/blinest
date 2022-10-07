@@ -20,7 +20,7 @@ class Room extends Model
         'mosaic',
         'users_count',
         'current_track_index',
-        'photo_src'
+        'photo_src',
     ];
 
     public function resolveRouteBinding($value, $field = null)

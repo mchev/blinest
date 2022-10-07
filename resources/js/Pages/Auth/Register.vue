@@ -5,7 +5,7 @@ import Logo from '@/Components/Logo.vue'
 import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
-import SocialIcon from '@/Components/SocialIcon.vue'
+import Socialite from './Socialite.vue'
 
 const form = useForm({
   name: '',
@@ -24,8 +24,8 @@ const register = () => {
   <AppLayout>
     <Head :title="__('Login')" />
 
-    <div class="mx-auto mt-8 flex max-w-3xl">
-      <Card class="w-full lg:w-2/3">
+    <div class="mx-auto flex flex-wrap mt-8 lg:max-w-3xl justify-center">
+      <Card class="flex flex-grow mr-4 mb-4">
         <template #header>
           <h1 class="text-center text-xl font-bold">{{ __('Register') }}</h1>
         </template>
@@ -42,35 +42,8 @@ const register = () => {
         </form>
       </Card>
 
-      <Card class="ml-4 px-10">
-        <div class="flex h-full flex-col justify-center">
-          <small class="mb-2 text-center">{{ __('Register with') }}</small>
-          <a :href="route('auth.redirect', 'discord')" class="btn-secondary my-2 flex justify-start gap-4">
-            <social-icon name="discord" class="h-6 w-6" />
-            Discord
-          </a>
+      <Socialite class="mb-4" />
 
-          <a :href="route('auth.redirect', 'instagram')" class="btn-secondary my-2 flex justify-start gap-4">
-            <social-icon name="instagram" class="h-6 w-6" />
-            Instagram
-          </a>
-
-          <a :href="route('auth.redirect', 'deezer')" class="btn-secondary my-2 flex justify-start gap-4">
-            <social-icon name="deezer" class="h-6 w-6" />
-            Deezer
-          </a>
-
-          <a :href="route('auth.redirect', 'spotify')" class="btn-secondary my-2 flex justify-start gap-4">
-            <social-icon name="spotify" class="h-6 w-6" />
-            Spotify
-          </a>
-
-          <a :href="route('auth.redirect', 'facebook')" class="btn-secondary my-2 flex justify-start gap-4">
-            <social-icon name="facebook" class="h-6 w-6" />
-            Facebook
-          </a>
-        </div>
-      </Card>
     </div>
   </AppLayout>
 </template>

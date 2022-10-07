@@ -74,7 +74,7 @@ const reset = () => {
               </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+              <Link v-if="room.category" class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
                 {{ room.category.name }}
               </Link>
             </td>

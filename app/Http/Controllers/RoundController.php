@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\NewScore;
 use App\Events\TrackEnded;
-use App\Jobs\ProcessScoreCreation;
+use App\Events\UserHasFoundAllTheAnswers;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
@@ -98,14 +98,18 @@ class RoundController extends Controller
                             'score' => $score,
                             'time' => Request::input('currentTime'),
                         ]);
-                        // ProcessScoreCreation::dispatch(Auth::user(), [
-                        //     'team_id' => Auth::user()?->team?->id,
-                        //     'round_id' => $round->id,
-                        //     'track_id' => $track->id,
-                        //     'answer_id' => $answer->id,
-                        //     'score' => $answer->score,
-                        //     'time' => Request::input('currentTime')
-                        // ]);
+
+                        $totalUserAnswers = Auth::user()->scores()->where('round_id', $round->id)->where('track_id', $track->id)->count();
+                        $totalTrackAnswers = $track->answers()->count();
+
+                        if ($totalUserAnswers === $totalTrackAnswers) {
+                            broadcast(new UserHasFoundAllTheAnswers($round->room, [
+                                'name' => Auth::user()->name,
+                                'id' => Auth::user()->id,
+                                'photo' => Auth::user()->photo,
+                                'time' => Request::input('currentTime'),
+                            ]));
+                        }
                     }
 
                     // Almost
@@ -131,6 +135,7 @@ class RoundController extends Controller
                     'answers' => $answers,
                     'points' => $score,
                     'total' => $total + $score,
+                    'time' => Request::input('currentTime'),
                 ]));
 
                 $message = [
@@ -139,12 +144,12 @@ class RoundController extends Controller
                 ];
             } elseif (count($almost_answers)) {
                 $message = [
-                    'type' => 'success',
+                    'type' => 'warning',
                     'body' => 'Presque '.$almost_answers[0]->type->name.'!',
                 ];
             } else {
                 $message = [
-                    'type' => 'success',
+                    'type' => 'error',
                     'body' => 'Pas du tout',
                 ];
             }

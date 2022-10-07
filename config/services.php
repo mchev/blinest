@@ -46,6 +46,12 @@ return [
         'redirect' => env('SPOTIFY_REDIRECT_URI'),
     ],
 
+    'deezer' => [
+        'client_id' => env('DEEZER_CLIENT_ID'),
+        'client_secret' => env('DEEZER_CLIENT_SECRET'),
+        'redirect' => env('DEEZER_REDIRECT_URI'),
+    ],
+
     'discord' => [
         'client_id' => env('DISCORD_APP_ID'),
         'client_secret' => env('DISCORD_APP_SECRET'),

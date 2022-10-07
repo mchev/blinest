@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Providers\RouteServiceProvider;
 use App\User;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -18,7 +19,7 @@ use Laravel\Socialite\Facades\Socialite;
          $user = $this->createUser($getInfo, $provider);
          auth()->login($user);
 
-         return redirect()->to('/');
+         return redirect()->intended(RouteServiceProvider::HOME);
      }
 
      public function createUser($getInfo, $provider)
