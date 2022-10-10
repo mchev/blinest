@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\SendinblueService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -66,12 +67,17 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->deletePicture();
-        $user->forceDelete();
-        Session::flush();
-        Auth::logout();
+        if(Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
+            (new SendinblueService)->contacts()->delete($user);
+            $user->deletePhoto();
+            $user->forceDelete();
+            Session::flush();
+            Auth::logout();
 
-        return redirect('login');
+            return redirect('login');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 
     public function markNotificationAsRead($id)

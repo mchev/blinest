@@ -85,6 +85,8 @@ Route::middleware('auth')->group(function () {
     // Users
     Route::get('users/{user}', [UserController::class, 'show'])
         ->name('users.show');
+    Route::delete('users/{user}', [UserController::class, 'destroy'])
+        ->name('users.destroy');
 
     // Teams
     Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);

@@ -1,11 +1,18 @@
 <script setup>
 import { Head, Link } from '@inertiajs/inertia-vue3'
+import { Inertia } from '@inertiajs/inertia'
 import Layout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 
-defineProps({
+const props = defineProps({
   user: Object,
 })
+
+const deleteUser = () => {
+  if(confirm('Attention, cette action est irréversible. Voulez-vous vraiment supprimer votre compte et tous les scores associés?')) {
+    Inertia.delete(route('users.destroy', props.user.id))
+  }
+}
 </script>
 <template>
   <Head :title="user.name" />
@@ -39,7 +46,7 @@ defineProps({
           </li>
         </ul>
 
-        <Link href="" class="text-red-600 hover:underline">{{ __('Delete my account') }}</Link>
+        <button @click="deleteUser" class="text-red-600 hover:underline">{{ __('Delete my account') }}</button>
       </div>
 
       <div class="flex-1">
