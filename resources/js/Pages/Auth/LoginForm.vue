@@ -8,7 +8,7 @@ import Socialite from './Socialite.vue'
 const form = useForm({
   email: '',
   password: '',
-  remember: false,
+  remember: true,
 })
 
 const login = () => {
@@ -25,14 +25,17 @@ const login = () => {
           <div class="p-4">
             <text-input v-model="form.email" :error="form.errors.email" class="mt-6" :label="__('Email')" type="email" autofocus autocapitalize="off" required/>
             <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" required />
-            <label class="mt-6 flex select-none items-center" for="remember">
+<!--             <label class="mt-6 flex select-none items-center" for="remember">
               <input id="remember" v-model="form.remember" class="mr-1" type="checkbox" />
               <span class="text-sm">{{ __('Remember Me') }}</span>
             </label>
-          </div>
+ -->          </div>
           <div class="flex px-6 py-4">
             <Link class="btn-secondary ml-auto mr-2" :href="route('register')">{{ __('Register') }}</Link>
             <loading-button :loading="form.processing" class="btn-primary" type="submit">{{ __('Login') }}</loading-button>
+          </div>
+          <div class="flex px-6 mb-2">
+            <Link class="text-sm ml-auto underline" :href="route('password.request')">{{ __('Forgot your password?') }}</Link>
           </div>
         </form>
       </Card>

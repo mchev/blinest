@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Services\SendinblueService;
+use App\Notifications\Welcome;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,6 +33,9 @@ class ProcessUserCreated implements ShouldQueue
      */
     public function handle()
     {
+        // Send a welcome email
+        $this->user->notify(new Welcome);
+        
         // Create sendinblue contact
         (new SendinblueService)->contacts()->create($this->user);
     }

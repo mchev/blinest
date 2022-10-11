@@ -11,7 +11,10 @@ defineProps({
 })
 </script>
 <template>
-  <Head title="Home" />
+  <Head>
+    <title>Blind-Tests multijoueurs - gratuit et sans inscription</title>
+    <meta name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.">
+  </Head>
   <Layout>
     <section v-if="!filters.search">
       <div v-if="top_rooms" class="relative mb-4">

@@ -8,7 +8,7 @@
       </div>
     </template>
     <template #dropdown>
-      <Link :href="route('language', [selectable_locale])" class="p-4 uppercase">
+      <Link :href="route('language', [selectable_locale])" class="uppercase p-3 leading-8">
         {{ selectable_locale }}
       </Link>
     </template>

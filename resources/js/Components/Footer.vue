@@ -12,6 +12,7 @@ import { Link, usePage } from '@inertiajs/inertia-vue3'
 				<li><a target="_blank" href="https://github.com/mchev/blinest/issues/new">{{ __('Report a bug') }}</a></li>
 				<li><Link href="#">Mentions légales</Link></li>
 				<li><Link href="#">Politique de confidentialité</Link></li>
+				<li><a target="_blank" href="https://donate.stripe.com/00g2bvf8i08X8De6oo">Faire un don</a></li>
 			</ul>
 		</div>
 	</div>

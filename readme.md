@@ -48,7 +48,7 @@ php artisan queue:work
 
 - TODO :
 	- ✅ Sendinblue
-	- Donate
+	- ✅ Donate
 	- Pages
 	- Messages réponses
 	- Answers : réponses users

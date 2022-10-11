@@ -5,36 +5,42 @@ import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
 import { Head, useForm } from '@inertiajs/inertia-vue3'
 
+const props = defineProps({
+    email: String,
+    token: String,
+});
 const form = useForm({
-  email: '',
-})
-
+    token: props.token,
+    email: props.email,
+    password: '',
+    password_confirmation: '',
+});
 const submit = () => {
-  form.post(route('password.email'))
-}
+    form.post(route('password.update'), {
+        onFinish: () => form.reset('password', 'password_confirmation'),
+    });
+};
 </script>
 
 <template>
   <AppLayout>
-    <Head :title="__('Forgot your password?')" />
+    <Head :title="__('Reset Password')" />
 
     <Card class="mx-auto max-w-xl">
       <template #header>
-        {{ __('Forgot your password?') }}
+        {{ __('Reset Password') }}
       </template>
-
-      <p class="mb-4">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-      </p>
 
       <form @submit.prevent="submit">
         <div>
           <TextInput type="email" label="Email" v-model="form.email" :error="form.errors.email" required autofocus />
+          <TextInput type="password" :label="__('Password')" v-model="form.password" :error="form.errors.password" required autofocus />
+          <TextInput type="password" :label="__('Confirm Password')" v-model="form.password_confirmation" :error="form.errors.password_confirmation" required autofocus />
         </div>
 
         <div class="mt-6 mb-4 flex items-center justify-end">
           <LoadingButton :class="{ 'opacity-25': form.processing }" class="btn-primary" :disabled="form.processing" :loading="form.processing">
-            {{ __('Email Password Reset Link') }}
+            {{ __('Reset Password') }}
           </LoadingButton>
         </div>
       </form>
