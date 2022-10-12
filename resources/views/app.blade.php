@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
         <meta property="og:image" content="/img/screenshot.jpg" />
         <meta property="og:title" content="Blind-Tests multijoueurs - gratuit et sans inscription" />

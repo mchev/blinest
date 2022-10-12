@@ -18,6 +18,11 @@ const isUrl = (...urls) => {
       </Link>
     </div>
     <div class="mb-6">
+      <Link class="group flex items-center" :href="route('admin.pages.index')">
+        <div :class="isUrl('pages') ? 'font-bold' : 'font-normal'">Pages</div>
+      </Link>
+    </div>
+    <div class="mb-6">
       <Link class="group flex items-center" :href="route('admin.users')">
         <div :class="isUrl('users') ? 'font-bold' : 'font-normal'">Users</div>
       </Link>

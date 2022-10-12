@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
@@ -58,6 +59,9 @@ Route::get('language/{language}', function ($language) {
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
+
+Route::get('/pages/{slug}', [PageController::class, 'show'])
+    ->name('pages.show');
 
 // Contact
 

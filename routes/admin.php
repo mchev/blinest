@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\AnswerTypeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -116,5 +117,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // Answer Types
     Route::resource('answer_types', AnswerTypeController::class)
+        ->except('show');
+
+    // Pages
+    Route::resource('pages', PageController::class)
         ->except('show');
 });
