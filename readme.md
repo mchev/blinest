@@ -51,6 +51,8 @@ php artisan queue:work
 	- Modération
 	- Room control
 	- Traduction et templates des mails
+	- Attente pendant que le morceau est en lecture
+	- Envoyer une suggestion (modos room)
 	- ✅ Sendinblue
 	- ✅ Donate
 	- ✅ Pages
