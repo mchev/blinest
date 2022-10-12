@@ -93,13 +93,20 @@ const addTrack = (track) => {
 
 const removeTrack = (track) => {
   let id = track.added ? track.added.id : track.id
+  if(confirm('Voulez-vous vraiment supprimer cet extrait?')) {
+    Inertia.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => {
+        fecthMusicProviders()
+      },
+    })
+  }
+}
 
-  Inertia.delete(route('tracks.delete', id), {
+const updateDificulty = (e, track) => {
+  Inertia.put(route('playlists.tracks.update', [props.playlist.id, track]), {dificulty: e.target.value}, {
     preserveScroll: true,
-    preserveState: true,
-    onSuccess: () => {
-      fecthMusicProviders()
-    },
   })
 }
 </script>
@@ -148,6 +155,7 @@ const removeTrack = (track) => {
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6" colspan="2"></th>
             <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Dificulty') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Votes') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Created at') }}</th>
           </tr>
@@ -168,6 +176,16 @@ const removeTrack = (track) => {
                   <span class="font-bold">{{ __(answer.type.name) }}:</span> {{ answer.value }} ({{ answer.score }}pts)
                 </div>
                 <button class="text-neutral-400" @click="createAnswer(track)"><Icon name="plus" class="inline-block h-4 w-4 flex-shrink-0 fill-neutral-400" />{{ __('Add an answer') }}</button>
+              </div>
+            </td>
+            <td class="border-t">
+              <div class="flex items-start px-6 py-4 text-center text-sm">
+                <SelectInput v-model="track.dificulty" :error="$page.props.errors.dificulty" @change="updateDificulty($event, track)">
+                  <option :value="0">Facile</option>
+                  <option :value="1">Moyen</option>
+                  <option :value="2">Difficile</option>
+                  <option :value="3">Expert</option>
+                </SelectInput>
               </div>
             </td>
             <td class="border-t">

@@ -88,8 +88,9 @@ class PlaylistController extends Controller
                         'provider' => $track->provider,
                         'preview_url' => $track->preview_url,
                         'answers' => $track->answers,
-                        //'up_votes' => $track->upVoters()->count(),
-                        //'down_votes' => $track->downVoters()->count(),
+                        'dificulty' => $track->dificulty,
+                        'up_votes' => $track->upVoters()->count(),
+                        'down_votes' => $track->downVoters()->count(),
                         'created_at' => $track->created_at->format('d/m/Y'),
                     ]),
             ]);

@@ -27,6 +27,7 @@ class TrackController extends Controller
                     'provider' => $track->provider,
                     'provider_url' => $track->provider_url,
                     'answers' => $track->answers,
+                    'dificulty' => $track->dificulty,
                     'up_votes' => $track->upVoters()->count(),
                     'down_votes' => $track->downVoters()->count(),
                     'created_at' => $track->created_at->format('d/m/Y'),
@@ -122,12 +123,35 @@ class TrackController extends Controller
         }
     }
 
-    public function destroy(Track $track)
+    public function update(Playlist $playlist, Track $track)
     {
         if (Auth::user()->id === $playlist->owner->id
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
+
+            Request::validate([
+                'dificulty' => ['required', 'integer', 'min:0', 'max:5'],
+            ]);
+         
+            // TRACK
+            $track->update([
+                'dificulty' => Request::get('dificulty'),
+            ]);
+
+            return redirect()->back();
+
+        }
+    }
+
+    public function destroy(Playlist $playlist, Track $track)
+    {
+        if (Auth::user()->id === $playlist->owner->id
+                || Auth::user()->isPlaylistModerator($playlist)
+                || Auth::user()->isAdministrator()
+            ) {
+            
+            $track->answers()->delete();
             $track->delete();
 
             return Redirect::back()->with('Track deleted');

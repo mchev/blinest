@@ -42,22 +42,19 @@ php artisan queue:work
 
 ## Roadmap
 
-- New rooms
-	- Facile
-	- Speed
-
-- TODO :
-	- ✅ Sendinblue
-	- ✅ Donate
-	- Pages
+- TODO v2.0 :
 	- Messages réponses
 	- Answers : réponses users
 	- Statistiques
-	- Réinitialisation de mot de passe
+	- Webhooks discord
 	- Mon compte
 	- Modération
 	- Room control
-	- Rooms Images : custom for pro
+	- Traduction et templates des mails
+	- ✅ Sendinblue
+	- ✅ Donate
+	- ✅ Pages
+	- ✅ Réinitialisation de mot de passe
 	- ✅ Affichage des scores
 	- ✅ Affichage des réponses
 	- ✅ Rooms Images : mosaics from album (to prevent random images from users)
@@ -68,3 +65,11 @@ php artisan queue:work
 	- ✅ Team
 	- ✅ Rankings
 	- ✅ Recherche
+
+- TODO v2.1
+	- Chat emojis
+	- Betters answers messages (wrong, almost, right)
+	- Room control
+	- Ban IPs
+	- Rooms Images : custom for pro
+	- Better translations (confirm js)

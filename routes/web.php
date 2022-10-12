@@ -207,8 +207,11 @@ Route::middleware('auth')->group(function () {
     Route::post('playlists/{playlist}/tracks', [TrackController::class, 'store'])
         ->name('playlists.tracks.store');
 
-    Route::delete('tracks/{track}', [TrackController::class, 'destroy'])
-        ->name('tracks.delete');
+    Route::put('playlists/{playlist}/tracks/{track}', [TrackController::class, 'update'])
+        ->name('playlists.tracks.update');
+
+    Route::delete('playlists/{playlist}/tracks/{track}', [TrackController::class, 'destroy'])
+        ->name('playlists.tracks.delete');
 
     Route::put('tracks/{track}', [TrackController::class, 'update'])
         ->name('tracks.update');

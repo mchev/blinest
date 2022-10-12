@@ -22,6 +22,7 @@ class CreateTracksTable extends Migration
             $table->string('provider_url')->nullable();
             $table->string('preview_url');
             $table->string('artwork_url');
+            $table->smallInteger('dificulty')->nullable();
             $table->integer('counter')->nullable();
             $table->timestamps();
         });
