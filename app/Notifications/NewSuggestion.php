@@ -17,7 +17,7 @@ class NewSuggestion extends Notification
      *
      * @return void
      */
-    public function __construct(public Room $room, public String $suggestion, protected User $user)
+    public function __construct(public Room $room, public string $suggestion, protected User $user)
     {
     }
 

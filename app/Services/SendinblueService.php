@@ -6,9 +6,10 @@ use App\Models\User;
 
 class SendinblueService
 {
-
     private $credentials;
+
     private $apiInstance;
+
     private $lists = [2];
 
     public function __construct()
@@ -28,16 +29,15 @@ class SendinblueService
 
     public function create(User $user)
     {
-
         $createContact = new \SendinBlue\Client\Model\CreateContact([
             'email' => $user->email,
             'updateEnabled' => true,
-            'attributes' => (object)[
-                'NOM' => $user->name, 
-                'INSCRIPTION' => $user->created_at, 
-                'PROVIDER' => $user->provider
+            'attributes' => (object) [
+                'NOM' => $user->name,
+                'INSCRIPTION' => $user->created_at,
+                'PROVIDER' => $user->provider,
             ],
-            'listIds' => $this->lists
+            'listIds' => $this->lists,
         ]);
 
         try {
@@ -45,7 +45,6 @@ class SendinblueService
         } catch (\Exception $e) {
             echo 'Exception when calling ContactsApi->createContact: ', $e->getMessage(), PHP_EOL;
         }
-
     }
 
     public function delete(User $user)
@@ -56,5 +55,4 @@ class SendinblueService
             echo 'Exception when calling ContactsApi->deleteContact: ', $e->getMessage(), PHP_EOL;
         }
     }
-
 }

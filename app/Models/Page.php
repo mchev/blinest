@@ -15,7 +15,7 @@ class Page extends Model
 
     public function getUrlAttribute()
     {
-        return $this->slug ? env('APP_URL') . '/pages/' . $this->slug : null;
+        return $this->slug ? env('APP_URL').'/pages/'.$this->slug : null;
     }
 
     public function getDateAttribute()
@@ -31,5 +31,4 @@ class Page extends Model
             });
         });
     }
-
 }

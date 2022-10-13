@@ -129,18 +129,16 @@ class TrackController extends Controller
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
-
             Request::validate([
                 'dificulty' => ['required', 'integer', 'min:0', 'max:5'],
             ]);
-         
+
             // TRACK
             $track->update([
                 'dificulty' => Request::get('dificulty'),
             ]);
 
             return redirect()->back();
-
         }
     }
 
@@ -150,7 +148,6 @@ class TrackController extends Controller
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
-            
             $track->answers()->delete();
             $track->delete();
 

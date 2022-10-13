@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Jobs\ProcessUserCreated;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Rules\Reserved;
 use Illuminate\Auth\Events\Registered;

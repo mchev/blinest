@@ -9,7 +9,7 @@ class PageController extends Controller
 {
     public function show(string $slug)
     {
-        if($page = Page::where('slug', $slug)->orderByDesc('revised_at')->first()) {
+        if ($page = Page::where('slug', $slug)->orderByDesc('revised_at')->first()) {
             return Inertia::render('Pages/Show', [
                 'page' => $page,
             ]);

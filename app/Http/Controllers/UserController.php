@@ -67,7 +67,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if(Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
+        if (Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
             (new SendinblueService)->contacts()->delete($user);
             $user->deletePhoto();
             $user->forceDelete();

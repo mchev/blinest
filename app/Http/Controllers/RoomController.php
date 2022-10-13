@@ -178,7 +178,7 @@ class RoomController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', "Bien reçu!");
+        return redirect()->back()->with('success', 'Bien reçu!');
     }
 
     public function generateMosaic(Room $room)

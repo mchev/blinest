@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RankingController;
