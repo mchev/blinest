@@ -57,7 +57,7 @@ const play = () => {
   audio.crossOrigin = 'anonymous'
 
   audio.addEventListener('error', () => {
-    error.value = audio.error.message
+    error.value = __(audio.error.message)
     isPlaying.value = false
   })
 

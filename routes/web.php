@@ -129,6 +129,9 @@ Route::middleware('auth')->group(function () {
     Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
         ->name('rooms.alert');
 
+    Route::post('rooms/{room}/suggestion', [RoomController::class, 'sendSuggestion'])
+        ->name('rooms.suggestions');
+
     Route::post('rooms/{room}/generate/mosaic', [RoomController::class, 'generateMosaic'])
         ->name('rooms.generate.mosaic');
 

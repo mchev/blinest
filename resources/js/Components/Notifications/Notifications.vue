@@ -7,6 +7,7 @@ import NewTeamRequest from './NewTeamRequest.vue'
 import TeamRequestApproved from './TeamRequestApproved.vue'
 import TeamRequestRejected from './TeamRequestRejected.vue'
 import NewRoomAlert from './NewRoomAlert.vue'
+import NewSuggestion from './NewSuggestion.vue'
 
 const user = usePage().props.value.auth.user
 
@@ -40,11 +41,12 @@ const markAsRead = (notification) => {
 		</template>
 		<template #dropdown>
 			<div class="p-2 font-light">
-				<ul v-if="notifications.length">
+				<ul v-if="notifications.length" class="max-w-xl max-h-96 overflow-y-scroll pr-2">
 					<li v-for="notification in notifications" :key="notification.id" class="my-2 rounded bg-neutral-700 p-2 flex">
 						<NewTeamRequest v-if="notification.type === 'App\\Notifications\\NewTeamRequest'" :notification="notification" />
 						<TeamRequestApproved v-if="notification.type === 'App\\Notifications\\TeamRequestApproved'" :notification="notification" />
 						<NewRoomAlert v-if="notification.type === 'App\\Notifications\\NewRoomAlert'" :notification="notification" />
+						<NewSuggestion v-if="notification.type === 'App\\Notifications\\NewSuggestion'" :notification="notification" />
 						<div class="justify-end">
 							<button @click="markAsRead(notification)" class="pl-4 text-neutral-400">
 								<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

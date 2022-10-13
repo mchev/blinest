@@ -11,7 +11,7 @@ const form = useForm({
 
 </script>
 <template>
-	<div v-if="notification">
+	<div v-if="notification" class="flex-grow">
 		<div class="flex justify-between items-center mb-1 border-b pb-1">
 			<h4 class="uppercase text-red-500 flex items-center font-bold">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

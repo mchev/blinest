@@ -75,7 +75,7 @@ class Round extends Model
             $this->stop();
             if ($this->room->users_count > 0) {
                 ProcessRoundFinished::dispatch($this->room)
-                    ->delay(now()->addSeconds($this->room->pause_beteen_rounds));
+                    ->delay(now()->addSeconds($this->room->pause_between_rounds));
             }
 
             // Else play next track

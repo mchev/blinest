@@ -52,7 +52,10 @@ php artisan queue:work
 	- Room control
 	- Traduction et templates des mails
 	- Attente pendant que le morceau est en lecture
-	- Envoyer une suggestion (modos room)
+	- ✅ Envoyer une suggestion (modos room)
+	- Empty playlist
+	- Socialite google
+	- Finnished round modal
 	- ✅ Sendinblue
 	- ✅ Donate
 	- ✅ Pages

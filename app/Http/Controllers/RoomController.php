@@ -7,6 +7,7 @@ use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\User;
 use App\Notifications\NewRoomAlert;
+use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -163,6 +164,21 @@ class RoomController extends Controller
         foreach ($moderators as $moderator) {
             $moderator->notify(new NewRoomAlert($room, Auth::user()));
         }
+    }
+
+    public function sendSuggestion(Room $room)
+    {
+        Request::validate([
+            'suggestion' => ['required'],
+        ]);
+
+        foreach ($room->playlists as $playlist) {
+            foreach ($playlist->moderators as $moderator) {
+                $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), Auth::user()));
+            }
+        }
+
+        return redirect()->back()->with('success', "Bien reçu!");
     }
 
     public function generateMosaic(Room $room)

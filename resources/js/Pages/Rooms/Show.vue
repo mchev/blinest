@@ -14,6 +14,7 @@ import UserInput from './partials/UserInput.vue'
 import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
+import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 
 const props = defineProps({
   room: Object,
@@ -25,6 +26,7 @@ const joined = ref(false)
 const users = ref(null)
 const data = ref(null)
 const roundFinished = ref(false)
+const sendingSuggestion = ref(false)
 const showSidebar = ref(true)
 const currentTime = ref(0)
 
@@ -108,11 +110,11 @@ const listenRounds = () => {
                 </div>
               </div>
               <div class="flex items-center">
-                <button class="btn-secondary bg-neutral-900 btn-sm">
+                <button class="btn-secondary bg-neutral-900 btn-sm" @click="sendingSuggestion = true">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                   </svg>
-                  Envoyer une suggestion
+                  {{ __('Send a suggestion') }}
                 </button>
               </div>
             </div>
@@ -132,6 +134,7 @@ const listenRounds = () => {
     </Transition>
 
     <FinishedRoundModal :show="roundFinished" @close="roundFinished = false" />
+    <SendSuggestionModal :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
     <UserGestureModal />
   </RoomLayout>
 </template>

@@ -11,7 +11,7 @@ const read = (team) => {
 
 </script>
 <template>
-	<div v-if="notification">
+	<div v-if="notification" class="flex-grow">
 		<h4 class="mb-1 border-b pb-1 uppercase text-neutral-500">{{ __('Team') }} {{ notification.data.team.name }}</h4>
 		<div class="my-2 text-sm font-medium">
 			{{ __('Ta demande a été acceptée!') }}<br>
