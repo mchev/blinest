@@ -23,7 +23,6 @@ class RoundFinished implements ShouldBroadcast
     public function __construct(Round $round)
     {
         $this->round = $round;
-        $this->round->load('room');
     }
 
     /**
@@ -35,4 +34,18 @@ class RoundFinished implements ShouldBroadcast
     {
         return new Channel('rooms.'.$this->round->room->id);
     }
+
+    /**
+      * Get the data to broadcast.
+      *
+      * @return array
+      */
+     public function broadcastWith()
+     {
+         return [
+             'round' => $this->round->load('room'),
+             'podium' => $this->round->podium,
+         ];
+     }
+
 }

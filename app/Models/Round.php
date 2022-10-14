@@ -116,4 +116,13 @@ class Round extends Model
     {
         return $this->hasMany(Score::class);
     }
+
+    public function podium()
+    {
+        return $this->scores()
+            ->join('users', 'scores.user_id', '=', 'users.id')
+            ->select([\DB::raw("SUM(score) as total"), 'user_id', 'users.name'])
+            ->groupBy('user_id')
+            ->orderByDesc('total');
+    }
 }

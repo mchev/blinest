@@ -29,6 +29,7 @@ const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
 const showSidebar = ref(true)
 const currentTime = ref(0)
+const podium = ref([])
 
 onMounted(() => {
   Echo.join(channel)
@@ -67,7 +68,8 @@ const listenRounds = () => {
     })
     .listen('RoundFinished', (e) => {
       console.warn('Round finished')
-      round.value = null
+      round.value = e.round
+      podium.value = e.podium
       roundFinished.value = true
     })
     .listen('TrackPlayed', (e) => {
@@ -133,7 +135,7 @@ const listenRounds = () => {
       </div>
     </Transition>
 
-    <FinishedRoundModal :show="roundFinished" @close="roundFinished = false" />
+    <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :podium="podium" @close="roundFinished = false" />  
     <SendSuggestionModal :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
     <UserGestureModal />
   </RoomLayout>

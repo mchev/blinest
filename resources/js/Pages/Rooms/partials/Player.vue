@@ -57,7 +57,7 @@ const play = () => {
   audio.crossOrigin = 'anonymous'
 
   audio.addEventListener('error', () => {
-    error.value = __(audio.error.message)
+    error.value = audio.error.message
     isPlaying.value = false
   })
 
@@ -95,7 +95,7 @@ const stop = () => {
 <template>
   <div id="player" class="flex h-4 w-full items-center rounded-t-lg bg-purple-200 relative">
     <transition-group name="list" tag="ul" v-if="usersWithAllAnswers">
-      <li v-for="user in usersWithAllAnswers" class="absolute bg-teal-600 p-1 text-white -top-8 rounded text-xs" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
+      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute bg-teal-600 p-1 text-white -top-8 rounded text-xs" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
         {{ user.name }}
         <div class="absolute left-1 top-full h-full h-0 w-full w-0 translate-y-[-50%] border-t-[8px] mt-1 border-l-[8px] border-r-[8px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
       </li>

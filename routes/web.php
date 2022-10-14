@@ -39,6 +39,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function() {
+    $podium = \App\Models\Round::find(39832)->podium;
+    dd($podium);
+});
+
 // Auth Social Providers
 
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
