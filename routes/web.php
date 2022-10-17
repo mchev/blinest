@@ -244,16 +244,17 @@ Route::middleware('auth')->group(function () {
     Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
         ->name('tracks.upvote');
 
-    // Music providers
-    Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])
-        ->name('providers.deezer.search.track');
-
-    Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTrack'])
-        ->name('providers.itunes.search.track');
-
-    Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
-        ->name('providers.spotify.search.track');
 }); // End Auth middleware
+
+// Music providers
+Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])
+    ->name('providers.deezer.search.track');
+
+Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTrack'])
+    ->name('providers.itunes.search.track');
+
+Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
+    ->name('providers.spotify.search.track');
 
 // Images
 

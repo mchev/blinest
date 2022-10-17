@@ -10,31 +10,31 @@ https://docs.soketi.app/getting-started/installation/cli-installation
 
 Then go to your working directory and :
 
-```
+```console
 composer install
 ```
 
-```
+```console
 php artisan key::generate
 ```
 
-```
+```console
 npm install
 ```
 
-```
+```console
 php artisan migrate:fresh --seed
 ```
 
 ### Start developing
-```
+```console
 npm run dev
 ```
-```
+```console
 soketi start
 ```
-```
-php artisan queue:work
+```console
+php artisan horizon
 ```
 
 ## Production
@@ -50,13 +50,13 @@ php artisan queue:work
 	- Mon compte
 	- Modération
 	- Room control
-	- Traduction et templates des mails
+	- ✅ Traduction et templates des mails
 	- Attente pendant que le morceau est en lecture
 	- ✅ Envoyer une suggestion (modos room)
 	- Empty playlist
-	- Fix Music provider api
+	- ✅ Fix Music provider api
 	- Socialite google
-	- Finnished round modal
+	- ✅ Finnished round modal
 	- ✅ Sendinblue
 	- ✅ Donate
 	- ✅ Pages
@@ -73,6 +73,7 @@ php artisan queue:work
 	- ✅ Recherche
 
 - TODO v2.1
+	- SEO
 	- Chat emojis
 	- Betters answers messages (wrong, almost, right)
 	- Room control

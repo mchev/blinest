@@ -76,9 +76,9 @@ const close = () => {
         <h2>{{ __('Round finished') }}</h2>
       </template>
       <div class="flex justify-between">
-        <div class="w-full" v-if="users_results.length">
+        <div class="w-full" v-if="users_results && users_results.length">
           <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Ranking') }}</h3>
-          <Podium :users="users_results" />
+          <Podium :list="users_results" />
           <ul class="max-h-48 overflow-auto">
             <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
@@ -87,13 +87,13 @@ const close = () => {
             </li>
           </ul>
         </div>
-        <div class="w-full" v-if="teams_results.length">
+        <div class="w-full" v-if="teams_results && teams_results.length">
           <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Teams') }}</h3>
-          <Podium :users="teams_results" />
+          <Podium :list="teams_results" />
           <ul class="max-h-48 overflow-auto">
             <li v-for="(result, index) in teams_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
-              <span class="flex-grow">{{ result.user.name }}</span>
+              <span class="flex-grow">{{ result.team.name }}</span>
               <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
             </li>
           </ul>

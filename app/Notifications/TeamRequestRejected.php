@@ -2,23 +2,26 @@
 
 namespace App\Notifications;
 
+use App\Models\TeamRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class TeamRequestRejected extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    public $team;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(TeamRequest $teamRequest)
     {
-        //
+        $this->team = $teamRequest->team;
     }
 
     /**
@@ -29,21 +32,23 @@ class TeamRequestRejected extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['database', 'broadcast'];
     }
 
     /**
-     * Get the mail representation of the notification.
+     * Get the broadcastable representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return BroadcastMessage
      */
-    public function toMail($notifiable)
+    public function toBroadcast($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return new BroadcastMessage([
+            'data' => [
+                'team' => $this->team,
+                'message' => 'Ta demande a été refusée.',
+            ],
+        ]);
     }
 
     /**
@@ -55,7 +60,8 @@ class TeamRequestRejected extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            'team' => $this->team,
+            'message' => 'Ta demande a été refusée.',
         ];
     }
 }
