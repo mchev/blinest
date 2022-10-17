@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Image;
 
 trait HasPicture
 {
@@ -13,14 +14,27 @@ trait HasPicture
      * @param  \Illuminate\Http\UploadedFile  $photo
      * @return void
      */
-    public function updatePhoto(UploadedFile $photo)
+    public function updatePhoto(UploadedFile $photo, int $width = 300, int $height = 300)
     {
-        tap($this->photo_path, function ($previous) use ($photo) {
+        tap($this->photo_path, function ($previous) use ($photo, $width, $height) {
+
+            $image = Image::make($photo->getRealPath())->resize($width, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            })->stream();
+
+            $filename =  uniqid() . '.jpg';
+
+            Storage::disk('public')->put($this->getTable() . '/' . $filename, $image);
+
             $this->forceFill([
-                'photo_path' => $photo->storePublicly(
-                    $this->getTable(), ['disk' => $this->profilePhotoDisk()]
-                ),
+                'photo_path' => $this->getTable() . '/' . $filename,
             ])->save();
+
+            // $this->forceFill([
+            //     'photo_path' => $photo->storePublicly(
+            //         $this->getTable(), ['disk' => $this->profilePhotoDisk()]
+            //     ),
+            // ])->save();
 
             if ($previous) {
                 Storage::disk($this->profilePhotoDisk())->delete($previous);

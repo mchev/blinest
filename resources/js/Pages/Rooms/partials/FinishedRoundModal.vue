@@ -99,6 +99,9 @@ const close = () => {
           </ul>
         </div>
       </div>
+      <div v-if="(users_results && !users_results.length) && (teams_results && !teams_results.length)">
+        {{ __('No scores') }}
+      </div>
       <template #footer>
         <div class="flex w-full items-center gap-6">
           <div class="flex flex-grow flex-col">

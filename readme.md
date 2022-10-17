@@ -53,9 +53,9 @@ php artisan horizon
 	- ✅ Traduction et templates des mails
 	- Attente pendant que le morceau est en lecture
 	- ✅ Envoyer une suggestion (modos room)
-	- Empty playlist
+	- ✅ Empty playlist
 	- ✅ Fix Music provider api
-	- Socialite google
+	- ✅ Socialite google
 	- ✅ Finnished round modal
 	- ✅ Sendinblue
 	- ✅ Donate

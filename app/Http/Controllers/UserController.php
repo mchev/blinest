@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
+use App\Rules\Reserved;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -45,24 +48,27 @@ class UserController extends Controller
 
     public function update(User $user)
     {
-        Request::validate([
-            'name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => ['nullable'],
-            'photo' => ['nullable', 'image'],
-        ]);
+        if(Auth::user()->id === $user->id ) {
 
-        $user->update(Request::only('name', 'email', 'owner'));
+            Request::validate([
+                'name' => ['required', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved],
+                'email' => ['required', 'max:255', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
+                'password' => ['nullable', Rules\Password::defaults()],
+                'photo' => ['nullable', 'image'],
+            ]);
 
-        if (Request::file('photo')) {
-            $user->updatePhoto(Request::file('photo'));
+            $user->update(Request::only('name', 'email'));
+
+            if (Request::file('photo')) {
+                $user->updatePhoto(Request::file('photo'));
+            }
+
+            if (Request::get('password')) {
+                $user->update(['password' => Hash::make(Request::get('password'))]);
+            }
+
+            return Redirect::back()->with('success', __('Updated.'));
         }
-
-        if (Request::get('password')) {
-            $user->update(['password' => Request::get('password')]);
-        }
-
-        return Redirect::back()->with('success', 'User updated.');
     }
 
     public function destroy(User $user)

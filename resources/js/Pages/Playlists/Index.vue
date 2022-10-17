@@ -90,5 +90,6 @@ const reset = () => {
         <Pagination :links="playlists.links" />
       </div>
     </Card>
+
   </AppLayout>
 </template>

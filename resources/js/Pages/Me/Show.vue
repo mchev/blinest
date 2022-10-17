@@ -1,12 +1,29 @@
 <script setup>
-import { Head, Link } from '@inertiajs/inertia-vue3'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 import Layout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
+import TextInput from '@/Components/TextInput.vue'
+import FileInput from '@/Components/FileInput.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
 
 const props = defineProps({
   user: Object,
 })
+
+const form = useForm({
+  name: props.user.name,
+  email: props.user.email,
+  photo: null,
+})
+
+const update = () => {
+  form.post(route('users.update', props.user.id), {
+    onSuccess: () => {
+      form.reset('photo')
+    }
+  })
+}
 
 const deleteUser = () => {
   if(confirm('Attention, cette action est irréversible. Voulez-vous vraiment supprimer votre compte et tous les scores associés?')) {
@@ -18,12 +35,13 @@ const deleteUser = () => {
   <Head :title="user.name" />
   <Layout>
     <div class="flex">
-      <div class="mr-4 border-r pr-4">
-        <figure>
-          <img :src="user.photo" :alt="user.name" class="w-full rounded" />
+      <div class="mr-4 border-r border-neutral-600 pr-4 text-center">
+
+        <figure class="mb-6">
+          <img :src="user.photo" :alt="user.name" class="w-60 rounded-lg" />
         </figure>
 
-        <h2 class="mt-2 text-xl font-bold">{{ user.name }}</h2>
+        <h2 class="text-xl font-bold">{{ user.name }}</h2>
         <p class="text-xs text-neutral-400">{{ user.email }}</p>
 
         <ul class="my-8">
@@ -46,25 +64,22 @@ const deleteUser = () => {
           </li>
         </ul>
 
-        <button @click="deleteUser" class="text-red-600 hover:underline">{{ __('Delete my account') }}</button>
+        <button @click="deleteUser" class="btn-danger btn-sm mx-auto">{{ __('Delete my account') }}</button>
       </div>
 
       <div class="flex-1">
-        <header class="mb-6 flex gap-2">
-          <Link class="btn-primary" href="/me/edit">{{ __('Edit my profile') }}</Link>
-          <Link class="btn-primary" href="/me/password">{{ __('Change password') }}</Link>
-          <Link class="btn-secondary ml-auto" :href="`/users/${user.id}`">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {{ __('See my profile as regular user') }}
-          </Link>
-        </header>
-
         <Card class="my-4">
           <template #header>
-            <h2 class="text-xl font-bold">{{ __('My scores') }}</h2>
+            <h2 class="text-xl font-bold">{{ __('Informations') }}</h2>
+          </template>
+          <form id="editUserForm" @submit.prevent="update">
+            <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Name')" required />
+            <text-input v-model="form.email" type="email" :error="form.errors.email" class="mb-4 w-full" :label="__('Email')" required />
+            <file-input v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
+            <text-input v-model="form.password" type="password" :error="form.errors.password" class="mb-4 w-full" :label="__('New password') + ' (' + __('Optional') + ')'" />
+          </form>
+          <template #footer>
+            <loading-button :loading="form.processing" class="btn-primary ml-auto" form="editUserForm" type="submit">{{ __('Update') }}</loading-button>
           </template>
         </Card>
 

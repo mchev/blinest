@@ -15,6 +15,10 @@ class PlaylistController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->allPlaylists()->count()) {
+            return redirect()->route('playlists.create');
+        }
+        
         return Inertia::render('Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
             'playlists' => Auth::user()->allPlaylists()

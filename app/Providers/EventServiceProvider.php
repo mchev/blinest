@@ -20,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
+            \SocialiteProviders\Google\GoogleExtendSocialite::class.'@handle',
             \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle',
             \SocialiteProviders\Deezer\DeezerExtendSocialite::class.'@handle',
             \SocialiteProviders\Spotify\SpotifyExtendSocialite::class.'@handle',

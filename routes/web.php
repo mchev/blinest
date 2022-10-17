@@ -79,22 +79,14 @@ Route::post('/contact', [ContactController::class, 'send'])
 Route::middleware('auth')->group(function () {
 
     // Me
-
     Route::get('me', [UserController::class, 'show'])
         ->name('me');
-
-    Route::put('me/edit', [UserController::class, 'edit'])
-        ->name('me.edit');
-
-    Route::put('me', [UserController::class, 'update'])
-        ->name('me.update');
-
-    Route::delete('me/destroy', [UserController::class, 'destroy'])
-        ->name('me.destroy');
 
     // Users
     Route::get('users/{user}', [UserController::class, 'show'])
         ->name('users.show');
+    Route::post('users/{user}', [UserController::class, 'update'])
+        ->name('users.update');
     Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
 
