@@ -54,6 +54,7 @@ php artisan queue:work
 	- Attente pendant que le morceau est en lecture
 	- ✅ Envoyer une suggestion (modos room)
 	- Empty playlist
+	- Fix Music provider api
 	- Socialite google
 	- Finnished round modal
 	- ✅ Sendinblue

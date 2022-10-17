@@ -2,17 +2,20 @@
 import { ref, watch, onMounted } from 'vue'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
+import Podium from './Podium.vue'
 
 const props = defineProps({
   round: Object,
-  podium: Array,
+  users_podium: Array,
+  teams_podium: Array,
   show: Boolean,
 })
 
 const emit = defineEmits(['close'])
 
 const countdown = ref(parseInt(props.round.room.pause_between_rounds))
-const results = ref(null)
+const users_results = ref(null)
+const teams_results = ref(null)
 
 watch(
   () => props.round,
@@ -31,10 +34,19 @@ watch(
 )
 
 watch(
-  () => props.podium,
+  () => props.users_podium,
   (value) => {
     if (value) {
-      results.value = value
+      users_results.value = value
+    }
+  },
+)
+
+watch(
+  () => props.teams_podium,
+  (value) => {
+    if (value) {
+      teams_results.value = value
     }
   },
 )
@@ -64,54 +76,25 @@ const close = () => {
         <h2>{{ __('Round finished') }}</h2>
       </template>
       <div class="flex justify-between">
-        <div class="">
-          <h3 class="py-2 text-xl font-bold text-center mb-2">{{ __('Teams') }}</h3>
-
-          <div class="flex border-b border-neutral-600 justify-center gap-1">
-            <div class="flex flex-col justify-end">
-              <div class="bg-purple-500 rounded-t h-10 p-4 opacity-25">
-                <span class="text-xl font-bold">5</span>
-              </div>
-            </div>
-            <div class="flex flex-col justify-end items-center">
-              <img class="rounded-full h-10 w-10 mb-2">
-              <div class="bg-purple-500 rounded-t h-32 p-4 opacity-60">
-                <span class="text-xl font-bold">3</span>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div class="bg-purple-500 rounded-t flex justify-end h-40 p-4">
-                <span>1</span>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div class="bg-purple-500 rounded-t flex justify-end h-40 p-4">
-                <span>1</span>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <div class="bg-purple-500 rounded-t flex justify-end h-40 p-4">
-                <span>1</span>
-              </div>
-            </div>
-          </div>
-
-
+        <div class="w-full" v-if="users_results.length">
+          <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Ranking') }}</h3>
+          <Podium :users="users_results" />
           <ul class="max-h-48 overflow-auto">
-            <li v-for="(user, index) in results" class="flex items-center gap-2 border broder-neutral-500 rounded m-1 p-2">
+            <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
-              <span class="flex-grow">{{ user.name }}</span>
-              <span>{{ user.total }}<sup class="ml-1">PTS</sup></span>
+              <span class="flex-grow">{{ result.user.name }}</span>
+              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
             </li>
           </ul>
         </div>
-        <div class="">
-          <h3 class="py-2 text-xl font-bold text-center mb-2">{{ __('Ranking') }}</h3>
+        <div class="w-full" v-if="teams_results.length">
+          <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Teams') }}</h3>
+          <Podium :users="teams_results" />
           <ul class="max-h-48 overflow-auto">
-            <li v-for="(user, index) in results" class="flex items-center gap-2 border broder-neutral-500 rounded m-1 p-2">
+            <li v-for="(result, index) in teams_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
-              <span class="flex-grow">{{ user.name }}</span>
-              <span>{{ user.total }}<sup class="ml-1">PTS</sup></span>
+              <span class="flex-grow">{{ result.user.name }}</span>
+              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
             </li>
           </ul>
         </div>
@@ -119,9 +102,9 @@ const close = () => {
       <template #footer>
         <div class="flex w-full items-center gap-6">
           <div class="flex flex-grow flex-col">
-            <div class="relative flex h-6 w-full items-center rounded-lg bg-purple-200 overflow-hidden">
-              <div class="h-6 rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-1000 ease-linear flex items-center justify-center text-neutral-700" :style="'width:' + countdown / parseInt(props.round.room.pause_between_rounds) * 100 + '%'"/>
-              <span class="text-sm absolute left-0 right-0 text-neutral-600 top-0 bottom-0 flex justify-center items-center">Prochaine partie dans {{ countdown }}</span>
+            <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
+              <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.round.room.pause_between_rounds)) * 100 + '%'" />
+              <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochaine partie dans {{ countdown }}</span>
             </div>
           </div>
           <div class="ml-auto flex items-center">

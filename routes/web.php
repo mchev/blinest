@@ -40,8 +40,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function() {
-    $podium = \App\Models\Round::find(39832)->podium;
-    dd($podium);
+    $usersPodium = \App\Models\Round::find(39832)->usersPodium;
+    $teamspodium = \App\Models\Round::find(39832)->teamspodium;
+    dd($usersPodium, $teamspodium);
 });
 
 // Auth Social Providers

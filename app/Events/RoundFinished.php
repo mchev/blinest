@@ -44,7 +44,8 @@ class RoundFinished implements ShouldBroadcast
      {
          return [
              'round' => $this->round->load('room'),
-             'podium' => $this->round->podium,
+             'users_podium' => $this->round->usersPodium,
+             'teams_podium' => $this->round->teamsPodium,
          ];
      }
 
