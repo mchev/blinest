@@ -34,7 +34,7 @@ class UserController extends Controller
                 'scores' => $user->allScores()->paginate(10)->through(fn ($score) => [
                     'room_id' => $score->room_id,
                     'name' => $score->name,
-                    'date' => $score->created_at->diffForHumans(),
+                    'date' => $score->updated_at->diffForHumans(),
                     'total' => $score->total,
                 ]),
             ],

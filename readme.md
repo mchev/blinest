@@ -44,14 +44,11 @@ php artisan horizon
 
 - TODO v2.0 :
 	- Messages réponses
-	- Answers : réponses users
 	- Statistiques
 	- Webhooks discord
-	- Mon compte
-	- Modération
-	- Room control
-	- ✅ Traduction et templates des mails
 	- Attente pendant que le morceau est en lecture
+	- ✅ Mon compte
+	- ✅ Traduction et templates des mails
 	- ✅ Envoyer une suggestion (modos room)
 	- ✅ Empty playlist
 	- ✅ Fix Music provider api
@@ -73,6 +70,9 @@ php artisan horizon
 	- ✅ Recherche
 
 - TODO v2.1
+	- Answers Card : réponses users surlignées
+	- Room control
+	- Modération (page)
 	- SEO
 	- Chat emojis
 	- Betters answers messages (wrong, almost, right)

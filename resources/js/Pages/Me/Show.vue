@@ -1,7 +1,7 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
-import Layout from '@/Layouts/AppLayout.vue'
+import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
@@ -34,11 +34,11 @@ const deleteUser = () => {
 </script>
 <template>
   <Head :title="user.name" />
-  <Layout>
-    <div class="flex">
-      <div class="mr-4 border-r border-neutral-600 pr-4 text-center">
+  <AppLayout>
+    <div class="flex flex-wrap">
+      <div class="lg:mr-4 pr-4 text-center w-full lg:w-auto mt-4">
 
-        <figure class="mb-6">
+        <figure class="mb-6 flex justify-center">
           <img :src="user.photo" :alt="user.name" class="w-60 rounded-lg" />
         </figure>
 
@@ -49,7 +49,7 @@ const deleteUser = () => {
           <li class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Registered at') }}</span>
             <span
-              >{{ user.created_at }}<br /><small>{{ user.created_at_from_now }}</small></span
+              >{{ user.created_at }}<br><small>{{ user.created_at_from_now }}</small></span
             >
           </li>
           <li class="mb-4 flex flex-col">
@@ -84,39 +84,44 @@ const deleteUser = () => {
           </template>
         </Card>
 
-        <Card class="my-4">
-          <template #header>
-            <h2 class="text-xl font-bold">{{ __('Playlists') }}</h2>
-          </template>
-          <ul class="flex flex-wrap items-center" v-if="user.playlists.length">
-            <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge" :class="'bg-teal-900', playlist.user_id === user.id">
-              <Link :href="route('playlists.edit', playlist.id)">{{ playlist.name }}</Link>
-            </li>
-          </ul>
-        </Card>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Card class="">
+            <template #header>
+              <h2 class="text-xl font-bold">{{ __('Playlists') }}</h2>
+            </template>
+            <ul class="flex flex-wrap items-center" v-if="user.playlists.length">
+              <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge" :class="'bg-teal-900', playlist.user_id === user.id">
+                <Link :href="route('playlists.edit', playlist.id)">{{ playlist.name }}</Link>
+              </li>
+            </ul>
+          </Card>
 
-        <Card class="my-4">
-          <template #header>
-            <h2 class="text-xl font-bold">{{ __('Rooms') }}</h2>
-          </template>
-          <ul class="flex flex-wrap items-center" v-if="user.rooms.length">
-            <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
-              <Link :href="route('rooms.edit', room.id)">{{ room.name }}</Link>
-            </li>
-          </ul>
-        </Card>
+          <Card class="">
+            <template #header>
+              <h2 class="text-xl font-bold">{{ __('Rooms') }}</h2>
+            </template>
+            <ul class="flex flex-wrap items-center" v-if="user.rooms.length">
+              <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
+                <Link :href="route('rooms.edit', room.id)">{{ room.name }}</Link>
+              </li>
+            </ul>
+          </Card>
+        </div>
 
-        <Card class="my-4">
+        <Card class="my-4 hidden lg:flex">
           <template #header>
             <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
           </template>
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto relative">
         <table class="w-full whitespace-nowrap">
+          <thead>
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
           </tr>
+          </thead>
+          <tbody>
           <tr v-for="score in user.scores.data" :key="score.room_id">
             <td class="border-t border-neutral-500">
               <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_id)">
@@ -137,8 +142,9 @@ const deleteUser = () => {
             </td>
           </tr>
           <tr v-if="user.scores.length === 0">
-            <td class="border-t border-neutral-500 px-6 py-4" colspan="4">No scores found.</td>
+            <td class="border-t border-neutral-500 px-6 py-4" colspan="3">{{ __('No scores') }}</td>
           </tr>
+        </tbody>
         </table>
 
         <Pagination :links="user.scores.links" />
@@ -146,5 +152,5 @@ const deleteUser = () => {
         </Card>
       </div>
     </div>
-  </Layout>
+  </AppLayout>
 </template>
