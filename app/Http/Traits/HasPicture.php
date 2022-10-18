@@ -17,17 +17,16 @@ trait HasPicture
     public function updatePhoto(UploadedFile $photo, int $width = 300, int $height = 300)
     {
         tap($this->photo_path, function ($previous) use ($photo, $width, $height) {
-
             $image = Image::make($photo->getRealPath())->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
             })->stream();
 
-            $filename =  uniqid() . '.jpg';
+            $filename = uniqid().'.jpg';
 
-            Storage::disk('public')->put($this->getTable() . '/' . $filename, $image);
+            Storage::disk('public')->put($this->getTable().'/'.$filename, $image);
 
             $this->forceFill([
-                'photo_path' => $this->getTable() . '/' . $filename,
+                'photo_path' => $this->getTable().'/'.$filename,
             ])->save();
 
             // $this->forceFill([

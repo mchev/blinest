@@ -36,17 +36,16 @@ class RoundFinished implements ShouldBroadcast
     }
 
     /**
-      * Get the data to broadcast.
-      *
-      * @return array
-      */
-     public function broadcastWith()
-     {
-         return [
-             'round' => $this->round->load('room'),
-             'users_podium' => $this->round->usersPodium,
-             'teams_podium' => $this->round->teamsPodium,
-         ];
-     }
-
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'round' => $this->round->load('room'),
+            'users_podium' => $this->round->usersPodium,
+            'teams_podium' => $this->round->teamsPodium,
+        ];
+    }
 }

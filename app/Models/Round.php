@@ -9,6 +9,7 @@ use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
+use App\Jobs\SendDiscordNotification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -83,12 +84,33 @@ class Round extends Model
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
 
-            // Event
-            broadcast(new TrackPlayed($this, $track));
+            if (@file_get_contents($track->preview_url)) {
 
-            // Job
-            ProcessTrackPlayed::dispatch($this)
-                ->delay(now()->addSeconds($this->room->track_duration));
+                // Event
+                broadcast(new TrackPlayed($this, $track));
+
+                // Job
+                ProcessTrackPlayed::dispatch($this)
+                    ->delay(now()->addSeconds($this->room->track_duration));
+            } else {
+
+                // DELETING TRACK - NOT READABLE
+
+                foreach ($track->playlist->rooms()->isPublic()->get() as $room) {
+                    if ($room->discord_webhook_url) {
+                        SendDiscordNotification::dispatch(
+                            $room,
+                            'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
+                            'danger'
+                        );
+                    }
+                }
+
+                $track->answers()->delete();
+                $track->delete();
+
+                $this->playNextTrack();
+            }
         }
     }
 
@@ -120,7 +142,7 @@ class Round extends Model
     public function usersPodium()
     {
         return $this->scores()
-            ->select([\DB::raw("SUM(score) as total"), 'user_id'])
+            ->select([\DB::raw('SUM(score) as total'), 'user_id'])
             ->with('user')
             ->groupBy('user_id')
             ->orderByDesc('total');
@@ -130,7 +152,7 @@ class Round extends Model
     {
         return $this->scores()
             ->whereNotNull('team_id')
-            ->select([\DB::raw("SUM(score) as total"), 'team_id'])
+            ->select([\DB::raw('SUM(score) as total'), 'team_id'])
             ->with('team')
             ->groupBy('team_id')
             ->orderByDesc('total');

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+
 // use Illuminate\Support\Facades\Queue;
 // use Illuminate\Queue\Events\JobFailed;
 

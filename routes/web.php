@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function() {
+Route::get('/test', function () {
     $usersPodium = \App\Models\Round::find(39832)->usersPodium;
     $teamspodium = \App\Models\Round::find(39832)->teamspodium;
     dd($usersPodium, $teamspodium);
@@ -235,7 +235,6 @@ Route::middleware('auth')->group(function () {
         ->name('tracks.downvote');
     Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
         ->name('tracks.upvote');
-
 }); // End Auth middleware
 
 // Music providers

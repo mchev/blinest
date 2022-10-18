@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\Reserved;
 use App\Services\SendinblueService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use App\Rules\Reserved;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -56,8 +56,7 @@ class UserController extends Controller
 
     public function update(User $user)
     {
-        if(Auth::user()->id === $user->id ) {
-
+        if (Auth::user()->id === $user->id) {
             Request::validate([
                 'name' => ['required', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved],
                 'email' => ['required', 'max:255', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],

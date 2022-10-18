@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\TrackVoted;
+use App\Jobs\SendDiscordNotification;
 use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\Track;
@@ -119,6 +120,16 @@ class TrackController extends Controller
             );
             }
 
+            foreach ($playlist->rooms()->isPublic()->get() as $room) {
+                if ($room->discord_webhook_url) {
+                    SendDiscordNotification::dispatch(
+                        $room,
+                        'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été ajouté.',
+                        'success'
+                    );
+                }
+            }
+
             return Redirect::back()->with('Track added');
         }
     }
@@ -148,6 +159,16 @@ class TrackController extends Controller
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
+            foreach ($playlist->rooms()->isPublic()->get() as $room) {
+                if ($room->discord_webhook_url) {
+                    SendDiscordNotification::dispatch(
+                        $room,
+                        'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
+                        'danger'
+                    );
+                }
+            }
+
             $track->answers()->delete();
             $track->delete();
 
