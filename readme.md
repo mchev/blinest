@@ -45,7 +45,7 @@ php artisan horizon
 - TODO v2.0 :
 	- Messages réponses
 	- Statistiques
-	- Webhooks discord
+	- ✅ Webhooks discord
 	- Attente pendant que le morceau est en lecture
 	- ✅ Mon compte
 	- ✅ Traduction et templates des mails

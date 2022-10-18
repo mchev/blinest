@@ -85,7 +85,7 @@ class PlaylistController extends Controller
                 'tracks' => $playlist->tracks()
                     ->filter(Request::only('search'))
                     ->with('answers')
-                    ->paginate(5)
+                    ->paginate(Request::get('paginate') ?? 5)
                     ->withQueryString()
                     ->through(fn ($track) => [
                         'id' => $track->id,

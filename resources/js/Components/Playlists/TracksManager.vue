@@ -22,12 +22,14 @@ const props = defineProps({
     type: Object,
     default: {
       search: '',
+      paginate: 5,
     },
   },
 })
 
 const form = useForm({
   search: props.filters.search,
+  paginate: props.filters.paginate ?? 5,
 })
 const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
@@ -119,7 +121,7 @@ const updateDificulty = (e, track) => {
       </div>
     </template>
     <div>
-      <div class="mb-4 flex flex-wrap gap-2 p-2">
+      <div class="mb-4 flex justify-between gap-2 p-2">
         <!-- Search on streaming platforms -->
         <dropdown placement="bottom-start" :auto-close="false" @closed="search_online = ''">
           <template #default>
@@ -148,6 +150,14 @@ const updateDificulty = (e, track) => {
             </ul>
           </template>
         </dropdown>
+        <div class="flex gap-2 items-center">
+          <SelectInput v-model="form.paginate">
+            <option :value="5">5</option>
+            <option :value="10">10</option>
+            <option :value="15">15</option>
+            <option :value="20">20</option>
+          </SelectInput>
+        </div>
       </div>
 
       <div v-if="tracks.data.length" class="mx-4 overflow-x-auto">
