@@ -3,7 +3,7 @@ import Card from '@/Components/Card.vue'
 import SocialIcon from '@/Components/SocialIcon.vue'
 </script>
 <template>
-      <Card class="px-4 w-auto">
+      <Card class="px-4 w-full lg:w-auto">
         <div class="flex h-full flex-col justify-center">
           <small class="text-center mb-2">{{ __('Login with') }}</small>
 

@@ -106,7 +106,7 @@ const listenRounds = () => {
           </div>
 
           <Card>
-            <div class="flex items-center justify-between px-4 text-sm">
+            <div class="flex items-center flex-col lg:flex-row lg:justify-between px-4 text-sm">
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
                   <span class="uppercase text-neutral-500">Modos</span>

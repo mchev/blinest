@@ -75,7 +75,7 @@ const voteTrackUp = (track) => {
                 <span class="mr-1 flex-shrink-0 rounded bg-neutral-500 px-1 text-[10px] font-bold uppercase text-neutral-300 text-white">{{ __(answer.type.name) }}</span> {{ answer.value }}
               </li>
             </ul>
-            <div class="flex flex-col items-end">
+            <div class="flex-col items-end hidden lg:flex">
               <a v-if="track.track_url" class="flex items-center whitespace-nowrap text-xs opacity-50 hover:opacity-90" :href="track.track_url" target="_blank" :title="__('Listen on') + ' ' + track.provider"> {{ __('Listen on') }} <Icon :name="track.provider" class="ml-1 h-5 w-5" /> </a>
               <div class="mt-4 flex items-center text-xs">
                 <button @click="voteTrackUp(track)" class="mr-4 flex items-center" :title="__('Like')"><Icon name="thumb-up" class="mr-1 h-5 w-5" /> {{ track.upvotes }}</button>

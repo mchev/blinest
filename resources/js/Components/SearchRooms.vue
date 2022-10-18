@@ -24,6 +24,6 @@ watch(
 </script>
 <template>
   <div :class="$attrs.class">
-    <text-input class="text-sm" v-model="form.search" prepend-icon="search" :placeholder="__('Search') + '...'" />
+    <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search') + '...'" />
   </div>
 </template>

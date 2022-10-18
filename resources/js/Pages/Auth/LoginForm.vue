@@ -16,8 +16,8 @@ const login = () => {
 }
 </script>
 <template>
-    <div class="mx-auto flex flex-wrap mt-8 lg:max-w-3xl justify-center">
-      <Card class="flex flex-grow mr-4 mb-4">
+    <div class="mx-auto flex flex-wrap gap-4 lg:max-w-3xl justify-center">
+      <Card class="flex flex-grow">
         <template #header>
           <h1 class="text-center text-xl font-bold">{{ __('Login') }}</h1>
         </template>
@@ -40,6 +40,6 @@ const login = () => {
         </form>
       </Card>
 
-      <Socialite class="mb-4"/>
+      <Socialite />
     </div>
 </template>

@@ -82,9 +82,9 @@ const showModerationModal = (e) => {
     <div ref="messenger" class="flex flex-1 flex-col-reverse overflow-y-scroll p-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" @moderate="showModerationModal" />
     </div>
-    <div class="flex p-2">
-      <form @submit.prevent="sendMessage" class="flex">
-        <TextInput v-model="body" autocomplete="off" inputClass="rounded-r-none border-0" />
+    <div class="flex w-full p-2">
+      <form @submit.prevent="sendMessage" class="flex w-full">
+        <TextInput v-model="body" autocomplete="off" inputClass="rounded-r-none border-0" class="flex-grow" />
         <button type="submit" class="rounded-r bg-teal-600 p-2 text-neutral-100">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
             <title>{{ __('Send') }}</title>
