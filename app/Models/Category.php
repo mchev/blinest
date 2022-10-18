@@ -17,9 +17,9 @@ class Category extends Model
     {
         return $this->hasMany(Room::class)
             ->withCount('rounds')
-            ->orderBy('is_public', 'DESC')
-            ->orderBy('rounds_count', 'DESC')
-            ->orderBy('name')
+            ->orderByDesc('is_playing')
+            ->orderByDesc('is_public')
+            ->orderByDesc('rounds_count')
             ->with('owner');
     }
 

@@ -31,8 +31,6 @@ class HomeController extends Controller
                         ->whereNull('password')
                         ->filter(Request::only('search'))
                         ->withCount('rounds')
-                        ->orderByDesc('is_public')
-                        ->orderByDesc('rounds_count')
                         ->paginate(5, ['*'], 'cat'.$category->id)
                         ->withQueryString(),
                 ];
