@@ -7,7 +7,7 @@ defineProps({
 })
 
 const visit = (url) => {
-  Inertia.visit(url, { preserveState: true, preserveScrol: true}, { only: ['categories'] });
+  Inertia.visit(url, { preserveState: true, preserveScroll: true}, { only: ['categories'] });
 }
 
 </script>

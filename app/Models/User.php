@@ -127,6 +127,12 @@ class User extends Authenticatable implements BannableContract
         return $this->morphedByMany(Room::class, 'moderable');
     }
 
+    public function allRooms()
+    {
+        return $this->rooms()->select('rooms.*')
+            ->union($this->moderatedRooms()->select('rooms.*'));
+    }
+
     public function isRoomModerator(Room $room)
     {
         return $this->whereHas('moderatedRooms', function (Builder $query) use ($room) {
@@ -155,6 +161,16 @@ class User extends Authenticatable implements BannableContract
     {
         $this->scores()
             ->selectRaw('SUM(score) as total');
+    }
+
+    public function allScores()
+    {
+        return $this->scores()
+            ->select('rounds.created_at', 'scores.user_id', \DB::raw("SUM(scores.score) as total"), 'scores.round_id', 'rooms.name', 'rooms.id as room_id')
+            ->join('rounds', 'rounds.id', '=', 'scores.round_id')
+            ->join('rooms', 'rooms.id', '=', 'rounds.room_id')
+            ->groupBy('rounds.room_id')
+            ->orderByDesc('total');
     }
 
     public function scoreByRoom(Room $room)

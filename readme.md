@@ -80,3 +80,4 @@ php artisan horizon
 	- Ban IPs
 	- Rooms Images : custom for pro
 	- Better translations (confirm js)
+	- Check duplicated names from socialite

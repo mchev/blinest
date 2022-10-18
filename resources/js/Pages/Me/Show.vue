@@ -6,6 +6,7 @@ import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
+import Pagination from '@/Components/Pagination.vue'
 
 const props = defineProps({
   user: Object,
@@ -85,14 +86,63 @@ const deleteUser = () => {
 
         <Card class="my-4">
           <template #header>
-            <h2 class="text-xl font-bold">{{ __('Playlist moderation') }}</h2>
+            <h2 class="text-xl font-bold">{{ __('Playlists') }}</h2>
           </template>
+          <ul class="flex flex-wrap items-center" v-if="user.playlists.length">
+            <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge" :class="'bg-teal-900', playlist.user_id === user.id">
+              <Link :href="route('playlists.edit', playlist.id)">{{ playlist.name }}</Link>
+            </li>
+          </ul>
         </Card>
 
         <Card class="my-4">
           <template #header>
-            <h2 class="text-xl font-bold">{{ __('Room modération') }}</h2>
+            <h2 class="text-xl font-bold">{{ __('Rooms') }}</h2>
           </template>
+          <ul class="flex flex-wrap items-center" v-if="user.rooms.length">
+            <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
+              <Link :href="route('rooms.edit', room.id)">{{ room.name }}</Link>
+            </li>
+          </ul>
+        </Card>
+
+        <Card class="my-4">
+          <template #header>
+            <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
+          </template>
+      <div class="overflow-x-auto">
+        <table class="w-full whitespace-nowrap">
+          <tr class="text-left font-bold">
+            <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
+          </tr>
+          <tr v-for="score in user.scores.data" :key="score.room_id">
+            <td class="border-t border-neutral-500">
+              <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_id)">
+                <div class="flex flex-col">
+                  {{ score.name }}
+                </div>
+              </Link>
+            </td>
+            <td class="border-t border-neutral-500">
+              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                {{ score.date }}
+              </Link>
+            </td>
+            <td class="border-t border-neutral-500">
+              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                {{ score.total }}<sup class="ml-1">PTS</sup>
+              </Link>
+            </td>
+          </tr>
+          <tr v-if="user.scores.length === 0">
+            <td class="border-t border-neutral-500 px-6 py-4" colspan="4">No scores found.</td>
+          </tr>
+        </table>
+
+        <Pagination :links="user.scores.links" />
+      </div>
         </Card>
       </div>
     </div>

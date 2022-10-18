@@ -29,6 +29,14 @@ class UserController extends Controller
                 'created_at' => $user->created_at->format('d/m/Y H:i'),
                 'created_at_from_now' => $user->created_at->diffForHumans(),
                 'latest_round_at' => $user->scores()->latest()->first()?->round?->created_at->format('d/m/Y H:i'),
+                'rooms' => $user->allRooms,
+                'playlists' => $user->allPlaylists,
+                'scores' => $user->allScores()->paginate(10)->through(fn ($score) => [
+                    'room_id' => $score->room_id,
+                    'name' => $score->name,
+                    'date' => $score->created_at->diffForHumans(),
+                    'total' => $score->total,
+                ]),
             ],
         ]);
     }

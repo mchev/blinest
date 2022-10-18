@@ -30,7 +30,6 @@ class Reserved implements InvokableRule
             'playlist',
             'room',
             'team',
-            'mchev',
         ];
 
         if (in_array(strtolower($value), $reserved)) {
