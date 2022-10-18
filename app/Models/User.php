@@ -244,6 +244,7 @@ class User extends Authenticatable implements BannableContract
             } elseif ($trashed === 'only') {
                 $query->onlyTrashed();
             }
-        });
+        })
+        ->orderByRaw('CASE WHEN name = "'.$filters['search'].'" THEN 1 WHEN name LIKE "%'.$filters['search'].'%" THEN 2 ELSE 3 END');
     }
 }
