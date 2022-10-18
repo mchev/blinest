@@ -15,7 +15,6 @@ class UserController extends Controller
             'users' => User::query()
                 ->filter(Request::only('search'))
                 ->select('id', 'name')
-                ->orderBy('name')
                 ->paginate(20)
                 ->withQueryString(),
         ]);
