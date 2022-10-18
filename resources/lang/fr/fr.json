@@ -1,5 +1,6 @@
 {
     "Title": "Titre",
+    "Last round played at": "Dernière partie le",
     "Delete my account": "Supprimer mon compte",
     "Registered at": "Inscrit.e le",
     "No round played yet": "Aucune partie jouée",
@@ -812,6 +813,7 @@
     "With Trashed": "Avec ceux mis à la corbeille",
     "Write": "Ecrire",
     "Year To Date": "Année du Jour",
+    "Year": "Année",
     "Yearly": "Annuellement",
     "Yemen": "Yémen",
     "Yes": "Oui",
