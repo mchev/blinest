@@ -26,7 +26,7 @@ const showingSearchbar = ref(false);
 			<SearchRooms class="mt-1 hidden lg:block" />
 
 			<div class="flex items-center justify-end">
-				<Button type="button" @click="showingSearchbar = !showingSearchbar"><Icon name="search" class="h-5 w-5 mr-4" /></Button>
+				<Button type="button" @click="showingSearchbar = !showingSearchbar" class="lg:hidden"><Icon name="search" class="h-5 w-5 mr-4" /></Button>
 				<Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-5 w-5 mr-4" /></Link>
 				<a href="https://discord.com/invite/uKyVgcxcFa" target="_blank" :title="__('Join the Blinest community on Discord')" class="mr-4">
 					<SocialIcon name="discord" class="h-5 w-5"/>
