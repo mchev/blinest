@@ -13,6 +13,7 @@ import Dropdown from '@/Components/Dropdown.vue'
 import pickBy from 'lodash/pickBy'
 import debounce from 'lodash/debounce'
 import throttle from 'lodash/throttle'
+import Sortable from '@/Components/Sortable.vue'
 
 const props = defineProps({
   playlist: Object,
@@ -23,6 +24,7 @@ const props = defineProps({
     default: {
       search: '',
       paginate: 5,
+      sortable: null,
     },
   },
 })
@@ -30,6 +32,7 @@ const props = defineProps({
 const form = useForm({
   search: props.filters.search,
   paginate: props.filters.paginate ?? 5,
+  sortable: props.filters.sortable,
 })
 const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
@@ -167,7 +170,7 @@ const updateDificulty = (e, track) => {
             <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Dificulty') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Votes') }}</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Created at') }}</th>
+            <th class="px-6 pb-4 pt-6" colspan="2"><Sortable field="created_at" v-model="form.sortable">{{ __('Created at') }}</sortable></th>
           </tr>
           <tr v-for="track in tracks.data" :key="track.id">
             <td class="border-t">

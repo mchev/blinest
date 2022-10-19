@@ -83,7 +83,7 @@ class PlaylistController extends Controller
                 'filters' => Request::all('search'),
                 'answer_types' => AnswerType::all(),
                 'tracks' => $playlist->tracks()
-                    ->filter(Request::only('search'))
+                    ->filter(Request::only('search', 'sortable'))
                     ->with('answers')
                     ->paginate(Request::get('paginate') ?? 5)
                     ->withQueryString()

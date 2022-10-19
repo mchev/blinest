@@ -65,6 +65,8 @@ class Track extends Model
             $query->whereRelation('answers', function ($query) use ($search) {
                 $query->where('value', 'like', '%'.$search.'%');
             });
+        })->when($filters['sortable'] ?? null, function ($query, $sortable) {
+            $query->orderBy($sortable['field'], $sortable['direction']);
         });
     }
 }

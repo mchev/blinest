@@ -83,4 +83,7 @@ defineProps({
     <rect x="17" y="6" width="13" height="36" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
     <rect x="30" y="26" width="13" height="16" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
   </svg>
+
+  <svg v-else-if="name === 'arrow-down'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" /></svg>
+  <svg v-else-if="name === 'arrow-up'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" /></svg>
 </template>
