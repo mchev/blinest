@@ -72,8 +72,6 @@ Route::middleware('auth')->group(function () {
     // Controls
     Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
         ->name('rounds.stop');
-    Route::post('rooms/{room}/start', [RoomController::class, 'start'])
-        ->name('rounds.start');
     Route::post('rounds/{round}/track/resume', [RoundController::class, 'resume'])
         ->name('rounds.track.resume');
     Route::post('rounds/{round}/track/pause', [RoundController::class, 'pause'])
