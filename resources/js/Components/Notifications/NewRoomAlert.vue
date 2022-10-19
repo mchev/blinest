@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from '@inertiajs/inertia-vue3'
+import { Link, useForm } from '@inertiajs/inertia-vue3'
 
 const props = defineProps({
 	notification: Object,
@@ -22,7 +22,7 @@ const form = useForm({
 			<span class="text-xs text-neutral-400">{{ notification.data.created_at }}</span>
 		</div>
 		<div class="my-2 text-sm font-medium">
-			{{ notification.data.message }}
+			<Link :href="route('rooms.show', notification.data.room.id)">{{ notification.data.message }}</Link>
 		</div>
 	</div>
 </template>

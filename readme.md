@@ -44,6 +44,7 @@ php artisan horizon
 
 - TODO v2.0 :
 	- Messages réponses
+	- Fix iphone sound
 	- Statistiques
 	- ✅ Webhooks discord
 	- Attente pendant que le morceau est en lecture
