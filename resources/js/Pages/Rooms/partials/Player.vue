@@ -96,7 +96,7 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
+  <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200  overflow-hidden">
     <transition-group name="list" tag="ul" v-if="usersWithAllAnswers">
       <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute -top-8 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
         {{ user.name }}
@@ -109,6 +109,9 @@ const stop = () => {
     <div v-else-if="loading" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
       {{ __('Loading') }}
     </div>
-    <div v-else class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" :class="audio.currentTime < room.track_duration * 0.15 ? 'from-orange-300 to-orange-600' : 'from-purple-300 to-purple-400'"/>
+    <div v-else class="w-full">
+    <div class="h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear z-10 absolute top-0 left-0" :style="'width:' + percent + '%; max-width: 15%'"/>
+    <div class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear absolute" :style="'width:' + percent + '%'"/>
+  </div>
   </div>
 </template>
