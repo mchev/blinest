@@ -8,8 +8,7 @@ export default {
 import { ref, onMounted, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
-import Dropdown from '@/Components/Dropdown.vue'
-import Controls from './Controls.vue'
+import Volume from '@/Components/Volume.vue'
 
 const props = defineProps({
   room: Object,
@@ -72,18 +71,7 @@ const showMessage = (data) => {
 
       <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" placeholder="Une idée?" autofocus />
 
-      <dropdown v-if="round && props.room.moderators.find(x => user.id === x.id)" :autoClose="false" placement="bottom-end">
-        <template #default>
-          <button type="button" class="h-14 bg-white p-4 text-neutral-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </button>
-        </template>
-        <template #dropdown>
-          <Controls :channel="channel" :room="props.room" :round="round" />
-        </template>
-      </dropdown>
+      <Volume class="flex items-center justify-center p-2 h-14 text-neutral-700 bg-white"/>
 
       <button type="submit" class="btn-send h-14">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="w-6 h-6">
