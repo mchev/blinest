@@ -37,10 +37,8 @@ class RoomMessageController extends Controller
 
     public function report(Room $room, Message $message)
     {
-        //if(!Auth::user()->hasVoted($message)) {
         Auth::user()->downVote($message);
         broadcast(new MessageReported($message));
-        //}
 
         if ($message->totalDownvotes() < -3) {
             broadcast(new MessageDeleted($message));

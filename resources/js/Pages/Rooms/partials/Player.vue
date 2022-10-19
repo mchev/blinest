@@ -109,6 +109,6 @@ const stop = () => {
     <div v-else-if="loading" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
       {{ __('Loading') }}
     </div>
-    <div v-else class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    <div v-else class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" :class="audio.currentTime < room.track_duration * 0.15 ? 'from-orange-300 to-orange-600' : 'from-purple-300 to-purple-400'"/>
   </div>
 </template>
