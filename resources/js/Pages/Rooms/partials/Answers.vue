@@ -1,5 +1,6 @@
 <script setup>
 import { Inertia } from '@inertiajs/inertia'
+import { usePage } from '@inertiajs/inertia-vue3'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -9,6 +10,7 @@ const props = defineProps({
   channel: String,
 })
 
+const user = usePage().props.value.auth.user
 const userList = ref(props.users)
 const round = ref(null)
 const tracks = ref([])
@@ -77,7 +79,7 @@ const voteTrackUp = (track) => {
             </ul>
             <div class="flex-col items-end hidden lg:flex">
               <a v-if="track.track_url" class="flex items-center whitespace-nowrap text-xs opacity-50 hover:opacity-90" :href="track.track_url" target="_blank" :title="__('Listen on') + ' ' + track.provider"> {{ __('Listen on') }} <Icon :name="track.provider" class="ml-1 h-5 w-5" /> </a>
-              <div class="mt-4 flex items-center text-xs">
+              <div class="mt-4 flex items-center text-xs" v-if="user">
                 <button @click="voteTrackUp(track)" class="mr-4 flex items-center" :title="__('Like')"><Icon name="thumb-up" class="mr-1 h-5 w-5" /> {{ track.upvotes }}</button>
                 <button @click="voteTrackDown(track)" class="flex items-center" :title="__('Don\'t like')"><Icon name="thumb-down" class="mr-1 h-5 w-5" /> {{ track.downvotes }}</button>
               </div>

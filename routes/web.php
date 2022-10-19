@@ -1,19 +1,11 @@
 <?php
 
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RankingController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\RoomMessageController;
-use App\Http\Controllers\RoomModeratorController;
-use App\Http\Controllers\RoomPlaylistController;
 use App\Http\Controllers\RoundController;
-use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TeamController;
 // Moderation
 use App\Http\Controllers\TeamRequestController;
@@ -39,42 +31,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    $usersPodium = \App\Models\Round::find(39832)->usersPodium;
-    $teamspodium = \App\Models\Round::find(39832)->teamspodium;
-    dd($usersPodium, $teamspodium);
-});
-
-// Auth Social Providers
-
-Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
-    ->name('auth.redirect');
-
-Route::get('/callback/{provider}', [SocialController::class, 'callback'])
-    ->name('auth.callback');
-
-// Language
-
-Route::get('language/{language}', function ($language) {
-    Session()->put('locale', $language);
-
-    return redirect()->back();
-})->name('language');
-
-// Home
-
-Route::get('/', [HomeController::class, 'index'])
-    ->name('home');
-
-Route::get('/pages/{slug}', [PageController::class, 'show'])
-    ->name('pages.show');
-
-// Contact
-
-Route::get('/contact', [ContactController::class, 'index'])
-    ->name('contact');
-Route::post('/contact', [ContactController::class, 'send'])
-    ->name('contact.send');
+// Check user answer
+Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
+    ->name('rounds.track.check');
 
 Route::middleware('auth')->group(function () {
 
@@ -103,48 +62,12 @@ Route::middleware('auth')->group(function () {
     // Notifications
     Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
 
-    // Rooms
-    Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
-        ->name('rooms.restore');
-
-    Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
-        ->name('rooms.joined');
-
-    Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
-        ->name('rooms.playlists.attach');
-
-    Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
-        ->name('rooms.playlists.detach');
-
-    // Rooms Messages
-    Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
-        ->name('rooms.message.store');
-
-    Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
-        ->name('rooms.message.report');
-
-    // Rooms alerts
-    Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
-        ->name('rooms.alert');
-
-    Route::post('rooms/{room}/suggestion', [RoomController::class, 'sendSuggestion'])
-        ->name('rooms.suggestions');
-
-    Route::post('rooms/{room}/generate/mosaic', [RoomController::class, 'generateMosaic'])
-        ->name('rooms.generate.mosaic');
-
-    Route::resource('rooms', RoomController::class)->middleware('auth');
-
     // Ranking
     Route::get('rankings', [RankingController::class, 'index'])
         ->name('rankings.index');
 
     Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
         ->name('rooms.scores.index');
-
-    // Rounds
-    Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
-        ->name('rounds.track.check');
 
     // Controls
     Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
@@ -191,11 +114,6 @@ Route::middleware('auth')->group(function () {
         ->name('playlists.moderators.attach');
     Route::delete('playlists/{playlist}/moderators/detach', [PlaylistModeratorController::class, 'detach'])
         ->name('playlists.moderators.detach');
-
-    Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, 'attach'])
-        ->name('rooms.moderators.attach');
-    Route::delete('rooms/{room}/moderators/detach', [RoomModeratorController::class, 'detach'])
-        ->name('rooms.moderators.detach');
 
     Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
         ->name('moderation.message.destroy');

@@ -58,7 +58,7 @@ onUnmounted(() => {
       <template #header>
         <div class="flex w-full items-center justify-between">
           <h3 class="text-xl font-bold">Classement</h3>
-          <button type="button" @click="showPodiumModal = true" :title="__('Show rankings for this room')">
+          <button v-if="me" type="button" @click="showPodiumModal = true" :title="__('Show rankings for this room')">
             <Icon name="podium" class="mr-2 h-8 w-8" />
           </button>
         </div>
@@ -66,7 +66,7 @@ onUnmounted(() => {
 
       <div class="h-64 overflow-y-scroll pr-2 md:h-80 2xl:h-96">
         <transition-group name="flip-list" tag="ul">
-          <li v-for="(user, index) in userList" :key="user.id" class="flex items-center rounded border-b border-neutral-600 px-2 py-4" :class="{ 'bg-neutral-700': me.id === user.id }">
+          <li v-for="(user, index) in userList" :key="user.id" class="flex items-center rounded border-b border-neutral-600 px-2 py-4" :class="{ 'bg-neutral-700': (me && me.id === user.id) }">
             <div class="font-bold text-xl justify-center items-center flex px-4">
               {{ index + 1 }}
             </div>
@@ -99,6 +99,6 @@ onUnmounted(() => {
       </div>
     </Card>
 
-    <PodiumModal v-if="showPodiumModal" :room="room" :show="showPodiumModal" @close="showPodiumModal = false" />
+    <PodiumModal v-if="me && showPodiumModal" :room="room" :show="showPodiumModal" @close="showPodiumModal = false" />
   </div>
 </template>

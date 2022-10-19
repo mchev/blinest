@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PlaylistExport;
 use App\Models\AnswerType;
 use App\Models\Playlist;
 use App\Rules\Reserved;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PlaylistExport;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PlaylistController extends Controller
 {
@@ -122,7 +122,7 @@ class PlaylistController extends Controller
         return abort(403, 'Unauthorized action.');
     }
 
-    public function export(Playlist $playlist) 
+    public function export(Playlist $playlist)
     {
         return Excel::download(new PlaylistExport($playlist), 'playlist.xlsx');
     }

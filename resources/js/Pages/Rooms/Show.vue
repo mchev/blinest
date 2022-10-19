@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head, usePage } from '@inertiajs/inertia-vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -20,6 +20,7 @@ const props = defineProps({
   room: Object,
 })
 
+const user = usePage().props.value.auth.user
 const channel = `rooms.${props.room.id}`
 const round = ref(null)
 const joined = ref(false)
@@ -113,7 +114,7 @@ const listenRounds = () => {
                   <span v-for="moderator in room.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
                 </div>
               </div>
-              <div class="flex items-center">
+              <div class="flex items-center" v-if="user">
                 <button class="btn-secondary bg-neutral-900 btn-sm" @click="sendingSuggestion = true">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
@@ -124,21 +125,21 @@ const listenRounds = () => {
             </div>
           </Card>
 
-          <button v-if="room.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
+          <button v-if="user && room.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </button>
         </div>
 
-        <div v-if="showSidebar && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
+        <div v-if="user && showSidebar && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>
     </Transition>
 
     <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />  
-    <SendSuggestionModal :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
+    <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
     <UserGestureModal />
   </RoomLayout>
 </template>

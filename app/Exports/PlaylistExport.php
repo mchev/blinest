@@ -9,15 +9,14 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class PlaylistExport implements FromView, ShouldAutoSize
 {
-
-    public function __construct(public Playlist $playlist) {
-
+    public function __construct(public Playlist $playlist)
+    {
     }
 
     public function view(): View
     {
         return view('exports.playlists', [
-            'playlist' => $this->playlist
+            'playlist' => $this->playlist,
         ]);
     }
 }
