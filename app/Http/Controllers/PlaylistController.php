@@ -8,6 +8,8 @@ use App\Rules\Reserved;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PlaylistExport;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -118,6 +120,11 @@ class PlaylistController extends Controller
         }
 
         return abort(403, 'Unauthorized action.');
+    }
+
+    public function export(Playlist $playlist) 
+    {
+        return Excel::download(new PlaylistExport($playlist), 'playlist.xlsx');
     }
 
     public function destroy(Playlist $playlist)

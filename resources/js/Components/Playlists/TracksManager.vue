@@ -98,7 +98,7 @@ const addTrack = (track) => {
 
 const removeTrack = (track) => {
   let id = track.added ? track.added.id : track.id
-  if(confirm('Voulez-vous vraiment supprimer cet extrait?')) {
+  if (confirm('Voulez-vous vraiment supprimer cet extrait?')) {
     Inertia.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
       preserveScroll: true,
       preserveState: true,
@@ -110,9 +110,13 @@ const removeTrack = (track) => {
 }
 
 const updateDificulty = (e, track) => {
-  Inertia.put(route('playlists.tracks.update', [props.playlist.id, track]), {dificulty: e.target.value}, {
-    preserveScroll: true,
-  })
+  Inertia.put(
+    route('playlists.tracks.update', [props.playlist.id, track]),
+    { dificulty: e.target.value },
+    {
+      preserveScroll: true,
+    },
+  )
 }
 </script>
 <template>
@@ -121,6 +125,12 @@ const updateDificulty = (e, track) => {
       <div class="flex w-full items-center justify-between">
         <h3 class="text-xl font-bold">{{ __('Tracks manager') }} ({{ tracks.total }})</h3>
         <text-input v-model="form.search" prepend-icon="search" :placeholder="__('Search in playlist') + '...'" />
+        <a :href="route('playlists.export', playlist)" target="_blank" class="btn-secondary rounded"
+          ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Exporter
+        </a>
       </div>
     </template>
     <div>
@@ -153,7 +163,7 @@ const updateDificulty = (e, track) => {
             </ul>
           </template>
         </dropdown>
-        <div class="flex gap-2 items-center">
+        <div class="flex items-center gap-2">
           <SelectInput v-model="form.paginate">
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -168,9 +178,13 @@ const updateDificulty = (e, track) => {
           <tr class="text-left font-bold">
             <th class="px-6 pb-4 pt-6" colspan="2"></th>
             <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
-            <th class="px-6 pb-4 pt-6">{{ __('Dificulty') }}</th>
+            <th class="px-6 pb-4 pt-6">
+              <Sortable field="dificulty" v-model="form.sortable">{{ __('Dificulty') }}</Sortable>
+            </th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Votes') }}</th>
-            <th class="px-6 pb-4 pt-6" colspan="2"><Sortable field="created_at" v-model="form.sortable">{{ __('Created at') }}</sortable></th>
+            <th class="px-6 pb-4 pt-6" colspan="2">
+              <Sortable field="created_at" v-model="form.sortable">{{ __('Created at') }}</Sortable>
+            </th>
           </tr>
           <tr v-for="track in tracks.data" :key="track.id">
             <td class="border-t">

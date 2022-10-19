@@ -182,6 +182,9 @@ Route::middleware('auth')->group(function () {
     Route::put('playlists/{playlist}/restore', [PlaylistController::class, 'restore'])
         ->name('playlists.restore');
 
+    Route::get('playlists/{playlist}/export', [PlaylistController::class, 'export'])
+        ->name('playlists.export');
+
     // Moderation
 
     Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])

@@ -76,7 +76,7 @@ const restore = () => {
       <div class="flex-1">
         <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore">{{ __('This playlist has been deleted.') }}</trashed-message>
 
-        <tracks-manager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
+        <TracksManager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
       </div>
     </div>
   </AppLayout>
