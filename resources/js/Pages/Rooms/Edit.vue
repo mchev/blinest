@@ -123,7 +123,7 @@ onUnmounted(() => {
               <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
                 >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
               >
-              <input id="tracks_by_round-range" type="range" min="1" max="30" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
+              <input id="tracks_by_round-range" type="range" min="1" max="100" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
               <label for="track_duration-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
                 >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
