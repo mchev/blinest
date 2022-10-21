@@ -140,17 +140,17 @@ class RoundController extends Controller
 
                 $message = [
                     'type' => 'success',
-                    'body' => 'Félicitation tu as trouvé '.$good_answers[0]->type->name,
+                    'body' => $this->getRandomSuccessMessage(),
                 ];
             } elseif (count($almost_answers)) {
                 $message = [
                     'type' => 'warning',
-                    'body' => 'Presque '.$almost_answers[0]->type->name.'!',
+                    'body' => 'Presque !',
                 ];
             } else {
                 $message = [
                     'type' => 'error',
-                    'body' => 'Pas du tout',
+                    'body' => $this->getRandomErrorMessage(),
                 ];
             }
 
@@ -161,4 +161,33 @@ class RoundController extends Controller
             ], 200);
         }
     }
+
+    public function getRandomSuccessMessage() {
+        $messages = [
+            "Bien joué !",
+            "Félicitation !",
+            "Je suis vraiment fier de toi !",
+            "Je savais que tu pouvais y arriver !",
+            "Trop fort !",
+            "Chapeau !"
+        ];
+        $random_index = array_rand($messages);
+        return $messages[$random_index];
+    }
+
+    public function getRandomErrorMessage() {
+        $messages = [
+            "Bof",
+            "Pas du tout !",
+            "Non, ce n'est pas ça",
+            "Cherches encore",
+            "Tu peux vraiment mieux faire.",
+            "N'importe quoi !",
+            "C'est tout ce que ça t'inspire ?",
+            "Faut pas pousser mémé dans les orties !"
+        ];
+        $random_index = array_rand($messages);
+        return $messages[$random_index];
+    }
+
 }

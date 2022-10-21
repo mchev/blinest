@@ -43,11 +43,11 @@ php artisan horizon
 ## Roadmap
 
 - TODO v2.0 :
-	- Messages réponses
 	- Fix iphone sound
 	- Statistiques
-	- ✅ Webhooks discord
 	- Attente pendant que le morceau est en lecture
+	- ✅ Webhooks discord
+	- ✅ Messages réponses
 	- ✅ Mon compte
 	- ✅ Traduction et templates des mails
 	- ✅ Envoyer une suggestion (modos room)
