@@ -38,6 +38,12 @@ const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
 const editingAnswer = ref(false)
 const search_online = ref('')
+const providers = ref([   
+  { id: 1, provider: "deezer", name: "Deezer", selected: true },
+  { id: 2, provider: "spotify", name: "Spotify", selected: true },
+  { id: 3, provider: "itunes", name: "Apple music", selected: true },
+])
+const selectedProviders = ref(['deezer', 'spotify', 'itunes'])
 const search = ref('')
 const loading = ref(false)
 const results = ref([])
@@ -59,6 +65,14 @@ watch(
   }, 150),
   { deep: true },
 )
+
+const check = (provider) => {
+  if(selectedProviders.value.includes(provider.provider)) {
+    selectedProviders.value = selectedProviders.value.filter(x => x != provider.provider)
+  } else {
+    selectedProviders.value.push(provider.provider);
+  }
+}
 
 const fecthMusicProviders = () => {
   if (search_online.value.length > 1) {
@@ -141,8 +155,13 @@ const updateDificulty = (e, track) => {
             <text-input v-model="search_online" prepend-icon="plus" append-icon="cheveron-down" :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
           </template>
           <template v-show="results.length" #dropdown>
+            <div v-if="results.length" class="flex gap-2 text-sm p-2 border-b">
+              <label v-for="provider in providers">
+                <input type="checkbox" v-model="provider.selected" @click="check(provider)"> {{provider.name}}
+              </label>
+            </div>
             <ul v-if="results.length" class="max-w-50 max-h-80 overflow-y-auto">
-              <li v-for="result in results" class="relative cursor-pointer border-b border-neutral-200 px-1 py-2 hover:bg-neutral-100 hover:text-neutral-900">
+              <li v-for="result in results.filter(x => selectedProviders.includes(x.provider))" class="relative cursor-pointer border-b border-neutral-200 px-1 py-2 hover:bg-neutral-100 hover:text-neutral-900">
                 <div class="flex items-center">
                   <div><Icon :name="result.provider" :title="result.provider" class="mr-2 h-6 w-6 flex-shrink-0" /></div>
                   <div>
