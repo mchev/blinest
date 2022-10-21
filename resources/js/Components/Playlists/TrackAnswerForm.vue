@@ -40,7 +40,7 @@ const close = () => {
 }
 
 const submitForm = () => {
-  form?.value?.id ? updateAnswer() : storeAnswer()
+  props.answer ? updateAnswer() : storeAnswer()
 }
 
 const updateAnswer = () => {
