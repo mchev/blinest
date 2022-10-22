@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Illuminate\Notifications\DatabaseNotification;
+
 
 class UserController extends Controller
 {
@@ -99,4 +101,16 @@ class UserController extends Controller
 
         return Redirect::back();
     }
+
+    public function markNotificationAsDone($id)
+    {
+        $done = Auth::user()->notifications()->find($id);
+
+        DatabaseNotification::where('type', $done->type)->whereNull('read_at')->get()->each(function($notification) use($done) {
+            if($notification->data['message'] == $done->data['message'])
+                $notification->markAsRead();
+        });
+        return Redirect::back();
+    }
+
 }

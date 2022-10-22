@@ -1,13 +1,21 @@
 <script setup>
-import { useForm } from '@inertiajs/inertia-vue3'
+import { defineEmits } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 
 const props = defineProps({
 	notification: Object,
 })
 
-const form = useForm({
-	notification_id: props.notification.id,
-})
+const emit = defineEmits(['markedAsdone']);
+
+const markAsDone = () => {
+	if(confirm('Ceci masquera aussi la suggestion pour les autres modérateurs.')) {
+		emit('markedAsdone');
+		Inertia.post(`/users/notifications/${props.notification.id}/done`, {
+			preserveScroll: true,
+		})
+	}
+}
 
 </script>
 <template>
@@ -22,5 +30,6 @@ const form = useForm({
 			{{ notification.data.message }}
 		</div>
 		<span class="text-xs">Envoyée par {{ notification.data.user.name }} sur {{ notification.data.room.name }}</span>
+		<button class="btn-primary btn-sm mt-2 ml-auto" @click="markAsDone">{{ __('Done') }}</button>
 	</div>
 </template>

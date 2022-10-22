@@ -42,7 +42,10 @@ class NewSuggestion extends Notification
     {
         return new BroadcastMessage([
             'data' => [
-                'room' => $this->room,
+                'room' => [
+                    'id' => $this->room->id,
+                    'name' => $this->room->name,
+                ],
                 'user' => [
                     'id' => $this->user->id,
                     'name' => $this->user->name,
@@ -62,7 +65,10 @@ class NewSuggestion extends Notification
     public function toArray($notifiable)
     {
         return [
-            'room' => $this->room,
+            'room' => [
+                'id' => $this->room->id,
+                'name' => $this->room->name,
+            ],
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,

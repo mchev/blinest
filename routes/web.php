@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
 
     // Notifications
     Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
+    Route::post('/users/notifications/{notification}/done', [UserController::class, 'markNotificationAsDone']);
 
     // Ranking
     Route::get('rankings', [RankingController::class, 'index'])
