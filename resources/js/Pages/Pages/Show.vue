@@ -20,7 +20,7 @@ defineProps({
           <small class="text-xs text-neutral-500">{{ __('Last revision') }} : {{ page.date }}</small>
         </div>
       </template>
-      <section class="prose text-inherit" v-html="page.content"/>
+      <section class="prose prose-invert" v-html="page.content"/>
     </Card>
   </AppLayout>
 </template>

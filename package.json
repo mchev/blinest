@@ -14,7 +14,7 @@
         "@inertiajs/inertia-vue3": "^0.6.0",
         "@inertiajs/progress": "^0.2.7",
         "@popperjs/core": "^2.11.0",
-        "@tailwindcss/typography": "^0.5.2",
+        "@tailwindcss/typography": "^0.5.7",
         "@vitejs/plugin-vue": "^2.3.3",
         "autoprefixer": "^10.4.7",
         "eslint": "^8.18.0",
