@@ -28,8 +28,8 @@ const cancelRequest = (team) => {
     <section>
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
-          <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white">{{ __('Teams') }}</h2>
-          <p class="font-light text-gray-500 dark:text-gray-400 sm:text-xl">Rejoins une team et partages tes scores avec les autres membres pour exploser les compteurs!</p>
+          <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Teams') }}</h2>
+          <p class="font-light sm:text-xl">Rejoins une team et partages tes scores avec les autres membres pour exploser les compteurs!</p>
           <div class="my-6 flex justify-center">
             <Link v-if="!user.team" href="/teams/create" class="btn-primary btn-lg">{{ __('Create a team') }}</Link>
             <Link v-else :href="route('teams.show', user.team.id)" class="btn-primary btn-lg">{{ __('Show my team') }}</Link>
@@ -46,7 +46,7 @@ const cancelRequest = (team) => {
             </svg>
           </Link>
           <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-16">
-            <div class="text-center text-gray-500 dark:text-gray-400" v-for="team in teams.data" :key="team.id">
+            <div class="text-center" v-for="team in teams.data" :key="team.id">
               <div class="relative">
                 <span class="absolute top-1 right-1 rounded-full bg-teal-500 py-1 px-2 font-bold text-white">
                   <sup>{{ team.members_count }}</sup
@@ -54,7 +54,7 @@ const cancelRequest = (team) => {
                 </span>
                 <img class="mx-auto mb-4 h-36 w-36 rounded-full" :src="team.photo" :alt="team.name" />
               </div>
-              <h3 class="mb-1 truncate text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h3 class="mb-1 truncate text-2xl font-bold tracking-tight">
                 <Link :href="route('teams.show', team.id)">{{ team.name }}</Link>
               </h3>
               <p>@{{ team.owner.name }}</p>

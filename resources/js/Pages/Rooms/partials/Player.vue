@@ -15,6 +15,7 @@ const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
 const usersWithAllAnswers = ref([])
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
 onMounted(() => {
   window.addEventListener('volume-localstorage-changed', (event) => {
@@ -58,6 +59,7 @@ const play = () => {
 
   audio.src = track.value.preview_url
   audio.crossOrigin = 'anonymous'
+  //audio.load()  // IOS Hack
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
@@ -66,7 +68,15 @@ const play = () => {
 
   audio.addEventListener('canplaythrough', () => {
     loading.value = false
-    let playPromise = audio.play()
+    if(isIOS) {
+      console.log('iOS Player')
+      audio.pause() // IOS Hack
+      audio.currentTime = 0  // IOS Hack
+      audio.volume = localStorage.getItem('volume')
+      audio.play()
+    } else {
+      let playPromise = audio.play()
+    }
   })
 
   audio.addEventListener('timeupdate', () => {
@@ -96,7 +106,7 @@ const stop = () => {
 }
 </script>
 <template>
-  <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200  overflow-hidden">
+  <div id="player" class="relative flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
     <transition-group name="list" tag="ul" v-if="usersWithAllAnswers">
       <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute -top-8 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
         {{ user.name }}
@@ -110,8 +120,8 @@ const stop = () => {
       {{ __('Loading') }}
     </div>
     <div v-else class="w-full">
-    <div class="h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear z-10 absolute top-0 left-0" :style="'width:' + percent + '%; max-width: 15%'"/>
-    <div class="shine h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear absolute" :style="'width:' + percent + '%'"/>
-  </div>
+      <div class="absolute top-0 left-0 z-10 h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear" :style="'width:' + percent + '%; max-width: 15%'" />
+      <div class="shine absolute h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
+    </div>
   </div>
 </template>

@@ -43,9 +43,10 @@ php artisan horizon
 ## Roadmap
 
 - TODO v2.0 :
+	- Answers Card : réponses users surlignées
 	- Fix iphone sound
-	- ✅ Statistiques
 	- Attente pendant que le morceau est en lecture
+	- ✅ Statistiques
 	- ✅ Webhooks discord
 	- ✅ Messages réponses
 	- ✅ Mon compte
@@ -71,13 +72,11 @@ php artisan horizon
 	- ✅ Recherche
 
 - TODO v2.1
-	- Answers Card : réponses users surlignées
 	- Room control
 	- Modération (page)
 	- SEO
 	- Chat emojis
 	- Betters answers messages (wrong, almost, right)
-	- Room control
 	- Ban IPs
 	- Rooms Images : custom for pro
 	- Better translations (confirm js)

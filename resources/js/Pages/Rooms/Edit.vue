@@ -120,22 +120,22 @@ onUnmounted(() => {
           </template>
           <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
             <div class="flex w-full flex-wrap">
-              <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium"
                 >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
               >
               <input id="tracks_by_round-range" type="range" min="1" max="100" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <label for="track_duration-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              <label for="track_duration-range" class="mb-2 block text-sm font-medium"
                 >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
               >
               <input id="track_duration-range" type="range" min="5" max="30" v-model="form.track_duration" :error="form.errors.track_duration" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <label for="pause_between_tracks-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              <label for="pause_between_tracks-range" class="mb-2 block text-sm font-medium"
                 >{{ __('Pause between tracks') }} : <span class="font-bold">{{ form.pause_between_tracks }} {{ __('seconds') }}</span></label
               >
               <input id="pause_between_tracks-range" type="range" min="0" max="30" v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
-              <label for="pause_between_rounds-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              <label for="pause_between_rounds-range" class="mb-2 block text-sm font-medium"
                 >{{ __('Pause between rounds') }} : <span class="font-bold">{{ form.pause_between_rounds }} {{ __('seconds') }}</span></label
               >
               <input id="pause_between_rounds-range" type="range" min="0" max="60" v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
