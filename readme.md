@@ -43,6 +43,7 @@ php artisan horizon
 ## Roadmap
 
 - TODO v2.0 :
+	- Pubs ?
 	- Answers Card : réponses users surlignées
 	- Fix iphone sound
 	- Attente pendant que le morceau est en lecture
