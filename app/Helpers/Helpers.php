@@ -17,11 +17,24 @@ if (! function_exists('pusher')) {
 if (! function_exists('sanitizeString')) {
     function sanitizeString($string)
     {
+        // Articles
+        $articles = [
+            'the-',
+            'le-',
+            'la-',
+            'les-',
+            'un-',
+            'une-',
+            'des-',
+        ];
+
         // Remove all between parenthesis
         $string = preg_replace("/\([^)]+\)/", '', $string);
 
         // Slugify to clean special characters
-        return Str::slug($string, ' ');
+        $string = Str::slug($string, ' ');
+
+        return str_replace($articles, "", $string);
     }
 }
 
