@@ -59,6 +59,7 @@ class RoomController extends Controller
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
                 'latest_messages' => $room->messages()->latest()->limit(30)->get(),
+                'pause_between_tracks' => $room->pause_between_tracks,
             ],
         ]);
     }

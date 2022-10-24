@@ -99,15 +99,16 @@ const close = () => {
           </ul>
         </div>
       </div>
-      <div v-if="(users_results && !users_results.length) && (teams_results && !teams_results.length)">
+      <div v-if="users_results && !users_results.length && teams_results && !teams_results.length">
         {{ __('No scores') }}
       </div>
       <template #footer>
         <div class="flex w-full items-center gap-6">
           <div class="flex flex-grow flex-col">
             <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
-              <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.round.room.pause_between_rounds)) * 100 + '%'" />
-              <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochaine partie dans {{ countdown }}</span>
+              <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.round.room.pause_between_rounds)) * 100 + '%'">
+                <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochaine partie dans {{ countdown }}</span>
+              </div>
             </div>
           </div>
           <div class="ml-auto flex items-center">

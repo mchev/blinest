@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   room: Object,
@@ -16,6 +16,8 @@ const error = ref(null)
 const percent = ref(0)
 const usersWithAllAnswers = ref([])
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const countdown = ref(0)
+const countdowning = ref(false)
 
 onMounted(() => {
   window.addEventListener('volume-localstorage-changed', (event) => {
@@ -31,6 +33,7 @@ onMounted(() => {
       console.log('Track ended')
       usersWithAllAnswers.value = []
       stop()
+      startCountdown()
     })
     .listen('TrackPaused', () => {
       pause()
@@ -104,6 +107,20 @@ const stop = () => {
   audio.pause()
   emit('track:stopped', props.track)
 }
+
+const startCountdown = () => {
+  countdown.value = parseInt(props.room.pause_between_tracks)
+  countdowning.value = true
+  let interval = setInterval(() => {
+    if (countdown.value === -1) {
+      clearInterval(interval)
+      countdowning.value = false
+    } else {
+      countdown.value--
+    }
+  }, 1000)
+}
+
 </script>
 <template>
   <div id="player" class="relative flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
@@ -116,8 +133,15 @@ const stop = () => {
     <div v-if="error" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg text-red-500">
       {{ error }}
     </div>
-    <div v-else-if="loading" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
+    <div v-else-if="loading && !countdowning" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
       {{ __('Loading') }}
+    </div>
+    <div v-else-if="countdowning && countdown != -1" class="flex flex-grow flex-col">
+      <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
+        <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.room.pause_between_tracks)) * 100 + '%'">
+          <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochain extrait dans {{ countdown }}</span>
+        </div>
+      </div>
     </div>
     <div v-else class="w-full">
       <div class="absolute top-0 left-0 z-10 h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear" :style="'width:' + percent + '%; max-width: 15%'" />
