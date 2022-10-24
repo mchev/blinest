@@ -134,11 +134,11 @@ class PlaylistController extends Controller
                 return Redirect::back()->with('error', 'Impossible de supprimer une playlist qui est publique et qui est associée à une room.');
             }
 
-            $playlist->moderators()->delete();
+            $playlist->moderators()->detach();
             $playlist->tracks()->delete();
             $playlist->delete();
 
-            return Redirect::back()->with('success', 'Playlist deleted.');
+            return Redirect::route('playlists')->with('success', 'Playlist deleted.');
         }
 
         return abort(403, 'Unauthorized action.');

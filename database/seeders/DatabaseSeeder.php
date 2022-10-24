@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             ImportOldUsers::class,
             ImportOldGames::class,
+            ImportOldModerators::class,
             ImportOldTracks::class,
             ImportOldScores::class,
         ]);

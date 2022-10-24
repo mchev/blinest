@@ -136,9 +136,10 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         $room->deletePhoto();
+        $room->moderators()->detach();
         $room->delete();
 
-        return Redirect::back()->with('success', 'Room deleted.');
+        return Redirect::route('rooms.index')->with('success', 'Room deleted.');
     }
 
     /**

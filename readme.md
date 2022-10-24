@@ -37,8 +37,12 @@ soketi start
 php artisan horizon
 ```
 
-## Production
+## Migration
 
+- Mentions légales
+- Politique de confidentialité
+- Stats
+- Git branch
 
 ## Roadmap
 

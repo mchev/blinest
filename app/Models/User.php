@@ -233,18 +233,18 @@ class User extends Authenticatable implements BannableContract
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
+        $query->when($filters['search'] ?? null, function ($query, $search) use ($filters) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('email', 'like', '%'.$search.'%');
-            });
+            })
+            ->orderByRaw('CASE WHEN name = "'.$filters['search'].'" THEN 1 WHEN name LIKE "%'.$filters['search'].'%" THEN 2 ELSE 3 END');
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();
             } elseif ($trashed === 'only') {
                 $query->onlyTrashed();
             }
-        })
-        ->orderByRaw('CASE WHEN name = "'.$filters['search'].'" THEN 1 WHEN name LIKE "%'.$filters['search'].'%" THEN 2 ELSE 3 END');
+        });
     }
 }

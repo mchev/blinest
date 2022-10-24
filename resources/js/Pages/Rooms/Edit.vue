@@ -48,6 +48,12 @@ const update = () => {
   form.post(route('rooms.update', props.room.id))
 }
 
+const deleteRoom = () => {
+  if(confirm('Voules-vous vraiment supprimer cette room ?')) {
+    Inertia.delete(route('rooms.destroy', props.room.id))
+  }
+}
+
 const mosaicForm = useForm({})
 const generatingMosaic = ref(false)
 
@@ -106,7 +112,7 @@ onUnmounted(() => {
             </div>
           </form>
           <template #footer>
-            <button v-if="!room.deleted_at" class="text-sm text-red-500 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete') }}</button>
+            <button v-if="!room.deleted_at" class="text-sm text-red-500 hover:underline" tabindex="-1" type="button" @click="deleteRoom">{{ __('Delete') }}</button>
             <loading-button :loading="form.processing" class="btn-primary ml-auto" form="roomForm" type="submit">{{ __('Update') }}</loading-button>
           </template>
         </Card>
