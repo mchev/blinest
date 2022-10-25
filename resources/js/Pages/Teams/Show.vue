@@ -15,6 +15,8 @@ const props = defineProps({
   user: Object,
 })
 
+const memberList = Object.values(props.members).sort((a, b) => b.score - a.score)
+
 const leave = () => {
   if (confirm('Are you sure?')) {
     Inertia.post(`/teams/${props.team.id}/leave`)
@@ -58,11 +60,11 @@ const switchOwner = (member) => {
           </div>
         </template>
         <ul>
-          <li v-for="(member, index) in members" :key="member.id" class="m-2 flex items-center rounded bg-neutral-900 p-4">
+          <li v-for="(member, index) in memberList" :key="member.id" class="m-2 flex items-center rounded bg-neutral-900 p-4">
             <div class="px-4 text-xl font-bold">
               {{ Number(index) + 1 }}
             </div>
-            <div class="flex flex-grow items-center">
+            <div class="flex flex-grow items-center pr-4">
               <img v-if="member.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="member.photo" />
               {{ member.name }}
               <span v-if="member.id === team.user_id" class="ml-2"
