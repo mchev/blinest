@@ -66,8 +66,8 @@ php artisan horizon
  - v2.1
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat
- 	- Bulle utilisateur sur le player quand bonne réponse
- 	- Couleur badge réponse
+ 	- ✅ Bulle utilisateur sur le player quand bonne réponse
+ 	- ✅ Couleur badge réponse
  	- ✅ Les articles sont encore necessaires dans les réponses
  	- ✅ Lien de connexion
  	- ✅ Bad words dans le mot

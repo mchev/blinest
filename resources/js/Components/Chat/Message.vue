@@ -41,11 +41,11 @@ const report = () => {
     <time class="mr-2 text-xs italic text-neutral-500">{{ message.time }}</time>
     <button v-if="isModerator" @click="moderate = true" class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
       <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
-      {{ message.user.name }} <sup v-if="user.team" class="mx-1 text-[9px] uppercase">[{{ user.team.name }}]</sup> :
+      {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </button>
     <span v-else class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
       <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
-      {{ message.user.name }} <sup v-if="user.team" class="mx-1 text-[9px] uppercase">[{{ user.team.name }}]</sup> :
+      {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </span>
     <span class="">{{ message.body }}</span>
     <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
