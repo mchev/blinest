@@ -15,8 +15,6 @@ const props = defineProps({
   user: Object,
 })
 
-console.log(props.members)
-
 const leave = () => {
   if (confirm('Are you sure?')) {
     Inertia.post(`/teams/${props.team.id}/leave`)
@@ -83,7 +81,7 @@ const switchOwner = (member) => {
         </ul>
       </Card>
       <div class="my-6 flex items-center gap-6">
-        <button v-if="members.find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
+        <button v-if="Object.values(members).find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
         <div v-else>
           <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>
           <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
