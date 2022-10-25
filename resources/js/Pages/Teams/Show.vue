@@ -11,7 +11,7 @@ import Share from '@/Components/Share.vue'
 const props = defineProps({
   team: Object,
   score: Number,
-  members: Array,
+  members: Object,
   user: Object,
 })
 
@@ -54,7 +54,7 @@ const switchOwner = (member) => {
             <div class="flex items-center">
               {{ __('Members') }}
             </div>
-            <span>{{ members.length }} / {{ team.seats }}</span>
+            <span>{{ Object.entries(members).length }} / {{ team.seats }}</span>
           </div>
         </template>
         <ul>
