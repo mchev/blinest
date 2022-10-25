@@ -26,6 +26,8 @@ if (! function_exists('sanitizeString')) {
             'un ',
             'une ',
             'des ',
+            'and ',
+            '& ',
         ];
 
         // Remove all between parenthesis

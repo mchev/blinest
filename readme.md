@@ -73,6 +73,7 @@ php artisan horizon
  	- ✅ Bad words dans le mot
  	- ✅ teams js sort error : https://github.com/mchev/blinest/issues/15
  	- changer le nom de la team
+ 	- light mode mal voyant
 
 - v2.0
 	- ✅ Statistiques
