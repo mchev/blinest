@@ -37,7 +37,6 @@ if (! function_exists('sanitizeString')) {
         $string = Str::slug($string, ' ');
 
         return str_replace($articles, '', $string);
-
     }
 }
 

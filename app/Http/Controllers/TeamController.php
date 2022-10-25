@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Rules\Reserved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class TeamController extends Controller
@@ -83,6 +84,26 @@ class TeamController extends Controller
                 'declined_requests' => Auth::user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
             ],
         ]);
+    }
+
+    public function update(Request $request, Team $team)
+    {
+        if (Auth::user()->id === $team->user_id) {
+            $request->validate([
+                'name' => ['required', 'max:30', Rule::unique('teams')->ignore($team->id), 'alpha_dash', new Reserved],
+                'photo' => ['nullable', 'image'],
+            ]);
+
+            $team->update($request->only('name'));
+
+            if ($request->file('photo')) {
+                $team->updatePhoto($request->file('photo'));
+            }
+
+            return redirect()->back()->with('success', __('Updated'));
+        }
+
+        return redirect()->back()->with('error', __("Ce n'est pas ta team."));
     }
 
     public function leave(Team $team)

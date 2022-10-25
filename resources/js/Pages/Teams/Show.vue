@@ -4,6 +4,7 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
+import FileInput from '@/Components/FileInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
 import Share from '@/Components/Share.vue'
@@ -16,6 +17,13 @@ const props = defineProps({
 })
 
 const memberList = Object.values(props.members).sort((a, b) => b.score - a.score)
+const user = usePage().props.value.auth.user
+
+const form = useForm({
+  _method: 'put',
+  name: props.team.name,
+  photo: null
+})
 
 const leave = () => {
   if (confirm('Are you sure?')) {
@@ -38,11 +46,25 @@ const switchOwner = (member) => {
     })
   }
 }
+
+const updateTeam = () => {
+  form.post(route('teams.update', props.team.id), {
+    preserveScroll: true
+  })
+}
+
 </script>
 <template>
   <Head :title="team.name" />
   <AppLayout>
     <div class="mx-auto mt-8 max-w-xl">
+      <Card class="my-8" v-if="user.id === team.user_id">
+        <form @submit.prevent="updateTeam">
+          <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name"/>
+          <FileInput v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo"/>
+          <LoadingButton type="submit" @click="updateTeam" :loading="form.processing" class="btn-primary mb-4 ml-auto">{{ __('Update') }}</LoadingButton>
+        </form>
+      </Card>
       <div class="flex items-center justify-between text-xl">
         <div class="mb-6 flex items-center">
           <img v-if="team.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="team.photo" />
