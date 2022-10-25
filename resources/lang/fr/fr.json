@@ -1,5 +1,12 @@
 {
     "Title": "Titre",
+    "Musical": "Comédie musicale",
+    "Documentary": "Documentaire",
+    "Individual": "Personne",
+    "Video game": "Jeu vidéo",
+    "Cover": "Cover",
+    "Drama": "Drama",
+    "Program": "Émission",
     "There is one form error.": "Il y a une erreur dans le formulaire.",
     "There are": "Il y a",
     "form errors": "erreurs dans le formulaire",

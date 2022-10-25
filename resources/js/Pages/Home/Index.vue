@@ -12,7 +12,7 @@ defineProps({
 </script>
 <template>
   <Head>
-    <title>Blind-Tests multijoueurs - gratuit et sans inscription</title>
+    <title>Blind-Tests multijoueurs</title>
     <meta name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.">
   </Head>
   <Layout>
