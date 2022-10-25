@@ -39,8 +39,8 @@ php artisan horizon
 
 ## Migration
 
-- New answers type
-- Mail a chaque connexion provider
+- ✅ New answers type
+- ✅ Mail a chaque connexion provider
 - ✅ Mentions légales
 - ✅ Politique de confidentialité
 - ✅ Stats

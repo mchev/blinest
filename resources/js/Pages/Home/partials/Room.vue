@@ -41,7 +41,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-contain bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${room.photo_src || room.mosaic});`">
+  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-contain bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${ room.photo_src ? room.photo_src : room.photo });`">
     <article class="relative h-full w-full">
       <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
       <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-700 text-white py-1 px-2 text-sm ease-in-out hover:scale-110" :title="__('Players')">
