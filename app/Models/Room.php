@@ -53,7 +53,7 @@ class Room extends Model
 
     protected function getPhotoSrcAttribute()
     {
-        return $this->photo_path ? $this->photo_path : $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
+        return $this->photo_path ? '/storage/' . $this->photo_path : $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
     }
 
     public function currentRound()
