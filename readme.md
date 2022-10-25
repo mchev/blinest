@@ -50,7 +50,6 @@ php artisan horizon
 	- Pubs ?
 	- Answers Card : réponses users surlignées
 	- Fix iphone sound
-	- Attente pendant que le morceau est en lecture
 	- ✅ Statistiques
 	- ✅ Webhooks discord
 	- ✅ Messages réponses
@@ -77,6 +76,7 @@ php artisan horizon
 	- ✅ Recherche
 
 - TODO v2.1
+	- Attente pendant que le morceau est en lecture
 	- Room control
 	- Modération (page)
 	- SEO

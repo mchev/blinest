@@ -20,7 +20,6 @@ const props = defineProps({
   room: Object,
 })
 
-const reactiveRoom = ref(props.room)
 const user = usePage().props.value.auth.user
 const channel = `rooms.${props.room.id}`
 const round = ref(null)
@@ -78,12 +77,12 @@ const listenRounds = () => {
     })
     .listen('TrackPlayed', (e) => {
       round.value = e.round
-      reactiveRoom.value = e.room
+      props.room.value = e.room
     })
 }
 </script>
 <template>
-  <Head :title="reactiveRoom.name" />
+  <Head :title="room.name" />
   <RoomLayout>
     <div v-if="!joined" class="flex h-full w-full items-center justify-center">
       <Spinner />
@@ -94,17 +93,17 @@ const listenRounds = () => {
       <div v-if="joined" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-4 flex items-center">
-            <h2 class="mr-8 text-xl font-bold">{{ reactiveRoom.name }}</h2>
+            <h2 class="mr-8 text-xl font-bold">{{ room.name }}</h2>
           </article>
 
           <div class="mb-4 md:mb-8">
-            <Player :room="reactiveRoom" :channel="channel" @track:currentTime="currentTime = $event" />
-            <UserInput :channel="channel" :currentTime="currentTime" :room="reactiveRoom" />
+            <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
+            <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>
 
           <div class="grid md:grid-cols-2 md:gap-8">
             <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
-            <Ranking class="mb-4 md:mb-8" :room="reactiveRoom" :users="users" :channel="channel" :data="data" />
+            <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
           <Card>
@@ -112,7 +111,7 @@ const listenRounds = () => {
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
                   <span class="uppercase text-neutral-500">Modos</span>
-                  <span v-for="moderator in reactiveRoom.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
+                  <span v-for="moderator in room.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
                 </div>
               </div>
               <div class="flex items-center" v-if="user">
@@ -126,21 +125,21 @@ const listenRounds = () => {
             </div>
           </Card>
 
-          <button v-if="user && reactiveRoom.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
+          <button v-if="user && room.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </button>
         </div>
 
-        <div v-if="user && showSidebar && reactiveRoom.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
-          <Chat :room="reactiveRoom" />
+        <div v-if="user && showSidebar && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
+          <Chat :room="room" />
         </div>
       </div>
     </Transition>
 
     <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />  
-    <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="reactiveRoom" @close="sendingSuggestion = false" />
+    <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
     <UserGestureModal />
   </RoomLayout>
 </template>

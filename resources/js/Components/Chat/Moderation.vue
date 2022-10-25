@@ -11,7 +11,7 @@ const props = defineProps({
   room: Object,
 })
 
-const emit = defineEmits('close')
+const emit = defineEmits(['close'])
 
 const form = useForm({
   comment: '',
