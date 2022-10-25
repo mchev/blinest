@@ -11,14 +11,11 @@ import Share from '@/Components/Share.vue'
 const props = defineProps({
   team: Object,
   score: Number,
-  members: Object,
+  members: Array,
   user: Object,
 })
 
-const memberList = props.members.sort((a, b) => {
-  if(b.score && a.score)
-    b.score - a.score
-})
+const memberList = props.members.sort((a, b) => b.score - a.score)
 
 const leave = () => {
   if (confirm('Are you sure?')) {
