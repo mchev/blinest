@@ -55,8 +55,8 @@ php artisan horizon
  	- Couleur badge réponse
  	- ✅ Les articles sont encore necessaires dans les réponses
  	- Lien de connexion
- 	- Bad words dans le mot
- 	- teams js sort error : https://github.com/mchev/blinest/issues/15
+ 	- ✅ Bad words dans le mot
+ 	- ✅ teams js sort error : https://github.com/mchev/blinest/issues/15
  	- changer le nom de la team
 
 - TODO v2.0 :
