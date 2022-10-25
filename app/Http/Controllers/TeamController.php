@@ -75,7 +75,7 @@ class TeamController extends Controller
                 'name' => $member->name,
                 'photo' => $member->photo,
                 'score' => $member->scores()->where('team_id', $team->id)->sum('score'),
-            ])->sortBy('score'),
+            ])->sortByDesc('score'),
             'user' => [
                 'id' => Auth::user()->id,
                 'team' => Auth::user()->team,
