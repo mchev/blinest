@@ -42,7 +42,6 @@ onMounted(() => {
       resume()
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
-      console.log(e)
       usersWithAllAnswers.value.push(e.user)
     })
 })
