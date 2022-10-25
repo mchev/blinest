@@ -48,21 +48,33 @@ php artisan horizon
 
 ## Roadmap
 
+- v2.2
+	- Pubs ?
+	- Answers Card : réponses users surlignées
+	- Fix iphone sound
+	- Attente pendant que le morceau est en lecture
+	- Room control
+	- Modération (page)
+	- SEO
+	- Chat emojis
+	- Betters answers messages (wrong, almost, right)
+	- Ban IPs
+	- Rooms Images : custom for pro
+	- Better translations (confirm js)
+	- Check duplicated names from socialite
+
  - v2.1
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat
  	- Bulle utilisateur sur le player quand bonne réponse
  	- Couleur badge réponse
  	- ✅ Les articles sont encore necessaires dans les réponses
- 	- Lien de connexion
+ 	- ✅ Lien de connexion
  	- ✅ Bad words dans le mot
  	- ✅ teams js sort error : https://github.com/mchev/blinest/issues/15
  	- changer le nom de la team
 
-- TODO v2.0 :
-	- Pubs ?
-	- Answers Card : réponses users surlignées
-	- Fix iphone sound
+- v2.0
 	- ✅ Statistiques
 	- ✅ Webhooks discord
 	- ✅ Messages réponses
@@ -87,15 +99,3 @@ php artisan horizon
 	- ✅ Team
 	- ✅ Rankings
 	- ✅ Recherche
-
-- TODO v2.1
-	- Attente pendant que le morceau est en lecture
-	- Room control
-	- Modération (page)
-	- SEO
-	- Chat emojis
-	- Betters answers messages (wrong, almost, right)
-	- Ban IPs
-	- Rooms Images : custom for pro
-	- Better translations (confirm js)
-	- Check duplicated names from socialite

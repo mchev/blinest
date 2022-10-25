@@ -34,11 +34,11 @@ const showingSearchbar = ref(false);
 				<Notifications class="mr-4" v-if="user" />
 				<LanguageSwitcher class="mr-4"/>
 				<UserDropdown v-if="user" />
-<!-- 				<div v-if="!user" class="flex gap-4 uppercase">
+ 				<div v-if="!user" class="flex gap-4 uppercase">
 					<Link :href="route('login')" :title="__('Login')">{{ __('Login') }}</Link>
-					<Link :href="route('register')" :title="__('Register')">{{ __('Register') }}</Link>
+					<Link :href="route('register')" class="hidden lg:block" :title="__('Register')">{{ __('Register') }}</Link>
 				</div>
- -->			</div>
+			</div>
 		</div>
 		<div>
 			<SearchRooms v-show="showingSearchbar" class="m-2"/>
