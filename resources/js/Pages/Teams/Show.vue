@@ -17,7 +17,6 @@ const props = defineProps({
 })
 
 const memberList = Object.values(props.members).sort((a, b) => b.score - a.score)
-const user = usePage().props.value.auth.user
 
 const form = useForm({
   _method: 'put',
