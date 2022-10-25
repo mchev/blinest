@@ -60,7 +60,7 @@ const switchOwner = (member) => {
         <ul>
           <li v-for="(member, index) in members" :key="member.id" class="m-2 flex items-center rounded bg-neutral-900 p-4">
             <div class="px-4 text-xl font-bold">
-              {{ index + 1 }}
+              {{ Number(index) + 1 }}
             </div>
             <div class="flex flex-grow items-center">
               <img v-if="member.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="member.photo" />
