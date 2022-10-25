@@ -11,7 +11,7 @@ import Share from '@/Components/Share.vue'
 const props = defineProps({
   team: Object,
   score: Number,
-  members: Object,
+  members: Array,
   user: Object,
 })
 
@@ -81,7 +81,7 @@ const switchOwner = (member) => {
         </ul>
       </Card>
       <div class="my-6 flex items-center gap-6">
-        <button v-if="members.find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
+        <button v-if="members.find((x) => x.id == user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
         <div v-else>
           <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>
           <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
