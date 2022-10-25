@@ -11,7 +11,7 @@ import Share from '@/Components/Share.vue'
 const props = defineProps({
   team: Object,
   score: Number,
-  members: Array,
+  members: Object,
   user: Object,
 })
 
