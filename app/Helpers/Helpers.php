@@ -34,7 +34,7 @@ if (! function_exists('sanitizeString')) {
         // Slugify to clean special characters
         $string = Str::slug($string, ' ');
 
-        return str_replace($articles, "", $string);
+        return str_replace($articles, '', $string);
     }
 }
 

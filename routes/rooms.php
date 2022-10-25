@@ -5,7 +5,6 @@ use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 
-
 Route::middleware('auth')->group(function () {
 
     // Rooms

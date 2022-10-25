@@ -162,32 +162,35 @@ class RoundController extends Controller
         }
     }
 
-    public function getRandomSuccessMessage() {
+    public function getRandomSuccessMessage()
+    {
         $messages = [
-            "Bien joué !",
-            "Félicitation !",
-            "Je suis vraiment fier de toi !",
-            "Je savais que tu pouvais y arriver !",
-            "Trop fort !",
-            "Chapeau !"
+            'Bien joué !',
+            'Félicitation !',
+            'Je suis vraiment fier de toi !',
+            'Je savais que tu pouvais y arriver !',
+            'Trop fort !',
+            'Chapeau !',
         ];
         $random_index = array_rand($messages);
+
         return $messages[$random_index];
     }
 
-    public function getRandomErrorMessage() {
+    public function getRandomErrorMessage()
+    {
         $messages = [
-            "Bof",
-            "Pas du tout !",
+            'Bof',
+            'Pas du tout !',
             "Non, ce n'est pas ça",
-            "Cherches encore",
-            "Tu peux vraiment mieux faire.",
+            'Cherches encore',
+            'Tu peux vraiment mieux faire.',
             "N'importe quoi !",
             "C'est tout ce que ça t'inspire ?",
-            "Faut pas pousser mémé dans les orties !"
+            'Faut pas pousser mémé dans les orties !',
         ];
         $random_index = array_rand($messages);
+
         return $messages[$random_index];
     }
-
 }

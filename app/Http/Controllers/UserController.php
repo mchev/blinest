@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Rules\Reserved;
 use App\Services\SendinblueService;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -13,8 +14,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
-use Illuminate\Notifications\DatabaseNotification;
-
 
 class UserController extends Controller
 {
@@ -106,11 +105,12 @@ class UserController extends Controller
     {
         $done = Auth::user()->notifications()->find($id);
 
-        DatabaseNotification::where('type', $done->type)->whereNull('read_at')->get()->each(function($notification) use($done) {
-            if($notification->data['message'] == $done->data['message'])
+        DatabaseNotification::where('type', $done->type)->whereNull('read_at')->get()->each(function ($notification) use ($done) {
+            if ($notification->data['message'] == $done->data['message']) {
                 $notification->markAsRead();
+            }
         });
+
         return Redirect::back();
     }
-
 }

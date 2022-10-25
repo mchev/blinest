@@ -35,6 +35,8 @@ use Laravel\Socialite\Facades\Socialite;
                  'provider' => $provider,
                  'provider_id' => $getInfo->id,
              ]);
+
+             ProcessUserCreated::dispatch($user);
          }
 
          if (! $user && $email) {
@@ -43,8 +45,6 @@ use Laravel\Socialite\Facades\Socialite;
              $email->update();
              $user = $email;
          }
-
-         ProcessUserCreated::dispatch($user);
 
          return $user;
      }

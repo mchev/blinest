@@ -66,11 +66,12 @@ class Track extends Model
                 $query->where('value', 'like', '%'.$search.'%');
             });
         })->when($filters['sortable'] ?? null, function ($query, $sortable) {
-            if($sortable['field'] == "votes") {
-                if($sortable['direction'] == "asc")
+            if ($sortable['field'] == 'votes') {
+                if ($sortable['direction'] == 'asc') {
                     $query->withTotalUpvotes()->orderByDesc('total_upvotes');
-                else
+                } else {
                     $query->withTotalDownvotes()->orderBy('total_downvotes');
+                }
             } else {
                 $query->orderBy($sortable['field'], $sortable['direction']);
             }

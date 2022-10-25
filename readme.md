@@ -39,10 +39,12 @@ php artisan horizon
 
 ## Migration
 
-- Mentions légales
-- Politique de confidentialité
-- Stats
-- Git branch
+- New answers type
+- Mail a chaque connexion provider
+- ✅ Mentions légales
+- ✅ Politique de confidentialité
+- ✅ Stats
+- Git branch old
 
 ## Roadmap
 

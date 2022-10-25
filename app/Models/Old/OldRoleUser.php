@@ -9,5 +9,4 @@ class OldRoleUser extends Model
     protected $connection = 'old';
 
     protected $table = 'role_user';
-
 }

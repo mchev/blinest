@@ -10,7 +10,6 @@ class ImportOldModerators extends Seeder
 {
     public function run()
     {
-
         $roomModerators = OldRoleUser::where('role_id', 3)->where('user_id', '!=', 1)->get()->map(fn ($role) => [
             'user_id' => $role->user_id,
             'moderable_type' => 'App\Models\Room',
@@ -34,6 +33,5 @@ class ImportOldModerators extends Seeder
             ['id'],
             ['user_id', 'moderable_type', 'moderable_id']
         );
-
     }
 }

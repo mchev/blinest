@@ -22,7 +22,7 @@ class CleanRooms implements ShouldQueue
     {
         $rooms = Room::doesntHave('playlists')->whereDate('created_at', '<=', now()->subDays(30))->get();
 
-        foreach($rooms as $room) {
+        foreach ($rooms as $room) {
             $room->deletePhoto();
             $room->rounds()->delete();
             $room->moderators()->detach();
@@ -30,13 +30,12 @@ class CleanRooms implements ShouldQueue
         }
 
         $deletedRooms = Room::onlyTrashed()->get();
-        
-        foreach($deletedRooms as $room) {
+
+        foreach ($deletedRooms as $room) {
             $room->deletePhoto();
             $room->rounds()->delete();
             $room->moderators()->detach();
             $room->forceDelete();
         }
-
     }
 }
