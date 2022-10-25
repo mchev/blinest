@@ -150,7 +150,7 @@ const updateDificulty = (e, track) => {
     <div>
       <div class="mb-4 flex justify-between gap-2 p-2">
         <!-- Search on streaming platforms -->
-        <dropdown placement="bottom-start" :auto-close="false" @closed="search_online = ''">
+        <dropdown placement="bottom-start" :auto-close="false">
           <template #default>
             <text-input v-model="search_online" prepend-icon="plus" append-icon="cheveron-down" :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
           </template>

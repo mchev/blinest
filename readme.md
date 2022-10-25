@@ -62,6 +62,7 @@ php artisan horizon
 	- Rooms Images : custom for pro
 	- Better translations (confirm js)
 	- Check duplicated names from socialite
+	- Clean rounds with no scores?
 
  - v2.1
  	- ✅ Flamme 18%
@@ -72,7 +73,7 @@ php artisan horizon
  	- ✅ Lien de connexion
  	- ✅ Bad words dans le mot
  	- ✅ teams js sort error : https://github.com/mchev/blinest/issues/15
- 	- changer le nom de la team
+ 	- ✅ changer le nom et la photo de la team
  	- light mode mal voyant
 
 - v2.0
