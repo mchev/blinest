@@ -71,7 +71,7 @@ const close = () => {
 
       <div class="my-4 flex items-center gap-4">
         <button class="btn-danger btn-sm" @click="deleteMessage">{{ __('Delete message') }}</button>
-        <button v-if="!authorIsModerator" class="btn-danger btn-sm" @click="showingBanForm = !showingBanForm">{{ __('Ban') }} {{ message.user.name }}</button>
+        <button v-if="!authorIsModerator && room.is_public" class="btn-danger btn-sm" @click="showingBanForm = !showingBanForm">{{ __('Ban') }} {{ message.user.name }}</button>
         <button class="btn-secondary btn-sm" @click="close">{{ __('Cancel') }}</button>
       </div>
 
