@@ -42,6 +42,7 @@ onMounted(() => {
       resume()
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
+      console.log(e)
       usersWithAllAnswers.value.push(e.user)
     })
 })
@@ -123,9 +124,9 @@ const startCountdown = () => {
 
 </script>
 <template>
-  <div id="player" class="relative flex h-4 w-full items-center overflow-hidden rounded-t-lg bg-purple-200">
-    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers">
-      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute -top-8 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
+  <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
+    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers.length">
+      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute z-20 -top-8 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
         {{ user.name }}
         <div class="absolute left-1 top-full mt-1 h-full h-0 w-full w-0 translate-y-[-50%] border-t-[8px] border-l-[8px] border-r-[8px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
       </li>
