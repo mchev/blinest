@@ -77,7 +77,7 @@ class RoundController extends Controller
                         }
 
                         // Bonus speed (10% of the room track duration)
-                        $speedBonus = (Request::input('currentTime') < ($round->room->track_duration * 0.15));
+                        $speedBonus = (Request::input('currentTime') < ($round->room->track_duration * 0.18));
                         if ($speedBonus) {
                             $score += 0.5;
                         }

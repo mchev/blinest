@@ -19,13 +19,13 @@ if (! function_exists('sanitizeString')) {
     {
         // Articles
         $articles = [
-            'the-',
-            'le-',
-            'la-',
-            'les-',
-            'un-',
-            'une-',
-            'des-',
+            'the ',
+            'le ',
+            'la ',
+            'les ',
+            'un ',
+            'une ',
+            'des ',
         ];
 
         // Remove all between parenthesis
@@ -35,6 +35,7 @@ if (! function_exists('sanitizeString')) {
         $string = Str::slug($string, ' ');
 
         return str_replace($articles, '', $string);
+
     }
 }
 

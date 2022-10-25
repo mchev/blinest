@@ -22,7 +22,7 @@ class RoomMessageController extends Controller
             ]);
 
             // Bad Words Filter
-            $badwords = trans('bad-words');
+            $badwords = trans('bad-words') . ' ';
             $body = str_ireplace($badwords, '*****', Request::input('body'));
 
             $message = $room->messages()->create([

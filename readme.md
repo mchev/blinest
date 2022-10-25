@@ -48,6 +48,16 @@ php artisan horizon
 
 ## Roadmap
 
+ - v2.1
+ 	- ✅ Flamme 18%
+ 	- ✅ Avatar dans le chat
+ 	- Bulle utilisateur sur le player quand bonne réponse
+ 	- Couleur badge réponse
+ 	- ✅ Les articles sont encore necessaires dans les réponses
+ 	- Lien de connexion
+ 	- Bad words dans le mot
+ 	- teams js sort error : https://github.com/mchev/blinest/issues/15
+
 - TODO v2.0 :
 	- Pubs ?
 	- Answers Card : réponses users surlignées

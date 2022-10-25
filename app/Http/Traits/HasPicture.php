@@ -66,7 +66,7 @@ trait HasPicture
      */
     public function getPhotoAttribute()
     {
-        return $this->photo_path
+        return $this->refresh()->photo_path
                     ? Storage::disk($this->profilePhotoDisk())->url($this->photo_path)
                     : $this->defaultPhotoUrl();
     }

@@ -144,7 +144,7 @@ const startCountdown = () => {
       </div>
     </div>
     <div v-else class="w-full">
-      <div class="absolute top-0 left-0 z-10 h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear" :style="'width:' + percent + '%; max-width: 15%'" />
+      <div class="absolute top-0 left-0 z-10 h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear" :style="'width:' + percent + '%; max-width: 18%'" />
       <div class="shine absolute h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
     </div>
   </div>
