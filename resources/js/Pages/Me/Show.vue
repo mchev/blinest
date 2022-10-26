@@ -63,6 +63,10 @@ const deleteUser = () => {
           <li v-else class="mb-4 flex flex-col">
             {{ __('No round played yet') }}
           </li>
+          <li class="mb-4 flex flex-col">
+            <span class="font-bold">{{ __('Score') }}</span>
+            <span>{{ user.total_score }}<sup class="ml-1">PTS</sup></span>
+          </li>
         </ul>
 
         <button @click="deleteUser" class="btn-danger btn-sm mx-auto">{{ __('Delete my account') }}</button>
@@ -110,7 +114,10 @@ const deleteUser = () => {
 
         <Card class="my-4 hidden lg:flex">
           <template #header>
-            <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
+            <div class="flex w-full justify-between items-center">
+              <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
+              <span>{{ user.total_score }}<sup class="ml-1">PTS</sup></span>
+            </div>
           </template>
       <div class="overflow-x-auto relative">
         <table class="w-full whitespace-nowrap">

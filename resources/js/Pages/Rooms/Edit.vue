@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { Head, Link, usePage, useForm } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -12,6 +12,7 @@ import LoadingButton from '@/Components/LoadingButton.vue'
 import ModeratorsManager from '@/Components/Rooms/ModeratorsManager.vue'
 import PlaylistsManager from '@/Components/Rooms/PlaylistsManager.vue'
 import Card from '@/Components/Card.vue'
+import Tip from '@/Components/Tip.vue'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
@@ -21,6 +22,8 @@ const props = defineProps({
   categories: Array,
   available_playlists: Array,
 })
+
+const user = usePage().props.value.auth.user
 
 const form = useForm({
   _method: 'put',
@@ -103,11 +106,10 @@ onUnmounted(() => {
                     {{ category.name }}
                   </option>
                 </select-input>
-                <file-input v-if="room.is_pro || room.is_public" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-                <div v-else>
-                  <button type="button" class="btn-secondary" v-if="!generatingMosaic" @click="generateMosaic">{{ __('Generate a new thumbnail') }}</button>
-                  <LoadingButton v-else :loading="true" class="text-xs text-yellow-600">{{ __('Generating new thumbnail') }}</LoadingButton>
-                </div>
+                <file-input v-if="room.is_pro || room.is_public || user.permissions.canUpdateRoomPicture" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
+                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUpdateRoomPicture">
+                  Pour changer l'image de la room vous devez avoir un score total de 2000 minimum et 3 mois d'ancienneté.
+                </Tip>
               </div>
             </div>
           </form>

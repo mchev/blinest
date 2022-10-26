@@ -51,6 +51,9 @@ class HandleInertiaRequests extends Middleware
                         'admin' => $request->user()->isAdministrator(),
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,
+                        'permissions' => [
+                            'canUpdateRoomPicture' => $request->user()->canUpdateRoomPicture(),
+                        ],
                     ] : null,
                 ];
             },

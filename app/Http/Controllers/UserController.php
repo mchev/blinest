@@ -32,6 +32,7 @@ class UserController extends Controller
                 'latest_round_at' => $user->scores()->latest()->first()?->round?->created_at->format('d/m/Y H:i'),
                 'rooms' => $user->allRooms,
                 'playlists' => $user->allPlaylists,
+                'total_score' => floatval($user->scores()->sum('score')),
                 'scores' => $user->allScores()->paginate(10)->through(fn ($score) => [
                     'room_id' => $score->room_id,
                     'name' => $score->name,
