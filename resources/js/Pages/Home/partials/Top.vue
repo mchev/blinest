@@ -50,12 +50,12 @@ const numbers = [
 ]
 </script>
 <template>
-  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-contain bg-right transition duration-100 ease-in-out" :style="`background-image: url(${room.photo_src || room.mosaic});`">
+  <Link :href="`/rooms/${room.id}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-auto bg-no-repeat bg-right transition duration-100 ease-in-out" :style="`background-image: url(${room.photo_src || room.mosaic});`">
     <article class="relative h-full w-full">
       <div class="w-1/3 bg-neutral-900 h-full" v-html="numbers[props.index]"/>
       <div class="w-2/3">
         <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
-        <div class="absolute top-0 right-0 w-auto rounded-bl-md rounded-tr-md bg-purple-500 text-white py-1 px-2 text-sm ease-in-out hover:scale-110" :title="__('Players')">
+        <div class="absolute top-0 right-0 w-auto rounded-bl-md rounded-tr-md bg-neutral-800 text-white p-3 text-sm ease-in-out hover:scale-110" :title="__('Players')">
           <div class="flex items-center">
             <span v-if="room.password" class="mr-1 font-bold text-orange-400">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4" :title="__('Password protected')">
@@ -72,9 +72,9 @@ const numbers = [
           </div>
         </div>
 
-        <div class="absolute bottom-0 flex w-full items-center justify-between rounded-b bg-neutral-900 p-2 text-sm uppercase text-gray-100">
+        <div class="absolute bottom-0 flex w-full items-center justify-between rounded-b bg-neutral-900 gap-2 p-2 text-sm uppercase text-gray-100">
           <span class="truncate font-bold">{{ room.name }}</span>
-          <div class="flex items-center">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
+          <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
         </div>
       </div>
     </article>
