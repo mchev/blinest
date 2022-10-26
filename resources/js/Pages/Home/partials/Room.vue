@@ -61,9 +61,9 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="absolute bottom-0 flex w-full items-center justify-between rounded-b bg-neutral-900 p-2 text-sm uppercase text-gray-100">
+      <div class="absolute bottom-0 flex w-full items-center justify-between bg-neutral-900 gap-2 py-2 text-sm uppercase text-gray-100">
         <span class="truncate font-bold">{{ room.name }}</span>
-        <div class="flex items-center">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
+        <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
       </div>
     </article>
   </Link>
