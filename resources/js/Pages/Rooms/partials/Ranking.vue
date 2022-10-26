@@ -57,7 +57,7 @@ onUnmounted(() => {
     <Card>
       <template #header>
         <div class="flex w-full items-center justify-between">
-          <h3 class="text-xl font-bold">Classement</h3>
+          <h3 class="text-xl font-bold">Classement <sup class="text-xs">({{ userList.length }})</sup></h3>
           <button v-if="me" type="button" @click="showPodiumModal = true" :title="__('Show rankings for this room')">
             <Icon name="podium" class="mr-2 h-8 w-8" />
           </button>
