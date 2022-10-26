@@ -44,7 +44,7 @@ const focus = () => {
 }
 
 const check = () => {
-  if (text.value.length > 1 && track.value) {
+  if (text.value.length >= 1 && track.value) {
     axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value, currentTime: props.currentTime }).then((response) => {
       answers.value.push(...response.data.good_answers)
       showMessage(response.data.message)

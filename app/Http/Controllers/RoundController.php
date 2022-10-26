@@ -41,7 +41,7 @@ class RoundController extends Controller
     {
         if (! $round->finished_at && $round->tracks[$round->current - 1] === $track->id) {
             Request::validate([
-                'text' => 'required|string|min:2',
+                'text' => 'required|string|min:1',
             ]);
 
             $total = $round->userScore(Auth::user());
