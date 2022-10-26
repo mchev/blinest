@@ -40,7 +40,7 @@ class RoomMessageController extends Controller
         Auth::user()->downVote($message);
         broadcast(new MessageReported($message));
 
-        if ($message->totalDownvotes() < -3) {
+        if ($message->totalDownvotes() < -2) {
             broadcast(new MessageDeleted($message));
             $message->delete();
         }

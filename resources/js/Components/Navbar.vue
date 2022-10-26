@@ -28,7 +28,7 @@ const showingSearchbar = ref(false);
 			<div class="flex items-center justify-end">
 				<button type="button" @click="showingSearchbar = !showingSearchbar" class="lg:hidden"><Icon name="search" class="h-5 w-5 mr-4" /></button>
 				<Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')"><Icon name="podium" class="h-5 w-5 mr-4" /></Link>
-				<a href="https://discord.com/invite/uKyVgcxcFa" target="_blank" :title="__('Join the Blinest community on Discord')" class="mr-4">
+				<a href="https://discord.com/invite/uKyVgcxcFa" target="_blank" :title="__('Join the Blinest community on Discord')" class="mr-4 umami--click--discord-button">
 					<SocialIcon name="discord" class="h-5 w-5"/>
 				</a>
 				<Notifications class="mr-4" v-if="user" />

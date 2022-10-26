@@ -17,9 +17,14 @@ defineProps({
   </Head>
   <Layout>
     <section v-if="!filters.search">
-      <div v-if="top_rooms" class="relative mb-4">
-        <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">TOP 5</h2>
-        <rooms :rooms="top_rooms" />
+      <div class="flex flex-wrap items-center">
+<!--         <div class="w-full lg:w-1/4 p-8">
+          <img src="/images/george.png" alt="George" class="h-full rounded-lg" />
+        </div>
+ -->        <div v-if="top_rooms" class="relative mb-4 flex-grow">
+          <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">TOP 5</h2>
+          <rooms :rooms="top_rooms" />
+        </div>
       </div>
     </section>
     <section v-if="categories.length" v-for="category in categories" :key="category.id">
