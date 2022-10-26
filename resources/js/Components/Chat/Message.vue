@@ -12,6 +12,7 @@ const moderate = ref(false)
 const reporting = ref(false)
 const user = usePage().props.value.auth.user
 const isModerator = props.room.moderators.find((x) => x.id === user.id)
+const userIsPublicModerator = usePage().props.value.publicModerators.find((x) => x.id === user.id)
 
 const report = () => {
   reporting.value = true
@@ -39,12 +40,12 @@ const report = () => {
       </button>
     </div>
     <time class="mr-2 text-xs italic text-neutral-500">{{ message.time }}</time>
-    <button v-if="isModerator" @click="moderate = true" class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
-      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
+    <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
+      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-7 w-7 rounded-full" />
       {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </button>
     <span v-else class="mr-1 flex items-center" :class="(room.moderators.find((x) => x.id === message.user.id)) ? 'text-purple-500' : 'text-neutral-400'">
-      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-6 w-6 rounded-full" />
+      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-7 w-7 rounded-full" />
       {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </span>
     <span class="">{{ message.body }}</span>

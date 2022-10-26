@@ -19,6 +19,7 @@ const form = useForm({
 })
 const user = usePage().props.value.auth.user
 const authorIsModerator = props.room.moderators.find((x) => x.id === props.message.user.id)
+const userIsPublicModerator = usePage().props.value.publicModerators.find((x) => x.id === user.id)
 const show = ref(true)
 const showingBanForm = ref(false)
 const reasons = [
@@ -71,7 +72,7 @@ const close = () => {
 
       <div class="my-4 flex items-center gap-4">
         <button class="btn-danger btn-sm" @click="deleteMessage">{{ __('Delete message') }}</button>
-        <button v-if="!authorIsModerator && room.is_public" class="btn-danger btn-sm" @click="showingBanForm = !showingBanForm">{{ __('Ban') }} {{ message.user.name }}</button>
+        <button v-if="!authorIsModerator && userIsPublicModerator" class="btn-danger btn-sm" @click="showingBanForm = !showingBanForm">{{ __('Ban') }} {{ message.user.name }}</button>
         <button class="btn-secondary btn-sm" @click="close">{{ __('Cancel') }}</button>
       </div>
 

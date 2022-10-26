@@ -76,7 +76,7 @@ php artisan horizon
  	- ✅ changer le nom et la photo de la team
  	- light mode mal voyant
  	- ✅ afficher le nombre d'extraits total sur la room
- 	- ban public moderator every room
+ 	- ✅ ban public moderator every room
  	- ✅ suppression message ne fonctionne pas
  	- moderation des noms de room
  	- Modification photos de room en fonction du score
