@@ -107,20 +107,21 @@ const listenRounds = () => {
           </div>
 
           <Card>
-            <div class="flex items-center flex-col lg:flex-row lg:justify-between px-4 text-sm">
+            <div class="flex items-center flex-col lg:flex-row lg:justify-between gap-4 text-sm">
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
                   <span class="uppercase text-neutral-500">Modos</span>
                   <span v-for="moderator in room.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
                 </div>
               </div>
-              <div class="flex items-center" v-if="user">
+              <div class="flex items-center gap-4" v-if="user">
                 <button class="btn-secondary bg-neutral-900 btn-sm" @click="sendingSuggestion = true">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                   </svg>
                   {{ __('Send a suggestion') }}
                 </button>
+                <span class="uppercase text-neutral-500">{{ room.tracks_count }} audios</span>
               </div>
             </div>
           </Card>

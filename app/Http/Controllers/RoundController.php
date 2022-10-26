@@ -183,7 +183,7 @@ class RoundController extends Controller
             'Bof',
             'Pas du tout !',
             "Non, ce n'est pas ça",
-            'Cherches encore',
+            'Cherche encore',
             'Tu peux vraiment mieux faire.',
             "N'importe quoi !",
             "C'est tout ce que ça t'inspire ?",
