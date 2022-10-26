@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\MessageDeleted;
 use App\Models\Message;
 use App\Models\User;
+use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -12,7 +13,7 @@ class ModerationController extends Controller
 {
     public function destroyMessage(Message $message)
     {
-        if (Auth::user()->isRoomModerator($message->room) || Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
+        if (Auth::user()->isRoomModerator(Room::find($message->messagable_id)) || Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
             broadcast(new MessageDeleted($message));
             $message->delete();
         }
