@@ -17,7 +17,7 @@ class ContactController extends Controller
 
     public function send()
     {
-        $blinest = User::find(1);
+        $blinest = User::find(105);
         $blinest->notify(new ContactMessage(Auth::user(), Request::input('message')));
 
         return Inertia::render('Contact/Sent');

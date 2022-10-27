@@ -32,8 +32,17 @@ class Reserved implements InvokableRule
             'team',
         ];
 
+        // Reserved names
         if (in_array(strtolower($value), $reserved)) {
             $fail('validation.reserved')->translate();
         }
+
+        // Bad words filter
+        foreach(trans('bad-words') as $badword) {
+            if(stripos(strtolower($value), $badword) !== false) {
+                $fail('validation.reserved')->translate();
+            }
+        }
+
     }
 }
