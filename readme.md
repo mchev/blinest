@@ -59,9 +59,13 @@ php artisan horizon
 
  - v2.1
  	- ✅ slugs
+ 	- recherche d'extaits provider à améliorer
+ 	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
+ 	- Confirm alerte modération
+ 	- ✅ Vider le champ de réponse à la fin d'un extrait
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat
  	- ✅ Bulle utilisateur sur le player quand bonne réponse

@@ -23,16 +23,24 @@ const text = ref('')
 const message = ref(null)
 const answers = ref([])
 const user = usePage().props.value.auth.user
+const inputDisabled = ref(true)
 
 onMounted(() => {
   focus()
 
-  Echo.channel(props.channel).listen('TrackPlayed', (e) => {
-    props.room.value = e.room
-    round.value = e.round
-    track.value = e.track
-    answers.value = []
-  })
+  Echo.channel(props.channel)
+    .listen('TrackPlayed', (e) => {
+      props.room.value = e.room
+      round.value = e.round
+      track.value = e.track
+      answers.value = []
+      inputDisabled.value = false
+      text.value = ''
+    })
+    .listen('TrackEnded', (e) => {
+      inputDisabled.value = true
+      text.value = ''
+    })
 })
 
 onUnmounted(() => {
@@ -69,7 +77,7 @@ const showMessage = (data) => {
         <div class="absolute left-5 top-full h-full h-0 w-full w-0 translate-y-[-50%] border-t-[10px] mt-1 border-l-[10px] border-r-[10px] border-t-transparent border-l-transparent border-r-transparent" :class="{'border-t-teal-600': message.type === 'success', 'border-t-orange-600': message.type === 'warning', 'border-t-red-600': message.type === 'error'}"></div>
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0 border-none" placeholder="Une idée?" autofocus />
+      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0 border-none" placeholder="Une idée?" autofocus :readonly="inputDisabled" />
 
       <Volume class="flex items-center justify-center p-2 h-14 text-neutral-700 bg-white -ml-1"/>
 
