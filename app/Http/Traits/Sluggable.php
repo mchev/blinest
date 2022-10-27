@@ -19,9 +19,35 @@ trait Sluggable
     {
         static::saving(function (Model $model) {
             if (empty($model->slug)) {
-                $model->slug = Str::slug($model->name);
+                $model->slug = $this->slugify($model->name);
             }
         });
     }
+
+    public function slugify($value) {
+
+        if (static::whereSlug($slug = Str::slug($value))->exists()) {
+
+            $slug = $this->incrementSlug($slug);
+        }
+
+        return $slug;
+    }
+
+    public function incrementSlug($slug) {
+
+        $original = $slug;
+
+        $count = 0;
+
+        while (static::whereSlug($slug)->exists()) {
+
+            $slug = "{$original}-" . $count++;
+        }
+
+        return $slug;
+
+    }
+
 
 }

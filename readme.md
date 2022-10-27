@@ -37,18 +37,11 @@ soketi start
 php artisan horizon
 ```
 
-## Migration
-
-- ✅ New answers type
-- ✅ Mail a chaque connexion provider
-- ✅ Mentions légales
-- ✅ Politique de confidentialité
-- ✅ Stats
-- Git branch old
-
 ## Roadmap
 
 - v2.2
+	- Import playlists from provider
+	- Profil pages
 	- Pubs ?
 	- Answers Card : réponses users surlignées
 	- Fix iphone sound
@@ -65,6 +58,9 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- ✅ slugs
+  	- light mode mal voyant
+ 	- moderation des noms de room
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat
  	- ✅ Bulle utilisateur sur le player quand bonne réponse
@@ -74,12 +70,11 @@ php artisan horizon
  	- ✅ Bad words dans le mot
  	- ✅ teams js sort error : https://github.com/mchev/blinest/issues/15
  	- ✅ changer le nom et la photo de la team
- 	- light mode mal voyant
  	- ✅ afficher le nombre d'extraits total sur la room
  	- ✅ ban public moderator every room
  	- ✅ suppression message ne fonctionne pas
- 	- moderation des noms de room
- 	- Modification photos de room en fonction du score
+ 	- ✅ Validation du nom des rooms (bad words et reserved words)
+ 	- ✅ Modification photos de room en fonction du score
 
 - v2.0
 	- ✅ Statistiques

@@ -49,12 +49,18 @@ class RoomController extends Controller
         ]);
     }
 
-    public function show(Room $room)
+    public function show($idOrSlug)
     {
+
+        $room = Room::where('id', $idOrSlug)
+                ->orWhere('slug', $idOrSlug)
+                ->firstOrFail();
+
         return Inertia::render('Rooms/Show', [
             'room' => [
                 'id' => $room->id,
                 'name' => $room->name,
+                'url' => url('/rooms/' . $room->slug),
                 'track_duration' => $room->track_duration,
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
@@ -63,6 +69,7 @@ class RoomController extends Controller
                 'tracks_count' => $room->tracks()->count(),
             ],
         ]);
+
     }
 
     public function create()

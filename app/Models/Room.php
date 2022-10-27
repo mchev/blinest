@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
+use App\Http\Traits\Sluggable;
 use App\Jobs\GenerateRoomMosaic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class Room extends Model
     use HasFactory;
     use SoftDeletes;
     use HasPicture;
+    use Sluggable;
 
     protected $appends = [
         'photo',
