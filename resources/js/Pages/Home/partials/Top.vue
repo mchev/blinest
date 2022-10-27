@@ -50,7 +50,7 @@ const numbers = [
 ]
 </script>
 <template>
-  <Link :href="`/rooms/${room.slug}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-auto bg-no-repeat bg-right transition duration-100 ease-in-out" :style="`background-image: url(${room.photo_src || room.mosaic});`">
+  <Link :href="`/rooms/${room.slug}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-right transition duration-100 ease-in-out" :style="`background-image: url(${room.photo_src || room.mosaic});`">
     <article class="relative h-full w-full">
       <div class="w-1/3 bg-neutral-900 h-full" v-html="numbers[props.index]"/>
       <div class="w-2/3">

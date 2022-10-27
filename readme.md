@@ -59,6 +59,7 @@ php artisan horizon
 
  - v2.1
  	- ✅ slugs
+ 	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
  	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
  	- sitemap

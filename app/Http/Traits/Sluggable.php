@@ -19,7 +19,7 @@ trait Sluggable
     {
         static::saving(function (Model $model) {
             if (empty($model->slug)) {
-                $model->slug = $this->slugify($model->name);
+                $model->slug = $model->slugify($model->name);
             }
         });
     }
