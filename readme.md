@@ -59,6 +59,7 @@ php artisan horizon
 
  - v2.1
  	- ✅ slugs
+ 	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
  	- ✅ Flamme 18%
