@@ -31,7 +31,7 @@ class HomeController extends Controller
                         ->whereNull('password')
                         ->filter(Request::only('search'))
                         ->withCount('rounds')
-                        ->paginate(6, ['*'], 'cat'.$category->id)
+                        ->paginate(30, ['*'], 'cat'.$category->id)
                         ->withQueryString(),
                 ];
             }),
@@ -42,7 +42,7 @@ class HomeController extends Controller
                 ->filter(Request::only('search'))
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
-                ->paginate(6, ['*'], 'private')
+                ->paginate(30, ['*'], 'private')
                 ->withQueryString() : null,
         ]);
     }

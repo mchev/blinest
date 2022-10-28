@@ -58,15 +58,16 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
- 	- ✅ slugs
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
- 	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
  	- Confirm alerte modération
  	- recherche de team ne fonctionne pas
+ 	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
+ 	- ✅ slugs
+ 	- ✅ better image quality and web encoding
  	- ✅ Vider le champ de réponse à la fin d'un extrait
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat

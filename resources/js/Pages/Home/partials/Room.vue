@@ -41,8 +41,9 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.slug}`" class="relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${ room.photo_src ? room.photo_src : room.photo });`">
+  <Link :href="`/rooms/${room.slug}`" class="relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0 swiper-lazy" :style="`background-image: url(${ room.photo_src ? room.photo_src : room.photo });`">
     <article class="relative h-full w-full">
+      <div class="swiper-lazy-preloader"></div>
       <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
       <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-800 text-white p-3 text-sm ease-in-out hover:scale-110" :title="__('Players')">
         <div class="flex items-center">
