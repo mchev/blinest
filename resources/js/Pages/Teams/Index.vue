@@ -4,15 +4,26 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
 
 const props = defineProps({
   teams: Object,
   user: Object,
+  filters: Object,
 })
 
-const searchForm = useForm({
-  search: '',
+const form = useForm({
+  search: props.filters.search,
 })
+
+watch(
+  form,
+  throttle(() => {
+    Inertia.get('/teams', pickBy(form), { remember: 'forget', preserveState: true })
+  }, 150),
+  { deep: true },
+)
 
 const sendRequest = (team) => {
   Inertia.post(`/teams/${team.id}/request`)
@@ -35,10 +46,10 @@ const cancelRequest = (team) => {
             <Link v-else :href="route('teams.show', user.team.id)" class="btn-primary btn-lg">{{ __('Show my team') }}</Link>
           </div>
           <div class="mt-16 flex justify-center">
-            <TextInput v-model="searchForm.search" :placeholder="__('Search a team')" />
+            <TextInput v-model="form.search" :placeholder="__('Search a team')" />
           </div>
         </div>
-        <div class="flex items-center gap-8">
+        <div class="flex items-center gap-8" v-if="teams.data.length">
           <Link v-show="teams.prev_page_url" :href="teams.prev_page_url">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" viewBox="0 0 20 20" fill="currentColor">
               <title>Previous team list</title>
@@ -69,6 +80,9 @@ const cancelRequest = (team) => {
               <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
             </svg>
           </Link>
+        </div>
+        <div v-else>
+          {{ __('No result') }}
         </div>
       </div>
     </section>

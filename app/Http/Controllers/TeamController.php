@@ -12,10 +12,12 @@ use Inertia\Inertia;
 
 class TeamController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('Teams/Index', [
+            'filters' => $request->all('search'),
             'teams' => Team::orderBy('created_at', 'DESC')
+                ->filter($request->only('search'))
                 ->with('owner')
                 ->withCount('members')
                 ->paginate(4),

@@ -58,13 +58,14 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- classement general responsive
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
  	- Confirm alerte modération
- 	- recherche de team ne fonctionne pas
+ 	- ✅ recherche de team ne fonctionne pas
  	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
  	- ✅ slugs
  	- ✅ better image quality and web encoding
