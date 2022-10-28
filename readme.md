@@ -64,7 +64,7 @@ php artisan horizon
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
- 	- Confirm alerte modération
+ 	- ✅ Confirm alerte modération and send comment
  	- ✅ recherche de team ne fonctionne pas
  	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
  	- ✅ slugs

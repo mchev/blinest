@@ -172,10 +172,17 @@ class RoomController extends Controller
 
     public function alert(Room $room)
     {
+
+        Request::validate([
+            'message' => ['nullable', 'string', 'max:255'],
+        ]);
+
         $moderators = User::publicModerators()->get();
         foreach ($moderators as $moderator) {
-            $moderator->notify(new NewRoomAlert($room, Auth::user()));
+            $moderator->notify(new NewRoomAlert($room, Auth::user(), Request::input('message')));
         }
+
+        return redirect()->back();
     }
 
     public function sendSuggestion(Room $room)

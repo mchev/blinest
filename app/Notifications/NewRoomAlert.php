@@ -12,19 +12,14 @@ class NewRoomAlert extends Notification
 {
     use Queueable;
 
-    public $room;
-
-    public $user;
-
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Room $room, User $user)
+    public function __construct(public Room $room, public User $user, public $message = null)
     {
-        $this->room = $room;
-        $this->user = $user;
+
     }
 
     /**
@@ -46,11 +41,15 @@ class NewRoomAlert extends Notification
      */
     public function toBroadcast($notifiable)
     {
+        $body = $this->message
+            ? $this->user->name.' signale un problème sur le chat '.$this->room->name . ' : ' . $this->message
+            : $this->user->name.' signale un problème sur le chat '.$this->room->name;
+
         return new BroadcastMessage([
             'data' => [
                 'room' => $this->room,
                 'created_at' => now()->format('d/m/Y H:i'),
-                'message' => $this->user->name.' signale un problème sur le chat '.$this->room->name,
+                'message' => $body,
             ],
         ]);
     }
@@ -63,10 +62,15 @@ class NewRoomAlert extends Notification
      */
     public function toArray($notifiable)
     {
+
+        $body = $this->message
+            ? $this->user->name.' signale un problème sur le chat '.$this->room->name . ' : ' . $this->message
+            : $this->user->name.' signale un problème sur le chat '.$this->room->name;
+
         return [
             'room' => $this->room,
             'created_at' => now()->format('d/m/Y H:i'),
-            'message' => $this->user->name.' signale un problème sur le chat '.$this->room->name,
+            'message' => $body,
         ];
     }
 }
