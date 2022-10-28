@@ -14,14 +14,14 @@ trait HasPicture
      * @param  \Illuminate\Http\UploadedFile  $photo
      * @return void
      */
-    public function updatePhoto(UploadedFile $photo, int $width = 300, int $height = 300)
+    public function updatePhoto(UploadedFile $photo, int $width = 350, int $height = 350)
     {
         tap($this->photo_path, function ($previous) use ($photo, $width, $height) {
             $image = Image::make($photo->getRealPath())->resize($width, $height, function ($constraint) {
                 $constraint->aspectRatio();
-            })->stream();
+            })->encode('webp')->stream();
 
-            $filename = uniqid().'.jpg';
+            $filename = uniqid().'.webp';
 
             Storage::disk('public')->put($this->getTable().'/'.$filename, $image);
 

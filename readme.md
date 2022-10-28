@@ -66,6 +66,7 @@ php artisan horizon
   	- light mode mal voyant
  	- moderation des noms de room
  	- Confirm alerte modération
+ 	- recherche de team ne fonctionne pas
  	- ✅ Vider le champ de réponse à la fin d'un extrait
  	- ✅ Flamme 18%
  	- ✅ Avatar dans le chat
