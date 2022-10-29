@@ -52,9 +52,9 @@ class RoomController extends Controller
     public function show($idOrSlug)
     {
 
-        $room = Room::where('id', $idOrSlug)
-                ->orWhere('slug', $idOrSlug)
-                ->firstOrFail();
+        $room = is_numeric($idOrSlug)
+            ? Room::find($idOrSlug)
+            : Room::whereSlug($idOrSlug)->firstOrFail();
 
         return Inertia::render('Rooms/Show', [
             'room' => [
