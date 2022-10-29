@@ -36,7 +36,6 @@ const modules = [Navigation, Lazy, A11y]
           spaceBetween: 30,
         },
       }"
-      loop
       navigation
     >
       <swiper-slide v-for="room in rooms.data" :key="room.id">
