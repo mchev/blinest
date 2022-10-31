@@ -58,6 +58,10 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- Ne pas afficher les messages précendents quand on arrive dans le chat
+ 	- Scores totaux, ne filtrer que les parties publiques
+ 	- Score max par room dans mon compte
+ 	- Affichage des réponses triées par type
  	- classement general responsive
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer

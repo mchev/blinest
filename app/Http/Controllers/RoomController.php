@@ -113,7 +113,7 @@ class RoomController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
             'password' => ['nullable'],
-            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:50'],
+            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:100'],
             'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
             'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
             'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
