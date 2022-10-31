@@ -14,13 +14,23 @@ class RankingController extends Controller
     {
         return Inertia::render('Rankings/Index', [
             'bestUsers' => User::select('id', 'name')
-                ->whereHas('scores')
-                ->withSum('scores as score', 'score')
+                ->withSum(['scores as score' => function($query) {
+                    $query->whereRelation('round', function($query) {
+                        $query->whereRelation('room', function($q) {
+                            $q->where('is_public', true);
+                        });
+                    });
+                }], 'score')
                 ->orderBy('score', 'DESC')
                 ->paginate(5),
             'bestTeams' => Team::select('id', 'name')
-                ->whereHas('scores')
-                ->withSum('scores as score', 'score')
+                ->withSum(['scores as score' => function($query) {
+                    $query->whereRelation('round', function($query) {
+                        $query->whereRelation('room', function($q) {
+                            $q->where('is_public', true);
+                        });
+                    });
+                }], 'score')
                 ->orderBy('score', 'DESC')
                 ->paginate(5),
         ]);

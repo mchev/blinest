@@ -16,11 +16,11 @@ const props = defineProps({
     <section>
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
-          <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-white">{{ __('Scores') }}</h2>
+          <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-white">{{ __('Best Scores') }}</h2>
         </div>
         <div>
           <section class="mb-4">
-            <h3 class="mb-4 text-3xl font-bold text-white">{{ __('Best players all categories') }}</h3>
+            <h3 class="mb-4 text-3xl font-bold text-white">Total joueurs en partie publiques</h3>
             <ul class="flex items-center justify-center">
               <li v-for="(user, index) in bestUsers.data" :key="user.id" class="flex flex-col items-center m-4">
                 <div class="relative">
@@ -33,7 +33,7 @@ const props = defineProps({
             </ul>
           </section>
           <section class="mb-4">
-            <h3 class="mb-4 text-3xl font-bold text-white">{{ __('Best teams all categories') }}</h3>
+            <h3 class="mb-4 text-3xl font-bold text-white">Total Teams en parties publiques</h3>
             <ul class="flex items-center justify-center">
               <li v-for="(team, index) in bestTeams.data" :key="team.id" class="flex flex-col items-center m-4">
                 <div class="relative">
