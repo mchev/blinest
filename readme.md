@@ -61,12 +61,12 @@ php artisan horizon
  	- Message informant du ban d'une personne
  	- Chiffres en texte dans les réponses
  	- Score max par room dans mon compte
- 	- Affichage des réponses triées par type
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
+ 	- ✅ Tri des types de réponse par ordre alphabétique
  	- ✅ Admin - users, provider column and better search
  	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)
  	- ✅ classement general responsive
