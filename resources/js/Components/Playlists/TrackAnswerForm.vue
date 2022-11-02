@@ -46,7 +46,6 @@ const submitForm = () => {
 const updateAnswer = () => {
   form.put(route('tracks.answers.update', [props.show, props.answer.id]), {
     preserveScroll: true,
-    preserveState: false,
     onSuccess: () => {
       close()
     },
@@ -56,7 +55,6 @@ const updateAnswer = () => {
 const storeAnswer = () => {
   form.post(route('tracks.answers.store', props.show), {
     preserveScroll: true,
-    preserveState: false,
     onSuccess: () => {
       close()
     },
