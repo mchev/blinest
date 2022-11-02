@@ -17,6 +17,7 @@ const props = defineProps({
       <div class="mx-auto py-8 px-4 text-center">
         <div class="mx-auto mb-8 lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold">{{ __('Best scores in public rooms') }}</h2>
+          <p class="text-sm">Les scores sur cette page sont actualisés toutes les 10 minutes.</p>
         </div>
         <div>
           <section class="mb-4">
