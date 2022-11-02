@@ -58,6 +58,11 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- Afficher la playlist concernée par la suggestion
+ 	- Pas de signalements de messages pour les modos
+ 	- Message informant du ban d'une personne
+ 	- Chiffres en texte dans les réponses
+ 	- Admin - users, provider column and better search
  	- Ne pas afficher les messages précendents quand on arrive dans le chat
  	- Scores totaux, ne filtrer que les parties publiques
  	- Score max par room dans mon compte

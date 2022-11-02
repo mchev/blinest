@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Score;
 use App\Models\Room;
 use App\Models\Team;
 use App\Models\User;
@@ -12,30 +13,58 @@ class RankingController extends Controller
 {
     public function index()
     {
+        
         return Inertia::render('Rankings/Index', [
-            'bestUsers' => User::select('id', 'name')
-                ->whereHas('scores')
-                ->withSum(['scores as score' => function($query) {
-                    $query->whereRelation('round', function($query) {
+            'bestUsers' => Score::whereRelation('round', function($query) {
                         $query->whereRelation('room', function($q) {
                             $q->where('is_public', true);
                         });
-                    });
-                }], 'score')
-                ->orderBy('score', 'DESC')
-                ->paginate(5),
-            'bestTeams' => Team::select('id', 'name')
-                ->whereHas('scores')
-                ->withSum(['scores as score' => function($query) {
-                    $query->whereRelation('round', function($query) {
+                    })
+                    ->selectRaw("SUM(score) as total, user_id")
+                    ->with('user')
+                    ->groupBy('user_id')
+                    ->orderBy('total', 'DESC')
+                    ->paginate(5),
+            'bestTeams' => Score::whereNotNull('team_id')
+                    ->whereRelation('round', function($query) {
                         $query->whereRelation('room', function($q) {
                             $q->where('is_public', true);
                         });
-                    });
-                }], 'score')
-                ->orderBy('score', 'DESC')
-                ->paginate(5),
+                    })
+                    ->selectRaw("SUM(score) as total, team_id")
+                    ->with('team')
+                    ->groupBy('team_id')
+                    ->orderBy('total', 'DESC')
+                    ->paginate(5)
+
         ]);
+
+        dd($scores);
+
+        // return Inertia::render('Rankings/Index', [
+        //     'bestUsers' => User::select('id', 'name')
+        //         ->whereHas('scores')
+        //         ->withSum(['scores as score' => function($query) {
+        //             $query->whereRelation('round', function($query) {
+        //                 $query->whereRelation('room', function($q) {
+        //                     $q->where('is_public', true);
+        //                 });
+        //             });
+        //         }], 'score')
+        //         ->orderBy('score', 'DESC')
+        //         ->paginate(5),
+        //     'bestTeams' => Team::select('id', 'name')
+        //         ->whereHas('scores')
+        //         ->withSum(['scores as score' => function($query) {
+        //             $query->whereRelation('round', function($query) {
+        //                 $query->whereRelation('room', function($q) {
+        //                     $q->where('is_public', true);
+        //                 });
+        //             });
+        //         }], 'score')
+        //         ->orderBy('score', 'DESC')
+        //         ->paginate(5),
+        // ]);
     }
 
     // Room Podium

@@ -14,34 +14,34 @@ const props = defineProps({
   <Head :title="__('Teams')" />
   <AppLayout>
     <section>
-      <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
-        <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
-          <h2 class="mb-4 text-4xl font-extrabold tracking-tight text-white">{{ __('Best Scores') }}</h2>
+      <div class="mx-auto py-8 px-4 text-center">
+        <div class="mx-auto mb-8 lg:mb-16">
+          <h2 class="mb-4 text-4xl font-extrabold">{{ __('Best scores in public rooms') }}</h2>
         </div>
         <div>
           <section class="mb-4">
-            <h3 class="mb-4 text-3xl font-bold text-white">Total joueurs en partie publiques</h3>
-            <ul class="flex items-center justify-center">
-              <li v-for="(user, index) in bestUsers.data" :key="user.id" class="flex flex-col items-center m-4">
+            <h3 class="mb-4 text-3xl font-bold">{{ __('Players') }}</h3>
+            <ul class="flex flex-wrap items-center justify-center">
+              <li v-for="(score, index) in bestUsers.data" :key="score.user.id" class="flex flex-col items-center m-4">
                 <div class="relative">
                   <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
-                  <img :src="user.photo" class="mb-2 h-20 w-20 rounded-full" />
+                  <img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" />
                 </div>
-                <span class="mb-1 font-bold">{{ user.name }}</span>
-                <span>{{ user.score }}<sup>PTS</sup></span>
+                <span class="mb-1 font-bold">{{ score.user.name }}</span>
+                <span>{{ score.total }}<sup>PTS</sup></span>
               </li>
             </ul>
           </section>
           <section class="mb-4">
-            <h3 class="mb-4 text-3xl font-bold text-white">Total Teams en parties publiques</h3>
-            <ul class="flex items-center justify-center">
-              <li v-for="(team, index) in bestTeams.data" :key="team.id" class="flex flex-col items-center m-4">
+            <h3 class="mb-4 text-3xl font-bold">{{ __('Teams') }}</h3>
+            <ul class="flex flex-wrap items-center justify-center">
+              <li v-for="(score, index) in bestTeams.data" :key="score.team.id" class="flex flex-col items-center m-4">
                 <div class="relative">
                   <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
-                  <img :src="team.photo" class="mb-2 h-20 w-20 rounded-full" />
+                  <img :src="score.team.photo" class="mb-2 h-20 w-20 rounded-full" />
                 </div>
-                <span class="mb-1 font-bold">{{ team.name }}</span>
-                <span>{{ team.score }}<sup>PTS</sup></span>
+                <span class="mb-1 font-bold">{{ score.team.name }}</span>
+                <span>{{ score.total }}<sup>PTS</sup></span>
               </li>
             </ul>
           </section>
