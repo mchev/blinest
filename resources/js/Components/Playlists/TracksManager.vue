@@ -96,6 +96,7 @@ const editAnswer = (track, answer = null) => {
 }
 
 const closeModal = () => {
+  selectedAnswer.value = null
   creatingAnswer.value = false
   editingAnswer.value = false
 }

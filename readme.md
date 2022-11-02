@@ -58,20 +58,20 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
- 	- ✅ Afficher la playlist concernée par la suggestion
- 	- ✅ Pas de signalements de messages pour les modos
  	- Message informant du ban d'une personne
  	- Chiffres en texte dans les réponses
- 	- ✅ Admin - users, provider column and better search
- 	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)
  	- Score max par room dans mon compte
  	- Affichage des réponses triées par type
- 	- ✅ classement general responsive
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
  	- sitemap
   	- light mode mal voyant
  	- moderation des noms de room
+ 	- ✅ Admin - users, provider column and better search
+ 	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)
+ 	- ✅ classement general responsive
+ 	- ✅ Afficher la playlist concernée par la suggestion
+ 	- ✅ Pas de signalements de messages pour les modos
  	- ✅ Confirm alerte modération and send comment
  	- ✅ recherche de team ne fonctionne pas
  	- ✅ Fix bug possibilité d'entrer une réponse après la fin du morceaux
