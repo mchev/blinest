@@ -63,7 +63,6 @@ php artisan horizon
  	- Message informant du ban d'une personne
  	- Chiffres en texte dans les réponses
  	- Admin - users, provider column and better search
- 	- Ne pas afficher les messages précedents quand on arrive dans le chat
  	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)
  	- Score max par room dans mon compte
  	- Affichage des réponses triées par type
