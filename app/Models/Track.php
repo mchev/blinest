@@ -23,7 +23,9 @@ class Track extends Model
 
     public function answers()
     {
-        return $this->hasMany(TrackAnswer::class);
+        return $this->hasMany(TrackAnswer::class)
+            ->join('answer_types', 'answer_type_id', '=', 'answer_types.id')
+            ->orderBy('answer_types.name');
     }
 
     public function scores()
