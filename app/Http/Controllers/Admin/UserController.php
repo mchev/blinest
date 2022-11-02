@@ -16,17 +16,20 @@ class UserController extends AdminController
     {
         return Inertia::render('Admin/Users/Index', [
             'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => User::orderByName()
+            'users' => User::query()
                 ->filter(Request::only('search', 'role', 'trashed'))
-                ->paginate(5)
+                ->orderByDesc('created_at')
+                ->paginate(10)
                 ->withQueryString()
                 ->through(fn ($user) => [
                     'id' => $user->id,
                     'name' => $user->name,
+                    'provider' => $user->provider,
                     'is_administrator' => $user->isAdministrator(),
                     'email' => $user->email,
                     'team' => $user->team,
-                    'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                    'photo' => $user->photo,
+                    'created_at' => $user->created_at->format('d/m/Y H:i'),
                     'deleted_at' => $user->deleted_at,
                 ]),
         ]);
