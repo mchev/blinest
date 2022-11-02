@@ -69,6 +69,7 @@ class NewSuggestion extends Notification
             'room' => [
                 'id' => $this->room->id,
                 'name' => $this->room->name,
+                'playlists' => implode(",", $this->room->playlists()->pluck('name')->toArray()),
             ],
             'user' => [
                 'id' => $this->user->id,
