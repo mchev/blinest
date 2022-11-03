@@ -35,7 +35,7 @@ const dispatch = () => {
     </template>
     <template #dropdown>
       <div class="p-2">
-        <input id="default-range" type="range" min="0" max="1" step="0.1" v-model="volume" class="h-2 w-full cursor-pointer appearance-none rounded-lg" />
+        <input id="default-range" type="range" min="0" max="1" step="0.01" v-model="volume" class="h-2 w-full cursor-pointer appearance-none rounded-lg" />
       </div>
     </template>
   </dropdown>

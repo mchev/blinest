@@ -58,6 +58,7 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- Message discord de suppression alors que l'extrait est encore présent
  	- Message signalant le ban d'une personne
  	- Chiffres en texte dans les réponses
  	- room avec password, faire l'identification
@@ -65,6 +66,7 @@ php artisan horizon
   	- light mode mal voyant
  	- moderation des noms de room
  	- Lien de partage rooms
+ 	- ✅ Réglage du volume plus fin
  	- ✅ Score max par room dans mon compte
  	- ✅ sitemap
  	- ✅ Fix prefilled new password input in my account
