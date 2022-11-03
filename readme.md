@@ -58,15 +58,16 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
- 	- Message informant du ban d'une personne
+ 	- Message signalant le ban d'une personne
  	- Chiffres en texte dans les réponses
- 	- Score max par room dans mon compte
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
- 	- ✅ sitemap
   	- light mode mal voyant
  	- moderation des noms de room
  	- Lien de partage rooms
+ 	- ✅ Score max par room dans mon compte
+ 	- ✅ sitemap
+ 	- ✅ Fix prefilled new password input in my account
  	- ✅ Tri des types de réponse par ordre alphabétique
  	- ✅ Admin - users, provider column and better search
  	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)

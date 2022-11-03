@@ -81,7 +81,7 @@ const deleteUser = () => {
             <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Name')" required />
             <text-input v-model="form.email" type="email" :error="form.errors.email" class="mb-4 w-full" :label="__('Email')" required />
             <file-input v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-            <text-input v-model="form.password" type="password" :error="form.errors.password" class="mb-4 w-full" :label="__('New password') + ' (' + __('Optional') + ')'" />
+            <text-input v-model="form.password" type="password" :error="form.errors.password" class="mb-4 w-full" :label="__('New password') + ' (' + __('Optional') + ')'" autocomplete="new-password" name="new-password" />
           </form>
           <template #footer>
             <loading-button :loading="form.processing" class="btn-primary ml-auto" form="editUserForm" type="submit">{{ __('Update') }}</loading-button>
