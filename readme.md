@@ -63,9 +63,10 @@ php artisan horizon
  	- Score max par room dans mon compte
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
- 	- sitemap
+ 	- ✅ sitemap
   	- light mode mal voyant
  	- moderation des noms de room
+ 	- Lien de partage rooms
  	- ✅ Tri des types de réponse par ordre alphabétique
  	- ✅ Admin - users, provider column and better search
  	- ✅ Scores totaux, ne filtrer que les parties publiques (+ cache)

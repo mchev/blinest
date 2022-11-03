@@ -30,6 +30,7 @@
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/spotify": "^4.1",
+        "spatie/laravel-sitemap": "^6.2",
         "symfony/http-client": "^6.1",
         "symfony/process": "^6.1",
         "symfony/sendinblue-mailer": "^6.1",

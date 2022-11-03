@@ -5,7 +5,6 @@ namespace App\Console;
 use App\Jobs\CleanEmptyPlaylists;
 use App\Jobs\CleanOldMessages;
 use App\Jobs\CleanRooms;
-use App\Jobs\ProcessRoomsMosaics;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,10 +18,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputTo(env('ADMIN_EMAIL'));
-        $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputTo(env('ADMIN_EMAIL'));
-        $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputTo(env('ADMIN_EMAIL'));
-        // $schedule->job(new ProcessRoomsMosaics)->dailyAt('07:00');
+        $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->command('sitemap:generate')->daily()->emailOutputOnFailure(env('ADMIN_EMAIL'));
         $schedule->command('ban:delete-expired')->everyMinute();
     }
 
