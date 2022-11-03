@@ -183,6 +183,18 @@ class User extends Authenticatable implements BannableContract
             ->selectRaw('created_at, user_id, SUM(score) as total');
     }
 
+    public function maxScoreByRoom(Room $room)
+    {
+        return $this->scores()
+            ->whereRelation('round', function ($query) use ($room) {
+                $query->where('room_id', $room->id)->where('round_id', '!=', $room->id);
+            })
+            ->groupBy('round_id')
+            ->selectRaw('SUM(score) as total')
+            ->orderByDesc('total')
+            ->limit(1);
+    }
+
     public function weekScoreByRoom(Room $room)
     {
         return $this->scoreByRoom($room)

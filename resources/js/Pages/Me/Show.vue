@@ -126,6 +126,7 @@ const deleteUser = () => {
             <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
+            <th class="px-6 pb-4 pt-6">{{ __('Score') }} Max</th>
           </tr>
           </thead>
           <tbody>
@@ -145,6 +146,11 @@ const deleteUser = () => {
             <td class="border-t border-neutral-500">
               <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
                 {{ score.total }}<sup class="ml-1">PTS</sup>
+              </Link>
+            </td>
+            <td class="border-t border-neutral-500">
+              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                {{ score.max }}<sup class="ml-1">PTS</sup>
               </Link>
             </td>
           </tr>
