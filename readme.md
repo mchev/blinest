@@ -64,7 +64,7 @@ php artisan horizon
  	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
  	- moderation des noms de room
- 	- Lien de partage rooms
+ 	- ✅ Lien de partage rooms
  	- ✅ Rooms Images : custom for pro
  	- ✅ Chiffres en texte dans les réponses
  	- ✅ Modification photos de team en fonction du score
