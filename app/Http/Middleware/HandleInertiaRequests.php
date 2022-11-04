@@ -52,8 +52,10 @@ class HandleInertiaRequests extends Middleware
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,
                         'permissions' => [
-                            'canUpdateRoomPicture' => $request->user()->canUpdateRoomPicture(),
+                            'canUploadImage' => $request->user()->canUploadImage(),
                         ],
+                        'pending_requests' => $request->user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
+                        'declined_requests' => $request->user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
                     ] : null,
                 ];
             },

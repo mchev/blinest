@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import pickBy from 'lodash/pickBy'
@@ -9,9 +9,10 @@ import throttle from 'lodash/throttle'
 
 const props = defineProps({
   teams: Object,
-  user: Object,
   filters: Object,
 })
+
+const user = usePage().props.value.auth.user
 
 const form = useForm({
   search: props.filters.search,

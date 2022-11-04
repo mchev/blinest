@@ -21,12 +21,6 @@ class TeamController extends Controller
                 ->with('owner')
                 ->withCount('members')
                 ->paginate(4),
-            'user' => [
-                'id' => Auth::user()->id,
-                'team' => Auth::user()->team,
-                'pending_requests' => Auth::user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
-                'declined_requests' => Auth::user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
-            ],
         ]);
     }
 
@@ -79,12 +73,6 @@ class TeamController extends Controller
                 'photo' => $member->photo,
                 'score' => $member->scores()->where('team_id', $team->id)->sum('score'),
             ])->sortByDesc('score'),
-            'user' => [
-                'id' => Auth::user()->id,
-                'team' => Auth::user()->team,
-                'pending_requests' => Auth::user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
-                'declined_requests' => Auth::user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
-            ],
         ]);
     }
 

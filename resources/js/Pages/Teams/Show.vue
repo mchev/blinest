@@ -7,16 +7,17 @@ import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
+import Tip from '@/Components/Tip.vue'
 import Share from '@/Components/Share.vue'
 
 const props = defineProps({
   team: Object,
   score: Number,
   members: Object,
-  user: Object,
 })
 
 const memberList = Object.values(props.members).sort((a, b) => b.score - a.score)
+const user = usePage().props.value.auth.user
 
 const form = useForm({
   _method: 'put',
@@ -60,7 +61,10 @@ const updateTeam = () => {
       <Card class="my-8" v-if="user.id === team.user_id">
         <form @submit.prevent="updateTeam">
           <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name"/>
-          <FileInput v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo"/>
+          <FileInput v-if="user.permissions.canUploadImage" v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo"/>
+          <Tip v-if="!user.permissions.canUploadImage">
+            Pour changer l'image de la team il faut minimum 3 mois d'ancienneté et un score total de 2000<sup>PTS</sup>.
+          </Tip>
           <LoadingButton type="submit" @click="updateTeam" :loading="form.processing" class="btn-primary mb-4 ml-auto">{{ __('Update') }}</LoadingButton>
         </form>
       </Card>
