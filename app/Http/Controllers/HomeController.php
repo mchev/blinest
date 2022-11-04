@@ -15,7 +15,6 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
             'top_rooms' => Room::isPublic()
-                ->with('owner')
                 ->whereHas('playlists')
                 ->whereNull('password')
                 ->withCount('rounds')
@@ -29,6 +28,7 @@ class HomeController extends Controller
                     'rooms' => $category->rooms()
                         ->whereHas('playlists')
                         ->whereNull('password')
+                        ->with('owner')
                         ->filter(Request::only('search'))
                         ->withCount('rounds')
                         ->paginate(30, ['*'], 'cat'.$category->id)
