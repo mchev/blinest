@@ -61,13 +61,13 @@ php artisan horizon
  	- Réglement / loi
  	- Message discord de suppression alors que l'extrait est encore présent
  	- Message signalant le ban d'une personne
- 	- Chiffres en texte dans les réponses
+ 	- ✅ Chiffres en texte dans les réponses
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
  	- moderation des noms de room
  	- Lien de partage rooms
- 	- Modification photos de team en fonction du score
+ 	- ✅ Modification photos de team en fonction du score
  	- ✅ Réglage du volume plus fin
  	- ✅ Score max par room dans mon compte
  	- ✅ sitemap
