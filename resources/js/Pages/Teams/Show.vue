@@ -107,14 +107,14 @@ const updateTeam = () => {
           </li>
         </ul>
       </Card>
-      <div class="my-6 flex items-center gap-6">
+      <div class="my-6 flex items-center gap-4">
         <button v-if="Object.values(members).find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
         <div v-else>
           <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>
           <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
           <button v-else type="button" @click="sendRequest(team)" class="btn-secondary mx-auto my-6">{{ __('Send a join request') }}</button>
         </div>
-        <Share :url="route('teams.show', team)" />
+        <Share :url="route('teams.show', team)" class="w-6" />
       </div>
     </div>
   </AppLayout>

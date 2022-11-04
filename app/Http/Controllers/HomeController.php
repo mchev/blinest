@@ -28,8 +28,8 @@ class HomeController extends Controller
                     'rooms' => $category->rooms()
                         ->whereHas('playlists')
                         ->whereNull('password')
-                        ->with('owner')
                         ->filter(Request::only('search'))
+                        ->with('owner')
                         ->withCount('rounds')
                         ->paginate(30, ['*'], 'cat'.$category->id)
                         ->withQueryString(),

@@ -7,6 +7,7 @@ import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
+import Share from '@/Components/Share.vue'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 import Player from './partials/Player.vue'
@@ -93,7 +94,8 @@ const listenRounds = () => {
       <div v-if="joined" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-4 flex items-center">
-            <h2 class="mr-8 text-xl font-bold">{{ room.name }}</h2>
+            <h2 class="mr-2 text-xl font-bold">{{ room.name }}</h2>
+            <Share :url="route('rooms.show', room.id)" class="w-5"/>
           </article>
 
           <div class="mb-4 md:mb-8">
