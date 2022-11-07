@@ -26,7 +26,7 @@ class ModerationController extends Controller
                     'created_at' => $message->created_at->format('d/m/Y H:i:s'),
                     'deleted_at' => $message->deleted_at->format('d/m/Y H:i:s'),
                     'user' => [
-                        'id' => $message->user->name,
+                        'id' => $message->user->id,
                         'name' => $message->user->name,
                         'ip' => $message->user_ip,
                         'photo' => $message->user->photo,
@@ -36,6 +36,18 @@ class ModerationController extends Controller
                         'voters' => $message->voters,
                     ],
                 ]),
+            'bannedUsers' => User::onlyBanned()->with('bans')->paginate(10)->through(fn ($user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'photo' => $user->photo,
+                'bans' => $user->bans->transform(fn ($ban) => [
+                    'id' => $ban->id,
+                    'comment' => $ban->comment,
+                    'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
+                    'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
+                    'banned_by' => User::find($ban->created_by_id)->name,
+                ])
+            ]),
         ]);
     }
 
