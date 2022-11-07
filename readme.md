@@ -57,6 +57,10 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- Notification des signalements?
+ 	- Bouton pour forcer le redémarrage?
+ 	- Rooms qui se bloquent
+ 	- Certified rooms
  	- Réglement / loi
  	- Message discord de suppression alors que l'extrait est encore présent
  	- Message signalant le ban d'une personne

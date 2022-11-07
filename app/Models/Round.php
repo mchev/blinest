@@ -84,7 +84,7 @@ class Round extends Model
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
 
-            if (@file_get_contents($track->preview_url)) {
+            // if (@file_get_contents($track->preview_url)) {
 
                 // Event
                 broadcast(new TrackPlayed($this, $track));
@@ -92,25 +92,24 @@ class Round extends Model
                 // Job
                 ProcessTrackPlayed::dispatch($this)
                     ->delay(now()->addSeconds($this->room->track_duration));
-            } else {
+            // } else {
 
-                // DELETING TRACK - NOT READABLE
+            //     // DELETING TRACK - NOT READABLE
 
-                foreach ($track->playlist->rooms()->isPublic()->get() as $room) {
-                    if ($room->discord_webhook_url) {
-                        SendDiscordNotification::dispatch(
-                            $room,
-                            'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
-                            'danger'
-                        );
-                    }
-                }
+            //     foreach ($track->playlist->rooms()->isPublic()->get() as $room) {
+            //         if ($room->discord_webhook_url) {
+            //             SendDiscordNotification::dispatch(
+            //                 $room,
+            //                 'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
+            //                 'danger'
+            //             );
+            //         }
+            //     }
 
-                $track->answers()->delete();
-                $track->delete();
+            //     $track->delete();
 
-                $this->playNextTrack();
-            }
+            //     $this->playNextTrack();
+            // }
         }
     }
 
