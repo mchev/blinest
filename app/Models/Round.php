@@ -86,11 +86,11 @@ class Round extends Model
 
             // if (@file_get_contents($track->preview_url)) {
 
-                // Event
-                broadcast(new TrackPlayed($this, $track));
+            // Event
+            broadcast(new TrackPlayed($this, $track));
 
-                // Job
-                ProcessTrackPlayed::dispatch($this)
+            // Job
+            ProcessTrackPlayed::dispatch($this)
                     ->delay(now()->addSeconds($this->room->track_duration));
             // } else {
 

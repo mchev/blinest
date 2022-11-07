@@ -244,11 +244,12 @@ class User extends Authenticatable implements BannableContract
     }
 
     // User older than 3 months and 2000 score min
-    public function canUploadImage() :bool
+    public function canUploadImage(): bool
     {
-        if($this->created_at < now()->subMonths(3) && floatval($this->scores()->sum('score')) > 2000) {
+        if ($this->created_at < now()->subMonths(3) && floatval($this->scores()->sum('score')) > 2000) {
             return true;
         }
+
         return false;
     }
 

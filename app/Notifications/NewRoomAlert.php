@@ -19,7 +19,6 @@ class NewRoomAlert extends Notification
      */
     public function __construct(public Room $room, public User $user, public $message = null)
     {
-
     }
 
     /**
@@ -42,7 +41,7 @@ class NewRoomAlert extends Notification
     public function toBroadcast($notifiable)
     {
         $body = $this->message
-            ? $this->user->name.' signale un problème sur le chat '.$this->room->name . ' : ' . $this->message
+            ? $this->user->name.' signale un problème sur le chat '.$this->room->name.' : '.$this->message
             : $this->user->name.' signale un problème sur le chat '.$this->room->name;
 
         return new BroadcastMessage([
@@ -62,9 +61,8 @@ class NewRoomAlert extends Notification
      */
     public function toArray($notifiable)
     {
-
         $body = $this->message
-            ? $this->user->name.' signale un problème sur le chat '.$this->room->name . ' : ' . $this->message
+            ? $this->user->name.' signale un problème sur le chat '.$this->room->name.' : '.$this->message
             : $this->user->name.' signale un problème sur le chat '.$this->room->name;
 
         return [

@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 
 trait Sluggable
 {
-
     /**
      * Boot the sluggable trait for a model.
      *
@@ -24,30 +23,25 @@ trait Sluggable
         });
     }
 
-    public function slugify($value) {
-
+    public function slugify($value)
+    {
         if (static::whereSlug($slug = Str::slug($value))->exists()) {
-
             $slug = $this->incrementSlug($slug);
         }
 
         return $slug;
     }
 
-    public function incrementSlug($slug) {
-
+    public function incrementSlug($slug)
+    {
         $original = $slug;
 
         $count = 0;
 
         while (static::whereSlug($slug)->exists()) {
-
-            $slug = "{$original}-" . $count++;
+            $slug = "{$original}-".$count++;
         }
 
         return $slug;
-
     }
-
-
 }

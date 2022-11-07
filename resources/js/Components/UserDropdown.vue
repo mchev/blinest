@@ -44,9 +44,14 @@ const isUrl = (...urls) => {
             {{ __('Playlists') }}
           </Link>
         </li>
-        <li>
-          <Link v-if="user.admin" :href="route('admin.dashboard')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
+        <li v-if="user.admin">
+          <Link :href="route('admin.dashboard')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
             {{ __('Administration') }}
+          </Link>
+        </li>
+        <li v-if="user.is_public_moderator">
+          <Link :href="route('moderation.index')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
+            {{ __('Modération') }}
           </Link>
         </li>
         <li>

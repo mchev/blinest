@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Room;
+use App\Models\User;
 use App\Rules\Reserved;
 use App\Services\SendinblueService;
 use Illuminate\Notifications\DatabaseNotification;
@@ -39,7 +39,7 @@ class UserController extends Controller
                     'name' => $score->name,
                     'date' => $score->updated_at->diffForHumans(),
                     'total' => $score->total,
-                    'max' => $user->maxScoreByRoom(Room::find($score->room_id))->first()?->total ?? '-'
+                    'max' => $user->maxScoreByRoom(Room::find($score->room_id))->first()?->total ?? '-',
                 ]),
             ],
         ]);

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
-use App\Models\User;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -49,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                         'name' => $request->user()->name,
                         'photo' => $request->user()->photo,
                         'admin' => $request->user()->isAdministrator(),
+                        'is_public_moderator' => $request->user()->isPublicModerator(),
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,
                         'permissions' => [

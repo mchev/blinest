@@ -62,4 +62,5 @@ class Message extends Model
 
         return $this->created_at->diffForHumans();
     }
+
 }

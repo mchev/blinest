@@ -37,6 +37,14 @@ Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'che
 
 Route::middleware('auth')->group(function () {
 
+    // Public moderation group
+    Route::middleware('auth.moderator')->group(function () {
+        Route::get('/moderation', [ModerationController::class, 'index'])
+            ->name('moderation.index');
+        Route::put('moderation/messages/{message}/restore', [ModerationController::class, 'restoreMessage'])
+            ->name('moderation.messages.restore');
+    });
+
     // Me
     Route::get('me', [UserController::class, 'show'])
         ->name('me');

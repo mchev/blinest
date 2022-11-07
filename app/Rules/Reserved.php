@@ -38,11 +38,10 @@ class Reserved implements InvokableRule
         }
 
         // Bad words filter
-        foreach(trans('bad-words') as $badword) {
-            if(stripos(strtolower($value), $badword) !== false) {
+        foreach (trans('bad-words') as $badword) {
+            if (stripos(strtolower($value), $badword) !== false) {
                 $fail('validation.reserved')->translate();
             }
         }
-
     }
 }

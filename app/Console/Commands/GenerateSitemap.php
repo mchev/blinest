@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Spatie\Sitemap\SitemapGenerator;
 use Illuminate\Console\Command;
+use Spatie\Sitemap\SitemapGenerator;
 
 class GenerateSitemap extends Command
 {

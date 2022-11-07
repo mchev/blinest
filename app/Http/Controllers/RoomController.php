@@ -51,7 +51,6 @@ class RoomController extends Controller
 
     public function show($idOrSlug)
     {
-
         $room = is_numeric($idOrSlug)
             ? Room::find($idOrSlug)
             : Room::whereSlug($idOrSlug)->firstOrFail();
@@ -60,7 +59,7 @@ class RoomController extends Controller
             'room' => [
                 'id' => $room->id,
                 'name' => $room->name,
-                'url' => url('/rooms/' . $room->slug),
+                'url' => url('/rooms/'.$room->slug),
                 'track_duration' => $room->track_duration,
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
@@ -69,7 +68,6 @@ class RoomController extends Controller
                 'tracks_count' => $room->tracks()->count(),
             ],
         ]);
-
     }
 
     public function create()
@@ -130,7 +128,7 @@ class RoomController extends Controller
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
 
         if (Request::file('photo')) {
-            if($room->is_public || $room->is_pro || Auth()->user()->canUpdateRoomPicture()) {
+            if ($room->is_public || $room->is_pro || Auth()->user()->canUpdateRoomPicture()) {
                 $room->updatePhoto(Request::file('photo'));
             }
         }
@@ -172,7 +170,6 @@ class RoomController extends Controller
 
     public function alert(Room $room)
     {
-
         Request::validate([
             'message' => ['nullable', 'string', 'max:255'],
         ]);

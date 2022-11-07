@@ -158,7 +158,7 @@ class RoundController extends Controller
             return response()->json([
                 'good_answers' => $good_answers,
                 'message' => $message,
-                'input' => $input
+                'input' => $input,
             ], 200);
         }
     }

@@ -19,13 +19,12 @@ return new class extends Migration
         });
 
         Room::chunk(500, function ($rooms) {
-            foreach($rooms as $room) {
+            foreach ($rooms as $room) {
                 $room->update([
                     'slug' => $room->slugify($room->name),
                 ]);
-            };
+            }
         });
-
     }
 
     /**
