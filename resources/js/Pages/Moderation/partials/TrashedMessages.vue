@@ -15,9 +15,6 @@ const restoreMessage = (message) => {
 </script>
 <template>
   <Card>
-    <template #header>
-      <h2 class="font-bold">Messages supprimés</h2>
-    </template>
     <div class="overflow-x-auto">
       <table class="w-full whitespace-nowrap">
         <thead>

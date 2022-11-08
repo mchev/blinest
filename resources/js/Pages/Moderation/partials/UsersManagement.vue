@@ -38,10 +38,6 @@ const banningUser = (user) => {
 </script>
 <template>
 	<Card>
-		<template #header>
-			<h3 class="font-bold">Gestion des utilisateurs</h3>
-		</template>
-
 		<dropdown placement="bottom-start" class="mb-2 pb-2" @closed="search = ''">
 			<template #default>
 				<text-input v-model="search" prepend-icon="search" append-icon="cheveron-down" :loading="searching" placeholder="Chercher un utilisateur" />

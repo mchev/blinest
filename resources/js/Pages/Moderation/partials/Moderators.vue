@@ -9,9 +9,6 @@ const props = defineProps({
 </script>
 <template>
   <Card>
-    <template #header>
-      <h2 class="font-bold">Modérateurs officiels</h2>
-    </template>
     <ul>
       <li v-for="room in moderators" :key="room.id" class="flex flex-col mb-4 border-b border-neutral-600">
         {{ room.name }}

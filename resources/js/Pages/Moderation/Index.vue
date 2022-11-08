@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
@@ -15,20 +16,35 @@ const props = defineProps({
   bannedUsers: Object,
 })
 
-const form = useForm({})
+const tab = ref('trashedMessages')
 </script>
 <template>
   <Head :title="__('Moderation')" />
   <AppLayout>
+    <div class="flex-grow">
     <Stats :stats="stats" />
-    <UsersManagement class="my-4"/>
 
-    <div class="mb-4 flex w-full flex-wrap gap-4">
-      <TrashedMessages class="lg:w-2/3" :trashedMessages="trashedMessages" />
-      <BannedUsers class="flex-grow" :bannedUsers="bannedUsers" />
+    <div>
+      <ul class="flex flex-wrap border-b border-neutral-700 text-center text-sm font-medium text-neutral-400">
+        <li class="mr-2">
+          <button type="button" @click="tab = 'trashedMessages'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'trashedMessages' }">Messages supprimés ({{ trashedMessages.total}})</button>
+        </li>
+        <li class="mr-2">
+          <button type="button" @click="tab = 'bannedUsers'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'bannedUsers' }">Utilisateurs bannis ({{ bannedUsers.total}})</button>
+        </li>
+        <li class="mr-2">
+          <button type="button" @click="tab = 'userManagement'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'userManagement' }">Gestion des utilisateurs</button>
+        </li>
+        <li class="mr-2">
+          <button type="button" @click="tab = 'moderators'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'moderators' }">Modérateurs</button>
+        </li>
+      </ul>
+
+      <TrashedMessages v-show="tab === 'trashedMessages'" class="rounded-t-none" :trashedMessages="trashedMessages" />
+      <BannedUsers v-show="tab === 'bannedUsers'" class="rounded-t-none" :bannedUsers="bannedUsers" />
+      <UsersManagement v-show="tab === 'userManagement'" class="rounded-t-none" />
+      <Moderators v-show="tab === 'moderators'" class="rounded-t-none" :moderators="moderators" />
     </div>
-    <div class="flex w-full flex-wrap gap-4">
-      <Moderators class="flex-grow" :moderators="moderators" />
-    </div>
+  </div>
   </AppLayout>
 </template>

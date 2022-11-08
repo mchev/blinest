@@ -15,9 +15,6 @@ const restoreMessage = (user) => {
 </script>
 <template>
   <Card>
-    <template #header>
-      <h2 class="font-bold">Utilisateurs bannis</h2>
-    </template>
     <table class="w-full whitespace-nowrap">
       <thead>
         <tr class="text-left font-bold">
