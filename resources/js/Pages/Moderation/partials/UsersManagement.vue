@@ -54,7 +54,7 @@ const banningUser = (user) => {
 		</dropdown>
 
 		<div v-if="selectedUser">
-			<div class="flex w-full justify-between mb-4">
+			<div class="mb-4 flex w-full justify-between">
 				<div class="flex items-center gap-2">
 					<img :src="selectedUser.photo" class="h-10 w-10 rounded-full" :alt="selectedUser.name" />
 					{{ selectedUser.name }}
@@ -62,20 +62,19 @@ const banningUser = (user) => {
 				<span class="text-sm text-neutral-500">Inscription le {{ selectedUser.created_at }}</span>
 			</div>
 			<div class="mb-4 flex w-full gap-4">
-				<div class="rounded border p-2 md:w-1/2">
-					<h3>Derniers messages</h3>
+				<div class="rounded border border-neutral-600 p-2 md:w-1/2">
+					<h3 class="mb-2 uppercase">Derniers messages</h3>
 					<ul class="flex flex-col text-xs">
-						<li v-for="message in selectedUser.latest_messages" :key="message.id" class="flex items-center gap-2">
-							<span class="break-all"
-								><span class="italic">{{ message.time }}:</span> {{ message.body }}</span
-							>
+						<li v-for="message in selectedUser.latest_messages" :key="message.id" class="mb-2 flex flex-col">
+							<span class="text-neutral-500">{{ message.time }} sur {{ message.room.name }} : <span v-if="message.deleted_at" class="text-red-500">[Supprimé]</span> [{{ message.reports }} signalements]</span>
+							<span class="break-word">{{ message.body }}</span>
 						</li>
 					</ul>
 				</div>
-				<div class="rounded border p-2 md:w-1/2">
-					<h3>Bans</h3>
-					<ul class="my-2 flex flex-col">
-						<li v-for="ban in selectedUser.bans" :key="ban.id" class="flex flex-col border-b border-neutral-600 p-2">
+				<div class="rounded border border-neutral-600 p-2 md:w-1/2">
+					<h3 class="mb-2 uppercase">Historique des bans</h3>
+					<ul v-if="selectedUser.bans.length" class="my-2 flex flex-col">
+						<li v-for="ban in selectedUser.bans" :key="ban.id" class="flex flex-col border border-neutral-600-b border border-neutral-600-neutral-600 p-2">
 							<span class="text-xs text-neutral-500">Banni par : {{ ban.banned_by }}</span>
 							<span class="text-xs text-neutral-500">le : {{ ban.created_at }}</span>
 							<span class="text-xs text-neutral-500">Raison : {{ ban.comment }}</span>
@@ -84,6 +83,9 @@ const banningUser = (user) => {
 		 -->
 						</li>
 					</ul>
+					<div v-else class="text-sm text-neutral-500">
+						Aucun
+					</div>
 				</div>
 			</div>
 			<div class="flex items-center gap-2">

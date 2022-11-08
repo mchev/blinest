@@ -35,6 +35,11 @@ class Message extends Model
         return $this->morphTo();
     }
 
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'messagable_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class)

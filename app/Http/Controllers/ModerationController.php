@@ -69,7 +69,7 @@ class ModerationController extends Controller
             'photo' => $user->photo,
             'created_at' => $user->created_at->format('d/m/Y H:i'),
             'reports_count' => $user->messages()->whereHas('downvotes')->count(),
-            'latest_messages' => $user->messages()->withTrashed()->orderByDesc('created_at')->limit(10)->get(),
+            'latest_messages' => $user->messages()->withTrashed()->orderByDesc('created_at')->with('room')->limit(10)->get(),
             'bans' => $user->bans->transform(fn ($ban) => [
                 'id' => $ban->id,
                 'comment' => $ban->comment,
