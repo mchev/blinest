@@ -215,7 +215,7 @@ class User extends Authenticatable implements BannableContract
     // CHAT
     public function messages()
     {
-        return $this->morphMany(Message::class, 'messagable');
+        return $this->hasMany(Message::class, 'user_id');
     }
 
     public function setPasswordAttribute($password)

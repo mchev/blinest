@@ -47,7 +47,6 @@ php artisan horizon
 	- Fix iphone sound
 	- Attente pendant que le morceau est en lecture
 	- Room control
-	- Modération (page)
 	- SEO
 	- Chat emojis
 	- Betters answers messages (wrong, almost, right)
@@ -57,6 +56,7 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
+ 	- Modération (page)
  	- Notification des signalements?
  	- Bouton pour forcer le redémarrage?
  	- Rooms qui se bloquent
@@ -68,13 +68,13 @@ php artisan horizon
  	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
  	- moderation des noms de room
+ 	- sitemap
  	- ✅ Lien de partage rooms
  	- ✅ Rooms Images : custom for pro
  	- ✅ Chiffres en texte dans les réponses
  	- ✅ Modification photos de team en fonction du score
  	- ✅ Réglage du volume plus fin
  	- ✅ Score max par room dans mon compte
- 	- ✅ sitemap
  	- ✅ Fix prefilled new password input in my account
  	- ✅ Tri des types de réponse par ordre alphabétique
  	- ✅ Admin - users, provider column and better search

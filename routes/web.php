@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
             ->name('moderation.index');
         Route::put('moderation/messages/{message}/restore', [ModerationController::class, 'restoreMessage'])
             ->name('moderation.messages.restore');
+        Route::get('moderation/users/{user}/informations', [ModerationController::class, 'fetchUserInformations'])
+            ->name('moderation.users.informations');
     });
 
     // Me
