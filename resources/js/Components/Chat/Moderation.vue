@@ -5,6 +5,7 @@ import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
+import BanForm from '@/Components/Moderation/BanForm.vue'
 
 const props = defineProps({
   message: Object,
@@ -13,40 +14,15 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const form = useForm({
-  comment: '',
-  expired_at: null
-})
 const user = usePage().props.value.auth.user
 const authorIsModerator = props.room.moderators.find((x) => x.id === props.message.user.id)
 const userIsPublicModerator = usePage().props.value.publicModerators.find((x) => x.id === user.id)
 const show = ref(true)
 const showingBanForm = ref(false)
-const reasons = [
-  'Pseudonyme inapproprié.',
-  'Langage inapproprié.',
-  'Propos injurieux, sexistes ou racistes.',
-  'Menace ou harcèle d\'autres joueurs.',
-  'Donne les réponses dans le chat.',
-  'Utilise un nouveau compte alors que le joueur a déjà été banni.',
-  'Troll, spam.',
-  'Triche.',
-]
 
 const deleteMessage = () => {
   axios.delete(`/moderation/messages/${props.message.id}`).then((response) => {
     close()
-  })
-}
-
-// TODO
-const banUser = () => {
-  form.post(`/moderation/users/${props.message.user.id}/ban`, {
-    preserveScroll: true,
-    preserveState: true,
-    onSuccess: () => {
-      close()
-    }
   })
 }
 
@@ -58,9 +34,9 @@ const close = () => {
   <Modal :show="show" @close="close">
     <Card>
       <template #header>
-        <div class="flex items-center justify-between w-full">
+        <div class="flex w-full items-center justify-between">
           <h2>{{ __('Moderation') }}</h2>
-          <span class="italic text-sm pr-2">{{ message.user.name }}</span>
+          <span class="pr-2 text-sm italic">{{ message.user.name }}</span>
         </div>
       </template>
 
@@ -76,19 +52,7 @@ const close = () => {
         <button class="btn-secondary btn-sm" @click="close">{{ __('Cancel') }}</button>
       </div>
 
-      <div v-show="showingBanForm" class="p-4 text-sm m-4 border rounded">
-        <SelectInput v-model="form.expired_at" class="mb-2" :label="__('Duration')">
-          <option value="+1 day">{{ __('One day') }}</option>
-          <option value="+1 week">{{ __('One week') }}</option>
-          <option value="+1 month">{{ __('One month') }}</option>
-          <option :value="null">{{ __('Unlimited') }}</option>
-        </SelectInput>
-        <SelectInput v-model="form.comment" :label="__('Reason')">
-          <option v-for="reason in reasons" :value="reason">{{ __(reason) }}</option>
-        </SelectInput>
-        <button v-if="!authorIsModerator" class="btn-danger btn-sm my-4" @click="banUser">{{ __('Confirm and ban') }} {{ message.user.name }}</button>
-      </div>
-
+      <BanForm v-show="showingBanForm" :user="message.user" />
     </Card>
   </Modal>
 </template>

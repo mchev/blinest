@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
     ->name('rounds.track.check');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'forbid-banned-user')->group(function () {
 
     // Public moderation group
     Route::middleware('auth.moderator')->group(function () {

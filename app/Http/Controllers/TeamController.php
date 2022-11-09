@@ -16,7 +16,8 @@ class TeamController extends Controller
     {
         return Inertia::render('Teams/Index', [
             'filters' => $request->all('search'),
-            'teams' => Team::orderBy('created_at', 'DESC')
+            'teams' => Team::whereHas('owner')
+                ->orderBy('created_at', 'DESC')
                 ->filter($request->only('search'))
                 ->with('owner')
                 ->withCount('members')
