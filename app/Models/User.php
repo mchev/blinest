@@ -62,7 +62,10 @@ class User extends Authenticatable implements BannableContract
 
     public function team()
     {
-        return $this->belongsTo(Team::class, 'team_id');
+        return $this->belongsTo(Team::class, 'team_id')
+            ->whereRelation('owner', function($query) {
+                $query->withoutBanned();
+            });
     }
 
     public function hasTeam()
