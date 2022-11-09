@@ -35,17 +35,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
     ->name('rounds.track.check');
 
-Route::middleware('auth', 'forbid-banned-user')->group(function () {
-
-    // Public moderation group
-    Route::middleware('auth.moderator')->group(function () {
-        Route::get('/moderation', [ModerationController::class, 'index'])
-            ->name('moderation.index');
-        Route::put('moderation/messages/{message}/restore', [ModerationController::class, 'restoreMessage'])
-            ->name('moderation.messages.restore');
-        Route::get('moderation/users/{user}/informations', [ModerationController::class, 'fetchUserInformations'])
-            ->name('moderation.users.informations');
-    });
+Route::middleware('auth')->group(function () {
 
     // Me
     Route::get('me', [UserController::class, 'show'])
@@ -58,6 +48,20 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
         ->name('users.update');
     Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
+
+});
+
+Route::middleware('auth', 'forbid-banned-user')->group(function () {
+
+    // Public moderation group
+    Route::middleware('auth.moderator')->group(function () {
+        Route::get('/moderation', [ModerationController::class, 'index'])
+            ->name('moderation.index');
+        Route::put('moderation/messages/{message}/restore', [ModerationController::class, 'restoreMessage'])
+            ->name('moderation.messages.restore');
+        Route::get('moderation/users/{user}/informations', [ModerationController::class, 'fetchUserInformations'])
+            ->name('moderation.users.informations');
+    });
 
     // Teams
     Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);

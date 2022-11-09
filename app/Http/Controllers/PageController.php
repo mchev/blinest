@@ -17,4 +17,16 @@ class PageController extends Controller
 
         abort('404');
     }
+
+    public function bannedUser()
+    {
+        $ban = auth()->user()->bans()->latest()->first();
+
+        return Inertia::render('Pages/Banned', [
+            'ban' => [
+                'comment' => $ban->comment,
+                'expired_at' => $ban->expired_at ? $ban->expired_at->diffForHumans() : 'jamais',
+            ],
+        ]);
+    }
 }

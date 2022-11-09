@@ -4,10 +4,12 @@ import { useForm } from '@inertiajs/inertia-vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Card from '@/Components/Card.vue'
+import BanForm from '@/Components/Moderation/BanForm.vue'
 import debounce from 'lodash/debounce'
 
 const search = ref('')
 const searching = ref(false)
+const banningUser = ref(false)
 const users = ref(null)
 const selectedUser = ref(null)
 const form = useForm({
@@ -32,9 +34,11 @@ const selectUser = (user) => {
 	})
 }
 
-const banningUser = (user) => {
-	alert('Bientôt disponible')
+const userHasBeenBanned = () => {
+	banningUser.value = false
+	selectUser(selectedUser.value)
 }
+
 </script>
 <template>
 	<Card>
@@ -62,7 +66,7 @@ const banningUser = (user) => {
 				<span class="text-sm text-neutral-500">Inscription le {{ selectedUser.created_at }}</span>
 			</div>
 			<div class="mb-4 flex w-full gap-4">
-				<div class="rounded border border-neutral-600 p-2 md:w-1/2">
+				<div v-if="selectedUser.latest_messages" class="rounded border border-neutral-600 p-2 md:w-1/2">
 					<h3 class="mb-2 uppercase">Derniers messages</h3>
 					<ul class="flex flex-col text-xs">
 						<li v-for="message in selectedUser.latest_messages" :key="message.id" class="mb-2 flex flex-col">
@@ -71,10 +75,10 @@ const banningUser = (user) => {
 						</li>
 					</ul>
 				</div>
-				<div class="rounded border border-neutral-600 p-2 md:w-1/2">
+				<div v-if="selectedUser.bans" class="rounded border border-neutral-600 p-2 md:w-1/2">
 					<h3 class="mb-2 uppercase">Historique des bans</h3>
 					<ul v-if="selectedUser.bans.length" class="my-2 flex flex-col">
-						<li v-for="ban in selectedUser.bans" :key="ban.id" class="flex flex-col border border-neutral-600-b border border-neutral-600-neutral-600 p-2">
+						<li v-for="ban in selectedUser.bans" :key="ban.id" class="flex flex-col mb-2 border border-neutral-600-b border border-neutral-600-neutral-600 p-2">
 							<span class="text-xs text-neutral-500">Banni par : {{ ban.banned_by }}</span>
 							<span class="text-xs text-neutral-500">le : {{ ban.created_at }}</span>
 							<span class="text-xs text-neutral-500">Raison : {{ ban.comment }}</span>
@@ -90,8 +94,9 @@ const banningUser = (user) => {
 			</div>
 			<div class="flex items-center gap-2">
 				<button class="btn-secondary btn-sm" @click="selectedUser = null">Fermer</button>
-				<button class="btn-danger btn-sm" @click="banningUser(user)">Bannir</button>
+				<button v-show="!banningUser" class="btn-danger btn-sm" @click="banningUser = true">Bannir</button>
 			</div>
+			<BanForm v-show="banningUser" :user="selectedUser" @userBanned="userHasBeenBanned"/>
 		</div>
 	</Card>
 </template>

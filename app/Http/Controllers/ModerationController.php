@@ -70,7 +70,7 @@ class ModerationController extends Controller
             'created_at' => $user->created_at->format('d/m/Y H:i'),
             'reports_count' => $user->messages()->whereHas('downvotes')->count(),
             'latest_messages' => $user->messages()->withTrashed()->orderByDesc('created_at')->with('room')->limit(10)->get(),
-            'bans' => $user->bans->transform(fn ($ban) => [
+            'bans' => $user->bans()->orderByDesc('created_at')->get()->transform(fn ($ban) => [
                 'id' => $ban->id,
                 'comment' => $ban->comment,
                 'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
@@ -106,6 +106,9 @@ class ModerationController extends Controller
                     'expired_at' => Request::input('expired_at') ?? null,
                     'comment' => Request::input('comment') ?? null,
                 ]);
+                return redirect()->back()->with('success', $user->name . ' a été banni.');
+            } else {
+                return redirect()->back()->with('error', 'Impossible de bannir un modérateur');
             }
         }
 

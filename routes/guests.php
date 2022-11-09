@@ -5,6 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SocialController;
 
+// Banned users
+Route::get('/user/banned', [PageController::class, 'bannedUser']);
+
 // Auth Social Providers
 
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
