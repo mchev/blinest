@@ -6,6 +6,7 @@
 @import 'buttons';
 @import 'form';
 @import 'transitions';
+@import 'fonts';
 
 .ribbon {
   /* adjust the below to control the shape */

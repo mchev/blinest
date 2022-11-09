@@ -63,7 +63,7 @@ php artisan horizon
  	- Certified rooms
  	- Réglement / loi
  	- Message discord de suppression alors que l'extrait est encore présent
- 	- Message signalant le ban d'une personne
+ 	- Message dans le chat signalant le ban d'une personne
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
