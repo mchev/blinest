@@ -22,6 +22,7 @@ if (! function_exists('sanitizeString')) {
             'the ',
             'and ',
             '& ',
+            'et ',
         ];
 
         // Remove all between parenthesis
