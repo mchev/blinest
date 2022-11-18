@@ -73,14 +73,14 @@ class RoundController extends Controller
             foreach ($remainingAnswers as $answer) {
 
                 $value = sanitizeString($answer->value);
-                $answerWords = explode(' ', $value);
+                $answerWords = array_unique(explode(' ', $value));
                 $goodWords = [];
                 $score = 0;
 
                 // Checking all words
                 foreach($answerWords as $word) {
                     foreach($userWords as $userWord) {
-                        if(levenshtein($userWord, $word) < 1.5) {
+                        if(levenshtein($userWord, $word) < 1.55) {
                             $goodWords[] = $word;
                         }
                     }
@@ -171,5 +171,5 @@ class RoundController extends Controller
 
         }
     }
-    
+
 }
