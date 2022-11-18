@@ -80,12 +80,13 @@ class RoundController extends Controller
                 // Checking all words
                 foreach($answerWords as $word) {
                     foreach($userWords as $userWord) {
-                        $distance = levenshtein($userWord, $word);
-                        if($distance < 1.5) {
+                        if(levenshtein($userWord, $word) < 1.5) {
                             $goodWords[] = $word;
                         }
                     }
                 }
+                
+                $goodWords = array_unique($goodWords);
 
                 // All good
                 if(count($answerWords) === count($goodWords)) {
@@ -124,7 +125,7 @@ class RoundController extends Controller
                     ]);
                 }
 
-                if(count($goodWords) >= (count($answerWords) / 2)) {
+                elseif(count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;
                 }
 
@@ -166,6 +167,7 @@ class RoundController extends Controller
                 'words' => $userWords,
                 'good_answers' => $goodAnswers,
                 'message' => $message,
+                'good' => $goodWords,
             ], 200);
 
         }
