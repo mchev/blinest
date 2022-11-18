@@ -31,7 +31,6 @@ onMounted(() => {
       scores.value.push(e.score)
       let index = userList.value.findIndex((x) => x.id === e.score.user_id)
       userList.value[index].score.total = e.score.total
-      userList.value[index].score.points = e.score.points
       userList.value[index].score.answers.push(...e.score.answers)
       userList.value.sort((a, b) => b.score.total - a.score.total)
     })

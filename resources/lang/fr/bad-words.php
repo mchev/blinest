@@ -92,6 +92,7 @@ return [
     'mongole',
     'mongolien',
     'mongolienne',
+    'nazi',
     'nichon',
     'nique',
     'niquer',

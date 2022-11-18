@@ -63,13 +63,13 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
                   <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
                 </svg>
               </Transition>
-              <span class="font-bold">{{ userCounter }}</span>
+              <span class="font-semibold">{{ userCounter }}</span>
             </div>
           </div>
         </div>
       </div>
                 <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 p-2 text-sm uppercase text-gray-100">
-            <span class="truncate font-bold">{{ room.name }}</span>
+            <span class="truncate font-semibold">{{ room.name }}</span>
             <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
           </div>
 

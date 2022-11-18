@@ -24,7 +24,7 @@ defineProps({
       <p><b>Raison du ban :</b><br>{{ ban.comment }}</p>
       <p><b>L'expulsion du site se termine :</b> <br>{{ ban.expired_at }}</p>
       <Tip class="text-orange-500">Dans certains cas, un signalement pourra être effectué auprès des autorités compétentes.</Tip>
-      <Tip class="text-orange-500">Il est toujours possible d'accèder à la gestion de votre compte afin de respecter les règles sur la protection des données mais en cas de signalement nous nous reservons le droit de conserver les éléments de preuve comme le prévoi la loi.</Tip>
+      <Tip class="text-orange-500">Il est toujours possible d'accèder à la gestion de votre compte afin de respecter les règles sur la protection des données mais en cas de signalement nous nous reservons le droit de conserver les éléments de preuve comme le prévoit la loi.</Tip>
       </div>
     </Card>
   </AppLayout>

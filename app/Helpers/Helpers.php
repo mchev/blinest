@@ -20,12 +20,6 @@ if (! function_exists('sanitizeString')) {
         // Articles
         $articles = [
             'the ',
-            'le ',
-            'la ',
-            'les ',
-            'un ',
-            'une ',
-            'des ',
             'and ',
             '& ',
         ];
