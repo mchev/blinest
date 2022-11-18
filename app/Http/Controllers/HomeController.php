@@ -15,8 +15,6 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
             'top_rooms' => Room::isPublic()
-                ->whereHas('playlists')
-                ->whereNull('password')
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
                 ->limit(5)
@@ -26,6 +24,7 @@ class HomeController extends Controller
                     'id' => $category->id,
                     'name' => $category->name,
                     'rooms' => $category->rooms()
+                        ->isPublic()
                         ->whereHas('playlists')
                         ->whereNull('password')
                         ->filter(Request::only('search'))
@@ -35,14 +34,22 @@ class HomeController extends Controller
                         ->withQueryString(),
                 ];
             }),
-            'private_rooms' => Auth::user() ? Auth::user()->rooms()
+            'private_rooms' => Room::isPrivate()
+                ->whereHas('playlists')
+                ->whereNull('password')
+                ->filter(Request::only('search'))
+                ->with('owner')
+                ->withCount('rounds')
+                ->paginate(30, ['*'], 'private_rooms')
+                ->withQueryString(),
+            'user_rooms' => Auth::user() ? Auth::user()->rooms()
                 ->with('owner')
                 ->where('is_public', false)
                 ->whereHas('playlists')
                 ->filter(Request::only('search'))
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
-                ->paginate(30, ['*'], 'private')
+                ->paginate(30, ['*'], 'user_rooms')
                 ->withQueryString() : null,
         ]);
     }

@@ -7,6 +7,7 @@ defineProps({
   filters: Object,
   categories: Object,
   private_rooms: Object,
+  user_rooms: Object,
   top_rooms: Array,
 })
 </script>
@@ -35,8 +36,14 @@ defineProps({
     </section>
     <section v-if="private_rooms && private_rooms.data.length">
       <div class="relative">
-        <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">{{ __('My rooms') }}</h2>
+        <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">{{ __('Private rooms') }}</h2>
         <rooms :rooms="private_rooms" id="private" />
+      </div>
+    </section>
+    <section v-if="user_rooms && user_rooms.data.length">
+      <div class="relative">
+        <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">{{ __('My rooms') }}</h2>
+        <rooms :rooms="user_rooms" id="private" />
       </div>
     </section>
   </Layout>
