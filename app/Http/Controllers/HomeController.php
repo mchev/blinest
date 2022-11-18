@@ -40,6 +40,9 @@ class HomeController extends Controller
                 ->filter(Request::only('search'))
                 ->with('owner')
                 ->withCount('rounds')
+                ->orderByDesc('is_playing')
+                ->orderByDesc('is_public')
+                ->orderByDesc('rounds_count')
                 ->paginate(30, ['*'], 'private_rooms')
                 ->withQueryString(),
             'user_rooms' => Auth::user() ? Auth::user()->rooms()
