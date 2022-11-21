@@ -56,8 +56,6 @@ php artisan horizon
 	- Clean rounds with no scores?
 
  - v2.1
- 	- Slug dans les notifications
- 	- Lien vers la room dans l'édition
  	- Notification des signalements?
  	- Bouton pour forcer le redémarrage?
  	- Certified rooms
@@ -67,6 +65,9 @@ php artisan horizon
   	- light mode mal voyant
  	- moderation des noms de room
  	- sitemap
+ 	- ✅ Slug dans les notifications
+ 	- ✅ Lien vers la room dans l'édition
+ 	- ✅ 404 when room id not found
  	- ✅ Message discord de suppression alors que l'extrait est encore présent
  	- ✅ Popup de confirmation du ban
  	- ✅ Rooms qui se bloquent

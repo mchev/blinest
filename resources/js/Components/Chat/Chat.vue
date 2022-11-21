@@ -4,6 +4,7 @@ import { usePage } from '@inertiajs/inertia-vue3'
 import Message from './Message.vue'
 import AlertModeratorsModal from './AlertModeratorsModal.vue'
 import TextInput from '@/Components/TextInput.vue'
+import Share from '@/Components/Share.vue'
 
 const props = defineProps({
   room: Object,
@@ -58,7 +59,7 @@ const scrollToBottom = () => {
 </script>
 <template>
   <div class="flex h-full flex-col">
-    <div class="flex justify-center px-2 py-4">
+    <div class="flex justify-center items-center gap-2 px-2 py-4">
       <button class="btn-secondary btn-sm bg-neutral-700" @click="alertingModerators = true" v-if="!reported">
         <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -71,6 +72,7 @@ const scrollToBottom = () => {
         </svg>
         {{ __('Alert sent') }}
       </div>
+      <Share :url="room.url" class="w-5 h-5"/>
     </div>
     <div ref="messenger" class="flex flex-1 flex-col-reverse overflow-y-scroll p-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />

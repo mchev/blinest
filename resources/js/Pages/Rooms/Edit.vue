@@ -13,6 +13,7 @@ import ModeratorsManager from '@/Components/Rooms/ModeratorsManager.vue'
 import PlaylistsManager from '@/Components/Rooms/PlaylistsManager.vue'
 import Card from '@/Components/Card.vue'
 import Tip from '@/Components/Tip.vue'
+import Share from '@/Components/Share.vue'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
@@ -86,8 +87,10 @@ onUnmounted(() => {
   <Head :title="__('Edit Room')" />
 
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">
+    <h1 class="mb-8 text-3xl font-bold flex items-center gap-2">
       <Link :href="route('rooms.index')">{{ __('Rooms') }}</Link> / {{ room.name }}
+      <Share :url="route('rooms.show', room.slug)" class="w-6 h-6"/>
+      <Link class="btn-primary ml-auto" :href="route('rooms.show', room.slug)">{{ __('Play') }}</Link>
     </h1>
 
     <div class="flex flex-wrap gap-4">

@@ -22,6 +22,7 @@ const show = ref(false)
 	<Modal :show="show" @close="show = false">
 		<div class="p-6">
 			<h2 class="my-4 text-xl">{{ __('Share this page') }}</h2>
+			<p class="text-sm mb-1">Copier le lien :</p>
 			<Clip class="mb-4" :text="url" />
 			<a class="btn-primary my-2" target="_blank" :href="`https://www.facebook.com/sharer/sharer.php?u=${url}`">{{ __('Share on Facebook') }}</a>
 			<a class="btn-primary my-2" target="_blank" :href="`https://twitter.com/intent/tweet?&url=${url}`">{{ __('Share on Twitter') }}</a>
