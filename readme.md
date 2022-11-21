@@ -55,7 +55,6 @@ php artisan horizon
  - v2.1
  	- Notification des signalements?
  	- Bouton pour forcer le redémarrage?
- 	- Certified rooms
  	- Réglement / loi
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer

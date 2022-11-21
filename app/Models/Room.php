@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Http\Traits\HasPicture;
 use App\Http\Traits\Sluggable;
-use App\Jobs\GenerateRoomMosaic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +18,6 @@ class Room extends Model
 
     protected $appends = [
         'photo',
-        'mosaic',
         'users_count',
         'current_track_index',
         'photo_src',
@@ -28,11 +26,6 @@ class Room extends Model
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
-    }
-
-    protected function getMosaicAttribute()
-    {
-        return url($this->mosaic_path);
     }
 
     protected function getUsersCountAttribute()
@@ -151,13 +144,6 @@ class Room extends Model
     {
         return $this->scores()
             ->limit(10);
-    }
-
-    public function generateMosaic()
-    {
-        if ($this->tracks()->count() > $this->tracks_by_round) {
-            GenerateRoomMosaic::dispatch($this);
-        }
     }
 
     public function scopeIsPublic($query)

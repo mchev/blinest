@@ -68,9 +68,12 @@ onUnmounted(() => {
 
       <div class="h-64 overflow-y-scroll pr-2 md:h-80 2xl:h-96">
         <transition-group name="flip-list" tag="ul">
-          <li v-for="(user, index) in userList" :key="user.id" class="flex items-center rounded border-b border-neutral-600 px-2 py-4" :class="{ 'bg-neutral-700': me && me.id === user.id }">
-            <div class="flex items-center justify-center px-4 text-xl font-bold">
+          <li v-for="(user, index) in userList" :key="user.id" class="flex items-center rounded border-b border-neutral-600 px-2 py-4 gap-4" :class="{ 'bg-neutral-700': me && me.id === user.id }">
+            <div class="flex items-center justify-center text-xl font-bold">
               {{ index + 1 }}
+            </div>
+            <div class="flex items-center">
+              <img :src="user.photo" :alt="user.name" class="w-12 h-12 rounded-full shadow-lg"/>
             </div>
             <div class="flex flex-grow flex-col">
               <div class="mb-2">

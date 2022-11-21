@@ -58,27 +58,6 @@ const deleteRoom = () => {
   }
 }
 
-const mosaicForm = useForm({})
-const generatingMosaic = ref(false)
-
-const generateMosaic = () => {
-  mosaicForm.post(route('rooms.generate.mosaic', props.room.id), {
-    preserveState: true,
-    preserveScroll: true,
-    onSuccess: () => {
-      generatingMosaic.value = true
-    },
-  })
-}
-
-onMounted(() => {
-  Echo.private(`rooms.${props.room.id}`)
-    .listen('MosaicGenerated', (e) => {
-      console.log(e.room)
-      generatingMosaic.value = false
-    })
-})
-
 onUnmounted(() => {
   Echo.leave(`rooms.${props.room.id}`)
 })

@@ -63,7 +63,7 @@ class RoomController extends Controller
                 'track_duration' => $room->track_duration,
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
-                'latest_messages' => $room->messages()->latest()->limit(30)->get(),
+                'latest_messages' => $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
                 'pause_between_tracks' => $room->pause_between_tracks,
                 'tracks_count' => $room->tracks()->count(),
             ],
@@ -195,12 +195,5 @@ class RoomController extends Controller
         }
 
         return redirect()->back()->with('success', 'Bien reçu!');
-    }
-
-    public function generateMosaic(Room $room)
-    {
-        $room->generateMosaic();
-
-        return redirect()->back();
     }
 }

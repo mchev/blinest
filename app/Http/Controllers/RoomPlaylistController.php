@@ -16,8 +16,6 @@ class RoomPlaylistController extends Controller
             ]);
             $room->playlists()->syncWithoutDetaching($request->playlist_id);
 
-            $room->generateMosaic();
-
             return redirect()->back();
         }
 
@@ -31,8 +29,6 @@ class RoomPlaylistController extends Controller
                 'playlist_id' => ['required', 'integer', 'exists:playlists,id'],
             ]);
             $room->playlists()->detach($request->playlist_id);
-
-            $room->generateMosaic();
 
             return redirect()->back();
         }
