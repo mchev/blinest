@@ -48,11 +48,9 @@ php artisan horizon
 	- Room control
 	- SEO
 	- Chat emojis
-	- Betters answers messages (wrong, almost, right)
 	- Ban IPs
 	- Better translations (confirm js)
 	- Check duplicated names from socialite
-	- Clean rounds with no scores?
 
  - v2.1
  	- Notification des signalements?
@@ -64,6 +62,8 @@ php artisan horizon
   	- light mode mal voyant
  	- moderation des noms de room
  	- sitemap
+	- ✅ Daily Clean rounds with no scores
+ 	- ✅ Betters answers messages (wrong, almost, right)
 	- ✅ Fix Apple devices sound
  	- ✅ Slug dans les notifications
  	- ✅ Lien vers la room dans l'édition

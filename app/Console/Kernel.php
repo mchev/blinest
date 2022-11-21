@@ -18,10 +18,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // Clean created rounds with no scores
+        $schedule->command('rounds:clean')->dailyAt('04:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
+        // Clean messages older than 15 days
         $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
+        // Clean playlists without tracks
         $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
+        // Clean rooms without playlists
         $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
-        $schedule->command('sitemap:generate')->daily()->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
+        // Delete expired bans
         $schedule->command('ban:delete-expired')->everyMinute();
     }
 
