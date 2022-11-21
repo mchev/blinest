@@ -52,7 +52,7 @@ class RoomController extends Controller
     public function show($idOrSlug)
     {
         $room = is_numeric($idOrSlug)
-            ? Room::find($idOrSlug)
+            ? Room::findOrFail($idOrSlug)
             : Room::whereSlug($idOrSlug)->firstOrFail();
 
         return Inertia::render('Rooms/Show', [
