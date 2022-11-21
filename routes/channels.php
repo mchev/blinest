@@ -23,6 +23,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
         'id' => $user->id,
         'name' => $user->name,
         'team' => $user->team,
+        'photo' => $user->photo,
         'score' => [
             'answers' => [],
             'points' => 0,
