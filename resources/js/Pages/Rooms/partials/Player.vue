@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 const props = defineProps({
   room: Object,
@@ -15,11 +16,17 @@ const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
 const usersWithAllAnswers = ref([])
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
 const countdown = ref(0)
 const countdowning = ref(false)
 
+const triggerUserGesture = () => {
+  console.log('User Gesture')
+  audio.play()
+}
+
 onMounted(() => {
+  audio.muted = true
   window.addEventListener('volume-localstorage-changed', (event) => {
     audio.volume = event.detail.volume
   })
@@ -62,7 +69,8 @@ const play = () => {
 
   audio.src = track.value.preview_url
   audio.crossOrigin = 'anonymous'
-  //audio.load()  // IOS Hack
+  audio.load()  // IOS Hack - Important
+  audio.muted = false
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
@@ -71,10 +79,10 @@ const play = () => {
 
   audio.addEventListener('canplaythrough', () => {
     loading.value = false
-    if(isIOS) {
+    if (isIOS) {
       console.log('iOS Player')
       audio.pause() // IOS Hack
-      audio.currentTime = 0  // IOS Hack
+      audio.currentTime = 0 // IOS Hack
       audio.volume = localStorage.getItem('volume')
       audio.play()
     } else {
@@ -120,12 +128,11 @@ const startCountdown = () => {
     }
   }, 1000)
 }
-
 </script>
 <template>
   <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
     <transition-group name="list" tag="ul" v-if="usersWithAllAnswers.length">
-      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute z-20 -top-8 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
+      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute -top-8 z-20 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
         {{ user.name }}
         <div class="absolute left-1 top-full mt-1 h-full h-0 w-full w-0 translate-y-[-50%] border-t-[8px] border-l-[8px] border-r-[8px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
       </li>
@@ -148,4 +155,5 @@ const startCountdown = () => {
       <div class="shine absolute h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" :style="'width:' + percent + '%'" />
     </div>
   </div>
+  <UserGestureModal @play="triggerUserGesture" />
 </template>

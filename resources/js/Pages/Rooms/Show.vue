@@ -8,7 +8,6 @@ import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import Share from '@/Components/Share.vue'
-import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 import Player from './partials/Player.vue'
 import UserInput from './partials/UserInput.vue'
@@ -143,6 +142,5 @@ const listenRounds = () => {
 
     <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />  
     <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
-    <UserGestureModal />
   </RoomLayout>
 </template>

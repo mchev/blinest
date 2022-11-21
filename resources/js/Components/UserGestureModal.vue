@@ -4,6 +4,12 @@ import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 
 const show = ref(false)
+const emit = defineEmits(['play'])
+
+const triggerUserGesture = () => {
+  emit('play')
+  show.value = false
+}
 
 onMounted(() => {
   var autoPlayAllowed = true
@@ -45,7 +51,7 @@ onMounted(() => {
           <span>{{ __('This message will appear every time you go directly to a room without going through the homepage.') }}</span>
         </p>
         <div class="mt-8 flex justify-end">
-          <button class="btn-primary" @click="show = false">{{ __("Let's go!") }}</button>
+          <button class="btn-primary" @click="triggerUserGesture">{{ __("Let's go!") }}</button>
         </div>
       </div>
     </Card>

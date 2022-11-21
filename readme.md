@@ -44,7 +44,6 @@ php artisan horizon
 	- Profil pages
 	- Pubs ?
 	- Answers Card : réponses users surlignées
-	- Fix iphone sound
 	- Attente pendant que le morceau est en lecture
 	- Room control
 	- SEO
@@ -65,6 +64,7 @@ php artisan horizon
   	- light mode mal voyant
  	- moderation des noms de room
  	- sitemap
+	- ✅ Fix Apple devices sound
  	- ✅ Slug dans les notifications
  	- ✅ Lien vers la room dans l'édition
  	- ✅ 404 when room id not found
