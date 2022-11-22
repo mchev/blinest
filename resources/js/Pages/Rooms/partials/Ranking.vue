@@ -56,7 +56,7 @@ onUnmounted(() => {
     <Card>
       <template #header>
         <div class="flex w-full items-center justify-between">
-          <h3 class="text-xl font-bold">Classement</h3>
+          <h3 class="text-xl font-bold">{{ __('Ranking') }}</h3>
           <div>
             <sup class="mr-2 text-xs">{{ userList.length }}</sup>
             <button v-if="me" type="button" @click="showPodiumModal = true" :title="__('Show rankings for this room')">

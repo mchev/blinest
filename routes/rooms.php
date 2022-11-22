@@ -11,6 +11,9 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
     Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
         ->name('rooms.restore');
 
+    Route::put('rooms/{room}/options', [RoomController::class, 'updateOptions'])
+        ->name('rooms.options');
+
     Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
         ->name('rooms.playlists.attach');
 

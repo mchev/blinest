@@ -7,7 +7,6 @@ import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
-import CheckboxInput from '@/Components/CheckboxInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import ModeratorsManager from '@/Components/Rooms/ModeratorsManager.vue'
 import PlaylistsManager from '@/Components/Rooms/PlaylistsManager.vue'
@@ -17,6 +16,7 @@ import Share from '@/Components/Share.vue'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 import mapValues from 'lodash/mapValues'
+import EditOptionsForm from './partials/EditOptionsForm.vue'
 
 const props = defineProps({
   room: Object,
@@ -36,6 +36,7 @@ const form = useForm({
   is_random: props.room.is_random,
   is_active: props.room.is_active,
   is_chat_active: props.room.is_chat_active,
+  is_autostart: props.room.is_autostart,
   discord_webhook_url: props.room.discord_webhook_url,
   color: props.room.color,
   has_password: props.room.password ? true : false,
@@ -108,40 +109,7 @@ onUnmounted(() => {
           <template #header>
             <h2 class="text-xl font-bold">{{ __('Options') }}</h2>
           </template>
-          <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
-            <div class="flex w-full flex-wrap">
-              <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium"
-                >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
-              >
-              <input id="tracks_by_round-range" type="range" min="1" max="100" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-              <label for="track_duration-range" class="mb-2 block text-sm font-medium"
-                >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
-              >
-              <input id="track_duration-range" type="range" min="5" max="30" v-model="form.track_duration" :error="form.errors.track_duration" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-              <label for="pause_between_tracks-range" class="mb-2 block text-sm font-medium"
-                >{{ __('Pause between tracks') }} : <span class="font-bold">{{ form.pause_between_tracks }} {{ __('seconds') }}</span></label
-              >
-              <input id="pause_between_tracks-range" type="range" min="0" max="30" v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-              <label for="pause_between_rounds-range" class="mb-2 block text-sm font-medium"
-                >{{ __('Pause between rounds') }} : <span class="font-bold">{{ form.pause_between_rounds }} {{ __('seconds') }}</span></label
-              >
-              <input id="pause_between_rounds-range" type="range" min="0" max="60" v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-            </div>
-
-            <div class="flex w-full flex-wrap">
-              <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Chatbox')" />
-              <checkbox-input v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
-            </div>
-
-            <text-input v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
-          </form>
-
-          <template #footer>
-            <loading-button :loading="form.processing" class="btn-primary ml-auto" form="optionsForm" type="submit">{{ __('Update') }}</loading-button>
-          </template>
+          <EditOptionsForm :room="room"/>
         </Card>
         <PlaylistsManager :room="room" :playlists="available_playlists" />
       </div>

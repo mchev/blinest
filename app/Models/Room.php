@@ -155,6 +155,11 @@ class Room extends Model
         $query->where('is_public', true);
     }
 
+    public function scopeIsAutostart($query)
+    {
+        $query->where('is_autostart', true);
+    }
+
     public function scopeIsPrivate($query)
     {
         $query->where('is_public', false);

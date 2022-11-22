@@ -60,11 +60,16 @@ class RoomController extends Controller
                 'id' => $room->id,
                 'name' => $room->name,
                 'url' => url('/rooms/'.$room->slug),
+                'is_playing' => $room->is_playing,
                 'track_duration' => $room->track_duration,
+                'tracks_by_round' => $room->tracks_by_round,
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
+                'is_autostart' => $room->is_autostart,
+                'password' => $room->password,
                 'latest_messages' => $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
                 'pause_between_tracks' => $room->pause_between_tracks,
+                'pause_between_rounds' => $room->pause_between_rounds,
                 'tracks_count' => $room->tracks()->count(),
             ],
         ]);
@@ -110,22 +115,10 @@ class RoomController extends Controller
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
-            'password' => ['nullable'],
-            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:100'],
-            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
-            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
-            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
             'photo' => ['nullable', 'image'],
-            'is_public' => ['required', 'boolean'],
-            'is_pro' => ['required', 'boolean'],
-            'is_random' => ['required', 'boolean'],
-            'is_active' => ['required', 'boolean'],
-            'is_chat_active' => ['required', 'boolean'],
-            'discord_webhook_url' => ['nullable', 'url'],
-            'color' => ['nullable'],
         ]);
 
-        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id', 'tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_public', 'is_pro', 'is_random', 'is_active', 'is_chat_active', 'discord_webhook_url', 'color'));
+        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id'));
 
         if (Request::file('photo')) {
             if ($room->is_public || $room->is_pro || Auth()->user()->canUpdateRoomPicture()) {
@@ -133,13 +126,31 @@ class RoomController extends Controller
             }
         }
 
+        return Redirect::back()->with('success', 'Room updated.');
+    }
+
+    public function updateOptions(Room $room)
+    {
+        Request::validate([
+            'password' => ['nullable'],
+            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:100'],
+            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
+            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
+            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
+            'is_chat_active' => ['required', 'boolean'],
+            'is_autostart' => ['required', 'boolean'],
+            'color' => ['nullable'],
+        ]);
+
+        $room->update(Request::only('tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_chat_active', 'is_autostart', 'color'));
+
         if (Request::get('has_password')) {
             $room->update(['password' => Request::get('password')]);
         } else {
             $room->update(['password' => null]);
         }
 
-        return Redirect::back()->with('success', 'Room updated.');
+        return Redirect::back()->with('success', 'Options updated.');
     }
 
     public function destroy(Room $room)
@@ -156,7 +167,7 @@ class RoomController extends Controller
      */
     public function joined(Room $room)
     {
-        if ($room->isPublic() && ! $room->isPlaying()) {
+        if ($room->isPublic() && ! $room->isPlaying() && $room->isAutostart()) {
             $room->startRound();
         }
     }

@@ -8,7 +8,9 @@ import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import Share from '@/Components/Share.vue'
+import Tip from '@/Components/Tip.vue'
 
+import Controls from './partials/Controls.vue'
 import Player from './partials/Player.vue'
 import UserInput from './partials/UserInput.vue'
 import Answers from './partials/Answers.vue'
@@ -97,6 +99,11 @@ const listenRounds = () => {
             <Share :url="room.url" class="w-5"/>
           </article>
 
+          <Tip class="bg-orange-400 text-orange-800" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
+            <span class="font-bold">{{ __('This room is in manual start mode.') }}</span>
+            <br> {{ __('The person responsible for the room (moderators) must be present to start the game.') }}
+          </Tip>
+
           <div class="mb-4 md:mb-8">
             <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
@@ -106,6 +113,8 @@ const listenRounds = () => {
             <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
+
+          <Controls v-if="!room.is_autostart && room.moderators.find(x => user.id === x.id)" :room="room" :round="round" class="mb-4" />
 
           <Card>
             <div class="flex items-center flex-col lg:flex-row lg:justify-between gap-4 text-sm">
@@ -142,5 +151,6 @@ const listenRounds = () => {
 
     <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />  
     <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
+
   </RoomLayout>
 </template>
