@@ -163,7 +163,7 @@ class RoomController extends Controller
 
     public function start(Room $room)
     {
-        (Auth::user()->hasRoomControl($room))
+        (Auth::user()->hasRoomControl($room) && ! $room->isPlaying())
             ? $room->startRound()
             : abort(403);
     }

@@ -32,7 +32,7 @@ onMounted(() => {
 					</svg>
 				</button>
 			</div>
-			<div v-if="loading">
+			<div v-if="loading" class="flex w-full p-12 items-center justify-center">
 				<Spinner />
 			</div>
 			<div v-else class="grid grid-cols-1 xl:grid-cols-2">
@@ -40,7 +40,7 @@ onMounted(() => {
 					<template #header>
 						<div class="flex w-full items-center justify-between">
 							<h3 class="font-bold">{{ __('All-time') }}</h3>
-							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.lifetime.total }}<sup class="ml-1">PTS</sup></span>
+							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">PTS</sup></span>
 						</div>
 					</template>
 					<table class="w-full">
@@ -79,7 +79,7 @@ onMounted(() => {
 							<tr v-for="(score, index) in scores.teams">
 								<td class="border-b p-2">{{ index + 1 }}</td>
 								<td class="truncate border-b p-2">{{ score.team.name }}</td>
-								<td class="border-b p-2">{{ score.total }}<sup class="ml-1">PTS</sup></td>
+								<td class="border-b p-2">{{ score.score }}<sup class="ml-1">PTS</sup></td>
 							</tr>
 						</tbody>
 					</table>

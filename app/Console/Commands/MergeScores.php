@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessAddScoreToTotalScore;
 use App\Models\Score;
 use Illuminate\Console\Command;
-use App\Jobs\ProcessAddScoreToTotalScore;
 
 class MergeScores extends Command
 {
@@ -29,7 +29,6 @@ class MergeScores extends Command
      */
     public function handle()
     {
-
         $count = Score::has('user')->has('round')->count();
         $bar = $this->getOutput()->createProgressBar($count);
 

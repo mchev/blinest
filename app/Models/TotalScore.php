@@ -32,4 +32,13 @@ class TotalScore extends Model
         return $this->belongsTo(Team::class, 'totalscorable_id');
     }
 
+    public function scopeByUsers($query)
+    {
+        $query->where('totalscorable_type', User::class);
+    }
+
+    public function scopeByTeams($query)
+    {
+        $query->where('totalscorable_type', Team::class);
+    }
 }

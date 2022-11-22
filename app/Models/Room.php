@@ -117,18 +117,17 @@ class Room extends Model
 
     public function totalUsersScores()
     {
-        return $this->hasMany(TotalScore::class, 'room_id')->where('totalscorable_type', User::class)->with('user')->orderByDesc('score');
+        return $this->hasMany(TotalScore::class, 'room_id')->byUsers()->with('user')->orderByDesc('score');
+    }
+
+    public function totalTeamsScores()
+    {
+        return $this->hasMany(TotalScore::class, 'room_id')->byTeams()->with('team')->orderByDesc('score');
     }
 
     public function teamsScores()
     {
-        return $this->hasManyThrough(Score::class, Round::class)
-            ->whereNotNull('scores.team_id')
-            ->selectRaw('scores.created_at, scores.team_id, SUM(scores.score) as total')
-            ->with('team')
-            ->groupBy('scores.team_id')
-            ->orderBy('total', 'DESC')
-            ->limit(10);
+        return $this->totalTeamsScores()->limit(10);
     }
 
     public function weekScores()

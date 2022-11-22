@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
+use App\Jobs\ProcessAddScoreToTotalScore;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
-use App\Jobs\ProcessAddScoreToTotalScore;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -77,11 +77,16 @@ class RoundController extends Controller
                 $goodWords = [];
                 $score = 0;
 
-                // Checking all words
-                foreach ($answerWords as $word) {
-                    foreach ($userWords as $userWord) {
-                        if (levenshtein($userWord, $word) < 1.55) {
-                            $goodWords[] = $word;
+                // Checking all sentence
+                if (levenshtein($sanitized, $value) < 3) {
+                    $goodWords = $answerWords;
+                } else {
+                    // Else Checking all words
+                    foreach ($answerWords as $word) {
+                        foreach ($userWords as $userWord) {
+                            if (levenshtein($userWord, $word) < 1.55) {
+                                $goodWords[] = $word;
+                            }
                         }
                     }
                 }
@@ -126,7 +131,6 @@ class RoundController extends Controller
 
                     // Increment total scores
                     ProcessAddScoreToTotalScore::dispatch($savedScore);
-
                 } elseif (count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;
                 }

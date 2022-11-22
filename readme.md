@@ -39,7 +39,7 @@ php artisan horizon
 
 ## Roadmap
 
-- v2.2
+- v2.1
 	- Import playlists from provider
 	- Profil pages
 	- Pubs ?
@@ -53,21 +53,17 @@ php artisan horizon
 	- Check duplicated names from socialite
 	- Automatic playlist creation based on tracks liked
 	- Room options directly editable on the room.show (options, name, playlist, etc)
-
- - v2.1
- 	- Check all sentence before checking by words
- 	- ✅ Polymorphic table with total score (teams and users)
  	- Page pour le comptage des points
- 	- Fix scores performances
- 	- Fix problème des espaces dans les réponses
- 	- Notification des signalements?
- 	- Bouton pour forcer le redémarrage?
  	- Réglement / loi
  	- room avec password, faire l'identification
  	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
  	- moderation des noms de room
  	- sitemap
+ 	- ✅ Fix problème des espaces dans les réponses
+ 	- ✅ Check all sentence before checking by words
+ 	- ✅ Polymorphic table with total score (teams and users)
+ 	- ✅ Fix scores performances
 	- ✅ Daily Clean rounds with no scores
  	- ✅ Betters answers messages (wrong, almost, right)
 	- ✅ Fix Apple devices sound

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
-use App\Models\Score;
+use App\Models\TotalScore;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -13,61 +13,37 @@ class RankingController extends Controller
     public function index()
     {
         $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
-            return Score::whereRelation('round', function ($query) {
-                $query->whereRelation('room', function ($q) {
-                    $q->where('is_public', true);
-                });
-            })
-                ->selectRaw('SUM(score) as total, user_id')
+            return TotalScore::byUsers()
+                ->select('totalscorable_id', 'room_id')
+                ->selectRaw('SUM(score) as total_score')
                 ->with('user')
-                ->groupBy('user_id')
-                ->orderBy('total', 'DESC')
-                ->paginate(5);
+                ->whereRelation('room', function ($query) {
+                    $query->where('is_public', true);
+                })
+                ->groupBy('totalscorable_id')
+                ->orderByDesc('total_score')
+                ->limit(50)
+                ->get();
         });
 
         $bestTeams = Cache::remember('bestTeams', now()->addMinutes(10), function () {
-            return Score::whereNotNull('team_id')
-                ->whereRelation('round', function ($query) {
-                    $query->whereRelation('room', function ($q) {
-                        $q->where('is_public', true);
-                    });
-                })
-                ->selectRaw('SUM(score) as total, team_id')
+            return TotalScore::byTeams()
+                ->select('totalscorable_id', 'room_id')
+                ->selectRaw('SUM(score) as total_score')
                 ->with('team')
-                ->groupBy('team_id')
-                ->orderBy('total', 'DESC')
-                ->paginate(5);
+                ->whereRelation('room', function ($query) {
+                    $query->where('is_public', true);
+                })
+                ->groupBy('totalscorable_id')
+                ->orderByDesc('total_score')
+                ->limit(50)
+                ->get();
         });
 
         return Inertia::render('Rankings/Index', [
             'bestUsers' => $bestUsers,
             'bestTeams' => $bestTeams,
         ]);
-
-        // return Inertia::render('Rankings/Index', [
-        //     'bestUsers' => User::select('id', 'name')
-        //         ->whereHas('scores')
-        //         ->withSum(['scores as score' => function($query) {
-        //             $query->whereRelation('round', function($query) {
-        //                 $query->whereRelation('room', function($q) {
-        //                     $q->where('is_public', true);
-        //                 });
-        //             });
-        //         }], 'score')
-        //         ->orderBy('score', 'DESC')
-        //         ->paginate(5),
-        //     'bestTeams' => Team::select('id', 'name')
-        //         ->whereHas('scores')
-        //         ->withSum(['scores as score' => function($query) {
-        //             $query->whereRelation('round', function($query) {
-        //                 $query->whereRelation('room', function($q) {
-        //                     $q->where('is_public', true);
-        //                 });
-        //             });
-        //         }], 'score')
-        //         ->orderBy('score', 'DESC')
-        //         ->paginate(5),
-        // ]);
     }
 
     // Room Podium
@@ -81,7 +57,7 @@ class RankingController extends Controller
             'user' => [
                 'week' => Auth::user()->weekScoreByRoom($room)->first(),
                 'month' => Auth::user()->monthScoreByRoom($room)->first(),
-                'lifetime' => Auth::user()->lifetimeScoreByRoom($room)->first(),
+                'lifetime' => TotalScore::byUsers()->where('room_id', $room->id)->where('totalscorable_id', Auth::user()->id)->first(),
                 'team' => Auth::user()?->team?->scoreByRoom($room)->first(),
             ],
         ], 200);
