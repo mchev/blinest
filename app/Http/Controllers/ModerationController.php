@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageDeleted;
 use App\Models\Message;
-use App\Models\Room;
 use App\Models\Playlist;
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -56,7 +56,7 @@ class ModerationController extends Controller
                     'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
                     'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
                     'banned_by' => User::find($ban->created_by_id)->name,
-                ])
+                ]),
             ]),
         ]);
     }
@@ -76,7 +76,7 @@ class ModerationController extends Controller
                 'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
                 'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
                 'banned_by' => User::find($ban->created_by_id)->name,
-            ])
+            ]),
         ];
 
         return response()->json($user);
@@ -94,6 +94,7 @@ class ModerationController extends Controller
     {
         if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
             Message::onlyTrashed()->find($id)->restore();
+
             return redirect()->back()->with('success', 'Message restauré');
         }
     }
@@ -106,7 +107,8 @@ class ModerationController extends Controller
                     'expired_at' => Request::input('expired_at') ?? null,
                     'comment' => Request::input('comment') ?? null,
                 ]);
-                return redirect()->back()->with('success', $user->name . ' a été banni.');
+
+                return redirect()->back()->with('success', $user->name.' a été banni.');
             } else {
                 return redirect()->back()->with('error', 'Impossible de bannir un modérateur');
             }

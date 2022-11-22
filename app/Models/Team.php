@@ -64,6 +64,11 @@ class Team extends Model
         return $this->hasMany(Score::class);
     }
 
+    public function totalScores()
+    {
+        return $this->morphMany(TotalScore::class, 'totalscorable');
+    }
+
     public function scoreByRoom(Room $room)
     {
         return $this->scores()

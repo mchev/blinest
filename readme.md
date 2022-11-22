@@ -51,8 +51,15 @@ php artisan horizon
 	- Ban IPs
 	- Better translations (confirm js)
 	- Check duplicated names from socialite
+	- Automatic playlist creation based on tracks liked
+	- Room options directly editable on the room.show (options, name, playlist, etc)
 
  - v2.1
+ 	- Check all sentence before checking by words
+ 	- ✅ Polymorphic table with total score (teams and users)
+ 	- Page pour le comptage des points
+ 	- Fix scores performances
+ 	- Fix problème des espaces dans les réponses
  	- Notification des signalements?
  	- Bouton pour forcer le redémarrage?
  	- Réglement / loi

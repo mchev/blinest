@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Jobs\ProcessCleanRounds;
+use Illuminate\Console\Command;
 
 class CleanRounds extends Command
 {
@@ -30,6 +30,7 @@ class CleanRounds extends Command
     {
         ProcessCleanRounds::dispatch();
         $this->info('Rounds without scores were correctly deleted!');
+
         return Command::SUCCESS;
     }
 }

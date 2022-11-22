@@ -40,7 +40,7 @@ onMounted(() => {
 					<template #header>
 						<div class="flex w-full items-center justify-between">
 							<h3 class="font-bold">{{ __('All-time') }}</h3>
-							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.lifetime.total }}<sup>PTS</sup></span>
+							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.lifetime.total }}<sup class="ml-1">PTS</sup></span>
 						</div>
 					</template>
 					<table class="w-full">
@@ -55,7 +55,7 @@ onMounted(() => {
 							<tr v-for="(score, index) in scores.lifetime">
 								<td class="border-b p-2">{{ index + 1 }}</td>
 								<td class="truncate border-b p-2">{{ score.user.name }}</td>
-								<td class="border-b p-2">{{ score.total }}</td>
+								<td class="border-b p-2">{{ score.score }}<sup class="ml-1">PTS</sup></td>
 							</tr>
 						</tbody>
 					</table>
@@ -64,7 +64,7 @@ onMounted(() => {
 					<template #header>
 						<div class="flex w-full items-center justify-between">
 							<h3 class="font-bold">{{ __('Teams') }}</h3>
-							<span v-if="scores.user.team" class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.team.total }}<sup>PTS</sup></span>
+							<span v-if="scores.user.team" class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.team.total }}<sup class="ml-1">PTS</sup></span>
 						</div>
 					</template>
 					<table class="w-full">
@@ -79,7 +79,7 @@ onMounted(() => {
 							<tr v-for="(score, index) in scores.teams">
 								<td class="border-b p-2">{{ index + 1 }}</td>
 								<td class="truncate border-b p-2">{{ score.team.name }}</td>
-								<td class="border-b p-2">{{ score.total }}</td>
+								<td class="border-b p-2">{{ score.total }}<sup class="ml-1">PTS</sup></td>
 							</tr>
 						</tbody>
 					</table>
@@ -88,7 +88,7 @@ onMounted(() => {
 					<template #header>
 						<div class="flex w-full items-center justify-between">
 							<h3 class="font-bold">{{ __('Last 7 days') }}</h3>
-							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.week.total }}<sup>PTS</sup></span>
+							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.week.total }}<sup class="ml-1">PTS</sup></span>
 						</div>
 					</template>
 					<table class="w-full">
@@ -103,7 +103,7 @@ onMounted(() => {
 							<tr v-for="(score, index) in scores.week">
 								<td class="border-b p-2">{{ index + 1 }}</td>
 								<td class="truncate border-b p-2">{{ score.user.name }}</td>
-								<td class="border-b p-2">{{ score.total }}</td>
+								<td class="border-b p-2">{{ score.total }}<sup class="ml-1">PTS</sup></td>
 							</tr>
 						</tbody>
 					</table>
@@ -112,7 +112,7 @@ onMounted(() => {
 					<template #header>
 						<div class="flex w-full items-center justify-between">
 							<h3 class="font-bold">{{ __('Last 30 days') }}</h3>
-							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.month.total }}<sup>PTS</sup></span>
+							<span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.month.total }}<sup class="ml-1">PTS</sup></span>
 						</div>
 					</template>
 					<table class="w-full">
@@ -127,7 +127,7 @@ onMounted(() => {
 							<tr v-for="(score, index) in scores.month">
 								<td class="border-b p-2">{{ index + 1 }}</td>
 								<td class="truncate border-b p-2">{{ score.user.name }}</td>
-								<td class="border-b p-2">{{ score.total }}</td>
+								<td class="border-b p-2">{{ score.total }}<sup class="ml-1">PTS</sup></td>
 							</tr>
 						</tbody>
 					</table>

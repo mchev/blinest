@@ -8,6 +8,7 @@ use App\Events\UserHasFoundAllTheAnswers;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
+use App\Jobs\ProcessAddScoreToTotalScore;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -37,11 +38,11 @@ class RoundController extends Controller
         }
     }
 
-    public function getMessage(String $type) :Array
+    public function getMessage(string $type): array
     {
         return [
             'type' => $type,
-            'body' => __('messages.' . $type)[array_rand(__('messages.' . $type))]
+            'body' => __('messages.'.$type)[array_rand(__('messages.'.$type))],
         ];
     }
 
@@ -54,7 +55,7 @@ class RoundController extends Controller
             Request::validate([
                 'text' => 'required|string|min:1',
                 'words' => 'nullable|array',
-                'currentTime' => 'required|numeric'
+                'currentTime' => 'required|numeric',
             ]);
 
             $user = Auth::user();
@@ -71,16 +72,15 @@ class RoundController extends Controller
             $remainingAnswers = $track->answers()->whereNotIn('id', $alreadyFoundAnswersIds)->get();
 
             foreach ($remainingAnswers as $answer) {
-
                 $value = sanitizeString($answer->value);
                 $answerWords = array_unique(explode(' ', $value));
                 $goodWords = [];
                 $score = 0;
 
                 // Checking all words
-                foreach($answerWords as $word) {
-                    foreach($userWords as $userWord) {
-                        if(levenshtein($userWord, $word) < 1.55) {
+                foreach ($answerWords as $word) {
+                    foreach ($userWords as $userWord) {
+                        if (levenshtein($userWord, $word) < 1.55) {
                             $goodWords[] = $word;
                         }
                     }
@@ -89,8 +89,7 @@ class RoundController extends Controller
                 $goodWords = array_unique($goodWords);
 
                 // All good
-                if(count($answerWords) === count($goodWords)) {
-                    
+                if (count($answerWords) === count($goodWords)) {
                     $score = $answer->score;
                     $goodAnswers[] = $answer;
 
@@ -115,7 +114,8 @@ class RoundController extends Controller
                         'name' => $answer->type->name,
                     ];
 
-                    $user->scores()->create([
+                    // Save score to db
+                    $savedScore = $user->scores()->create([
                         'team_id' => $user?->team?->id,
                         'round_id' => $round->id,
                         'track_id' => $track->id,
@@ -123,16 +123,16 @@ class RoundController extends Controller
                         'score' => $score,
                         'time' => Request::input('currentTime'),
                     ]);
-                }
 
-                elseif(count($goodWords) >= (count($answerWords) / 2)) {
+                    // Increment total scores
+                    ProcessAddScoreToTotalScore::dispatch($savedScore);
+
+                } elseif (count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;
                 }
-
             }
 
-            if(!empty($goodAnswers)) {
-
+            if (! empty($goodAnswers)) {
                 $totalUserAnswers = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->count();
                 $totalTrackAnswers = $track->answers()->count();
                 $message = $this->getMessage('good');
@@ -156,7 +156,6 @@ class RoundController extends Controller
                         'time' => Request::input('currentTime'),
                     ]));
                 }
-
             } elseif ($almostAnswers) {
                 $message = $this->getMessage('almost');
             } else {
@@ -168,8 +167,6 @@ class RoundController extends Controller
                 'good_answers' => $goodAnswers,
                 'message' => $message,
             ], 200);
-
         }
     }
-
 }

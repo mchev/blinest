@@ -63,7 +63,7 @@ class User extends Authenticatable implements BannableContract
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id')
-            ->whereRelation('owner', function($query) {
+            ->whereRelation('owner', function ($query) {
                 $query->withoutBanned();
             });
     }
@@ -158,6 +158,11 @@ class User extends Authenticatable implements BannableContract
     public function scores()
     {
         return $this->hasMany(Score::class);
+    }
+
+    public function totalScores()
+    {
+        return $this->morphMany(TotalScore::class, 'totalscorable');
     }
 
     public function scopeTotalScore()

@@ -48,7 +48,6 @@ Route::middleware('auth')->group(function () {
         ->name('users.update');
     Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
-
 });
 
 Route::middleware('auth', 'forbid-banned-user')->group(function () {

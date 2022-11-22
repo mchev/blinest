@@ -1,5 +1,4 @@
 <script setup>
-import { defineEmits } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 
 const props = defineProps({

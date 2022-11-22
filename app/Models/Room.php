@@ -115,6 +115,11 @@ class Room extends Model
             ->orderBy('total', 'DESC');
     }
 
+    public function totalUsersScores()
+    {
+        return $this->hasMany(TotalScore::class, 'room_id')->where('totalscorable_type', User::class)->with('user')->orderByDesc('score');
+    }
+
     public function teamsScores()
     {
         return $this->hasManyThrough(Score::class, Round::class)
@@ -142,7 +147,7 @@ class Room extends Model
 
     public function lifetimeScores()
     {
-        return $this->scores()
+        return $this->totalUsersScores()
             ->limit(10);
     }
 
