@@ -93,7 +93,7 @@ class RoomController extends AdminController
     public function edit(Room $room)
     {
         return Inertia::render('Admin/Rooms/Edit', [
-            'room' => $room,
+            'room' => $room->makeVisible(['discord_webhook_url']),
             'categories' => Category::orderBy('name')->get(),
             'moderators' => $room->moderators,
             'playlists' => $room->playlists,

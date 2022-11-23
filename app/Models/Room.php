@@ -23,6 +23,8 @@ class Room extends Model
         'photo_src',
     ];
 
+    protected $hidden = ['discord_webhook_url'];
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
