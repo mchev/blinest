@@ -41,16 +41,22 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.slug}`" class="relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0 swiper-lazy" :style="`background-image: url(${ room.photo_src ? room.photo_src : room.photo });`">
+  <Link :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`">
     <article class="relative h-full w-full">
       <div class="swiper-lazy-preloader"></div>
       <div v-if="!room.is_public && room.owner" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
-      <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-800 text-white p-3 text-sm ease-in-out hover:scale-110" :title="__('Players')">
+      <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-800 p-3 text-sm text-white ease-in-out hover:scale-110">
         <div class="flex items-center">
           <span v-if="room.password" class="mr-1 font-bold text-orange-400">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4" :title="__('Password protected')">
               <title>{{ __('Password protected') }}</title>
               <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
+            </svg>
+          </span>
+          <span v-if="!room.is_autostart" class="mr-1 font-bold text-orange-400">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" :title="__('This room is in manual start mode.')">
+              <title>{{ __('This room is in manual start mode.') }}</title>
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
             </svg>
           </span>
           <Transition name="slide-fade">
@@ -62,7 +68,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="absolute bottom-0 flex w-full items-center justify-between bg-neutral-900 gap-2 py-2 text-sm uppercase text-gray-100">
+      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 py-2 text-sm uppercase text-gray-100">
         <span class="truncate font-semibold">{{ room.name }}</span>
         <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
       </div>

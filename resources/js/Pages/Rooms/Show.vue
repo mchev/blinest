@@ -114,7 +114,7 @@ const listenRounds = () => {
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
-          <Controls v-if="!room.is_autostart && room.moderators.find(x => user.id === x.id)" :room="room" :round="round" class="mb-4" />
+          <Controls v-if="room.moderators.find(x => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
 
           <Card>
             <div class="flex items-center flex-col lg:flex-row lg:justify-between gap-4 text-sm">

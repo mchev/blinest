@@ -33,7 +33,7 @@ class ProcessRoundFinished implements ShouldQueue
     public function handle()
     {
         // Start a new round
-        if ($this->room->isPublic() && ! $this->room->isPlaying() && $this->room->is_autostart) {
+        if (!$this->room->is_playing && $this->room->is_autostart) {
             $this->room->startRound();
         }
     }

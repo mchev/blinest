@@ -65,7 +65,7 @@ const update = () => {
 
     <div class="flex w-full flex-wrap">
       <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="pr-4 pb-4" :label="__('Chatbox')" />
-      <!-- <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" class="pr-4 pb-4" :label="__('Autostart')" /> -->
+      <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" class="pr-4 pb-4" :label="__('Autostart')" />
       <checkbox-input v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
     </div>
 

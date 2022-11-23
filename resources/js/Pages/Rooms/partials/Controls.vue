@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Inertia } from '@inertiajs/inertia'
 import Card from '@/Components/Card.vue'
 import Modal from '@/Components/Modal.vue'
 import EditOptionsForm from './EditOptionsForm.vue'
@@ -12,34 +13,40 @@ const props = defineProps({
 })
 
 const isPlaying = true
-const loading = ref(false)
+const startingRound = ref(false)
+const endingRound = ref(false)
 const showingOptionsModal = ref(false)
 
 const stopRound = () => {
-  loading.value = true
-  axios.post(`/rounds/${props.round.id}/stop`).then((response) => {
-    loading.value = false
+  endingRound.value = true
+  Inertia.post(`/rounds/${props.round.id}/stop`, {
+    preserveScroll: true,
+    preserveState: false,
   })
 }
 const startRound = () => {
-  loading.value = true
-  axios.post(`/rooms/${props.room.id}/start`).then((response) => {
-    loading.value = false
+  startingRound.value = true
+  Inertia.post(`/rooms/${props.room.id}/start`, {
+    preserveScroll: true,
+    preserveState: false,
   })
 }
 
-// const resumeTrack = () => {
-//   axios.post(`/rounds/${props.round.id}/track/resume`)
-// }
-// const pauseTrack = () => {
-//   axios.post(`/rounds/${props.round.id}/track/pause`)
-// }
-// const playPreviousTrack = () => {
-//   axios.post(`/rounds/${props.round.id}/track/prev`)
-// }
-// const playNextTrack = () => {
-//   axios.post(`/rounds/${props.round.id}/track/next`)
-// }
+onMounted(() => {
+  Echo.channel(props.channel)
+    .listen('RoundStarted', () => {
+      startingRound.value = false
+      props.room.is_playing = true
+    })
+    .listen('RoundFinished', (e) => {
+      endingRound.value = false
+      props.room.is_playing = false
+    })
+})
+
+onUnmounted(() => {
+  Echo.leave(props.channel)
+})
 </script>
 <template>
   <Card :class="$attrs.class">
@@ -50,10 +57,10 @@ const startRound = () => {
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <button v-if="!round || !round.is_playing" type="button" class="btn-secondary btn-sm" @click="showingOptionsModal = true">Options</button>
+        <button type="button" class="btn-secondary btn-sm" @click="showingOptionsModal = true">Options</button>
         <template v-if="!room.is_autostart">
-          <LoadingButton v-if="round && (round.is_playing || room.is_playing)" :loading="loading" type="button" class="btn-danger btn-sm" @click="stopRound">{{ __('Stop round') }}</LoadingButton>
-          <LoadingButton v-else type="button" :loading="loading" class="btn-primary btn-sm" @click="startRound">{{ __('Start round') }}</LoadingButton>
+          <LoadingButton v-if="room.is_playing" :loading="endingRound" type="button" class="btn-danger btn-sm" @click="stopRound">{{ __('Stop round') }}</LoadingButton>
+          <LoadingButton v-else type="button" :loading="startingRound" class="btn-primary btn-sm" @click="startRound">{{ __('Start round') }}</LoadingButton>
         </template>
       </div>
     </div>
