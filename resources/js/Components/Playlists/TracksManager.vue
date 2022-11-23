@@ -156,25 +156,28 @@ const updateDificulty = (e, track) => {
             <text-input v-model="search_online" prepend-icon="plus" append-icon="cheveron-down" :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
           </template>
           <template v-show="results.length" #dropdown>
-            <div v-if="results.length" class="flex gap-2 border-b p-2 text-sm">
+            <div v-if="results.length" class="flex gap-2 border-b-2 border-neutral-600 p-2 text-sm bg-neutral-900">
               <label v-for="provider in providers"> <input type="checkbox" v-model="provider.selected" @click="check(provider)" /> {{ provider.name }} </label>
             </div>
-            <ul v-if="results.length" class="max-w-50 max-h-80 overflow-y-auto">
-              <li v-for="result in results.filter((x) => selectedProviders.includes(x.provider))" class="relative cursor-pointer border-b border-neutral-200 px-1 py-2 hover:bg-neutral-100 hover:text-neutral-900">
-                <div class="flex items-center">
-                  <div><Icon :name="result.provider" :title="result.provider" class="mr-2 h-6 w-6 flex-shrink-0" /></div>
+            <ul v-if="results.length" class="max-h-80 overflow-y-auto bg-neutral-900">
+              <li v-for="result in results.filter((x) => selectedProviders.includes(x.provider))" class="relative border-b border-neutral-600 px-2 py-3">
+                <div class="flex items-center gap-2">
+                  <div><Icon :name="result.provider" :title="result.provider" class="h-6 w-6 flex-shrink-0" /></div>
                   <div>
-                    <mini-player :key="`mini-player-results-${result.id}`" :track="result" />
+                    <!-- <mini-player :key="`mini-player-results-${result.id}`" :track="result" /> -->
+                    <audio :id="`mini-player-results-${result.id}`" preload="none" controls>
+                      <source :src="result.preview_url" type="audio/mpeg" />
+                    </audio>
                   </div>
-                  <div class="mr-2 flex w-80 flex-1 flex-col">
+                  <div class="mr-2 flex w-80 flex-grow flex-col">
                     <span class="max-w-[16rem] truncate break-normal font-bold">{{ result.artist_name }}</span>
                     <span class="max-w-[16rem] truncate break-normal text-sm">{{ result.track_name }}</span>
                   </div>
                   <div v-if="!result.added" class="ml-auto">
-                    <button :disabled="loading" class="btn-primary" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
+                    <button :disabled="loading" class="btn-primary btn-sm" type="button" @click="addTrack(result)">{{ __('Add') }}</button>
                   </div>
                   <div v-else class="ml-auto">
-                    <button :disabled="loading" class="btn-danger" type="button" @click="removeTrack(result)">{{ __('Remove') }}</button>
+                    <button :disabled="loading" class="btn-danger btn-sm" type="button" @click="removeTrack(result)">{{ __('Remove') }}</button>
                   </div>
                 </div>
               </li>

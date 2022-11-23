@@ -17,7 +17,7 @@ class AppleMusicService
         $query = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $query);
         $query = str_replace(' ', '+', $query);
 
-        $url = 'https://itunes.apple.com/search?term='.$query.'&country='.config('app.locale').'&entity=musicTrack&limit=10&output=json';
+        $url = 'https://itunes.apple.com/search?term='.$query.'&country='.config('app.locale').'&media=music&limit=10&output=json';
 
         $collection = Http::get($url)->collect();
 
