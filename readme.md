@@ -40,26 +40,27 @@ php artisan horizon
 ## Roadmap
 
 - v2.1
-	- Import playlists from provider
 	- Profil pages
 	- Pubs ?
 	- Answers Card : réponses users surlignées
 	- Attente pendant que le morceau est en lecture
-	- Room control
-	- SEO
 	- Chat emojis
 	- Ban IPs
 	- Better translations (confirm js)
-	- Check duplicated names from socialite
 	- Automatic playlist creation based on tracks liked
-	- Room options directly editable on the room.show (options, name, playlist, etc)
  	- Page pour le comptage des points
  	- Réglement / loi
  	- room avec password, faire l'identification
- 	- recherche d'extaits provider à améliorer
   	- light mode mal voyant
  	- moderation des noms de room
  	- sitemap
+	- SEO
+	- Import playlists from provider
+	- Check duplicated names from socialite
+ 	- ✅ recherche d'extaits provider à améliorer
+	- ✅ Room manual control
+	- ✅ Room options directly editable on the room.show
+ 	- ✅ Remove a team member
  	- ✅ Fix problème des espaces dans les réponses
  	- ✅ Check all sentence before checking by words
  	- ✅ Polymorphic table with total score (teams and users)
