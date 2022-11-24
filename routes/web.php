@@ -69,6 +69,7 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
     Route::post('teams/requests/{teamRequest}/decline', [TeamRequestController::class, 'decline']);
     Route::post('teams/{team}/leave', [TeamController::class, 'leave']);
     Route::post('teams/{team}/owner/{user}', [TeamController::class, 'switchOwner']);
+    Route::post('teams/{team}/members/{user}/remove', [TeamController::class, 'removeMember']);
 
     Route::resource('teams', TeamController::class);
 
