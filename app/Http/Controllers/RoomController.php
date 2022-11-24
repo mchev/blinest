@@ -59,6 +59,8 @@ class RoomController extends Controller
             'room' => [
                 'id' => $room->id,
                 'name' => $room->name,
+                'description' => $room->description,
+                'photo' => $room->photo,
                 'url' => url('/rooms/'.$room->slug),
                 'is_playing' => $room->is_playing,
                 'track_duration' => $room->track_duration,

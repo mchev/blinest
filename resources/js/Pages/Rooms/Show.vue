@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
-import { Head, usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/inertia-vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -84,7 +84,6 @@ const listenRounds = () => {
 }
 </script>
 <template>
-  <Head :title="room.name" />
   <RoomLayout>
     <div v-if="!joined" class="flex h-full w-full items-center justify-center">
       <Spinner />

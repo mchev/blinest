@@ -53,10 +53,11 @@ php artisan horizon
  	- room avec password, faire l'identification
   	- light mode mal voyant
  	- moderation des noms de room
- 	- sitemap
-	- SEO
 	- Import playlists from provider
 	- Check duplicated names from socialite
+ 	- Sitemap
+	- SEO
+	- ✅ SEO Opengraph
  	- ✅ recherche d'extaits provider à améliorer
 	- ✅ Room manual control
 	- ✅ Room options directly editable on the room.show

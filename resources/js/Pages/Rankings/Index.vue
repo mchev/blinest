@@ -11,7 +11,7 @@ const props = defineProps({
 })
 </script>
 <template>
-  <Head :title="__('Teams')" />
+  <Head :title="__('Rankings') + ' - Top 50'" />
   <AppLayout>
     <section>
       <div class="mx-auto py-8 px-4 text-center">

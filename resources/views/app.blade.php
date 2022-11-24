@@ -6,17 +6,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <meta inertia name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.">
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
-        <meta property="og:image" content="/img/screenshot.jpg" />
-        <meta property="og:title" content="Blind-Tests multijoueurs" />
-        <meta property="og:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.">
-        <meta name="twitter:title" content="Blind-Tests multijoueurs">
-        <meta name="twitter:site" content="@PegaseMartin">
- 
+        <meta property="og:locale" content="fr_FR"/>
+        <meta property="og:locale:alternate" content="en_US"/>
+
         @production
             <script async defer data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818" src="https://analytics.pegase.io/pegasestats.js"></script>
         @endproduction
