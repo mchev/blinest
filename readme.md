@@ -55,7 +55,7 @@ php artisan horizon
 	- Import playlists from provider
 	- SEO
 	- SEO Opengraph not working in production (check cache)
- 	- room avec password, faire l'identification
+ 	- ✅ room avec password, faire l'identification
  	- ✅ Sitemap
 	- ✅ Check duplicated names from socialite
  	- ✅ recherche d'extaits provider à améliorer
