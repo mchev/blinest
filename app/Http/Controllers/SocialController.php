@@ -29,8 +29,14 @@ use Laravel\Socialite\Facades\Socialite;
          $email = User::where('email', $getInfo->email)->first();
 
          if (! $user && ! $email) {
+             if (User::whereName($getInfo->name)->exists()) {
+                 $name = $this->incrementUsername($getInfo->name);
+             } else {
+                 $name = $getInfo->name;
+             }
+
              $user = User::create([
-                 'name'     => $getInfo->name,
+                 'name'     => $name,
                  'email'    => $getInfo->email,
                  'provider' => $provider,
                  'provider_id' => $getInfo->id,
@@ -47,5 +53,17 @@ use Laravel\Socialite\Facades\Socialite;
          }
 
          return $user;
+     }
+
+     public function incrementUsername($username)
+     {
+         $original = $username;
+         $count = 0;
+
+         while (User::whereName($username)->exists()) {
+             $username = "{$original}-".$count++;
+         }
+
+         return $username;
      }
  }

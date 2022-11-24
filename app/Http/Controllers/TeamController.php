@@ -40,8 +40,10 @@ class TeamController extends Controller
             $team->update([
                 'user_id' => $user->id,
             ]);
-            return redirect()->route('teams.show', $team)->with('success', "Le propriétaire de la team a été modifié.");
+
+            return redirect()->route('teams.show', $team)->with('success', 'Le propriétaire de la team a été modifié.');
         }
+
         return abort(403, 'Unauthorized action.');
     }
 
@@ -50,8 +52,10 @@ class TeamController extends Controller
         if ($team?->owner?->id === Auth::user()->id) {
             $user->team_id = null;
             $user->update();
+
             return redirect()->route('teams.show', $team)->with('success', "Le membre n'est plus dans la team.");
         }
+
         return abort(403, 'Unauthorized action.');
     }
 

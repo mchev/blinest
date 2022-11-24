@@ -57,7 +57,7 @@ php artisan horizon
 	- Check duplicated names from socialite
  	- Sitemap
 	- SEO
-	- ✅ SEO Opengraph
+	- SEO Opengraph not working in production (check cache)
  	- ✅ recherche d'extaits provider à améliorer
 	- ✅ Room manual control
 	- ✅ Room options directly editable on the room.show

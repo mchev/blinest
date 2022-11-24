@@ -169,19 +169,21 @@ class RoomController extends Controller
      */
     public function joined(Room $room)
     {
-        if (!$room->is_playing && $room->is_autostart) {
+        if (! $room->is_playing && $room->is_autostart) {
             $room->startRound();
         }
+
         return response()->json('Successfully joined the room.');
     }
 
     public function start(Room $room)
     {
-        if (Auth::user()->hasRoomControl($room) && !$room->is_playing) {
+        if (Auth::user()->hasRoomControl($room) && ! $room->is_playing) {
             $room->startRound();
+
             return redirect()->back();
         }
-        
+
         return abort(403);
     }
 

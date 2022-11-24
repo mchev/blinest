@@ -21,7 +21,7 @@ class SpotifyService
     {
         $term = e(Request::get('term'));
 
-        $response = $this->api->search($term, ['track','artist'], ['include_external' => 'audio', 'market' => 'FR']);
+        $response = $this->api->search($term, ['track', 'artist'], ['include_external' => 'audio', 'market' => 'FR']);
         $results = collect($response->tracks->items);
 
         $tracks = ($results) ? $results->where('is_playable')->where('preview_url')->map(function ($track) {
