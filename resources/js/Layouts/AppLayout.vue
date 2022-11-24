@@ -21,7 +21,7 @@ watch(
 </script>
 <template>
   <AppHead>
-      <meta property="og:image" content="/img/screenshot.jpg" />
+      <meta property="og:image" content="/images/screenshot.png" />
       <meta property="og:title" content="Blind-Tests multijoueurs" />
       <meta property="og:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
       <meta property="og:type" content="website" />
