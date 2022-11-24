@@ -50,14 +50,14 @@ php artisan horizon
 	- Automatic playlist creation based on tracks liked
  	- Page pour le comptage des points
  	- Réglement / loi
- 	- room avec password, faire l'identification
   	- light mode mal voyant
  	- moderation des noms de room
 	- Import playlists from provider
-	- Check duplicated names from socialite
- 	- Sitemap
 	- SEO
 	- SEO Opengraph not working in production (check cache)
+ 	- room avec password, faire l'identification
+ 	- ✅ Sitemap
+	- ✅ Check duplicated names from socialite
  	- ✅ recherche d'extaits provider à améliorer
 	- ✅ Room manual control
 	- ✅ Room options directly editable on the room.show
