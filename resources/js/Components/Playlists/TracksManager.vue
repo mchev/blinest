@@ -160,14 +160,11 @@ const updateDificulty = (e, track) => {
               <label v-for="provider in providers"> <input type="checkbox" v-model="provider.selected" @click="check(provider)" /> {{ provider.name }} </label>
             </div>
             <ul v-if="results.length" class="max-h-80 overflow-y-auto bg-neutral-900">
-              <li v-for="result in results.filter((x) => selectedProviders.includes(x.provider))" class="relative border-b border-neutral-600 px-2 py-3">
+              <li v-for="result in results.filter((x) => selectedProviders.includes(x.provider))" class="relative border-b border-neutral-600 px-2 py-3" :key="result.id">
                 <div class="flex items-center gap-2">
                   <div><Icon :name="result.provider" :title="result.provider" class="h-6 w-6 flex-shrink-0" /></div>
                   <div>
-                    <!-- <mini-player :key="`mini-player-results-${result.id}`" :track="result" /> -->
-                    <audio :id="`mini-player-results-${result.id}`" preload="none" controls>
-                      <source :src="result.preview_url" type="audio/mpeg" />
-                    </audio>
+                    <mini-player :key="`mini-player-results-${result.id}`" :track="result" />
                   </div>
                   <div class="mr-2 flex w-80 flex-grow flex-col">
                     <span class="max-w-[16rem] truncate break-normal font-bold">{{ result.artist_name }}</span>
