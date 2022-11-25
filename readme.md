@@ -39,22 +39,22 @@ php artisan horizon
 
 ## Roadmap
 
+- v2.2
+	- Better translations (confirm js)
+
 - v2.1
 	- Profil pages
 	- Pubs ?
 	- Answers Card : réponses users surlignées
 	- Attente pendant que le morceau est en lecture
 	- Chat emojis
-	- Ban IPs
-	- Better translations (confirm js)
 	- Automatic playlist creation based on tracks liked
  	- Page pour le comptage des points
  	- Réglement / loi
   	- light mode mal voyant
  	- moderation des noms de room
 	- Import playlists from provider
-	- SEO
-	- SEO Opengraph not working in production (check cache)
+	- ✅ SEO Opengraph not working in production (check cache)
  	- ✅ room avec password, faire l'identification
  	- ✅ Sitemap
 	- ✅ Check duplicated names from socialite

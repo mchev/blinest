@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
-        <title inertia>{{ config('app.name', 'Blinest') }} - Quiz musicaux gratuits et multijoueurs</title>
+        <title inertia>{{ config('app.name', 'Blinest') }}</title>
         <meta inertia name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc.">
+        <link rel="canonical" href="{{ URL::current() }}" />
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
         <meta property="og:locale" content="fr_FR"/>
