@@ -3,8 +3,8 @@
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\SocialController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SocialController;
 
 // Banned users
 Route::get('/user/banned', [PageController::class, 'bannedUser']);

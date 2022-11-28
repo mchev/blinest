@@ -45,15 +45,15 @@ php artisan horizon
 - v2.1
 	- Profil pages
 	- Pubs ?
-	- Answers Card : réponses users surlignées
 	- Attente pendant que le morceau est en lecture
 	- Chat emojis
-	- Automatic playlist creation based on tracks liked
  	- Page pour le comptage des points
  	- Réglement / loi
   	- light mode mal voyant
  	- moderation des noms de room
-	- Import playlists from provider
+	- Answers Card : réponses users surlignées
+	- ✅ Import playlists from provider
+	- ✅ Import playlists from likes
 	- ✅ SEO Opengraph not working in production (check cache)
  	- ✅ room avec password, faire l'identification
  	- ✅ Sitemap

@@ -1,7 +1,9 @@
 <table>
     <thead>
     <tr>
-        <th>Réponses</th>
+        @foreach($answer_types as $type)
+            <th>{{ $type->name }}</th>
+        @endforeach
         <th>Origine</th>
         <th>Lien</th>
         <th>Difficulté</th>
@@ -13,13 +15,15 @@
     <tbody>
     @foreach($playlist->tracks as $track)
         <tr>
-            <td>
-                <ul>
-                @foreach($track->answers as $answer)
-                    <li>{{ $answer->type->name }} : {{ $answer->value }}</li>
-                @endforeach
-                </ul>
-            </td>
+            @foreach($answer_types as $type)
+                <td>
+                    <ul>
+                        @foreach($track->answers()->where('answer_type_id', $type->id)->get() as $answer)
+                            <li>{{ $answer->value }}</li>
+                        @endforeach
+                    </ul>
+                </td>
+            @endforeach
             <td>{{ $track->provider }}</td>
             <td>{{ $track->provider_url }}</td>
             <td>{{ $track->dificulty }}</td>

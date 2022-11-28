@@ -121,6 +121,12 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
     Route::get('playlists/{playlist}/export', [PlaylistController::class, 'export'])
         ->name('playlists.export');
 
+    Route::post('playlists/{playlist}/providers/find', [PlaylistController::class, 'findPlaylistByProvider'])
+        ->name('playlists.providers.find');
+
+    Route::post('playlists/{playlist}/providers/import', [PlaylistController::class, 'importPlaylistFromProvider'])
+        ->name('playlists.providers.import');
+
     // Moderation
 
     Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])

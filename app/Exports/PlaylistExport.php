@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\AnswerType;
 use App\Models\Playlist;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -17,6 +18,7 @@ class PlaylistExport implements FromView, ShouldAutoSize
     {
         return view('exports.playlists', [
             'playlist' => $this->playlist,
+            'answer_types' => AnswerType::orderBy('id')->get(),
         ]);
     }
 }

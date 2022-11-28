@@ -14,6 +14,7 @@ import pickBy from 'lodash/pickBy'
 import debounce from 'lodash/debounce'
 import throttle from 'lodash/throttle'
 import Sortable from '@/Components/Sortable.vue'
+import ImportPlaylist from './ImportPlaylist.vue'
 
 const props = defineProps({
   playlist: Object,
@@ -45,6 +46,7 @@ const providers = ref([
 ])
 const selectedProviders = ref(['deezer', 'spotify', 'itunes'])
 const search = ref('')
+const importingPlaylist = ref(false)
 const loading = ref(false)
 const results = ref([])
 
@@ -156,7 +158,7 @@ const updateDificulty = (e, track) => {
             <text-input v-model="search_online" prepend-icon="plus" append-icon="cheveron-down" :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
           </template>
           <template v-show="results.length" #dropdown>
-            <div v-if="results.length" class="flex gap-2 border-b-2 border-neutral-600 p-2 text-sm bg-neutral-900">
+            <div v-if="results.length" class="flex gap-2 border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm">
               <label v-for="provider in providers"> <input type="checkbox" v-model="provider.selected" @click="check(provider)" /> {{ provider.name }} </label>
             </div>
             <ul v-if="results.length" class="max-h-80 overflow-y-auto bg-neutral-900">
@@ -181,6 +183,12 @@ const updateDificulty = (e, track) => {
             </ul>
           </template>
         </dropdown>
+        <button class="btn-secondary btn-sm" @click="importingPlaylist = true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 mr-2">
+            <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+          </svg>
+          Importer une playlist
+        </button>
         <div class="flex items-center gap-2">
           <SelectInput v-model="form.paginate">
             <option :value="5">5</option>
@@ -265,4 +273,6 @@ const updateDificulty = (e, track) => {
       <track-answer-form v-if="creatingAnswer || (editingAnswer && selectedAnswer)" :answer="selectedAnswer" :answer_types="answer_types" :show="editingAnswer || creatingAnswer" max-width="md" @close="closeModal" />
     </div>
   </Card>
+
+  <ImportPlaylist v-if="importingPlaylist" @close="importingPlaylist = false" :playlist="playlist" />
 </template>

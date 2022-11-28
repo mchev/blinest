@@ -55,14 +55,14 @@ class RoomController extends Controller
             ? Room::findOrFail($idOrSlug)
             : Room::whereSlug($idOrSlug)->firstOrFail();
 
-        if($room->password) {
-            if(Request::has('password')) {
-                if(Request::input('password') != $room->password) {
+        if ($room->password) {
+            if (Request::has('password')) {
+                if (Request::input('password') != $room->password) {
                     return redirect()->back()->with('error', 'Le mot de passe est incorrect.');
                 }
             } else {
                 return Inertia::render('Rooms/Password', [
-                    'room' => $room
+                    'room' => $room,
                 ]);
             }
         }

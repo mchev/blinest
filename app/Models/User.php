@@ -277,4 +277,15 @@ class User extends Authenticatable implements BannableContract
             }
         });
     }
+
+    public function getUpVotedItems(string $model)
+    {
+        return app($model)->whereHas(
+            'voters',
+            function ($q) {
+                return $q->where(config('vote.user_foreign_key'), $this->getKey())->where('votes', 1);
+            }
+        );
+    }
+
 }

@@ -6,6 +6,9 @@ use App\Exports\PlaylistExport;
 use App\Models\AnswerType;
 use App\Models\Playlist;
 use App\Rules\Reserved;
+use App\Services\MusicProviders\DeezerService;
+use App\Services\MusicProviders\SpotifyService;
+use App\Services\MusicProviders\BlinestLikesService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -142,5 +145,44 @@ class PlaylistController extends Controller
         }
 
         return abort(403, 'Unauthorized action.');
+    }
+
+    public function findPlaylistByProvider(Playlist $playlist)
+    {
+        Request::validate([
+            'provider' => ['required'],
+            'playlist_id' => ['required_if:provider,Spotify,Deezer'],
+        ]);
+
+        if (Request::input('provider') === 'Spotify') {
+            $providerPlaylist = (new SpotifyService)->findPlaylistById(Request::input('playlist_id'));
+        }
+
+        if (Request::input('provider') === 'Deezer') {
+            $providerPlaylist = (new DeezerService)->findPlaylistById(Request::input('playlist_id'));
+        }
+
+        if (Request::input('provider') === 'Blinest likes') {
+            $providerPlaylist = (new BlinestLikesService)->getLikesInformation();
+        }
+
+        return Inertia::render('Playlists/Edit', [
+            'providerPlaylist' => $providerPlaylist,
+        ]);
+    }
+
+    public function importPlaylistFromProvider(Playlist $playlist)
+    {
+        if (Request::input('provider') === 'Spotify') {
+            $count = (new SpotifyService)->importPlaylist($playlist, Request::input('playlist_id'));
+        }
+        if (Request::input('provider') === 'Deezer') {
+            $count = (new DeezerService)->importPlaylist($playlist, Request::input('playlist_id'));
+        }
+        if (Request::input('provider') === 'Blinest likes') {
+            $count = (new BlinestLikesService)->importPlaylist($playlist);
+        }
+
+        return redirect()->route('playlists.edit', $playlist)->with('success', $count.'/'.Request::input('tracks_count').' titres ont été importés.');
     }
 }
