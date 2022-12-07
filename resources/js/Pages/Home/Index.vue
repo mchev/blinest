@@ -20,7 +20,7 @@ defineProps({
     <section v-if="!filters.search">
       <div class="flex flex-wrap items-center">
         <div class="lg:pr-8 py-8 mx-auto">
-          <a href="http://www.georgequiz.com/?utm_source=blinest&utm_medium=banner&utm_campaign=dec2022" target="_blank" class="umami--click--george-banner-V4.2" title="George Quiz">
+          <a href="http://www.georgequiz.com/?utm_source=blinest&utm_medium=banner&utm_campaign=dec2022" target="_blank" class="umami--click--george-banner" title="George Quiz">
             <img src="/images/statics/george_V4.2.gif" loading="lazy" alt="George" class="h-full rounded-lg" />
           </a>
         </div>
