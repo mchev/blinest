@@ -19,10 +19,12 @@ defineProps({
   <Layout>
     <section v-if="!filters.search">
       <div class="flex flex-wrap items-center">
-<!--         <div class="w-full lg:w-1/4 p-8">
-          <img src="/images/george.png" alt="George" class="h-full rounded-lg" />
+        <div class="lg:pr-8 py-8 mx-auto">
+          <a href="http://www.georgequiz.com/?utm_source=blinest&utm_medium=banner&utm_campaign=dec2022" target="_blank" class="umami--click--george-banner-V4.2" title="George Quiz">
+            <img src="/images/statics/george_V4.2.gif" alt="George" class="h-full rounded-lg" />
+          </a>
         </div>
- -->        <div v-if="top_rooms" class="relative mb-4 flex-grow">
+        <div v-if="top_rooms" class="relative mb-4 flex-grow">
           <h2 class="text-xl text-neutral-400 lg:text-2xl mb-1">TOP 5</h2>
           <rooms :rooms="top_rooms" />
         </div>
