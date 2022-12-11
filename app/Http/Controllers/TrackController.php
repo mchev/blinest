@@ -159,20 +159,8 @@ class TrackController extends Controller
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
-            foreach ($playlist->rooms()->isPublic()->get() as $room) {
-                if ($room->discord_webhook_url) {
-                    SendDiscordNotification::dispatch(
-                        $room,
-                        'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
-                        'danger'
-                    );
-                }
-            }
-
-            $track->answers()->delete();
-            $track->delete();
-
-            return Redirect::back()->with('Track deleted');
+                $track->deleteWithNotification();
+                return Redirect::back()->with('Track deleted');
         }
     }
 

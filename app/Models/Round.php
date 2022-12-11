@@ -9,7 +9,6 @@ use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
-use App\Jobs\SendDiscordNotification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -72,44 +71,31 @@ class Round extends Model
         }
 
         // All tracks has been played
-        if ($this->current === count($this->tracks)) {
+        if ($this->current >= count($this->tracks)) {
             $this->stop();
             if ($this->room->users_count > 0) {
                 ProcessRoundFinished::dispatch($this->room)
                     ->delay(now()->addSeconds($this->room->pause_between_rounds));
             }
 
-            // Else play next track
+        // Else play next track
         } else {
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
 
-            // if (@file_get_contents($track->preview_url)) {
+            if (@file_get_contents($track->preview_url)) {
 
-            // Event
-            broadcast(new TrackPlayed($this, $track));
+                // Event
+                broadcast(new TrackPlayed($this, $track));
 
-            // Job
-            ProcessTrackPlayed::dispatch($this)
-                    ->delay(now()->addSeconds($this->room->track_duration));
-            // } else {
+                // Job
+                ProcessTrackPlayed::dispatch($this)
+                        ->delay(now()->addSeconds($this->room->track_duration));
 
-            //     // DELETING TRACK - NOT READABLE
-
-            //     foreach ($track->playlist->rooms()->isPublic()->get() as $room) {
-            //         if ($room->discord_webhook_url) {
-            //             SendDiscordNotification::dispatch(
-            //                 $room,
-            //                 'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
-            //                 'danger'
-            //             );
-            //         }
-            //     }
-
-            //     $track->delete();
-
-            //     $this->playNextTrack();
-            // }
+            } else {
+                $track->deleteWithNotification();
+                $this->playNextTrack();
+            }
         }
     }
 

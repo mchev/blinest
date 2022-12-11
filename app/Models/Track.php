@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVote\Traits\Votable;
+use App\Jobs\SendDiscordNotification;
 
 class Track extends Model
 {
@@ -47,6 +48,22 @@ class Track extends Model
                     return null;
             }
         }
+    }
+
+    public function deleteWithNotification()
+    {
+        foreach ($this->playlist->rooms()->isPublic()->get() as $room) {
+            if ($room->discord_webhook_url) {
+                SendDiscordNotification::dispatch(
+                    $room,
+                    'Le titre '.$this->answers()->where('answer_type_id', 2)->first()?->value.' de '.$this->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
+                    'danger'
+                );
+            }
+        }
+
+        $this->answers()->delete();
+        $this->delete();
     }
 
     public function getUpvotesAttribute()
