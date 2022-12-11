@@ -9,12 +9,13 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
 
-defineProps({
+const props = defineProps({
   id: String | Number,
   rooms: Object,
 })
 
 const modules = [Navigation, Lazy, A11y]
+const maxSlides = props.rooms.data && props.rooms.data.length < 6 ? props.rooms.data.length : 6
 </script>
 <template>
   <div v-if="rooms.data">
@@ -32,7 +33,7 @@ const modules = [Navigation, Lazy, A11y]
           spaceBetween: 20,
         },
         1024: {
-          slidesPerView: 6,
+          slidesPerView: maxSlides,
           spaceBetween: 30,
         },
       }"

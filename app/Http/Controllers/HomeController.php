@@ -12,19 +12,21 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Home/Index', [
-            'filters' => Request::all('search'),
-            'top_rooms' => Room::isPublic()
+        $topRooms = Room::isPublic()
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
                 ->limit(5)
-                ->get(),
-            'categories' => Category::all()->map(function ($category) {
-                return [
+                ->get();
+
+        return Inertia::render('Home/Index', [
+            'filters' => Request::all('search'),
+            'top_rooms' => $topRooms,
+            'categories' => Category::all()->map(fn ($category) => [
                     'id' => $category->id,
                     'name' => $category->name,
                     'rooms' => $category->rooms()
                         ->isPublic()
+                        ->whereNotIn('id', $topRooms->pluck('id'))
                         ->whereHas('playlists')
                         ->whereNull('password')
                         ->filter(Request::only('search'))
@@ -32,8 +34,8 @@ class HomeController extends Controller
                         ->withCount('rounds')
                         ->paginate(30, ['*'], 'cat'.$category->id)
                         ->withQueryString(),
-                ];
-            }),
+                ]
+            ),
             'private_rooms' => Room::isPrivate()
                 ->whereHas('playlists')
                 ->whereNull('password')
