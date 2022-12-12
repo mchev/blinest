@@ -18,7 +18,7 @@ class SitemapController extends Controller
                     'url' => url('/rooms/'.$room->slug),
                     'updated_at' => $room->updated_at,
                 ]),
-            'pages' => Page::orderByDesc('revised_at')->distinct()->get(),
+            'pages' => Page::select('id', 'title', 'slug', 'revised_at', 'updated_at')->orderByDesc('revised_at')->get()->unique('slug'),
         ])->header('Content-Type', 'text/xml');
     }
 }
