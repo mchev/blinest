@@ -51,7 +51,7 @@ php artisan horizon
  	- Réglement / loi
   	- light mode mal voyant
  	- moderation des noms de room
-	- Answers Card : réponses users surlignées
+	- ✅ Answers Card : réponses users surlignées
 	- ✅ Import playlists from provider
 	- ✅ Import playlists from likes
 	- ✅ SEO Opengraph not working in production (check cache)
