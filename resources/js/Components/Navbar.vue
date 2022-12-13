@@ -20,7 +20,7 @@ const showingSearchbar = ref(false);
 	<div class="md:flex md:flex-shrink-0">
 		<div class="flex w-full items-center justify-between px-4 py-2 md:flex-shrink-0 md:px-12">
 			<Link class="" :href="route('home')" title="Blinest">
-				<logo class="fill-inherit w-24 lg:w-32" />
+				<logo class="fill-inherit w-24 lg:w-32" name="xmas" />
 			</Link>
 
 			<SearchRooms class="mt-1 hidden lg:block" />

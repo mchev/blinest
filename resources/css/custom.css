@@ -4,4 +4,29 @@
     @apply m-1 bg-neutral-600 text-xs py-1 px-2 rounded;
   }
 
+  .ribbon {
+    /* adjust the below to control the shape */
+    --d:5px; 
+    --g:16px;
+    --c:#333;
+    /**/
+
+    position: absolute;
+    opacity: .9;
+    top: 0;
+    right: 0;
+    transform: translate(29.29%, -100%) rotate(45deg); /* 29.29% = 100%*(1 - cos(45deg)) */
+    color: #fff;
+    text-align: center;
+    width: 100px;
+    transform-origin: bottom left;
+    padding:5px 1rem calc(var(--d) + 5px);
+    background:
+      linear-gradient(135deg, transparent var(--g), var(--c) calc(var(--g) - 0.3px)) left,
+      linear-gradient(-135deg,transparent var(--g), var(--c) calc(var(--g) - 0.3px)) right;
+    background-size:51% 100%;
+    background-repeat:no-repeat;
+    clip-path:polygon(0 0,100% 0,100% 100%, calc(100% - var(--d)) calc(100% - var(--d)), var(--d) calc(100% - var(--d)),0 100%)
+  }
+
 }
