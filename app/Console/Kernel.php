@@ -21,6 +21,9 @@ class Kernel extends ConsoleKernel
         // Clean created rounds with no scores
         $schedule->command('rounds:clean')->dailyAt('04:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
 
+        // Clean rounds stucked or unfinished
+        $schedule->command('rounds:reset')->everyMinute()->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
         // Clean messages older than 15 days
         $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
 

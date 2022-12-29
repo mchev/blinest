@@ -20,7 +20,7 @@ class CleanRooms implements ShouldQueue
      */
     public function handle()
     {
-        $rooms = Room::doesntHave('playlists')->whereDate('created_at', '<=', now()->subDays(30))->get();
+        $rooms = Room::doesntHave('playlists')->whereDate('created_at', '<=', now(config('app.timezone'))->subDays(30))->get();
 
         foreach ($rooms as $room) {
             $room->deletePhoto();
