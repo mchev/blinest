@@ -4,7 +4,6 @@ import { Head } from '@inertiajs/inertia-vue3'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import Footer from '@/Components/Footer.vue'
-import Snow from '@/Components/Snow.vue'
 
 const props = defineProps({
   session: Object,
@@ -38,7 +37,6 @@ watch(
   </Head>
   <div class="text-neutral-200">
     <div id="dropdown" />
-    <Snow />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
         <Navbar />
