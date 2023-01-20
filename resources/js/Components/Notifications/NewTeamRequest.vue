@@ -24,8 +24,8 @@ const accept = (team) => {
 			{{ notification.data.message }}
 		</div>
 		<div class="mt-1 flex items-center justify-end">
-			<button @click="decline" class="btn-danger btn-sm mr-2 opacity-80">{{ __('Decline') }}</button>
-			<button @click="accept" class="btn-primary btn-sm opacity-80">{{ __('Accept') }}</button>
+			<button type="button" @click="decline" class="btn-danger btn-sm mr-2 opacity-80">{{ __('Decline') }}</button>
+			<button type="button" @click="accept" class="btn-primary btn-sm opacity-80">{{ __('Accept') }}</button>
 		</div>
 	</div>
 </template>

@@ -5,9 +5,7 @@ const props = defineProps({
 	notification: Object,
 })
 
-const form = useForm({
-	notification_id: props.notification.id,
-})
+const emit = defineEmits(['markedAsdone'])
 
 </script>
 <template>
@@ -24,5 +22,11 @@ const form = useForm({
 		<div class="my-2 text-sm font-medium">
 			<Link :href="route('rooms.show', notification.data.room.slug)">{{ notification.data.message }}</Link>
 		</div>
+		<button type="button" class="btn-primary btn-sm mt-2 ml-auto" @click="$emit('markedAsdone')">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+			</svg>
+			{{ __('Done') }}
+		</button>
 	</div>
 </template>

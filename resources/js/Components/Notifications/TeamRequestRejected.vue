@@ -17,7 +17,7 @@ const read = (team) => {
 			{{ notification.data.message }}
 		</div>
 		<div class="mt-1 flex items-center justify-end">
-			<button @click="read" class="btn-primary btn-sm opacity-80">Ok</button>
+			<button type="button" @click="read" class="btn-primary btn-sm opacity-80">Ok</button>
 		</div>
 	</div>
 </template>

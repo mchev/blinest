@@ -17,7 +17,7 @@ const read = (team) => {
 			{{ __('Ta demande a été acceptée!') }}<br>
 		</div>
 		<div class="mt-1 flex items-center justify-end">
-			<button @click="read" class="btn-primary btn-sm opacity-80">{{ __('Mark as read') }}</button>
+			<button type="button" @click="read" class="btn-primary btn-sm opacity-80">{{ __('Mark as read') }}</button>
 		</div>
 	</div>
 </template>

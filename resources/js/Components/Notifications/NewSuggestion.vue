@@ -1,5 +1,4 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
 
 const props = defineProps({
 	notification: Object,
@@ -7,14 +6,6 @@ const props = defineProps({
 
 const emit = defineEmits(['markedAsdone'])
 
-const markAsDone = () => {
-	if (confirm('Ceci masquera aussi la suggestion pour les autres modérateurs.')) {
-		emit('markedAsdone')
-		Inertia.post(`/users/notifications/${props.notification.id}/done`, {
-			preserveScroll: true,
-		})
-	}
-}
 </script>
 <template>
 	<div v-if="notification" class="flex-grow">
@@ -25,8 +16,13 @@ const markAsDone = () => {
 		<div class="my-2 whitespace-pre-line text-sm font-medium">
 			{{ notification.data.message }}
 		</div>
-		<span class="flex text-xs">Envoyée par {{ notification.data.user.name }} sur {{ notification.data.room.name }}</span>
+		<span class="flex text-xs">Envoyée par {{ notification.data.user.name }} sur <span class="font-bold ml-1">{{ notification.data.room.name }}</span></span>
 		<span v-if="notification.data.room.playlists" class="text-xs">Playlists : {{ notification.data.room.playlists }}</span>
-		<button class="btn-primary btn-sm mt-2 ml-auto" @click="markAsDone">{{ __('Done') }}</button>
+		<button type="button" class="btn-primary btn-sm mt-2 ml-auto" @click="$emit('markedAsdone')">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+			</svg>
+			{{ __('Done') }}
+		</button>
 	</div>
 </template>
