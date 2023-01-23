@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { Head, Link } from '@inertiajs/inertia-vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'

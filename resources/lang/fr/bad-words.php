@@ -24,7 +24,6 @@ return [
     'bouffonne',
     'bougnoul',
     'bougnoule',
-    'boulet',
     'branlette',
     'branleur',
     'bride',

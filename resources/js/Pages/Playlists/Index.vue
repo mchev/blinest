@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
@@ -23,7 +23,7 @@ const form = useForm({
 watch(
   form,
   throttle(() => {
-    Inertia.get('/playlists', pickBy(form), { remember: 'forget', preserveState: true })
+    router.get('/playlists', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Link } from '@inertiajs/inertia-vue3'
+import { Link } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'

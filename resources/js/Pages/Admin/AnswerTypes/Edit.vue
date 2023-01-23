@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
@@ -21,7 +21,7 @@ const update = () => {
 }
 const destroy = () => {
   if (confirm('Are you sure you want to delete this answer_type?')) {
-    Inertia.delete(`/admin/answer_types/${props.answer_type.id}`)
+    router.delete(`/admin/answer_types/${props.answer_type.id}`)
   }
 }
 </script>

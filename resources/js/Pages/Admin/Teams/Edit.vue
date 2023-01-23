@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
@@ -25,13 +25,13 @@ const update = () => {
 
 const destroy = () => {
   if (confirm('Are you sure you want to delete this team?')) {
-    Inertia.delete(`/admin/teams/${props.team.id}`)
+    router.delete(`/admin/teams/${props.team.id}`)
   }
 }
 
 const restore = () => {
   if (confirm('Are you sure you want to restore this team?')) {
-    Inertia.put(`/admin/teams/${props.team.id}/restore`)
+    router.put(`/admin/teams/${props.team.id}/restore`)
   }
 }
 </script>

@@ -6,7 +6,7 @@ export default {
 </script>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Volume from '@/Components/Volume.vue'
 
@@ -23,7 +23,7 @@ const text = ref('')
 const words = ref([])
 const message = ref(null)
 const answers = ref([])
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const inputDisabled = ref(true)
 
 onMounted(() => {

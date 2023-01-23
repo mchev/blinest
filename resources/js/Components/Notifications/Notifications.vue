@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Link, usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import Dropdown from '@/Components/Dropdown.vue'
 import NewTeamRequest from './NewTeamRequest.vue'
 import TeamRequestApproved from './TeamRequestApproved.vue'
@@ -9,7 +9,7 @@ import TeamRequestRejected from './TeamRequestRejected.vue'
 import NewRoomAlert from './NewRoomAlert.vue'
 import NewSuggestion from './NewSuggestion.vue'
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const notifications = ref(user.notifications)
 const popup = ref(null)
 
@@ -32,7 +32,7 @@ const markAsRead = (notification) => {
 
 const markAsDone = (notification) => {
 	hideItemBeforeRefresh(notification)
-	Inertia.post(`/users/notifications/${notification.id}/done`, {
+	router.post(`/users/notifications/${notification.id}/done`, {
 		preserveScroll: true,
 	})
 }

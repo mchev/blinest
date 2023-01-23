@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Link, usePage } from '@inertiajs/inertia-vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import Logo from '@/Components/Logo.vue'
 import Icon from '@/Components/Icon.vue'
 import Dropdown from '@/Components/Dropdown.vue'
@@ -11,7 +11,7 @@ import Notifications from '@/Components/Notifications/Notifications.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import SocialIcon from '@/Components/SocialIcon.vue'
 
-const user = usePage().props.value.auth?.user
+const user = usePage().props.auth?.user
 
 const showingSearchbar = ref(false);
 

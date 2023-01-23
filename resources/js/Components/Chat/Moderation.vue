@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { usePage, useForm } from '@inertiajs/inertia-vue3'
+import { usePage, useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -14,9 +14,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const authorIsModerator = props.room.moderators.find((x) => x.id === props.message.user.id)
-const userIsPublicModerator = usePage().props.value.publicModerators.find((x) => x.id === user.id)
+const userIsPublicModerator = usePage().props.publicModerators.find((x) => x.id === user.id)
 const show = ref(true)
 const showingBanForm = ref(false)
 

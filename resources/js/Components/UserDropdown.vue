@@ -1,12 +1,12 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/inertia-vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const isUrl = (...urls) => {
-  let currentUrl = usePage().url.value.substr(1)
+  let currentUrl = usePage().url.substr(1)
   if (urls[0] === '') {
     return currentUrl === ''
   }

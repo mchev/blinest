@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
+import Tip from '@/Components/Tip.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
 
@@ -41,6 +42,7 @@ const close = () => {
       </template>
       <form @submit.prevent="submit" id="suggestionForm">
         <textarea-input v-model="form.suggestion" :error="form.errors.suggestion" class="mb-4 w-full" :label="__('What would you like to suggest?')" required/>
+        <Tip>Inutile d'envoyer les suggestions séparement. Regrouper au maximum les idées sous forme de liste dans une seule suggestion, ce sera plus lisible pour les modérateurs.</Tip>
       </form>
       <template #footer>
         <div class="flex items-center ml-auto">

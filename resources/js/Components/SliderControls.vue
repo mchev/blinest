@@ -1,5 +1,5 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
 
 const props = defineProps({
@@ -10,7 +10,7 @@ const prevUrl = ref(props.rooms.prev_page_url)
 const nextUrl = ref(props.rooms.next_page_url || props.rooms.first_page_url)
 
 const visit = (url) => {
-	Inertia.visit(url, { preserveState: true, preserveScroll: true }, { only: ['rooms'] })
+	router.visit(url, { preserveState: true, preserveScroll: true }, { only: ['rooms'] })
 }
 
 watch(

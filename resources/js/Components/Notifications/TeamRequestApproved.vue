@@ -1,12 +1,12 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
 	notification: Object,
 })
 
 const read = (team) => {
-	Inertia.post(`/users/notifications/${props.notification.id}/read`)
+	router.post(`/users/notifications/${props.notification.id}/read`)
 }
 
 </script>

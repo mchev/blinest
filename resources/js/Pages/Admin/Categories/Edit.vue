@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
@@ -18,7 +18,7 @@ const update = () => {
 }
 const destroy = () => {
   if (confirm('Are you sure you want to delete this category?')) {
-    Inertia.delete(`/admin/categories/${props.category.id}`)
+    router.delete(`/admin/categories/${props.category.id}`)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3'
+import { Head } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Rooms from './partials/Rooms.vue'
 

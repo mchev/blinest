@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -10,7 +10,7 @@ const props = defineProps({
   channel: String,
 })
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const userAnswers = ref([])
 const round = ref(null)
 const tracks = ref([])

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Modal from '@/Components/Modal.vue'
 import EditOptionsForm from './EditOptionsForm.vue'
@@ -19,14 +19,14 @@ const showingOptionsModal = ref(false)
 
 const stopRound = () => {
   endingRound.value = true
-  Inertia.post(`/rounds/${props.round.id}/stop`, {
+  router.post(`/rounds/${props.round.id}/stop`, {
     preserveScroll: true,
     preserveState: false,
   })
 }
 const startRound = () => {
   startingRound.value = true
-  Inertia.post(`/rooms/${props.room.id}/start`, {
+  router.post(`/rooms/${props.room.id}/start`, {
     preserveScroll: true,
     preserveState: false,
   })

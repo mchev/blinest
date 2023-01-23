@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
@@ -17,7 +17,7 @@ const props = defineProps({
 })
 
 // const memberList = Object.values(props.members).sort((a, b) => b.score - a.score)
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const form = useForm({
   _method: 'put',
@@ -27,21 +27,21 @@ const form = useForm({
 
 const leave = () => {
   if (confirm('Are you sure?')) {
-    Inertia.post(`/teams/${props.team.id}/leave`)
+    router.post(`/teams/${props.team.id}/leave`)
   }
 }
 
 const sendRequest = (team) => {
-  Inertia.post(`/teams/${team.id}/request`)
+  router.post(`/teams/${team.id}/request`)
 }
 
 const cancelRequest = (team) => {
-  Inertia.post(`/teams/${team.id}/request/cancel`)
+  router.post(`/teams/${team.id}/request/cancel`)
 }
 
 const switchOwner = (member) => {
   if (confirm('Veux-tu vraiment transferer la gestion de la team à ce membre ?')) {
-    Inertia.post(`/teams/${props.team.id}/owner/${member.id}`, {
+    router.post(`/teams/${props.team.id}/owner/${member.id}`, {
       preserveState: false,
     })
   }
@@ -49,7 +49,7 @@ const switchOwner = (member) => {
 
 const removeMember = (member) => {
   if (confirm('Veux-tu vraiment retirer ce membre de la team ?')) {
-    Inertia.post(`/teams/${props.team.id}/members/${member.id}/remove`, {
+    router.post(`/teams/${props.team.id}/members/${member.id}/remove`, {
       onSuccess: () => {
         console.log('Member removed')
         memberList.value = memberList.value.filter((e) => e.id !== member.id)

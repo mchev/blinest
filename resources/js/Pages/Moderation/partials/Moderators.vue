@@ -1,5 +1,5 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 
 const props = defineProps({

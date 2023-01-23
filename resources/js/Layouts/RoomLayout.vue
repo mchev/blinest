@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Link, Head, usePage } from '@inertiajs/inertia-vue3'
+import { Link, Head, usePage } from '@inertiajs/vue3'
 import Logo from '@/Components/Logo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import MainMenu from '@/Components/MainMenu.vue'
@@ -10,7 +10,7 @@ import UserDropdown from '@/Components/UserDropdown.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import Navbar from '@/Components/Navbar.vue'
 
-const room = computed(() => usePage().props.value.room)
+const room = computed(() => usePage().props.room)
 </script>
 <template>
   <Head>

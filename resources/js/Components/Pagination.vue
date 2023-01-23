@@ -1,13 +1,13 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Link } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 
 defineProps({
   links: Array,
 })
 
 const visit = (url) => {
-  Inertia.visit(url, { preserveState: true, preserveScroll: true}, { only: ['categories'] });
+  router.visit(url, { preserveState: true, preserveScroll: true}, { only: ['categories'] });
 }
 
 </script>

@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 

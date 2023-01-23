@@ -1,5 +1,5 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Pagination from '@/Components/Pagination.vue'
 
@@ -8,7 +8,7 @@ const props = defineProps({
 })
 
 const restoreMessage = (message) => {
-  Inertia.put(route('moderation.messages.restore', message), {
+  router.put(route('moderation.messages.restore', message), {
     preserveScroll: true,
   })
 }

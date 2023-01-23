@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 import Message from './Message.vue'
 import AlertModeratorsModal from './AlertModeratorsModal.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -13,7 +13,7 @@ const props = defineProps({
 const channel = `chat-room.${props.room.id}`
 const body = ref('')
 const messages = ref(props.room.latest_messages)
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const messenger = ref()
 const reported = ref(null)
 const alertingModerators = ref(null)

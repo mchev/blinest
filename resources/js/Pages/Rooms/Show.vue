@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -22,7 +22,7 @@ const props = defineProps({
   room: Object,
 })
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const channel = `rooms.${props.room.id}`
 const round = ref(null)
 const joined = ref(false)

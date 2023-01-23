@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Link, usePage } from '@inertiajs/inertia-vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
 import PodiumModal from './PodiumModal.vue'
@@ -12,7 +12,7 @@ const props = defineProps({
   data: Object,
 })
 
-const me = usePage().props.value.auth.user
+const me = usePage().props.auth.user
 const scores = ref([])
 const userList = ref(props?.users)
 const track = ref(null)

@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import pickBy from 'lodash/pickBy'
@@ -12,7 +12,7 @@ const props = defineProps({
   filters: Object,
 })
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const form = useForm({
   search: props.filters.search,
@@ -21,17 +21,17 @@ const form = useForm({
 watch(
   form,
   throttle(() => {
-    Inertia.get('/teams', pickBy(form), { remember: 'forget', preserveState: true })
+    router.get('/teams', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )
 
 const sendRequest = (team) => {
-  Inertia.post(`/teams/${team.id}/request`)
+  router.post(`/teams/${team.id}/request`)
 }
 
 const cancelRequest = (team) => {
-  Inertia.post(`/teams/${team.id}/request/cancel`)
+  router.post(`/teams/${team.id}/request/cancel`)
 }
 </script>
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { usePage } from '@inertiajs/inertia-vue3'
+import { usePage } from '@inertiajs/vue3'
 import Moderation from './Moderation.vue'
 
 const props = defineProps({
@@ -10,9 +10,9 @@ const props = defineProps({
 
 const moderate = ref(false)
 const reporting = ref(false)
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 const isModerator = props.room.moderators.find((x) => x.id === user.id)
-const userIsPublicModerator = usePage().props.value.publicModerators.find((x) => x.id === user.id)
+const userIsPublicModerator = usePage().props.publicModerators.find((x) => x.id === user.id)
 
 const report = () => {
   reporting.value = true
@@ -23,7 +23,7 @@ const report = () => {
 </script>
 <template>
   <div class="group relative my-1 flex flex-wrap items-center text-sm hover:opacity-90">
-    <div v-if="!usePage().props.value.publicModerators.find((x) => x.id === message.user.id)" class="absolute top-0 right-0 items-center bg-neutral-800 py-1 px-2 group-hover:flex" :class="message.reports < 0 ? 'flex' : 'hidden'">
+    <div v-if="!usePage().props.publicModerators.find((x) => x.id === message.user.id)" class="absolute top-0 right-0 items-center bg-neutral-800 py-1 px-2 group-hover:flex" :class="message.reports < 0 ? 'flex' : 'hidden'">
       <div v-if="reporting">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 animate-spin">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

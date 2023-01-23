@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Link } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import Room from './Room.vue'
 import Top from './Top.vue'
 import SliderControls from '@/Components/SliderControls.vue'

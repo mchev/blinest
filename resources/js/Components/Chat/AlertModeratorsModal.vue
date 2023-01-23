@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 import Tip from '@/Components/Tip.vue'

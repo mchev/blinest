@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -60,7 +60,7 @@ watch(
 watch(
   form,
   throttle(() => {
-    Inertia.get(route('playlists.edit', props.playlist), pickBy(form), {
+    router.get(route('playlists.edit', props.playlist), pickBy(form), {
       preserveScroll: true,
       preserveState: true,
     })
@@ -104,7 +104,7 @@ const closeModal = () => {
 }
 
 const addTrack = (track) => {
-  Inertia.post(route('playlists.tracks.store', props.playlist.id), track, {
+  router.post(route('playlists.tracks.store', props.playlist.id), track, {
     preserveScroll: true,
     preserveState: true,
     onSuccess: () => {
@@ -116,7 +116,7 @@ const addTrack = (track) => {
 const removeTrack = (track) => {
   let id = track.added ? track.added.id : track.id
   if (confirm('Voulez-vous vraiment supprimer cet extrait?')) {
-    Inertia.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
+    router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => {
@@ -127,7 +127,7 @@ const removeTrack = (track) => {
 }
 
 const updateDificulty = (e, track) => {
-  Inertia.put(
+  router.put(
     route('playlists.tracks.update', [props.playlist.id, track]),
     { dificulty: e.target.value },
     {

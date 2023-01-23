@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { Link, useForm } from '@inertiajs/inertia-vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import SelectInput from '@/Components/SelectInput.vue'
 import TextInput from '@/Components/TextInput.vue'
 import Modal from '@/Components/Modal.vue'

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useForm } from '@inertiajs/inertia-vue3'
+import { useForm } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Card from '@/Components/Card.vue'

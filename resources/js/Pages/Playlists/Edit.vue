@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -22,7 +22,7 @@ const props = defineProps({
 
 const form = useForm(props.playlist)
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const update = () => {
   form.put(`/playlists/${props.playlist.id}`, {
@@ -32,13 +32,13 @@ const update = () => {
 
 const destroy = () => {
   if (confirm('Are you sure you want to delete this playlist?')) {
-    Inertia.delete(`/playlists/${props.playlist.id}`)
+    router.delete(`/playlists/${props.playlist.id}`)
   }
 }
 
 const restore = () => {
   if (confirm('Are you sure you want to restore this playlist?')) {
-    Inertia.put(`/playlists/${props.playlist.id}/restore`)
+    router.put(`/playlists/${props.playlist.id}/restore`)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-import { Link } from '@inertiajs/inertia-vue3'
+import { Link } from '@inertiajs/vue3'
 import Logo from '@/Components/Logo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import AdminMenu from '@/Components/AdminMenu.vue'

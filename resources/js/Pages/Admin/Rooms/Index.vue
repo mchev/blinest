@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
@@ -23,7 +23,7 @@ const form = useForm({
 watch(
   form,
   throttle(() => {
-    Inertia.get('/admin/rooms', pickBy(form), { remember: 'forget', preserveState: true })
+    router.get('/admin/rooms', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )

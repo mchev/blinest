@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, usePage, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import CheckboxInput from '@/Components/CheckboxInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
@@ -16,7 +16,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const form = useForm({
   is_chat_active: props.room.is_chat_active,

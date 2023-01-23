@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { useForm, usePage } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import throttle from 'lodash/throttle'
 import pickBy from 'lodash/pickBy'
@@ -11,13 +11,13 @@ const props = defineProps({
 })
 
 const form = useForm({
-  search: usePage().props.value?.filters?.search
+  search: usePage().props?.filters?.search
 })
 
 watch(
   form,
   throttle(() => {
-    Inertia.get('/', pickBy(form), { remember: 'forget', preserveState: true })
+    router.get('/', pickBy(form), { remember: 'forget', preserveState: true })
   }, 150),
   { deep: true },
 )

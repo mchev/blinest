@@ -1,7 +1,7 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/inertia-vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 
-// const user = usePage().props.value.auth?.user
+// const user = usePage().props.auth?.user
 </script>
 <template>
 	<div class="md:flex md:flex-shrink-0 mt-8 border-t border-neutral-500 text-neutral-500 text-sm">

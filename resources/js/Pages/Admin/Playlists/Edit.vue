@@ -1,6 +1,6 @@
 <script setup>
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -30,13 +30,13 @@ const update = () => {
 
 const destroy = () => {
   if (confirm('Are you sure you want to delete this playlist?')) {
-    Inertia.delete(`/admin/playlists/${props.playlist.id}`)
+    router.delete(`/admin/playlists/${props.playlist.id}`)
   }
 }
 
 const restore = () => {
   if (confirm('Are you sure you want to restore this playlist?')) {
-    Inertia.put(`/admin/playlists/${props.playlist.id}/restore`)
+    router.put(`/admin/playlists/${props.playlist.id}/restore`)
   }
 }
 </script>

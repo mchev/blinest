@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Inertia } from '@inertiajs/inertia'
-import { Head, Link, usePage, useForm } from '@inertiajs/inertia-vue3'
+import { router } from '@inertiajs/vue3'
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -24,7 +24,7 @@ const props = defineProps({
   available_playlists: Array,
 })
 
-const user = usePage().props.value.auth.user
+const user = usePage().props.auth.user
 
 const form = useForm({
   _method: 'put',
@@ -55,7 +55,7 @@ const update = () => {
 
 const deleteRoom = () => {
   if(confirm('Voules-vous vraiment supprimer cette room ?')) {
-    Inertia.delete(route('rooms.destroy', props.room.id))
+    router.delete(route('rooms.destroy', props.room.id))
   }
 }
 
