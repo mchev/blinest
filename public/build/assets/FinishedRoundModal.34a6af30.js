@@ -1,1 +1,0 @@
-import{_ as t}from"./Modal.95e75e17.js";import{o as a,c,w as n,h as r}from"./app.2ccf841f.js";const d={__name:"FinishedRoundModal",props:{show:Boolean},emits:["close"],setup(o,{emit:e}){const s=()=>{e("close")};return(i,l)=>(a(),c(t,{show:o.show,onClose:s},{default:n(()=>[r(" Round finished ")]),_:1},8,["show"]))}};export{d as default};
