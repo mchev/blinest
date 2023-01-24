@@ -9,6 +9,8 @@ import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import Share from '@/Components/Share.vue'
 import Tip from '@/Components/Tip.vue'
+import Modal from '@/Components/Modal.vue'
+import LoginForm from '@/Pages/Auth/LoginForm.vue'
 
 import Controls from './partials/Controls.vue'
 import Player from './partials/Player.vue'
@@ -26,7 +28,7 @@ const user = usePage().props.auth.user
 const channel = `rooms.${props.room.id}`
 const round = ref(null)
 const joined = ref(false)
-const users = ref(null)
+const users = ref([])
 const data = ref(null)
 const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
@@ -36,20 +38,22 @@ const users_podium = ref([])
 const teams_podium = ref([])
 
 onMounted(() => {
-  Echo.join(channel)
-    .here((usersHere) => {
-      users.value = usersHere
-      joining()
-    })
-    .joining((user) => {
-      users.value.push(user)
-    })
-    .leaving((user) => {
-      users.value = users.value.filter((u) => u.id !== user.id)
-    })
-    .error((error) => {
-      console.error(error)
-    })
+  if(user) {
+    Echo.join(channel)
+      .here((usersHere) => {
+        users.value = usersHere
+        joining()
+      })
+      .joining((user) => {
+        users.value.push(user)
+      })
+      .leaving((user) => {
+        users.value = users.value.filter((u) => u.id !== user.id)
+      })
+      .error((error) => {
+        console.error(error)
+      })
+  }
 })
 
 onUnmounted(() => {
@@ -85,13 +89,18 @@ const listenRounds = () => {
 </script>
 <template>
   <RoomLayout>
-    <div v-if="!joined" class="flex h-full w-full items-center justify-center">
+
+    <Modal v-if="!user" :show="true">
+      <LoginForm :isFromModal="true" />
+    </Modal>
+
+    <div v-if="!joined && user" class="flex h-full w-full items-center justify-center">
       <Spinner />
       <h2>{{ __('Loading') }}...</h2>
     </div>
 
     <Transition name="slide-right">
-      <div v-if="joined" class="h-full md:flex">
+      <div v-if="joined || !user" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-4 flex items-center">
             <h2 class="mr-2 text-xl font-bold">{{ room.name }}</h2>
@@ -103,7 +112,7 @@ const listenRounds = () => {
             <br> {{ __('The person responsible for the room (moderators) must be present to start the game.') }}
           </Tip>
 
-          <div class="mb-4 md:mb-8">
+          <div class="mb-4 md:mb-8" v-if="user">
             <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>
@@ -113,7 +122,9 @@ const listenRounds = () => {
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
-          <Controls v-if="room.moderators.find(x => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
+          <template v-if="user">
+            <Controls v-if="room.moderators.find(x => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
+          </template>
 
           <Card>
             <div class="flex items-center flex-col lg:flex-row lg:justify-between gap-4 text-sm">

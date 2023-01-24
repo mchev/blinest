@@ -5,6 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\RoomController;
+
 
 // Banned users
 Route::get('/user/banned', [PageController::class, 'bannedUser']);
@@ -35,6 +37,12 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::get('/pages/{slug}', [PageController::class, 'show'])
     ->name('pages.show');
+
+// Room
+Route::get('rooms/{slug}', [RoomController::class, 'show'])
+    ->name('rooms.show');
+Route::get('rooms/{room}', [RoomController::class, 'show'])
+    ->name('rooms.show');
 
 // Contact
 

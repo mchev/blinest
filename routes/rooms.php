@@ -34,6 +34,7 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
     Route::post('rooms/{room}/suggestion', [RoomController::class, 'sendSuggestion'])
         ->name('rooms.suggestions');
 
+    // Join
     Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
         ->name('rooms.joined');
 

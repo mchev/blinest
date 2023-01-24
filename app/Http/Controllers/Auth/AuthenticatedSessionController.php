@@ -32,6 +32,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if($request->isFromModal) {
+            return redirect()->back();
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

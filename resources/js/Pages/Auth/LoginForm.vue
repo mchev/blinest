@@ -5,14 +5,21 @@ import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Socialite from './Socialite.vue'
 
+const props = defineProps({
+  isFromModal: { type: Boolean, required: false, default: false }
+})
+
 const form = useForm({
   email: '',
   password: '',
+  isFromModal: props.isFromModal,
   remember: true,
 })
 
 const login = () => {
-  form.post('/login')
+  form.post('/login', {
+    preserveState: false
+  })
 }
 </script>
 <template>
@@ -23,6 +30,10 @@ const login = () => {
         </template>
         <form @submit.prevent="login">
           <div class="p-4">
+            <div v-if="$page.props.errors.email" class="text-red-600 my-2 max-w-xs text-sm">
+              {{ $page.props.errors.email }}
+            </div>
+
             <text-input v-model="form.email" :error="form.errors.email" class="mt-6" :label="__('Email')" type="email" autofocus autocapitalize="off" required/>
             <text-input v-model="form.password" :error="form.errors.password" class="mt-6" :label="__('Password')" type="password" required />
 <!--             <label class="mt-6 flex select-none items-center" for="remember">
