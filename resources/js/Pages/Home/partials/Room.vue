@@ -41,7 +41,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110 hover:grayscale-0" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`">
+  <Link :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`">
     <article class="relative h-full w-full">
       <div class="swiper-lazy-preloader"></div>
       <div v-if="!room.is_public && room.owner" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
