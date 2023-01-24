@@ -3,7 +3,6 @@ import { router } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import Room from './Room.vue'
 import Top from './Top.vue'
-import SliderControls from '@/Components/SliderControls.vue'
 import { Navigation, Lazy, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
@@ -43,8 +42,6 @@ const maxSlides = props.rooms.data && props.rooms.data.length < 6 ? props.rooms.
         <Room :room="room" />
       </swiper-slide>
     </swiper>
-    <!--     <Room :room="room" v-for="room in rooms.data" :key="room.id" />
-    <SliderControls :rooms="rooms"/> -->
   </div>
   <div v-else class="relative grid grid-cols-1 gap-8 md:grid-cols-5">
     <Top :room="room" v-for="(room, index) in rooms" :key="room.id" :index="index" />
@@ -54,9 +51,15 @@ const maxSlides = props.rooms.data && props.rooms.data.length < 6 ? props.rooms.
 <style>
 .swiper-button-next {
   --swiper-navigation-color: white;
+  @apply flex bg-gradient-to-r from-transparent to-neutral-900 h-full top-0 right-0 items-center px-8
 }
 
 .swiper-button-prev {
   --swiper-navigation-color: white;
+  @apply flex bg-gradient-to-l from-transparent to-neutral-900 h-full top-0 left-0 items-center px-8
+}
+
+.swiper-button-disabled{
+    display:none;   
 }
 </style>
