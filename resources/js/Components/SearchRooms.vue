@@ -27,7 +27,8 @@ watch(
     <meta itemprop="url" content="https://blinest.com/"/>
     <form itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
       <meta itemprop="target" content="https://blinest.com/?search={search_term_string}"/>
-      <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search') + '...'" itemprop="query-input" name="search_term_string" />
+      <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search') + '...'" />
+      <input class="hidden" itemprop="query-input" type="text" name="search_term_string" v-model="form.search" required/>
     </form>
   </div>
 </template>
