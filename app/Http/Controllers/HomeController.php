@@ -12,6 +12,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        if(Request::only('search')) {
+            return $this->search(Request::only('search'));
+        }
+
         $topRooms = Room::isPublic()
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
@@ -56,6 +60,24 @@ class HomeController extends Controller
                 ->orderByDesc('rounds_count')
                 ->paginate(30, ['*'], 'user_rooms')
                 ->withQueryString() : null,
+        ]);
+    }
+
+    public function search($search)
+    {
+        return Inertia::render('Home/Index', [
+            'filters' => Request::all('search'),
+            'search_result' => Room::query()
+                ->whereHas('playlists')
+                ->whereNull('password')
+                ->filter($search)
+                ->with('owner')
+                ->withCount('rounds')
+                ->orderByDesc('is_playing')
+                ->orderByDesc('is_public')
+                ->orderByDesc('rounds_count')
+                ->paginate(30)
+                ->withQueryString(),
         ]);
     }
 }
