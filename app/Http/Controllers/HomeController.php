@@ -36,8 +36,8 @@ class HomeController extends Controller
                         ->filter(Request::only('search'))
                         ->with('owner')
                         ->withCount('rounds')
-                        ->paginate(30, ['*'], 'cat'.$category->id)
-                        ->withQueryString(),
+                        ->limit(18)
+                        ->get(),
                 ]
             ),
             'private_rooms' => Room::isPrivate()
@@ -49,8 +49,8 @@ class HomeController extends Controller
                 ->orderByDesc('is_playing')
                 ->orderByDesc('is_public')
                 ->orderByDesc('rounds_count')
-                ->paginate(30, ['*'], 'private_rooms')
-                ->withQueryString(),
+                ->limit(18)
+                ->get(),
             'user_rooms' => Auth::user() ? Auth::user()->rooms()
                 ->with('owner')
                 ->where('is_public', false)
@@ -58,8 +58,7 @@ class HomeController extends Controller
                 ->filter(Request::only('search'))
                 ->withCount('rounds')
                 ->orderByDesc('rounds_count')
-                ->paginate(30, ['*'], 'user_rooms')
-                ->withQueryString() : null,
+                ->get() : null,
         ]);
     }
 
@@ -76,8 +75,8 @@ class HomeController extends Controller
                 ->orderByDesc('is_playing')
                 ->orderByDesc('is_public')
                 ->orderByDesc('rounds_count')
-                ->paginate(30)
-                ->withQueryString(),
+                ->limit(30)
+                ->get(),
         ]);
     }
 }

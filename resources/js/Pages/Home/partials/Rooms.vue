@@ -11,13 +11,14 @@ import 'swiper/css/navigation'
 const props = defineProps({
   id: String | Number,
   rooms: Object,
+  is_top_5: Boolean,
 })
 
 const modules = [Navigation, Lazy, A11y]
-const maxSlides = props.rooms.data && props.rooms.data.length < 6 ? props.rooms.data.length : 6
+const maxSlides = props.rooms && props.rooms.length < 6 ? props.rooms.length : 6
 </script>
 <template>
-  <div v-if="rooms.data">
+  <div v-if="rooms && !is_top_5">
     <swiper
       :modules="modules"
       :slides-per-view="1"
@@ -38,7 +39,7 @@ const maxSlides = props.rooms.data && props.rooms.data.length < 6 ? props.rooms.
       }"
       navigation
     >
-      <swiper-slide v-for="room in rooms.data" :key="room.id">
+      <swiper-slide v-for="room in rooms" :key="room.id">
         <Room :room="room" />
       </swiper-slide>
     </swiper>
