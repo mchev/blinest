@@ -41,8 +41,6 @@ Route::get('/pages/{slug}', [PageController::class, 'show'])
 // Room
 Route::get('rooms/{slug}', [RoomController::class, 'show'])
     ->name('rooms.show');
-Route::get('rooms/{room}', [RoomController::class, 'show'])
-    ->name('rooms.show');
 
 // Contact
 
