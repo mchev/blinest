@@ -36,7 +36,7 @@ watch(
     <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
     <meta name="twitter:image" content="https://blinest.com/images/statics/screenshot.png" />
   </Head>
-  <div class="text-neutral-200" itemscope itemtype="https://schema.org/WebSite">
+  <div class="text-neutral-200">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">

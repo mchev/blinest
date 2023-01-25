@@ -17,8 +17,24 @@
         {
             "@context": "https://schema.org",
             "@type": "Organization",
-            "url": "https://blinest.com",
+            "url": "{{ config('app.url') }}",
             "logo": "https://blinest.com/images/statics/logo_blinest.png"
+        }
+        </script>
+
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "url": "{{ config('app.url') }}",
+          "potentialAction": [{
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "{{ config('app.url') }}?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }]
         }
         </script>
 
