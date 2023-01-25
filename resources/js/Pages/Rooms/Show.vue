@@ -89,7 +89,7 @@ const listenRounds = () => {
 </script>
 <template>
   <RoomLayout>
-    <Modal v-if="!user" :show="true" class="max-w-3xl">
+    <Modal v-if="!user" :show="true" :maxWidth="'3xl'">
       <LoginForm :isFromModal="true" />
     </Modal>
 

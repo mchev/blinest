@@ -121,6 +121,7 @@ return [
     'tantouze',
     'tarlouse',
     'tarlouze',
+    'tarlouz',
     'tebe',
     'teub',
     'teube',
