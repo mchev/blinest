@@ -16,7 +16,7 @@ const store = () => {
 <template>
   <Head title="Create Team" />
   <AppLayout>
-    <Card class="max-w-xl mx-auto">
+    <Card class="mx-auto max-w-xl">
       <template #header>
         <h1 class="text-xl font-bold">{{ __('Creating a team') }}</h1>
       </template>

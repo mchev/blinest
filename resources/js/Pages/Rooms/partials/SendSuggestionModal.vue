@@ -25,14 +25,13 @@ const submit = () => {
     onSuccess: () => {
       form.reset()
       emit('close')
-    }
+    },
   })
 }
 
 const close = () => {
   emit('close')
 }
-
 </script>
 <template>
   <Modal :show="show" @close="close">
@@ -41,11 +40,11 @@ const close = () => {
         <h2>{{ __('Send a suggestion') }}</h2>
       </template>
       <form @submit.prevent="submit" id="suggestionForm">
-        <textarea-input v-model="form.suggestion" :error="form.errors.suggestion" class="mb-4 w-full" :label="__('What would you like to suggest?')" required/>
+        <textarea-input v-model="form.suggestion" :error="form.errors.suggestion" class="mb-4 w-full" :label="__('What would you like to suggest?')" required />
         <Tip>Inutile d'envoyer les suggestions séparement. Regrouper au maximum les idées sous forme de liste dans une seule suggestion, ce sera plus lisible pour les modérateurs.</Tip>
       </form>
       <template #footer>
-        <div class="flex items-center ml-auto">
+        <div class="ml-auto flex items-center">
           <button type="button" class="btn-secondary mr-2" @click="$emit('close')">{{ __('Cancel') }}</button>
           <loading-button :loading="form.processing" class="btn-primary" form="suggestionForm" type="submit">{{ __('Send') }}</loading-button>
         </div>

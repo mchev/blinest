@@ -44,7 +44,7 @@ defineProps({
         </div>
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto p-12 md:block" />
-          <div class="px-4 py-8 md:flex-1 md:overflow-y-auto md:p-12 text-neutral-100" scroll-region>
+          <div class="px-4 py-8 text-neutral-100 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
             <flash-messages />
             <slot />
           </div>

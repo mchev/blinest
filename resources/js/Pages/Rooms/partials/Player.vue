@@ -69,7 +69,7 @@ const play = () => {
 
   audio.src = track.value.preview_url
   audio.crossOrigin = 'anonymous'
-  audio.load()  // IOS Hack - Important
+  audio.load() // IOS Hack - Important
   audio.muted = false
 
   audio.addEventListener('error', () => {

@@ -117,7 +117,7 @@ const update = () => {
         </Card>
 
         <PlaylistsManager class="mb-4" :room="room" :playlists="available_playlists" />
-        
+
         <Card class="mb-4">
           <template #header>
             <h2 class="text-xl font-bold">{{ __('Discord') }}</h2>

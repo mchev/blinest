@@ -54,7 +54,7 @@ const update = () => {
 }
 
 const deleteRoom = () => {
-  if(confirm('Voules-vous vraiment supprimer cette room ?')) {
+  if (confirm('Voules-vous vraiment supprimer cette room ?')) {
     router.delete(route('rooms.destroy', props.room.id))
   }
 }
@@ -67,9 +67,9 @@ onUnmounted(() => {
   <Head :title="__('Edit Room')" />
 
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold flex items-center gap-2">
+    <h1 class="mb-8 flex items-center gap-2 text-3xl font-bold">
       <Link :href="route('rooms.index')">{{ __('Rooms') }}</Link> / {{ room.name }}
-      <Share :url="route('rooms.show', room.slug)" class="w-6 h-6"/>
+      <Share :url="route('rooms.show', room.slug)" class="h-6 w-6" />
       <Link class="btn-primary ml-auto" :href="route('rooms.show', room.slug)">{{ __('Play') }}</Link>
     </h1>
 
@@ -90,9 +90,7 @@ onUnmounted(() => {
                   </option>
                 </select-input>
                 <file-input v-if="room.is_pro || room.is_public || user.permissions.canUploadImage" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage">
-                  Pour changer l'image de la room vous devez avoir un score total de 2000 minimum et 3 mois d'ancienneté.
-                </Tip>
+                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> Pour changer l'image de la room vous devez avoir un score total de 2000 minimum et 3 mois d'ancienneté. </Tip>
               </div>
             </div>
           </form>
@@ -109,7 +107,7 @@ onUnmounted(() => {
           <template #header>
             <h2 class="text-xl font-bold">{{ __('Options') }}</h2>
           </template>
-          <EditOptionsForm :room="room"/>
+          <EditOptionsForm :room="room" />
         </Card>
         <PlaylistsManager :room="room" :playlists="available_playlists" />
       </div>

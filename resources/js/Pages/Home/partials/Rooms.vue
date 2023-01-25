@@ -52,15 +52,15 @@ const maxSlides = props.rooms && props.rooms.length < 6 ? props.rooms.length : 6
 <style>
 .swiper-button-next {
   --swiper-navigation-color: white;
-  @apply flex bg-gradient-to-r from-transparent to-neutral-900 h-full top-0 right-0 items-center px-8
+  @apply top-0 right-0 flex h-full items-center bg-gradient-to-r from-transparent to-neutral-900 px-8;
 }
 
 .swiper-button-prev {
   --swiper-navigation-color: white;
-  @apply flex bg-gradient-to-l from-transparent to-neutral-900 h-full top-0 left-0 items-center px-8
+  @apply top-0 left-0 flex h-full items-center bg-gradient-to-l from-transparent to-neutral-900 px-8;
 }
 
-.swiper-button-disabled{
-    display:none;   
+.swiper-button-disabled {
+  display: none;
 }
 </style>

@@ -24,7 +24,7 @@ const register = () => {
   <AppLayout>
     <Head :title="__('Login')" />
 
-    <div class="mx-auto flex flex-wrap gap-4 lg:max-w-3xl justify-center">
+    <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
       <Card class="flex flex-grow">
         <template #header>
           <h1 class="text-center text-xl font-bold">{{ __('Register') }}</h1>
@@ -43,7 +43,6 @@ const register = () => {
       </Card>
 
       <Socialite />
-
     </div>
   </AppLayout>
 </template>

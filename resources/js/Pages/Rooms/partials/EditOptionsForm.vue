@@ -11,7 +11,7 @@ const props = defineProps({
   modal: {
     type: Boolean,
     default: false,
-  }
+  },
 })
 
 const emit = defineEmits(['close'])
@@ -35,7 +35,7 @@ const update = () => {
     preserveScroll: true,
     onSuccess: () => {
       emit('close')
-    }
+    },
   })
 }
 </script>
@@ -73,7 +73,7 @@ const update = () => {
       <text-input v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
     </div>
 
-    <div class="flex items-center gap-2 ml-auto">
+    <div class="ml-auto flex items-center gap-2">
       <button @click="$emit('close')" class="btn-secondary" type="button">{{ __('Close') }}</button>
       <loading-button :loading="form.processing" class="btn-primary" form="optionsForm" type="submit">{{ __('Update') }}</loading-button>
     </div>

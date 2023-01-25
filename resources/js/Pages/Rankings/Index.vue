@@ -22,9 +22,9 @@ const props = defineProps({
         <div>
           <section class="mb-8">
             <ul class="flex flex-wrap items-center justify-center">
-              <li v-for="(score, index) in bestUsers" :key="score.user.id" class="flex flex-col items-center m-4">
+              <li v-for="(score, index) in bestUsers" :key="score.user.id" class="m-4 flex flex-col items-center">
                 <div class="relative">
-                  <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
+                  <span class="absolute -left-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 p-1 text-neutral-700">{{ index + 1 }}</span>
                   <img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" />
                 </div>
                 <span class="mb-1 font-bold">{{ score.user.name }}</span>
@@ -36,9 +36,9 @@ const props = defineProps({
             <h3 class="mb-4 text-3xl font-bold">{{ __('Teams') }}</h3>
             <ul class="flex flex-wrap items-center justify-center">
               <li v-for="(score, index) in bestTeams" :key="score.team.id">
-                <Link :href="route('teams.show', score.team.id)" class="flex flex-col items-center m-4">
+                <Link :href="route('teams.show', score.team.id)" class="m-4 flex flex-col items-center">
                   <div class="relative">
-                    <span class="p-1 bg-neutral-100 rounded-full h-8 w-8 flex items-center justify-center text-neutral-700 absolute -left-2 -top-2">{{ index + 1}}</span>
+                    <span class="absolute -left-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 p-1 text-neutral-700">{{ index + 1 }}</span>
                     <img :src="score.team.photo" class="mb-2 h-20 w-20 rounded-full" />
                   </div>
                   <span class="mb-1 font-bold">{{ score.team.name }}</span>

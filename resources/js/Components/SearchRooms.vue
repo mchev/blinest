@@ -11,7 +11,7 @@ const props = defineProps({
 })
 
 const form = useForm({
-  search: usePage().props?.filters?.search
+  search: usePage().props?.filters?.search,
 })
 
 watch(
@@ -25,9 +25,9 @@ watch(
 <template>
   <div :class="$attrs.class">
     <form itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
-      <meta itemprop="target" content="https://blinest.com/?search={search_term_string}"/>
+      <meta itemprop="target" content="https://blinest.com/?search={search_term_string}" />
       <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search') + '...'" />
-      <input class="hidden" itemprop="query-input" type="text" name="search_term_string" v-model="form.search" required/>
+      <input class="hidden" itemprop="query-input" type="text" name="search_term_string" v-model="form.search" required />
     </form>
   </div>
 </template>

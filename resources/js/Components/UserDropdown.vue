@@ -18,7 +18,7 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <img :src="user.photo" class="w-10 h-10 rounded-full" :alt="user.name">
+          <img :src="user.photo" class="h-10 w-10 rounded-full" :alt="user.name" />
         </div>
       </div>
     </template>

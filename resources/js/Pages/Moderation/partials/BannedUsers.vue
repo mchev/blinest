@@ -34,15 +34,16 @@ const restoreMessage = (user) => {
             </div>
           </td>
           <td class="border-t px-2 py-4">
-              <ul class="flex flex-col">
-                <li v-for="ban in user.bans" :key="ban.id" class="flex flex-col border-b border-neutral-600 p-2">
-                  <span class="text-xs text-neutral-500">Banni par : {{ ban.banned_by }}</span>
-                  <span class="text-xs text-neutral-500">le : {{ ban.created_at }}</span>
-                  <span class="text-xs text-neutral-500">Raison : {{ ban.comment }}</span>
-                  <span class="text-xs text-neutral-500">Expire le : {{ ban.expired_at }}</span>
-<!--                   <button class="btn-secondary btn-sm mt-2">Annuler le ban</button>
- -->                </li>
-              </ul>
+            <ul class="flex flex-col">
+              <li v-for="ban in user.bans" :key="ban.id" class="flex flex-col border-b border-neutral-600 p-2">
+                <span class="text-xs text-neutral-500">Banni par : {{ ban.banned_by }}</span>
+                <span class="text-xs text-neutral-500">le : {{ ban.created_at }}</span>
+                <span class="text-xs text-neutral-500">Raison : {{ ban.comment }}</span>
+                <span class="text-xs text-neutral-500">Expire le : {{ ban.expired_at }}</span>
+                <!--                   <button class="btn-secondary btn-sm mt-2">Annuler le ban</button>
+ -->
+              </li>
+            </ul>
           </td>
         </tr>
       </tbody>

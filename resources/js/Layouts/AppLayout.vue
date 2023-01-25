@@ -20,7 +20,7 @@ watch(
 </script>
 <template>
   <Head>
-    <meta itemprop="url" content="https://blinest.com"/>
+    <meta itemprop="url" content="https://blinest.com" />
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://blinest.com" />
     <meta property="og:type" content="website" />

@@ -57,7 +57,7 @@ const reset = () => {
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 <div class="flex flex-col">
                   {{ playlist.name }}
-                  <small class="truncate text-xs max-w-md">{{ playlist.description }}</small>
+                  <small class="max-w-md truncate text-xs">{{ playlist.description }}</small>
                 </div>
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>
@@ -90,6 +90,5 @@ const reset = () => {
         <Pagination :links="playlists.links" />
       </div>
     </Card>
-
   </AppLayout>
 </template>

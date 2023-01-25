@@ -16,8 +16,7 @@ const form = useForm({
 })
 
 const submit = () => {
-  if (form.password && form.password.length > 0)
-    form.get(`/rooms/${props.room.slug}`)
+  if (form.password && form.password.length > 0) form.get(`/rooms/${props.room.slug}`)
 }
 </script>
 <template>

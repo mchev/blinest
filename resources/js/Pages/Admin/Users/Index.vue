@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head title="Users" />
-    <h1 class="mb-8 text-3xl font-bold">Users  ({{ users.total }})</h1>
+    <h1 class="mb-8 text-3xl font-bold">Users ({{ users.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
         <label class="mt-4 block text-gray-700">Trashed:</label>

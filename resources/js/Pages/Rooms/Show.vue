@@ -38,7 +38,7 @@ const users_podium = ref([])
 const teams_podium = ref([])
 
 onMounted(() => {
-  if(user) {
+  if (user) {
     Echo.join(channel)
       .here((usersHere) => {
         users.value = usersHere
@@ -89,8 +89,7 @@ const listenRounds = () => {
 </script>
 <template>
   <RoomLayout>
-
-    <Modal v-if="!user" :show="true">
+    <Modal v-if="!user" :show="true" class="max-w-3xl">
       <LoginForm :isFromModal="true" />
     </Modal>
 
@@ -104,12 +103,13 @@ const listenRounds = () => {
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-4 flex items-center">
             <h2 class="mr-2 text-xl font-bold">{{ room.name }}</h2>
-            <Share :url="room.url" class="w-5"/>
+            <Share :url="room.url" class="w-5" />
           </article>
 
           <Tip class="bg-orange-400 text-orange-800" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
             <span class="font-bold">{{ __('This room is in manual start mode.') }}</span>
-            <br> {{ __('The person responsible for the room (moderators) must be present to start the game.') }}
+            <br />
+            {{ __('The person responsible for the room (moderators) must be present to start the game.') }}
           </Tip>
 
           <div class="mb-4 md:mb-8" v-if="user">
@@ -123,11 +123,11 @@ const listenRounds = () => {
           </div>
 
           <template v-if="user">
-            <Controls v-if="room.moderators.find(x => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
+            <Controls v-if="room.moderators.find((x) => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
           </template>
 
           <Card>
-            <div class="flex items-center flex-col lg:flex-row lg:justify-between gap-4 text-sm">
+            <div class="flex flex-col items-center gap-4 text-sm lg:flex-row lg:justify-between">
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
                   <span class="uppercase text-neutral-500">Modos</span>
@@ -135,7 +135,7 @@ const listenRounds = () => {
                 </div>
               </div>
               <div class="flex items-center gap-4" v-if="user">
-                <button class="btn-secondary bg-neutral-900 btn-sm" @click="sendingSuggestion = true">
+                <button class="btn-secondary btn-sm bg-neutral-900" @click="sendingSuggestion = true">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                   </svg>
@@ -159,8 +159,7 @@ const listenRounds = () => {
       </div>
     </Transition>
 
-    <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />  
+    <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />
     <SendSuggestionModal v-if="user" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
-
   </RoomLayout>
 </template>

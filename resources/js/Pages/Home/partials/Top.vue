@@ -68,11 +68,10 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
           </div>
         </div>
       </div>
-                <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 p-2 text-sm uppercase text-gray-100">
-            <span class="truncate font-semibold">{{ room.name }}</span>
-            <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
-          </div>
-
+      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 p-2 text-sm uppercase text-gray-100">
+        <span class="truncate font-semibold">{{ room.name }}</span>
+        <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
+      </div>
     </article>
   </Link>
 </template>

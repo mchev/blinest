@@ -6,6 +6,6 @@ import LoginForm from './LoginForm.vue'
 <template>
   <AppLayout>
     <Head :title="__('Login')" />
-    <LoginForm/>
+    <LoginForm />
   </AppLayout>
 </template>

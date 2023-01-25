@@ -119,49 +119,49 @@ const deleteUser = () => {
               <span>{{ user.total_score }}<sup class="ml-1">PTS</sup></span>
             </div>
           </template>
-      <div class="overflow-x-auto relative">
-        <table class="w-full whitespace-nowrap">
-          <thead>
-          <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
-            <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
-            <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
-            <th class="px-6 pb-4 pt-6">{{ __('Score') }} Max</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="score in user.scores.data" :key="score.room_id">
-            <td class="border-t border-neutral-500">
-              <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_id)">
-                <div class="flex flex-col">
-                  {{ score.name }}
-                </div>
-              </Link>
-            </td>
-            <td class="border-t border-neutral-500">
-              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
-                {{ score.date }}
-              </Link>
-            </td>
-            <td class="border-t border-neutral-500">
-              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
-                {{ score.total }}<sup class="ml-1">PTS</sup>
-              </Link>
-            </td>
-            <td class="border-t border-neutral-500">
-              <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
-                {{ score.max }}<sup class="ml-1">PTS</sup>
-              </Link>
-            </td>
-          </tr>
-          <tr v-if="user.scores.length === 0">
-            <td class="border-t border-neutral-500 px-6 py-4" colspan="3">{{ __('No scores') }}</td>
-          </tr>
-        </tbody>
-        </table>
+          <div class="overflow-x-auto relative">
+            <table class="w-full whitespace-nowrap">
+              <thead>
+              <tr class="text-left font-bold">
+                <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
+                <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
+                <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
+                <th class="px-6 pb-4 pt-6">{{ __('Score') }} Max</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="score in user.scores.data" :key="score.room_id">
+                <td class="border-t border-neutral-500">
+                  <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_id)">
+                    <div class="flex flex-col">
+                      {{ score.name }}
+                    </div>
+                  </Link>
+                </td>
+                <td class="border-t border-neutral-500">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                    {{ score.date }}
+                  </Link>
+                </td>
+                <td class="border-t border-neutral-500">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                    {{ score.total }}<sup class="ml-1">PTS</sup>
+                  </Link>
+                </td>
+                <td class="border-t border-neutral-500">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                    {{ score.max }}<sup class="ml-1">PTS</sup>
+                  </Link>
+                </td>
+              </tr>
+              <tr v-if="user.scores.length === 0">
+                <td class="border-t border-neutral-500 px-6 py-4" colspan="3">{{ __('No scores') }}</td>
+              </tr>
+            </tbody>
+            </table>
 
-        <Pagination :links="user.scores.links" />
-      </div>
+            <Pagination :links="user.scores.links" />
+          </div>
         </Card>
       </div>
     </div>

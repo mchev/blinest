@@ -18,7 +18,7 @@ module.exports = {
     'comma-dangle': ['warn', 'always-multiline'],
     'vue/component-api-style': [
       'error',
-      ['script-setup', 'composition', 'options'], // "script-setup", "composition", "composition-vue2", or "options"
+      ['script-setup', 'composition'], // "script-setup", "composition", "composition-vue2", or "options"
     ],
     'vue/multi-word-component-names': 'off',
     'vue/max-attributes-per-line': 'off',

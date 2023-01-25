@@ -13,23 +13,23 @@ defineEmits(['update:modelValue', 'reset'])
 </script>
 <template>
   <div class="flex items-center">
-    <div class="flex w-full bg-neutral-700 rounded shadow">
-      <dropdown v-if="$slots.default" :auto-close="false" class="focus:z-10 px-4 hover:bg-neutral-500 border-r focus:border-white rounded-l focus:ring md:px-6" placement="left">
+    <div class="flex w-full rounded bg-neutral-700 shadow">
+      <dropdown v-if="$slots.default" :auto-close="false" class="rounded-l border-r px-4 hover:bg-neutral-500 focus:z-10 focus:border-white focus:ring md:px-6" placement="left">
         <template #default>
           <div class="flex items-center">
             <span class="hidden md:inline">{{ __('Filter') }}</span>
-            <svg class="w-2 h-2 md:ml-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 961.243 599.998">
+            <svg class="h-2 w-2 md:ml-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 961.243 599.998">
               <path d="M239.998 239.999L0 0h961.243L721.246 240c-131.999 132-240.28 240-240.624 239.999-.345-.001-108.625-108.001-240.624-240z" />
             </svg>
           </div>
         </template>
         <template #dropdown>
-          <div class="mt-2 px-4 py-6 w-screen bg-white rounded shadow-xl" :style="{ maxWidth: `${maxWidth}px` }">
+          <div class="mt-2 w-screen rounded bg-white px-4 py-6 shadow-xl" :style="{ maxWidth: `${maxWidth}px` }">
             <slot />
           </div>
         </template>
       </dropdown>
-      <input class="relative px-6 py-3 w-full rounded-r focus:shadow-outline text-neutral-600" :class="{'rounded-l': !$slots.default}" autocomplete="off" type="text" name="search" :placeholder="__('Search…')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
+      <input class="focus:shadow-outline relative w-full rounded-r px-6 py-3 text-neutral-600" :class="{ 'rounded-l': !$slots.default }" autocomplete="off" type="text" name="search" :placeholder="__('Search…')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
     </div>
     <button class="ml-3 text-sm" type="button" @click="$emit('reset')">{{ __('Reset') }}</button>
   </div>

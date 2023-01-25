@@ -39,7 +39,7 @@ const destroy = () => {
         </div>
       </template>
       <form @submit.prevent="update" id="editForm">
-        <Link v-if="page.url" :href="page.url" class="underline px-8">{{ page.url }}</Link>
+        <Link v-if="page.url" :href="page.url" class="px-8 underline">{{ page.url }}</Link>
         <div class="p-8">
           <text-input v-model="form.title" :error="form.errors.title" class="w-full pb-8 pr-6 lg:w-1/2" label="Title" />
           <text-editor v-model="form.content" :error="form.errors.content" class="w-full pb-8 pr-6" />

@@ -15,17 +15,17 @@ onMounted(() => {
 
 const checkTheme = (theme) => {
   switch (theme) {
-  case 'dark':
-    localStorage.theme = 'dark'
-    document.documentElement.classList.add('dark')
-    break
-  case 'light':
-    localStorage.theme = 'light'
-    document.documentElement.classList.remove('dark')
-    break
-  case 'system':
-    localStorage.removeItem('theme')
-    break
+    case 'dark':
+      localStorage.theme = 'dark'
+      document.documentElement.classList.add('dark')
+      break
+    case 'light':
+      localStorage.theme = 'light'
+      document.documentElement.classList.remove('dark')
+      break
+    case 'system':
+      localStorage.removeItem('theme')
+      break
   }
 }
 </script>

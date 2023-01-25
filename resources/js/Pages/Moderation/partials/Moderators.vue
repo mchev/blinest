@@ -5,16 +5,15 @@ import Card from '@/Components/Card.vue'
 const props = defineProps({
   moderators: Object,
 })
-
 </script>
 <template>
   <Card>
     <ul>
-      <li v-for="room in moderators" :key="room.id" class="flex flex-col mb-4 border-b border-neutral-600">
+      <li v-for="room in moderators" :key="room.id" class="mb-4 flex flex-col border-b border-neutral-600">
         {{ room.name }}
-        <ul class="flex flex-wrap gap-1 mb-2">
+        <ul class="mb-2 flex flex-wrap gap-1">
           <li v-for="moderator in room.moderators">
-            <span class="badge flex items-center gap-1"><img :src="moderator.photo" class="w-5 h-5 rounded-full">{{ moderator.name }}</span>
+            <span class="badge flex items-center gap-1"><img :src="moderator.photo" class="h-5 w-5 rounded-full" />{{ moderator.name }}</span>
           </li>
         </ul>
       </li>

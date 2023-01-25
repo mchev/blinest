@@ -1,16 +1,12 @@
 <template>
   <!-- tsParticles Repository: https://github.com/matteobruni/tsparticles -->
   <!-- tsParticles Website: https://particles.js.org -->
-  <Particles
-    id="tsparticles"
-    :options="options"
-    :particlesInit="particlesInit"
-  />
+  <Particles id="tsparticles" :options="options" :particlesInit="particlesInit" />
 </template>
 
 <script lang="ts">
-import type { Engine } from "tsparticles-engine";
-import { loadSnowPreset } from "tsparticles-preset-snow"; // loads tsparticles-slim
+import type { Engine } from 'tsparticles-engine'
+import { loadSnowPreset } from 'tsparticles-preset-snow' // loads tsparticles-slim
 //import { loadFull } from "tsparticles"; // loads tsparticles
 export default {
   data() {
@@ -37,13 +33,13 @@ export default {
           },
         },
       },
-    };
+    }
   },
   methods: {
     async particlesInit(engine: Engine) {
-      await loadSnowPreset(engine);
+      await loadSnowPreset(engine)
       // await loadFull(engine); // for this sample the slim version is enough, choose whatever you prefer, slim is smaller in size but doesn't have all the plugins and the mouse trail feature
     },
   },
-};
+}
 </script>

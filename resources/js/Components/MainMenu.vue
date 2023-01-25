@@ -11,7 +11,7 @@ const isUrl = (...urls) => {
 }
 </script>
 <template>
-  <div class="flex flex-col md:flex-row items-end gap-6">
+  <div class="flex flex-col items-end gap-6 md:flex-row">
     <div class="">
       <Link class="group flex items-center" :href="route('rooms.index')">
         <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>

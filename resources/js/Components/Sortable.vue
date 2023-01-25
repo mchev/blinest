@@ -28,9 +28,9 @@ const select = () => {
 <template>
   <div :class="$attrs.class" class="cursor-pointer" @click="select">
     <slot />
-    <div v-if="$attrs.modelValue && field == $attrs.modelValue.field" class="inline-block align-middle ml-1">
-      <icon v-if="$attrs.modelValue.direction === 'asc'" name="arrow-down" class="block w-4 h-4 fill-gray-400" />
-      <icon v-else name="arrow-up" class="block w-4 h-4 fill-gray-400" />
+    <div v-if="$attrs.modelValue && field == $attrs.modelValue.field" class="ml-1 inline-block align-middle">
+      <icon v-if="$attrs.modelValue.direction === 'asc'" name="arrow-down" class="block h-4 w-4 fill-gray-400" />
+      <icon v-else name="arrow-up" class="block h-4 w-4 fill-gray-400" />
     </div>
   </div>
 </template>

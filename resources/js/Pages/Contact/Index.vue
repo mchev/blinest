@@ -24,7 +24,11 @@ const send = () => {
           <h3 class="text-xl font-bold">{{ __('Send a message to') }} Blinest</h3>
         </template>
         <Tip class="mb-2">Pour toute demande d'ajout/modification des extraits dans les playlists publiques merci de contacter directement les modérateurs.rices.</Tip>
-        <Tip><p>Pour rapporter un bug ou proposer une évolution sur le site merci de passer par là : <a class="underline" target="_blank" href="https://github.com/mchev/blinest/issues/new">{{ __('Report a bug') }}</a></p></Tip>
+        <Tip
+          ><p>
+            Pour rapporter un bug ou proposer une évolution sur le site merci de passer par là : <a class="underline" target="_blank" href="https://github.com/mchev/blinest/issues/new">{{ __('Report a bug') }}</a>
+          </p></Tip
+        >
 
         <form @submit.prevent="send" id="roomForm" class="mt-4">
           <textarea-input v-model="form.message" :error="form.errors.message" rows="10" class="mb-4 w-full" :label="__('Message')" />

@@ -66,7 +66,7 @@ const reset = () => {
                 <img v-if="room.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.photo" />
                 <div class="flex flex-col">
                   {{ room.name }}
-                  <small class="text-gray-500 truncate max-w-[18rem]">{{ room.description }}</small>
+                  <small class="max-w-[18rem] truncate text-gray-500">{{ room.description }}</small>
                 </div>
                 <icon v-if="room.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />
               </Link>

@@ -38,9 +38,7 @@ watch(
 
 onMounted(() => {
   editor.value = new Editor({
-    extensions: [
-      StarterKit,
-    ],
+    extensions: [StarterKit],
     content: props.modelValue,
     onUpdate: () => {
       emit('update:modelValue', editor.value.getHTML())
@@ -78,7 +76,7 @@ onBeforeUnmount(() => {
       <button class="mr-1 rounded border p-1" type="button" @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">undo</button>
       <button class="mr-1 rounded border p-1" type="button" @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">redo</button>
     </div>
-    <editor-content :editor="editor" @update="$emit('update:modelValue', $event.target.value)" class="prose prose-invert border p-1 rounded w-full border-neutral-500 text-inherit" :class="{ error: error }" />
+    <editor-content :editor="editor" @update="$emit('update:modelValue', $event.target.value)" class="prose prose-invert w-full rounded border border-neutral-500 p-1 text-inherit" :class="{ error: error }" />
     <div v-if="error" class="form-error">{{ error }}</div>
   </div>
 </template>

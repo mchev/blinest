@@ -46,7 +46,7 @@ const restoreMessage = (message) => {
               </div>
             </td>
             <td class="border-t px-2 py-4">
-              <span class="text-sm italic break-all">{{ message.body }}</span>
+              <span class="break-all text-sm italic">{{ message.body }}</span>
             </td>
             <td class="border-t px-2 py-4">
               <div class="flex flex-col">
