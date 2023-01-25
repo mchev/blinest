@@ -27,6 +27,7 @@ class ModerationController extends Controller
             'moderators' => Room::isPublic()->select('id', 'name')->with('moderators')->get(),
             'trashedMessages' => Message::onlyTrashed()
                 ->orderByDesc('deleted_at')
+                ->with('user', 'room')
                 ->paginate(10, ['*'], 'trashedMessages')
                 ->withQueryString()
                 ->through(fn ($message) => [
@@ -35,6 +36,11 @@ class ModerationController extends Controller
                     'time' => $message->time,
                     'created_at' => $message->created_at->format('d/m/Y H:i:s'),
                     'deleted_at' => $message->deleted_at->format('d/m/Y H:i:s'),
+                    'room' => [
+                        'id' => $message->room->id,
+                        'name' => $message->room->name,
+                        'slug' => $message->room->slug,
+                    ],
                     'user' => [
                         'id' => $message->user->id,
                         'name' => $message->user->name,
@@ -46,18 +52,22 @@ class ModerationController extends Controller
                         'voters' => $message->voters,
                     ],
                 ]),
-            'bannedUsers' => User::onlyBanned()->with('bans')->paginate(10, ['*'], 'bannedUsers')->through(fn ($user) => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'photo' => $user->photo,
-                'bans' => $user->bans->transform(fn ($ban) => [
-                    'id' => $ban->id,
-                    'comment' => $ban->comment,
-                    'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
-                    'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
-                    'banned_by' => User::find($ban->created_by_id)->name,
+            'bannedUsers' => User::onlyBanned()
+                ->with('bans')
+                ->orderBy('banned_at', 'DESC')
+                ->paginate(10, ['*'], 'bannedUsers')
+                ->through(fn ($user) => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'photo' => $user->photo,
+                    'bans' => $user->bans->transform(fn ($ban) => [
+                        'id' => $ban->id,
+                        'comment' => $ban->comment,
+                        'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
+                        'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
+                        'banned_by' => User::find($ban->created_by_id)->name,
+                    ]),
                 ]),
-            ]),
         ]);
     }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { router } from '@inertiajs/vue3'
+import { router, Link } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Pagination from '@/Components/Pagination.vue'
 
@@ -40,7 +40,7 @@ const restoreMessage = (message) => {
             </td>
             <td class="border-t px-2 py-4">
               <div class="flex flex-col">
-                {{ message.time }}
+                <span class="text-sm">{{ message.time }} sur <Link :href="route('rooms.slug', message.room.slug)">{{ message.room.name }}</Link></span>
                 <span class="text-xs text-neutral-500">Creation : {{ message.created_at }}</span>
                 <span class="text-xs text-neutral-500">Suppression : {{ message.deleted_at }}</span>
               </div>
