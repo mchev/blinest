@@ -13,6 +13,16 @@
         <meta property="og:locale" content="fr_FR"/>
         <meta property="og:locale:alternate" content="en_US"/>
 
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "url": "https://blinest.com",
+            "logo": "https://blinest.com/images/statics/logo_blinest.png"
+        }
+        </script>
+
+
         @production
             <script async defer data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818" src="https://analytics.pegase.io/pegasestats.js"></script>
         @endproduction
