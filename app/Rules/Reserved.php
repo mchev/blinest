@@ -22,7 +22,6 @@ class Reserved implements InvokableRule
             'administrateur',
             'administrator',
             'superadmin',
-            'blinest',
             'blinest.com',
             'moderator',
             'moderateur',
