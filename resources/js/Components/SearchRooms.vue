@@ -23,8 +23,7 @@ watch(
 )
 </script>
 <template>
-  <div :class="$attrs.class" itemscope itemtype="https://schema.org/WebSite">
-    <meta itemprop="url" content="https://blinest.com/"/>
+  <div :class="$attrs.class">
     <form itemprop="potentialAction" itemscope itemtype="https://schema.org/SearchAction">
       <meta itemprop="target" content="https://blinest.com/?search={search_term_string}"/>
       <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search') + '...'" />
