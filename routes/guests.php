@@ -16,7 +16,8 @@ Route::get('/user/banned', [PageController::class, 'bannedUser']);
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 // FAQ
-Route::get('/faq', [FAQController::class, 'index']);
+Route::get('/faq', [FAQController::class, 'index'])
+    ->name('faq');
 
 // Auth Social Providers
 

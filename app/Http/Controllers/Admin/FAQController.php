@@ -21,7 +21,7 @@ class FAQController extends Controller
             'filters' => Request::all('search'),
             'faqs' => FAQ::orderByDesc('updated_at')
                 ->filter(Request::only('search'))
-                ->paginate(5)
+                ->paginate(10)
                 ->withQueryString(),
         ]);
     }

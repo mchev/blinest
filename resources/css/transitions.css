@@ -1,3 +1,18 @@
+.faq-move, /* apply transition to moving elements */
+.faq-enter-active,
+.faq-leave-active {
+  transition: all 0.4s ease;
+}
+.faq-leave-to {
+  opacity: 0;
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+}
+
 /* Slide right */
 .slide-right-enter-active {
   transition: all 0.3s ease-out;

@@ -13,7 +13,7 @@
     <loc>{{ $room->url }}</loc>
     <lastmod>{{ $room->updated_at->toAtomString() }}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>{{ 0.90 - ($key / 100) }}</priority>
+    <priority>0.90</priority>
   </url>
   @endforeach
 
@@ -25,6 +25,12 @@
     <priority>0.10</priority>
   </url>
   @endforeach
+
+  <url>
+    <loc>https://blinest.com/faq</loc>
+    <lastmod>2023-01-26T15:27:50+00:00</lastmod>
+    <priority>0.50</priority>
+  </url>
 
   <url>
     <loc>https://blinest.com/login</loc>
