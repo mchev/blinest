@@ -49,11 +49,8 @@ class RoomController extends Controller
         ]);
     }
 
-    public function show($idOrSlug)
+    public function show(Room $room)
     {
-        $room = is_numeric($idOrSlug)
-            ? Room::findOrFail($idOrSlug)
-            : Room::whereSlug($idOrSlug)->firstOrFail();
 
         if ($room->password) {
             if (Request::has('password')) {

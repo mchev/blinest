@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AnswerTypeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\PlaylistController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\TeamController;
@@ -121,5 +122,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'a
 
     // Pages
     Route::resource('pages', PageController::class)
+        ->except('show');
+
+    // FAQ
+    Route::resource('faqs', FAQController::class)
         ->except('show');
 });

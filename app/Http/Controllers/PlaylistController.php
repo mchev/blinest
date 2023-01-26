@@ -82,6 +82,7 @@ class PlaylistController extends Controller
                     'moderators' => $playlist->moderators,
                     'rooms' => $playlist->rooms->map(fn ($room) => [
                         'id' => $room->id,
+                        'slug' => $room->slug,
                         'name' => $room->name,
                     ]),
                 ],

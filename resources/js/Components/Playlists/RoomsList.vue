@@ -14,7 +14,7 @@ defineProps({
 
     <ul v-if="playlist.rooms.length">
       <li v-for="room in playlist.rooms" :key="room.id" class="flex items-center rounded p-3 hover:bg-neutral-200">
-        <Link :href="route('rooms.show', room.id)">{{ room.name }}</Link>
+        <Link :href="route('rooms.show', room.slug)">{{ room.name }}</Link>
       </li>
     </ul>
     <p v-else class="my-2 text-sm text-neutral-400">{{ __('Empty') }}</p>

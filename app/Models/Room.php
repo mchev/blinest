@@ -25,6 +25,11 @@ class Room extends Model
 
     protected $hidden = ['discord_webhook_url'];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();

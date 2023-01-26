@@ -38,7 +38,13 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
     Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
         ->name('rooms.joined');
 
-    Route::resource('rooms', RoomController::class);
+    // Changing route order because of room/slug
+    Route::get('create/room', [RoomController::class, 'create'])
+        ->name('rooms.create');
+
+    // Show is registered in guests.php (slugs)
+    Route::resource('rooms', RoomController::class)
+        ->except('show', 'create');
 
     // ATTACH DETACH MODERATORS
     Route::post('rooms/{room}/moderators/attach', [RoomModeratorController::class, 'attach'])

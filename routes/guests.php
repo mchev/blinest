@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\FAQController;
 
 
 // Banned users
@@ -13,6 +14,9 @@ Route::get('/user/banned', [PageController::class, 'bannedUser']);
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+// FAQ
+Route::get('/faq', [FAQController::class, 'index']);
 
 // Auth Social Providers
 
@@ -39,8 +43,8 @@ Route::get('/pages/{slug}', [PageController::class, 'show'])
     ->name('pages.show');
 
 // Room
-Route::get('rooms/{slug}', [RoomController::class, 'show'])
-    ->name('rooms.slug');
+Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
+    ->name('rooms.show');
 
 // Contact
 
