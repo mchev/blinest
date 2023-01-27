@@ -50,7 +50,7 @@ const hideItemBeforeRefresh = (notification) => {
     </div>
     <dropdown placement="bottom-end" :autoClose="false">
       <template #default>
-        <div class="relative">
+        <div class="relative" title="Notifications">
           <div v-if="notifications.length" class="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center truncate rounded-full bg-red-500 p-1 text-xs">
             {{ notifications.length }}
           </div>

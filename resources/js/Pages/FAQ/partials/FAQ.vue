@@ -1,13 +1,30 @@
 <script setup>
+import { usePage, useForm } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
+import Icon from '@/Components/Icon.vue'
 
-defineProps({
+const props = defineProps({
   faq: Object,
 })
+
+const user = usePage().props.auth.user
+
+const form = useForm({
+	id: props.faq.id
+})
+
+const voteUp = () => {
+	form.post(`/faq/${props.faq.id}/vote/up`)
+}
+
+const voteDown = () => {
+	form.post(`/faq/${props.faq.id}/vote/down`)
+}
 
 </script>
 
 <template>
+	<li>
 	<Card itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
 		<template #header>
 			<div class="flex items-center gap-2 font-bold">
@@ -22,5 +39,12 @@ defineProps({
 		<div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
 			<div itemprop="text" class="prose whitespace-pre-wrap prose-invert" v-html="faq.answer"></div>
 		</div>
+		<template #footer v-if="user">
+			<div class="ml-auto flex gap-4">
+	            <button @click="voteUp()" class="flex items-center" :title="__('Like')"><Icon name="thumb-up" class="mr-1 h-5 w-5" /> {{ faq.upvotes }}</button>
+	            <button @click="voteDown()" class="flex items-center" :title="__('Don\'t like')"><Icon name="thumb-down" class="mr-1 h-5 w-5" /> {{ faq.downvotes }}</button>
+	        </div>
+		</template>
 	</Card>
+	</li>
 </template>

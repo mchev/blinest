@@ -33,18 +33,19 @@ watch(
 <template>
   <Head title="FAQ" />
   <AppLayout>
-    <div class="min-h-screen">
-      <div class="w-full flex flex-col items-center justify-center">
-        <h1 class="mb-8 text-3xl font-bold">{{ __('FAQ') }}</h1>
-        <text-input v-model="form.search" class="mr-4 w-full max-w-md" placeholder="Une question ?" />
-        <Pagination :links="faqs.links"/>
-      </div>
-        <TransitionGroup name="faq" tag="ul" v-if="faqs.data.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto my-8">
-
-            <FAQ v-for="faq in faqs.data" :faq="faq" :key="faq.id"/>
-
-
-      </TransitionGroup>
+    <div class="w-full flex flex-col items-center justify-center">
+      <h1 class="mb-8 text-3xl font-bold">{{ __('FAQ') }}</h1>
+      <text-input v-model="form.search" class="mr-4 w-full max-w-md" placeholder="Une question ?" />
+      <Pagination :links="faqs.links" class="mt-4 mb-0 mx-0 justify-center"/>
+    </div>
+    <TransitionGroup name="faq" tag="ul" v-if="faqs.data.length" class="flex flex-col gap-4 max-w-6xl mx-auto my-8">
+      <FAQ v-for="faq in faqs.data" :faq="faq" :key="faq.id"/>
+    </TransitionGroup>
+    <div v-else class="max-w-6xl mx-auto text-center my-8">
+      Aucun resultat
+    </div>
+    <div class="max-w-6xl mx-auto text-center my-4">
+      <Pagination :links="faqs.links" class="my-0 mx-0 justify-center"/>
     </div>
   </AppLayout>
 </template>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PlaylistController;
@@ -40,6 +41,10 @@ Route::middleware('auth')->group(function () {
     // Me
     Route::get('me', [UserController::class, 'show'])
         ->name('me');
+
+    // FAQ
+    Route::post('faq/{faq}/vote/up', [FAQController::class, 'upvote']);
+    Route::post('faq/{faq}/vote/down', [FAQController::class, 'downvote']);
 
     // Users
     Route::get('users/{user}', [UserController::class, 'show'])

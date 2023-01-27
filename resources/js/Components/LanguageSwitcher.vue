@@ -2,7 +2,7 @@
   <dropdown placement="bottom-end">
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
-        <div class="mr-1 whitespace-nowrap">
+        <div class="whitespace-nowrap" title="Langue">
           <span class="uppercase">{{ $page.props.locale }}</span>
         </div>
       </div>
