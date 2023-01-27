@@ -41,16 +41,14 @@ php artisan horizon
 
 - v2.2
 	- Better translations (confirm js)
-
-- v2.1
 	- Profil pages
-	- Pubs ?
 	- Attente pendant que le morceau est en lecture
 	- Chat emojis
- 	- Page pour le comptage des points
- 	- Réglement / loi
   	- light mode mal voyant
  	- moderation des noms de room
+
+- v2.1
+	- ✅ FAQ
 	- ✅ Answers Card : réponses users surlignées
 	- ✅ Import playlists from provider
 	- ✅ Import playlists from likes
