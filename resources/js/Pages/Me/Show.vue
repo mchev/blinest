@@ -132,24 +132,24 @@ const deleteUser = () => {
               <tbody>
               <tr v-for="score in user.scores.data" :key="score.room_id">
                 <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_id)">
+                  <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_slug)">
                     <div class="flex flex-col">
                       {{ score.name }}
                     </div>
                   </Link>
                 </td>
                 <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
                     {{ score.date }}
                   </Link>
                 </td>
                 <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
                     {{ score.total }}<sup class="ml-1">PTS</sup>
                   </Link>
                 </td>
                 <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_id)" tabindex="-1">
+                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
                     {{ score.max }}<sup class="ml-1">PTS</sup>
                   </Link>
                 </td>

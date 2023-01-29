@@ -174,7 +174,7 @@ class User extends Authenticatable implements BannableContract
     public function allScores()
     {
         return $this->scores()
-            ->select('rounds.updated_at', 'scores.user_id', \DB::raw('SUM(scores.score) as total'), 'scores.round_id', 'rooms.name', 'rooms.id as room_id')
+            ->select('rounds.updated_at', 'scores.user_id', \DB::raw('SUM(scores.score) as total'), 'scores.round_id', 'rooms.name', 'rooms.slug as room_slug', 'rooms.id as room_id')
             ->join('rounds', 'rounds.id', '=', 'scores.round_id')
             ->join('rooms', 'rooms.id', '=', 'rounds.room_id')
             ->orderByDesc('rounds.created_at')

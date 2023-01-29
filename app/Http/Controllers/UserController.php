@@ -36,6 +36,7 @@ class UserController extends Controller
                 'total_score' => floatval($user->scores()->sum('score')),
                 'scores' => $user->allScores()->paginate(10)->through(fn ($score) => [
                     'room_id' => $score->room_id,
+                    'room_slug' => $score->room_slug,
                     'name' => $score->name,
                     'date' => $score->updated_at->diffForHumans(),
                     'total' => $score->total,
