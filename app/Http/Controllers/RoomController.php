@@ -126,7 +126,7 @@ class RoomController extends Controller
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
             'playlist_id' => ['nullable', 'id'],
-            'photo' => ['nullable', 'image'],
+            'photo' => 'nullable|image|mimes:jpeg,png|max:2048',
         ]);
 
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id'));
