@@ -31,12 +31,12 @@ const checkForm = useForm({
 const checkPlaylist = () => {
   console.log('Checking')
   checkForm.post(route('playlists.providers.find', props.playlist.id), {
-    only: ['providerPlaylist'],
+    only: ['providerPlaylist', 'errors'],
     onSuccess: (response) => {
       pp.value = response.props.providerPlaylist
       if (pp.value) {
         if (pp.value.message) {
-          checkForm.errors.provider_id = `[${pp.value.code}] ${pp.value.message}`
+          checkForm.errors.playlist_id = `[${pp.value.code}] ${pp.value.message}`
         } else {
           step.value = 2
         }
@@ -69,12 +69,15 @@ const importPlaylist = () => {
             <option v-for="provider in providers" :value="provider">{{ provider }}</option>
           </SelectInput>
           <div v-if="checkForm.provider != 'Blinest likes'">
-            <TextInput v-model="checkForm.playlist_id" :error="checkForm.errors.provider_id" type="text" label="ID de la playlist" required />
+            <TextInput v-model="checkForm.playlist_id" :error="checkForm.errors.playlist_id" type="text" label="ID de la playlist" required />
             <small>Vous pouvez trouver l'ID de la playlist dans la barre d'adresse de votre navigateur</small><br />
             <small v-show="checkForm.provider === 'Spotify'">Exemple d'ID Spotify : https://open.spotify.com/playlist/<span class="font-bold underline">37i9dQZF1DXcBWIGoYBM5M</span></small>
             <small v-show="checkForm.provider === 'Deezer'">Exemple d'ID Deezer : https://www.deezer.com/fr/playlist/<span class="font-bold underline">53362031</span></small>
           </div>
-          <LoadingButton class="btn-secondary btn-sm ml-auto" :loading="checkForm.processing">{{ __('Next') }}</LoadingButton>
+          <div class="mt-4 flex items-center justify-end gap-2">
+            <Link class="btn-secondary btn-sm" :href="route('playlists.edit', playlist.id)">{{ __('Cancel') }}</Link>
+            <LoadingButton class="btn-secondary btn-sm" :loading="checkForm.processing">{{ __('Next') }}</LoadingButton>
+          </div>
         </form>
       </Card>
       <!-- Step 2 -->
@@ -94,7 +97,7 @@ const importPlaylist = () => {
         </ul>
         <Tip>Les titres en doublon ne seront pas importés.</Tip>
         <div class="mt-4 flex items-center justify-end gap-2">
-          <button class="btn-secondary btn-sm" @click="step = 1">{{ __('Cancel') }}</button>
+          <Link class="btn-secondary btn-sm" :href="route('playlists.edit', playlist.id)">{{ __('Cancel') }}</Link>
           <LoadingButton class="btn-primary btn-sm" @click="importPlaylist" :loading="checkForm.processing">{{ __('Import') }}</LoadingButton>
         </div>
       </Card>

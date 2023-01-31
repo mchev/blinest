@@ -150,9 +150,10 @@ class PlaylistController extends Controller
 
     public function findPlaylistByProvider(Playlist $playlist)
     {
+
         Request::validate([
             'provider' => ['required'],
-            'playlist_id' => ['required_if:provider,Spotify,Deezer'],
+            'playlist_id' => 'required_if:provider,Spotify,Deezer|alpha_num',
         ]);
 
         if (Request::input('provider') === 'Spotify') {
