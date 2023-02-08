@@ -73,7 +73,7 @@ class Track extends Model
 
     public function getDownvotesAttribute()
     {
-        return formatVoteNumbers($this->totalDownvotes());
+        return formatVoteNumbers(abs($this->totalDownvotes()));
     }
 
     public function scopeFilter($query, array $filters)
