@@ -6,7 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import Translation from './translation';
 
-const appName = 'Laravel';
+const appName = 'Blinest [Blind test]';
 
 createServer((page) =>
     createInertiaApp({

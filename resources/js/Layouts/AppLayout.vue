@@ -1,24 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { Head } from '@inertiajs/vue3'
+import { Head, usePage } from '@inertiajs/vue3'
 import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import Footer from '@/Components/Footer.vue'
 
-const props = defineProps({
-  session: Object,
-})
+const url = 'https://blinest.com' + usePage().url
 
-const authModalIsOpen = ref(false)
-const url = window.location.href
-
-watch(
-  () => props.session,
-  (session) => {
-    authModalIsOpen.value = !!sessions?.requireAuth
-  },
-)
 </script>
 <template>
   <StructuredData/>

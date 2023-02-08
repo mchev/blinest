@@ -2,9 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" <?php if(Route::is('faq')) : ?>itemscope itemtype="https://schema.org/FAQPage"<?php endif; ?>>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <title inertia>{{ config('app.name', 'Blinest') }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">        
         <link rel="canonical" href="{{ url()->current() }}" />
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
