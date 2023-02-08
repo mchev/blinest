@@ -33,9 +33,9 @@ const reset = () => {
 }
 </script>
 <template>
-  <Head title="Rooms" />
+  <Head :title="__('My Rooms')" />
   <AppLayout>
-    <h1 v-if="rooms && rooms.data.length" class="mb-8 text-3xl font-bold">{{ __('Rooms') }}</h1>
+    <h1 v-if="rooms && rooms.data.length" class="mb-8 text-3xl font-bold">{{ __('My Rooms') }}</h1>
     <div v-if="rooms && rooms.data.length" class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" :href="route('rooms.create')">

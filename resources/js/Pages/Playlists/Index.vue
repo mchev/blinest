@@ -33,9 +33,9 @@ const reset = () => {
 }
 </script>
 <template>
-  <Head :title="__('Playlists')" />
+  <Head :title="__('My Playlists')" />
   <AppLayout>
-    <h1 class="mb-8 text-3xl font-bold">{{ __('Playlists') }}</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('My Playlists') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" :href="route('playlists.create')">
