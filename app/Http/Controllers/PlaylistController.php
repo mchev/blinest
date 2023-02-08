@@ -6,9 +6,9 @@ use App\Exports\PlaylistExport;
 use App\Models\AnswerType;
 use App\Models\Playlist;
 use App\Rules\Reserved;
+use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
-use App\Services\MusicProviders\BlinestLikesService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -150,7 +150,6 @@ class PlaylistController extends Controller
 
     public function findPlaylistByProvider(Playlist $playlist)
     {
-
         Request::validate([
             'provider' => ['required'],
             'playlist_id' => 'required_if:provider,Spotify,Deezer|alpha_num',

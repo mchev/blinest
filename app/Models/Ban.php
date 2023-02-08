@@ -16,8 +16,8 @@ class Ban extends Model
         'created_by',
     ];
 
-    protected $dates = [
-        'expired_at',
+    protected $casts = [
+        'expired_at' => 'datetime',
     ];
 
     public function setExpiredAtAttribute($value): void

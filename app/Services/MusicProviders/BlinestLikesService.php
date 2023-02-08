@@ -2,22 +2,17 @@
 
 namespace App\Services\MusicProviders;
 
-use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
 use App\Models\Track;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BlinestLikesService
 {
-
     public function getLikesInformation(): object
     {
         return (object) [
             'id' => null,
-            'name' => Auth::user()->name . ' likes',
+            'name' => Auth::user()->name.' likes',
             'description' => 'Tous les titres que tu as liké sur Blinest',
             'tracks_count' => Auth::user()->getUpVotedItems(Track::class)->count(),
             'image' => Auth::user()->photo,
@@ -39,7 +34,7 @@ class BlinestLikesService
                     'artwork_url' => $track->artwork_url,
                 ]);
 
-                foreach($track->answers as $answer) {
+                foreach ($track->answers as $answer) {
                     $duplicatedTrack->answers()->create([
                         'answer_type_id' => $answer->answer_type_id,
                         'value' => $answer->value,
@@ -53,5 +48,4 @@ class BlinestLikesService
 
         return count(array_filter($importedTracks));
     }
-
 }

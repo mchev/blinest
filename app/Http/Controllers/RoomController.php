@@ -51,7 +51,6 @@ class RoomController extends Controller
 
     public function show(Room $room)
     {
-
         if ($room->password) {
             if (Request::has('password')) {
                 if (Request::input('password') != $room->password) {
@@ -179,7 +178,7 @@ class RoomController extends Controller
      */
     public function joined(Room $room)
     {
-        if(Auth::user()) {
+        if (Auth::user()) {
             if (! $room->is_playing && $room->is_autostart) {
                 $room->startRound();
             }

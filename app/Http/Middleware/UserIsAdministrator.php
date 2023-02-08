@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Auth;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -17,7 +16,7 @@ class UserIsAdministrator
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->isAdministrator()) {
+        if ($request->user()->isAdministrator()) {
             return $next($request);
         }
 

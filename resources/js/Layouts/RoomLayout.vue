@@ -17,7 +17,7 @@ const room = computed(() => usePage().props.room)
     <meta property="og:url" :content="route('rooms.show', room.slug)" />
     <meta property="og:type" content="website" />
     <meta property="og:image" :content="room.photo_src ? room.photo_src : room.photo" />
-    <meta property="og:title" :content="room.name + ' - Blinest.com'" />
+    <meta property="og:title" :content="room.name + ' - Blinest'" />
     <meta property="og:description" :content="room.description" />
 
     <!-- Twitter Meta Tags -->

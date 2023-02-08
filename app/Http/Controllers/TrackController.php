@@ -159,8 +159,9 @@ class TrackController extends Controller
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
             ) {
-                $track->deleteWithNotification();
-                return Redirect::back()->with('Track deleted');
+            $track->deleteWithNotification();
+
+            return Redirect::back()->with('Track deleted');
         }
     }
 

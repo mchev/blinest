@@ -78,7 +78,7 @@ class DeezerService
         return count(array_filter($importedTracks));
     }
 
-    public function formatTrack(array $track) : object
+    public function formatTrack(array $track): object
     {
         return (object) [
             'provider' => 'deezer',

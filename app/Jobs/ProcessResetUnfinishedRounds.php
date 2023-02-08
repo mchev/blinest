@@ -3,9 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Round;
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -33,12 +31,12 @@ class ProcessResetUnfinishedRounds implements ShouldQueue
     public function handle()
     {
         // We assume that a round while not taking longer than an hour.
-        $rounds =  Round::where('is_playing', 1)
+        $rounds = Round::where('is_playing', 1)
             ->where('created_at', '<=', now(config('app.timezone'))->subHour()->toDateTimeString())
             ->with('room')
             ->get();
 
-        foreach($rounds as $round) {
+        foreach ($rounds as $round) {
             $round->finished_at = now();
             $round->is_playing = 0;
             $round->update();

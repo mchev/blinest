@@ -25,10 +25,7 @@ class Round extends Model
 
     protected $casts = [
         'tracks' => 'object',
-    ];
-
-    protected $dates = [
-        'finished_at',
+        'finished_at' => 'datetime',
     ];
 
     public function start()
@@ -78,7 +75,7 @@ class Round extends Model
                     ->delay(now()->addSeconds($this->room->pause_between_rounds));
             }
 
-        // Else play next track
+            // Else play next track
         } else {
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
@@ -91,7 +88,6 @@ class Round extends Model
                 // Job
                 ProcessTrackPlayed::dispatch($this)
                         ->delay(now()->addSeconds($this->room->track_duration));
-
             } else {
                 $track->deleteWithNotification();
                 $this->playNextTrack();

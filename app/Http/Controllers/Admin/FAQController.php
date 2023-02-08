@@ -77,7 +77,6 @@ class FAQController extends Controller
      */
     public function update(FAQ $faq)
     {
-
         $validated = Request::validate([
             'locale' => ['required', 'max:2'],
             'question' => ['required', 'max:255', Rule::unique('faqs')->ignore($faq)],

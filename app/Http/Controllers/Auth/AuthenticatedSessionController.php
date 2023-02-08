@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if($request->isFromModal) {
+        if ($request->isFromModal) {
             return redirect()->back();
         }
 

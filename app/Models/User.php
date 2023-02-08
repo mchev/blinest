@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Overtrue\LaravelVote\Traits\Voter;
@@ -174,7 +175,7 @@ class User extends Authenticatable implements BannableContract
     public function allScores()
     {
         return $this->scores()
-            ->select('rounds.updated_at', 'scores.user_id', \DB::raw('SUM(scores.score) as total'), 'scores.round_id', 'rooms.name', 'rooms.slug as room_slug', 'rooms.id as room_id')
+            ->select('rounds.updated_at', 'scores.user_id', DB::raw('SUM(scores.score) as total'), 'scores.round_id', 'rooms.name', 'rooms.slug as room_slug', 'rooms.id as room_id')
             ->join('rounds', 'rounds.id', '=', 'scores.round_id')
             ->join('rooms', 'rooms.id', '=', 'rounds.room_id')
             ->orderByDesc('rounds.created_at')
@@ -287,5 +288,4 @@ class User extends Authenticatable implements BannableContract
             }
         );
     }
-
 }

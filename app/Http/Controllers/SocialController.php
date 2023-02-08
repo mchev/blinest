@@ -36,8 +36,8 @@ use Laravel\Socialite\Facades\Socialite;
              }
 
              $user = User::create([
-                 'name'     => $name,
-                 'email'    => $getInfo->email,
+                 'name' => $name,
+                 'email' => $getInfo->email,
                  'provider' => $provider,
                  'provider_id' => $getInfo->id,
              ]);

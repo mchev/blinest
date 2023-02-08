@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Jobs\SendDiscordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVote\Traits\Votable;
-use App\Jobs\SendDiscordNotification;
 
 class Track extends Model
 {

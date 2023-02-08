@@ -12,7 +12,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        if(Request::only('search')) {
+        if (Request::only('search')) {
             return $this->search(Request::only('search'));
         }
 
@@ -26,19 +26,19 @@ class HomeController extends Controller
             'filters' => Request::all('search'),
             'top_rooms' => $topRooms,
             'categories' => Category::all()->map(fn ($category) => [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                    'rooms' => $category->rooms()
-                        ->isPublic()
-                        ->whereNotIn('id', $topRooms->pluck('id'))
-                        ->whereHas('playlists')
-                        ->whereNull('password')
-                        ->filter(Request::only('search'))
-                        ->with('owner')
-                        ->withCount('rounds')
-                        ->limit(18)
-                        ->get(),
-                ]
+                'id' => $category->id,
+                'name' => $category->name,
+                'rooms' => $category->rooms()
+                    ->isPublic()
+                    ->whereNotIn('id', $topRooms->pluck('id'))
+                    ->whereHas('playlists')
+                    ->whereNull('password')
+                    ->filter(Request::only('search'))
+                    ->with('owner')
+                    ->withCount('rounds')
+                    ->limit(18)
+                    ->get(),
+            ]
             ),
             'private_rooms' => Room::isPrivate()
                 ->whereHas('playlists')

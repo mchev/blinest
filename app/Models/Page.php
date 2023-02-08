@@ -9,13 +9,18 @@ class Page extends Model
 {
     use HasFactory;
 
-    protected $dates = ['revised_at'];
+    protected $casts = [
+        'revised_at' => 'datetime',
+    ];
 
-    protected $appends = ['url', 'date'];
+    protected $appends = [
+        'url',
+        'date',
+    ];
 
     public function getUrlAttribute()
     {
-        return $this->slug ? env('APP_URL').'/pages/'.$this->slug : null;
+        return $this->slug ? config('app.url').'/pages/'.$this->slug : null;
     }
 
     public function getDateAttribute()

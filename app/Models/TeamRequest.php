@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TeamRequest extends Model
 {
-    protected $dates = [
-        'declined_at',
+    protected $casts = [
+        'declined_at' => 'datetime',
     ];
 
     public function team()

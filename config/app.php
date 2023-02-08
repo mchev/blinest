@@ -56,6 +56,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'admin_email' => env('ADMIN_EMAIL', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
