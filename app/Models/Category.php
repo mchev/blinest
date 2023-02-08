@@ -15,12 +15,7 @@ class Category extends Model
 
     public function rooms()
     {
-        return $this->hasMany(Room::class)
-            ->withCount('rounds')
-            ->orderByDesc('is_playing')
-            ->orderByDesc('is_public')
-            ->orderByDesc('rounds_count')
-            ->with('owner');
+        return $this->hasMany(Room::class);
     }
 
     public function publicRooms()
