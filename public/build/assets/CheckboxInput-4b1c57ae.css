@@ -1,5 +1,0 @@
-
-input:checked ~ .dot[data-v-599c107c] {
-  transform: translateX(100%);
-  background-color: rgb(13, 148, 136);
-}
