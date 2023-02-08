@@ -11,6 +11,7 @@ const props = defineProps({
 })
 
 const authModalIsOpen = ref(false)
+const url = window.location.href
 
 watch(
   () => props.session,
@@ -22,9 +23,9 @@ watch(
 <template>
   <StructuredData/>
   <Head>
-    <meta itemprop="url" content="https://blinest.com" />
+    <meta itemprop="url" :content="url" />
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://blinest.com" />
+    <meta property="og:url" :content="url" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Blinest - Quiz musicaux gratuits et multijoueurs" />
     <meta property="og:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
@@ -33,7 +34,7 @@ watch(
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="twitter:domain" content="blinest.com" />
-    <meta property="twitter:url" content="https://blinest.com" />
+    <meta property="twitter:url" :content="url" />
     <meta name="twitter:title" content="Blinest - Quiz musicaux gratuits et multijoueurs" />
     <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
     <meta name="twitter:image" content="https://blinest.com/images/statics/screenshot.png" />

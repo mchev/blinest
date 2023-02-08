@@ -14,7 +14,7 @@ const room = computed(() => usePage().props.room)
     <meta name="description" :content="room.description" />
 
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" :content="room.url" />
+    <meta property="og:url" :content="route('rooms.show', room.slug)" />
     <meta property="og:type" content="website" />
     <meta property="og:image" :content="room.photo_src ? room.photo_src : room.photo" />
     <meta property="og:title" :content="room.name + ' - Blinest.com'" />
@@ -23,7 +23,7 @@ const room = computed(() => usePage().props.room)
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="twitter:domain" content="blinest.com" />
-    <meta property="twitter:url" :content="room.url" />
+    <meta property="twitter:url" :content="route('rooms.show', room.slug)" />
     <meta name="twitter:description" :content="room.description" />
     <meta name="twitter:title" :content="room.name + ' - Blinest'" />
     <meta name="twitter:image" :content="room.photo_src ? room.photo_src : room.photo" />
