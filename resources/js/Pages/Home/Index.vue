@@ -16,7 +16,7 @@ defineProps({
 <template>
   <Head>
     <title>{{ __('Free multiplayer music quizzes') }}</title>
-    <meta name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
+    <meta head-key="description" name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
   </Head>
   <Layout>
     <section v-if="search_result">

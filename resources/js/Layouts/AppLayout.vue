@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Head } from '@inertiajs/vue3'
+import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import Footer from '@/Components/Footer.vue'
@@ -19,6 +20,7 @@ watch(
 )
 </script>
 <template>
+  <StructuredData/>
   <Head>
     <meta itemprop="url" content="https://blinest.com" />
     <!-- Facebook Meta Tags -->

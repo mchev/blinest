@@ -15,7 +15,10 @@ const send = () => {
 }
 </script>
 <template>
-  <Head :title="__('Contact')" />
+  <Head>
+    <title>{{ __('Contact') }}</title>
+    <meta name="description" content="Envoyez votre message à Blinest. Réponse garantie!" />
+  </Head>
 
   <AppLayout>
     <div class="mx-auto flex w-full max-w-2xl flex-col">

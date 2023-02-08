@@ -1,18 +1,14 @@
 <script setup>
 import { computed } from 'vue'
 import { Link, Head, usePage } from '@inertiajs/vue3'
-import Logo from '@/Components/Logo.vue'
-import Dropdown from '@/Components/Dropdown.vue'
-import MainMenu from '@/Components/MainMenu.vue'
+import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
-import SearchRooms from '@/Components/SearchRooms.vue'
-import UserDropdown from '@/Components/UserDropdown.vue'
-import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import Navbar from '@/Components/Navbar.vue'
 
 const room = computed(() => usePage().props.room)
 </script>
 <template>
+  <StructuredData/>
   <Head>
     <title>{{ room.name }}</title>
     <meta name="description" :content="room.description" />
@@ -41,7 +37,7 @@ const room = computed(() => usePage().props.room)
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right" appear>
             <div v-if="$slots.default" class="md:flex-1">
-              <flash-messages />
+              <FlashMessages />
               <slot />
             </div>
           </Transition>

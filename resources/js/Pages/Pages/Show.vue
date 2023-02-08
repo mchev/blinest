@@ -10,7 +10,6 @@ defineProps({
 <template>
   <Head>
     <title>{{ page.title }}</title>
-    <meta name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
   </Head>
   <AppLayout>
     <Card class="mx-auto">
