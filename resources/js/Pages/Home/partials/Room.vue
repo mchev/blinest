@@ -69,7 +69,7 @@ onUnmounted(() => {
       </div>
 
       <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 py-2 text-sm uppercase text-gray-100">
-        <span class="truncate font-semibold">{{ room.name }}</span>
+        <h3 class="truncate font-semibold"><span class="hidden">Blind Test </span>{{ room.name }}</h3>
         <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
       </div>
     </article>
