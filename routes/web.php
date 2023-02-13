@@ -32,11 +32,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Check user answer
-Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
-    ->name('rounds.track.check');
-
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // Me
     Route::get('me', [UserController::class, 'show'])
@@ -53,9 +49,14 @@ Route::middleware('auth')->group(function () {
         ->name('users.update');
     Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
+
 });
 
-Route::middleware('auth', 'forbid-banned-user')->group(function () {
+Route::middleware(['auth', 'logout.banned'])->group(function () {
+
+    // Check user answer
+    Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
+        ->name('rounds.track.check');
 
     // Public moderation group
     Route::middleware('auth.moderator')->group(function () {
@@ -180,7 +181,7 @@ Route::middleware('auth', 'forbid-banned-user')->group(function () {
         ->name('tracks.downvote');
     Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
         ->name('tracks.upvote');
-}); // End Auth middleware
+}); // End Auth/Banned middleware
 
 // Music providers
 Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])

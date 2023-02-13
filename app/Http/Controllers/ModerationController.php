@@ -22,7 +22,7 @@ class ModerationController extends Controller
                 'rooms_count' => Room::count(),
                 'public_playlists_count' => Playlist::isPublic()->count(),
                 'public_rooms_count' => Room::isPublic()->count(),
-                'banned_users_count' => User::whereNotNull('banned_at')->count(),
+                'banned_users_count' => User::banned()->count(),
             ],
             'moderators' => Room::isPublic()->select('id', 'name')->with('moderators')->get(),
             'trashedMessages' => Message::onlyTrashed()
@@ -52,9 +52,8 @@ class ModerationController extends Controller
                         'voters' => $message->voters,
                     ],
                 ]),
-            'bannedUsers' => User::onlyBanned()
+            'bannedUsers' => User::banned()
                 ->with('bans')
-                ->orderBy('banned_at', 'DESC')
                 ->paginate(10, ['*'], 'bannedUsers')
                 ->through(fn ($user) => [
                     'id' => $user->id,
@@ -116,6 +115,7 @@ class ModerationController extends Controller
                 $user->ban([
                     'expired_at' => Request::input('expired_at') ?? null,
                     'comment' => Request::input('comment') ?? null,
+                    'ip' => $user->ip
                 ]);
 
                 return redirect()->back()->with('success', $user->name.' a été banni.');

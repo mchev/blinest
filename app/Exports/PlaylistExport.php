@@ -3,21 +3,20 @@
 namespace App\Exports;
 
 use App\Models\AnswerType;
-use App\Models\Playlist;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class PlaylistExport implements FromView, ShouldAutoSize
 {
-    public function __construct(public Playlist $playlist)
+    public function __construct(public $tracks)
     {
     }
 
     public function view(): View
-    {
+    {        
         return view('exports.playlists', [
-            'playlist' => $this->playlist,
+            'tracks' => $this->tracks,
             'answer_types' => AnswerType::orderBy('id')->get(),
         ]);
     }

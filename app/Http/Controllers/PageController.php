@@ -20,13 +20,17 @@ class PageController extends Controller
 
     public function bannedUser()
     {
-        $ban = auth()->user()->bans()->latest()->first();
+        if(auth()->user()) {
+            $ban = auth()->user()->bans()->latest()->first();
+        } else {
+            abort(403, config('ban.message'));
+        }
 
         return Inertia::render('Pages/Banned', [
-            'ban' => [
-                'comment' => $ban->comment,
+            'ban' => $ban ? [
+                'comment' => $ban->comment ?? 'Votre adresse IP a été bloquée' ,
                 'expired_at' => $ban->expired_at ? $ban->expired_at->diffForHumans() : 'jamais',
-            ],
+            ] : null,
         ]);
     }
 }

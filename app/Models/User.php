@@ -3,8 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
-use Cog\Contracts\Ban\Bannable as BannableContract;
-use Cog\Laravel\Ban\Traits\Bannable;
+use Mchev\Banhammer\Traits\Bannable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Overtrue\LaravelVote\Traits\Voter;
 
-class User extends Authenticatable implements BannableContract
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
 
@@ -28,6 +27,7 @@ class User extends Authenticatable implements BannableContract
         'name',
         'email',
         'password',
+        'ip',
     ];
 
     /**
@@ -65,7 +65,7 @@ class User extends Authenticatable implements BannableContract
     {
         return $this->belongsTo(Team::class, 'team_id')
             ->whereRelation('owner', function ($query) {
-                $query->withoutBanned();
+                $query->notBanned();
             });
     }
 

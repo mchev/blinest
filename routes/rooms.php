@@ -5,7 +5,7 @@ use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 
-Route::middleware('auth', 'forbid-banned-user')->group(function () {
+Route::middleware(['auth', 'logout.banned'])->group(function () {
 
     // Rooms
     Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])

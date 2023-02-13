@@ -1,50 +1,38 @@
 <?php
 
-/*
- * This file is part of Laravel Ban.
- *
- * (c) Anton Komarev <anton@komarev.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-declare(strict_types=1);
-
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Ban Database Migrations
+    | Table Name
     |--------------------------------------------------------------------------
     |
-    | Determine if default package migrations should be registered.
-    | Set value to `false` when using customized migrations.
+    | Change here the name of the table that will be created during the migration to use the ban system.
     |
     */
 
-    'load_default_migrations' => true,
+    'table' => 'bans',
 
     /*
-    |---------------------------------------------------------------------------
-    | URL to redirect banned user to
-    |---------------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | Where to redirect banned Models
+    |--------------------------------------------------------------------------
     |
-    | Provide a url, this is where a banned user will be redirected to
-    | by the middleware.
-    |
-    | For example:
-    |
-    | 'redirect_url' => route('banned.user'),
-    |
-    | or
-    |
-    | 'redirect_url' => '/user/banned',
-    |
-    | Leaving the value as null will result in a redirect "back".
+    | Url to which the user will be redirected when he/she tries to log in after being banned.
+    | If not defined, the banned user will be redirected to the previous page.
     |
     */
 
-    'redirect_url' => '/user/banned',
+    'fallback_url' => '/user/banned', // null | "/oops"
+
+    /*
+    |--------------------------------------------------------------------------
+    | 403 Message
+    |--------------------------------------------------------------------------
+    |
+    | The message that will be displayed if no fallback url for banned users has been defined.
+    |
+    */
+    'message' => 'You have been banned.',
 
 ];

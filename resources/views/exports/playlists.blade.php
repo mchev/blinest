@@ -13,7 +13,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($playlist->tracks as $track)
+    @foreach($tracks as $track)
         <tr>
             @foreach($answer_types as $type)
                 <td>
