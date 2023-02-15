@@ -17,7 +17,7 @@ class TeamController extends Controller
         return Inertia::render('Teams/Index', [
             'filters' => $request->all('search'),
             'teams' => Team::whereHas('owner', function ($query) {
-                $query->withoutBanned();
+                $query->notBanned();
             })
                 ->orderBy('created_at', 'DESC')
                 ->filter($request->only('search'))
