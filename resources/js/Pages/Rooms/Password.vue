@@ -29,7 +29,7 @@ const submit = () => {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-5 w-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
-            Cette room est protégée par un mot de passe
+            {{ __('This room is secured by a password') }}
           </p>
         </div>
       </template>
@@ -43,6 +43,6 @@ const submit = () => {
         >
       </form>
     </Card>
-    <Tip class="mx-auto max-w-xl">Si vous êtes le propriétaire de la room et que vous avez oublié le mot de passe, vous pouvez le modifier sur <Link :href="route('rooms.index')" class="underline">la page d'édition de la room.</Link></Tip>
+    <Tip class="mx-auto max-w-xl"> {{ __('If you are the owner of the room and have forgotten the password, you can change it on the room's editing page.') }}<Link :href="route('rooms.index')" class="underline">la page d'édition de la room.</Link></Tip>
   </AppLayout>
 </template>

@@ -779,6 +779,8 @@
     "This subscription has expired and cannot be resumed. Please create a new subscription.": "Cette souscription a expiré et ne peut être reprise. Veuillez en créer une nouvelle.",
     "This user already belongs to the team.": "Cet utilisateur appartient déjà à l'équipe.",
     "This user has already been invited to the team.": "Cet utilisateur a déjà été invité à rejoindre l'équipe.",
+    "This room is secured by a password": "Cette room est protégée par un mot de passe",
+    "If you are the owner of the room and have forgotten the password, you can change it on the room's editing page.": "Si vous êtes le propriétaire de la room et que vous avez oublié le mot de passe, vous pouvez le modifier sur la page d'édition de la room."
     "Timor-Leste": "Timor oriental",
     "to": "à",
     "Today": "Aujourd'hui",
