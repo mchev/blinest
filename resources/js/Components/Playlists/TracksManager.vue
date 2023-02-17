@@ -205,7 +205,7 @@ const updateDificulty = (e, track) => {
             <th class="px-6 pb-4 pt-6" colspan="2"></th>
             <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
             <th class="px-6 pb-4 pt-6">
-              <Sortable field="dificulty" v-model="form.sortable">{{ __('Dificulty') }}</Sortable>
+              <Sortable field="dificulty" v-model="form.sortable">{{ __('Difficulty') }}</Sortable>
             </th>
             <th class="px-6 pb-4 pt-6" colspan="2">
               <Sortable field="votes" v-model="form.sortable">{{ __('Votes') }}</Sortable>
