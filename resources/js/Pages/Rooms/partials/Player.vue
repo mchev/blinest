@@ -146,7 +146,7 @@ const startCountdown = () => {
     <div v-else-if="countdowning && countdown != -1" class="flex max-w-full flex-grow flex-col">
       <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
         <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.room.pause_between_tracks)) * 100 + '%'">
-          <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochain extrait dans {{ countdown }}</span>
+          <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">{{ __('Next track in') }} {{ countdown }}</span>
         </div>
       </div>
     </div>
