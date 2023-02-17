@@ -75,7 +75,7 @@ const deleteUser = () => {
       <div class="flex-1">
         <Card class="my-4">
           <template #header>
-            <h2 class="text-xl font-bold">{{ __('Informations') }}</h2>
+            <h2 class="text-xl font-bold">{{ __('Information') }}</h2>
           </template>
           <form id="editUserForm" @submit.prevent="update">
             <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Name')" required />
