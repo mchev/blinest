@@ -62,7 +62,7 @@ class TeamController extends Controller
     public function store(Request $request)
     {
         if (Auth::user()->hasTeam()) {
-            redirect()->back()->with('error', __('Tu es déjà dans une team.'));
+            redirect()->back()->with('error', __('You are already part of a team.'));
         }
 
         $request->validate([
