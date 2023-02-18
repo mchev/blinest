@@ -236,10 +236,10 @@ const updateDificulty = (e, track) => {
             <td class="border-t">
               <div class="flex items-start px-6 py-4 text-center text-sm">
                 <SelectInput v-model="track.dificulty" :error="$page.props.errors.dificulty" @change="updateDificulty($event, track)">
-                  <option :value="0">Facile</option>
-                  <option :value="1">Moyen</option>
-                  <option :value="2">Difficile</option>
-                  <option :value="3">Expert</option>
+                  <option :value="0">{{ __('Easy') }}</option>
+                  <option :value="1">{{ __('Medium') }}</option>
+                  <option :value="2">{{ __('Difficult') }}</option>
+                  <option :value="3">Exp{{ __('Expert') }}ert</option>
                 </SelectInput>
               </div>
             </td>

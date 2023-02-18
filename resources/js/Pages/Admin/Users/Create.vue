@@ -16,8 +16,8 @@
             <option :value="false">No</option>
           </select-input>
           <select-input v-model="form.is_admin" :error="form.errors.is_admin" class="w-full pb-8 pr-6 lg:w-1/2" label="Admin">
-            <option :value="0">No</option>
-            <option :value="1">Yes</option>
+            <option :value="0">{{ __('No') }}</option>
+            <option :value="1">{{ __('Yes') }}</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
