@@ -932,5 +932,12 @@
     " reports a problem on the chat " : " meldet ein Problem im Chat.",
     "Copy URL:" : "URL kopieren:",
     "Join a team and share your scores with other members to skyrocket the scores!" : "Trete einem Team bei und teile deine Punktzahlen mit anderen Mitgliedern, um die Punktzahlen in die Höhe zu treiben!",
-    " audios" : " audios"
+    " audios" : " audios",
+    "Send by ":"Gesendet von ",
+    "on ":"am ",
+    "Suggestion":"Vorschlag",
+    "Easy": "Einfach",
+    "Medium": "Mittel",
+    "Difficult": "Schwierig",
+    "Expert": "Experte"
   }

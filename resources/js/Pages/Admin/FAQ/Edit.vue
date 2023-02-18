@@ -44,6 +44,8 @@ const destroy = () => {
           <select-input v-model="form.locale" :error="form.errors.locale" class="w-full pb-8 pr-6 lg:w-1/2" label="Locale" required>
             <option value="fr">FR</option>
             <option value="en">EN</option>
+            <option value="de">DE</option>
+            <option value="pt">PT</option>
           </select-input>
           <text-input v-model="form.question" :error="form.errors.question" class="w-full pb-8 pr-6 lg:w-1/2" label="Question" required />
           <textarea-input rows="10" v-model="form.answer" :error="form.errors.answer" class="w-full pb-8 pr-6" label="Réponse" required />
