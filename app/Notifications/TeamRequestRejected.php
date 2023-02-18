@@ -46,7 +46,7 @@ class TeamRequestRejected extends Notification implements ShouldQueue
         return new BroadcastMessage([
             'data' => [
                 'team' => $this->team,
-                'message' => 'Ta demande a été refusée.',
+                'message' => __('Your request has been declined.'),
             ],
         ]);
     }
@@ -61,7 +61,7 @@ class TeamRequestRejected extends Notification implements ShouldQueue
     {
         return [
             'team' => $this->team,
-            'message' => 'Ta demande a été refusée.',
+            'message' => __('Your request has been declined.'), 
         ];
     }
 }

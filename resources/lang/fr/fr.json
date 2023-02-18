@@ -926,5 +926,11 @@
     "Updating the demo user is not allowed." : "Impossible d'actualiser l'utilisateur de démo.",
     "Deleting the demo user is not allowed." : "Impossible de supprimer l'utilisateur de démo.",
     "User deleted." : "Utlisateur supprimé.",
-    "User restored." : "Utlisateur restauré."
+    "User restored." : "Utlisateur restauré.",
+    "You have been banned." : "Vous avez été banni.",
+	"Your request has been declined." : "Ta demande a été refusée.", 
+	"Your request has been accepted! Welcome to the team " : "Ta demande a été accepté! Bienvenue dans la team ",
+	"Your request has been accepted!<br> Welcome to the team " : "Ta demande a été accepté! Bienvenue dans la team ",
+	" wishes to join your team." : " souhaite rejoindre ta team.",
+	" reports a problem on the chat " : " signale un problème sur le chat "
 }
