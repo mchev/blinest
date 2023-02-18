@@ -19,7 +19,7 @@ class RoomPlaylistController extends Controller
             return redirect()->back();
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function detach(Request $request, Room $room)
@@ -33,6 +33,6 @@ class RoomPlaylistController extends Controller
             return redirect()->back();
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 }

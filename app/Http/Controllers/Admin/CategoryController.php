@@ -53,7 +53,7 @@ class CategoryController extends Controller
             'name' => Request::get('name'),
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created.');
+        return redirect()->route('admin.categories.index')->with('success', __('Category created.'));
     }
 
     /**
@@ -86,7 +86,7 @@ class CategoryController extends Controller
             'name' => ['required', 'max:50', Rule::unique('categories')->ignore($category->id)],
         ]));
 
-        return redirect()->back()->with('success', 'Category updated.');
+        return redirect()->back()->with('success', __('Category updated.'));
     }
 
     /**
@@ -99,6 +99,6 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted.');
+        return redirect()->route('admin.categories.index')->with('success', __('Category deleted.'));
     }
 }

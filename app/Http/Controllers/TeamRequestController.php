@@ -15,12 +15,12 @@ class TeamRequestController extends Controller
 
         // User is not already in a team
         if (Auth::user()->hasTeam()) {
-            return redirect()->route('teams.index')->with('error', "Il n'est pas possible de rejoindre une autre team. Il faut quitter la team actuelle pour faire une nouvelle demande.");
+            return redirect()->route('teams.index')->with('error', __("It is not possible to join another team. You must leave the current team and make a new request."));
         }
 
         // Max 3 team requests by user
         if (Auth::user()->teamRequests()->count() > 2) {
-            return redirect()->back()->with('error', 'Tu ne peux pas faire plus de 3 demandes à la fois.');
+            return redirect()->back()->with('error', __('Tu ne peux pas faire plus de 3 demandes à la fois.'));
         }
 
         // Check if all the seats are occupied
@@ -31,10 +31,10 @@ class TeamRequestController extends Controller
 
             $team->owner->notify(new NewTeamRequest($teamRequest));
 
-            return redirect()->back()->with('success', 'La demande a été envoyée.');
+            return redirect()->back()->with('success', __('The request has been sent.'));
         }
 
-        return redirect()->back()->with('error', 'Impossible de rejoindre cette team. Le nombre maximum de membres a été atteint.');
+        return redirect()->back()->with('error', __('It is not possible to join this team. The maximum number of members has been reached.'));
     }
 
     public function accept(TeamRequest $teamRequest)
@@ -51,7 +51,7 @@ class TeamRequestController extends Controller
             return redirect()->back();
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function decline(TeamRequest $teamRequest)
@@ -68,7 +68,7 @@ class TeamRequestController extends Controller
             return redirect()->back();
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function cancel(Team $team)
@@ -78,9 +78,9 @@ class TeamRequestController extends Controller
         if ($teamRequest) {
             $teamRequest->cancel();
 
-            return redirect()->back()->with('success', 'La demande a été annulée.');
+            return redirect()->back()->with('success', 'The request has been cancelled.');
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 }

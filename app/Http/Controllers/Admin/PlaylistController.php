@@ -56,7 +56,7 @@ class PlaylistController extends AdminController
             'is_public' => Request::get('is_public'),
         ]);
 
-        return Redirect::route('admin.playlists.edit', $playlist)->with('success', 'Playlist created.');
+        return Redirect::route('admin.playlists.edit', $playlist)->with('success', __('Playlist created.'));
     }
 
     public function edit(Playlist $playlist)
@@ -105,20 +105,20 @@ class PlaylistController extends AdminController
 
         $playlist->update(Request::only('name', 'description', 'is_public'));
 
-        return Redirect::back()->with('success', 'Playlist updated.');
+        return Redirect::back()->with('success', __('Playlist updated.'));
     }
 
     public function destroy(Playlist $playlist)
     {
         $playlist->delete();
 
-        return Redirect::back()->with('success', 'Playlist deleted.');
+        return Redirect::back()->with('success', __('Playlist deleted.'));
     }
 
     public function restore(Playlist $playlist)
     {
         $playlist->restore();
 
-        return Redirect::back()->with('success', 'Playlist restored.');
+        return Redirect::back()->with('success', __('Playlist restored.'));
     }
 }
