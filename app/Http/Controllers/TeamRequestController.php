@@ -20,7 +20,7 @@ class TeamRequestController extends Controller
 
         // Max 3 team requests by user
         if (Auth::user()->teamRequests()->count() > 2) {
-            return redirect()->back()->with('error', __('Tu ne peux pas faire plus de 3 demandes à la fois.'));
+            return redirect()->back()->with('error', __('You cannot do more than 3 requests at the same time.'));
         }
 
         // Check if all the seats are occupied
