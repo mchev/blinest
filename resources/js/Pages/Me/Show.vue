@@ -65,7 +65,7 @@ const deleteUser = () => {
           </li>
           <li class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Score') }}</span>
-            <span>{{ user.total_score }}<sup class="ml-1">PTS</sup></span>
+            <span>{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
           </li>
         </ul>
 
@@ -116,7 +116,7 @@ const deleteUser = () => {
           <template #header>
             <div class="flex w-full justify-between items-center">
               <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
-              <span>{{ user.total_score }}<sup class="ml-1">PTS</sup></span>
+              <span>{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <div class="overflow-x-auto relative">
@@ -145,12 +145,12 @@ const deleteUser = () => {
                 </td>
                 <td class="border-t border-neutral-500">
                   <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
-                    {{ score.total }}<sup class="ml-1">PTS</sup>
+                    {{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup>
                   </Link>
                 </td>
                 <td class="border-t border-neutral-500">
                   <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
-                    {{ score.max }}<sup class="ml-1">PTS</sup>
+                    {{ score.max }}<sup class="ml-1">{{ __('PTS') }}</sup>
                   </Link>
                 </td>
               </tr>

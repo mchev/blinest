@@ -942,5 +942,7 @@
     "Easy" : "Facile",
     "Medium":"Moyen",
     "Difficult":"Difficile",
-    "Expert":"Expert"
+    "Expert":"Expert",
+    "Players":"Joueurs",
+    "PTS":"PTS"
 }

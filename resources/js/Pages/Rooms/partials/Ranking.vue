@@ -98,7 +98,7 @@ onUnmounted(() => {
                 </span>
               </div>
             </div>
-            <div>{{ user?.score ? user.score.total : 0 }} <sup>PTS</sup></div>
+            <div>{{ user?.score ? user.score.total : 0 }} <sup>{{ __('PTS') }}</sup></div>
           </li>
         </transition-group>
       </div>

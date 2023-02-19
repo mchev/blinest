@@ -28,7 +28,7 @@ const props = defineProps({
                   <img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" />
                 </div>
                 <span class="mb-1 font-bold">{{ score.user.name }}</span>
-                <span>{{ score.total_score }}<sup>PTS</sup></span>
+                <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
               </li>
             </ul>
           </section>
@@ -42,7 +42,7 @@ const props = defineProps({
                     <img :src="score.team.photo" class="mb-2 h-20 w-20 rounded-full" />
                   </div>
                   <span class="mb-1 font-bold">{{ score.team.name }}</span>
-                  <span>{{ score.total_score }}<sup>PTS</sup></span>
+                  <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
                 </Link>
               </li>
             </ul>

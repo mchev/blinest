@@ -83,7 +83,7 @@ const close = () => {
             <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow">{{ result.user.name }}</span>
-              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
+              <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>
@@ -94,7 +94,7 @@ const close = () => {
             <li v-for="(result, index) in teams_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow">{{ result.team.name }}</span>
-              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
+              <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>
