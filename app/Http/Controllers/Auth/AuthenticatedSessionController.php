@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $request->user()->update([
-            'ip' => $request->ip()
+            'ip' => $request->ip(),
         ]);
 
         if ($request->isFromModal) {
