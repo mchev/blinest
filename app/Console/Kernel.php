@@ -18,6 +18,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+
+        // Redis Cache Tags
+        $schedule->command('cache:prune-stale-tags')->hourly();
+
         // Clean created rounds with no scores
         $schedule->command('rounds:clean')->dailyAt('04:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
 
@@ -32,9 +36,6 @@ class Kernel extends ConsoleKernel
 
         // Clean rooms without playlists
         $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
-
-        // Delete expired bans
-        $schedule->command('ban:delete-expired')->everyMinute();
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
-use Mchev\Banhammer\Traits\Bannable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Mchev\Banhammer\Traits\Bannable;
 use Overtrue\LaravelVote\Traits\Voter;
 
 class User extends Authenticatable
