@@ -239,7 +239,7 @@ const updateDificulty = (e, track) => {
                   <option :value="0">{{ __('Easy') }}</option>
                   <option :value="1">{{ __('Medium') }}</option>
                   <option :value="2">{{ __('Difficult') }}</option>
-                  <option :value="3">Exp{{ __('Expert') }}ert</option>
+                  <option :value="3">{{ __('Expert') }}</option>
                 </SelectInput>
               </div>
             </td>
