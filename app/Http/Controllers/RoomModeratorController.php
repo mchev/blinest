@@ -13,7 +13,7 @@ class RoomModeratorController extends Controller
         if (Auth::user()->isRoomOwner($room) || Auth::user()->isAdministrator()) {
             $room->moderators()->syncWithoutDetaching($request->user_id);
         } else {
-            abort(403, 'Unauthorized action.');
+            abort(403, __('Unauthorized action.'));
         }
 
         return redirect()->back();
@@ -24,7 +24,7 @@ class RoomModeratorController extends Controller
         if (Auth::user()->isRoomOwner($room) || Auth::user()->isAdministrator()) {
             $room->moderators()->detach($request->user_id);
         } else {
-            abort(403, 'Unauthorized action.');
+            abort(403, __('Unauthorized action.'));
         }
 
         return redirect()->back();
