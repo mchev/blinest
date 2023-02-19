@@ -63,7 +63,7 @@ class ModerationController extends Controller
                         'id' => $ban->id,
                         'comment' => $ban->comment,
                         'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
-                        'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
+                        'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : __('Permanent ban'),
                         'banned_by' => User::find($ban->created_by_id)->name,
                     ]),
                 ]),
@@ -83,7 +83,7 @@ class ModerationController extends Controller
                 'id' => $ban->id,
                 'comment' => $ban->comment,
                 'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
-                'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : 'Ban permanent',
+                'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : __('Permanent ban'),
                 'banned_by' => User::find($ban->created_by_id)->name,
             ]),
         ];
@@ -104,7 +104,7 @@ class ModerationController extends Controller
         if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
             Message::onlyTrashed()->find($id)->restore();
 
-            return redirect()->back()->with('success', 'Message restauré');
+            return redirect()->back()->with('success', __('Message restored'));
         }
     }
 
@@ -115,12 +115,12 @@ class ModerationController extends Controller
                 $user->ban([
                     'expired_at' => Request::input('expired_at') ?? null,
                     'comment' => Request::input('comment') ?? null,
-                    'ip' => $user->ip,
+                    'ip' => $user->ip
                 ]);
 
-                return redirect()->back()->with('success', $user->name.' a été banni.');
+                return redirect()->back()->with('success', $user->name.__(' has been banned.'));
             } else {
-                return redirect()->back()->with('error', 'Impossible de bannir un modérateur');
+                return redirect()->back()->with('error', __('Impossible to ban a moderator'));
             }
         }
 

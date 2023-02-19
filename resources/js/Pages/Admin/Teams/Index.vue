@@ -40,8 +40,8 @@ const reset = () => {
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
         <select v-model="form.trashed" class="form-select mt-1 w-full">
           <option :value="null" />
-          <option value="with">With Trashed</option>
-          <option value="only">Only Trashed</option>
+          <option value="with">{{ __('With Trashed') }}</option>
+          <option value="only">{{ __('Only Trashed') }}</option>
         </select>
       </search-filter>
       <Link class="btn-primary" href="/admin/teams/create">
