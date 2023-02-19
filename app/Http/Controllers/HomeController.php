@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Room;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller

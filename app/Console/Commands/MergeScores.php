@@ -33,7 +33,7 @@ class MergeScores extends Command
         $bar = $this->getOutput()->createProgressBar($count);
 
         Score::has('user')->has('round')->chunk(5000, function ($scores) use ($bar) {
-            $scores->each(fn ($score) => ProcessAddScoreToTotalScore::dispatchNow($score));
+            $scores->each(fn ($score) => ProcessAddScoreToTotalScore::dispatchSync($score));
             $bar->advance(5000);
         });
 
