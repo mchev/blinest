@@ -115,7 +115,7 @@ class ModerationController extends Controller
                 $user->ban([
                     'expired_at' => Request::input('expired_at') ?? null,
                     'comment' => Request::input('comment') ?? null,
-                    'ip' => $user->ip
+                    'ip' => $user->ip,
                 ]);
 
                 return redirect()->back()->with('success', $user->name.' a été banni.');

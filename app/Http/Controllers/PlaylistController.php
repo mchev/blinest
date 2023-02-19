@@ -129,6 +129,7 @@ class PlaylistController extends Controller
     public function export(Playlist $playlist)
     {
         $tracks = $playlist->tracks()->with('answers')->get();
+
         return Excel::download(new PlaylistExport($tracks), 'playlist.xlsx');
     }
 

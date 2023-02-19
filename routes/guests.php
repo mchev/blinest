@@ -40,6 +40,7 @@ Route::get('/callback/{provider}', [SocialController::class, 'callback'])
 
 Route::get('language/{language}', function ($language) {
     Session()->put('locale', $language);
+
     return redirect()->back();
 })->name('language');
 
@@ -52,5 +53,4 @@ Route::middleware(['auth.banned', 'ip.banned'])->group(function () {
     // Room
     Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
         ->name('rooms.show');
-
 });
