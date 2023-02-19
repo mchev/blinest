@@ -115,7 +115,7 @@ const reset = () => {
     <div v-else class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
       <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
         <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Rooms') }}</h2>
-        <p class="text-lg">{{ __('\"If you don't have a room on Blinest by the time you turn 50, you will have missed out on life.\"') }}<br /><small class="text-xs italic">{{ __('Anonymous.') }}</small></p>
+        <p class="text-lg">"Si à 50 ans on n'a pas de Room sur Blinest, on a raté sa vie."<br /><small class="text-xs italic">{{ __('Anonymous.') }}</small></p>
         <div class="my-8 flex justify-center">
           <Link class="btn-primary btn-lg" :href="route('rooms.create')">
             {{ __('Create my first room') }}

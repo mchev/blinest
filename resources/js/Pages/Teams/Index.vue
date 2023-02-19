@@ -41,7 +41,7 @@ const cancelRequest = (team) => {
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Teams') }}</h2>
-          <p class="font-light sm:text-xl">{{ __(Join a team and share your scores with other members to skyrocket the scores!) }}</p>
+          <p class="font-light sm:text-xl">{{ __('Join a team and share your scores with other members to skyrocket the scores!') }}</p>
           <div class="my-6 flex justify-center">
             <Link v-if="!user.team" href="/teams/create" class="btn-primary btn-lg">{{ __('Create a team') }}</Link>
             <Link v-else :href="route('teams.show', user.team.id)" class="btn-primary btn-lg">{{ __('Show my team') }}</Link>
