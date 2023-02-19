@@ -8,7 +8,7 @@ import { Link, usePage } from '@inertiajs/vue3'
     <div class="flex w-full items-center justify-between py-2 md:flex-shrink-0">
       Blinest
       <ul class="flex flex-col gap-4 md:flex-row">
-        <li><Link href="/contact">Contact</Link></li>
+        <li><Link href="/contact">{{ __('Contact') }}</Link></li>
         <li>
           <a target="_blank" rel="external nofollow" href="https://github.com/mchev/blinest/issues/new">{{ __('Report a bug') }}</a>
         </li>
