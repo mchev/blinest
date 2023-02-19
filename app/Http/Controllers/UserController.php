@@ -94,7 +94,7 @@ class UserController extends Controller
 
             return redirect('login');
         } else {
-            abort(403, 'Unauthorized action.');
+            abort(403, __('Unauthorized action.'));
         }
     }
 

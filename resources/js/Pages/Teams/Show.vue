@@ -72,7 +72,7 @@ const updateTeam = () => {
         <form @submit.prevent="updateTeam">
           <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name" />
           <FileInput v-if="user.permissions.canUploadImage" v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo" />
-          <Tip v-if="!user.permissions.canUploadImage"> Pour changer l'image de la team il faut minimum 3 mois d'ancienneté et un score total de 2000<sup>PTS</sup>. </Tip>
+          <Tip v-if="!user.permissions.canUploadImage"> Pour changer l'image de la team il faut minimum 3 mois d'ancienneté et un score total de 2000<sup>{{ __('PTS') }}</sup>. </Tip>
           <LoadingButton type="submit" @click="updateTeam" :loading="form.processing" class="btn-primary mb-4 ml-auto">{{ __('Update') }}</LoadingButton>
         </form>
       </Card>
@@ -81,7 +81,7 @@ const updateTeam = () => {
           <img v-if="team.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="team.photo" />
           <h1 class="font-bold">Team {{ team.name }}</h1>
         </div>
-        <span>{{ score }}<sup class="ml-1">PTS</sup></span>
+        <span>{{ score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
       </div>
       <Card>
         <template #header>
@@ -118,7 +118,7 @@ const updateTeam = () => {
                 </svg>
               </button>
             </div>
-            <div>{{ member.score }}<sup>PTS</sup></div>
+            <div>{{ member.score }}<sup>{{ __('PTS') }}</sup></div>
           </li>
         </ul>
       </Card>

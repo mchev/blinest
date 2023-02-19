@@ -11,12 +11,12 @@ const props = defineProps({
 })
 </script>
 <template>
-  <Head :title="__('Rankings') + ' - Top 50'" />
+  <Head :title="__('Rankings') + ' - ' + __('Top 50')" />
   <AppLayout>
     <section>
       <div class="mx-auto py-8 px-4 text-center">
         <div class="mx-auto mb-8 lg:mb-16">
-          <h2 class="mb-4 text-4xl font-extrabold">Top 50</h2>
+          <h2 class="mb-4 text-4xl font-extrabold">__('Top 50')</h2>
           <p>public rooms</p>
         </div>
         <div>
@@ -28,7 +28,7 @@ const props = defineProps({
                   <img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" />
                 </div>
                 <span class="mb-1 font-bold">{{ score.user.name }}</span>
-                <span>{{ score.total_score }}<sup>PTS</sup></span>
+                <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
               </li>
             </ul>
           </section>
@@ -42,7 +42,7 @@ const props = defineProps({
                     <img :src="score.team.photo" class="mb-2 h-20 w-20 rounded-full" />
                   </div>
                   <span class="mb-1 font-bold">{{ score.team.name }}</span>
-                  <span>{{ score.total_score }}<sup>PTS</sup></span>
+                  <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
                 </Link>
               </li>
             </ul>
