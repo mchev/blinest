@@ -941,5 +941,7 @@
   "Easy" : "Fácil",
   "Medium":"Médio",
   "Difficult":"Difícil",
-  "Expert":"Especialista"
+  "Expert":"Especialista",
+  "Players":"Jogadores",
+  "PTS":"PTS"
 }
