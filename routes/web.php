@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.destroy');
 });
 
-Route::middleware(['auth', 'logout.banned'])->group(function () {
+Route::middleware(['auth', 'auth.banned', 'ip.banned'])->group(function () {
 
     // Check user answer
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
