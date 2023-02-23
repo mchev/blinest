@@ -56,4 +56,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     // Controls
     Route::post('rooms/{room}/start', [RoomController::class, 'start'])
         ->name('rounds.start');
+
+    // Search existing tracks in room playlists
+    Route::post('rooms/{room}/search/tracks', [RoomController::class, 'searchTracks'])
+        ->name('rooms.search.tracks');
 });

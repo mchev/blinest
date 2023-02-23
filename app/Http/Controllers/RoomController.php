@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Http\JsonResponse;
 
 class RoomController extends Controller
 {
@@ -227,5 +228,16 @@ class RoomController extends Controller
         }
 
         return redirect()->back()->with('success', 'Bien reçu!');
+    }
+
+    public function searchTracks(Room $room) : JsonResponse
+    {
+        return response()->json(
+            $room->tracks()
+                ->filter(Request::only('search'))
+                ->limit(10)
+                ->with('answers')
+                ->get('id')
+        );
     }
 }
