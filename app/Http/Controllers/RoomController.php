@@ -9,12 +9,12 @@ use App\Models\User;
 use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Illuminate\Http\JsonResponse;
 
 class RoomController extends Controller
 {
@@ -230,7 +230,7 @@ class RoomController extends Controller
         return redirect()->back()->with('success', 'Bien reçu!');
     }
 
-    public function searchTracks(Room $room) : JsonResponse
+    public function searchTracks(Room $room): JsonResponse
     {
         return response()->json(
             $room->tracks()

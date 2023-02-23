@@ -74,7 +74,7 @@ class TrackController extends Controller
                 || Auth::user()->isAdministrator()
             ) {
 
-        // VALIDATE
+            // VALIDATE
             Request::validate([
                 'provider' => ['required', 'max:50'],
                 'provider_id' => ['required', 'max:255'],
@@ -89,42 +89,36 @@ class TrackController extends Controller
 
             // TRACK
             $track = $playlist->tracks()->updateOrCreate(
-            [
-                'provider' => Request::get('provider'),
-                'provider_id' => Request::get('provider_id'),
-            ],
-            [
-                'provider_url' => Request::get('provider_url'),
-                // 'artist_name' => Request::get('artist_name'),
-                // 'track_name' => Request::get('track_name'),
-                // 'album_name' => Request::get('album_name'),
-                'preview_url' => Request::get('preview_url'),
-                // 'release_date' => Request::get('release_date'),
-                'artwork_url' => Request::get('artwork_url'),
-            ]
-        );
+                [
+                    'provider' => Request::get('provider'),
+                    'provider_id' => Request::get('provider_id'),
+                ],
+                [
+                    'provider_url' => Request::get('provider_url'),
+                    // 'artist_name' => Request::get('artist_name'),
+                    // 'track_name' => Request::get('track_name'),
+                    // 'album_name' => Request::get('album_name'),
+                    'preview_url' => Request::get('preview_url'),
+                    // 'release_date' => Request::get('release_date'),
+                    'artwork_url' => Request::get('artwork_url'),
+                ]
+            );
 
             // ANSWERS
             $track->answers()->updateOrCreate(
-            ['answer_type_id' => 1], // Artist
-            ['value' => Request::get('artist_name')]
-        );
-            $track->answers()->updateOrCreate(
-            ['answer_type_id' => 2], // Title
-            ['value' => Request::get('track_name')]
-        );
-            if (Request::get('album_name')) {
-                $track->answers()->updateOrCreate(
-                ['answer_type_id' => 3], // Album
-                ['value' => Request::get('album_name')]
+                ['answer_type_id' => 1], // Artist
+                ['value' => Request::get('artist_name')]
             );
-            }
+            $track->answers()->updateOrCreate(
+                ['answer_type_id' => 2], // Title
+                ['value' => Request::get('track_name')]
+            );
 
             foreach ($playlist->rooms()->isPublic()->get() as $room) {
                 if ($room->discord_webhook_url) {
                     SendDiscordNotification::dispatch(
                         $room,
-                        'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été ajouté.',
+                        'Le titre '.$track->answers()->where('answer_type_id', 2)->first()?->value.' de '.$track->answers()->where('answer_type_id', 1)->first()?->value.' a été ajouté par '.auth()->user()->name.'.',
                         'success'
                     );
                 }
