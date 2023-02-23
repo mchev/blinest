@@ -46,7 +46,7 @@ const report = () => {
       <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-7 w-7 rounded-full" />
       {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </span>
-    <span class="">{{ message.body }}</span>
+    <span class="break-all whitespace-pre-wrap">{{ message.body }}</span>
     <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
   </div>
 </template>

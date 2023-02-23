@@ -34,7 +34,6 @@ const restoreMessage = (message) => {
                 <div class="flex flex-col">
                   {{ message.user.name }}
                   <span class="text-xs text-neutral-500">ID : {{ message.user.id }}</span>
-                  <span class="text-xs text-neutral-500">IP : {{ message.user.ip }}</span>
                 </div>
               </div>
             </td>
@@ -43,10 +42,11 @@ const restoreMessage = (message) => {
                 <span class="text-sm">{{ message.time }} sur <Link :href="route('rooms.show', message.room.slug)">{{ message.room.name }}</Link></span>
                 <span class="text-xs text-neutral-500">Creation : {{ message.created_at }}</span>
                 <span class="text-xs text-neutral-500">Suppression : {{ message.deleted_at }}</span>
+                <span class="text-xs text-neutral-500">IP : {{ message.user.ip }}</span>
               </div>
             </td>
-            <td class="border-t px-2 py-4">
-              <span class="break-all text-sm italic">{{ message.body }}</span>
+            <td class="border-t px-2 py-4 max-w-xl">
+              <span class="break-all whitespace-pre-wrap text-xs italic">{{ message.body }}</span>
             </td>
             <td class="border-t px-2 py-4">
               <div class="flex flex-col">

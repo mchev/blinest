@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -54,7 +55,7 @@ class RoomController extends Controller
         if ($room->password) {
             if (Request::has('password')) {
                 if (Request::input('password') != $room->password) {
-                    return redirect()->back()->with('error', __('The password is incorrect.'));
+                    return redirect()->back()->with('error', 'Le mot de passe est incorrect.');
                 }
             } else {
                 return Inertia::render('Rooms/Password', [
@@ -105,7 +106,7 @@ class RoomController extends Controller
             'category_id' => Request::get('category_id'),
         ]);
 
-        return Redirect::route('rooms.edit', $room)->with('success', __('Room created.'));
+        return Redirect::route('rooms.edit', $room)->with('success', 'Room created.');
     }
 
     public function edit(Room $room)
@@ -137,7 +138,7 @@ class RoomController extends Controller
             }
         }
 
-        return Redirect::back()->with('success', __('Room updated.'));
+        return Redirect::back()->with('success', 'Room updated.');
     }
 
     public function updateOptions(Room $room)
@@ -161,7 +162,7 @@ class RoomController extends Controller
             $room->update(['password' => null]);
         }
 
-        return Redirect::back()->with('success', __('Options updated.'));
+        return Redirect::back()->with('success', 'Options updated.');
     }
 
     public function destroy(Room $room)
@@ -170,7 +171,7 @@ class RoomController extends Controller
         $room->moderators()->detach();
         $room->delete();
 
-        return Redirect::route('rooms.index')->with('success', __('Room deleted.'));
+        return Redirect::route('rooms.index')->with('success', 'Room deleted.');
     }
 
     /**
@@ -183,9 +184,9 @@ class RoomController extends Controller
                 $room->startRound();
             }
 
-            return response()->json(__('Successfully joined the room.'));
+            return response()->json('Successfully joined the room.');
         } else {
-            return response()->json(__('User is not logged in.'));
+            return response()->json('User is not logged in.');
         }
     }
 
@@ -226,6 +227,17 @@ class RoomController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', __('Understood!'));
+        return redirect()->back()->with('success', 'Bien reçu!');
+    }
+
+    public function searchTracks(Room $room): JsonResponse
+    {
+        return response()->json(
+            $room->tracks()
+                ->filter(Request::only('search'))
+                ->limit(10)
+                ->with('answers')
+                ->get('id')
+        );
     }
 }
