@@ -53,7 +53,7 @@ class TeamController extends Controller
             $user->team_id = null;
             $user->update();
 
-            return redirect()->route('teams.show', $team)->with('success', __("The member is not part of the team anymore"));
+            return redirect()->route('teams.show', $team)->with('success', __('The member is not part of the team anymore'));
         }
 
         return abort(403, __('Unauthorized action.'));
