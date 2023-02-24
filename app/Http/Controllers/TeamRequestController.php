@@ -15,7 +15,7 @@ class TeamRequestController extends Controller
 
         // User is not already in a team
         if (Auth::user()->hasTeam()) {
-            return redirect()->route('teams.index')->with('error', __("It is not possible to join another team. You must leave the current team and make a new request."));
+            return redirect()->route('teams.index')->with('error', __('It is not possible to join another team. You must leave the current team and make a new request.'));
         }
 
         // Max 3 team requests by user

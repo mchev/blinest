@@ -112,13 +112,13 @@ class TeamController extends Controller
             return redirect()->back()->with('success', __('Updated'));
         }
 
-        return redirect()->back()->with('error', __("This is not your team."));
+        return redirect()->back()->with('error', __('This is not your team.'));
     }
 
     public function leave(Team $team)
     {
         if (Auth::user()->id === $team->user_id) {
-            return redirect()->back()->with('error', __("Impossible to leave your own team. You must transfer ownership to another member first."));
+            return redirect()->back()->with('error', __('Impossible to leave your own team. You must transfer ownership to another member first.'));
         }
 
         if ($team->members()->where('id', Auth::user()->id)->exists()) {
