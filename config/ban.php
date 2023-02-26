@@ -33,6 +33,6 @@ return [
     | The message that will be displayed if no fallback url for banned users has been defined.
     |
     */
-    'message' => __('You have been banned.'),
+    'message' => 'You have been banned.',
 
 ];
