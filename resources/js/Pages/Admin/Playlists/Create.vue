@@ -27,8 +27,8 @@ const store = () => {
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
           <select-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pb-8 pr-6 lg:w-1/2" label="Public">
-            <option :value="1">Yes</option>
-            <option :value="0">No</option>
+            <option :value="1">{{ __('Yes') }}</option>
+            <option :value="0">{{ __('No') }}</option>
           </select-input>
         </div>
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">

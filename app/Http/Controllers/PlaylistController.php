@@ -63,7 +63,7 @@ class PlaylistController extends Controller
 
         $playlist->moderators()->attach(Auth::user());
 
-        return Redirect::route('playlists.edit', $playlist)->with('success', 'Playlist created.');
+        return Redirect::route('playlists.edit', $playlist)->with('success', __('Playlist created.'));
     }
 
     public function edit(Playlist $playlist)
@@ -106,7 +106,7 @@ class PlaylistController extends Controller
             ]);
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function update(Playlist $playlist)
@@ -120,10 +120,10 @@ class PlaylistController extends Controller
 
             $playlist->update(Request::only('name', 'description', 'user_id'));
 
-            return Redirect::back()->with('success', 'Playlist updated.');
+            return Redirect::back()->with('success', __('Playlist updated.'));
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function export(Playlist $playlist)
@@ -137,17 +137,17 @@ class PlaylistController extends Controller
     {
         if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
             if ($playlist->is_public && $playlist->has('rooms')) {
-                return Redirect::back()->with('error', 'Impossible de supprimer une playlist qui est publique et qui est associée à une room.');
+                return Redirect::back()->with('error', __('Impossible to delete a playlist that is public and associated to a room.'));
             }
 
             $playlist->moderators()->detach();
             $playlist->tracks()->delete();
             $playlist->delete();
 
-            return Redirect::route('playlists')->with('success', 'Playlist deleted.');
+            return Redirect::route('playlists')->with('success', __('Playlist deleted.'));
         }
 
-        return abort(403, 'Unauthorized action.');
+        return abort(403, __('Unauthorized action.'));
     }
 
     public function findPlaylistByProvider(Playlist $playlist)
@@ -186,6 +186,6 @@ class PlaylistController extends Controller
             $count = (new BlinestLikesService)->importPlaylist($playlist);
         }
 
-        return redirect()->route('playlists.edit', $playlist)->with('success', $count.'/'.Request::input('tracks_count').' titres ont été importés.');
+        return redirect()->route('playlists.edit', $playlist)->with('success', $count.'/'.Request::input('tracks_count').__(' tracks have been imported.'));
     }
 }

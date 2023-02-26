@@ -18,14 +18,14 @@ class RoundController extends Controller
     {
         (Auth::user()->hasRoomControl($round->room))
             ? $round->pause()
-            : abort(403, 'Unauthorized action.');
+            : abort(403, __('Unauthorized action.'));
     }
 
     public function resume(Round $round)
     {
         (Auth::user()->hasRoomControl($round->room))
             ? $round->resume()
-            : abort(403, 'Unauthorized action.');
+            : abort(403, __('Unauthorized action.'));
     }
 
     public function stop(Round $round)
@@ -34,7 +34,7 @@ class RoundController extends Controller
             $round->stop();
             broadcast(new TrackEnded($round));
         } else {
-            abort(403, 'Unauthorized action.');
+            abort(403, __('Unauthorized action.'));
         }
     }
 

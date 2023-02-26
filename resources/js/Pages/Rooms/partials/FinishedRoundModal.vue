@@ -83,7 +83,7 @@ const close = () => {
             <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow">{{ result.user.name }}</span>
-              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
+              <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>
@@ -94,7 +94,7 @@ const close = () => {
             <li v-for="(result, index) in teams_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow">{{ result.team.name }}</span>
-              <span>{{ result.total }}<sup class="ml-1">PTS</sup></span>
+              <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>
@@ -107,7 +107,7 @@ const close = () => {
           <div class="flex flex-grow flex-col">
             <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
               <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.round.room.pause_between_rounds)) * 100 + '%'">
-                <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">Prochaine partie dans {{ countdown }}</span>
+                <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">{{ __('Next game in') }} {{ countdown }}</span>
               </div>
             </div>
           </div>

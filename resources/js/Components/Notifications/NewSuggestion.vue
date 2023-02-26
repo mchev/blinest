@@ -8,14 +8,14 @@ const emit = defineEmits(['markedAsdone'])
 <template>
   <div v-if="notification" class="flex-grow">
     <div class="mb-1 flex items-center justify-between border-b pb-1">
-      <h4 class="flex items-center font-bold uppercase">Suggestion</h4>
+      <h4 class="flex items-center font-bold uppercase">{{ __('Suggestion') }}</h4>
       <span class="text-xs text-neutral-400">{{ notification.data.created_at }}</span>
     </div>
     <div class="my-2 whitespace-pre-line text-sm font-medium">
       {{ notification.data.message }}
     </div>
     <span class="flex text-xs"
-      >Envoyée par {{ notification.data.user.name }} sur <span class="ml-1 font-bold">{{ notification.data.room.name }}</span></span
+      > {{ __('Send by ') }}{{ notification.data.user.name }} {{ __('on ') }}<span class="ml-1 font-bold">{{ notification.data.room.name }}</span></span
     >
     <span v-if="notification.data.room.playlists" class="text-xs">Playlists : {{ notification.data.room.playlists }}</span>
     <button type="button" class="btn-primary btn-sm mt-2 ml-auto" @click="$emit('markedAsdone')">

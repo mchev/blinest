@@ -17,12 +17,12 @@
           <text-input v-model="form.email" :error="form.errors.email" class="w-full pb-8 pr-6 lg:w-1/2" label="Email" />
           <text-input v-model="form.password" :error="form.errors.password" class="w-full pb-8 pr-6 lg:w-1/2" type="password" autocomplete="new-password" label="Password" />
           <select-input v-model="form.team_id" :error="form.errors.team_id" class="w-full pb-8 pr-6 lg:w-1/2" label="Team">
-            <option :value="0">Yes</option>
-            <option :value="1">No</option>
+            <option :value="0">{{ __('Yes') }}</option>
+            <option :value="1">{{ __('No') }}</option>
           </select-input>
           <select-input v-model="form.is_administrator" :error="form.errors.is_administrator" class="w-full pb-8 pr-6 lg:w-1/2" label="Admin">
-            <option :value="0">No</option>
-            <option :value="1">Yes</option>
+            <option :value="0">{{ __('No') }}</option>
+            <option :value="1">{{ __('Yes') }}</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>

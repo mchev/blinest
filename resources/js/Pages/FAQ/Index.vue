@@ -35,7 +35,7 @@ watch(
   <AppLayout>
     <div class="w-full flex flex-col items-center justify-center">
       <h1 class="mb-8 text-3xl font-bold">{{ __('FAQ') }}</h1>
-      <text-input v-model="form.search" class="mr-4 w-full max-w-md" placeholder="Une question ?" />
+      <text-input v-model="form.search" class="mr-4 w-full max-w-md" :placeholder="__('Search in FAQ')" />
       <Pagination :links="faqs.links" class="mt-4 mb-0 mx-0 justify-center"/>
     </div>
     <TransitionGroup name="faq" tag="ul" v-if="faqs.data.length" class="flex flex-col gap-4 max-w-6xl mx-auto my-8">
