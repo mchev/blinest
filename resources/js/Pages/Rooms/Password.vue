@@ -43,6 +43,6 @@ const submit = () => {
         >
       </form>
     </Card>
-    <Tip class="mx-auto max-w-xl"> {{ __('If you are the owner of the room and have forgotten the password, you can change it on the room's editing page.') }}<Link :href="route('rooms.index')" class="underline">la page d'édition de la room.</Link></Tip>
+    <Tip class="mx-auto max-w-xl"> {{ __("If you are the owner of the room and have forgotten the password, you can change it on the room's editing page.") }}<Link :href="route('rooms.index')" class="underline">la page d'édition de la room.</Link></Tip>
   </AppLayout>
 </template>
