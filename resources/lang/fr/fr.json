@@ -971,5 +971,11 @@
     "Next team list" : "Team suivante",
     "Tracks to be imported:":"Titres à importer :",
     "Confirm import":"Confirmer l'importation",
-    "You can find the ID of the playlist in the address bar of your browser.":"Vous pouvez trouver l'ID de la playlist dans la barre d'adresse de votre navigateur"
+    "You can find the ID of the playlist in the address bar of your browser.":"Vous pouvez trouver l'ID de la playlist dans la barre d'adresse de votre navigateur",
+    "Playlist ID":"ID de la playlist",
+    "Playlist ID:":"ID de la playlist :",
+    "Playlist source":"Origine de la playlist",
+    "Spotify ID example: https://open.spotify.com/playlist/":"Exemple d'ID Spotify : https://open.spotify.com/playlist/",
+    "Deezer ID example: https://www.deezer.com/fr/playlist/":"Exemple d'ID Deezer : https://www.deezer.com/fr/playlist/",
+    "Source:":"Origine :"
 }
