@@ -17,7 +17,7 @@ const props = defineProps({
       <div class="mx-auto py-8 px-4 text-center">
         <div class="mx-auto mb-8 lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold">{{ __('Top 50') }}</h2>
-          <p>public rooms</p>
+          {{ __(<p>'public rooms') }}</p>
         </div>
         <div>
           <section class="mb-8">
