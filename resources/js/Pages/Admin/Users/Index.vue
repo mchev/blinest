@@ -4,7 +4,7 @@
     <h1 class="mb-8 text-3xl font-bold">Users ({{ users.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="mt-4 block text-gray-700">Trashed:</label>
+        <label class="mt-4 block text-gray-700">{{ __('Trashed:') }}</label>
         <select v-model="form.trashed" class="form-select mt-1 w-full">
           <option :value="null" />
           <option value="with">{{ __('With Trashed') }}</option>
@@ -19,10 +19,10 @@
     <card>
       <table class="w-full whitespace-nowrap">
         <tr class="text-left font-bold">
-          <th class="px-6 pb-4 pt-6">Name</th>
-          <th class="px-6 pb-4 pt-6">Email</th>
-          <th class="px-6 pb-4 pt-6">Provider</th>
-          <th class="px-6 pb-4 pt-6">Inscription</th>
+          <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+          <th class="px-6 pb-4 pt-6">{{ __('Email') }}</th>
+          <th class="px-6 pb-4 pt-6">{{ __('Provider') }}</th>
+          <th class="px-6 pb-4 pt-6">{{ __('Register') }}</th>
           <th class="px-6 pb-4 pt-6" colspan="2">Role</th>
         </tr>
         <tr v-for="user in users.data" :key="user.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">

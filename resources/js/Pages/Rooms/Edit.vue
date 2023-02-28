@@ -90,7 +90,7 @@ onUnmounted(() => {
                   </option>
                 </select-input>
                 <file-input v-if="room.is_pro || room.is_public || user.permissions.canUploadImage" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> Pour changer l'image de la room vous devez avoir un score total de 2000 minimum et 3 mois d'ancienneté. </Tip>
+                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
               </div>
             </div>
           </form>

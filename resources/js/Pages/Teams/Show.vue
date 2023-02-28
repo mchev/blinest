@@ -72,7 +72,7 @@ const updateTeam = () => {
         <form @submit.prevent="updateTeam">
           <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name" />
           <FileInput v-if="user.permissions.canUploadImage" v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo" />
-          <Tip v-if="!user.permissions.canUploadImage"> Pour changer l'image de la team il faut minimum 3 mois d'ancienneté et un score total de 2000<sup>{{ __('PTS') }}</sup>. </Tip>
+          <Tip v-if="!user.permissions.canUploadImage"> {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }}<sup>{{ __('PTS') }}</sup>. </Tip>
           <LoadingButton type="submit" @click="updateTeam" :loading="form.processing" class="btn-primary mb-4 ml-auto">{{ __('Update') }}</LoadingButton>
         </form>
       </Card>

@@ -35,18 +35,18 @@ const destroy = () => {
     <Card>
       <template #header>
         <h1 class="text-xl font-bold">
-          <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/faqs">FAQ</Link>
+          <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/faqs">{{ __('FAQ') }}</Link>
           <span class="font-medium text-indigo-400"> /</span> {{ __('Create') }}
         </h1>
       </template>
       <form @submit.prevent="update" id="editForm">
         <div class="p-8">
-          <select-input v-model="form.locale" :error="form.errors.locale" class="w-full pb-8 pr-6 lg:w-1/2" label="Locale" required>
+          <select-input v-model="form.locale" :error="form.errors.locale" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Locale')" required>
             <option value="fr">FR</option>
             <option value="en">EN</option>
           </select-input>
-          <text-input v-model="form.question" :error="form.errors.question" class="w-full pb-8 pr-6 lg:w-1/2" label="Question" required />
-          <textarea-input rows="10" v-model="form.answer" :error="form.errors.answer" class="w-full pb-8 pr-6" label="Réponse" required />
+          <text-input v-model="form.question" :error="form.errors.question" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Question')" required />
+          <textarea-input rows="10" v-model="form.answer" :error="form.errors.answer" class="w-full pb-8 pr-6" :label="__('Answer')" required />
         </div>
       </form>
       <template #footer>

@@ -34,12 +34,12 @@ const reset = () => {
 <template>
   <Head title="Answer Types" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">Answer Types</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Answer Types') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" href="/admin/answer_types/create">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Answer Type</span>
+        <span class="hidden md:inline">&nbsp;{{ __('Answer Type') }}</span>
       </Link>
     </div>
     <Card>
@@ -47,8 +47,8 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
-              <th class="px-6 pb-4 pt-6">Name</th>
-              <th class="px-6 pb-4 pt-6">Pronoun</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Pronoun') }}</th>
               <th class="px-6 pb-4 pt-6" colspan="2">Icon</th>
             </tr>
           </thead>

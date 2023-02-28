@@ -34,12 +34,12 @@ const reset = () => {
 <template>
   <Head title="Categories" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">Categories</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Categories') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" href="/admin/categories/create">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Category</span>
+        <span class="hidden md:inline">&nbsp;{{ __('Category') }}</span>
       </Link>
     </div>
     <Card>
@@ -47,9 +47,9 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
-              <th class="px-6 pb-4 pt-6">Name</th>
-              <th class="px-6 pb-4 pt-6">Public Rooms</th>
-              <th class="px-6 pb-4 pt-6" colspan="2">Private Rooms</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Public Rooms') }}</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Private Rooms') }}</th>
             </tr>
           </thead>
           <tbody>

@@ -58,7 +58,7 @@ const voteTrackUp = (track) => {
   <Card>
     <template #header>
       <div class="flex w-full items-center justify-between">
-        <h3 class="text-xl font-bold">Playlist</h3>
+        <h3 class="text-xl font-bold">{{ __('Playlist') }}</h3>
         <span v-if="round" class="text-xl font-bold text-neutral-500"
           ><span class="text-neutral-700">{{ round.current }}</span> / {{ round.tracks.length }}</span
         >

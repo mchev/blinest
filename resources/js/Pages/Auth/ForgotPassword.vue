@@ -29,7 +29,7 @@ const submit = () => {
 
       <form @submit.prevent="submit">
         <div>
-          <TextInput type="email" label="Email" v-model="form.email" :error="form.errors.email" required autofocus />
+          <TextInput type="email" :label="__('Email')" v-model="form.email" :error="form.errors.email" required autofocus />
         </div>
 
         <div class="mt-6 mb-4 flex items-center justify-end">

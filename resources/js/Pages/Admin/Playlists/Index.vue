@@ -35,7 +35,7 @@ const reset = () => {
 <template>
   <Head title="Playlists" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">Playlists ({{ playlists.total }})</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Playlists') }} ({{ playlists.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
         <label class="mt-4 block text-gray-700">Trashed:</label>
@@ -47,7 +47,7 @@ const reset = () => {
       </search-filter>
       <Link class="btn-primary" :href="route('admin.playlists.create')">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Playlist</span>
+        <span class="hidden md:inline">&nbsp;{{ __('Playlists') }}</span>
       </Link>
     </div>
 
