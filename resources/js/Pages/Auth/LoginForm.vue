@@ -48,7 +48,7 @@ const login = () => {
         </div>
         <div class="mb-2 flex gap-2 px-6">
           <Link class="ml-auto text-sm underline" :href="route('password.request')">{{ __('Forgot your password?') }}</Link>
-          <Link class="text-sm underline" :href="route('home')">Retourner à l'accueil</Link>
+          <Link class="text-sm underline" :href="route('home')">{{ __('Return to Homepage') }}</Link>
         </div>
       </form>
     </Card>

@@ -41,8 +41,8 @@ const alertModerators = () => {
         </h3>
       </template>
       <div class="p-4">
-        <Tip>Attention, cette fonctionnalité n'est à utiliser qu'en cas de problème de respect des règles sur le chat ou d'une panne sur la partie.</Tip>
-        <TextareaInput v-model="form.message" :error="form.errors.message" label="Commentaire (facultatif)" />
+        <Tip>{{ __('Warning, this feature should only be used in case of rule breaking in the chat or a technical issue in the game.') }}</Tip>
+        <TextareaInput v-model="form.message" :error="form.errors.message" :label="__('Comment (optional)')" />
         <div class="mt-8 flex justify-end">
           <button class="btn-secondary mr-2" @click="$emit('close')">{{ __('Close') }}</button>
           <button class="btn-danger" @click="alertModerators">{{ __('Alerting moderators') }}</button>

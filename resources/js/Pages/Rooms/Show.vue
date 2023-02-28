@@ -130,7 +130,7 @@ const listenRounds = () => {
             <div class="flex flex-col items-center gap-4 text-sm lg:flex-row lg:justify-between">
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
-                  <span class="uppercase text-neutral-500">Modos</span>
+                  <span class="uppercase text-neutral-500">{{ __('Mods') }}</span>
                   <span v-for="moderator in room.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
                 </div>
               </div>

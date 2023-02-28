@@ -42,8 +42,8 @@ const destroy = () => {
           <span v-html="form.svg_icon" />
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete Answer Type</button>
-          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">Update Answer Type</loading-button>
+          <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Answer Type') }}</button>
+          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Update Answer Type') }}</loading-button>
         </div>
       </form>
     </div>

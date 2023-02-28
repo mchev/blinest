@@ -20,7 +20,7 @@ const store = () => {
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Playlists') }}</h2>
-          <p class="font-light sm:text-xl">Si tu connais déjà par coeur les playlists publiques ou que tu souhaites créer quelque chose d'unique c'est ici que ça se passe.</p>
+          <p class="font-light sm:text-xl">{{ __('If you already know the public playlists by heart or if you want to create something unique, this is the place to be.') }}</p>
           <div class="mt-16 flex justify-center">
             <text-input v-model="form.name" :error="form.errors.name" class="text-xl" :placeholder="__('Playlist name')" required />
           </div>

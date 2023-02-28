@@ -26,7 +26,7 @@ const destroy = () => {
   <Head :title="form.name" />
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/categories">Categories</Link>
+      <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/categories">{{ __('Categories') }}</Link>
       <span class="font-medium text-indigo-400">/</span>
       {{ form.name }}
     </h1>
@@ -36,8 +36,8 @@ const destroy = () => {
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete Category</button>
-          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">Update Category</loading-button>
+          <button class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Category') }}</button>
+          <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Update Category') }}</loading-button>
         </div>
       </form>
     </div>

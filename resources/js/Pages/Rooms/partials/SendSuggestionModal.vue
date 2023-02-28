@@ -78,7 +78,7 @@ const close = () => {
             </div>
           </li>
         </ul>
-        <Tip>Inutile d'envoyer les suggestions séparement. Regrouper au maximum les idées sous forme de liste dans une seule suggestion, ce sera plus lisible pour les modérateurs.</Tip>
+        <Tip>{{ __('No need to send suggestions separately. Gather them in a single suggestion, to give better readability for moderators.') }}</Tip>
       </form>
       <template #footer>
         <div class="ml-auto flex items-center">

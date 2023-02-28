@@ -80,7 +80,7 @@ const showMessage = (data) => {
         <div class="absolute left-5 top-full mt-1 h-full h-0 w-full w-0 translate-y-[-50%] border-t-[10px] border-l-[10px] border-r-[10px] border-t-transparent border-l-transparent border-r-transparent" :class="{ 'border-t-teal-600': message.type === 'good', 'border-t-orange-600': message.type === 'almost', 'border-t-red-600': message.type === 'bad' }"></div>
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" placeholder="Une idée?" autofocus :readonly="inputDisabled" />
+      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none p-2 text-2xl uppercase text-gray-600 focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" />
 
       <Volume class="-ml-1 flex h-14 items-center justify-center bg-white p-2 text-neutral-700" />
 

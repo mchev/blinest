@@ -26,7 +26,7 @@ const store = () => {
       <div class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
         <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
           <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Rooms') }}</h2>
-          <p class="font-light sm:text-xl">Invites tes amis en privé, ou partage tes playlists en laissant ta room ouverte pour que tout le monde puisse jouer.</p>
+          <p class="font-light sm:text-xl">{{ __('Invite your friends in private games, or share your playlists by leaving your room open for everyone to play.') }}</p>
           <div class="mt-6 flex justify-center">
             <SelectInput v-model="form.category_id" :error="form.errors.category_id" class="text-xl md:w-1/2" :label="__('Category')">
               <option v-for="category in categories" :key="category.id" :value="category.id">

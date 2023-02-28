@@ -22,7 +22,7 @@
           <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" label="Photo" />
         </div>
         <div class="flex items-center justify-end border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <loading-button :loading="form.processing" class="btn-primary" type="submit">Create User</loading-button>
+          <loading-button :loading="form.processing" class="btn-primary" type="submit">{{ __('Create User') }}</loading-button>
         </div>
       </form>
     </div>
