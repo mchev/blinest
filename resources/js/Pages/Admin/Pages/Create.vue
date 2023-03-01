@@ -21,13 +21,13 @@ const store = () => {
     <Card>
       <template #header>
         <h1 class="text-xl font-bold">
-          <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/pages">Pages</Link>
+          <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/pages">{{ __('Pages') }}</Link>
           <span class="font-medium text-indigo-400">/</span> {{ __('Create') }}
         </h1>
       </template>
       <form @submit.prevent="store" id="createForm">
         <div class="p-8">
-          <text-input v-model="form.title" :error="form.errors.title" class="w-full pb-8 pr-6 lg:w-1/2" label="Title" />
+          <text-input v-model="form.title" :error="form.errors.title" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Title')" />
           <text-editor v-model="form.content" :error="form.errors.content" class="w-full pb-8 pr-6" />
         </div>
       </form>

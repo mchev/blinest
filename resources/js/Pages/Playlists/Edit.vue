@@ -55,7 +55,7 @@ const restore = () => {
       <div v-if="user.id === playlist.user_id" class="flex w-full flex-col xl:w-1/4">
         <Card class="mb-4">
           <template #header>
-            <h3 class="text-xl font-bold">Playlist</h3>
+            <h3 class="text-xl font-bold">{{ __('Playlist') }}</h3>
           </template>
           <form id="playlistForm" class="p-4" @submit.prevent="update">
             <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Title')" />

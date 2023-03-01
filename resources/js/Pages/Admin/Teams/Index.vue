@@ -54,8 +54,8 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
-              <th class="px-6 pb-4 pt-6">Name</th>
-              <th class="px-6 pb-4 pt-6" colspan="2">Members</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Members') }}</th>
             </tr>
           </thead>
           <tbody>

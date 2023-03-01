@@ -39,7 +39,7 @@ const isUrl = (...urls) => {
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('playlists') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.playlists')">
-        <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">Playlists</div>
+        <div :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">{{ __('Playlists') }}</div>
       </Link>
     </div>
     <div class="mb-6">

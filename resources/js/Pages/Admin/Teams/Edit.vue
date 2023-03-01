@@ -50,8 +50,8 @@ const restore = () => {
     <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
       <form @submit.prevent="update">
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
-          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
-          <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full pb-8 pr-6 lg:w-1/2" label="Owner">
+          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Name')" />
+          <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Owner')">
             <option v-for="member in team.members" :key="member.id" :value="member.id">{{ member.name }}</option>
           </select-input>
           <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6" type="file" accept="image/*" :label="__('Photo')" />

@@ -13,18 +13,18 @@
     <card>
       <form @submit.prevent="update">
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
-          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
-          <text-input v-model="form.email" :error="form.errors.email" class="w-full pb-8 pr-6 lg:w-1/2" label="Email" />
-          <text-input v-model="form.password" :error="form.errors.password" class="w-full pb-8 pr-6 lg:w-1/2" type="password" autocomplete="new-password" label="Password" />
-          <select-input v-model="form.team_id" :error="form.errors.team_id" class="w-full pb-8 pr-6 lg:w-1/2" label="Team">
+          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Name')" />
+          <text-input v-model="form.email" :error="form.errors.email" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Email')" />
+          <text-input v-model="form.password" :error="form.errors.password" class="w-full pb-8 pr-6 lg:w-1/2" type="password" autocomplete="new-password" :label="__('Password')"/>
+          <select-input v-model="form.team_id" :error="form.errors.team_id" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Team')">
             <option :value="0">{{ __('Yes') }}</option>
             <option :value="1">{{ __('No') }}</option>
           </select-input>
-          <select-input v-model="form.is_administrator" :error="form.errors.is_administrator" class="w-full pb-8 pr-6 lg:w-1/2" label="Admin">
+          <select-input v-model="form.is_administrator" :error="form.errors.is_administrator" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Admin')">
             <option :value="0">{{ __('No') }}</option>
             <option :value="1">{{ __('Yes') }}</option>
           </select-input>
-          <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" label="Photo" />
+          <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6 lg:w-1/2" type="file" accept="image/*" :label="__('Photo')" />
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
           <button v-if="!user.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete User') }}</button>

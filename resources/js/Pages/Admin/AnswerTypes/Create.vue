@@ -22,7 +22,7 @@ const store = () => {
     <Card>
       <template #header>
         <h1 class="text-3xl font-bold">
-          <Link class="text-blue-400 hover:text-blue-600" href="/admin/answer_types">Answer Types</Link>
+          <Link class="text-blue-400 hover:text-blue-600" href="/admin/answer_types">{{ __('Answer Types') }}</Link>
           <span class="font-medium text-blue-400"> /</span> Create
         </h1>
       </template>

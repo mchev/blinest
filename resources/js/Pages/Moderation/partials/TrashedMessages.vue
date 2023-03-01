@@ -19,11 +19,11 @@ const restoreMessage = (message) => {
       <table class="w-full whitespace-nowrap">
         <thead>
           <tr class="text-left font-bold">
-            <th class="px-2 pb-4 pt-6">Auteur</th>
-            <th class="px-2 pb-4 pt-6">Date</th>
-            <th class="px-2 pb-4 pt-6">Message</th>
-            <th class="px-2 pb-4 pt-6">Signalements</th>
-            <th class="px-2 pb-4 pt-6">Actions</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Author') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Date') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Message') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Reports') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -40,8 +40,8 @@ const restoreMessage = (message) => {
             <td class="border-t px-2 py-4">
               <div class="flex flex-col">
                 <span class="text-sm">{{ message.time }} sur <Link :href="route('rooms.show', message.room.slug)">{{ message.room.name }}</Link></span>
-                <span class="text-xs text-neutral-500">Creation : {{ message.created_at }}</span>
-                <span class="text-xs text-neutral-500">Suppression : {{ message.deleted_at }}</span>
+                <span class="text-xs text-neutral-500">{{ __('Creation :') }} {{ message.created_at }}</span>
+                <span class="text-xs text-neutral-500">{{ __('Suppression :') }} {{ message.deleted_at }}</span>
                 <span class="text-xs text-neutral-500">IP : {{ message.user.ip }}</span>
               </div>
             </td>

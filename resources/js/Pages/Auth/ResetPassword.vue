@@ -33,7 +33,7 @@ const submit = () => {
 
       <form @submit.prevent="submit">
         <div>
-          <TextInput type="email" label="Email" v-model="form.email" :error="form.errors.email" required autofocus />
+          <TextInput type="email" :label="__('Email')" v-model="form.email" :error="form.errors.email" required autofocus />
           <TextInput type="password" :label="__('Password')" v-model="form.password" :error="form.errors.password" required autofocus />
           <TextInput type="password" :label="__('Confirm Password')" v-model="form.password_confirmation" :error="form.errors.password_confirmation" required autofocus />
         </div>

@@ -35,10 +35,10 @@ const reset = () => {
 <template>
   <Head title="Rooms" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">Rooms ({{ rooms.total }})</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Rooms:') }} ({{ rooms.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
-        <label class="mt-4 block text-gray-700">Trashed:</label>
+        <label class="mt-4 block text-gray-700">{{ __('Trashed:') }}</label>
         <select v-model="form.trashed" class="form-select mt-1 w-full">
           <option :value="null" />
           <option value="with">{{ __('With Trashed') }}</option>
@@ -47,7 +47,7 @@ const reset = () => {
       </search-filter>
       <Link class="btn-primary" :href="route('admin.rooms.create')">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Room</span>
+        <span class="hidden md:inline">&nbsp;{{ __('Rooms:') }}</span>
       </Link>
     </div>
     <Card>

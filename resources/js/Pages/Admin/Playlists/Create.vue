@@ -19,14 +19,14 @@ const store = () => {
   <Head title="Create Playlist" />
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.playlists')">Playlists</Link>
+      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
       <span class="font-medium text-blinest-400">/</span> Create
     </h1>
     <card>
       <form @submit.prevent="store">
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
-          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" label="Name" />
-          <select-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pb-8 pr-6 lg:w-1/2" label="Public">
+          <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Name')" />
+          <select-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Public')">
             <option :value="1">{{ __('Yes') }}</option>
             <option :value="0">{{ __('No') }}</option>
           </select-input>
