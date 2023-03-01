@@ -23,7 +23,7 @@
           <th class="px-6 pb-4 pt-6">{{ __('Email') }}</th>
           <th class="px-6 pb-4 pt-6">{{ __('Provider') }}</th>
           <th class="px-6 pb-4 pt-6">{{ __('Register') }}</th>
-          <th class="px-6 pb-4 pt-6" colspan="2">Role</th>
+          <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Role') }}</th>
         </tr>
         <tr v-for="user in users.data" :key="user.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
           <td class="border-t">

@@ -18,8 +18,8 @@ const restoreMessage = (user) => {
     <table class="w-full whitespace-nowrap">
       <thead>
         <tr class="text-left font-bold">
-          <th class="px-2 pb-4 pt-6">Utilisateur</th>
-          <th class="px-2 pb-4 pt-6">Bans</th>
+          <th class="px-2 pb-4 pt-6">{{ __('User') }}</th>
+          <th class="px-2 pb-4 pt-6">{{ __('Bans') }}</th>
         </tr>
       </thead>
       <tbody>

@@ -49,7 +49,7 @@ const reset = () => {
             <tr class="text-left font-bold">
               <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
               <th class="px-6 pb-4 pt-6">{{ __('Pronoun') }}</th>
-              <th class="px-6 pb-4 pt-6" colspan="2">Icon</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Icon') }}</th>
             </tr>
           </thead>
           <tbody>
