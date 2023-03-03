@@ -63,8 +63,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::middleware('auth.moderator')->group(function () {
         Route::get('/moderation', [ModerationController::class, 'index'])
             ->name('moderation.index');
-        Route::put('moderation/messages/{message}/restore', [ModerationController::class, 'restoreMessage'])
-            ->name('moderation.messages.restore');
         Route::get('moderation/users/{user}/informations', [ModerationController::class, 'fetchUserInformations'])
             ->name('moderation.users.informations');
     });
@@ -140,9 +138,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('playlists.moderators.attach');
     Route::delete('playlists/{playlist}/moderators/detach', [PlaylistModeratorController::class, 'detach'])
         ->name('playlists.moderators.detach');
-
-    Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
-        ->name('moderation.message.destroy');
 
     // User Bans
     Route::post('/users/{user}/ban', [UserBanController::class, 'store'])

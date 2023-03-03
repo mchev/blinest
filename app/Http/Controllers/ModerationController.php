@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessageDeleted;
 use App\Models\Message;
 use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ModerationController extends Controller
@@ -90,22 +88,5 @@ class ModerationController extends Controller
         ];
 
         return response()->json($user);
-    }
-
-    public function destroyMessage(Message $message)
-    {
-        if (Auth::user()->isRoomModerator(Room::find($message->messagable_id)) || Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
-            broadcast(new MessageDeleted($message));
-            $message->delete();
-        }
-    }
-
-    public function restoreMessage($id)
-    {
-        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
-            Message::onlyTrashed()->find($id)->restore();
-
-            return redirect()->back()->with('success', __('Message restored'));
-        }
     }
 }

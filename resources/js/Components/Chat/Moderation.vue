@@ -21,7 +21,7 @@ const show = ref(true)
 const showingBanForm = ref(false)
 
 const deleteMessage = () => {
-  axios.delete(`/moderation/messages/${props.message.id}`).then((response) => {
+  axios.delete(route('messages.destroy', props.message)).then((response) => {
     close()
   })
 }

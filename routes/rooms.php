@@ -27,6 +27,12 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
         ->name('rooms.message.report');
 
+    Route::delete('messages/{message}', [RoomMessageController::class, 'destroy'])
+        ->name('messages.destroy');
+
+    Route::put('messages/{message}/restore', [RoomMessageController::class, 'restore'])
+        ->name('messages.restore');
+
     // Rooms alerts
     Route::post('rooms/{room}/alert', [RoomController::class, 'alert'])
         ->name('rooms.alert');

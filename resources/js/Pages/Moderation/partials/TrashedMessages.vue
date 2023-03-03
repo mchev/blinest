@@ -8,7 +8,7 @@ const props = defineProps({
 })
 
 const restoreMessage = (message) => {
-  router.put(route('moderation.messages.restore', message), {
+  router.put(route('messages.restore', message), {
     preserveScroll: true,
   })
 }

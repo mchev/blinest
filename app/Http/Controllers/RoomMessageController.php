@@ -45,4 +45,21 @@ class RoomMessageController extends Controller
             $message->delete();
         }
     }
+
+    public function destroy(Message $message)
+    {
+        if (Auth::user()->isRoomModerator(Room::find($message->messagable_id)) || Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
+            broadcast(new MessageDeleted($message));
+            $message->delete();
+        }
+    }
+
+    public function restore($id)
+    {
+        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
+            Message::withTrashed()->findOrFail($id)->restore();
+
+            return redirect()->back()->with('success', __('Message restored'));
+        }
+    }
 }
