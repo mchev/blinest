@@ -65,7 +65,7 @@ class ModerationController extends Controller
                         'comment' => $ban->comment,
                         'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
                         'expired_at' => $ban->expired_at ? $ban->expired_at->diffForHumans() : __('Permanent ban'),
-                        'banned_by' => $ban->banned_by?->name,
+                        'banned_by' => $ban->createdby?->name,
                     ]),
                 ]),
         ]);
