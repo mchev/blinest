@@ -32,7 +32,7 @@ return [
         "Non, ce n'est pas ça",
         'Essaie encore',
         'Tu peux vraiment mieux faire.',
-        "Hmm, pas tout à fait",
+        'Hmm, pas tout à fait',
         "Rien n'est impossible, tout est question de persévérance.",
         'La patience est la clé, peu importe le temps que cela prendra.',
         'Avance à ton propre rythme, l’important est de ne pas abandonner.',

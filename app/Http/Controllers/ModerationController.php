@@ -8,7 +8,6 @@ use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class ModerationController extends Controller
@@ -54,17 +53,19 @@ class ModerationController extends Controller
                 ]),
             'bannedUsers' => User::banned()
                 ->with('bans')
-                ->paginate(10, ['*'], 'bannedUsers')
+                ->paginate(10, ['*'], 'bans')
                 ->through(fn ($user) => [
                     'id' => $user->id,
+                    'ip' => $user->ip,
                     'name' => $user->name,
                     'photo' => $user->photo,
                     'bans' => $user->bans->transform(fn ($ban) => [
                         'id' => $ban->id,
+                        'ip' => $ban->ip,
                         'comment' => $ban->comment,
                         'created_at' => $ban->created_at->format('d/m/Y H:i:s'),
-                        'expired_at' => $ban->expired_at ? $ban->expired_at->format('d/m/Y H:i:s') : __('Permanent ban'),
-                        'banned_by' => User::find($ban->created_by_id)->name,
+                        'expired_at' => $ban->expired_at ? $ban->expired_at->diffForHumans() : __('Permanent ban'),
+                        'banned_by' => $ban->banned_by?->name,
                     ]),
                 ]),
         ]);
@@ -105,32 +106,6 @@ class ModerationController extends Controller
             Message::onlyTrashed()->find($id)->restore();
 
             return redirect()->back()->with('success', __('Message restored'));
-        }
-    }
-
-    public function banUser(User $user)
-    {
-        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
-            if (! $user->isPublicModerator() && ! $user->isAdministrator()) {
-                $user->ban([
-                    'expired_at' => Request::input('expired_at') ?? null,
-                    'comment' => Request::input('comment') ?? null,
-                    'ip' => $user->ip,
-                ]);
-
-                return redirect()->back()->with('success', $user->name.__(' has been banned.'));
-            } else {
-                return redirect()->back()->with('error', __('Impossible to ban a moderator'));
-            }
-        }
-
-        return redirect()->back();
-    }
-
-    public function unbanUser(User $user)
-    {
-        if (Auth::user()->isPublicModerator() || Auth::user()->isAdministrator()) {
-            $user->unban();
         }
     }
 }

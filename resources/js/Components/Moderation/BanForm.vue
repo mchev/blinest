@@ -18,7 +18,7 @@ const form = useForm({
 const reasons = ['Pseudonyme inapproprié.', 'Langage inapproprié.', 'Propos injurieux, sexistes ou racistes.', "Menace ou harcèle d'autres joueurs.", 'Donne les réponses dans le chat.', 'Utilise un nouveau compte alors que le joueur a déjà été banni.', 'Troll, spam.', 'Triche.']
 
 const banUser = () => {
-  form.post(`/moderation/users/${props.user.id}/ban`, {
+  form.post(route('user.ban', props.user), {
     preserveScroll: false,
     preserveState: true,
     onSuccess: () => {

@@ -52,7 +52,7 @@ const close = () => {
         <button class="btn-secondary btn-sm" @click="close">{{ __('Cancel') }}</button>
       </div>
 
-      <BanForm v-show="showingBanForm" :user="message.user" />
+      <BanForm v-show="showingBanForm" :user="message.user" @userBanned="close" />
     </Card>
   </Modal>
 </template>

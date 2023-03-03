@@ -6,13 +6,15 @@ use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\RankingController;
+// Moderation
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\TeamController;
-// Moderation
+// Teams
 use App\Http\Controllers\TeamRequestController;
-// Tracks
 use App\Http\Controllers\TrackAnswerController;
+// Tracks
 use App\Http\Controllers\TrackController;
+use App\Http\Controllers\UserBanController;
 // Socialite
 use App\Http\Controllers\UserController;
 // Music Providers Services
@@ -141,10 +143,12 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
 
     Route::delete('moderation/messages/{message}', [ModerationController::class, 'destroyMessage'])
         ->name('moderation.message.destroy');
-    Route::post('moderation/users/{user}/ban', [ModerationController::class, 'banUser'])
-        ->name('moderation.user.ban');
-    Route::post('moderation/users/{user}/unban', [ModerationController::class, 'unbanUser'])
-        ->name('moderation.user.unban');
+
+    // User Bans
+    Route::post('/users/{user}/ban', [UserBanController::class, 'store'])
+        ->name('user.ban');
+    Route::delete('/users/{user}/unban', [UserBanController::class, 'destroy'])
+        ->name('user.unban');
 
     // Tracks
     Route::get('playlists/{playlist}/tracks', [TrackController::class, 'index'])

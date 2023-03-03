@@ -30,7 +30,7 @@ const tab = ref('trashedMessages')
             <button type="button" @click="tab = 'trashedMessages'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'trashedMessages' }">Messages supprimés ({{ trashedMessages.total }})</button>
           </li>
           <li class="mr-2">
-            <button type="button" @click="tab = 'bannedUsers'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'bannedUsers' }">Utilisateurs bannis ({{ bannedUsers.total }})</button>
+            <button type="button" @click="tab = 'bans'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'bans' }">Bans ({{ bannedUsers.total }})</button>
           </li>
           <li class="mr-2">
             <button type="button" @click="tab = 'userManagement'" class="inline-block rounded-t-lg p-4 hover:bg-neutral-800 hover:text-neutral-300" :class="{ 'active bg-neutral-800 text-neutral-300': tab == 'userManagement' }">Gestion des utilisateurs</button>
@@ -41,7 +41,7 @@ const tab = ref('trashedMessages')
         </ul>
 
         <TrashedMessages v-show="tab === 'trashedMessages'" class="rounded-t-none" :trashedMessages="trashedMessages" />
-        <BannedUsers v-show="tab === 'bannedUsers'" class="rounded-t-none" :bannedUsers="bannedUsers" />
+        <BannedUsers v-show="tab === 'bans'" class="rounded-t-none" :bannedUsers="bannedUsers" />
         <UsersManagement v-show="tab === 'userManagement'" class="rounded-t-none" />
         <Moderators v-show="tab === 'moderators'" class="rounded-t-none" :moderators="moderators" />
       </div>
