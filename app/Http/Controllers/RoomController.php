@@ -106,7 +106,7 @@ class RoomController extends Controller
             'category_id' => Request::get('category_id'),
         ]);
 
-        return Redirect::route('rooms.edit', $room)->with('success', 'Room created.');
+        return Redirect::route('rooms.edit', $room->id)->with('success', 'Room created.');
     }
 
     public function edit(Room $room)
