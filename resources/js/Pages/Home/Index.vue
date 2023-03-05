@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
+import DonationBanner from '@/Components/DonationBanner.vue'
 
 defineProps({
   filters: Object,
@@ -19,6 +20,7 @@ defineProps({
     <meta head-key="description" name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
   </Head>
   <Layout>
+    <DonationBanner/>
     <section v-if="search_result">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-6">
         <Room v-for="room in search_result" :room="room" :key="room.id" />
