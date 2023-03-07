@@ -50,7 +50,7 @@ const userHasBeenBanned = () => {
           <li v-for="user in users.data" :key="user.id" class="flex items-center p-2">
             <img v-if="user.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="user.photo" />
             <span class="mr-4">{{ user.name }}</span>
-            <button class="ml-auto rounded-full bg-blue-500 py-1 px-2 text-xs uppercase" @click="selectUser(user)">Sélectionner</button>
+            <button class="ml-auto rounded-full bg-blue-500 py-1 px-2 text-xs uppercase" @click="selectUser(user)">{{ __('Select') }}</button>
           </li>
         </ul>
       </template>
@@ -62,14 +62,14 @@ const userHasBeenBanned = () => {
           <img :src="selectedUser.photo" class="h-10 w-10 rounded-full" :alt="selectedUser.name" />
           {{ selectedUser.name }}
         </div>
-        <span class="text-sm text-neutral-500">Inscription le {{ selectedUser.created_at }}</span>
+        <span class="text-sm text-neutral-500">{{ __('Registered on  ') }}{{ selectedUser.created_at }}</span>
       </div>
       <div class="mb-4 flex w-full gap-4">
         <div v-if="selectedUser.latest_messages" class="rounded border border-neutral-600 p-2 md:w-1/2">
-          <h3 class="mb-2 uppercase">Derniers messages</h3>
+          <h3 class="mb-2 uppercase">{{ __('Latest messages') }}</h3>
           <ul class="flex flex-col text-xs">
             <li v-for="message in selectedUser.latest_messages" :key="message.id" class="mb-2 flex flex-col">
-              <span class="text-neutral-500">{{ message.time }} sur {{ message.room.name }} : <span v-if="message.deleted_at" class="text-red-500">[Supprimé]</span> [{{ message.reports }} signalements]</span>
+              <span class="text-neutral-500">{{ message.time }}{{ __(' on ') }}{{ message.room.name }} : <span v-if="message.deleted_at" class="text-red-500">[Supprimé]</span> [{{ message.reports }} signalements]</span>
               <span class="break-word">{{ message.body }}</span>
             </li>
           </ul>
@@ -78,10 +78,10 @@ const userHasBeenBanned = () => {
           <h3 class="mb-2 uppercase">Historique des bans</h3>
           <ul v-if="selectedUser.bans.length" class="my-2 flex flex-col">
             <li v-for="ban in selectedUser.bans" :key="ban.id" class="border-neutral-600-b border-neutral-600-neutral-600 mb-2 flex flex-col border border p-2">
-              <span class="text-xs text-neutral-500">Banni par : {{ ban.banned_by }}</span>
-              <span class="text-xs text-neutral-500">le : {{ ban.created_at }}</span>
-              <span class="text-xs text-neutral-500">Raison : {{ ban.comment }}</span>
-              <span class="text-xs text-neutral-500">Expire le : {{ ban.expired_at }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Banned by: ') }}{{ ban.banned_by }}</span>
+              <span class="text-xs text-neutral-500">{{ __('On: ') }}{{ ban.created_at }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Reason: ') }}{{ ban.comment }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Expires on: ') }}{{ ban.expired_at }}</span>
               <!--                   <button class="btn-secondary btn-sm mt-2">Annuler le ban</button>
 		 -->
             </li>
@@ -90,8 +90,8 @@ const userHasBeenBanned = () => {
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button class="btn-secondary btn-sm" @click="selectedUser = null">Fermer</button>
-        <button v-show="!banningUser" class="btn-danger btn-sm" @click="banningUser = true">Bannir</button>
+        <button class="btn-secondary btn-sm" @click="selectedUser = null">{{ __('Close') }}</button>
+        <button v-show="!banningUser" class="btn-danger btn-sm" @click="banningUser = true">{{ __('Ban') }}</button>
       </div>
       <BanForm v-show="banningUser" :user="selectedUser" @userBanned="userHasBeenBanned" />
     </div>

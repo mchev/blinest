@@ -55,7 +55,7 @@ class RoomController extends Controller
         if ($room->password) {
             if (Request::has('password')) {
                 if (Request::input('password') != $room->password) {
-                    return redirect()->back()->with('error', 'Le mot de passe est incorrect.');
+                    return redirect()->back()->with('error', __('The password is incorrect.')); 
                 }
             } else {
                 return Inertia::render('Rooms/Password', [
