@@ -102,7 +102,7 @@ const listenRounds = () => {
       <div v-if="joined || !user" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-4 flex items-center">
-            <h2 class="mr-2 text-xl font-bold">{{ room.name }}</h2>
+            <h1 class="mr-2 text-xl font-bold">{{ room.name }}</h1>
             <Share :url="room.url" class="w-5" />
           </article>
 

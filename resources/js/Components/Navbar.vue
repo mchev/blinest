@@ -19,7 +19,6 @@ const showingSearchbar = ref(false)
   <div class="md:flex md:flex-shrink-0">
     <div class="flex w-full items-center justify-between px-4 py-2 md:flex-shrink-0 md:px-12">
       <Link :href="route('home')" title="Blinest">
-        <h1 class="hidden">Blinest</h1>
         <logo class="w-24 fill-inherit lg:w-32" />
         <p class="text-sm text-neutral-500 mt-1">Testez votre culture musicale</p>
       </Link>

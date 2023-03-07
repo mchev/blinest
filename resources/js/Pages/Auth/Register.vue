@@ -22,7 +22,7 @@ const register = () => {
 </script>
 <template>
   <AppLayout>
-    <Head :title="__('Login')" />
+    <Head :title="__('Register')" />
 
     <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
       <Card class="flex flex-grow">

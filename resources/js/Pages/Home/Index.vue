@@ -20,6 +20,7 @@ defineProps({
     <meta head-key="description" name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
   </Head>
   <Layout>
+    <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
     <DonationBanner/>
     <section v-if="search_result">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-6">
