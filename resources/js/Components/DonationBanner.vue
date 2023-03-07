@@ -13,7 +13,7 @@ const show = ref(true)
         {{ __('Donate') }}
       </a>
       <p class="flex-grow">
-        {{ __('Blinest is ') }}<span class="font-bold">{{ __('free and ad-free') }}</span>{{ __('. To keep it going, it needs your support.') }}<br><span class="italic"> {{ __('If everyone gave 1€, it would be enough to cover the servers and maintenance costs for the year.":"Si chacune et chacun donnait 1€, cela suffirait à payer les serveurs et la maintenance pour l'année.') }}</span>
+      Blinest est un site <span class="font-bold">gratuit et sans publicité</span>. Pour son fonctionnement, il a besoin de votre aide.<br><span class="italic">Si chacune et chacun donnaient 1€, cela suffirait à payer les serveurs et la maintenance pour l'année.</span>
       </p>
     </div>
   </div>
