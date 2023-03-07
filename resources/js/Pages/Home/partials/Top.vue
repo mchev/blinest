@@ -46,6 +46,10 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
 <template>
   <Link :href="`/rooms/${room.slug}`" class="relative flex h-48 w-full flex-col items-center justify-center rounded-md bg-neutral-800" :title="room.name">
     <article class="relative flex h-full w-full transition duration-100 ease-in-out hover:z-10 hover:scale-110">
+      <header class="hidden">
+        <h3>Blind Test {{ room.name }}</h3>
+        <p>{{ room.description }}</p>
+      </header>
       <div class="h-full w-1/3 bg-neutral-900 py-4" v-html="numbers[props.index]" />
       <div class="h-full w-2/3">
         <div class="relative flex h-full w-full rounded-lg bg-cover bg-center" :style="`background-image: url(${room.photo_src || room.mosaic});`">
@@ -68,8 +72,8 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
           </div>
         </div>
       </div>
-      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 p-2 text-sm uppercase text-gray-100">
-        <h3 class="truncate font-semibold"><span class="hidden">Blind Test&nbsp;</span>{{ room.name }}</h3>
+      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 p-2 uppercase text-gray-100">
+        <h3 class="truncate font-semibold">{{ room.name }}</h3>
         <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
       </div>
     </article>
