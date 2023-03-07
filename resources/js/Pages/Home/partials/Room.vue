@@ -41,8 +41,12 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`">
+  <Link :rel="(!room.is_public) ? 'nofollow': ''" :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`">
     <article class="relative h-full w-full">
+      <header class="hidden">
+        <h3>Blind Test {{ room.name }}</h3>
+        <p>{{ room.description }}</p>
+      </header>
       <div class="swiper-lazy-preloader"></div>
       <div v-if="!room.is_public && room.owner" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
       <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-800 p-3 text-sm text-white ease-in-out hover:scale-110">
@@ -68,8 +72,8 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 py-2 text-sm uppercase text-gray-100">
-        <h3 class="truncate font-semibold"><span class="hidden">Blind Test </span>{{ room.name }}</h3>
+      <div class="absolute bottom-0 flex w-full items-center justify-between gap-2 bg-neutral-900 py-2 text-lg uppercase text-gray-100">
+        <p class="truncate font-semibold">{{ room.name }}</p>
         <div class="whitespace-nowrap">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
       </div>
     </article>
