@@ -13,7 +13,7 @@ const show = ref(true)
         {{ __('Donate') }}
       </a>
       <p class="flex-grow">
-      Blinest est un site <span class="font-bold">gratuit et sans publicité</span>. Pour son fonctionnement, il a besoin de votre aide.<br><span class="italic">Si chacune et chacun donnait 1€, cela suffirait à payer les serveurs et la maintenance pour l'année.</span>
+      Blinest est un site <span class="font-bold">gratuit et sans publicité</span>. Pour son fonctionnement, il a besoin de votre aide.<br><span class="italic">Si chacune et chacun donnaient 1€, cela suffirait à payer les serveurs et la maintenance pour l'année.</span>
       </p>
     </div>
   </div>
