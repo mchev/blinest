@@ -21,6 +21,7 @@ const showingSearchbar = ref(false)
       <Link :href="route('home')" title="Blinest">
         <h1 class="hidden">Blinest</h1>
         <logo class="w-24 fill-inherit lg:w-32" />
+        <p class="text-sm text-neutral-500 mt-1">Testez votre culture musicale</p>
       </Link>
 
       <div class="mt-1 items-center gap-2 hidden md:flex">
