@@ -1027,5 +1027,9 @@
     "Registered on ":"Inscription le ",
     "No pages found.":"Pages non trouvées.",
     "No playlists found.":"Playlists non trouvées",
-    "Teams":"Teams"
+    "Teams":"Teams",
+    "Users":"Utilisateurs",
+    "Public playlists":"Playlists publiques",
+    "Public rooms":"Rooms publiques",
+    "Banned users":"Utilisateurs bannis"
 }

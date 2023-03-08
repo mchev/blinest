@@ -58,7 +58,7 @@ const restoreMessage = (message) => {
             </td>
             <td class="border-t px-2 py-4">
               <div class="flex gap-2">
-                <button class="btn-secondary btn-sm" @click="restoreMessage(message)">Restaurer</button>
+                <button class="btn-secondary btn-sm" @click="restoreMessage(message)">{{ __('Restore') }}</button>
               </div>
             </td>
           </tr>
