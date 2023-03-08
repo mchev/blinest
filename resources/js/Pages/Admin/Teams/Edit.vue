@@ -41,7 +41,7 @@ const restore = () => {
     <div class="mb-8 flex items-center">
       <img v-if="team.photo" class="mr-4 block h-8 w-8 rounded-full" :src="team.photo" />
       <h1 class="text-3xl font-bold">
-        <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/teams">Teams</Link>
+        <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/teams">{{ __('Teams') }}</Link>
         <span class="font-medium text-indigo-400">/</span>
         {{ form.name }}
       </h1>

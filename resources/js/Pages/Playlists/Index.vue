@@ -83,7 +83,7 @@ const reset = () => {
             </td>
           </tr>
           <tr v-if="playlists.length === 0">
-            <td class="border-t border-neutral-500 px-6 py-4" colspan="4">No playlists found.</td>
+            <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No playlists found.') }}</td>
           </tr>
         </table>
 

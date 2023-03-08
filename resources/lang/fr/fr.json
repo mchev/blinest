@@ -1024,6 +1024,8 @@
     "Expires on: ":"Expire le : ",
     " on ":" sur ",
     "Latest messages":"Derniers messages",
-    "Registered on ":"Inscription le "
-
+    "Registered on ":"Inscription le ",
+    "No pages found.":"Pages non trouvées.",
+    "No playlists found.":"Playlists non trouvées",
+    "Teams":"Teams"
 }
