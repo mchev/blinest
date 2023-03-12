@@ -1014,9 +1014,23 @@
     "Author":"Auteur",
     "Date":"Date",
     "Message":"Message",
-    "Creation:":"Creation :",
-    "Suppression:":"Deletion :",
+    "Created at:":"Création :",
+    "Deleted at:":"Suppression :",
     "Reports":"Signalements",
-    "Bans":"Bans"
-
+    "Bans":"Bans",
+    "Test your musical knowledge":"Testez votre culture musicale",
+    "Banned by: ":"Banni par : ",
+    "On: ":"le : ",
+    "Reason: ":"Raison : ",
+    "Expires on: ":"Expire le : ",
+    " on ":" sur ",
+    "Latest messages":"Derniers messages",
+    "Registered on ":"Inscription le ",
+    "No pages found.":"Pages non trouvées.",
+    "No playlists found.":"Playlists non trouvées",
+    "Teams":"Teams",
+    "Users":"Utilisateurs",
+    "Public playlists":"Playlists publiques",
+    "Public rooms":"Rooms publiques",
+    "Banned users":"Utilisateurs bannis"
 }

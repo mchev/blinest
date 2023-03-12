@@ -40,8 +40,8 @@ const restoreMessage = (message) => {
             <td class="border-t px-2 py-4">
               <div class="flex flex-col">
                 <span class="text-sm">{{ message.time }} sur <Link :href="route('rooms.show', message.room.slug)">{{ message.room.name }}</Link></span>
-                <span class="text-xs text-neutral-500">{{ __('Creation :') }} {{ message.created_at }}</span>
-                <span class="text-xs text-neutral-500">{{ __('Suppression :') }} {{ message.deleted_at }}</span>
+                <span class="text-xs text-neutral-500">{{ __('Created at:') }} {{ message.created_at }}</span>
+                <span class="text-xs text-neutral-500">{{ __('Deleted at:') }} {{ message.deleted_at }}</span>
                 <span class="text-xs text-neutral-500">IP : {{ message.user.ip }}</span>
               </div>
             </td>
@@ -58,7 +58,7 @@ const restoreMessage = (message) => {
             </td>
             <td class="border-t px-2 py-4">
               <div class="flex gap-2">
-                <button class="btn-secondary btn-sm" @click="restoreMessage(message)">Restaurer</button>
+                <button class="btn-secondary btn-sm" @click="restoreMessage(message)">{{ __('Restore') }}</button>
               </div>
             </td>
           </tr>
