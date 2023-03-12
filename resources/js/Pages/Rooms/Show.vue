@@ -7,12 +7,11 @@ import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
-import Share from '@/Components/Share.vue'
 import Tip from '@/Components/Tip.vue'
 import Modal from '@/Components/Modal.vue'
 import LoginForm from '@/Pages/Auth/LoginForm.vue'
 
-import Controls from './partials/Controls.vue'
+import RoomActions from './partials/RoomActions.vue'
 import Player from './partials/Player.vue'
 import UserInput from './partials/UserInput.vue'
 import Answers from './partials/Answers.vue'
@@ -32,7 +31,7 @@ const users = ref([])
 const data = ref(null)
 const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
-const showSidebar = ref(true)
+const displayChat = ref(true)
 const currentTime = ref(0)
 const users_podium = ref([])
 const teams_podium = ref([])
@@ -101,9 +100,13 @@ const listenRounds = () => {
     <Transition name="slide-right">
       <div v-if="joined || !user" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="mb-4 flex items-center">
-            <h1 class="mr-2 text-xl font-bold">{{ room.name }}</h1>
-            <Share :url="room.url" class="w-5" />
+          <article class="mb-4 flex flex-wrap gap-2 items-center justify-between">
+            <div class="flex items-center">
+              <h1 class="mr-2 text-xl font-bold">{{ room.name }}</h1>
+            </div>
+            <div class="flex items-center gap-2">
+              <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
+            </div>
           </article>
 
           <Tip class="bg-orange-400 text-orange-800" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
@@ -121,10 +124,6 @@ const listenRounds = () => {
             <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
-
-          <template v-if="user">
-            <Controls v-if="room.moderators.find((x) => user.id === x.id)" :room="room" :round="round" :channel="channel" class="mb-4" />
-          </template>
 
           <Card>
             <div class="flex flex-col items-center gap-4 text-sm lg:flex-row lg:justify-between">
@@ -146,14 +145,10 @@ const listenRounds = () => {
             </div>
           </Card>
 
-          <button v-if="user && room.is_chat_active" class="absolute right-0 top-5 hidden rounded-l-lg bg-neutral-800 p-2 md:block" @click="showSidebar = !showSidebar" :title="__('Hide/Show chatbox')">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </button>
+
         </div>
 
-        <div v-if="user && showSidebar && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
+        <div v-if="user && displayChat && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>

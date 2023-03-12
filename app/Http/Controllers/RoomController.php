@@ -83,6 +83,7 @@ class RoomController extends Controller
                 'pause_between_tracks' => $room->pause_between_tracks,
                 'pause_between_rounds' => $room->pause_between_rounds,
                 'tracks_count' => $room->tracks()->count(),
+                'is_bookmarked' => $room->bookmarks()->where('user_id', auth()?->user()?->id)->exists(),
             ],
         ]);
     }

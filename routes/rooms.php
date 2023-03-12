@@ -1,11 +1,18 @@
 <?php
 
+use App\Http\Controllers\RoomBookmarkController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 
 Route::middleware(['auth', 'logout.banned'])->group(function () {
+
+    // Bookmarks
+    Route::post('rooms/{room}/bookmark', [RoomBookmarkController::class, 'store'])
+        ->name('rooms.bookmarks.store');
+    Route::delete('rooms/{room}/bookmark', [RoomBookmarkController::class, 'destroy'])
+        ->name('rooms.bookmarks.destroy');
 
     // Rooms
     Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])

@@ -8,7 +8,6 @@ import FileInput from '@/Components/FileInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
 import Tip from '@/Components/Tip.vue'
-import Share from '@/Components/Share.vue'
 
 const props = defineProps({
   team: Object,
@@ -129,7 +128,6 @@ const updateTeam = () => {
           <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
           <button v-else type="button" @click="sendRequest(team)" class="btn-secondary mx-auto my-6">{{ __('Send a join request') }}</button>
         </div>
-        <Share :url="route('teams.show', team)" class="w-6" />
       </div>
     </div>
   </AppLayout>

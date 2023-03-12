@@ -6,6 +6,7 @@ use App\Http\Traits\HasPicture;
 use App\Http\Traits\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,6 +77,11 @@ class Room extends Model
             'tracks' => $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->distinct()->pluck('id'),
         ]);
         $round->start();
+    }
+
+    public function bookmarks(): MorphToMany
+    {
+        return $this->morphToMany(User::class, 'bookmarkable', 'bookmarks')->withTimestamps();
     }
 
     public function messages()

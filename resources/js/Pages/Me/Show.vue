@@ -88,10 +88,22 @@ const deleteUser = () => {
           </template>
         </Card>
 
+        <Card class="mb-4">
+          <template #header>
+            <h2 class="text-xl font-bold">{{ __('Bookmark') }}</h2>
+          </template>
+          <ul class="flex flex-wrap items-center" v-if="user.bookmarked_rooms.length">
+            <li v-for="room in user.bookmarked_rooms" :key="'bookmarked_rooms-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
+              <Link :href="route('rooms.show', room.slug)">{{ room.name }}</Link>
+            </li>
+          </ul>
+        </Card>
+
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card class="">
             <template #header>
-              <h2 class="text-xl font-bold">{{ __('Playlists') }}</h2>
+              <h2 class="text-xl font-bold">{{ __('My Playlists') }}</h2>
             </template>
             <ul class="flex flex-wrap items-center" v-if="user.playlists.length">
               <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge" :class="'bg-teal-900', playlist.user_id === user.id">
@@ -102,7 +114,7 @@ const deleteUser = () => {
 
           <Card class="">
             <template #header>
-              <h2 class="text-xl font-bold">{{ __('Rooms') }}</h2>
+              <h2 class="text-xl font-bold">{{ __('My Rooms') }}</h2>
             </template>
             <ul class="flex flex-wrap items-center" v-if="user.rooms.length">
               <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
