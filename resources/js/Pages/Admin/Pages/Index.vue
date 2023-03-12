@@ -71,7 +71,7 @@ const reset = () => {
               </td>
             </tr>
             <tr v-if="pages.data.length === 0">
-              <td class="border-t px-6 py-4" colspan="4">No pages found.</td>
+              <td class="border-t px-6 py-4" colspan="4">{{ __('No pages found.') }}</td>
             </tr>
           </tbody>
         </table>
