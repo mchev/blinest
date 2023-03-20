@@ -51,6 +51,7 @@ const reset = () => {
             <th class="px-2 pb-4 pt-6">{{ __('Category') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
+            <th class="px-2 pb-4 pt-6">{{ __('Autostart') }}</th>
             <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
           </tr>
           <tr v-for="room in rooms.data" :key="room.id">
@@ -95,7 +96,12 @@ const reset = () => {
             </td>
             <td class="border-t">
               <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
-                <span class="badge" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-600'">{{ room.password ? __('No') : __('Yes') }}</span>
+                <span class="badge text-neutral-100" :class="room.is_autostart ? 'bg-teal-600 ' : 'bg-red-600'">{{ __('Autostart') }}</span>
+              </Link>
+            </td>
+            <td class="border-t">
+              <Link class="flex flex-col items-start px-2 py-4" :href="route('rooms.edit', room.id)" tabindex="-1">
+                <span class="badge" :class="!room.password ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-600'">{{ room.password ? __('No') : __('Publique') }}</span>
                 <small v-if="room.password" class="text-xs text-neutral-500">{{ __('Password protected') }}</small>
               </Link>
             </td>

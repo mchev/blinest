@@ -36,6 +36,7 @@ class RoomController extends Controller
                     'description' => $room->description,
                     'password' => $room->password,
                     'rounds_count' => $room->rounds()->count(),
+                    'is_autostart' => $room->is_autostart,
                     'moderators' => $room->moderators->map(fn ($moderator) => [
                         'id' => $moderator->id,
                         'name' => $moderator->name,
