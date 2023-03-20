@@ -55,7 +55,7 @@ class RoomController extends Controller
         if ($room->password) {
             if (Request::has('password')) {
                 if (Request::input('password') != $room->password) {
-                    return redirect()->back()->with('error', __('The password is incorrect.')); 
+                    return redirect()->back()->with('error', __('The password is incorrect.'));
                 }
             } else {
                 return Inertia::render('Rooms/Password', [
@@ -226,7 +226,7 @@ class RoomController extends Controller
 
         foreach ($room->playlists as $playlist) {
             foreach ($playlist->moderators as $moderator) {
-                if(!in_array($moderator, $moderators)) {
+                if (! in_array($moderator, $moderators)) {
                     $moderators[] = $moderator;
                     $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), Auth::user()));
                 }
