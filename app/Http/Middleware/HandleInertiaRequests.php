@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 
@@ -61,9 +60,7 @@ class HandleInertiaRequests extends Middleware
                     ] : null,
                 ];
             },
-            'publicModerators' => Cache::remember('publicModerators', 3600, function () {
-                User::publicModerators()->select('id', 'name')->get();
-            }),
+            'publicModerators' => User::publicModerators()->select('id', 'name')->get(),
             'flash' => function () use ($request) {
                 return [
                     'success' => $request->session()->get('success'),
