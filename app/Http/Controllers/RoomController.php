@@ -117,7 +117,7 @@ class RoomController extends Controller
         return Inertia::render('Rooms/Edit', [
             'room' => $room,
             'categories' => Category::orderBy('name')->get(),
-            'available_playlists' => Playlist::isPublic()->get()->merge(Auth::user()->playlists),
+            'available_playlists' => Playlist::isPublic()->get()->merge(auth()->user()->allPlaylists),
         ]);
     }
 
