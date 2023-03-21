@@ -1034,5 +1034,8 @@
     "Users":"Utilisateurs",
     "Public playlists":"Playlists publiques",
     "Public rooms":"Rooms publiques",
-    "Banned users":"Utilisateurs bannis"
+    "Banned users":"Utilisateurs bannis",
+    "Member since":"Membre depuis",
+    "Public rooms ":"Rooms publiques ",
+    "Private rooms " : "Rooms privées "
 }
