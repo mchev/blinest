@@ -229,7 +229,7 @@ class RoomController extends Controller
 
         foreach ($room->playlists as $playlist) {
             foreach ($playlist->moderators as $moderator) {
-                if (! in_array($moderator, $moderators)) {
+                if (! in_array($moderator, $moderators, true)) {
                     $moderators[] = $moderator;
                     $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), Auth::user()));
                 }
