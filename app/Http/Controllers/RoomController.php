@@ -79,6 +79,7 @@ class RoomController extends Controller
                 'moderators' => $room->moderators,
                 'is_chat_active' => $room->is_chat_active,
                 'is_autostart' => $room->is_autostart,
+                'is_random' => $room->is_random,
                 'password' => $room->password,
                 'latest_messages' => $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
                 'pause_between_tracks' => $room->pause_between_tracks,
@@ -153,10 +154,11 @@ class RoomController extends Controller
             'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
             'is_chat_active' => ['required', 'boolean'],
             'is_autostart' => ['required', 'boolean'],
+            'is_random' => ['required', 'boolean'],
             'color' => ['nullable'],
         ]);
 
-        $room->update(Request::only('tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_chat_active', 'is_autostart', 'color'));
+        $room->update(Request::only('tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_chat_active', 'is_autostart', 'is_random', 'color'));
 
         if (Request::get('has_password')) {
             $room->update(['password' => Request::get('password')]);

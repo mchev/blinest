@@ -21,6 +21,7 @@ const user = usePage().props.auth.user
 const form = useForm({
   is_chat_active: props.room.is_chat_active,
   is_autostart: props.room.is_autostart,
+  is_random: props.room.is_random,
   color: props.room.color,
   has_password: props.room.password ? true : false,
   password: props.room.password,
@@ -63,9 +64,10 @@ const update = () => {
       <input id="pause_between_rounds-range" type="range" min="0" max="60" v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
     </div>
 
-    <div class="flex w-full flex-wrap">
-      <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="pr-4 pb-4" :label="__('Chatbox')" />
-      <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" class="pr-4 pb-4" :label="__('Autostart')" />
+    <div class="flex w-full flex-wrap gap-4">
+      <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" :label="__('Chatbox')" />
+      <checkbox-input v-model="form.is_random" :error="form.errors.is_random" :label="__('Random')" />
+      <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" :label="__('Autostart')" />
       <checkbox-input v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
     </div>
 
