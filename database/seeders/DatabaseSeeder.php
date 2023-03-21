@@ -16,11 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AnswerTypesSeeder::class,
             CategoriesSeeder::class,
-            ImportOldUsers::class,
-            ImportOldGames::class,
-            ImportOldModerators::class,
-            ImportOldTracks::class,
-            ImportOldScores::class,
         ]);
     }
 }
