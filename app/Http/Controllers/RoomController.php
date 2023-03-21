@@ -225,15 +225,8 @@ class RoomController extends Controller
             'suggestion' => ['required'],
         ]);
 
-        $moderators = [];
-
-        foreach ($room->playlists as $playlist) {
-            foreach ($playlist->moderators as $moderator) {
-                if (! in_array($moderator, $moderators, true)) {
-                    $moderators[] = $moderator;
-                    $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), Auth::user()));
-                }
-            }
+        foreach ($room->moderators as $moderator) {
+            $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), auth()->user()));
         }
 
         return redirect()->back()->with('success', 'Bien reçu!');
