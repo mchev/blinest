@@ -94,13 +94,7 @@ class User extends Authenticatable
 
     public function moderatedPlaylists()
     {
-        return $this->morphedByMany(Playlist::class, 'moderable')->where('playlists.user_id', '!=', $this->id);
-    }
-
-    public function allPlaylists()
-    {
-        return $this->playlists()->select('playlists.*')
-            ->union($this->moderatedPlaylists()->select('playlists.*'));
+        return $this->morphedByMany(Playlist::class, 'moderable')->orderBy('name');
     }
 
     public function isPlaylistOwner(Playlist $playlist)
@@ -136,13 +130,7 @@ class User extends Authenticatable
 
     public function moderatedRooms()
     {
-        return $this->morphedByMany(Room::class, 'moderable');
-    }
-
-    public function allRooms()
-    {
-        return $this->rooms()->select('rooms.*')
-            ->union($this->moderatedRooms()->select('rooms.*'));
+        return $this->morphedByMany(Room::class, 'moderable')->orderBy('name');
     }
 
     public function isRoomModerator(Room $room)

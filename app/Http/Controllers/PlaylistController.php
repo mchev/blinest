@@ -20,13 +20,13 @@ class PlaylistController extends Controller
 {
     public function index()
     {
-        if (! Auth::user()->allPlaylists()->count()) {
+        if (! Auth::user()->moderatedPlaylists()->count()) {
             return redirect()->route('playlists.create');
         }
 
         return Inertia::render('Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'playlists' => Auth::user()->allPlaylists()
+            'playlists' => Auth::user()->moderatedPlaylists()
                 ->orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
                 ->with('moderators', 'owner')

@@ -31,8 +31,8 @@ class UserController extends Controller
                 'created_at' => $user->created_at->format('d/m/Y H:i'),
                 'created_at_from_now' => $user->created_at->diffForHumans(),
                 'latest_round_at' => $user->scores()->latest()->first()?->round?->created_at->format('d/m/Y H:i'),
-                'rooms' => $user->allRooms,
-                'playlists' => $user->allPlaylists,
+                'rooms' => $user->moderatedRooms,
+                'playlists' => $user->moderatedPlaylists,
                 'bookmarked_rooms' => $user->bookmarkedRooms()->get(),
                 'total_score' => floatval($user->scores()->sum('score')),
                 'scores' => $user->allScores()->paginate(10)->through(fn ($score) => [

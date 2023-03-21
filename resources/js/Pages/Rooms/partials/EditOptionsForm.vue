@@ -74,7 +74,7 @@ const update = () => {
     </div>
 
     <div class="ml-auto flex items-center gap-2">
-      <button @click="$emit('close')" class="btn-secondary" type="button">{{ __('Close') }}</button>
+      <button v-if="modal" @click="$emit('close')" class="btn-secondary" type="button">{{ __('Close') }}</button>
       <loading-button :loading="form.processing" class="btn-primary" form="optionsForm" type="submit">{{ __('Update') }}</loading-button>
     </div>
   </form>
