@@ -92,7 +92,7 @@ onUnmounted(() => {
                   </span>
                 </span>
                 <span v-for="answer in track.answers" v-if="track">
-                  <span v-if="!user?.score?.answers.find((x) => x.id === answer.id)" class="relative flex rounded bg-neutral-300 px-1 text-[11px] font-bold uppercase text-neutral-500 text-white">
+                  <span v-if="!user?.score?.answers.find((x) => x.id === answer.id)" class="relative flex rounded bg-neutral-600 px-1 text-[11px] font-bold uppercase text-white">
                     {{ __(answer.name) }}
                   </span>
                 </span>
