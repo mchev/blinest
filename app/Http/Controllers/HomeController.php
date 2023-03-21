@@ -57,7 +57,8 @@ class HomeController extends Controller
                     ->limit(18)
                     ->get();
             }),
-            'user_rooms' => auth()->user() ? auth()->user()->rooms()
+            'user_rooms' => auth()->user() ? auth()->user()->moderatedRooms()
+                ->with('owner')
                 ->where('is_public', false)
                 ->whereHas('playlists')
                 ->filter(Request::only('search'))
