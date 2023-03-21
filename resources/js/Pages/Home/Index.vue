@@ -44,7 +44,7 @@ defineProps({
       </section>
       <section v-if="categories.length" v-for="category in categories" :key="category.id">
         <div v-if="category.rooms.length" class="relative mb-4">
-          <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">{{ category.name }}</h2>
+          <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">{{ __(category.name) }}</h2>
           <rooms :rooms="category.rooms" :id="category.id" />
         </div>
       </section>
