@@ -60,6 +60,17 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
+    // Likes
+    public function likes()
+    {
+        return app(Track::class)->whereHas(
+            'voters',
+            function ($q) {
+                return $q->where(config('vote.user_foreign_key'), $this->getKey())->where('votes', 1);
+            }
+        )->with('answers');
+    }
+
     // TEAM
 
     public function team()

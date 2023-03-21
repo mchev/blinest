@@ -15,8 +15,9 @@ use App\Http\Controllers\TrackAnswerController;
 // Tracks
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\UserBanController;
-// Socialite
+// Users
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 // Music Providers Services
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
@@ -39,6 +40,10 @@ Route::middleware(['auth'])->group(function () {
     // Me
     Route::get('me', [UserController::class, 'show'])
         ->name('me');
+
+    // Profile
+    Route::get('profile/{user}', [ProfileController::class, 'show'])
+        ->name('user.profile');
 
     // FAQ
     Route::post('faq/{faq}/vote/up', [FAQController::class, 'upvote']);

@@ -77,7 +77,7 @@ onUnmounted(() => {
             </div>
             <div class="flex flex-grow flex-col">
               <div class="mb-2">
-                {{ user.name }} <sup v-if="user.team" class="text-[9px] uppercase">[{{ user.team.name }}]</sup>
+                <Link :href="route('user.profile', user)">{{ user.name }}</Link> <Link v-if="user.team" :href="route('teams.show', user.team)"><sup class="text-[9px] uppercase">[{{ user.team.name }}]</sup></Link>
               </div>
               <div class="flex flex-wrap items-center gap-1">
                 <span v-for="userAnswer in user.score.answers" v-if="user.score" class="relative flex items-center rounded bg-purple-500 px-1 text-[11px] font-bold uppercase text-white" :class="{ 'mr-2': userAnswer.order < 4 }">

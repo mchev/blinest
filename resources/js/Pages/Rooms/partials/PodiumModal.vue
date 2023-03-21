@@ -54,7 +54,7 @@ onMounted(() => {
             <tbody>
               <tr v-for="(score, index) in scores.lifetime">
                 <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2">{{ score.user.name }}</td>
+                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
                 <td class="border-b p-2">{{ score.score }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
@@ -78,7 +78,7 @@ onMounted(() => {
             <tbody>
               <tr v-for="(score, index) in scores.teams">
                 <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2">{{ score.team.name }}</td>
+                <td class="truncate border-b p-2"><Link :href="route('teams.show', score.team)">{{ score.team.name }}</Link></td>
                 <td class="border-b p-2">{{ score.score }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
@@ -102,7 +102,7 @@ onMounted(() => {
             <tbody>
               <tr v-for="(score, index) in scores.week">
                 <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2">{{ score.user.name }}</td>
+                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
                 <td class="border-b p-2">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
@@ -126,7 +126,7 @@ onMounted(() => {
             <tbody>
               <tr v-for="(score, index) in scores.month">
                 <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2">{{ score.user.name }}</td>
+                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
                 <td class="border-b p-2">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>

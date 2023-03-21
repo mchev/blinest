@@ -33,12 +33,6 @@
   </url>
 
   <url>
-    <loc>https://blinest.com/login</loc>
-    <lastmod>2019-10-02T15:27:50+00:00</lastmod>
-    <priority>0.20</priority>
-  </url>
-
-  <url>
     <loc>https://blinest.com/register</loc>
     <lastmod>2019-10-02T15:27:50+00:00</lastmod>
     <priority>0.20</priority>

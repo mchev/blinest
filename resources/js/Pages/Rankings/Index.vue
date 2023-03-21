@@ -25,9 +25,9 @@ const props = defineProps({
               <li v-for="(score, index) in bestUsers" :key="score.user.id" class="m-4 flex flex-col items-center">
                 <div class="relative">
                   <span class="absolute -left-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 p-1 text-neutral-700">{{ index + 1 }}</span>
-                  <img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" />
+                  <Link :href="route('user.profile', score.user)"><img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" /></Link>
                 </div>
-                <span class="mb-1 font-bold">{{ score.user.name }}</span>
+                <Link :href="route('user.profile', score.user)" class="mb-1 font-bold">{{ score.user.name }}</Link>
                 <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
               </li>
             </ul>
