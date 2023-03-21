@@ -52,7 +52,7 @@ const sendMessage = () => {
 
 const scrollToBottom = () => {
   let container = messenger.value
-  container.scrollTop = container.scrollHeight + 1000
+  container.scrollTo = container.scrollHeight + 5000
 }
 </script>
 <template>
