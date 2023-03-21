@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Card from '@/Components/Card.vue'
@@ -10,6 +10,7 @@ const props = defineProps({
   room: Object,
 })
 
+const user = usePage().props.auth.user
 const search = ref('')
 const searching = ref(false)
 const users = ref(null)
@@ -54,7 +55,7 @@ const detach = (user) => {
       <h3 class="text-xl font-bold">{{ __('Moderators') }}</h3>
     </template>
 
-    <dropdown placement="bottom-start" class="mb-2 pb-2" @closed="search = ''">
+    <dropdown v-if="user.id === room.user_id" placement="bottom-start" class="mb-2 pb-2" @closed="search = ''">
       <template #default>
         <text-input v-model="search" prepend-icon="search" append-icon="cheveron-down" :loading="searching" :placeholder="__('Add a moderator')" />
       </template>
@@ -75,7 +76,7 @@ const detach = (user) => {
       <li v-for="moderator in room.moderators" :key="moderator.id" class="flex items-center rounded p-3">
         <img v-if="moderator.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="moderator.photo" />
         {{ moderator.name }}
-        <button class="ml-auto flex text-red-500" :title="__('Remove')" @click="detach(moderator)">
+        <button v-if="user.id === room.user_id" class="ml-auto flex text-red-500" :title="__('Remove')" @click="detach(moderator)">
           {{ __('Remove') }}
           <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

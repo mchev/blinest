@@ -88,7 +88,7 @@ onUnmounted(() => {
                   </option>
                 </select-input>
                 <file-input v-if="room.is_pro || room.is_public || user.permissions.canUploadImage" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
+                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> {{ __('In order to change room picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
               </div>
             </div>
           </form>
@@ -107,7 +107,7 @@ onUnmounted(() => {
           </template>
           <EditOptionsForm :room="room" />
         </Card>
-        <PlaylistsManager :room="room" :playlists="available_playlists" />
+        <PlaylistsManager v-if="user.id === room.user_id" :room="room" :playlists="available_playlists" />
       </div>
     </div>
   </AppLayout>
