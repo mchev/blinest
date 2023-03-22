@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { watch, ref, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Message from './Message.vue'
 import AlertModeratorsModal from './AlertModeratorsModal.vue'
@@ -13,7 +13,6 @@ const channel = `chat-room.${props.room.id}`
 const body = ref('')
 const messages = ref(props.room.latest_messages)
 const user = usePage().props.auth.user
-const messenger = ref()
 const reported = ref(null)
 const alertingModerators = ref(null)
 
@@ -21,7 +20,6 @@ onMounted(() => {
   Echo.private(channel)
     .listen('NewMessage', (e) => {
       messages.value.unshift(...[e.message])
-      scrollToBottom()
     })
     .listen('MessageReported', (e) => {
       messages.value = messages.value.map((x) => {
@@ -48,11 +46,6 @@ const sendMessage = () => {
     .then((response) => {
       body.value = ''
     })
-}
-
-const scrollToBottom = () => {
-  let container = messenger.value
-  container.scrollTo = container.scrollHeight + 5000
 }
 </script>
 <template>
