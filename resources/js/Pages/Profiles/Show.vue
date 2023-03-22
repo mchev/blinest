@@ -69,11 +69,11 @@ const tab = ref('scores')
                 </div>
                 <div class="flex gap-8 text-sm items-center uppercase justify-center">
                   <div class="flex flex-col">
-                    <span class="font-bold">{{ __('Public rooms ') }}</span>
+                    <span class="font-bold">{{ __('Public rooms') }}</span>
                     <span>{{ user.total_public_score }} <sup>{{ __('PTS') }}</sup></span>
                   </div>
                   <div class="flex flex-col">
-                    <span class="font-bold">{{ __('Private rooms ') }}</span>
+                    <span class="font-bold">{{ __('Private rooms') }}</span>
                     <span>{{ user.total_private_score }} <sup>{{ __('PTS') }}</sup></span>
                   </div>
                 </div>
