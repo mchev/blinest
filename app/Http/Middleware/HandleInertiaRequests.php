@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
+use Illuminate\Support\Facades\Gate;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -52,9 +53,7 @@ class HandleInertiaRequests extends Middleware
                         'is_public_moderator' => $request->user()->isPublicModerator(),
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,
-                        'permissions' => [
-                            'canUploadImage' => $request->user()->canUploadImage(),
-                        ],
+                        'can' => Gate::abilities(),
                         'pending_requests' => $request->user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
                         'declined_requests' => $request->user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
                     ] : null,

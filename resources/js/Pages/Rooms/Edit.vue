@@ -79,16 +79,17 @@ onUnmounted(() => {
           </template>
           <form @submit.prevent="update" id="roomForm">
             <div class="flex">
-              <div class="flex flex-wrap">
-                <text-input v-model="form.name" :error="form.errors.name" class="mb-4 w-full" :label="__('Name')" />
-                <textarea-input v-model="form.description" :error="form.errors.description" class="mb-4 w-full" :label="__('Description')" />
-                <select-input v-model="form.category_id" :error="form.errors.category_id" class="mb-4 w-full" :label="__('Category')">
+              <div class="flex flex-wrap gap-4">
+                <text-input v-model="form.name" :error="form.errors.name" class="w-full" :label="__('Name')" />
+                <textarea-input v-model="form.description" :error="form.errors.description" class="w-full" :label="__('Description')" />
+                <select-input v-model="form.category_id" :error="form.errors.category_id" class="w-full" :label="__('Category')">
                   <option v-for="category in categories" :key="category.id" :value="category.id">
                     {{ category.name }}
                   </option>
                 </select-input>
-                <file-input v-if="room.is_pro || room.is_public || user.permissions.canUploadImage" v-model="form.photo" :error="form.errors.photo" class="mb-4 w-full" type="file" accept="image/*" :label="__('Photo')" />
-                <Tip v-if="!room.is_pro && !room.is_public && !user.permissions.canUploadImage"> {{ __('In order to change room picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
+                <file-input v-if="room.is_pro || room.is_public || user.can.changeRoomPicture" v-model="form.photo" :error="form.errors.photo" class="w-full" type="file" accept="image/*" :label="__('Photo')" />
+                <img v-if="room.photo" :src="room.photo" class="rounded max-h-30 max-w-full" :alt="room.name">
+                <Tip v-if="!room.is_pro && !room.is_public && !user.can.changeRoomPicture" class="bg-red-800 text-white"> {{ __('In order to change room picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
               </div>
             </div>
           </form>

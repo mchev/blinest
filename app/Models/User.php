@@ -259,16 +259,6 @@ class User extends Authenticatable
         return $this->moderatedRooms()->where('is_public', true)->exists();
     }
 
-    // User older than 3 months and 2000 score min
-    public function canUploadImage(): bool
-    {
-        if ($this->created_at < now()->subMonths(3) && floatval($this->scores()->sum('score')) > 2000) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) use ($filters) {

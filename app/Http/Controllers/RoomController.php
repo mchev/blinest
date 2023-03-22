@@ -136,9 +136,8 @@ class RoomController extends Controller
         $room->update(Request::only('name', 'description', 'category_id', 'playlist_id'));
 
         if (Request::file('photo')) {
-            if ($room->is_public || $room->is_pro || Auth()->user()->canUpdateRoomPicture()) {
-                $room->updatePhoto(Request::file('photo'));
-            }
+            $this->authorize('changeRoomPicture');
+            $room->updatePhoto(Request::file('photo'));
         }
 
         return Redirect::back()->with('success', 'Room updated.');
