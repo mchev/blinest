@@ -45,9 +45,10 @@ class TrackController extends Controller
             return response()->json([
                 'filters' => Request::only('term'),
                 'tracks' => (new MusicProviders)->search(Request::get('term'))
-                    ->sortBy('track_name')->unique(function ($item) {
-                        return $item['artist_name'].$item['track_name'];
-                    })
+                    // ->sortBy('track_name')
+                    // ->unique(function ($item) {
+                    //     return $item['artist_name'].$item['track_name'];
+                    // })
                     ->values()
                     ->map(function ($track) use ($playlist) {
                         return [
