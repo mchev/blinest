@@ -9,6 +9,7 @@ use App\Rules\Reserved;
 use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
@@ -75,7 +76,7 @@ class PlaylistController extends Controller
                 'playlist' => [
                     'id' => $playlist->id,
                     'name' => $playlist->name,
-                    'desription' => $playlist->desription,
+                    'description' => $playlist->description,
                     'deleted_at' => $playlist->deleted_at,
                     'user_id' => $playlist->user_id,
                     'moderators' => $playlist->moderators,
