@@ -9,7 +9,6 @@ use App\Rules\Reserved;
 use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
@@ -20,13 +19,13 @@ class PlaylistController extends Controller
 {
     public function index()
     {
-        if (! Auth::user()->moderatedPlaylists()->count()) {
+        if (! auth()->user()->moderatedPlaylists()->count()) {
             return redirect()->route('playlists.create');
         }
 
         return Inertia::render('Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'playlists' => Auth::user()->moderatedPlaylists()
+            'playlists' => auth()->user()->moderatedPlaylists()
                 ->orderBy('updated_at')
                 ->filter(Request::only('search', 'trashed'))
                 ->with('moderators', 'owner')
@@ -57,20 +56,20 @@ class PlaylistController extends Controller
             'name' => ['required', 'max:50', new Reserved, 'unique:playlists'],
         ]);
 
-        $playlist = Auth::user()->playlists()->create([
+        $playlist = auth()->user()->playlists()->create([
             'name' => Request::get('name'),
         ]);
 
-        $playlist->moderators()->attach(Auth::user());
+        $playlist->moderators()->attach(auth()->user());
 
         return Redirect::route('playlists.edit', $playlist)->with('success', __('Playlist created.'));
     }
 
     public function edit(Playlist $playlist)
     {
-        if (Auth::user()->id === $playlist->owner->id
-                || Auth::user()->isPlaylistModerator($playlist)
-                || Auth::user()->isAdministrator()
+        if (auth()->user()->id === $playlist->owner->id
+                || auth()->user()->isPlaylistModerator($playlist)
+                || auth()->user()->isAdministrator()
             ) {
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
@@ -111,7 +110,7 @@ class PlaylistController extends Controller
 
     public function update(Playlist $playlist)
     {
-        if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
+        if (auth()->user()->id === $playlist->owner->id || auth()->user()->isAdministrator()) {
             Request::validate([
                 'name' => ['required', 'max:50', new Reserved, Rule::unique('playlists')->ignore($playlist->id)],
                 'description' => ['nullable'],
@@ -135,7 +134,7 @@ class PlaylistController extends Controller
 
     public function destroy(Playlist $playlist)
     {
-        if (Auth::user()->id === $playlist->owner->id || Auth::user()->isAdministrator()) {
+        if (auth()->user()->id === $playlist->owner->id || auth()->user()->isAdministrator()) {
             if ($playlist->is_public && $playlist->has('rooms')) {
                 return Redirect::back()->with('error', __('Impossible to delete a playlist that is public and associated to a room.'));
             }

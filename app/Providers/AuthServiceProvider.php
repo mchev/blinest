@@ -22,10 +22,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('changeRoomPicture', function(User $user) {
+        Gate::define('changeRoomPicture', function (User $user) {
             return ($user->created_at < now()->subMonths(3) && $user->totalScores()->sum('score') > 2000) ? true : false;
         });
-        Gate::define('changeTeamPicture', function(User $user) {
+        Gate::define('changeTeamPicture', function (User $user) {
             return ($user->created_at < now()->subMonths(3) && $user->totalScores()->sum('score') > 2000) ? true : false;
         });
     }

@@ -39,10 +39,10 @@ php artisan horizon
 
 ## Roadmap
 
-- [x] Better translations
-- [ ] Profil pages
-- [ ] Better way to wait while a track is playing (replace loading by a countdown or something else)
+- [ ] Trivia games (rooms type?)
+- [ ] User Badges (reputation)
 - [ ] Chat emojis
-- [ ] Light mode
 - [ ] Moderation : rooms name edition
 - [ ] Pro/Premium rooms
+- [x] Better translations
+- [x] Profile pages

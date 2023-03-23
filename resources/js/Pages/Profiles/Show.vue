@@ -5,6 +5,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import ScoresTab from './partials/ScoresTab.vue'
 import LikesTab from './partials/LikesTab.vue'
 import BookmarksTab from './partials/BookmarksTab.vue'
+import Badge from '@/Components/Badge.vue'
 
 const props = defineProps({
   user: Object,
@@ -77,6 +78,11 @@ const tab = ref('scores')
                     <span>{{ user.total_private_score }} <sup>{{ __('PTS') }}</sup></span>
                   </div>
                 </div>
+
+<!--                 <div class="flex w-full justify-center items-center gap-4 flex-wrap my-12">
+                  <Badge color="silver" :text="__('Seniority')" class="h-16" />
+                </div> -->
+
               </div>
               <div class="mt-10 py-10 border-t border-white-200 text-center">
 

@@ -4,9 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
-use Illuminate\Support\Facades\Gate;
 
 class HandleInertiaRequests extends Middleware
 {

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Mchev\Banhammer\Traits\Bannable;
@@ -171,23 +170,6 @@ class User extends Authenticatable
     public function totalScores()
     {
         return $this->morphMany(TotalScore::class, 'totalscorable');
-    }
-
-    public function scopeTotalScore()
-    {
-        $this->scores()
-            ->selectRaw('SUM(score) as total');
-    }
-
-    public function allScores()
-    {
-        return $this->scores()
-            ->select('rounds.updated_at', 'scores.user_id', DB::raw('SUM(scores.score) as total'), 'scores.round_id', 'rooms.name', 'rooms.slug as room_slug', 'rooms.id as room_id')
-            ->join('rounds', 'rounds.id', '=', 'scores.round_id')
-            ->join('rooms', 'rooms.id', '=', 'rounds.room_id')
-            ->orderByDesc('rounds.created_at')
-            ->groupBy('rounds.room_id')
-            ->orderByDesc('total');
     }
 
     public function scoreByRoom(Room $room)

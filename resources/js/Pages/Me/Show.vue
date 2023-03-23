@@ -69,6 +69,7 @@ const deleteUser = () => {
           </li>
         </ul>
 
+        <Link :href="route('user.profile', user)" class="btn-primary btn-sm mx-auto mb-4">{{ __('View my public profile') }}</Link>
         <button @click="deleteUser" class="btn-danger btn-sm mx-auto">{{ __('Delete my account') }}</button>
       </div>
 

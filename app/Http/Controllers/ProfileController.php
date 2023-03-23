@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Carbon\CarbonInterface;
 
 class ProfileController extends Controller
 {
