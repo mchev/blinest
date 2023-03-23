@@ -35,14 +35,14 @@ const reset = () => {
 <template>
   <Head :title="__('My Rooms')" />
   <AppLayout>
-    <h1 v-if="rooms && rooms.data.length" class="mb-8 text-3xl font-bold">{{ __('My Rooms') }}</h1>
-    <div v-if="rooms && rooms.data.length" class="mb-6 flex items-center justify-between">
+    <h1 class="mb-8 text-3xl font-bold">{{ __('My Rooms') }}</h1>
+    <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" :href="route('rooms.create')">
         {{ __('Create a room') }}
       </Link>
     </div>
-    <Card v-if="rooms && rooms.data.length">
+    <Card>
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
@@ -118,15 +118,11 @@ const reset = () => {
       </div>
       <Pagination :links="rooms.links" />
     </Card>
-    <div v-else class="mx-auto max-w-screen-xl py-8 px-4 text-center lg:py-16 lg:px-6">
-      <div class="mx-auto mb-8 max-w-screen-sm lg:mb-16">
-        <h2 class="mb-4 text-4xl font-extrabold tracking-tight">{{ __('Rooms') }}</h2>
-        <p class="text-lg">"Si à 50 ans on n'a pas de Room sur Blinest, on a raté sa vie."<br /><small class="text-xs italic">{{ __('Anonymous.') }}</small></p>
-        <div class="my-8 flex justify-center">
-          <Link class="btn-primary btn-lg" :href="route('rooms.create')">
-            {{ __('Create my first room') }}
-          </Link>
-        </div>
+    <div v-if="rooms.data.length == 0 && !filters.search" class="mx-auto max-w-screen-xl py-4 px-4 text-center lg:px-6">
+      <div class="flex justify-center">
+        <Link class="btn-primary btn-lg" :href="route('rooms.create')">
+          {{ __('Create my first room') }}
+        </Link>
       </div>
     </div>
   </AppLayout>

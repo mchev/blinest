@@ -22,7 +22,7 @@ class RoomController extends Controller
     {
         return Inertia::render('Rooms/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'rooms' => Auth::user()->rooms()
+            'rooms' => Auth::user()->moderatedRooms()
                 ->orderBy('is_public', 'DESC')
                 ->orderBy('name')
                 ->filter(Request::only('search', 'trashed'))
@@ -51,18 +51,18 @@ class RoomController extends Controller
         ]);
     }
 
+
     public function show(Room $room)
     {
-        if ($room->password) {
-            if (Request::has('password')) {
-                if (Request::input('password') != $room->password) {
-                    return redirect()->back()->with('error', __('The password is incorrect.'));
-                }
-            } else {
-                return Inertia::render('Rooms/Password', [
-                    'room' => $room,
-                ]);
-            }
+
+        if ($room->password && !Request::has('password')) {
+            return Inertia::render('Rooms/Password', [
+                'room' => $room,
+            ]);
+        }
+
+        if ($room->password && Request::input('password') !== $room->password) {
+            return redirect()->back()->with('error', __('The password is incorrect.'));
         }
 
         return Inertia::render('Rooms/Show', [
@@ -125,6 +125,11 @@ class RoomController extends Controller
 
     public function update(Room $room)
     {
+
+        if(!auth()->user()->isRoomModerator($room)) {
+            abort(403);
+        }
+
         Request::validate([
             'name' => ['required', 'max:25', new Reserved, Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],

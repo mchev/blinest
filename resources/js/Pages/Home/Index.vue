@@ -21,7 +21,7 @@ defineProps({
   </Head>
   <Layout>
     <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
-    <DonationBanner/>
+    <!-- <DonationBanner/> -->
     <section v-if="search_result">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-6">
         <Room v-for="room in search_result" :room="room" :key="room.id" />
