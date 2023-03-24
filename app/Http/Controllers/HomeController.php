@@ -29,51 +29,47 @@ class HomeController extends Controller
             ]);
         }
 
-        $topRooms = Cache::remember('toprooms', 3600, function () {
-            return Room::isPublic()
-                ->withCount('rounds')
-                ->orderByDesc('rounds_count')
-                ->limit(5)
-                ->get();
-        });
+        $topRooms = Room::isPublic()
+            ->withCount('rounds')
+            ->orderByDesc('rounds_count')
+            ->limit(5)
+            ->get();
 
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
             'top_rooms' => $topRooms,
-            'categories' => Cache::remember('categories', 120, function () use ($topRooms) {
-                return Category::all()->map(fn ($category) => [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                    'rooms' => $category->rooms()
-                        ->isPublic()
-                        ->whereNotIn('id', $topRooms->pluck('id'))
-                        ->whereNull('password')
-                        ->filter(Request::only('search'))
-                        ->orderByDesc('is_playing')
-                        ->limit(18)
-                        ->get()
-                        ->sortByDesc(function ($room) {
-                            return $room->users_count;
-                        }),
-                ]);
-            }),
-            'private_rooms' => Cache::remember('privaterooms', 120, function () {
-                return Room::isPrivate()
+            'categories' => Category::all()->map(fn ($category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'rooms' => $category->rooms()
+                    ->isPublic()
+                    ->whereNotIn('id', $topRooms->pluck('id'))
                     ->whereNull('password')
                     ->filter(Request::only('search'))
-                    ->with('owner')
                     ->orderByDesc('is_playing')
                     ->limit(18)
                     ->get()
                     ->sortByDesc(function ($room) {
                         return $room->users_count;
-                    });
-            }),
-            'user_rooms' => auth()->user() ? auth()->user()->moderatedRooms()
-                ->isPrivate()
-                ->with('owner')
+                    }),
+            ]),
+            'private_rooms' => Room::isPrivate()
+                ->whereNull('password')
                 ->filter(Request::only('search'))
-                ->get() : null,
+                ->with('owner')
+                ->orderByDesc('is_playing')
+                ->limit(18)
+                ->get()
+                ->sortByDesc(function ($room) {
+                    return $room->users_count;
+            }),
+            'user_rooms' => auth()->user() 
+                ? auth()->user()->moderatedRooms()
+                    ->isPrivate()
+                    ->with('owner')
+                    ->filter(Request::only('search'))
+                    ->get() 
+                : null,
         ]);
     }
 }
