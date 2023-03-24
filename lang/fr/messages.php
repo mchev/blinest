@@ -29,7 +29,7 @@ return [
         'Magnifique, tu es vraiment talentueux !',
         'Super, tu as vraiment le rythme dans la peau !',
         'Impressionnant, tu es un vrai prodige de la musique !',
-        'Exceptionnel, tu as un don pour la musique !'
+        'Exceptionnel, tu as un don pour la musique !',
     ],
 
     'almost' => [

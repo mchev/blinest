@@ -51,11 +51,9 @@ class RoomController extends Controller
         ]);
     }
 
-
     public function show(Room $room)
     {
-
-        if ($room->password && !Request::has('password')) {
+        if ($room->password && ! Request::has('password')) {
             return Inertia::render('Rooms/Password', [
                 'room' => $room,
             ]);
@@ -125,8 +123,7 @@ class RoomController extends Controller
 
     public function update(Room $room)
     {
-
-        if(!auth()->user()->isRoomModerator($room)) {
+        if (! auth()->user()->isRoomModerator($room)) {
             abort(403);
         }
 

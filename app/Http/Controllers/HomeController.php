@@ -52,9 +52,9 @@ class HomeController extends Controller
                         ->orderByDesc('is_playing')
                         ->limit(18)
                         ->get()
-                        ->sortByDesc(function($room) {
+                        ->sortByDesc(function ($room) {
                             return $room->users_count;
-                        })
+                        }),
                 ]);
             }),
             'private_rooms' => Cache::remember('privaterooms', 120, function () {
@@ -65,7 +65,7 @@ class HomeController extends Controller
                     ->orderByDesc('is_playing')
                     ->limit(18)
                     ->get()
-                    ->sortByDesc(function($room) {
+                    ->sortByDesc(function ($room) {
                         return $room->users_count;
                     });
             }),
@@ -76,5 +76,4 @@ class HomeController extends Controller
                 ->get() : null,
         ]);
     }
-
 }

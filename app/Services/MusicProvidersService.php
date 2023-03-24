@@ -24,10 +24,11 @@ class MusicProvidersService
         }
 
         $sorted = $merged->sortByDesc(function ($item) use ($term) {
-            $text1 = $item['artist_name'] . ' ' . $item['track_name'];
-            $text2 = $item['track_name'] . ' ' . $item['artist_name'];
+            $text1 = $item['artist_name'].' '.$item['track_name'];
+            $text2 = $item['track_name'].' '.$item['artist_name'];
             $percent1 = similar_text($term, $text1, $percent1);
             $percent2 = similar_text($term, $text2, $percent2);
+
             return max($percent1, $percent2);
         });
 

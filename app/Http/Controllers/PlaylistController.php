@@ -9,7 +9,6 @@ use App\Rules\Reserved;
 use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
@@ -128,9 +127,7 @@ class PlaylistController extends Controller
 
     public function export(Playlist $playlist)
     {
-        $tracks = $playlist->tracks()->with('answers')->get();
-
-        return Excel::download(new PlaylistExport($tracks), 'playlist.xlsx');
+        return Excel::download(new PlaylistExport($playlist), 'playlist.xlsx');
     }
 
     public function destroy(Playlist $playlist)

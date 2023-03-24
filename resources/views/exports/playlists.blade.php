@@ -2,7 +2,7 @@
     <thead>
     <tr>
         @foreach($answer_types as $type)
-            <th>{{ $type->name }}</th>
+            <th>{{ __($type->name) }}</th>
         @endforeach
         <th>Origine</th>
         <th>Lien</th>
