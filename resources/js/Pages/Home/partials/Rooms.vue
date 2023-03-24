@@ -3,7 +3,7 @@ import { router } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import Room from './Room.vue'
 import Top from './Top.vue'
-import { Navigation, Lazy, A11y } from 'swiper'
+import { Navigation, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -14,7 +14,7 @@ const props = defineProps({
   is_top_5: Boolean,
 })
 
-const modules = [Navigation, Lazy, A11y]
+const modules = [Navigation, A11y]
 const maxSlides = props.rooms && props.rooms.length < 6 ? props.rooms.length : 6
 </script>
 <template>

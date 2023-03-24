@@ -41,13 +41,12 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Link :rel="(!room.is_public) ? 'nofollow': ''" :href="`/rooms/${room.slug}`" class="swiper-lazy relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`" :title="room.name">
+  <Link :rel="(!room.is_public) ? 'nofollow': ''" :href="`/rooms/${room.slug}`" class="relative flex h-52 w-full flex-col items-center justify-center rounded-md bg-neutral-800 bg-cover bg-center transition duration-100 ease-in-out hover:z-10 hover:scale-110" :style="`background-image: url(${room.photo_src ? room.photo_src : room.photo});`" :title="room.name">
     <article class="relative h-full w-full">
       <header class="hidden">
         <h3>Blind Test {{ room.name }}</h3>
         <p>{{ room.description }}</p>
       </header>
-      <div class="swiper-lazy-preloader"></div>
       <div v-if="!room.is_public && room.owner" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
       <div class="absolute top-0 left-0 w-auto rounded-br-md rounded-tl-md bg-neutral-800 p-3 text-sm text-white ease-in-out hover:scale-110">
         <div class="flex items-center">
