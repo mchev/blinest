@@ -15,11 +15,13 @@ const messages = ref(props.room.latest_messages)
 const user = usePage().props.auth.user
 const reported = ref(null)
 const alertingModerators = ref(null)
+const messagesContainer = ref(null)
 
 onMounted(() => {
   Echo.private(channel)
     .listen('NewMessage', (e) => {
       messages.value.unshift(...[e.message])
+      messagesContainer.value.scrollTop = 0;
     })
     .listen('MessageReported', (e) => {
       messages.value = messages.value.map((x) => {
@@ -69,7 +71,7 @@ const sendMessage = () => {
         </svg>
       </a>
     </div>
-    <div ref="messenger" class="flex flex-1 flex-col-reverse overflow-y-scroll p-2">
+    <div ref="messagesContainer" class="flex flex-1 flex-col-reverse overflow-y-scroll p-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
     <div class="flex w-full p-2">
