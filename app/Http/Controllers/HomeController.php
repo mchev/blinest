@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Room;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
@@ -62,13 +61,13 @@ class HomeController extends Controller
                 ->get()
                 ->sortByDesc(function ($room) {
                     return $room->users_count;
-            }),
-            'user_rooms' => auth()->user() 
+                }),
+            'user_rooms' => auth()->user()
                 ? auth()->user()->moderatedRooms()
                     ->isPrivate()
                     ->with('owner')
                     ->filter(Request::only('search'))
-                    ->get() 
+                    ->get()
                 : null,
         ]);
     }
