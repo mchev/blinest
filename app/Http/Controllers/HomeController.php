@@ -44,7 +44,6 @@ class HomeController extends Controller
                     ->isPublic()
                     ->whereNotIn('id', $topRooms->pluck('id'))
                     ->whereNull('password')
-                    ->filter(Request::only('search'))
                     ->orderByDesc('is_playing')
                     ->limit(18)
                     ->get()
@@ -54,7 +53,7 @@ class HomeController extends Controller
             ]),
             'private_rooms' => Room::isPrivate()
                 ->whereNull('password')
-                ->filter(Request::only('search'))
+                ->whereHas('playlists')
                 ->with('owner')
                 ->orderByDesc('is_playing')
                 ->limit(18)
@@ -66,7 +65,6 @@ class HomeController extends Controller
                 ? auth()->user()->moderatedRooms()
                     ->isPrivate()
                     ->with('owner')
-                    ->filter(Request::only('search'))
                     ->get()
                 : null,
         ]);
