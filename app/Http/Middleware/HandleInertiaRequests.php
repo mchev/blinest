@@ -77,7 +77,7 @@ class HandleInertiaRequests extends Middleware
             },
             'language' => function () {
                 return translations(
-                    base_path('lang/'.app()->getLocale().'/'.app()->getLocale().'.json')
+                    base_path('lang/'.app()->getLocale().'.json')
                 );
             },
         ]);
