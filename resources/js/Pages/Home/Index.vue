@@ -36,20 +36,20 @@ defineProps({
           </div> -->
           <div v-if="top_rooms" class="relative mb-4 flex-grow">
             <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">TOP 5</h2>
-            <rooms :rooms="top_rooms" :is_top_5="true" />
+            <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" />
           </div>
         </div>
       </section>
       <section v-if="categories.length" v-for="category in categories" :key="category.id">
         <div v-if="category.rooms.length" class="relative mb-4">
           <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">{{ __(category.name) }}</h2>
-          <rooms :rooms="category.rooms" :id="category.id" />
+          <rooms :rooms="category.rooms" :id="`category-${category.id}`" />
         </div>
       </section>
       <section v-if="private_rooms && private_rooms.length">
         <div class="relative">
           <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">{{ __('Private rooms') }}</h2>
-          <rooms :rooms="private_rooms" id="private" />
+          <rooms :rooms="private_rooms" id="privateRooms" />
         </div>
       </section>
       <section v-if="user_rooms && user_rooms.length">

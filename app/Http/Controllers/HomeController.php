@@ -49,7 +49,9 @@ class HomeController extends Controller
                     ->get()
                     ->sortByDesc(function ($room) {
                         return $room->users_count;
-                    }),
+                    })
+                    ->values()
+                    ->all(),
             ]),
             'private_rooms' => Room::isPrivate()
                 ->whereNull('password')
@@ -60,7 +62,9 @@ class HomeController extends Controller
                 ->get()
                 ->sortByDesc(function ($room) {
                     return $room->users_count;
-                }),
+                })
+                ->values()
+                ->all(),
             'user_rooms' => auth()->user()
                 ? auth()->user()->moderatedRooms()
                     ->isPrivate()
