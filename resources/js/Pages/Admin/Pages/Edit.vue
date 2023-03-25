@@ -32,7 +32,7 @@ const destroy = () => {
       <template #header>
         <div class="flex w-full items-center justify-between">
           <h1 class="text-xl font-bold">
-            <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/pages">Pages</Link>
+            <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/pages">{{ __('Pages') }}</Link>
             <span class="font-medium text-indigo-400">/</span> {{ __('Update') }}
           </h1>
           <small class="text-xs text-neutral-500">{{ __('Last revision') }} : {{ page.date }}</small>

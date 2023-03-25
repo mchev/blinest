@@ -13,7 +13,7 @@
       </search-filter>
       <Link class="btn-primary" :href="route('admin.users.create')">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;User</span>
+        <span class="hidden md:inline">&nbsp;{{ __('User') }}</span>
       </Link>
     </div>
     <card>
