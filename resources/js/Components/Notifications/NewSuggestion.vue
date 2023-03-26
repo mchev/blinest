@@ -15,7 +15,7 @@ const emit = defineEmits(['markedAsdone'])
       {{ notification.data.message }}
     </div>
     <span class="flex text-xs"
-      > {{ __('Sent by') }}&nbsp;{{ notification.data.user.name }} {{ __('on ') }} <span class="ml-1 font-bold">{{ notification.data.room.name }}</span></span
+      > {{ __('Sent by') }}&nbsp;{{ notification.data.user.name }} {{ __('on') }} <span class="ml-1 font-bold">{{ notification.data.room.name }}</span></span
     >
     <span v-if="notification.data.room.playlists" class="text-xs">Playlists : {{ notification.data.room.playlists }}</span>
     <button type="button" class="btn-primary btn-sm mt-2 ml-auto" @click="$emit('markedAsdone')">
