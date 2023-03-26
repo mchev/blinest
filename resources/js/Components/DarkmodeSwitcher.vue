@@ -42,15 +42,15 @@ const checkTheme = (theme) => {
       <template #dropdown>
         <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'dark'">
           <Icon name="dark" class="mr-2 inline-block h-6 w-6" />
-          Dark
+          {{ __('Dark') }}
         </button>
         <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'light'">
           <Icon name="light" class="mr-2 inline-block h-6 w-6" />
-          Light
+          {{ __('Light') }}
         </button>
         <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'system'">
           <Icon name="system" class="mr-2 inline-block h-6 w-6" />
-          System
+          {{ __('System') }}
         </button>
       </template>
     </dropdown>

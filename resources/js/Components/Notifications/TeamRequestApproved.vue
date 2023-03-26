@@ -12,7 +12,7 @@ const read = (team) => {
 <template>
   <div v-if="notification" class="flex-grow">
     <h4 class="mb-1 border-b pb-1 uppercase text-neutral-500">{{ __('Team') }} {{ notification.data.team.name }}</h4>
-    <div class="my-2 text-sm font-medium">{{ __('Ta demande a été acceptée!') }}<br /></div>
+    <div class="my-2 text-sm font-medium">{{ __('Your request has been accepted!') }}<br /></div>
     <div class="mt-1 flex items-center justify-end">
       <button type="button" @click="read" class="btn-primary btn-sm opacity-80">{{ __('Mark as read') }}</button>
     </div>
