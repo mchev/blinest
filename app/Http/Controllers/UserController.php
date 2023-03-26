@@ -80,7 +80,7 @@ class UserController extends Controller
                 $user->update(['password' => Hash::make(Request::get('password'))]);
             }
 
-            return Redirect::back()->with('success', __('Updated.'));
+            return Redirect::back()->with('success', __('Information updated.'));
         }
     }
 

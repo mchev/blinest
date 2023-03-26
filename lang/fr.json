@@ -1040,5 +1040,9 @@
     "Seniority":"Ancienneté",
     "Random":"Aléatoire",
     "has been unbanned.":"a été débanni",
-    "Your request has been accepted!":"Ta demande a été acceptée!"
+    "Your request has been accepted!":"Ta demande a été acceptée!",
+    "Information updated.":"Informations mises à jour.",
+    "Dark":"Sombre",
+    "Light":"Clair",
+    "System":"Système"
 }
