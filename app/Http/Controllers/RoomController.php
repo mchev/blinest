@@ -107,7 +107,7 @@ class RoomController extends Controller
             'category_id' => Request::get('category_id'),
         ]);
 
-        return Redirect::route('rooms.edit', $room->id)->with('success', 'Room created.');
+        return Redirect::route('rooms.edit', $room->id)->with('success', __('Room created.'));
     }
 
     public function edit(Room $room)
@@ -142,7 +142,7 @@ class RoomController extends Controller
             $room->updatePhoto(Request::file('photo'));
         }
 
-        return Redirect::back()->with('success', 'Room updated.');
+        return Redirect::back()->with('success', __('Room updated.'));
     }
 
     public function updateOptions(Room $room)
@@ -167,7 +167,7 @@ class RoomController extends Controller
             $room->update(['password' => null]);
         }
 
-        return Redirect::back()->with('success', 'Options updated.');
+        return Redirect::back()->with('success', __('Options updated.'));
     }
 
     public function destroy(Room $room)
@@ -176,7 +176,7 @@ class RoomController extends Controller
         $room->moderators()->detach();
         $room->delete();
 
-        return Redirect::route('rooms.index')->with('success', 'Room deleted.');
+        return Redirect::route('rooms.index')->with('success', __('Room deleted.'));
     }
 
     /**
@@ -189,9 +189,9 @@ class RoomController extends Controller
                 $room->startRound();
             }
 
-            return response()->json('Successfully joined the room.');
+            return response()->json(__('Successfully joined the room.'));
         } else {
-            return response()->json('User is not logged in.');
+            return response()->json(__('User is not logged in.'));
         }
     }
 
@@ -230,7 +230,7 @@ class RoomController extends Controller
             $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), auth()->user()));
         }
 
-        return redirect()->back()->with('success', 'Bien reçu!');
+        return redirect()->back()->with('success', __('Understood!'));
     }
 
     public function searchTracks(Room $room): JsonResponse
