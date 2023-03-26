@@ -36,7 +36,7 @@ class UserBanController extends Controller
         if (auth()->user()->isPublicModerator() || auth()->user()->isAdministrator()) {
             $user->unban();
 
-            return redirect()->back()->with('success', $user->name.__('has been unbanned.'));
+            return redirect()->back()->with('success', $user->name. ' ' .__('has been unbanned.'));
         }
 
         return abort(403);
