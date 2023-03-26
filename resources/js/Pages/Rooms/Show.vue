@@ -140,7 +140,7 @@ const listenRounds = () => {
                   </svg>
                   {{ __('Send a suggestion') }}
                 </button>
-                <span class="uppercase text-neutral-500">{{ room.tracks_count }}  {{ __(' audios') }}</span>
+                <span class="uppercase text-neutral-500">{{ room.tracks_count }}&nbsp;{{ __('audios') }}</span>
               </div>
             </div>
           </Card>

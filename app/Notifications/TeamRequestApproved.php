@@ -46,7 +46,7 @@ class TeamRequestApproved extends Notification implements ShouldQueue
         return new BroadcastMessage([
             'data' => [
                 'team' => $this->team,
-                'message' => __('Your request has been accepted! Welcome to the team ').$this->team->name,
+                'message' => __('Your request has been accepted! Welcome to the team'). ' ' .$this->team->name,
             ],
         ]);
     }
@@ -61,7 +61,7 @@ class TeamRequestApproved extends Notification implements ShouldQueue
     {
         return [
             'team' => $this->team,
-            'message' => __('Your request has been accepted!<br> Welcome to the team ').$this->team->name,
+            'message' => __('Your request has been accepted!<br> Welcome to the team'). ' ' .$this->team->name,
         ];
     }
 }
