@@ -22,7 +22,7 @@ class UserBanController extends Controller
                     'ip' => $user->ip,
                 ]);
 
-                return redirect()->back()->with('success', $user->name. ' ' .__(' has been banned.'));
+                return redirect()->back()->with('success', $user->name. ' ' .__('has been banned.'));
             } else {
                 return redirect()->back()->with('error', __('Impossible to ban a moderator'));
             }
@@ -36,7 +36,7 @@ class UserBanController extends Controller
         if (auth()->user()->isPublicModerator() || auth()->user()->isAdministrator()) {
             $user->unban();
 
-            return redirect()->back()->with('success', $user->name.__(' has been unbanned.'));
+            return redirect()->back()->with('success', $user->name.__('has been unbanned.'));
         }
 
         return abort(403);
