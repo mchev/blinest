@@ -95,7 +95,7 @@ const importPlaylist = () => {
           <li v-if="pp.id"><b>{{ __('Playlist ID:') }}</b> {{ pp.id }}</li>
           <li><b>{{ __('Tracks to be imported:') }}</b> {{ pp.tracks_count }}</li>
         </ul>
-        <Tip>{{ __('Duplicated tracks will not be imported.') }}</Tip>
+        <Tip>{{ __('Duplicated tracks will not be imported') }}.</Tip>
         <div class="mt-4 flex items-center justify-end gap-2">
           <Link class="btn-secondary btn-sm" :href="route('playlists.edit', playlist.id)">{{ __('Cancel') }}</Link>
           <LoadingButton class="btn-primary btn-sm" @click="importPlaylist" :loading="checkForm.processing">{{ __('Import') }}</LoadingButton>
