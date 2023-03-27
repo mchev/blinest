@@ -57,7 +57,7 @@ const restore = () => {
           <file-input v-model="form.photo" :error="form.errors.photo" class="w-full pb-8 pr-6" type="file" accept="image/*" :label="__('Photo')" />
         </div>
         <div class="flex items-center border-t border-gray-100 bg-gray-50 px-8 py-4">
-          <button v-if="!team.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Delete Team</button>
+          <button v-if="!team.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete Team') }}</button>
           <loading-button :loading="form.processing" class="btn-primary ml-auto" type="submit">{{ __('Update Team') }}</loading-button>
         </div>
       </form>
