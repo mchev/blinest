@@ -259,7 +259,7 @@ const updateDificulty = (e, track) => {
             </td>
           </tr>
           <tr v-if="tracks.length === 0">
-            <td class="border-t px-6 py-4" colspan="4">{{ __('No tracks found') }}.</td>
+            <td class="border-t px-6 py-4" colspan="4">{{ __('No tracks found.') }}</td>
           </tr>
         </table>
       </div>

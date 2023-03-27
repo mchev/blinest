@@ -38,7 +38,7 @@ watch(flash, (val) => {
           <div v-else class="py-4 text-sm font-medium text-white">
             <span v-if="$page.props.errors.login">{{ __($page.props.errors.login) }}</span>
             <span v-else-if="Object.keys($page.props.errors).length === 1">{{ __('There is one form error.') }}</span>
-            <span v-else>{{ __('There are') }} {{ Object.keys($page.props.errors).length }} {{ __('form errors') }}.</span>
+            <span v-else>{{ __('There are') }} {{ Object.keys($page.props.errors).length }} {{ __('form errors.') }}</span>
           </div>
         </div>
         <button type="button" class="group mr-2 p-2" @click="show = false">
