@@ -110,9 +110,9 @@ const listenRounds = () => {
           </article>
 
           <Tip class="bg-orange-400 text-orange-800" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
-            <span class="font-bold">{{ __('This room is in manual start mode.') }}</span>
+            <span class="font-bold">{{ __('This room is in manual start mode') }}</span>
             <br />
-            {{ __('The person responsible for the room (moderators) must be present to start the game.') }}
+            {{ __('The person responsible for the room (moderators) must be present to start the game') }}
           </Tip>
 
           <div class="mb-4 md:mb-8" v-if="user">

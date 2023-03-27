@@ -63,7 +63,7 @@ const restore = () => {
             <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full" :label="__('Owner')">
               <option v-for="moderator in playlist.moderators" :value="moderator.id">{{ moderator.name }}</option>
             </select-input>
-            <small>{{ __('Transfer the playlist management to a moderator.') }}</small>
+            <small>{{ __('Transfer the playlist management to a moderator') }}</small>
           </form>
           <template #footer>
             <button v-if="!playlist.deleted_at" class="text-sm text-red-500 hover:underline" tabindex="-1" type="button" @click="destroy">{{ __('Delete') }}</button>
@@ -74,7 +74,7 @@ const restore = () => {
         <RoomsList :playlist="playlist" />
       </div>
       <div class="flex-1">
-        <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore">{{ __('This playlist has been deleted.') }}</trashed-message>
+        <trashed-message v-if="playlist.deleted_at" class="mb-6" @restore="restore">{{ __('This playlist has been deleted') }}</trashed-message>
 
         <TracksManager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
       </div>

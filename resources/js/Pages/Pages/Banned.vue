@@ -22,12 +22,12 @@ defineProps({
       <div class="prose prose-invert" v-if="ban">
         <p><b>{{ __('Reason for ban:') }}</b><br />{{ ban.comment }}</p>
         <p><b>{{ __('The eviction from the site ends on:') }}</b> <br />{{ ban.expired_at }}</p>
-        <Tip class="text-orange-500">{{ __('In some cases, a report can be made to the relevant authorities.') }}</Tip>
-        <Tip class="text-orange-500">{{ __('You can always access your account management to comply with data protection rules, but in case of reporting we reserve the right to retain evidence as provided by law.') }}</Tip>
+        <Tip class="text-orange-500">{{ __('In some cases, a report can be made to the relevant authorities') }}</Tip>
+        <Tip class="text-orange-500">{{ __('You can always access your account management to comply with data protection rules, but in case of reporting we reserve the right to retain evidence as provided by law') }}</Tip>
       </div>
       <div class="prose prose-invert" v-else>
-        <p>{{ __('The IP address you are browsing from has been blocked.') }}</p>
-        <Tip class="text-orange-500">{{ __('The IP address is blocked because a user with the same address was banned or suspicious activity was detected on that IP.') }}</Tip>
+        <p>{{ __('The IP address you are browsing from has been blocked') }}</p>
+        <Tip class="text-orange-500">{{ __('The IP address is blocked because a user with the same address was banned or suspicious activity was detected on that IP') }}</Tip>
       </div>
     </Card>
   </AppLayout>

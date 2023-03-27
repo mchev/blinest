@@ -46,7 +46,7 @@ const restore = () => {
         {{ form.name }}
       </h1>
     </div>
-    <trashed-message v-if="team.deleted_at" class="mb-6" @restore="restore">{{ __('This team has been deleted.') }}</trashed-message>
+    <trashed-message v-if="team.deleted_at" class="mb-6" @restore="restore">{{ __('This team has been deleted') }}</trashed-message>
     <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
       <form @submit.prevent="update">
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">

@@ -56,7 +56,7 @@ class PageController extends Controller
             'revised_at' => now(),
         ]);
 
-        return redirect()->route('admin.pages.edit', $page)->with('success', __('Page created.'));
+        return redirect()->route('admin.pages.edit', $page)->with('success', __('Page created'));
     }
 
     /**
@@ -94,7 +94,7 @@ class PageController extends Controller
             'revised_at' => now(),
         ]);
 
-        return redirect()->route('admin.pages.edit', $newPage)->with('success', __('Page updated.'));
+        return redirect()->route('admin.pages.edit', $newPage)->with('success', __('Page updated'));
     }
 
     /**
@@ -107,6 +107,6 @@ class PageController extends Controller
     {
         $page->delete();
 
-        return redirect()->route('admin.pages.index')->with('success', __('Page deleted.'));
+        return redirect()->route('admin.pages.index')->with('success', __('Page deleted'));
     }
 }

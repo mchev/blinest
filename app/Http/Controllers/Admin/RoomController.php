@@ -87,7 +87,7 @@ class RoomController extends AdminController
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
         ]);
 
-        return Redirect::route('admin.rooms.edit', $room)->with('success', __('Room created.'));
+        return Redirect::route('admin.rooms.edit', $room)->with('success', __('Room created'));
     }
 
     public function edit(Room $room)
@@ -133,7 +133,7 @@ class RoomController extends AdminController
             $room->update(['password' => Request::get('password')]);
         }
 
-        return Redirect::back()->with('success', __('Room updated.'));
+        return Redirect::back()->with('success', __('Room updated'));
     }
 
     public function destroy(Room $room)
@@ -141,13 +141,13 @@ class RoomController extends AdminController
         $room->deletePhoto();
         $room->delete();
 
-        return Redirect::back()->with('success', __('Room deleted.'));
+        return Redirect::back()->with('success', __('Room deleted'));
     }
 
     public function restore(Room $room)
     {
         $room->restore();
 
-        return Redirect::back()->with('success', __('Room restored.'));
+        return Redirect::back()->with('success', __('Room restored'));
     }
 }

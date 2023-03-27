@@ -52,7 +52,7 @@ class FAQController extends Controller
 
         $faq = FAQ::create($validated);
 
-        return redirect()->route('admin.faqs.edit', $faq)->with('success', __('FAQ created.'));
+        return redirect()->route('admin.faqs.edit', $faq)->with('success', __('FAQ created'));
     }
 
     /**
@@ -85,7 +85,7 @@ class FAQController extends Controller
 
         $faq->update($validated);
 
-        return redirect()->route('admin.faqs.edit', $faq)->with('success', __('FAQ updated.'));
+        return redirect()->route('admin.faqs.edit', $faq)->with('success', __('FAQ updated'));
     }
 
     /**
@@ -98,6 +98,6 @@ class FAQController extends Controller
     {
         $faq->delete();
 
-        return redirect()->route('admin.faqs.index')->with('success', __('FAQ deleted.'));
+        return redirect()->route('admin.faqs.index')->with('success', __('FAQ deleted'));
     }
 }

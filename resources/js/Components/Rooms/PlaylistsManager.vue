@@ -67,8 +67,8 @@ const detach = (playlist) => {
     </template>
 
     <Tip v-if="!room.playlists.length">
-      {{ __('The room must be associated with one or more playlists to work.') }}<br />
-      {{ __('It is possible to use the official Blinest playlists or to create your own playlists.') }}
+      {{ __('The room must be associated with one or more playlists to work') }}<br />
+      {{ __('It is possible to use the official Blinest playlists or to create your own playlists') }}
     </Tip>
 
     <ul v-if="room.playlists && room.playlists.length">

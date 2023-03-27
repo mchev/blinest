@@ -16,7 +16,7 @@ class PlaylistModeratorController extends Controller
             return redirect()->back();
         }
 
-        abort(403, __('Unauthorized action.'));
+        abort(403, __('Unauthorized action'));
     }
 
     public function detach(Request $request, Playlist $playlist)
@@ -27,6 +27,6 @@ class PlaylistModeratorController extends Controller
             return redirect()->back();
         }
 
-        abort(403, __('Unauthorized action.'));
+        abort(403, __('Unauthorized action'));
     }
 }

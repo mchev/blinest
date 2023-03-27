@@ -112,7 +112,7 @@ const reset = () => {
             </td>
           </tr>
           <tr v-if="rooms && rooms.data.length === 0">
-            <td class="border-t px-2 py-4" colspan="6">{{ __('No rooms found.') }}</td>
+            <td class="border-t px-2 py-4" colspan="6">{{ __('No rooms found') }}</td>
           </tr>
         </table>
       </div>

@@ -80,7 +80,7 @@ class UserController extends Controller
                 $user->update(['password' => Hash::make(Request::get('password'))]);
             }
 
-            return Redirect::back()->with('success', __('Information updated.'));
+            return Redirect::back()->with('success', __('Information updated'));
         }
     }
 
@@ -95,7 +95,7 @@ class UserController extends Controller
 
             return redirect('login');
         } else {
-            abort(403, __('Unauthorized action.'));
+            abort(403, __('Unauthorized action'));
         }
     }
 

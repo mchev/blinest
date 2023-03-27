@@ -26,7 +26,7 @@ const send = () => {
         <template #header>
           <h3 class="text-xl font-bold">{{ __('Send a message to') }} Blinest</h3>
         </template>
-        <Tip class="mb-2">{{ __('For any request to add or modify tracks in public playlists, please contact the moderators directly.') }}</Tip>
+        <Tip class="mb-2">{{ __('For any request to add or modify tracks in public playlists, please contact the moderators directly') }}</Tip>
         <Tip
           ><p>
             {{ __('To report a bug or suggest a site improvement, please use the following link:') }}&nbsp;<a class="underline" target="_blank" href="https://github.com/mchev/blinest/issues/new">{{ __('Report a bug') }}</a>

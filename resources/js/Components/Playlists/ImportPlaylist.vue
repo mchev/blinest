@@ -64,13 +64,13 @@ const importPlaylist = () => {
       <!-- Step 1 -->
       <Card class="shadow-none" v-if="step === 1">
         <form @submit.prevent="checkPlaylist" class="flex flex-col gap-4">
-          <Tip>{{ __('Only public playlists can be imported') }}<br />{{ __('Tracks that cannot be read by the site will not be imported.') }}</Tip>
+          <Tip>{{ __('Only public playlists can be imported') }}<br />{{ __('Tracks that cannot be read by the site will not be imported') }}</Tip>
           <SelectInput v-model="checkForm.provider" :error="checkForm.provider.error" :label="__('Playlist source')" required>
             <option v-for="provider in providers" :value="provider">{{ provider }}</option>
           </SelectInput>
           <div v-if="checkForm.provider != 'Blinest likes'">
             <TextInput v-model="checkForm.playlist_id" :error="checkForm.errors.playlist_id" type="text" :label="__('Playlist ID')" required />
-            <small>{{ __('You can find the ID of the playlist in the address bar of your browser.') }}</small><br />
+            <small>{{ __('You can find the ID of the playlist in the address bar of your browser') }}</small><br />
             <small v-show="checkForm.provider === 'Spotify'">{{ __('Spotify ID example: https://open.spotify.com/playlist/') }}<span class="font-bold underline">37i9dQZF1DXcBWIGoYBM5M</span></small>
             <small v-show="checkForm.provider === 'Deezer'">{{ __('Deezer ID example: https://www.deezer.com/fr/playlist/') }}<span class="font-bold underline">53362031</span></small>
           </div>
