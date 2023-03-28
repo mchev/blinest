@@ -67,7 +67,7 @@ class ContactsTest extends TestCase
                     ->where('city', 'Murphyland')
                     ->where('deleted_at', null)
                     ->has('organization', fn (Assert $assert) => $assert
-                        ->where('name', 'Example Organization Inc')
+                        ->where('name', 'Example Organization Inc.')
                     )
                 )
                 ->has('contacts.data.1', fn (Assert $assert) => $assert
@@ -77,7 +77,7 @@ class ContactsTest extends TestCase
                     ->where('city', 'Woodstock')
                     ->where('deleted_at', null)
                     ->has('organization', fn (Assert $assert) => $assert
-                        ->where('name', 'Example Organization Inc')
+                        ->where('name', 'Example Organization Inc.')
                     )
                 )
             );
@@ -98,7 +98,7 @@ class ContactsTest extends TestCase
                     ->where('city', 'Murphyland')
                     ->where('deleted_at', null)
                     ->has('organization', fn (Assert $assert) => $assert
-                        ->where('name', 'Example Organization Inc')
+                        ->where('name', 'Example Organization Inc.')
                     )
                 )
             );
