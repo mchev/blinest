@@ -20,13 +20,11 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * Register any application authentication / authorization services.
      */
-    public function boot(): void
+    public function boot(User $user): void
     {
-        Gate::define('changeRoomPicture', function (User $user) {
-            return ($user->created_at < now()->subMonths(3) && $user->totalScores()->sum('score') > 2000) ? true : false;
-        });
-        Gate::define('changeTeamPicture', function (User $user) {
-            return ($user->created_at < now()->subMonths(3) && $user->totalScores()->sum('score') > 2000) ? true : false;
-        });
+        $condition = ($user->created_at < now()->subMonths(3) && $user->totalScores()->sum('score') > 2000) ? true : false;
+
+        Gate::define('changeRoomPicture', fn () => $condition);
+        Gate::define('changeTeamPicture', fn () => $condition);
     }
 }

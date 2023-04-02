@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Room;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
@@ -28,11 +29,13 @@ class HomeController extends Controller
             ]);
         }
 
-        $topRooms = Room::isPublic()
-            ->withCount('rounds')
-            ->orderByDesc('rounds_count')
-            ->limit(5)
-            ->get();
+        $topRooms = Cache::remember('homepage-toprooms', now()->addMinutes(60), function () {
+            return Room::isPublic()
+                ->withCount('rounds')
+                ->orderByDesc('rounds_count')
+                ->limit(5)
+                ->get();
+        });
 
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
@@ -66,10 +69,12 @@ class HomeController extends Controller
                 ->values()
                 ->all(),
             'user_rooms' => auth()->user()
-                ? auth()->user()->moderatedRooms()
-                    ->isPrivate()
-                    ->with('owner')
-                    ->get()
+                ? Cache::remember('homepage-moderatedrooms', now()->addMinutes(10), function () {
+                    return auth()->user()->moderatedRooms()
+                        ->isPrivate()
+                        ->with('owner')
+                        ->get();
+                })
                 : null,
         ]);
     }

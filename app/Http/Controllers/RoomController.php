@@ -107,6 +107,8 @@ class RoomController extends Controller
             'category_id' => Request::get('category_id'),
         ]);
 
+        $room->moderators()->attach(auth()->user());
+
         return Redirect::route('rooms.edit', $room->id)->with('success', __('Room created'));
     }
 
