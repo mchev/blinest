@@ -126,7 +126,7 @@ class TeamController extends Controller
                 'team_id' => null,
             ]);
 
-            return redirect()->route('teams.index')->with('success', __('You have left the team'). ' ' .$team->name);
+            return redirect()->route('teams.index')->with('success', __('You have left the team').' '.$team->name);
         } else {
             return redirect()->back()->with('error', __('You are not part of this team'));
         }

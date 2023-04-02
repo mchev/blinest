@@ -130,39 +130,48 @@ class Room extends Model
             ->orderBy('total', 'DESC');
     }
 
-    public function totalUsersScores()
+    public function weekUsersScores()
     {
-        return $this->hasMany(TotalScore::class, 'room_id')->byUsers()->with('user')->orderByDesc('score');
-    }
-
-    public function totalTeamsScores()
-    {
-        return $this->hasMany(TotalScore::class, 'room_id')->byTeams()->with('team')->orderByDesc('score');
-    }
-
-    public function teamsScores()
-    {
-        return $this->totalTeamsScores()->limit(10);
-    }
-
-    public function weekScores()
-    {
-        return $this->scores()
+        return $this->hasManyThrough(Score::class, Round::class)
+            ->selectRaw('MAX(scores.created_at) as max_created_at, scores.user_id, SUM(scores.score) as total')
             ->where('scores.created_at', '>=', now()->subDays(7))
+            ->with('user')
+            ->groupBy('user_id')
+            ->orderByDesc('total')
             ->limit(10);
     }
 
-    public function monthScores()
+    public function monthUsersScores()
     {
-        return $this->scores()
+        return $this->hasManyThrough(Score::class, Round::class)
+            ->selectRaw('MAX(scores.created_at) as max_created_at, scores.user_id, SUM(scores.score) as total')
             ->where('scores.created_at', '>=', now()->subDays(30))
+            ->with('user')
+            ->groupBy('user_id')
+            ->orderByDesc('total')
             ->limit(10);
     }
 
-    public function lifetimeScores()
+    public function lifetimeUsersScores(int $limit = 10)
     {
-        return $this->totalUsersScores()
-            ->limit(10);
+        return $this->hasMany(TotalScore::class, 'room_id')
+            ->byUsers()
+            ->selectRaw('SUM(score) AS total, totalscorable_id')
+            ->groupBy('totalscorable_id')
+            ->orderByDesc('total')
+            ->with('user')
+            ->limit($limit);
+    }
+
+    public function lifetimeTeamsScores(int $limit = 10)
+    {
+        return $this->hasMany(TotalScore::class, 'room_id')
+            ->byTeams()
+            ->selectRaw('SUM(score) AS total, totalscorable_id')
+            ->groupBy('totalscorable_id')
+            ->orderByDesc('total')
+            ->with('team')
+            ->limit($limit);
     }
 
     public function scopeIsPublic($query)

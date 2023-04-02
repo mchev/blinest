@@ -51,17 +51,19 @@ class RankingController extends Controller
     // Room Podium
     public function roomScores(Room $room)
     {
-        return response()->json([
-            'week' => $room->weekScores,
-            'month' => $room->monthScores,
-            'lifetime' => $room->lifetimeScores,
-            'teams' => $room->teamsScores,
+        $scores = Cache::remember($room->slug.'-scores', now()->addMinutes(10), fn () => [
+            'week' => $room->weekUsersScores,
+            //'month' => $room->monthUsersScores,
+            'lifetime' => $room->lifetimeUsersScores,
+            'teams' => $room->lifetimeTeamsScores,
             'user' => [
                 'week' => Auth::user()->weekScoreByRoom($room)->first(),
-                'month' => Auth::user()->monthScoreByRoom($room)->first(),
+                //'month' => Auth::user()->monthScoreByRoom($room)->first(),
                 'lifetime' => TotalScore::byUsers()->where('room_id', $room->id)->where('totalscorable_id', Auth::user()->id)->first(),
                 'team' => Auth::user()?->team?->scoreByRoom($room)->first(),
             ],
-        ], 200);
+        ]);
+
+        return response()->json($scores);
     }
 }

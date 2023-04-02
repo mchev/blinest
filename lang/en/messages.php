@@ -29,7 +29,7 @@ return [
         'Magnificent, you are truly talented!',
         'Great, you really have rhythm in your blood!',
         'Impressive, you are a true music prodigy!',
-        'Exceptional, you have a gift for music!'
+        'Exceptional, you have a gift for music!',
     ],
 
     'almost' => [
@@ -52,7 +52,7 @@ return [
         'The answer is almost within reach!',
         'You are very close to the answer!',
         'You have almost succeeded, keep it up!',
-        'You are approaching the solution!'
+        'You are approaching the solution!',
     ],
 
     'bad' => [
@@ -75,10 +75,10 @@ return [
         'Don\'t rush, let\'s take the time to think.',
         'You can really do better.',
         'I\'m sure you have the potential to do better.',
-        "Do you have any other ideas to share?",
+        'Do you have any other ideas to share?',
         'Every fall is an opportunity to rise stronger.',
         "I wouldn\'t have done it like that...",
-        'There are surely other ideas to explore.'
+        'There are surely other ideas to explore.',
     ],
 
 ];

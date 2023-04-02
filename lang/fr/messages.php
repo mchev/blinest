@@ -29,7 +29,7 @@ return [
         'Magnifique, tu es vraiment talentueux !',
         'Super, tu as vraiment le rythme dans la peau !',
         'Impressionnant, tu es un vrai prodige de la musique !',
-        'Exceptionnel, tu as un don pour la musique !'
+        'Exceptionnel, tu as un don pour la musique !',
     ],
 
     'almost' => [
@@ -52,7 +52,7 @@ return [
         'La réponse est presque à portée de main !',
         'Tu es très proche de la réponse !',
         'Tu as presque réussi, continue comme ça !',
-        'Tu approches de la solution !'
+        'Tu approches de la solution !',
     ],
 
     'bad' => [
@@ -78,7 +78,7 @@ return [
         "As-tu d'autres idées à partager ?",
         'Chaque chute est une opportunité pour se relever plus fort.',
         "J'aurais pas fait ça comme ça...",
-        'Il y a sûrement d’autres idées à explorer.'
+        'Il y a sûrement d’autres idées à explorer.',
     ],
 
 ];

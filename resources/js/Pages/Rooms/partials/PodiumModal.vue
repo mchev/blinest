@@ -35,12 +35,12 @@ onMounted(() => {
       <div v-if="loading" class="flex w-full items-center justify-center p-12">
         <Spinner />
       </div>
-      <div v-else class="grid grid-cols-1 xl:grid-cols-2">
+      <div v-else class="grid grid-cols-1 xl:grid-cols-3">
         <Card class="m-4">
           <template #header>
             <div class="flex w-full items-center justify-between">
               <h3 class="font-bold">{{ __('All-time') }}</h3>
-              <span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span v-if="scores.user.lifetime.score" class="font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <table class="w-full">
@@ -53,9 +53,9 @@ onMounted(() => {
             </thead>
             <tbody>
               <tr v-for="(score, index) in scores.lifetime">
-                <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2">{{ score.score }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
+                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
+                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
+                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
           </table>
@@ -64,7 +64,7 @@ onMounted(() => {
           <template #header>
             <div class="flex w-full items-center justify-between">
               <h3 class="font-bold">{{ __('Teams') }}</h3>
-              <span v-if="scores.user.team" class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.team.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span v-if="scores.user.team" class="font-bold text-white">{{ scores.user.team.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <table class="w-full">
@@ -77,9 +77,9 @@ onMounted(() => {
             </thead>
             <tbody>
               <tr v-for="(score, index) in scores.teams">
-                <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2"><Link :href="route('teams.show', score.team)">{{ score.team.name }}</Link></td>
-                <td class="border-b p-2">{{ score.score }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
+                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
+                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('teams.show', score.team)">{{ score.team.name }}</Link></td>
+                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
           </table>
@@ -88,7 +88,7 @@ onMounted(() => {
           <template #header>
             <div class="flex w-full items-center justify-between">
               <h3 class="font-bold">{{ __('Last 7 days') }}</h3>
-              <span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.week.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span v-if="scores.user.week.total" class="font-bold text-white">{{ scores.user.week.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <table class="w-full">
@@ -101,18 +101,18 @@ onMounted(() => {
             </thead>
             <tbody>
               <tr v-for="(score, index) in scores.week">
-                <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
+                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
+                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
+                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
           </table>
         </Card>
-        <Card class="m-4">
+<!--         <Card class="m-4">
           <template #header>
             <div class="flex w-full items-center justify-between">
               <h3 class="font-bold">{{ __('Last 30 days') }}</h3>
-              <span class="rounded bg-teal-500 p-1 font-bold text-white">{{ scores.user.month.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span v-if="scores.user.month.total" class="font-bold text-white">{{ scores.user.month.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <table class="w-full">
@@ -125,13 +125,13 @@ onMounted(() => {
             </thead>
             <tbody>
               <tr v-for="(score, index) in scores.month">
-                <td class="border-b p-2">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
+                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
+                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
+                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
               </tr>
             </tbody>
           </table>
-        </Card>
+        </Card> -->
       </div>
     </div>
   </Modal>
