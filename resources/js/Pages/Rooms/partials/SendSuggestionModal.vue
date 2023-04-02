@@ -78,7 +78,7 @@ const close = () => {
             </div>
           </li>
         </ul>
-        <Tip>{{ __('No need to send suggestions separately. Gather them in a single suggestion, to give better readability for moderators.') }}</Tip>
+        <Tip>{{ __('No need to send suggestions separately. Gather them in a single suggestion, to give better readability for moderators') }}</Tip>
       </form>
       <template #footer>
         <div class="ml-auto flex items-center">

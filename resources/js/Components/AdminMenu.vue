@@ -14,27 +14,27 @@ const isUrl = (...urls) => {
   <div class="text-neutral-100">
     <div class="mb-6">
       <Link class="group" :class="isUrl('dashboard') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.dashboard')">
-        <div :class="isUrl('dashboard') ? 'font-bold' : 'font-normal'">Dashboard</div>
+        <div :class="isUrl('dashboard') ? 'font-bold' : 'font-normal'">{{ __('Dashboard') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('pages') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.pages.index')">
-        <div :class="isUrl('pages') ? 'font-bold' : 'font-normal'">Pages</div>
+        <div :class="isUrl('pages') ? 'font-bold' : 'font-normal'">{{ __('Pages') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('faqs') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.faqs.index')">
-        <div :class="isUrl('faqs') ? 'font-bold' : 'font-normal'">FAQ</div>
+        <div :class="isUrl('faqs') ? 'font-bold' : 'font-normal'">{{ __('FAQ') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('users') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.users')">
-        <div :class="isUrl('users') ? 'font-bold' : 'font-normal'">Users</div>
+        <div :class="isUrl('users') ? 'font-bold' : 'font-normal'">{{ __('Users') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('teams') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.teams')">
-        <div :class="isUrl('teams') ? 'font-bold' : 'font-normal'">Teams</div>
+        <div :class="isUrl('teams') ? 'font-bold' : 'font-normal'">{{ __('Teams') }}</div>
       </Link>
     </div>
     <div class="mb-6">
@@ -44,17 +44,17 @@ const isUrl = (...urls) => {
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('categories') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.categories.index')">
-        <div :class="isUrl('categories') ? 'font-bold' : 'font-normal'">Categories</div>
+        <div :class="isUrl('categories') ? 'font-bold' : 'font-normal'">{{ __('Categories') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('rooms') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.rooms')">
-        <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">Rooms</div>
+        <div :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">{{ __('Rooms') }}</div>
       </Link>
     </div>
     <div class="mb-6">
       <Link class="group" :class="isUrl('answer_types') ? 'btn-primary' : 'btn-secondary'" :href="route('admin.answer_types.index')">
-        <div :class="isUrl('answer_types') ? 'font-bold' : 'font-normal'">Answer Types</div>
+        <div :class="isUrl('answer_types') ? 'font-bold' : 'font-normal'">{{ __('Answer Types') }}</div>
       </Link>
     </div>
   </div>

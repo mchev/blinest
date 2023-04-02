@@ -30,7 +30,7 @@ class TeamController extends Controller
     public function create()
     {
         return Auth::user()->hasTeam()
-            ? redirect()->back()->with('error', __('You are already part of a team.'))
+            ? redirect()->back()->with('error', __('You are already part of a team'))
             : Inertia::render('Teams/Create');
     }
 
@@ -41,10 +41,10 @@ class TeamController extends Controller
                 'user_id' => $user->id,
             ]);
 
-            return redirect()->route('teams.show', $team)->with('success', __('The owner of the team has been updated.'));
+            return redirect()->route('teams.show', $team)->with('success', __('The owner of the team has been updated'));
         }
 
-        return abort(403, __('Unauthorized action.'));
+        return abort(403, __('Unauthorized action'));
     }
 
     public function removeMember(Team $team, User $user)
@@ -56,13 +56,13 @@ class TeamController extends Controller
             return redirect()->route('teams.show', $team)->with('success', __('The member is not part of the team anymore'));
         }
 
-        return abort(403, __('Unauthorized action.'));
+        return abort(403, __('Unauthorized action'));
     }
 
     public function store(Request $request)
     {
         if (Auth::user()->hasTeam()) {
-            redirect()->back()->with('error', __('You are already part of a team.'));
+            redirect()->back()->with('error', __('You are already part of a team'));
         }
 
         $request->validate([
@@ -112,13 +112,13 @@ class TeamController extends Controller
             return redirect()->back()->with('success', __('Updated'));
         }
 
-        return redirect()->back()->with('error', __('This is not your team.'));
+        return redirect()->back()->with('error', __('This is not your team'));
     }
 
     public function leave(Team $team)
     {
         if (Auth::user()->id === $team->user_id) {
-            return redirect()->back()->with('error', __('Impossible to leave your own team. You must transfer ownership to another member first.'));
+            return redirect()->back()->with('error', __('Impossible to leave your own team. You must transfer ownership to another member first'));
         }
 
         if ($team->members()->where('id', Auth::user()->id)->exists()) {
@@ -126,9 +126,9 @@ class TeamController extends Controller
                 'team_id' => null,
             ]);
 
-            return redirect()->route('teams.index')->with('success', __('You have left the team ').$team->name);
+            return redirect()->route('teams.index')->with('success', __('You have left the team'). ' ' .$team->name);
         } else {
-            return redirect()->back()->with('error', __('You are not part of this team.'));
+            return redirect()->back()->with('error', __('You are not part of this team'));
         }
     }
 }

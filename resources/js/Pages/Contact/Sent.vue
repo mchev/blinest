@@ -22,7 +22,7 @@ const send = () => {
         <template #header>
           <h3 class="text-xl font-bold">{{ __('Message sent') }}!</h3>
         </template>
-        <p class="mb-2">{{ __('Thank you, the message has been successfully sent.') }}</p>
+        <p class="mb-2">{{ __('Thank you, the message has been successfully sent') }}</p>
         <template #footer>
           <Link class="btn-primary" :href="route('home')">{{ __('Return to Homepage') }}</Link>
         </template>

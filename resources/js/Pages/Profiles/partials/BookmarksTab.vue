@@ -21,7 +21,7 @@ const props = defineProps({
           </td>
         </tr>
         <tr v-if="user.bookmarks.total === 0">
-          <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No bookmarks found.') }}</td>
+          <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No bookmarks found') }}</td>
         </tr>
       </tbody>
     </table>

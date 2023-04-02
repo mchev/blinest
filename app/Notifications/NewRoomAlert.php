@@ -62,8 +62,8 @@ class NewRoomAlert extends Notification
     public function toArray($notifiable)
     {
         $body = $this->message
-            ? $this->user->name.__(' reports a problem on the chat ').$this->room->name.' : '.$this->message
-            : $this->user->name.__(' reports a problem on the chat ').$this->room->name;
+            ? $this->user->name. ' ' .__('reports a problem on the chat'). ' ' .$this->room->name.' : '.$this->message
+            : $this->user->name. ' ' .__('reports a problem on the chat'). ' ' .$this->room->name;
 
         return [
             'room' => $this->room,

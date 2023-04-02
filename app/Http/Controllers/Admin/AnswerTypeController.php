@@ -54,7 +54,7 @@ class AnswerTypeController extends Controller
             'svg_icon' => Request::get('svg_icon'),
         ]);
 
-        return redirect()->route('admin.answer_types.index')->with('success', __('AnswerType created.'));
+        return redirect()->route('admin.answer_types.index')->with('success', __('AnswerType created'));
     }
 
     /**
@@ -85,7 +85,7 @@ class AnswerTypeController extends Controller
             'svg_icon' => ['nullable'],
         ]));
 
-        return redirect()->back()->with('success', __('AnswerType updated.'));
+        return redirect()->back()->with('success', __('AnswerType updated'));
     }
 
     /**
@@ -98,6 +98,6 @@ class AnswerTypeController extends Controller
     {
         $answerType->delete();
 
-        return redirect()->route('admin.answer_types.index')->with('success', __('AnswerType deleted.'));
+        return redirect()->route('admin.answer_types.index')->with('success', __('AnswerType deleted'));
     }
 }

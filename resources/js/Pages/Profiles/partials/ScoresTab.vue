@@ -34,7 +34,7 @@ const props = defineProps({
           </td>
         </tr>
         <tr v-if="user.scores.total === 0">
-          <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No scores found.') }}</td>
+          <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No scores found') }}</td>
         </tr>
       </tbody>
     </table>

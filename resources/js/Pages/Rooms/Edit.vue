@@ -89,7 +89,7 @@ onUnmounted(() => {
                 </select-input>
                 <file-input v-if="room.is_pro || room.is_public || user.can.changeRoomPicture" v-model="form.photo" :error="form.errors.photo" class="w-full" type="file" accept="image/*" :label="__('Photo')" />
                 <img v-if="room.photo" :src="room.photo" class="rounded max-h-30 max-w-full" :alt="room.name">
-                <Tip v-if="!room.is_pro && !room.is_public && !user.can.changeRoomPicture" class="bg-red-800 text-white"> {{ __('In order to change room picture, you need to have a minimum of three months of seniority and a total score above two thousand.') }} </Tip>
+                <Tip v-if="!room.is_pro && !room.is_public && !user.can.changeRoomPicture" class="bg-red-800 text-white"> {{ __('In order to change room picture, you need to have a minimum of three months of seniority and a total score above two thousand') }} </Tip>
               </div>
             </div>
           </form>

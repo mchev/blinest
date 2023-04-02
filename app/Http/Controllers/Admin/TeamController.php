@@ -26,7 +26,7 @@ class TeamController extends AdminController
     public function create()
     {
         if (Auth::user()->ownsTeam()) {
-            return redirect()->back()->with('error', __('You already own a team.'));
+            return redirect()->back()->with('error', __('You already own a team'));
         }
 
         return Inertia::render('Admin/Teams/Create');
@@ -46,7 +46,7 @@ class TeamController extends AdminController
             'team_id' => $team->id,
         ]);
 
-        return Redirect::route('admin.teams')->with('success', __('Team created.'));
+        return Redirect::route('admin.teams')->with('success', __('Team created'));
     }
 
     public function edit(Team $team)
@@ -77,7 +77,7 @@ class TeamController extends AdminController
             $team->updatePhoto(Request::file('photo'));
         }
 
-        return Redirect::back()->with('success', __('Team updated.'));
+        return Redirect::back()->with('success', __('Team updated'));
     }
 
     public function destroy(Team $team)
@@ -85,13 +85,13 @@ class TeamController extends AdminController
         $team->deletePhoto();
         $team->delete();
 
-        return Redirect::back()->with('success', __('Team deleted.'));
+        return Redirect::back()->with('success', __('Team deleted'));
     }
 
     public function restore(Team $team)
     {
         $team->restore();
 
-        return Redirect::back()->with('success', __('Team restored.'));
+        return Redirect::back()->with('success', __('Team restored'));
     }
 }

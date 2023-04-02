@@ -58,7 +58,7 @@ class UserController extends AdminController
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('users') : null,
         ]);
 
-        return Redirect::route('admin.users')->with('success', __('User created.'));
+        return Redirect::route('admin.users')->with('success', __('User created'));
     }
 
     public function edit(User $user)
@@ -79,7 +79,7 @@ class UserController extends AdminController
     public function update(User $user)
     {
         if (App::environment('demo') && $user->isDemoUser()) {
-            return Redirect::back()->with('error', __('Updating the demo user is not allowed.'));
+            return Redirect::back()->with('error', __('Updating the demo user is not allowed'));
         }
 
         Request::validate([
@@ -101,24 +101,24 @@ class UserController extends AdminController
             $user->update(['password' => Request::get('password')]);
         }
 
-        return Redirect::back()->with('success', __('User updated.'));
+        return Redirect::back()->with('success', __('User updated'));
     }
 
     public function destroy(User $user)
     {
         if (App::environment('demo') && $user->isDemoUser()) {
-            return Redirect::back()->with('error', __('Deleting the demo user is not allowed.'));
+            return Redirect::back()->with('error', __('Deleting the demo user is not allowed'));
         }
 
         $user->delete();
 
-        return Redirect::back()->with('success', __('User deleted.'));
+        return Redirect::back()->with('success', __('User deleted'));
     }
 
     public function restore(User $user)
     {
         $user->restore();
 
-        return Redirect::back()->with('success', __('User restored.'));
+        return Redirect::back()->with('success', __('User restored'));
     }
 }

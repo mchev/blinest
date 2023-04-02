@@ -64,13 +64,13 @@ const importPlaylist = () => {
       <!-- Step 1 -->
       <Card class="shadow-none" v-if="step === 1">
         <form @submit.prevent="checkPlaylist" class="flex flex-col gap-4">
-          <Tip>{{ __('Only public playlists can be imported') }}<br />{{ __('Tracks that cannot be read by the site will not be imported.') }}</Tip>
+          <Tip>{{ __('Only public playlists can be imported') }}<br />{{ __('Tracks that cannot be read by the site will not be imported') }}</Tip>
           <SelectInput v-model="checkForm.provider" :error="checkForm.provider.error" :label="__('Playlist source')" required>
             <option v-for="provider in providers" :value="provider">{{ provider }}</option>
           </SelectInput>
           <div v-if="checkForm.provider != 'Blinest likes'">
             <TextInput v-model="checkForm.playlist_id" :error="checkForm.errors.playlist_id" type="text" :label="__('Playlist ID')" required />
-            <small>{{ __('You can find the ID of the playlist in the address bar of your browser.') }}</small><br />
+            <small>{{ __('You can find the ID of the playlist in the address bar of your browser') }}</small><br />
             <small v-show="checkForm.provider === 'Spotify'">{{ __('Spotify ID example: https://open.spotify.com/playlist/') }}<span class="font-bold underline">37i9dQZF1DXcBWIGoYBM5M</span></small>
             <small v-show="checkForm.provider === 'Deezer'">{{ __('Deezer ID example: https://www.deezer.com/fr/playlist/') }}<span class="font-bold underline">53362031</span></small>
           </div>
@@ -95,7 +95,7 @@ const importPlaylist = () => {
           <li v-if="pp.id"><b>{{ __('Playlist ID:') }}</b> {{ pp.id }}</li>
           <li><b>{{ __('Tracks to be imported:') }}</b> {{ pp.tracks_count }}</li>
         </ul>
-        <Tip>{{ __('Duplicated tracks will not be imported.') }}</Tip>
+        <Tip>{{ __('Duplicated tracks will not be imported') }}</Tip>
         <div class="mt-4 flex items-center justify-end gap-2">
           <Link class="btn-secondary btn-sm" :href="route('playlists.edit', playlist.id)">{{ __('Cancel') }}</Link>
           <LoadingButton class="btn-primary btn-sm" @click="importPlaylist" :loading="checkForm.processing">{{ __('Import') }}</LoadingButton>

@@ -34,12 +34,12 @@ const reset = () => {
 <template>
   <Head title="Pages" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">Pages</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Pages') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" href="/admin/pages/create">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;Page</span>
+        <span class="hidden md:inline">&nbsp;{{ __('Page') }}</span>
       </Link>
     </div>
     <Card>
@@ -71,7 +71,7 @@ const reset = () => {
               </td>
             </tr>
             <tr v-if="pages.data.length === 0">
-              <td class="border-t px-6 py-4" colspan="4">{{ __('No pages found.') }}</td>
+              <td class="border-t px-6 py-4" colspan="4">{{ __('No pages found') }}</td>
             </tr>
           </tbody>
         </table>

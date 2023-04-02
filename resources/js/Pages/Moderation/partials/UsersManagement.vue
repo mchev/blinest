@@ -62,14 +62,14 @@ const userHasBeenBanned = () => {
           <img :src="selectedUser.photo" class="h-10 w-10 rounded-full" :alt="selectedUser.name" />
           {{ selectedUser.name }}
         </div>
-        <span class="text-sm text-neutral-500">{{ __('Registered on  ') }}{{ selectedUser.created_at }}</span>
+        <span class="text-sm text-neutral-500">{{ __('Registered on') }}&nbsp;{{ selectedUser.created_at }}</span>
       </div>
       <div class="mb-4 flex w-full gap-4">
         <div v-if="selectedUser.latest_messages" class="rounded border border-neutral-600 p-2 md:w-1/2">
           <h3 class="mb-2 uppercase">{{ __('Latest messages') }}</h3>
           <ul class="flex flex-col text-xs">
             <li v-for="message in selectedUser.latest_messages" :key="message.id" class="mb-2 flex flex-col">
-              <span class="text-neutral-500">{{ message.time }}{{ __(' on ') }}{{ message.room.name }} : <span v-if="message.deleted_at" class="text-red-500">[Supprimé]</span> [{{ message.reports }} signalements]</span>
+              <span class="text-neutral-500">{{ message.time }}&nbsp;{{ __('on') }}&nbsp;{{ message.room.name }} : <span v-if="message.deleted_at" class="text-red-500">[Supprimé]</span> [{{ message.reports }} signalements]</span>
               <span class="break-word">{{ message.body }}</span>
             </li>
           </ul>
@@ -78,10 +78,10 @@ const userHasBeenBanned = () => {
           <h3 class="mb-2 uppercase">Historique des bans</h3>
           <ul v-if="selectedUser.bans.length" class="my-2 flex flex-col">
             <li v-for="ban in selectedUser.bans" :key="ban.id" class="border-neutral-600-b border-neutral-600-neutral-600 mb-2 flex flex-col border border p-2">
-              <span class="text-xs text-neutral-500">{{ __('Banned by: ') }}{{ ban.banned_by }}</span>
-              <span class="text-xs text-neutral-500">{{ __('On: ') }}{{ ban.created_at }}</span>
-              <span class="text-xs text-neutral-500">{{ __('Reason: ') }}{{ ban.comment }}</span>
-              <span class="text-xs text-neutral-500">{{ __('Expires on: ') }}{{ ban.expired_at }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Banned by:') }}&nbsp;{{ ban.banned_by }}</span>
+              <span class="text-xs text-neutral-500">{{ __('On:') }}&nbsp;{{ ban.created_at }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Reason:') }}&nbsp;{{ ban.comment }}</span>
+              <span class="text-xs text-neutral-500">{{ __('Expires on:') }}&nbsp;{{ ban.expired_at }}</span>
               <!--                   <button class="btn-secondary btn-sm mt-2">Annuler le ban</button>
 		 -->
             </li>

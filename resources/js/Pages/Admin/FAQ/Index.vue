@@ -34,12 +34,12 @@ const reset = () => {
 <template>
   <Head title="FAQ" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">FAQ</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('FAQ') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />
       <Link class="btn-primary" href="/admin/faqs/create">
         <span>Create</span>
-        <span class="hidden md:inline">&nbsp;FAQ</span>
+        <span class="hidden md:inline">&nbsp;{{ __('FAQ') }}</span>
       </Link>
     </div>
     <Card>
