@@ -40,7 +40,7 @@ onMounted(() => {
           <template #header>
             <div class="flex w-full items-center justify-between">
               <h3 class="font-bold">{{ __('All-time') }}</h3>
-              <span v-if="scores.user.lifetime.score" class="font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span v-if="scores.user.lifetime" class="font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </div>
           </template>
           <table class="w-full">
