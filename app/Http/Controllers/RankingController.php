@@ -26,7 +26,8 @@ class RankingController extends Controller
         //         ->get();
         // });
 
-        $bestUsers = TotalScore::query()
+        $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
+            return TotalScore::query()
                 ->with('user')
                 ->select('totalscorable_id', 'room_id')
                 ->selectRaw('SUM(score) as total_score')
@@ -37,6 +38,7 @@ class RankingController extends Controller
                 ->orderByDesc('total_score')
                 ->limit(50)
                 ->get();
+        });
 
         $bestTeams = Cache::remember('bestTeams', now()->addMinutes(10), function () {
             return TotalScore::byTeams()
