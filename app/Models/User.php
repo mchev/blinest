@@ -19,7 +19,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
 
     protected $appends = [
-        'photo',
+        'photo'
     ];
 
     /**

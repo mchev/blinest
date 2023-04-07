@@ -42,6 +42,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request)
     {
+
+        // dd($request->user()->created_at < now()->subMonths(3), floatval($request->user()->totalScores()->sum('score')) > 2000, $request->user()->id);
+
         return array_merge(parent::share($request), [
             'auth' => function () use ($request) {
                 return [
@@ -53,7 +56,7 @@ class HandleInertiaRequests extends Middleware
                         'is_public_moderator' => $request->user()->isPublicModerator(),
                         'team' => $request->user()->team,
                         'notifications' => $request->user()->unreadNotifications,
-                        'can' => Gate::abilities(),
+                        'can' => Gate::forUser($request->user())->abilities(),
                         'pending_requests' => $request->user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
                         'declined_requests' => $request->user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
                     ] : null,
