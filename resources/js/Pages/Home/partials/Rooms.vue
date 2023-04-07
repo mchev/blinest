@@ -15,7 +15,8 @@ const props = defineProps({
 })
 
 const modules = [Navigation, A11y]
-const maxSlides = props.rooms && props.rooms.length < 6 ? props.rooms.length : 6
+const maxSlides = props.rooms && props.rooms.length < 5 ? 3 : 5
+console.log(props.rooms.length)
 </script>
 <template>
   <div v-if="rooms && !is_top_5">

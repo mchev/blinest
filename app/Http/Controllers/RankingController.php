@@ -12,20 +12,31 @@ class RankingController extends Controller
 {
     public function index()
     {
-        $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
-            return TotalScore::byUsers()
-                ->whereHas('user')
+        // $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
+        //     return TotalScore::query()
+        //         ->with('user')
+        //         ->select('totalscorable_id', 'room_id')
+        //         ->selectRaw('SUM(score) as total_score')
+        //         ->join('users', 'users.id', '=', 'total_scores.totalscorable_id')
+        //         ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+        //         ->where('rooms.is_public', true)
+        //         ->groupBy('totalscorable_id')
+        //         ->orderByDesc('total_score')
+        //         ->limit(50)
+        //         ->get();
+        // });
+
+        $bestUsers = TotalScore::query()
+                ->with('user')
                 ->select('totalscorable_id', 'room_id')
                 ->selectRaw('SUM(score) as total_score')
-                ->with('user')
-                ->whereRelation('room', function ($query) {
-                    $query->where('is_public', true);
-                })
+                ->join('users', 'users.id', '=', 'total_scores.totalscorable_id')
+                ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+                ->where('rooms.is_public', true)
                 ->groupBy('totalscorable_id')
                 ->orderByDesc('total_score')
                 ->limit(50)
                 ->get();
-        });
 
         $bestTeams = Cache::remember('bestTeams', now()->addMinutes(10), function () {
             return TotalScore::byTeams()

@@ -19,8 +19,8 @@ class Team extends Model
     public $seats = 8;
 
     protected $appends = [
-        'seats',
         'photo',
+        'seats',
     ];
 
     public function resolveRouteBinding($value, $field = null)

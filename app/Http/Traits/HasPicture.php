@@ -2,6 +2,7 @@
 
 namespace App\Http\Traits;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Image;
@@ -29,12 +30,6 @@ trait HasPicture
                 'photo_path' => $this->getTable().'/'.$filename,
             ])->save();
 
-            // $this->forceFill([
-            //     'photo_path' => $photo->storePublicly(
-            //         $this->getTable(), ['disk' => $this->profilePhotoDisk()]
-            //     ),
-            // ])->save();
-
             if ($previous) {
                 Storage::disk($this->profilePhotoDisk())->delete($previous);
             }
@@ -60,15 +55,17 @@ trait HasPicture
     }
 
     /**
-     * Get the URL to the user's profile photo.
+     * Get the photo.
      *
-     * @return string
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getPhotoAttribute()
+    public function photo(): Attribute
     {
-        return $this->photo_path
+        return Attribute::get(function () {
+            return $this->refresh()->photo_path
                     ? Storage::disk($this->profilePhotoDisk())->url($this->photo_path)
                     : $this->defaultPhotoUrl();
+        });
     }
 
     /**

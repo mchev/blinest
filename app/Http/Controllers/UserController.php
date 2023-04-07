@@ -35,7 +35,7 @@ class UserController extends Controller
                 'playlists' => $user->moderatedPlaylists,
                 'bookmarked_rooms' => $user->bookmarkedRooms()->get(),
                 'total_score' => $user->totalScores()->sum('score'),
-                'scores' => $user->totalScores()->with('room')->paginate(10)->through(fn ($score) => [
+                'scores' => $user->totalScores()->whereHas('room')->with('room')->paginate(10)->through(fn ($score) => [
                     'room_id' => $score->room->id,
                     'room_slug' => $score->room->slug,
                     'name' => $score->room->name,

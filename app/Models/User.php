@@ -18,6 +18,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
 
+    protected $appends = [
+        'photo',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,10 +52,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-    ];
-
-    protected $appends = [
-        'photo',
     ];
 
     public function resolveRouteBinding($value, $field = null)
