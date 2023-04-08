@@ -12,25 +12,12 @@ class RankingController extends Controller
 {
     public function index()
     {
-        // $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
-        //     return TotalScore::query()
-        //         ->with('user')
-        //         ->select('totalscorable_id', 'room_id')
-        //         ->selectRaw('SUM(score) as total_score')
-        //         ->join('users', 'users.id', '=', 'total_scores.totalscorable_id')
-        //         ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
-        //         ->where('rooms.is_public', true)
-        //         ->groupBy('totalscorable_id')
-        //         ->orderByDesc('total_score')
-        //         ->limit(50)
-        //         ->get();
-        // });
-
-        $bestUsers = Cache::remember('bestUsers', now()->addMinutes(10), function () {
+        $top50Users = Cache::remember('top-50-users', now()->addMinutes(10), function () {
             return TotalScore::query()
                 ->with('user')
                 ->select('totalscorable_id', 'room_id')
-                ->selectRaw('SUM(score) as total_score')
+                ->selectRaw('ROUND(SUM(score), 1) as total_score')
+                ->where('totalscorable_type', 'App\Models\User')
                 ->join('users', 'users.id', '=', 'total_scores.totalscorable_id')
                 ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
                 ->where('rooms.is_public', true)
@@ -40,15 +27,15 @@ class RankingController extends Controller
                 ->get();
         });
 
-        $bestTeams = Cache::remember('bestTeams', now()->addMinutes(10), function () {
-            return TotalScore::byTeams()
-                ->whereHas('team')
-                ->select('totalscorable_id', 'room_id')
-                ->selectRaw('SUM(score) as total_score')
+        $top50Teams = Cache::remember('top-50-teams', now()->addMinutes(10), function () {
+            return TotalScore::query()
                 ->with('team')
-                ->whereRelation('room', function ($query) {
-                    $query->where('is_public', true);
-                })
+                ->select('totalscorable_id', 'room_id')
+                ->selectRaw('ROUND(SUM(score), 1) as total_score')
+                ->where('totalscorable_type', 'App\Models\Team')
+                ->join('teams', 'teams.id', '=', 'total_scores.totalscorable_id')
+                ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+                ->where('rooms.is_public', true)
                 ->groupBy('totalscorable_id')
                 ->orderByDesc('total_score')
                 ->limit(50)
@@ -56,8 +43,8 @@ class RankingController extends Controller
         });
 
         return Inertia::render('Rankings/Index', [
-            'bestUsers' => $bestUsers,
-            'bestTeams' => $bestTeams,
+            'bestUsers' => $top50Users,
+            'bestTeams' => $top50Teams,
         ]);
     }
 

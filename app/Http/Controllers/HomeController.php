@@ -69,7 +69,7 @@ class HomeController extends Controller
                 ->values()
                 ->all(),
             'user_rooms' => auth()->user()
-                ? Cache::remember('homepage-moderatedrooms', now()->addMinutes(10), function () {
+                ? Cache::remember('homepage-moderatedrooms-'.auth()->user()->id, now()->addMinutes(10), function () {
                     return auth()->user()->moderatedRooms()
                         ->isPrivate()
                         ->with('owner')
