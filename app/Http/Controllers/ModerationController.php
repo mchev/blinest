@@ -24,6 +24,8 @@ class ModerationController extends Controller
             'moderators' => Room::isPublic()->select('id', 'name')->with('moderators')->get(),
             'trashedMessages' => Message::onlyTrashed()
                 ->orderByDesc('deleted_at')
+                ->whereHas('user')
+                ->whereHas('room')
                 ->with('user', 'room')
                 ->paginate(10, ['*'], 'trashedMessages')
                 ->withQueryString()
