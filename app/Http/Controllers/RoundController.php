@@ -53,7 +53,7 @@ class RoundController extends Controller
 
             // Validate
             Request::validate([
-                'text' => 'required|string|min:1',
+                'text' => 'required|string|min:1|max:255',
                 'words' => 'nullable|array',
                 'currentTime' => 'required|numeric',
             ]);
