@@ -79,7 +79,7 @@ const showMessage = (data) => {
         {{ message.body }}
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full bg-neutral-700 flex-grow rounded-none rounded-bl-md border-none border-none p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" maxlength="255" />
+      <input ref="input" v-model="text" type="text" class="h-14 w-full bg-neutral-700 flex-grow rounded-none rounded-bl-md border-none border-none p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" onpaste="return false;" ondrop="return false;" autocomplete="off" maxlength="255" />
 
       <Volume class="-ml-1 flex h-14 items-center justify-center bg-neutral-700 p-2" />
 
