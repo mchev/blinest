@@ -12,7 +12,6 @@ class RankingController extends Controller
 {
     public function index()
     {
-
         $top50Users = Cache::remember('top-50-users', now()->addMinutes(10), function () {
             return TotalScore::query()
                 ->with('user')
