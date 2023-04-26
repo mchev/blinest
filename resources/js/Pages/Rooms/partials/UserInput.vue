@@ -71,15 +71,21 @@ const showMessage = (data) => {
     message.value = null
   }, 1600)
 }
+
+const pastedAnswer = (event) => {
+  event.preventDefault()
+  text.value = "Je copie colle et c'est mal. Je copie colle et c'est mal."
+  return false
+}
 </script>
 <template>
   <form class="flex w-full items-center justify-center" @submit.prevent="check">
     <div class="relative flex w-full items-center">
-      <blockquote v-if="message" class="absolute top-full mt-2 right-0 opacity-80 flex rounded-lg py-1 px-2 text-neutral-100" :class="{ 'bg-teal-600': message.type === 'good', 'bg-orange-600': message.type === 'almost', 'bg-red-700': message.type === 'bad' }">
+      <blockquote v-if="message" class="absolute top-full right-0 mt-2 flex rounded-lg py-1 px-2 text-neutral-100 opacity-80" :class="{ 'bg-teal-600': message.type === 'good', 'bg-orange-600': message.type === 'almost', 'bg-red-700': message.type === 'bad' }">
         {{ message.body }}
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full bg-neutral-700 flex-grow rounded-none rounded-bl-md border-none border-none p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" onpaste="return false;" ondrop="return false;" autocomplete="off" maxlength="255" />
+      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" autocomplete="off" maxlength="255" />
 
       <Volume class="-ml-1 flex h-14 items-center justify-center bg-neutral-700 p-2" />
 
