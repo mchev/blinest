@@ -39,5 +39,6 @@ Broadcast::channel('chat-room.{id}', function ($user) {
         'id' => $user->id,
         'name' => $user->name,
         'team' => $user->team,
+        'photo' => $user->photo,
     ];
 });

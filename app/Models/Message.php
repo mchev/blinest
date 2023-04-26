@@ -44,7 +44,7 @@ class Message extends Model
     {
         return $this->belongsTo(User::class)
             ->with('team')
-            ->select('users.id', 'users.name', 'users.team_id');
+            ->select('users.id', 'users.name', 'users.team_id', 'users.photo_path');
     }
 
     public function getChannelAttribute(): string
