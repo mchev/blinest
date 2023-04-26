@@ -11,12 +11,12 @@ class Score extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class)->select('id', 'name');
+        return $this->belongsTo(User::class)->select('id', 'name', 'photo_path');
     }
 
     public function team()
     {
-        return $this->belongsTo(Team::class)->select('id', 'name');
+        return $this->belongsTo(Team::class)->select('id', 'name', 'photo_path');
     }
 
     public function round()

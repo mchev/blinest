@@ -62,7 +62,7 @@ trait HasPicture
     public function photo(): Attribute
     {
         return Attribute::get(function () {
-            return $this->refresh()->photo_path
+            return $this->photo_path
                     ? Storage::disk($this->profilePhotoDisk())->url($this->photo_path)
                     : $this->defaultPhotoUrl();
         });

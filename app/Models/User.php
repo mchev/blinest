@@ -22,6 +22,8 @@ class User extends Authenticatable
         'photo',
     ];
 
+    //protected $with = [ 'photo_path' ];
+
     /**
      * The attributes that are mass assignable.
      *

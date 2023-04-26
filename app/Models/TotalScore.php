@@ -24,12 +24,12 @@ class TotalScore extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'totalscorable_id')->select('id', 'name');
+        return $this->belongsTo(User::class, 'totalscorable_id')->select('id', 'name', 'photo_path');
     }
 
     public function team()
     {
-        return $this->belongsTo(Team::class, 'totalscorable_id')->select('id', 'name');
+        return $this->belongsTo(Team::class, 'totalscorable_id')->select('id', 'name', 'photo_path');
     }
 
     public function scopeByUsers($query)

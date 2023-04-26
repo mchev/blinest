@@ -64,7 +64,7 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'publicModerators' => Cache::remember('public-moderators', 3600, function () {
-                return User::publicModerators()->select('id', 'name')->get();
+                return User::publicModerators()->select('id', 'name', 'photo_path')->get();
             }),
             'flash' => function () use ($request) {
                 return [
