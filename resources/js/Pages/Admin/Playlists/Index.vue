@@ -55,13 +55,19 @@ const reset = () => {
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
+            <th class="px-6 pb-4 pt-6">{{ __('Id') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Owner') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Moderators') }}</th>
             <th class="px-6 pb-4 pt-6">{{ __('Tracks') }}</th>
             <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Public') }}</th>
           </tr>
-          <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-neutral-200">
+          <tr v-for="playlist in playlists.data" :key="playlist.id" class="hover:bg-neutral-700">
+            <td class="border-t">
+              <Link class="flex items-center px-6 py-4" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+                {{ playlist.id }}
+              </Link>
+            </td>
             <td class="border-t">
               <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.playlists.edit', playlist.id)">
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
@@ -77,7 +83,7 @@ const reset = () => {
             <td class="border-t">
               <ul class="flex items-center px-6 py-4 text-sm">
                 <li v-for="moderator in playlist.moderators" :key="moderator.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
+                  <Link class="m-1 rounded bg-neutral-900 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
                     {{ moderator.name }}
                   </Link>
                 </li>

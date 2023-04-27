@@ -54,13 +54,19 @@ const reset = () => {
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
           <tr class="text-left font-bold">
+            <th class="px-2 pb-4 pt-6">{{ __('Id') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Name') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Owner') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Moderators') }}</th>
             <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
             <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Public') }}</th>
           </tr>
-          <tr v-for="room in rooms.data" :key="room.id" class="hover:bg-neutral-200">
+          <tr v-for="room in rooms.data" :key="room.id" class="hover:bg-neutral-700">
+            <td class="border-t">
+              <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
+                {{ room.id }}
+              </Link>
+            </td>
             <td class="border-t">
               <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)">
                 <img v-if="room.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.photo" />
@@ -80,7 +86,7 @@ const reset = () => {
             <td class="border-t">
               <ul class="flex items-center px-2 py-4 text-sm">
                 <li v-for="moderator in room.moderators" :key="moderator.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
+                  <Link class="m-1 rounded bg-neutral-900 p-1 hover:underline" :href="route('admin.users.edit', moderator.id)" tabindex="-1">
                     {{ moderator.name }}
                   </Link>
                 </li>
@@ -89,7 +95,7 @@ const reset = () => {
             <td class="border-t">
               <ul class="flex items-center px-2 py-4 text-sm">
                 <li v-for="playlist in room.playlists" :key="playlist.id">
-                  <Link class="m-1 rounded bg-neutral-300 p-1 hover:underline" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
+                  <Link class="m-1 rounded bg-neutral-900 p-1 hover:underline" :href="route('admin.playlists.edit', playlist.id)" tabindex="-1">
                     {{ playlist.name }}
                   </Link>
                 </li>
@@ -97,7 +103,7 @@ const reset = () => {
             </td>
             <td class="border-t">
               <Link class="flex items-center px-2 py-4" :href="route('admin.rooms.edit', room.id)" tabindex="-1">
-                <span class="m-1 rounded px-2 py-1" :class="room.is_public ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-300'">{{ room.is_public ? __('Yes') : __('No') }}</span>
+                <span class="m-1 rounded px-2 py-1" :class="room.is_public ? 'bg-teal-600  text-neutral-100' : 'bg-neutral-900'">{{ room.is_public ? __('Yes') : __('No') }}</span>
               </Link>
             </td>
             <td class="w-px border-t">

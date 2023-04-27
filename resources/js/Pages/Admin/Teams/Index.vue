@@ -35,7 +35,7 @@ const reset = () => {
 <template>
   <Head title="Teams" />
   <AdminLayout>
-    <h1 class="mb-8 text-3xl font-bold">{{ __('Teams') }}</h1>
+    <h1 class="mb-8 text-3xl font-bold">{{ __('Teams') }} ({{ teams.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
         <select v-model="form.trashed" class="form-select mt-1 w-full">
@@ -54,12 +54,18 @@ const reset = () => {
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="text-left font-bold">
+              <th class="px-6 pb-4 pt-6">{{ __('Id') }}</th>
               <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
               <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Members') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="team in teams.data" :key="team.id" class="hover:bg-neutral-200">
+            <tr v-for="team in teams.data" :key="team.id" class="hover:bg-neutral-700">
+              <td class="border-t">
+                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.teams.edit', team)">
+                  {{ team.id }}
+                </Link>
+              </td>
               <td class="border-t">
                 <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('admin.teams.edit', team)">
                   {{ team.name }}

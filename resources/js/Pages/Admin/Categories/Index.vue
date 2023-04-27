@@ -53,7 +53,7 @@ const reset = () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in categories.data" :key="category.id" class="hover:bg-gray-100">
+            <tr v-for="category in categories.data" :key="category.id" class="hover:bg-neutral-700">
               <td class="border-t">
                 <Link class="flex items-center px-6 py-4" :href="`/admin/categories/${category.id}/edit`">
                   {{ category.name }}
