@@ -7,7 +7,7 @@
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
         @production
-            <script async defer data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818" src="https://analytics.pegase.io/pegasestats.js"></script>
+            <script async src="https://analytics.pegase.io/pegasestats" data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818"></script>
         @endproduction
         
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])

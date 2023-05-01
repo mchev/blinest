@@ -28,12 +28,6 @@ defineProps({
     <div v-else>
       <section v-if="!filters.search">
         <div class="flex flex-wrap items-center">
-          <!--         <div class="lg:pr-8 py-6 mx-auto">
-            <a href="http://www.georgequiz.com/?utm_source=blinest&utm_medium=banner&utm_campaign=dec2022" target="_blank" rel="nofollow sponsored" class="umami--click--george-banner" title="George Quiz">
-              <img src="/images/statics/george_V4.1.gif" loading="lazy" alt="George" class="h-full rounded-lg" />
-              <small class="text-xs text-neutral-500">Lien sponsorisé - George Quiz</small>
-            </a>
-          </div> -->
           <div v-if="top_rooms" class="relative mb-4 flex-grow">
             <h2 class="mb-1 text-xl text-neutral-400 lg:text-2xl">TOP 5</h2>
             <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" />
