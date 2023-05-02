@@ -7,7 +7,20 @@
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
         @production
-            <script async src="https://analytics.pegase.io/pegasestats" data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818"></script>
+            <!-- Matomo -->
+            <script>
+              var _paq = window._paq = window._paq || [];
+              _paq.push(['trackPageView']);
+              _paq.push(['enableLinkTracking']);
+              (function() {
+                var u="//stats.pegase.io/";
+                _paq.push(['setTrackerUrl', u+'matomo.php']);
+                _paq.push(['setSiteId', '2']);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+              })();
+            </script>
+            <!-- End Matomo Code -->
         @endproduction
         
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
