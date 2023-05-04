@@ -63,7 +63,7 @@ onUnmounted(() => {
       </div>
       <figure class="h-40 w-full relative">
         <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full rounded">
-        <div class="absolute top-0 left-0 w-auto rounded-br-sm rounded-tl-sm bg-neutral-800 p-2 text-sm text-white">
+        <div class="absolute top-0 left-0 w-auto rounded-br rounded-tl-sm bg-neutral-100 bg-opacity-30 p-2 text-sm text-neutral-800">
           <div class="flex items-center">
             <span v-if="room.password" class="mr-1 font-bold text-orange-400">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4" :title="__('Password protected')">
