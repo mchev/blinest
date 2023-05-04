@@ -181,6 +181,13 @@ class RoomController extends Controller
         return Redirect::route('rooms.index')->with('success', __('Room deleted'));
     }
 
+    public function deletePicture(Room $room)
+    {
+        $room->deletePhoto();
+
+        return Redirect::back()->with('success', __('Room picture deleted'));
+    }
+
     /**
      * Starting a round if no running
      */

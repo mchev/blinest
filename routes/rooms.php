@@ -27,6 +27,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::delete('rooms/{room}/playlists/detach', [RoomPlaylistController::class, 'detach'])
         ->name('rooms.playlists.detach');
 
+    Route::delete('rooms/{room}/picture/delete', [RoomController::class, 'deletePicture'])
+        ->name('rooms.picture.delete');
+
     // Rooms Messages
     Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
         ->name('rooms.message.store');
