@@ -77,7 +77,7 @@ trait HasPicture
     {
         if ($this->getTable() === 'rooms') {
             // $default = $this->playlists()?->first()?->tracks()?->latest()->first()?->artwork_url;
-            $default = 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=random&color=fff&size=500@format=svg&length=3';
+            $default = 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=random&color=fff&size=300@format=svg&length=5&font-size=0.15';
         } else {
             $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
                 return mb_substr($segment, 0, 1);
