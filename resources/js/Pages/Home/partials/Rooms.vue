@@ -2,7 +2,6 @@
 import { router } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import Room from './Room.vue'
-import Top from './Top.vue'
 import { Navigation, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
@@ -44,16 +43,15 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
       </swiper-slide>
     </swiper>
   </div>
-  <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-5">
+  <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:grid-cols-5">
     <div v-for="(room, index) in rooms" :key="'top-'+room.id" class="flex">
-      <div class="w-1/3 bg-neutral-900 py-4 flex items-center justify-end">
+      <div class="w-1/4 bg-neutral-900 py-4 flex items-center">
         <div v-html="numbers[index]" class="h-24 w-24"/>
       </div>
-      <div class="w-2/3 h-52">
+      <div class="w-3/4 h-52">
         <Room :room="room"/>
       </div>
     </div>
-    <!-- <Top :room="room" v-for="(room, index) in rooms" :key="room.id" :index="index" /> -->
   </div>
 </template>
 
