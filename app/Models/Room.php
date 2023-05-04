@@ -21,7 +21,6 @@ class Room extends Model
         'photo',
         'users_count',
         'current_track_index',
-        'photo_src',
     ];
 
     protected $hidden = ['discord_webhook_url'];
@@ -52,11 +51,6 @@ class Room extends Model
         }
 
         return 0;
-    }
-
-    protected function getPhotoSrcAttribute()
-    {
-        return $this->photo_path ? '/storage/'.$this->photo_path : $this->playlists()?->first()?->tracks()?->first()?->artwork_url;
     }
 
     public function currentRound()

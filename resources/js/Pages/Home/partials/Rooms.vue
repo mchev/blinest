@@ -15,27 +15,26 @@ const props = defineProps({
 })
 
 const modules = [Navigation, A11y]
-const maxSlides = props.rooms && props.rooms.length < 5 ? 3 : 5
+const maxSlides = props.rooms && props.rooms.length < 6 ? 5 : 6
 
 </script>
 <template>
-  <div v-if="rooms && !is_top_5">
+  <div v-if="rooms && rooms.length > 0 && !is_top_5">
     <swiper
       :modules="modules"
+      :loop="true"
+      :loopedSlides="1"
       :slides-per-view="1"
-      :space-between="10"
+      :space-between="12"
       :breakpoints="{
         640: {
           slidesPerView: 2,
-          spaceBetween: 10,
         },
         768: {
           slidesPerView: 4,
-          spaceBetween: 20,
         },
         1024: {
           slidesPerView: maxSlides,
-          spaceBetween: 30,
         },
       }"
       navigation

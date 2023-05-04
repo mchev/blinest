@@ -75,11 +75,17 @@ trait HasPicture
      */
     protected function defaultPhotoUrl()
     {
-        $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
-            return mb_substr($segment, 0, 1);
-        })->join(' '));
+        if ($this->getTable() === 'rooms') {
+            $default = $this->playlists()?->first()?->tracks()?->latest()->first()?->artwork_url;
+        } else {
+            $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
+                return mb_substr($segment, 0, 1);
+            })->join(' '));
 
-        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=1f2937&size=300';
+            $default = 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=1f2937&size=300';
+        }
+
+        return $default;
     }
 
     /**

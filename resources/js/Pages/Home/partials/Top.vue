@@ -52,7 +52,7 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
       </header>
       <div class="h-full w-1/3 bg-neutral-900 py-4" v-html="numbers[props.index]" />
       <div class="h-full w-2/3">
-        <div class="relative flex h-full w-full rounded-lg bg-cover bg-center" :style="`background-image: url(${room.photo_src || room.mosaic});`">
+        <div class="relative flex h-full w-full rounded-lg bg-cover bg-center" :style="`background-image: url(${room.photo});`">
           <div v-if="!room.is_public" class="ribbon truncate text-xs">@{{ room.owner.name }}</div>
           <div class="absolute top-0 right-0 w-auto rounded-bl-md rounded-tr-md bg-neutral-800 p-3 text-sm text-white ease-in-out hover:scale-110" :title="__('Players')">
             <div class="flex items-center">
