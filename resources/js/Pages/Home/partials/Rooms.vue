@@ -22,10 +22,10 @@ const maxSlides = props.rooms && props.rooms.length < 6 ? 5 : 6
   <div v-if="rooms && rooms.length > 0 && !is_top_5">
     <swiper
       :modules="modules"
-      :loop="true"
+      :loop="props.rooms.length > 5 ? true : false"
       :loopedSlides="1"
       :slides-per-view="1"
-      :space-between="12"
+      :space-between="16"
       :breakpoints="{
         640: {
           slidesPerView: 2,
