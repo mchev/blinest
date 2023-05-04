@@ -94,7 +94,7 @@ onUnmounted(() => {
       </figure>
       <div class="py-1">
         <p class="truncate text-gray-100" :title="room.name">{{ room.name }}</p>
-        <p class="truncate text-sm text-neutral-500" :title="room.description">{{ room.description }}</p>
+        <p class="text-sm text-neutral-500 truncate" :title="room.description">{{ room.description }}</p>
       </div>
     </article>
   </Link>

@@ -25,7 +25,7 @@ watch(
 <template>
   <div :class="$attrs.class">
     <form>
-      <text-input class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search a room') + '...'" />
+      <TextInput class="text-sm" v-model="form.search" spellcheck="false" prepend-icon="search" :placeholder="__('Search a room') + '...'" />
       <input class="hidden" type="text" name="search_term_string" v-model="form.search" required />
     </form>
   </div>
