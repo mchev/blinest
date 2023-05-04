@@ -58,12 +58,12 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
 <style>
 .swiper-button-next {
   --swiper-navigation-color: white;
-  @apply top-0 right-0 flex h-full items-center bg-gradient-to-r from-transparent to-neutral-900 px-8;
+  @apply top-0 bottom-0 right-0 flex h-full items-center bg-gradient-to-r from-transparent to-neutral-900 px-8 -mr-4;
 }
 
 .swiper-button-prev {
   --swiper-navigation-color: white;
-  @apply top-0 left-0 flex h-full items-center bg-gradient-to-l from-transparent to-neutral-900 px-8;
+  @apply top-0 bottom-0 left-0 flex h-full items-center bg-gradient-to-l from-transparent to-neutral-900 px-8 -ml-4;
 }
 
 .swiper-button-disabled {
