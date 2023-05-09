@@ -83,6 +83,8 @@ class PlaylistController extends Controller
                         'id' => $room->id,
                         'slug' => $room->slug,
                         'name' => $room->name,
+                        'photo' => $room->photo,
+                        'owner' => $room->owner
                     ]),
                     'difficulties' => [
                         'Easy' => $playlist->tracks()->where('dificulty', 0)->count(),
