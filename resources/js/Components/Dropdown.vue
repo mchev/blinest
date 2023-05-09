@@ -52,7 +52,7 @@ onMounted(() => {
 </script>
 <template>
   <div ref="root">
-    <button type="button" class="flex h-full" @click="show = true">
+    <button type="button" class="flex h-full w-full" @click="show = true">
       <slot />
       <teleport v-if="show" to="#dropdown">
         <div>
