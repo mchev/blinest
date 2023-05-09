@@ -84,6 +84,7 @@ class DeezerService
             'provider' => 'deezer',
             'provider_id' => $track['id'],
             'provider_url' => $track['link'],
+            'provider_popularity' => $track['rank'],
             'artist_name' => $track['artist']['name'],
             'track_name' => $track['title'],
             'album_name' => $track['album']['title'],

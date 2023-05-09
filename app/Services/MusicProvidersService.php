@@ -23,7 +23,7 @@ class MusicProvidersService
             }
         }
 
-        $sorted = $merged->sortByDesc(function ($item) use ($term) {
+        $sorted = $merged->sortByDesc('provider_popularity')->sortByDesc(function ($item) use ($term) {
             $text1 = $item['artist_name'].' '.$item['track_name'];
             $text2 = $item['track_name'].' '.$item['artist_name'];
             $percent1 = similar_text($term, $text1, $percent1);

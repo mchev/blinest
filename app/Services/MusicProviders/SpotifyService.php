@@ -76,6 +76,7 @@ class SpotifyService
             'provider' => 'spotify',
             'provider_id' => $track->id,
             'provider_url' => $track->external_urls->spotify,
+            'provider_popularity' => $track->popularity,
             'artist_name' => $track->artists[0]->name,
             'track_name' => $track->name,
             'album_name' => $track->album->name,

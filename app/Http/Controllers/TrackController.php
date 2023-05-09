@@ -55,6 +55,7 @@ class TrackController extends Controller
                             'provider' => $track['provider'],
                             'provider_id' => $track['provider_id'],
                             'provider_url' => $track['provider_url'],
+                            'provider_popularity' => $track['provider_popularity'],
                             'artist_name' => $track['artist_name'],
                             'track_name' => $track['track_name'],
                             'album_name' => $track['album_name'],
