@@ -84,6 +84,12 @@ class PlaylistController extends Controller
                         'slug' => $room->slug,
                         'name' => $room->name,
                     ]),
+                    'difficulties' => [
+                        'Easy' => $playlist->tracks()->where('dificulty', 0)->count(),
+                        'Medium' => $playlist->tracks()->where('dificulty', 1)->count(),
+                        'Difficult' => $playlist->tracks()->where('dificulty', 2)->count(),
+                        'Expert' => $playlist->tracks()->where('dificulty', 3)->count(),
+                    ],
                 ],
                 'filters' => Request::all('search'),
                 'answer_types' => AnswerType::all(),

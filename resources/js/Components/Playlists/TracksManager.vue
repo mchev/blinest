@@ -140,7 +140,15 @@ const updateDificulty = (e, track) => {
   <Card>
     <template #header>
       <div class="flex w-full items-center justify-between">
-        <h3 class="text-xl font-bold">{{ __('Tracks manager') }} ({{ tracks.total }})</h3>
+        <div>
+          <h3 class="text-xl font-bold">{{ __('Tracks manager') }} ({{ tracks.total }})</h3>
+          <ul class="flex items-center gap-2 text-xs font-normal flex-wrap">
+            <li class="text-teal-400">{{ __('Easy') }} {{ Math.round(playlist.difficulties.Easy / tracks.total * 100) }}%,</li>
+            <li class="text-yellow-400">{{ __('Medium') }} {{ Math.round(playlist.difficulties.Medium / tracks.total * 100) }}%,</li>
+            <li class="text-orange-400">{{ __('Difficult') }} {{ Math.round(playlist.difficulties.Difficult / tracks.total * 100) }}%,</li>
+            <li class="text-red-400">{{ __('Expert') }} {{ Math.round(playlist.difficulties.Expert / tracks.total * 100) }}%</li>
+          </ul>
+        </div>
         <text-input v-model="form.search" prepend-icon="search" :placeholder="__('Search in playlist') + '...'" />
         <a :href="route('playlists.export', playlist)" target="_blank" class="btn-secondary rounded"
           ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
