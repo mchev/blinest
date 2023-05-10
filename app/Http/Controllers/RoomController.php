@@ -231,6 +231,8 @@ class RoomController extends Controller
 
     public function sendSuggestion(Room $room)
     {
+        $this->authorize('sendSuggestion');
+
         Request::validate([
             'suggestion' => ['required'],
         ]);
