@@ -28,7 +28,7 @@ class AppleMusicService
                 'provider' => 'itunes',
                 'provider_id' => $track['trackId'],
                 'provider_url' => $track['trackViewUrl'],
-                'provider_popularity' => $track['rank'],
+                'provider_popularity' => 0,
                 'artist_name' => $track['artistName'],
                 'track_name' => $track['trackName'],
                 'album_name' => $track['collectionName'],
