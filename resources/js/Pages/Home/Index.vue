@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
+import Adsense from '@/Components/Adsense.vue'
 
 defineProps({
   filters: Object,
@@ -30,7 +31,12 @@ defineProps({
         <div class="flex flex-wrap items-center">
           <div v-if="top_rooms" class="relative mb-6 flex-grow">
             <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">TOP 5</h2>
-            <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" />
+            <div class="flex flex-wrap gap-4">
+              <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" class="w-3/4" />
+              <div class="flex-grow px-4 max-w-full overflow-hidden">
+                <Adsense/>
+              </div>
+            </div>
           </div>
         </div>
       </section>
