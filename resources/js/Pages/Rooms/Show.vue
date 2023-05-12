@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { usePage } from '@inertiajs/vue3'
+import { router, usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -21,6 +20,7 @@ import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 
 const props = defineProps({
   room: Object,
+  public_rooms: Object,
 })
 
 const user = usePage().props.auth.user
@@ -125,7 +125,7 @@ const listenRounds = () => {
             <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
-          <Card>
+          <Card class="mb-8">
             <div class="flex flex-col items-center gap-4 text-sm lg:flex-row lg:justify-between">
               <div>
                 <div class="mx-auto flex flex-wrap items-center gap-4">
@@ -143,6 +143,17 @@ const listenRounds = () => {
                 <span class="uppercase text-neutral-500">{{ room.tracks_count }}&nbsp;{{ __('audios') }}</span>
               </div>
             </div>
+          </Card>
+
+          <Card>
+            <ul class="flex items-center flex-wrap">
+              <li class="badge" v-for="proom in public_rooms" :key="'room-' + proom.id">
+                <Link :href="route('rooms.show', proom.slug)" class="flex items-center gap-2">
+                  <img :src="proom.photo" :alt="proom.name" class="rounded-full h-5 w-5 shadow"/>
+                  {{ proom.name }}
+                </Link>
+              </li>
+            </ul>
           </Card>
 
 
