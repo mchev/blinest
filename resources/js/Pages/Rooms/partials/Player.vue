@@ -71,6 +71,8 @@ const play = () => {
   audio.crossOrigin = 'anonymous'
   audio.load() // IOS Hack - Important
   audio.muted = false
+  // audio.playbackRate = 0.55
+  // audio.preservesPitch = false
 
   audio.addEventListener('error', () => {
     error.value = audio.error.message
