@@ -61,7 +61,7 @@ onUnmounted(() => {
       <div v-if="!room.is_public && room.owner" class="bg-purple-600 absolute truncate z-10 origin-top w-52 right-6 top-6 shadow-xl text-xs p-1 text-center" style="transform:translateX(50%) rotate(45deg);" >
         {{ room.owner.name }}
       </div>
-      <figure class="h-40 w-full relative bg-purple-200 rounded">
+      <figure class="h-40 w-full relative bg-purple-400 rounded">
         <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full rounded">
         <div class="absolute top-0 left-0 w-auto rounded-br rounded-tl-sm  p-2 text-sm text-neutral-800">
           <div class="flex items-center">
