@@ -61,11 +61,9 @@ onUnmounted(() => {
       <div v-if="!room.is_public && room.owner" class="bg-purple-600 absolute truncate z-10 origin-top w-52 right-6 top-6 shadow-xl text-xs p-1 text-center" style="transform:translateX(50%) rotate(45deg);" >
         {{ room.owner.name }}
       </div>
-      <figure class="h-40 w-full relative bg-purple-400 rounded">
-        <div class="h-full rounded-[50%] bg-white">
-          <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full rounded">
-        </div>
-        <div class="absolute top-0 left-0 w-auto rounded-br rounded-tl-sm  p-2 text-sm text-neutral-800">
+      <figure class="h-40 w-full relative rounded flex justify-center bg-orange-300">
+        <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full">
+        <div class="absolute top-0 left-0 w-auto rounded-br rounded-tl-sm  p-2 text-sm text-black">
           <div class="flex items-center">
             <span v-if="room.password" class="mr-1 font-bold text-orange-400">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4" :title="__('Password protected')">
@@ -94,9 +92,9 @@ onUnmounted(() => {
           <div class="whitespace-nowrap text-sm">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
         </div>
       </figure>
-      <div class="py-1">
+      <div class="py-1 text-center">
         <p class="truncate text-gray-100" :title="room.name">{{ room.name }}</p>
-        <p class="text-sm text-neutral-500 truncate" :title="room.description">{{ room.description }}</p>
+        <!-- <p class="text-sm text-neutral-500 truncate" :title="room.description">{{ room.description }}</p> -->
       </div>
     </article>
   </Link>
