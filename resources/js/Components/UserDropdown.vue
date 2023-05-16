@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Dropdown from '@/Components/Dropdown.vue'
+import ProBadge from '@/Components/ProBadge.vue'
 
 const user = usePage().props.auth.user
 
@@ -17,7 +18,9 @@ const isUrl = (...urls) => {
   <dropdown placement="bottom-end">
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
-        <div class="mr-1 whitespace-nowrap">
+
+        <div class="mr-1 whitespace-nowrap relative">
+          <ProBadge class="absolute left-[50%] -top-1"/>
           <img :src="user.photo" class="h-10 w-10 rounded-full" :alt="user.name" />
         </div>
       </div>

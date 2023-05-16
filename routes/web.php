@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('accounts.index');
     Route::get('account/edit', [AccountController::class, 'edit'])
         ->name('accounts.edit');
+    Route::get('account/likes', [AccountController::class, 'likes'])
+        ->name('accounts.likes');
     Route::get('account/statistics', [AccountController::class, 'statistics'])
         ->name('accounts.statistics');
 

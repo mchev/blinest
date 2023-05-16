@@ -5,5 +5,5 @@ const user = usePage().props.auth.user
 
 </script>
 <template>
-  <Link href="/billing" class="rounded p-1 text-xs text-white font-bold uppercase" :class="user.is_pro ? 'bg-teal-500' : 'bg-orange-400'">Pro</Link>
+  <Link href="/account/billing" class="rounded-full px-2 text-xs text-white font-semibold uppercase" :class="user.is_pro ? 'bg-green-600' : 'bg-orange-400'">Pro</Link>
 </template>

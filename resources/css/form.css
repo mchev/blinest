@@ -1,4 +1,5 @@
 @layer components {
+
   .form-label {
     @apply mb-2 block text-neutral-400 select-none;
   }

@@ -17,10 +17,14 @@
 </head>
 <body class="font-sans antialiased bg-neutral-900">
     @inertia
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-    <script>treenation_track("645b732967eee");</script>
+    @if(!auth()->user()->subscribed())
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    @endif
+    @production
+        <script>treenation_track("645b732967eee");</script>
+    @endproduction
 </body>
 </html>

@@ -5,14 +5,14 @@ import { Bar } from 'vue-chartjs'
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const props = defineProps({
-  rounds: Object,
+  summary: Object,
 })
 
 const data = {
-  labels: props.rounds.map(x => x.date),
+  labels: props.summary.map(x => x.room.name),
   datasets: [{
-    label: "Points par jours",
-    data: props.rounds.map(x => x.score),
+    label: "Scores par room",
+    data: props.summary.map(x => x.score),
     backgroundColor: 'rgba(255, 99, 132, 0.2)',
   }],
 }

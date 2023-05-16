@@ -20,7 +20,6 @@ const url = 'https://blinest.com' + usePage().url
         <Navbar :search="false" />
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <div class="flex flex-col justify-between px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:py-4" scroll-region>
-            <flash-messages />
 
             <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar" aria-controls="cta-button-sidebar" type="button" class="mt-2 ml-3 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 sm:hidden">
               <span class="sr-only">Open sidebar</span>
@@ -79,12 +78,12 @@ const url = 'https://blinest.com' + usePage().url
                     </a>
                   </li>
                   <li>
-                    <a href="#" class="flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                    <Link :href="route('accounts.likes')" class="flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
                         <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                       </svg>
                       <span class="ml-3 flex-1 whitespace-nowrap">Likes</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <Link :href="route('accounts.statistics')" class="flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
@@ -99,6 +98,14 @@ const url = 'https://blinest.com' + usePage().url
                       <svg aria-hidden="true" class="h-6 w-6 flex-shrink-0 transition duration-75 group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path></svg>
                       <span class="ml-3 flex-1 whitespace-nowrap">Déconnexion</span>
                     </a>
+                  </li>
+                  <li>
+                    <Link href="/" class="flex items-center rounded-lg p-2 text-neutral-400 text-sm mt-8">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-5 w-5 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                      </svg>
+                      <span class="ml-3 flex-1 whitespace-nowrap">{{ __('Go back to homepage')}}</span>
+                    </Link>
                   </li>
                 </ul>
                 <div id="dropdown-cta" class="mt-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900" role="alert">
@@ -116,6 +123,7 @@ const url = 'https://blinest.com' + usePage().url
             </aside>
 
             <div class="p-4 sm:ml-64">
+              <flash-messages />
               <div class="rounded-lg border-2 border-dashed border-gray-200 p-4 dark:border-gray-700">
                 <slot />
               </div>

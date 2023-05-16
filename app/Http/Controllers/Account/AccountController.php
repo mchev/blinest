@@ -16,10 +16,14 @@ class AccountController extends Controller
         return Inertia::render('Accounts/Index');
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
         return Inertia::render('Accounts/Edit', [
-            'user' => auth()->user(),
+            'user' => [
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+            ],
             'subscriptions' => auth()->user()->subscriptions()->get()->transform(fn($subscription) => [
                 'id' => $subscription->id,
                 'name' => $subscription->name,
@@ -35,11 +39,8 @@ class AccountController extends Controller
         $start_at = now()->subDays(300);
         $end_at = now();
 
-        // dd(auth()->user()->totalScores()->with('room')->get());
-        // dd(auth()->user()->scores()->whereBetween('created_at', [$start_at, $end_at])->groupBy('round_id')->with('round.room')->get());
-
         return Inertia::render('Accounts/Statistics', [
-            'summary' => auth()->user()->totalScores()->with('room')->get(),
+            'summary' => auth()->user()->totalScores()->orderByDesc('score')->with('room')->get(),
             'rounds' => auth()->user()
                 ->scores()
                 ->whereBetween('created_at', [$start_at, $end_at])
@@ -49,4 +50,10 @@ class AccountController extends Controller
         ]);
     }
 
+    public function likes(Request $request)
+    {
+        return Inertia::render('Accounts/Likes', [
+            'likes' => $request->user()->likes()->paginate(5, ['*'], 'likes'),
+        ]);
+    }
 }

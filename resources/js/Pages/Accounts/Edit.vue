@@ -68,7 +68,7 @@ const deleteUser = () => {
         </template>
         <UserSubscriptions :subscriptions="subscriptions"/>
         <template #footer>
-          <Link href="/billing" class="btn-primary ml-auto">{{ __('Manage my subscriptions') }}</Link>
+          <Link href="/account/billing" class="btn-primary ml-auto">{{ __('Manage my subscriptions') }}</Link>
         </template>
       </Card>
       <Card class="border-2 border-red-800 p-8 text-red-500">
