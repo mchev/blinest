@@ -39,7 +39,9 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
       navigation
     >
       <swiper-slide v-for="room in rooms" :key="room.id">
-        <Room :room="room" />
+        <div class="hover:scale-105 pt-2 transition">
+          <Room :room="room" />
+        </div>
       </swiper-slide>
     </swiper>
   </div>
@@ -49,7 +51,9 @@ const numbers = ['<svg id="rank-1" width="100%" height="100%" viewBox="-20 0 70 
         <div v-html="numbers[index]" class="h-24 w-24 fill-neutral-800"/>
       </div>
       <div class="w-3/4 h-52">
-        <Room :room="room"/>
+        <div class="hover:scale-105 pt-2 transition">
+          <Room :room="room"/>
+        </div>
       </div>
     </div>
   </div>
