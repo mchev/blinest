@@ -62,7 +62,9 @@ onUnmounted(() => {
         {{ room.owner.name }}
       </div>
       <figure class="h-40 w-full relative bg-purple-400 rounded">
-        <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full rounded">
+        <div class="h-full rounded-[50%] bg-white">
+          <img :src="room.photo" :alt="'Illlustration de la room ' + room.name" class="object-cover w-full h-full rounded">
+        </div>
         <div class="absolute top-0 left-0 w-auto rounded-br rounded-tl-sm  p-2 text-sm text-neutral-800">
           <div class="flex items-center">
             <span v-if="room.password" class="mr-1 font-bold text-orange-400">
