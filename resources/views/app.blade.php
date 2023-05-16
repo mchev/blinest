@@ -8,6 +8,8 @@
 
         @production
             <script async src="https://stats.pegase.io/script.js" data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818"></script>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272"
+     crossorigin="anonymous"></script>
             <script async src="https://tree-nation.com/js/track.js"></script>
         @endproduction
         
@@ -17,10 +19,6 @@
 </head>
 <body class="font-sans antialiased bg-neutral-900">
     @inertia
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
     <script>treenation_track("645b732967eee");</script>
 </body>
 </html>
