@@ -29,8 +29,8 @@ defineProps({
     <div v-else>
       <section v-if="!filters.search">
         <div class="flex flex-wrap items-center">
-          <div v-if="top_rooms" class="relative mb-6 flex-grow">
-            <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">TOP 5</h2>
+          <div v-if="top_rooms" class="relative my-6 flex-grow">
+            <!-- <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">TOP 5</h2> -->
             <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" />
           </div>
         </div>

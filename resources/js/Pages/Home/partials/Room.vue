@@ -92,7 +92,7 @@ onUnmounted(() => {
           <div class="whitespace-nowrap text-sm">{{ round ? round.current : room.current_track_index }} / {{ room.tracks_by_round }}</div>
         </div>
       </figure>
-      <div class="py-1 text-center">
+      <div class="py-1 text-center text-lg">
         <p class="truncate text-gray-100" :title="room.name">{{ room.name }}</p>
         <!-- <p class="text-sm text-neutral-500 truncate" :title="room.description">{{ room.description }}</p> -->
       </div>
