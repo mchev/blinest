@@ -87,9 +87,23 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
+
+            // Laravel Spark - Unsubscribe
+            if (optional($user->subscription())->recurring()) {
+                $user->subscription()->cancelNow();
+            }
+
+            // Sendinblue - delete user
             (new SendinblueService)->contacts()->delete($user);
+
+            // Delete user picture
             $user->deletePhoto();
+
+            // Todo - team detach
+
+            // Deletion
             $user->forceDelete();
+            
             Session::flush();
             Auth::logout();
 

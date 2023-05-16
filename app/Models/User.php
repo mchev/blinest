@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Mchev\Banhammer\Traits\Bannable;
 use Overtrue\LaravelVote\Traits\Voter;
+use Spark\Billable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
+    use HasApiTokens, Billable, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
 
     protected $appends = [
         'photo',
@@ -54,11 +55,17 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'trial_ends_at' => 'datetime',
     ];
 
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
+    }
+
+    public function rounds()
+    {
+        return $this->hasMany(Round::class);
     }
 
     // Likes

@@ -12,20 +12,20 @@ use App\Rules\Reserved;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('Rooms/Index', [
-            'filters' => Request::all('search', 'trashed'),
+            'filters' => $request->all('search', 'trashed'),
             'rooms' => Auth::user()->moderatedRooms()
                 ->orderBy('is_public', 'DESC')
                 ->orderBy('name')
-                ->filter(Request::only('search', 'trashed'))
+                ->filter($request->only('search', 'trashed'))
                 ->with('moderators', 'playlists', 'category')
                 ->paginate(5)
                 ->withQueryString()
@@ -51,15 +51,15 @@ class RoomController extends Controller
         ]);
     }
 
-    public function show(Room $room)
+    public function show(Request $request, Room $room)
     {
-        if ($room->password && ! Request::has('password')) {
+        if ($room->password && ! $request->has('password')) {
             return Inertia::render('Rooms/Password', [
                 'room' => $room,
             ]);
         }
 
-        if ($room->password && Request::input('password') !== $room->password) {
+        if ($room->password && $request->input('password') !== $room->password) {
             return redirect()->back()->with('error', __('The password is incorrect'));
         }
 
@@ -96,16 +96,16 @@ class RoomController extends Controller
         ]);
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        Request::validate([
+        $request->validate([
             'name' => ['required', 'max:25', new Reserved, Rule::unique('rooms')],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
         ]);
 
         $room = Auth::user()->rooms()->create([
-            'name' => Request::get('name'),
-            'category_id' => Request::get('category_id'),
+            'name' => $request->input('name'),
+            'category_id' => $request->input('category_id'),
         ]);
 
         $room->moderators()->attach(auth()->user());
@@ -124,13 +124,13 @@ class RoomController extends Controller
         ]);
     }
 
-    public function update(Room $room)
+    public function update(Request $request, Room $room)
     {
-        if (! auth()->user()->isRoomModerator($room)) {
+        if (!$request->user()->isRoomModerator($room)) {
             abort(403);
         }
 
-        Request::validate([
+        $request->validate([
             'name' => ['required', 'max:25', new Reserved, Rule::unique('rooms')->ignore($room->id)],
             'description' => ['nullable'],
             'category_id' => ['required', 'exists:categories,id'],
@@ -138,39 +138,14 @@ class RoomController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
         ]);
 
-        $room->update(Request::only('name', 'description', 'category_id', 'playlist_id'));
+        $room->update($request->only('name', 'description', 'category_id', 'playlist_id'));
 
-        if (Request::file('photo')) {
+        if ($request->file('photo')) {
             $this->authorize('changeRoomPicture');
-            $room->updatePhoto(Request::file('photo'));
+            $room->updatePhoto($request->file('photo'));
         }
 
         return Redirect::back()->with('success', __('Room updated'));
-    }
-
-    public function updateOptions(Room $room)
-    {
-        Request::validate([
-            'password' => ['nullable'],
-            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:100'],
-            'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
-            'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
-            'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
-            'is_chat_active' => ['required', 'boolean'],
-            'is_autostart' => ['required', 'boolean'],
-            'is_random' => ['required', 'boolean'],
-            'color' => ['nullable'],
-        ]);
-
-        $room->update(Request::only('tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_chat_active', 'is_autostart', 'is_random', 'color'));
-
-        if (Request::get('has_password')) {
-            $room->update(['password' => Request::get('password')]);
-        } else {
-            $room->update(['password' => null]);
-        }
-
-        return Redirect::back()->with('success', __('Options updated'));
     }
 
     public function destroy(Room $room)
@@ -216,40 +191,40 @@ class RoomController extends Controller
         return abort(403);
     }
 
-    public function alert(Room $room)
+    public function alert(Request $request, Room $room)
     {
-        Request::validate([
+        $request->validate([
             'message' => ['nullable', 'string', 'max:255'],
         ]);
 
         $moderators = User::publicModerators()->get();
         foreach ($moderators as $moderator) {
-            $moderator->notify(new NewRoomAlert($room, Auth::user(), Request::input('message')));
+            $moderator->notify(new NewRoomAlert($room, Auth::user(), $request->input('message')));
         }
 
         return redirect()->back();
     }
 
-    public function sendSuggestion(Room $room)
+    public function sendSuggestion(Request $request, Room $room)
     {
         $this->authorize('sendSuggestion');
 
-        Request::validate([
+        $request->validate([
             'suggestion' => ['required'],
         ]);
 
         foreach ($room->moderators as $moderator) {
-            $moderator->notify(new NewSuggestion($room, Request::get('suggestion'), auth()->user()));
+            $moderator->notify(new NewSuggestion($room, $request->input('suggestion'), auth()->user()));
         }
 
         return redirect()->back()->with('success', __('Understood!'));
     }
 
-    public function searchTracks(Room $room): JsonResponse
+    public function searchTracks(Request $request, Room $room): JsonResponse
     {
         return response()->json(
             $room->tracks()
-                ->filter(Request::only('search'))
+                ->filter($request->only('search'))
                 ->limit(10)
                 ->with('answers')
                 ->get('id')

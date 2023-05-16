@@ -4,6 +4,7 @@ use App\Http\Controllers\RoomBookmarkController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
+use App\Http\Controllers\RoomOptionController;
 use App\Http\Controllers\RoomPlaylistController;
 
 Route::middleware(['auth', 'logout.banned'])->group(function () {
@@ -18,8 +19,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::put('rooms/{room}/restore', [RoomController::class, 'restore'])
         ->name('rooms.restore');
 
-    Route::put('rooms/{room}/options', [RoomController::class, 'updateOptions'])
-        ->name('rooms.options');
+    // Room options
+    Route::put('rooms/{room}/options', [RoomOptionController::class, 'update'])
+        ->name('rooms.options.update');
 
     Route::post('rooms/{room}/playlists/attach', [RoomPlaylistController::class, 'attach'])
         ->name('rooms.playlists.attach');

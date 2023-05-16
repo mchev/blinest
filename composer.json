@@ -16,6 +16,7 @@
         "laravel/horizon": "^5.15",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.2",
+        "laravel/spark-stripe": "^4.0",
         "laravel/tinker": "^2.7",
         "league/glide-laravel": "^1.0",
         "maatwebsite/excel": "^3.1",
@@ -38,12 +39,19 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
         "fakerphp/faker": "^1.9.1",
+        "laravel-lang/common": "^3.1",
         "laravel/sail": "^1.21",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://spark.laravel.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",

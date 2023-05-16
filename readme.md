@@ -37,12 +37,14 @@ soketi start
 php artisan horizon
 ```
 
-## Roadmap
+## Todo
 
-- [ ] Trivia games (rooms type?)
-- [ ] User Badges (reputation)
-- [ ] Chat emojis
-- [ ] Moderation : rooms name edition
-- [ ] Pro/Premium rooms
-- [x] Better translations
-- [x] Profile pages
+- [ ] Spark implementation
+- [ ] Pro restrictions
+- [ ] Rooms limits
+- [ ] Room options limits
+- [ ] Play speed option
+- [ ] Company logo on room
+- [ ] No Ads on pro accounts
+- [ ] CGV
+- [ ] User deletion (cancel subscriptions)

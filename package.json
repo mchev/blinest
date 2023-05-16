@@ -9,9 +9,13 @@
         "fix-code-style": "npm run fix:prettier && npm run fix:eslint"
     },
     "devDependencies": {
+        "@inertiajs/vue3": "^1.0.0",
         "@popperjs/core": "^2.11.0",
         "@tailwindcss/typography": "^0.5.7",
+        "@tiptap/starter-kit": "^2.0.0-beta.199",
+        "@tiptap/vue-3": "^2.0.0-beta.199",
         "@vitejs/plugin-vue": "^4.0.0",
+        "@vue/server-renderer": "^3.2.45",
         "autoprefixer": "^10.4.7",
         "eslint": "^8.32.0",
         "eslint-plugin-vue": "^9.9.0",
@@ -24,16 +28,16 @@
         "prettier": "^2.8.3",
         "prettier-plugin-tailwindcss": "^0.2.2",
         "pusher-js": "^7.1.1-beta",
+        "swiper": "^9.1.0",
         "tailwindcss": "^3.1.3",
         "uuid": "^8.3.2",
         "vite": "^4.0.4",
         "vue": "^3.2.41",
         "vue-loader": "^17.0.0",
-        "vue3-carousel": "^0.1.40",
-        "@inertiajs/vue3": "^1.0.0",
-        "@tiptap/starter-kit": "^2.0.0-beta.199",
-        "@tiptap/vue-3": "^2.0.0-beta.199",
-        "@vue/server-renderer": "^3.2.45",
-        "swiper": "^9.1.0"
+        "vue3-carousel": "^0.1.40"
+    },
+    "dependencies": {
+        "chart.js": "^4.3.0",
+        "vue-chartjs": "^5.2.0"
     }
 }

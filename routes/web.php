@@ -18,6 +18,8 @@ use App\Http\Controllers\TrackController;
 // Users
 use App\Http\Controllers\UserBanController;
 use App\Http\Controllers\UserController;
+// User Account
+use App\Http\Controllers\Account\AccountController;
 // Music Providers Services
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
@@ -40,6 +42,14 @@ Route::middleware(['auth'])->group(function () {
     // Me
     Route::get('me', [UserController::class, 'show'])
         ->name('me');
+
+    // Account
+    Route::get('account', [AccountController::class, 'index'])
+        ->name('accounts.index');
+    Route::get('account/edit', [AccountController::class, 'edit'])
+        ->name('accounts.edit');
+    Route::get('account/statistics', [AccountController::class, 'statistics'])
+        ->name('accounts.statistics');
 
     // Profile
     Route::get('profile/{user}', [ProfileController::class, 'show'])

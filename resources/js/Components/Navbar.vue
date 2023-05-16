@@ -11,8 +11,14 @@ import Notifications from '@/Components/Notifications/Notifications.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import SocialIcon from '@/Components/SocialIcon.vue'
 
-const user = usePage().props.auth?.user
+ defineProps({
+  search: {
+    type: Boolean,
+    default: true
+  }
+})
 
+const user = usePage().props.auth?.user
 const showingSearchbar = ref(false)
 </script>
 <template>
@@ -23,7 +29,7 @@ const showingSearchbar = ref(false)
         <p class="text-sm text-neutral-500 mt-1 hidden md:block">{{ __('Test your musical knowledge') }}</p>
       </Link>
 
-      <div class="mt-1 items-center gap-2 hidden md:flex">
+      <div v-if="search" class="mt-1 items-center gap-2 hidden md:flex">
         <SearchRooms class="hover:scale-[104%] focus:scale-[104%] transition" />
         <Link :href="route('faq')" title="FAQ" class="text-neutral-500 hover:text-inherit transition">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
