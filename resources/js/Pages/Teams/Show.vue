@@ -30,6 +30,12 @@ const leave = () => {
   }
 }
 
+const destroy = () => {
+  if (confirm('Are you sure?')) {
+    router.delete(`/teams/${props.team.id}`)
+  }
+}
+
 const sendRequest = (team) => {
   router.post(`/teams/${team.id}/request`)
 }
@@ -71,7 +77,10 @@ const updateTeam = () => {
         <form @submit.prevent="updateTeam">
           <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name" />
           <FileInput v-if="user.can.changeTeamPicture" v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo" />
-          <Tip v-if="!user.can.changeTeamPicture"> {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand') }}<sup>{{ __('PTS') }}</sup>. </Tip>
+          <Tip v-if="!user.can.changeTeamPicture">
+            {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand') }}<sup>{{ __('PTS') }}</sup
+            >.
+          </Tip>
           <LoadingButton type="submit" @click="updateTeam" :loading="form.processing" class="btn-primary mb-4 ml-auto">{{ __('Update') }}</LoadingButton>
         </form>
       </Card>
@@ -80,7 +89,9 @@ const updateTeam = () => {
           <img v-if="team.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="team.photo" />
           <h1 class="font-bold">Team {{ team.name }}</h1>
         </div>
-        <span>{{ score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+        <span
+          >{{ score }}<sup class="ml-1">{{ __('PTS') }}</sup></span
+        >
       </div>
       <Card>
         <template #header>
@@ -117,12 +128,16 @@ const updateTeam = () => {
                 </svg>
               </button>
             </div>
-            <div>{{ member.score }}<sup>{{ __('PTS') }}</sup></div>
+            <div>
+              {{ member.score }}<sup>{{ __('PTS') }}</sup>
+            </div>
           </li>
         </ul>
       </Card>
       <div class="my-6 flex items-center gap-4">
-        <button v-if="Object.values(members).find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
+        <button v-if="Object.values(members).length === 1 && team.user_id === user.id" type="button" class="btn-danger" @click="destroy">{{ __('Delete') }} {{ __('The Team') }}</button>
+
+        <button v-else-if="Object.values(members).find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">{{ __('Leave the team') }}</button>
         <div v-else>
           <button v-if="user.declined_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Declined request') }}</button>
           <button v-else-if="user.pending_requests.includes(team.id)" type="button" @click="cancelRequest(team)" class="btn-danger mx-auto my-6">{{ __('Cancel join request') }}</button>
