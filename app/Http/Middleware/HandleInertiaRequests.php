@@ -56,7 +56,7 @@ class HandleInertiaRequests extends Middleware
                         'admin' => $request->user()->isAdministrator(),
                         'is_public_moderator' => $request->user()->isPublicModerator(),
                         'team' => $request->user()->team,
-                        'notifications' => Cache::remember($request->user()->id . '_unread_notifications', now()->addMinutes(15), function () use($request) {
+                        'notifications' => Cache::remember($request->user()->id.'_unread_notifications', now()->addMinutes(15), function () use ($request) {
                             return $request->user()->unreadNotifications;
                         }),
                         'can' => Gate::forUser($request->user())->abilities(),

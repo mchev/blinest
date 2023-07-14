@@ -6,11 +6,12 @@ use App\Models\Room;
 use App\Models\User;
 use App\Rules\Reserved;
 use App\Services\SendinblueService;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
@@ -60,24 +61,24 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(User $user)
+    public function update(Request $request, User $user)
     {
         if (Auth::user()->id === $user->id) {
-            Request::validate([
+            $request->validate([
                 'name' => ['required', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved],
                 'email' => ['required', 'max:255', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
                 'password' => ['nullable', Rules\Password::defaults()],
                 'photo' => ['nullable', 'image'],
             ]);
 
-            $user->update(Request::only('name', 'email'));
+            $user->update($request->only('name', 'email'));
 
-            if (Request::file('photo')) {
-                $user->updatePhoto(Request::file('photo'));
+            if ($request->file('photo')) {
+                $user->updatePhoto($request->file('photo'));
             }
 
-            if (Request::get('password')) {
-                $user->update(['password' => Hash::make(Request::get('password'))]);
+            if ($request->get('password')) {
+                $user->update(['password' => Hash::make($request->get('password'))]);
             }
 
             return Redirect::back()->with('success', __('Information updated'));
@@ -99,22 +100,25 @@ class UserController extends Controller
         }
     }
 
-    public function markNotificationAsRead($id)
+    public function markNotificationAsRead(Request $request, $id)
     {
-        Auth::user()->notifications()->find($id)->markAsRead();
+        $request->user()->notifications()->find($id)->markAsRead();
+        Cache::forget($request->user()->id.'_unread_notifications');
 
         return Redirect::back();
     }
 
-    public function markNotificationAsDone($id)
+    public function markNotificationAsDone(Request $request, $id)
     {
-        $done = Auth::user()->notifications()->find($id);
+        $done = $request->user()->notifications()->find($id);
 
         DatabaseNotification::where('type', $done->type)->whereNull('read_at')->get()->each(function ($notification) use ($done) {
             if ($notification->data['message'] == $done->data['message']) {
                 $notification->markAsRead();
             }
         });
+
+        Cache::forget($request->user()->id.'_unread_notifications');
 
         return Redirect::back();
     }
