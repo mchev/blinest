@@ -9,8 +9,8 @@ use App\Jobs\ProcessAddScoreToTotalScore;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class RoundController extends Controller
 {
@@ -46,27 +46,27 @@ class RoundController extends Controller
         ];
     }
 
-    public function check(Round $round, Track $track)
+    public function check(Request $request, Round $round, Track $track)
     {
         // Check if the round is still running and if the track is corresponding
         if (! $round->finished_at && $round->tracks[$round->current - 1] === $track->id) {
 
             // Validate
-            Request::validate([
+            $request->validate([
                 'text' => 'required|string|min:1|max:255',
                 'words' => 'nullable|array',
                 'currentTime' => 'required|numeric',
             ]);
 
-            $user = Auth::user();
+            $user = $request->user();
             $goodAnswers = [];
             $almostAnswers = false;
-            $speedBonus = (Request::input('currentTime') < ($round->room->track_duration * 0.18));
+            $speedBonus = ($request->input('currentTime') < ($round->room->track_duration * 0.18));
 
             // Updates the words array
-            $sanitized = sanitizeString(Request::input('text'));
+            $sanitized = sanitizeString($request->input('text'));
             $newWords = explode(' ', $sanitized);
-            $userWords = array_unique(array_merge($newWords, Request::input('words')));
+            $userWords = array_unique(array_merge($newWords, $request->input('words')));
 
             $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
             $remainingAnswers = $track->answers()->whereNotIn('id', $alreadyFoundAnswersIds)->get();
@@ -126,7 +126,7 @@ class RoundController extends Controller
                         'track_id' => $track->id,
                         'answer_id' => $answer->id,
                         'score' => $score,
-                        'time' => Request::input('currentTime'),
+                        'time' => $request->input('currentTime'),
                     ]);
 
                     // Increment total scores
@@ -148,16 +148,16 @@ class RoundController extends Controller
                     'track_id' => $track->id,
                     'answers' => $answers,
                     'total' => $round->userScore($user),
-                    'time' => Request::input('currentTime'),
+                    'time' => $request->input('currentTime'),
                 ]));
 
-                // Broadcast all answers player bubble
+                // If user has found all the answers send the bubble to the player
                 if ($totalUserAnswers === $totalTrackAnswers) {
                     broadcast(new UserHasFoundAllTheAnswers($round->room, [
                         'name' => $user->name,
                         'id' => $user->id,
                         'photo' => $user->photo,
-                        'time' => Request::input('currentTime'),
+                        'time' => $request->input('currentTime'),
                     ]));
                 }
             } elseif ($almostAnswers) {

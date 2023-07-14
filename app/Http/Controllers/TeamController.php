@@ -135,13 +135,11 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         if (Auth::user()->id === $team->user_id && $team->members->count() === 1) {
-           
             $team->delete();
 
             return redirect()->route('teams.index')->with('success', __('The Team').' '.$team->name.' '.__('has been deleted'));
         }
 
         return redirect()->back()->with('error', __('This is not your team'));
-
     }
 }

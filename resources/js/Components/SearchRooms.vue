@@ -1,26 +1,25 @@
 <script setup>
-import { watch } from 'vue'
+import { watch, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { useForm, usePage } from '@inertiajs/vue3'
+import debounce from 'lodash/debounce'
 import TextInput from '@/Components/TextInput.vue'
-import throttle from 'lodash/throttle'
-import pickBy from 'lodash/pickBy'
-
-const props = defineProps({
-  filters: Object,
-})
 
 const form = useForm({
   search: usePage().props?.filters?.search,
 })
 
-watch(
-  form,
-  throttle(() => {
-    router.get('/', pickBy(form), { remember: 'forget', preserveState: true })
-  }, 150),
-  { deep: true },
+const debouncedSearch = ref(
+  debounce(() => {
+    if (form.search === '') {
+      router.visit(route('home'))
+      return
+    }
+    router.get('/', { search: form.search }, { remember: 'forget', preserveState: true })
+  }, 300),
 )
+
+watch(() => form.search, debouncedSearch.value)
 </script>
 <template>
   <div :class="$attrs.class">

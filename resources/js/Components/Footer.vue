@@ -15,11 +15,6 @@ import { Link, usePage } from '@inertiajs/vue3'
         <li><Link :href="route('pages.show', 'mentions-legales')">{{ __('Terms and Conditions') }}</Link></li>
         <li><Link :href="route('pages.show', 'politique-de-confidentialite')">{{ __('Privacy Policy') }}</Link></li>
         <li><a target="_blank" class="font-bold" rel="external nofollow" href="https://donate.stripe.com/00g2bvf8i08X8De6oo">{{ __('Donate') }}</a></li>
-        <li>
-          <a href="https://tree-nation.com/fr/profil/impact/blinest#co2" target="_blank" style="position:relative;cursor:pointer;display:block;z-index:999;">
-          <img src="https://tree-nation.com/images/tracking/label-co2-website-white-en.png" style="width:157px;height:auto;">
-          </a>
-        </li>
       </ul>
     </div>
   </div>

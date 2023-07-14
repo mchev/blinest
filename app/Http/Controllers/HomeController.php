@@ -37,10 +37,14 @@ class HomeController extends Controller
                 ->get();
         });
 
+        $categories = Cache::remember('homepage-categories', now()->addMinutes(60), function () {
+            return Category::all();
+        });
+
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
             'top_rooms' => $topRooms,
-            'categories' => Category::all()->map(fn ($category) => [
+            'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
                 'name' => $category->name,
                 'rooms' => $category->rooms()

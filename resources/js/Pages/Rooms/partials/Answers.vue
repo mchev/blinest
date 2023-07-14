@@ -37,7 +37,7 @@ onMounted(() => {
     })
     .listen('NewScore', (e) => {
       if (e.score.user_id === user.id) {
-        console.log(e.score)
+        // console.log(e.score)
         userAnswers.value.push(e.score)
       }
     })
