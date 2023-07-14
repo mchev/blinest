@@ -77,15 +77,22 @@ class RoundController extends Controller
                 $goodWords = [];
                 $score = 0;
 
-                // Checking all sentence
-                if (levenshtein($sanitized, $value) < 3) {
-                    $goodWords = $answerWords;
+                // If the user answer is short we don't check the distance
+                if (strlen($sanitized) < 5) {
+                    if (in_array($sanitized, $answerWords)) {
+                        $goodWords = $answerWords;
+                    }
                 } else {
-                    // Else Checking all words
-                    foreach ($answerWords as $word) {
-                        foreach ($userWords as $userWord) {
-                            if (levenshtein($userWord, $word) < 1.55) {
-                                $goodWords[] = $word;
+                    // Checking all sentence
+                    if (levenshtein($sanitized, $value) < 3) {
+                        $goodWords = $answerWords;
+                    } else {
+                        // Else Checking all words
+                        foreach ($answerWords as $word) {
+                            foreach ($userWords as $userWord) {
+                                if (levenshtein($userWord, $word) < 1.55) {
+                                    $goodWords[] = $word;
+                                }
                             }
                         }
                     }
