@@ -80,7 +80,7 @@ class RoundController extends Controller
                 // If the user answer is short we don't check the distance
                 if (strlen($sanitized) < 5) {
                     if (in_array($sanitized, $answerWords)) {
-                        $goodWords = $answerWords;
+                        $goodWords[] = $sanitized;
                     }
                 } else {
                     // Checking all sentence
