@@ -15,7 +15,7 @@
         "laravel/framework": "^10.0",
         "laravel/horizon": "^5.15",
         "laravel/sanctum": "^3.2",
-        "laravel/socialite": "^5.2",
+        "laravel/socialite": "^5.8",
         "laravel/tinker": "^2.7",
         "league/glide-laravel": "^1.0",
         "maatwebsite/excel": "^3.1",
