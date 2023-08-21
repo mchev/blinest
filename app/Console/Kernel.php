@@ -23,19 +23,19 @@ class Kernel extends ConsoleKernel
         $schedule->command('cache:prune-stale-tags')->hourly();
 
         // Clean created rounds with no scores
-        $schedule->command('rounds:clean')->dailyAt('04:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->command('rounds:clean')->dailyAt('04:00')->emailOutputOnFailure(config('app.admin_email'));
 
         // Clean rounds stucked or unfinished
-        $schedule->command('rounds:reset')->everyMinute()->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->command('rounds:reset')->everyMinute()->emailOutputOnFailure(config('app.admin_email'));
 
         // Clean messages older than 15 days
-        $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->job(new CleanOldMessages)->dailyAt('06:00')->emailOutputOnFailure(config('app.admin_email'));
 
         // Clean playlists without tracks
-        $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputOnFailure(config('app.admin_email'));
 
         // Clean rooms without playlists
-        $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(env('ADMIN_EMAIL'));
+        $schedule->job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(config('app.admin_email'));
     }
 
     /**
