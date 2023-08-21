@@ -84,12 +84,11 @@ class RoundController extends Controller
                     // Else Checking all words
                     foreach ($answerWords as $word) {
                         foreach ($userWords as $userWord) {
-                            if(strlen($userWord) < 5) {
-                                if($userWord === $word) {
+                            if (strlen($userWord) < 5) {
+                                if ($userWord === $word) {
                                     $goodWords[] = $word;
                                 }
-                            }
-                            elseif (levenshtein($userWord, $word) < 1.55) {
+                            } elseif (levenshtein($userWord, $word) < 1.55) {
                                 $goodWords[] = $word;
                             }
                         }
