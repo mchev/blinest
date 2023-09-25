@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
     // Profile
     Route::get('profile/{user}', [ProfileController::class, 'show'])
         ->name('user.profile');
+    Route::delete('profile/likes/{track}', [ProfileController::class, 'unlikeTrack'])
+        ->name('profiles.likes.delete');
 
     // FAQ
     Route::post('faq/{faq}/vote/up', [FAQController::class, 'upvote']);

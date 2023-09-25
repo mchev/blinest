@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Track;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProfileController extends Controller
@@ -38,5 +40,15 @@ class ProfileController extends Controller
                 'bookmarks' => $user->bookmarkedRooms()->paginate(5, ['*'], 'bookmarks'),
             ],
         ]);
+    }
+
+    public function unlikeTrack(Request $request, Track $track)
+    {
+        $request->user()->votes()
+            ->where('votable_type', 'App\Models\Track')
+            ->where('votable_id', $track->id)
+            ->delete();
+
+        back();
     }
 }

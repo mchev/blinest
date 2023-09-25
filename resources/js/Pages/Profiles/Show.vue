@@ -99,7 +99,7 @@ const tab = ref('scores')
                 </ul>
 
                 <div class="flex flex-wrap justify-center">
-                  <div class="w-full lg:w-9/12 px-4">
+                  <div class="w-full lg:w-9/12 lg:px-4">
                     <ScoresTab v-show="tab == 'scores'" :user="user"/>
                     <LikesTab v-show="tab == 'likes'" :user="user"/>
                     <BookmarksTab v-show="tab == 'bookmarks'" :user="user"/>
