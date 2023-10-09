@@ -36,6 +36,7 @@ class RankingController extends Controller
                 ->join('teams', 'teams.id', '=', 'total_scores.totalscorable_id')
                 ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
                 ->where('rooms.is_public', true)
+                ->whereNull('teams.is_deleted')
                 ->groupBy('totalscorable_id')
                 ->orderByDesc('total_score')
                 ->limit(50)
