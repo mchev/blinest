@@ -20,7 +20,7 @@
         "lodash": "^4.17.21",
         "postcss": "^8.4.14",
         "postcss-import": "^14.0.1",
-        "postcss-nesting": "^7.0.1",
+        "postcss-nesting": "^12.0.1",
         "prettier": "^2.8.3",
         "prettier-plugin-tailwindcss": "^0.2.2",
         "pusher-js": "^7.1.1-beta",
@@ -31,8 +31,8 @@
         "vue-loader": "^17.0.0",
         "vue3-carousel": "^0.1.40",
         "@inertiajs/vue3": "^1.0.0",
-        "@tiptap/starter-kit": "^2.0.0-beta.199",
-        "@tiptap/vue-3": "^2.0.0-beta.199",
+        "@tiptap/starter-kit": "^2.1.12",
+        "@tiptap/vue-3": "^2.1.12",
         "@vue/server-renderer": "^3.2.45",
         "swiper": "^9.1.0"
     }
