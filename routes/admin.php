@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PlaylistController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\StorageMigrationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'auth.administrator']], function () {
+
+    // Storage Migration
+    Route::get('/migrate', [StorageMigrationController::class, 'migrate']);
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])

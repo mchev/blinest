@@ -24,7 +24,7 @@ trait HasPicture
 
             $filename = uniqid().'.webp';
 
-            Storage::disk('public')->put($this->getTable().'/'.$filename, $image);
+            Storage::disk($this->profilePhotoDisk())->put($this->getTable().'/'.$filename, $image);
 
             $this->forceFill([
                 'photo_path' => $this->getTable().'/'.$filename,
@@ -96,6 +96,6 @@ trait HasPicture
      */
     protected function profilePhotoDisk()
     {
-        return 'public';
+        return 'contabo';
     }
 }
