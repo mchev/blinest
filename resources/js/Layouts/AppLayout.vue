@@ -5,6 +5,7 @@ import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import Footer from '@/Components/Footer.vue'
+import Snow from '@/Components/Snow.vue'
 
 const url = 'https://blinest.com' + usePage().url
 
@@ -28,6 +29,7 @@ const url = 'https://blinest.com' + usePage().url
     <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
     <meta name="twitter:image" content="https://blinest.com/images/statics/screenshot.png" />
   </Head>
+  <Snow/>
   <div class="text-neutral-200">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">

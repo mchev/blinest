@@ -19,7 +19,7 @@ const showingSearchbar = ref(false)
   <div class="md:flex md:flex-shrink-0">
     <div class="flex w-full items-center justify-between px-4 py-2 md:flex-shrink-0 md:px-12">
       <Link :href="route('home')" title="Blinest">
-        <logo class="w-24 fill-inherit lg:w-32" />
+        <logo class="w-24 fill-inherit lg:w-32" name="xmas" />
         <p class="text-sm text-neutral-500 mt-1 hidden md:block">{{ __('Test your musical knowledge') }}</p>
       </Link>
 

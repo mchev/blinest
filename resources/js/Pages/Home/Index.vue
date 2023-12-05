@@ -31,25 +31,25 @@ defineProps({
         <div class="flex flex-wrap items-center">
           <div v-if="top_rooms" class="relative my-6 flex-grow">
             <!-- <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">TOP 5</h2> -->
-            <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" />
+            <rooms :rooms="top_rooms" :is_top_5="true" id="topRooms" class="flex-grow" />
           </div>
         </div>
       </section>
       <section v-if="categories.length" v-for="category in categories" :key="category.id">
         <div v-if="category.rooms.length" class="relative mb-6">
-          <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">{{ __(category.name) }}</h2>
+          <h2 class="mb-1 text-xl font-medium text-neutral-100 lg:text-xl">{{ __(category.name) }}</h2>
           <rooms :rooms="category.rooms" :id="`category-${category.id}`" />
         </div>
       </section>
       <section v-if="private_rooms && private_rooms.length">
         <div class="relative mb-6">
-          <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">{{ __('Private rooms') }}</h2>
+          <h2 class="mb-1 text-xl font-medium text-neutral-100 lg:text-xl">{{ __('Private rooms') }}</h2>
           <rooms :rooms="private_rooms" id="privateRooms" />
         </div>
       </section>
       <section v-if="user_rooms && user_rooms.length">
         <div class="relative">
-          <h2 class="mb-1 text-xl text-neutral-100 lg:text-xl font-medium">{{ __('My rooms') }}</h2>
+          <h2 class="mb-1 text-xl font-medium text-neutral-100 lg:text-xl">{{ __('My rooms') }}</h2>
           <rooms :rooms="user_rooms" id="userRooms" />
         </div>
       </section>
