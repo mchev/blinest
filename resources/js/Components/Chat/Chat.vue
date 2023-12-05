@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import Message from './Message.vue'
 import AlertModeratorsModal from './AlertModeratorsModal.vue'
 import TextInput from '@/Components/TextInput.vue'
+import { replaceEmojis } from './emojis.js';
 
 const props = defineProps({
   room: Object,
@@ -41,6 +42,7 @@ onUnmounted(() => {
 })
 
 const sendMessage = () => {
+  body.value = replaceEmojis(body.value);
   axios
     .post(`/rooms/${props.room.id}/message`, {
       body: body.value,
@@ -76,7 +78,7 @@ const sendMessage = () => {
     </div>
     <div class="flex w-full p-2">
       <form @submit.prevent="sendMessage" class="flex w-full">
-        <TextInput v-model="body" autocomplete="off" inputClass="rounded-r-none border-0" class="flex-grow" />
+        <TextInput v-model="body" autocomplete="off" inputClass="rounded-r-none border-0 focus:ring-0 focus:ring-offset-0 focus:border-transparent focus:outline-none" class="flex-grow" />
         <button type="submit" class="rounded-r bg-teal-600 p-2 text-neutral-100">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <title>{{ __('Send') }}</title>
