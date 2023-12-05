@@ -96,6 +96,6 @@ trait HasPicture
      */
     protected function profilePhotoDisk()
     {
-        return 'contabo';
+        return config('filesystems.default');
     }
 }
