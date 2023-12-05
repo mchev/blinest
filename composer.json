@@ -25,15 +25,14 @@
         "predis/predis": "^2.0",
         "psr/simple-cache": "^2.0",
         "pusher/pusher-php-server": "^7.0",
-        "sendinblue/api-v3-sdk": "^8.3",
+        "getbrevo/brevo-php": "^1.0",
         "socialiteproviders/deezer": "^4.1",
         "socialiteproviders/discord": "^4.1",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",
-        "socialiteproviders/spotify": "^4.1",
         "symfony/http-client": "^6.1",
         "symfony/process": "^6.1",
-        "symfony/sendinblue-mailer": "^6.1",
+        "symfony/brevo-mailer": "^7.0",
         "tightenco/ziggy": "^1.4"
     },
     "require-dev": {

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 
-class SendinblueService
+class BrevoService
 {
     private $credentials;
 
@@ -14,12 +14,12 @@ class SendinblueService
 
     public function __construct()
     {
-        $this->credentials = \SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', config('services.sendinblue.key'));
+        $this->credentials = \Brevo\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', config('services.brevo.key'));
     }
 
     public function contacts()
     {
-        $this->apiInstance = new \SendinBlue\Client\Api\ContactsApi(
+        $this->apiInstance = new \Brevo\Client\Api\ContactsApi(
             new \GuzzleHttp\Client(),
             $this->credentials
         );
@@ -29,7 +29,7 @@ class SendinblueService
 
     public function create(User $user)
     {
-        $createContact = new \SendinBlue\Client\Model\CreateContact([
+        $createContact = new \Brevo\Client\Model\CreateContact([
             'email' => $user->email,
             'updateEnabled' => true,
             'attributes' => (object) [

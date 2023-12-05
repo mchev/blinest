@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Notifications\ContactMessage;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ContactController extends Controller
@@ -15,10 +14,10 @@ class ContactController extends Controller
         return Inertia::render('Contact/Index');
     }
 
-    public function send()
+    public function send(Request $request)
     {
-        $blinest = User::find(105);
-        $blinest->notify(new ContactMessage(Auth::user(), Request::input('message')));
+        $expeditor = User::where('email', config('mail.from.address'))->firstOrFail();
+        $expeditor->notify(new ContactMessage($request->user(), $request->message));
 
         return Inertia::render('Contact/Sent');
     }

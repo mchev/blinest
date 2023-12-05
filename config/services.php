@@ -24,8 +24,8 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
-    'sendinblue' => [
-        'key' => env('SENDINBLUE_KEY'),
+    'brevo' => [
+        'key' => env('BREVO_KEY'),
     ],
 
     'ses' => [

@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Notifications\Welcome;
-use App\Services\SendinblueService;
+use App\Services\BrevoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -34,7 +34,7 @@ class ProcessUserCreated implements ShouldQueue
         // Send a welcome email
         $this->user->notify(new Welcome);
 
-        // Create sendinblue contact
-        (new SendinblueService)->contacts()->create($this->user);
+        // Create brevo contact
+        (new BrevoService)->contacts()->create($this->user);
     }
 }
