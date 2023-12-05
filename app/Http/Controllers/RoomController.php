@@ -85,7 +85,7 @@ class RoomController extends Controller
                 'tracks_count' => $room->tracks()->count(),
                 'is_bookmarked' => $room->bookmarks()->where('user_id', auth()?->user()?->id)->exists(),
             ],
-            'public_rooms' => Room::isPublic()->orderBy('name')->select('id', 'slug', 'name')->get(),
+            'public_rooms' => Room::isPublic()->orderBy('name')->select('id', 'slug', 'name', 'photo_path')->get(),
         ]);
     }
 
