@@ -34,7 +34,7 @@ class ProcessRoundFinished implements ShouldQueue
     {
         // Start a new round
         if (! $this->room->is_playing && $this->room->is_autostart) {
-            $this->room->startRound();
+            StartRound::dispatch($this->room);
         }
     }
 }

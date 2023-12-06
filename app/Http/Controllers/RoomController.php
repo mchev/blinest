@@ -203,6 +203,7 @@ class RoomController extends Controller
     {
         if ($request->user()->hasRoomControl($room) && ! $room->is_playing) {
             StartRound::dispatch($room, $request->user());
+
             return redirect()->back();
         }
 

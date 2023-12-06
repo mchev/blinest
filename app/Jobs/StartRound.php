@@ -19,7 +19,7 @@ class StartRound implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected Room $room, protected User $user)
+    public function __construct(protected Room $room, protected ?User $user = null)
     {
         //
     }
@@ -32,7 +32,7 @@ class StartRound implements ShouldQueue
         try {
 
             $round = $this->room->rounds()->create([
-                'user_id' => $this->user->id,
+                'user_id' => $this->user ? $this->user->id : null,
                 'is_playing' => true,
                 'tracks' => $this->room->is_random
                     ? $this->room->tracks()->inRandomOrder()->take($this->room->tracks_by_round)->distinct()->pluck('id')
