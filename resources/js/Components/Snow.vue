@@ -5,34 +5,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
 
-const flakes = ref([]);
+const flakes = ref([])
+let idCounter = 0
 
 const createFlake = () => ({
-  id: Date.now(),
+  id: idCounter++,
   x: Math.random() * window.innerWidth,
   y: Math.random() * window.innerHeight,
   speed: Math.random() * 2 + 1,
-});
+})
 
 const moveFlakes = () => {
   flakes.value.forEach((flake, index) => {
-    flake.y += flake.speed;
+    flake.y += flake.speed
 
     if (flake.y > window.innerHeight) {
-      flakes.value.splice(index, 1, createFlake());
+      flakes.value.splice(index, 1, createFlake())
     }
-  });
-};
+  })
+}
 
 onMounted(() => {
   for (let i = 0; i < 25; i++) {
-    flakes.value.push(createFlake());
+    flakes.value.push(createFlake())
   }
 
-  setInterval(moveFlakes, 30);
-});
+  setInterval(moveFlakes, 30)
+})
 </script>
 
 <style scoped>
@@ -47,7 +48,7 @@ onMounted(() => {
 }
 
 .snowflake {
-  @apply w-2 h-2 bg-white rounded-full absolute;
+  @apply absolute h-2 w-2 rounded-full bg-white;
   animation: fall linear infinite;
 }
 

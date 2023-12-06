@@ -47,9 +47,9 @@ class ContactMessage extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Message de '.$this->user->name)
-                    ->from($this->user->email, $this->user->name)
-                    ->line($this->user->name.': '.$this->user->email)
-                    ->line($this->message);
+            ->subject('Message de '.$this->user->name)
+            ->from($this->user->email, $this->user->name)
+            ->line($this->user->name.': '.$this->user->email)
+            ->line($this->message);
     }
 }

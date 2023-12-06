@@ -41,7 +41,7 @@ class TrackController extends Controller
         if (Auth::user()->id === $playlist->owner->id
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
-            ) {
+        ) {
             return response()->json([
                 'filters' => Request::only('term'),
                 'tracks' => (new MusicProviders)->search(Request::get('term'))
@@ -74,7 +74,7 @@ class TrackController extends Controller
         if (Auth::user()->id === $playlist->owner->id
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
-            ) {
+        ) {
 
             // VALIDATE
             Request::validate([
@@ -135,7 +135,7 @@ class TrackController extends Controller
         if (Auth::user()->id === $playlist->owner->id
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
-            ) {
+        ) {
             Request::validate([
                 'dificulty' => ['required', 'integer', 'min:0', 'max:5'],
             ]);
@@ -154,7 +154,7 @@ class TrackController extends Controller
         if (Auth::user()->id === $playlist->owner->id
                 || Auth::user()->isPlaylistModerator($playlist)
                 || Auth::user()->isAdministrator()
-            ) {
+        ) {
             $track->deleteWithNotification();
 
             return Redirect::back()->with('Track deleted');

@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Auth;
 class Room extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     use HasPicture;
     use Sluggable;
+    use SoftDeletes;
 
     protected $appends = [
         'photo',
@@ -61,18 +61,6 @@ class Room extends Model
     public function scopeIsPlaying()
     {
         return $this->currentRound()->exists();
-    }
-
-    public function startRound()
-    {
-        $round = $this->rounds()->create([
-            // When using symphony process we loose auth and guest could also launch rounds
-            'user_id' => Auth::check() ? Auth::user()->id : null,
-            'tracks' => $this->is_random
-                ? $this->tracks()->inRandomOrder()->take($this->tracks_by_round)->distinct()->pluck('id')
-                : $this->tracks()->take($this->tracks_by_round)->distinct()->pluck('id'),
-        ]);
-        $round->start();
     }
 
     public function bookmarks(): MorphToMany

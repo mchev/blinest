@@ -70,7 +70,7 @@ class PlaylistController extends Controller
         if (auth()->user()->id === $playlist->owner->id
                 || auth()->user()->isPlaylistModerator($playlist)
                 || auth()->user()->isAdministrator()
-            ) {
+        ) {
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
                     'id' => $playlist->id,

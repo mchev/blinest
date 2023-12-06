@@ -37,13 +37,14 @@ class ProcessResetUnfinishedRounds implements ShouldQueue
             ->get();
 
         foreach ($rounds as $round) {
-            $round->finished_at = now();
-            $round->is_playing = 0;
-            $round->update();
+            $round->update([
+                'finished_at' => now(),
+                'is_playing' => 0,
+            ]);
 
             $room = $round->room;
-            $room->is_playing = 0;
-            $room->update();
+            $room->update(['is_playing' => 0]);
+            $room->save();
         }
     }
 }

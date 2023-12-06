@@ -53,7 +53,7 @@ return [
             'use_path_style_endpoint' => true,
             'throw' => true,
         ],
-        
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

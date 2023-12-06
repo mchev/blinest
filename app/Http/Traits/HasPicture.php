@@ -12,7 +12,6 @@ trait HasPicture
     /**
      * Update the user's profile photo.
      *
-     * @param  \Illuminate\Http\UploadedFile  $photo
      * @return void
      */
     public function updatePhoto(UploadedFile $photo, int $width = 350, int $height = 350)
@@ -56,8 +55,6 @@ trait HasPicture
 
     /**
      * Get the photo.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
     public function photo(): Attribute
     {

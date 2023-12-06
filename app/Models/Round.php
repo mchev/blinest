@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Events\RoundFinished;
-use App\Events\RoundStarted;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
@@ -27,16 +26,6 @@ class Round extends Model
         'tracks' => 'object',
         'finished_at' => 'datetime',
     ];
-
-    public function start()
-    {
-        if (! empty($this->tracks)) {
-            broadcast(new RoundStarted($this));
-            $this->update(['is_playing' => true]);
-            $this->room()->update(['is_playing' => true]);
-            $this->playNextTrack();
-        }
-    }
 
     public function pause()
     {
@@ -87,7 +76,7 @@ class Round extends Model
 
                 // Job
                 ProcessTrackPlayed::dispatch($this)
-                        ->delay(now()->addSeconds($this->room->track_duration));
+                    ->delay(now()->addSeconds($this->room->track_duration));
             } else {
                 $track->deleteWithNotification();
                 $this->playNextTrack();

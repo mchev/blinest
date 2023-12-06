@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class PlaylistExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
+class PlaylistExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping
 {
     protected $playlist;
 

@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Team extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     use HasPicture;
+    use SoftDeletes;
 
     /**
      * Max members allowed by teams
@@ -81,10 +81,10 @@ class Team extends Model
     public function purge()
     {
         $this->owner()->where('team_id', $this->id)
-                ->update(['team_id' => null]);
+            ->update(['team_id' => null]);
 
         $this->members()->where('team_id', $this->id)
-                ->update(['team_id' => null]);
+            ->update(['team_id' => null]);
 
         $this->members()->detach();
 

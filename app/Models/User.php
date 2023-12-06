@@ -16,7 +16,7 @@ use Overtrue\LaravelVote\Traits\Voter;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Bannable, Voter;
+    use Bannable, HasApiTokens, HasFactory, HasPicture, Notifiable, SoftDeletes, Voter;
 
     protected $appends = [
         'photo',
@@ -250,7 +250,7 @@ class User extends Authenticatable
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('email', 'like', '%'.$search.'%');
             })
-            ->orderByRaw('CASE WHEN name = "'.$filters['search'].'" THEN 1 WHEN name LIKE "%'.$filters['search'].'%" THEN 2 ELSE 3 END');
+                ->orderByRaw('CASE WHEN name = "'.$filters['search'].'" THEN 1 WHEN name LIKE "%'.$filters['search'].'%" THEN 2 ELSE 3 END');
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();

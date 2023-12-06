@@ -8,12 +8,14 @@
         "php": "^8.2",
         "ext-exif": "*",
         "ext-gd": "*",
+        "getbrevo/brevo-php": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.9",
         "intervention/image": "^2.7",
         "jwilsson/spotify-web-api-php": "^5.0",
         "laravel/framework": "^10.0",
         "laravel/horizon": "^5.15",
+        "laravel/pulse": "^1.0@beta",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.8",
         "laravel/tinker": "^2.7",
@@ -25,15 +27,14 @@
         "predis/predis": "^2.0",
         "psr/simple-cache": "^2.0",
         "pusher/pusher-php-server": "^7.0",
-        "getbrevo/brevo-php": "^1.0",
         "socialiteproviders/deezer": "^4.1",
         "socialiteproviders/discord": "^4.1",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/spotify": "^4.1",
+        "symfony/brevo-mailer": "^7.0",
         "symfony/http-client": "^6.1",
         "symfony/process": "^6.1",
-        "symfony/brevo-mailer": "^7.0",
         "tightenco/ziggy": "^1.4"
     },
     "require-dev": {
@@ -91,6 +92,6 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "beta",
     "prefer-stable": true
 }

@@ -7,9 +7,9 @@ use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PlaylistController;
 use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\Admin\StorageMigrationController;
 use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\StorageMigrationController;
 use Illuminate\Support\Facades\Route;
 
 /*

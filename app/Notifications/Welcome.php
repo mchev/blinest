@@ -31,11 +31,11 @@ class Welcome extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject(__('messages.welcome_subject'))
-                    ->greeting(__('messages.welcome_title', ['name' => $notifiable->name]))
-                    ->line(__('messages.welcome_intro'))
-                    ->line(__('messages.welcome_content'))
-                    ->action(__('messages.welcome_action'), url('/'))
-                    ->salutation(__('messages.salutations'));
+            ->subject(__('messages.welcome_subject'))
+            ->greeting(__('messages.welcome_title', ['name' => $notifiable->name]))
+            ->line(__('messages.welcome_intro'))
+            ->line(__('messages.welcome_content'))
+            ->action(__('messages.welcome_action'), url('/'))
+            ->salutation(__('messages.salutations'));
     }
 }
