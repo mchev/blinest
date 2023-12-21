@@ -6,7 +6,7 @@
   .form-input,
   .form-textarea,
   .form-select {
-    @apply py-2 leading-normal block w-full border border-neutral-700 bg-neutral-600 font-sans rounded text-left appearance-none relative focus:border-blinest-400 focus:ring;
+    @apply py-2 leading-normal block w-full border border-neutral-700 bg-neutral-600 font-sans rounded text-left appearance-none relative focus:border-gray-400 focus:ring;
 
     &::placeholder {
       @apply text-neutral-500 opacity-100;

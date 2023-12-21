@@ -17,8 +17,8 @@ const store = () => {
   <Head title="Create Team" />
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.teams')">{{ __('Teams') }}</Link>
-      <span class="font-medium text-blinest-400">/</span> Create
+      <Link class="text-gray-400 hover:text-blinest-600" :href="route('admin.teams')">{{ __('Teams') }}</Link>
+      <span class="font-medium text-gray-400">/</span> Create
     </h1>
     <div class="max-w-3xl overflow-hidden rounded-md bg-white shadow">
       <form @submit.prevent="store">

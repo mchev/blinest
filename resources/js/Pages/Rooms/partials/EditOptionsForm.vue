@@ -19,6 +19,7 @@ const emit = defineEmits(['close'])
 const user = usePage().props.auth.user
 
 const form = useForm({
+  is_featured: props.room.is_featured,
   is_chat_active: props.room.is_chat_active,
   is_autostart: props.room.is_autostart,
   is_random: props.room.is_random,
@@ -65,6 +66,7 @@ const update = () => {
     </div>
 
     <div class="flex w-full flex-wrap gap-4">
+      <checkbox-input v-if="user.admin" v-model="form.is_featured" :error="form.errors.is_featured" :label="__('Featured')" />
       <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" :label="__('Chatbox')" />
       <checkbox-input v-model="form.is_random" :error="form.errors.is_random" :label="__('Random')" />
       <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" :label="__('Autostart')" />
