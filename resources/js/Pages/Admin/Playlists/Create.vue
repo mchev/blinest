@@ -19,8 +19,8 @@ const store = () => {
   <Head title="Create Playlist" />
   <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
-      <Link class="text-blinest-400 hover:text-blinest-600" :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
-      <span class="font-medium text-blinest-400">/</span> Create
+      <Link class="text-gray-400 hover:text-blinest-600" :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
+      <span class="font-medium text-gray-400">/</span> Create
     </h1>
     <card>
       <form @submit.prevent="store">

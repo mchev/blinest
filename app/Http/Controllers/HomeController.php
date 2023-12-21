@@ -29,13 +29,13 @@ class HomeController extends Controller
             ]);
         }
 
-        $topRooms = Cache::remember('homepage-toprooms', now()->addMinutes(60), function () {
-            return Room::isPublic()
-                ->withCount('rounds')
-                ->orderByDesc('rounds_count')
-                ->limit(5)
-                ->get();
-        });
+        // $topRooms = Cache::remember('homepage-toprooms', now()->addMinutes(60), function () {
+        //     return Room::isPublic()
+        //         ->withCount('rounds')
+        //         ->orderByDesc('rounds_count')
+        //         ->limit(5)
+        //         ->get();
+        // });
 
         $categories = Cache::remember('homepage-categories', now()->addMinutes(60), function () {
             return Category::all();
@@ -43,13 +43,12 @@ class HomeController extends Controller
 
         return Inertia::render('Home/Index', [
             'filters' => Request::all('search'),
-            'top_rooms' => $topRooms,
+            'featured_rooms' => Room::where('is_featured', true)->get(),
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
                 'name' => $category->name,
                 'rooms' => $category->rooms()
                     ->isPublic()
-                    ->whereNotIn('id', $topRooms->pluck('id'))
                     ->whereNull('password')
                     ->orderByDesc('is_playing')
                     ->limit(18)

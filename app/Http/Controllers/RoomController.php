@@ -164,6 +164,14 @@ class RoomController extends Controller
 
         $room->update($request->only('tracks_by_round', 'track_duration', 'pause_between_tracks', 'pause_between_rounds', 'is_chat_active', 'is_autostart', 'is_random', 'color'));
 
+        // Administrator stuff
+        if ($request->user()->isAdministrator()) {
+            $room->update([
+                'is_featured' => $request->is_featured,
+            ]);
+        }
+
+        // Room password
         if ($request->get('has_password')) {
             $room->update(['password' => $request->get('password')]);
         } else {
@@ -233,7 +241,7 @@ class RoomController extends Controller
         ]);
 
         foreach ($room->moderators as $moderator) {
-            $moderator->notify(new NewSuggestion($room, $request->get('suggestion'), $request->user()->user()));
+            $moderator->notify(new NewSuggestion($room, $request->get('suggestion'), $request->user()));
         }
 
         return redirect()->back()->with('success', __('Understood!'));
