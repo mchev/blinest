@@ -8,6 +8,7 @@ import TeamRequestApproved from './TeamRequestApproved.vue'
 import TeamRequestRejected from './TeamRequestRejected.vue'
 import NewRoomAlert from './NewRoomAlert.vue'
 import NewSuggestion from './NewSuggestion.vue'
+import TrackDeleted from './TrackDeleted.vue'
 
 const user = usePage().props.auth.user
 const notifications = ref(user.notifications)
@@ -19,7 +20,7 @@ onMounted(() => {
     setTimeout(() => {
       popup.value = null
     }, 3000)
-    notifications.value.push(...[notification])
+    notifications.value.unshift(...[notification])
   })
 })
 
@@ -67,6 +68,7 @@ const hideItemBeforeRefresh = (notification) => {
               <TeamRequestApproved v-if="notification.type === 'App\\Notifications\\TeamRequestApproved'" :notification="notification" />
               <NewRoomAlert v-if="notification.type === 'App\\Notifications\\NewRoomAlert'" :notification="notification" @markedAsdone="markAsDone(notification)" />
               <NewSuggestion v-if="notification.type === 'App\\Notifications\\NewSuggestion'" :notification="notification" @markedAsdone="markAsDone(notification)" />
+              <TrackDeleted v-if="notification.type === 'App\\Notifications\\TrackDeleted'" :notification="notification" @markedAsdone="markAsDone(notification)" />
               <div class="justify-end">
                 <button @click="markAsRead(notification)" class="pl-4 text-neutral-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

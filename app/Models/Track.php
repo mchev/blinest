@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\SendDiscordNotification;
+use App\Notifications\TrackDeleted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVote\Traits\Votable;
@@ -52,13 +53,19 @@ class Track extends Model
 
     public function deleteWithNotification()
     {
+        $message = 'Le titre '.$this->answers()->where('answer_type_id', 2)->first()?->value.' de '.$this->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.';
+
+        // Public rooms discord notification
         foreach ($this->playlist->rooms()->isPublic()->get() as $room) {
             if ($room->discord_webhook_url) {
-                SendDiscordNotification::dispatch(
-                    $room,
-                    'Le titre '.$this->answers()->where('answer_type_id', 2)->first()?->value.' de '.$this->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.',
-                    'danger'
-                );
+                SendDiscordNotification::dispatch($room, $message, 'danger');
+            }
+        }
+
+        // Private rooms notifications
+        if (! $this->playlist->is_public) {
+            foreach ($this->playlist->moderators as $moderator) {
+                $moderator->notify(new TrackDeleted($this->playlist, $message));
             }
         }
 
