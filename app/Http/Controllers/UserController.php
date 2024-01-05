@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\User;
 use App\Rules\Reserved;
-use App\Services\SendinblueService;
+use App\Services\BrevoService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
@@ -88,7 +88,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
-            (new SendinblueService)->contacts()->delete($user);
+            (new BrevoService)->contacts()->delete($user);
             $user->deletePhoto();
             $user->forceDelete();
             Session::flush();
