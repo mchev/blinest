@@ -22,7 +22,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/glide-laravel": "^1.0",
         "maatwebsite/excel": "^3.1",
-        "mchev/banhammer": "^1.2",
+        "mchev/banhammer": "^2.0",
         "overtrue/laravel-vote": "^3.1",
         "predis/predis": "^2.0",
         "psr/simple-cache": "^2.0",
