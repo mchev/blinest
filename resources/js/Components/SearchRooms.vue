@@ -15,8 +15,12 @@ const debouncedSearch = ref(
       router.visit(route('home'))
       return
     }
-    router.get('/', { search: form.search }, { remember: 'forget', preserveState: true })
-  }, 300),
+    router.get('/', { search: form.search }, { 
+      remember: 'forget', 
+      preserveState: true,
+      only: ['search_result']
+    })
+  }, 150),
 )
 
 watch(() => form.search, debouncedSearch.value)
