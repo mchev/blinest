@@ -70,7 +70,8 @@ class DeezerService
         while ($url) {
             $tracks = Http::get($url)->json();
             foreach ($tracks['data'] as $track) {
-                $importedTracks[] = ProcessImportTrack::dispatchSync($playlist, $this->formatTrack($track));
+                $formatedTrack = $this->formatTrack($track);
+                $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formatedTrack)->onQueue('imports');
             }
             $url = $tracks['next'] ?? null;
         }

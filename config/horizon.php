@@ -167,15 +167,17 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default'],
+            'queue' => ['default', 'imports'],
             'balance' => 'auto',
-            'maxProcesses' => 1,
+            'maxProcesses' => 3,
             'maxTime' => 0,
             'maxJobs' => 0,
             'memory' => 128,
             'tries' => 1,
             'timeout' => 60,
-            'nice' => 0,
+            'nice' => 10,
+            'rest' => 0.5,
+            'sleep' => 5
         ],
     ],
 
