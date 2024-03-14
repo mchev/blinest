@@ -169,15 +169,14 @@ return [
             'connection' => 'redis',
             'queue' => ['default', 'imports'],
             'balance' => 'auto',
-            'maxProcesses' => 3,
+            'maxProcesses' => 1,
             'maxTime' => 0,
             'maxJobs' => 0,
             'memory' => 128,
             'tries' => 1,
             'timeout' => 60,
-            'nice' => 10,
-            'rest' => 0.5,
-            'sleep' => 5
+            'nice' => 8,
+            'rest' => 0.5
         ],
     ],
 
