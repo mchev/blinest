@@ -90,6 +90,10 @@ class UserController extends Controller
         if (Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
             (new BrevoService)->contacts()->delete($user);
             $user->deletePhoto();
+            $user->rooms()->delete();
+            $user->playlists()->delete();
+            $user->scores()->delete();
+            $user->totalScores()->delete();
             $user->forceDelete();
             Session::flush();
             Auth::logout();

@@ -115,12 +115,21 @@ class RoomController extends Controller
 
     public function edit(Request $request, Room $room)
     {
+        $user = $request->user();
+
+        if (!$user->isRoomModerator($room)) {
+            return redirect()->route('rooms.index');
+        }
+
         $room->load('moderators', 'playlists');
+
+        $available_playlists = Playlist::isPublic()->get()
+            ->merge($user->moderatedPlaylists);
 
         return Inertia::render('Rooms/Edit', [
             'room' => $room,
             'categories' => Category::orderBy('name')->get(),
-            'available_playlists' => Playlist::isPublic()->get()->merge($request->user()->moderatedPlaylists),
+            'available_playlists' => $available_playlists,
         ]);
     }
 

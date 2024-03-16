@@ -9,13 +9,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
-const file = ref(null)
+const file = ref('')
 
-watch(props.modelValue, (value) => {
+watch(() => props.modelValue, (value) => {
   if (!value) {
-    file.value = ''
+    file.value = '';
   }
-})
+});
 
 const filesize = (size) => {
   var i = Math.floor(Math.log(size) / Math.log(1024))

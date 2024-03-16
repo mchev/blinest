@@ -21,7 +21,7 @@ class RoomModeratorController extends Controller
 
     public function detach(Request $request, Room $room)
     {
-        if (Auth::user()->isRoomOwner($room) || Auth::user()->isAdministrator()) {
+        if ($request->user()->isRoomModerator($room) || $request->user()->isAdministrator()) {
             $room->moderators()->detach($request->user_id);
         } else {
             abort(403, __('Unauthorized action'));

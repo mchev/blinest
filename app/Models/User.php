@@ -147,9 +147,9 @@ class User extends Authenticatable
 
     public function isRoomModerator(Room $room)
     {
-        return $this->whereHas('moderatedRooms', function (Builder $query) use ($room) {
-            $query->where('rooms.id', $room->id);
-        })->exists();
+        return $this->moderatedRooms()
+                    ->where('rooms.id', $room->id)
+                    ->exists();
     }
 
     public function isRoomOwner(Room $room)
