@@ -4,45 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Room;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (Request::only('search')) {
+        if ($request->only('search')) {
             return Inertia::render('Home/Index', [
-                'filters' => Request::all('search'),
+                'filters' => $request->all('search'),
                 'search_result' => Room::query()
                     ->whereHas('playlists')
                     ->whereNull('password')
-                    ->filter(Request::only('search'))
+                    ->filter($request->only('search'))
                     ->with('owner')
                     ->withCount('rounds')
                     ->orderByDesc('is_playing')
                     ->orderByDesc('is_public')
                     ->orderByDesc('rounds_count')
-                    ->limit(30)
+                    ->limit(20)
                     ->get(),
             ]);
         }
 
-        // $topRooms = Cache::remember('homepage-toprooms', now()->addMinutes(60), function () {
-        //     return Room::isPublic()
-        //         ->withCount('rounds')
-        //         ->orderByDesc('rounds_count')
-        //         ->limit(5)
-        //         ->get();
-        // });
-
-        $categories = Cache::remember('homepage-categories', now()->addMinutes(60), function () {
+        $categories = Cache::rememberForever('homepage-categories', function () {
             return Category::all();
         });
+        $user = $request->user();
 
         return Inertia::render('Home/Index', [
-            'filters' => Request::all('search'),
+            'filters' => $request->all('search'),
             'featured_rooms' => Room::where('is_featured', true)->get(),
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
@@ -71,9 +64,9 @@ class HomeController extends Controller
                 })
                 ->values()
                 ->all(),
-            'user_rooms' => auth()->user()
-                ? Cache::remember('homepage-moderatedrooms-'.auth()->user()->id, now()->addMinutes(10), function () {
-                    return auth()->user()->moderatedRooms()
+            'user_rooms' => $user
+                ? Cache::remember('homepage-moderatedrooms-'.$user->id, now()->addDay(), function () use ($user) {
+                    return $user->moderatedRooms()
                         ->isPrivate()
                         ->with('owner')
                         ->get();

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class Room extends Model
 {
@@ -43,13 +44,15 @@ class Room extends Model
 
     protected function getCurrentTrackIndexAttribute()
     {
-        if ($this->rounds()->exists()) {
-            if ($this->rounds()->latest()->first()->is_playing) {
-                return $this->rounds()->latest()->first()->current;
-            }
-        }
+        return Cache::remember('current_track_index_'.$this->id, now()->addMinutes(1), function () {
+            $latestRound = $this->rounds()->latest()->first(['current', 'is_playing']);
 
-        return 0;
+            if ($latestRound && $latestRound->is_playing) {
+                return $latestRound->current;
+            }
+
+            return 0;
+        });
     }
 
     public function currentRound()
