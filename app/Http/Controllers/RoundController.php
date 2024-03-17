@@ -6,12 +6,12 @@ use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
 use App\Jobs\ProcessAddScoreToTotalScore;
-use Illuminate\Support\Facades\Cache;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class RoundController extends Controller
 {
@@ -62,7 +62,7 @@ class RoundController extends Controller
             $user = $request->user();
             $goodAnswers = [];
             $almostAnswers = false;
-            $trackDuration = Cache::rememberForever('track_'. $track->id . '_duration', function() use ($round) {
+            $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
                 return $round->room->track_duration;
             });
             $speedBonus = ($request->input('currentTime') < ($trackDuration * 0.18));
@@ -74,7 +74,7 @@ class RoundController extends Controller
 
             $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
 
-            $trackAnswers = Cache::remember('track-' . $track->id . '-answers', now()->addDay(), function() use ($track) {
+            $trackAnswers = Cache::remember('track-'.$track->id.'-answers', now()->addDay(), function () use ($track) {
                 return $track->answers;
             });
 
@@ -113,7 +113,7 @@ class RoundController extends Controller
 
                     // Bonuses
                     $bonusCacheKey = 'round_'.$round->id.'_track_'.$track->id.'_answser_'.$answer->id.'_bonus';
-                    if(!Cache::get($bonusCacheKey)) {
+                    if (! Cache::get($bonusCacheKey)) {
                         $order = Score::where('round_id', $round->id)
                             ->where('track_id', $track->id)
                             ->where('answer_id', $answer->id)

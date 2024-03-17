@@ -176,7 +176,7 @@ return [
             'tries' => 1,
             'timeout' => 60,
             'nice' => 8,
-            'rest' => 0.5
+            'rest' => 0.5,
         ],
     ],
 

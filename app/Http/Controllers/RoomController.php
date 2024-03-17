@@ -117,7 +117,7 @@ class RoomController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->isRoomModerator($room)) {
+        if (! $user->isRoomModerator($room)) {
             return redirect()->route('rooms.index');
         }
 

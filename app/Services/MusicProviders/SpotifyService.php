@@ -61,7 +61,7 @@ class SpotifyService
         while ($next || $first) {
             $playlistTracks = $this->api->getPlaylistTracks($provider_playlist_id, ['offset' => $next]);
             foreach ($playlistTracks->items as $item) {
-                if($item->track->id) {
+                if ($item->track->id) {
                     $formatedTrack = $this->formatTrack($item->track);
                     $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formatedTrack)->onQueue('imports');
                 }
