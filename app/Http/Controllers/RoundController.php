@@ -6,6 +6,7 @@ use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
 use App\Jobs\ProcessAddScoreToTotalScore;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
@@ -61,7 +62,10 @@ class RoundController extends Controller
             $user = $request->user();
             $goodAnswers = [];
             $almostAnswers = false;
-            $speedBonus = ($request->input('currentTime') < ($round->room->track_duration * 0.18));
+            $trackDuration = Cache::rememberForever('track_'. $track->id . '_duration', function() use ($round) {
+                return $round->room->track_duration;
+            });
+            $speedBonus = ($request->input('currentTime') < ($trackDuration * 0.18));
 
             // Updates the words array
             $sanitized = sanitizeString($request->input('text'));
@@ -69,7 +73,12 @@ class RoundController extends Controller
             $userWords = array_unique(array_merge($newWords, $request->input('words')));
 
             $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
-            $remainingAnswers = $track->answers()->whereNotIn('id', $alreadyFoundAnswersIds)->get();
+
+            $trackAnswers = Cache::remember('track-' . $track->id . '-answers', now()->addDay(), function() use ($track) {
+                return $track->answers;
+            });
+
+            $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
 
             foreach ($remainingAnswers as $answer) {
                 $value = sanitizeString($answer->value);
@@ -103,12 +112,17 @@ class RoundController extends Controller
                     $goodAnswers[] = $answer;
 
                     // Bonuses
-                    $order = Score::where('round_id', $round->id)
-                        ->where('track_id', $track->id)
-                        ->where('answer_id', $answer->id)
-                        ->count() + 1;
-                    if ($order < 4) {
-                        $score += 0.5;
+                    $bonusCacheKey = 'round_'.$round->id.'_track_'.$track->id.'_answser_'.$answer->id.'_bonus';
+                    if(!Cache::get($bonusCacheKey)) {
+                        $order = Score::where('round_id', $round->id)
+                            ->where('track_id', $track->id)
+                            ->where('answer_id', $answer->id)
+                            ->count() + 1;
+                        if ($order < 4) {
+                            $score += 0.5;
+                        } else {
+                            Cache::put($bonusCacheKey, true, now()->addDay());
+                        }
                     }
 
                     // Flamme - Bonus speed (18% of the room track duration)
@@ -142,7 +156,7 @@ class RoundController extends Controller
 
             if (! empty($goodAnswers)) {
                 $totalUserAnswers = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->count();
-                $totalTrackAnswers = $track->answers()->count();
+                $totalTrackAnswers = $trackAnswers->count();
                 $message = $this->getMessage('good');
 
                 // Broadcast score to everyone
