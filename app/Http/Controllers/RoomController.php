@@ -212,7 +212,9 @@ class RoomController extends Controller
     public function joined(Request $request, Room $room)
     {
         if (! $room->is_playing && $room->is_autostart) {
-            StartRound::dispatch($room, $request->user());
+            if(! $room->isPlaying()) { // To be sure there is no round playing
+                StartRound::dispatch($room, $request->user());
+            }
         }
     }
 
