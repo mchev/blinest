@@ -112,17 +112,12 @@ class RoundController extends Controller
                     $goodAnswers[] = $answer;
 
                     // Bonuses
-                    $bonusCacheKey = 'round_'.$round->id.'_track_'.$track->id.'_answser_'.$answer->id.'_bonus';
-                    if (! Cache::get($bonusCacheKey)) {
-                        $order = Score::where('round_id', $round->id)
-                            ->where('track_id', $track->id)
-                            ->where('answer_id', $answer->id)
-                            ->count() + 1;
-                        if ($order < 4) {
-                            $score += 0.5;
-                        } else {
-                            Cache::put($bonusCacheKey, true, now()->addDay());
-                        }
+                    $order = Score::where('round_id', $round->id)
+                        ->where('track_id', $track->id)
+                        ->where('answer_id', $answer->id)
+                        ->count() + 1;
+                    if ($order < 4) {
+                        $score += 0.5;
                     }
 
                     // Flamme - Bonus speed (18% of the room track duration)
