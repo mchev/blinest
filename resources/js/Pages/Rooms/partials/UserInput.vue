@@ -43,6 +43,11 @@ onMounted(() => {
       text.value = ''
       words.value = []
     })
+    .listen('UserHasFoundAllTheAnswers', (e) => {
+      if(e.user = user) {
+        inputDisabled.value = true
+      }
+    })
 })
 
 onUnmounted(() => {
@@ -54,13 +59,17 @@ const focus = () => {
 }
 
 const check = () => {
-  if (text.value.length >= 1 && track.value) {
-    axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value, words: words.value, currentTime: props.currentTime }).then((response) => {
-      answers.value.push(...response.data.good_answers)
-      words.value = response.data.words
-      showMessage(response.data.message)
-      focus()
-    })
+  if(!inputDisabled.value) {
+    if (text.value.length >= 1 && track.value) {
+      axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value, words: words.value, currentTime: props.currentTime }).then((response) => {
+        answers.value.push(...response.data.good_answers)
+        words.value = response.data.words
+        showMessage(response.data.message)
+        focus()
+      })
+    }
+  } else {
+    console.info('Toutes les réponses ont déjà été trouvées.')
   }
   text.value = ''
 }
@@ -85,7 +94,7 @@ const pastedAnswer = (event) => {
         {{ message.body }}
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus :readonly="inputDisabled" @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" autocomplete="off" maxlength="255" />
+      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" autocomplete="off" maxlength="255" />
 
       <Volume class="-ml-1 flex h-14 items-center justify-center bg-neutral-700 p-2" />
 

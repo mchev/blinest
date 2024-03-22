@@ -6,6 +6,7 @@ use App\Models\Track;
 use App\Models\TrackAnswer;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Cache;
 
 class TrackAnswerController extends Controller
 {
@@ -22,6 +23,8 @@ class TrackAnswerController extends Controller
             'value' => Request::get('value'),
             'score' => Request::get('score'),
         ]);
+
+        Cache::put('track-'.$track->id.'-answers', $track->answers);
 
         return Redirect::back();
     }
@@ -40,12 +43,16 @@ class TrackAnswerController extends Controller
             'score' => Request::get('score'),
         ]);
 
+        Cache::put('track-'.$track->id.'-answers', $track->answers);
+
         return Redirect::back();
     }
 
     public function destroy(Track $track, TrackAnswer $answer)
     {
         $answer->delete();
+
+        Cache::put('track-'.$track->id.'-answers', $track->answers);
 
         return Redirect::back();
     }

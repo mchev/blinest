@@ -21,7 +21,7 @@ const countdown = ref(0)
 const countdowning = ref(false)
 
 const triggerUserGesture = () => {
-  console.log('User Gesture')
+  console.info('User Gesture')
   audio.play()
 }
 
@@ -32,12 +32,12 @@ onMounted(() => {
   })
   Echo.channel(props.channel)
     .listen('TrackPlayed', (e) => {
-      console.log('Track played')
+      console.info('Track played')
       track.value = e.track
       play()
     })
     .listen('TrackEnded', (e) => {
-      console.log('Track ended')
+      console.info('Track ended')
       usersWithAllAnswers.value = []
       stop()
       startCountdown()

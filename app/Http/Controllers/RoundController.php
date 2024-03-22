@@ -74,9 +74,10 @@ class RoundController extends Controller
 
             $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
 
-            $trackAnswers = Cache::remember('track-'.$track->id.'-answers', now()->addDay(), function () use ($track) {
+            $trackAnswers = Cache::rememberForever('track-'.$track->id.'-answers', function () use ($track) {
                 return $track->answers;
             });
+
 
             $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
 
