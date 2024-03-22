@@ -44,9 +44,9 @@ onMounted(() => {
       words.value = []
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
-      if(e.user = user) {
-        inputDisabled.value = true
-      }
+      // if(e.user = user) {
+      //   inputDisabled.value = true
+      // }
     })
 })
 
