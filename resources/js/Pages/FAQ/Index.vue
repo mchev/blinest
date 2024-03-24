@@ -1,5 +1,5 @@
 <script setup>
-import { watch } from 'vue'
+import { watch, onMounted } from 'vue'
 import { Head, Link, useForm, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
@@ -16,6 +16,13 @@ const props = defineProps({
 const form = useForm({
   search: props.filters.search,
 })
+
+onMounted(() => {
+  // Select the HTML element to which you want to add attributes
+  const htmlElement = document.querySelector('html');
+  htmlElement.setAttribute('itemscope', true);
+  htmlElement.setAttribute('itemtype', 'https://schema.org/FAQPage');
+});
 
 watch(
   form,
