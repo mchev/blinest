@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
-import { useForm, usePage } from '@inertiajs/inertia-vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
   faq: Object,

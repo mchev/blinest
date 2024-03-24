@@ -1,7 +1,6 @@
 <script setup>
 import { watch } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Head, Link, useForm, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
 import TextInput from '@/Components/TextInput.vue'
