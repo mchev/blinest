@@ -1,6 +1,6 @@
 <script setup>
-import { defineProps, onMounted } from 'vue'
-import { Head, useForm, usePage } from '@inertiajs/inertia-vue3'
+import { defineProps } from 'vue'
+import { useForm, usePage } from '@inertiajs/inertia-vue3'
 
 const props = defineProps({
   faq: Object,
