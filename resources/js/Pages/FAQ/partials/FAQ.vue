@@ -1,6 +1,7 @@
 <script setup>
 import { useForm, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue';
+import Icon from '@/Components/Icon.vue';
 
 const props = defineProps({
   faq: Object,
