@@ -78,7 +78,6 @@ class RoundController extends Controller
                 return $track->answers;
             });
 
-
             $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
 
             foreach ($remainingAnswers as $answer) {
