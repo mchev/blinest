@@ -159,7 +159,7 @@ class PlaylistController extends Controller
     {
         Request::validate([
             'provider' => ['required'],
-            'playlist_id' => 'required_if:provider,Spotify,Deezer|alpha_num',
+            'playlist_id' => 'required_if:provider,Spotify,Deezer|alpha_num|nullable',
         ]);
 
         if (Request::input('provider') === 'Spotify') {
