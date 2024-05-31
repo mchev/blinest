@@ -75,6 +75,12 @@ const play = () => {
   // audio.preservesPitch = false
 
   audio.addEventListener('error', () => {
+    if (audio.error.code === 13) {
+      error.value = `Erreur de lecture média. Veuillez vérifier votre périphérique de sortie audio. (${audio.error.message})`
+    } else {
+      error.value = audio.error.message
+    }
+
     error.value = audio.error.message
     isPlaying.value = false
   })
