@@ -14,7 +14,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(RouteServiceProvider::HOME);
+
+        $middleware->web([
+            \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
+
+        $middleware->statefulApi();
+        $middleware->throttleApi();
+
+        $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
+
+        $middleware->alias([
+            'auth.administrator' => \App\Http\Middleware\UserIsAdministrator::class,
+            'auth.moderator' => \App\Http\Middleware\UserIsPublicModerator::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
