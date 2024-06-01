@@ -22,10 +22,13 @@ class Round extends Model
         'is_playing',
     ];
 
-    protected $casts = [
-        'tracks' => 'object',
-        'finished_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'tracks' => 'object',
+            'finished_at' => 'datetime',
+        ];
+    }
 
     public function pause()
     {
