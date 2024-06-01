@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'auth.administrator']], function () {
+Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')->group(function () {
 
     // Storage Migration
     Route::get('/delete/track', function () {

@@ -27,10 +27,8 @@ class ProcessRoundFinished implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // Start a new round
         if (! $this->room->is_playing && $this->room->is_autostart) {

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessUserCreated;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
+use App\Providers\AppServiceProvider;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
@@ -20,7 +20,7 @@ class SocialController extends Controller
         $user = $this->createUser($getInfo, $provider);
         auth()->login($user);
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(AppServiceProvider::HOME);
     }
 
     public function createUser($getInfo, $provider)

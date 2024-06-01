@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -16,9 +18,12 @@ class Ban extends Model
         'created_by',
     ];
 
-    protected $casts = [
-        'expired_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'expired_at' => 'datetime',
+        ];
+    }
 
     public function setExpiredAtAttribute($value): void
     {
@@ -29,12 +34,12 @@ class Ban extends Model
         $this->attributes['expired_at'] = $value;
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function bannable()
+    public function bannable(): MorphTo
     {
         return $this->morphTo();
     }

@@ -45,7 +45,7 @@ class ProfileController extends Controller
     public function unlikeTrack(Request $request, Track $track)
     {
         $request->user()->votes()
-            ->where('votable_type', 'App\Models\Track')
+            ->where('votable_type', \App\Models\Track::class)
             ->where('votable_id', $track->id)
             ->delete();
 

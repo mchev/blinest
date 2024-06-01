@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Overtrue\LaravelVote\Traits\Votable;
@@ -30,17 +32,17 @@ class Message extends Model
         'reports',
     ];
 
-    public function messagable()
+    public function messagable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function room()
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class, 'messagable_id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class)
             ->with('team')

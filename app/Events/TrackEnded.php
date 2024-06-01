@@ -20,8 +20,6 @@ class TrackEnded implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
     public function __construct(Round $round)
     {
@@ -31,10 +29,8 @@ class TrackEnded implements ShouldBroadcast
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->round->room->id);
     }

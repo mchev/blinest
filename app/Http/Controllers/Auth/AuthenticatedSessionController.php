@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
+use App\Providers\AppServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(AppServiceProvider::HOME);
     }
 
     /**

@@ -23,10 +23,8 @@ class CleanRounds extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         ProcessCleanRounds::dispatch();
         $this->info('Rounds without scores were correctly deleted!');

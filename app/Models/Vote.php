@@ -15,10 +15,6 @@ class Vote extends Model
         'is_down_vote',
     ];
 
-    protected $casts = [
-        'votes' => 'int',
-    ];
-
     public function __construct(array $attributes = [])
     {
         $this->table = \config('vote.votes_table');
@@ -38,6 +34,13 @@ class Vote extends Model
                 $vote->{$vote->getKeyName()} = $vote->{$vote->getKeyName()} ?: (string) Str::orderedUuid();
             }
         });
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'votes' => 'int',
+        ];
     }
 
     public function votable(): \Illuminate\Database\Eloquent\Relations\MorphTo

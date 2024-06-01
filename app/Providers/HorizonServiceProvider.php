@@ -10,10 +10,8 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 

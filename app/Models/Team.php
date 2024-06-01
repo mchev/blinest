@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Http\Traits\HasPicture;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Team extends Model
@@ -33,17 +36,17 @@ class Team extends Model
         return $this->seats;
     }
 
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id')->select('id', 'name', 'photo_path');
     }
 
-    public function members()
+    public function members(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(TeamRequest::class);
     }
@@ -59,12 +62,12 @@ class Team extends Model
         $this->users()->detach($user);
     }
 
-    public function scores()
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
     }
 
-    public function totalScores()
+    public function totalScores(): MorphMany
     {
         return $this->morphMany(TotalScore::class, 'totalscorable');
     }

@@ -26,10 +26,8 @@ class ProcessUserCreated implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // Send a welcome email
         $this->user->notify(new Welcome);

@@ -27,10 +27,8 @@ class ProcessTrackEnded implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // Play
         $this->round->playNextTrack();

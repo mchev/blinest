@@ -15,11 +15,11 @@ class ProcessCleanRounds implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        return Round::doesntHave('scores')->whereDate('created_at', '<=', now()->subDays(10))->delete();
+        Round::doesntHave('scores')
+            ->whereDate('created_at', '<=', now()->subDays(10))
+            ->delete();
     }
 }

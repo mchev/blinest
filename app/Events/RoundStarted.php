@@ -17,21 +17,16 @@ class RoundStarted implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
     public function __construct(Round $round)
     {
-        $this->round = $round;
-        $this->round->load('room');
+        $this->round = $round->load('room');
     }
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->round->room->id);
     }

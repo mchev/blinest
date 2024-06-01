@@ -12,7 +12,7 @@
         @endproduction
         
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
-        @routes
+        @routes()
         @inertiaHead
 </head>
 <body class="font-sans antialiased bg-shark-700 [background:radial-gradient(125%_125%_at_50%_45%,#272B2C_46%,#DD5E5E_100%)]">

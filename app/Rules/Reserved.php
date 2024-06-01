@@ -2,19 +2,15 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\InvokableRule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class Reserved implements InvokableRule
+class Reserved implements ValidationRule
 {
     /**
      * Run the validation rule.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     * @return void
      */
-    public function __invoke($attribute, $value, $fail)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $reserved = [
             'admin',

@@ -13,24 +13,18 @@ class TrackPaused implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $room;
-
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(Room $room)
-    {
-        $this->room = $room;
+    public function __construct(
+        public Room $room
+    ) {
     }
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->room->id);
     }

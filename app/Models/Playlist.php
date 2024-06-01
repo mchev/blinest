@@ -4,17 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Playlist extends Model
 {
     use HasFactory;
 
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function moderators()
+    public function moderators(): MorphToMany
     {
         return $this->morphToMany(User::class, 'moderable')->select('users.id', 'users.name')->withTimestamps();
     }
@@ -24,12 +28,12 @@ class Playlist extends Model
         $query->where('is_public', true);
     }
 
-    public function tracks()
+    public function tracks(): HasMany
     {
         return $this->hasMany(Track::class);
     }
 
-    public function rooms()
+    public function rooms(): BelongsToMany
     {
         return $this->belongsToMany(Room::class);
     }

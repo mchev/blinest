@@ -25,10 +25,8 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $user = $this->score->user;
         $team = $this->score->team;

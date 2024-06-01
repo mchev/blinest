@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserIsAdministrator
 {
@@ -12,7 +13,7 @@ class UserIsAdministrator
      *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if ($request->user()->isAdministrator()) {
             return $next($request);

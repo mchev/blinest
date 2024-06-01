@@ -9,10 +9,8 @@ class CategoriesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         Category::factory()->create([
             'name' => 'Genre musical',

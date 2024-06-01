@@ -24,10 +24,8 @@ class MergeScores extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $count = Score::has('user')->has('round')->count();
         $bar = $this->getOutput()->createProgressBar($count);
