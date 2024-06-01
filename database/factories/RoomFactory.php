@@ -16,16 +16,16 @@ class RoomFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->name(),
             'user_id' => User::inRandomOrder()->first()->id,
             'category_id' => Category::inRandomOrder()->first()->id,
-            'description' => $this->faker->optional()->text,
+            'description' => $this->faker->optional()->text(),
             //'photo_path' => $this->faker->imageUrl(360, 360, 'animals', true, 'cats'),
-            'color' => $this->faker->safeHexColor,
+            'color' => $this->faker->safeHexColor(),
             'is_public' => rand(0, 1),
             'is_active' => rand(0, 1),
-            'password' => $this->faker->optional()->password,
-            'deleted_at' => $this->faker->optional()->dateTime,
+            'password' => $this->faker->optional()->password(),
+            'deleted_at' => $this->faker->optional()->dateTime(),
         ];
     }
 }
