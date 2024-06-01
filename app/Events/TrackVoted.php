@@ -14,27 +14,18 @@ class TrackVoted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $room;
-
-    public $track;
-
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(Room $room, Track $track)
-    {
-        $this->room = $room;
-        $this->track = $track;
-    }
+    public function __construct(
+        public Room $room, 
+        public Track $track
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->room->id);
     }

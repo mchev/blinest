@@ -13,24 +13,17 @@ class RoundFinished implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $round;
-
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(Round $round)
-    {
-        $this->round = $round;
-    }
+    public function __construct(
+        public Round $round
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->round->room->id);
     }

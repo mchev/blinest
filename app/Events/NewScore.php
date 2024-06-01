@@ -12,24 +12,17 @@ class NewScore implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $score;
-
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
-    public function __construct(array $score)
-    {
-        $this->score = $score;
-    }
+    public function __construct(
+        public array $score
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
         return new Channel('rooms.'.$this->score['room_id']);
     }

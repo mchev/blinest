@@ -17,23 +17,17 @@ class MessageReported implements ShouldBroadcastNow
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
     public function __construct(Message $message)
     {
-        $this->message = $message;
+        $this->message = $message->load('user');
     }
 
     /**
      * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): PrivateChannel
     {
-        $this->message->load('user');
-
         return new PrivateChannel($this->message->channel);
     }
 }

@@ -33,6 +33,7 @@
         "vite": "^4.0.4",
         "vue": "^3.3.4",
         "vue-loader": "^17.0.0",
-        "vue3-carousel": "^0.1.48"
+        "vue3-carousel": "^0.1.48",
+        "ziggy-js": "^2.2.1"
     }
 }
