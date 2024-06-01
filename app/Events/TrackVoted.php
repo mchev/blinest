@@ -18,9 +18,10 @@ class TrackVoted implements ShouldBroadcastNow
      * Create a new event instance.
      */
     public function __construct(
-        public Room $room, 
+        public Room $room,
         public Track $track
-    ) {}
+    ) {
+    }
 
     /**
      * Get the channels the event should broadcast on.

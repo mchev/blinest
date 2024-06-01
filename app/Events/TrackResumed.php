@@ -18,7 +18,8 @@ class TrackResumed implements ShouldBroadcastNow
      */
     public function __construct(
         public Room $room
-    ) {}
+    ) {
+    }
 
     /**
      * Get the channels the event should broadcast on.

@@ -17,7 +17,8 @@ class NewScore implements ShouldBroadcastNow
      */
     public function __construct(
         public array $score
-    ) {}
+    ) {
+    }
 
     /**
      * Get the channels the event should broadcast on.
