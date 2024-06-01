@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -10,14 +13,14 @@
         "ext-gd": "*",
         "getbrevo/brevo-php": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
-        "inertiajs/inertia-laravel": "^0.6.9",
+        "inertiajs/inertia-laravel": "^1.0",
         "intervention/image": "^2.7",
         "jwilsson/spotify-web-api-php": "^5.0",
-        "laravel/framework": "^10.0",
-        "laravel/horizon": "^5.15",
-        "laravel/sanctum": "^3.2",
-        "laravel/socialite": "^5.8",
-        "laravel/tinker": "^2.7",
+        "laravel/framework": "^11.9",
+        "laravel/horizon": "^5.22",
+        "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.11",
+        "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/glide-laravel": "^1.0",
         "maatwebsite/excel": "^3.1",
@@ -32,18 +35,18 @@
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/spotify": "^4.1",
         "symfony/brevo-mailer": "^7.0",
-        "symfony/http-client": "^6.1",
-        "symfony/process": "^6.1",
-        "tightenco/ziggy": "^1.4"
+        "symfony/http-client": "^7.0",
+        "symfony/process": "^7.0",
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.8",
-        "fakerphp/faker": "^1.9.1",
-        "laravel/sail": "^1.21",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
-        "phpunit/phpunit": "^10.0",
-        "spatie/laravel-ignition": "^2.0"
+        "barryvdh/laravel-debugbar": "^3.10",
+        "fakerphp/faker": "^1.23",
+        "laravel/sail": "^1.26",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.0",
+        "phpunit/phpunit": "^10.5",
+        "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {
         "psr-4": {
@@ -91,6 +94,6 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
