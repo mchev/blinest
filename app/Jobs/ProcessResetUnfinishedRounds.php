@@ -28,7 +28,7 @@ class ProcessResetUnfinishedRounds implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         // We assume that a round while not taking longer than an hour.
         $rounds = Round::where('is_playing', 1)

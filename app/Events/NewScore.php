@@ -29,7 +29,7 @@ class NewScore implements ShouldBroadcastNow
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return new Channel('rooms.'.$this->score['room_id']);
     }

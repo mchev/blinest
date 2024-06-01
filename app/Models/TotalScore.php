@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,22 +14,22 @@ class TotalScore extends Model
     /**
      * Get the parent imageable model (user or post).
      */
-    public function totalscorable()
+    public function totalscorable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function room()
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'totalscorable_id')->select('id', 'name', 'photo_path');
     }
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'totalscorable_id')->select('id', 'name', 'photo_path');
     }

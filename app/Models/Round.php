@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Events\RoundFinished;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
@@ -97,17 +99,17 @@ class Round extends Model
         return floatval($user->scores()->where('round_id', $this->id)->sum('score'));
     }
 
-    public function room()
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function scores()
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
     }

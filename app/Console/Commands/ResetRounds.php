@@ -26,7 +26,7 @@ class ResetRounds extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         ProcessResetUnfinishedRounds::dispatch();
         $this->info('Rounds has been correctly reseted!');

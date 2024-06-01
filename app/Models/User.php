@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Traits\HasPicture;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -77,7 +81,7 @@ class User extends Authenticatable
 
     // TEAM
 
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'team_id')
             ->whereRelation('owner', function ($query) {
@@ -95,19 +99,19 @@ class User extends Authenticatable
         return Team::where('user_id', $query->first()->id)->exists();
     }
 
-    public function teamRequests()
+    public function teamRequests(): HasMany
     {
         return $this->hasMany(TeamRequest::class);
     }
 
     // PLAYLIST
 
-    public function playlists()
+    public function playlists(): HasMany
     {
         return $this->hasMany(Playlist::class);
     }
 
-    public function moderatedPlaylists()
+    public function moderatedPlaylists(): MorphedByMany
     {
         return $this->morphedByMany(Playlist::class, 'moderable')->orderBy('name');
     }
@@ -138,12 +142,12 @@ class User extends Authenticatable
 
     // ROOM
 
-    public function rooms()
+    public function rooms(): HasMany
     {
         return $this->hasMany(Room::class);
     }
 
-    public function moderatedRooms()
+    public function moderatedRooms(): MorphedByMany
     {
         return $this->morphedByMany(Room::class, 'moderable')->orderBy('name');
     }
@@ -167,12 +171,12 @@ class User extends Authenticatable
 
     // SCORES
 
-    public function scores()
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
     }
 
-    public function totalScores()
+    public function totalScores(): MorphMany
     {
         return $this->morphMany(TotalScore::class, 'totalscorable');
     }
@@ -216,7 +220,7 @@ class User extends Authenticatable
     }
 
     // CHAT
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class, 'user_id');
     }

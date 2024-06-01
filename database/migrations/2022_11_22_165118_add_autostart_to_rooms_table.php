@@ -12,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('rooms', function (Blueprint $table) {
             $table->boolean('is_autostart')->default(true);
@@ -32,7 +32,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('rooms', function (Blueprint $table) {
             $table->dropColumn('is_autostart');

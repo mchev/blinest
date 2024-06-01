@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class RoomSlugsSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         Room::chunk(500, function ($rooms) {
             foreach ($rooms as $room) {

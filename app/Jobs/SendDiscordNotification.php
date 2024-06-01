@@ -29,7 +29,7 @@ class SendDiscordNotification implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->room->discord_webhook_url) {
             if ($this->type === 'danger') {

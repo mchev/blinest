@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         Model::unguard();
     }
@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         // Queue::failing(function (JobFailed $event) {
         //     // $event->connectionName

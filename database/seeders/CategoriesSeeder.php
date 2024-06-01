@@ -12,7 +12,7 @@ class CategoriesSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         Category::factory()->create([
             'name' => 'Genre musical',

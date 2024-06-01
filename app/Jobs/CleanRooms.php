@@ -18,7 +18,7 @@ class CleanRooms implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $rooms = Room::doesntHave('playlists')->whereDate('created_at', '<=', now(config('app.timezone'))->subDays(30))->get();
 

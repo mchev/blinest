@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,17 +25,17 @@ class TrackAnswer extends Model
         'type',
     ];
 
-    public function track()
+    public function track(): BelongsTo
     {
         return $this->belongsTo(Track::class);
     }
 
-    public function type()
+    public function type(): BelongsTo
     {
         return $this->belongsTo(AnswerType::class, 'answer_type_id');
     }
 
-    public function scores()
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class, 'answer_id');
     }

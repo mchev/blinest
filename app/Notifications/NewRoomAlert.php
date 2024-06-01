@@ -27,7 +27,7 @@ class NewRoomAlert extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['database', 'broadcast'];
     }
@@ -59,7 +59,7 @@ class NewRoomAlert extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         $body = $this->message
             ? $this->user->name.' '.__('reports a problem on the chat').' '.$this->room->name.' : '.$this->message

@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Traits\HasPicture;
 use App\Http\Traits\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,27 +75,27 @@ class Room extends Model
         return $this->morphToMany(User::class, 'bookmarkable', 'bookmarks')->withTimestamps();
     }
 
-    public function messages()
+    public function messages(): MorphMany
     {
         return $this->morphMany(Message::class, 'messagable');
     }
 
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id')->select('id', 'name', 'photo_path');
     }
 
-    public function moderators()
+    public function moderators(): MorphToMany
     {
         return $this->morphToMany(User::class, 'moderable')->select('users.id', 'users.name')->withTimestamps();
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function playlists()
+    public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class);
     }
@@ -100,12 +105,12 @@ class Room extends Model
         return Track::whereIn('playlist_id', $this->playlists()->pluck('id'));
     }
 
-    public function rounds()
+    public function rounds(): HasMany
     {
         return $this->hasMany(Round::class);
     }
 
-    public function scores()
+    public function scores(): HasManyThrough
     {
         return $this->hasManyThrough(Score::class, Round::class)
             ->selectRaw('scores.created_at, scores.user_id, SUM(scores.score) as total')
@@ -114,7 +119,7 @@ class Room extends Model
             ->orderBy('total', 'DESC');
     }
 
-    public function weekUsersScores()
+    public function weekUsersScores(): HasManyThrough
     {
         return $this->hasManyThrough(Score::class, Round::class)
             ->selectRaw('MAX(scores.created_at) as max_created_at, scores.user_id, SUM(scores.score) as total')
@@ -125,7 +130,7 @@ class Room extends Model
             ->limit(10);
     }
 
-    public function monthUsersScores()
+    public function monthUsersScores(): HasManyThrough
     {
         return $this->hasManyThrough(Score::class, Round::class)
             ->selectRaw('MAX(scores.created_at) as max_created_at, scores.user_id, SUM(scores.score) as total')
@@ -136,7 +141,7 @@ class Room extends Model
             ->limit(10);
     }
 
-    public function lifetimeUsersScores(int $limit = 10)
+    public function lifetimeUsersScores(int $limit = 10): HasMany
     {
         return $this->hasMany(TotalScore::class, 'room_id')
             ->byUsers()
@@ -147,7 +152,7 @@ class Room extends Model
             ->limit($limit);
     }
 
-    public function lifetimeTeamsScores(int $limit = 10)
+    public function lifetimeTeamsScores(int $limit = 10): HasMany
     {
         return $this->hasMany(TotalScore::class, 'room_id')
             ->byTeams()

@@ -12,7 +12,7 @@ class AnswerTypesSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         AnswerType::create([
             'name' => 'Artist',

@@ -47,7 +47,7 @@ class TrackPlayed implements ShouldBroadcast
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return new Channel('rooms.'.$this->round['room_id']);
     }

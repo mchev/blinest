@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Jobs\SendDiscordNotification;
 use App\Notifications\TrackDeleted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,17 +20,17 @@ class Track extends Model
         'upvotes',
     ];
 
-    public function playlist()
+    public function playlist(): BelongsTo
     {
         return $this->belongsTo(Playlist::class);
     }
 
-    public function answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(TrackAnswer::class)->orderBy('answer_type_id');
     }
 
-    public function scores()
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
     }

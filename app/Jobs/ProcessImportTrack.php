@@ -28,7 +28,7 @@ class ProcessImportTrack implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if ($this->track->preview_url && $this->track->artwork_url) {
             if ($this->playlist->tracks()->where('provider', $this->track->provider)->where('provider_id', $this->track->provider_id)->doesntExist()) {

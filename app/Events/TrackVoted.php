@@ -34,7 +34,7 @@ class TrackVoted implements ShouldBroadcastNow
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return new Channel('rooms.'.$this->room->id);
     }

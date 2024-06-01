@@ -30,7 +30,7 @@ class MessageReported implements ShouldBroadcastNow
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         $this->message->load('user');
 

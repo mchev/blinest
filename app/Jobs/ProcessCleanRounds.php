@@ -18,7 +18,7 @@ class ProcessCleanRounds implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         return Round::doesntHave('scores')->whereDate('created_at', '<=', now()->subDays(10))->delete();
     }
