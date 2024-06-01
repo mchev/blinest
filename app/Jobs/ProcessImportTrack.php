@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Playlist;
+use App\Models\Track;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,18 +16,16 @@ class ProcessImportTrack implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
-    public function __construct(public Playlist $playlist, public object $track)
-    {
-        //
-    }
+    public function __construct(
+        public Playlist $playlist, 
+        public object $track
+    ) {}
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(): ?Track
     {
         if ($this->track->preview_url && $this->track->artwork_url) {
             if ($this->playlist->tracks()->where('provider', $this->track->provider)->where('provider_id', $this->track->provider_id)->doesntExist()) {

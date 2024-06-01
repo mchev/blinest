@@ -191,6 +191,6 @@ class PlaylistController extends Controller
             $count = (new BlinestLikesService)->importPlaylist($playlist);
         }
 
-        return redirect()->route('playlists.edit', $playlist)->with('success', $count.'/'.Request::input('tracks_count').' '.__('tracks have been imported'));
+        return redirect()->route('playlists.edit', $playlist)->with('success', $count.'/'.Request::input('tracks_count').' '.__('are being imported.'));
     }
 }

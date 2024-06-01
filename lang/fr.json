@@ -376,7 +376,7 @@
     "Track deleted": "Extrait supprimé",
     "Tracks": "Titres",
     "Tracks by round": "Extraits par partie",
-    "tracks have been imported": "titres ont été importés",
+    "are being imported.": "sont en cours d'importation.",
     "Tracks manager": "Gestion des extraits",
     "Tracks that cannot be read by the site will not be imported": "Les extraits ne pouvant pas être lus par le site ne seront pas importés",
     "Tracks to be imported:": "Titres à importer :",
