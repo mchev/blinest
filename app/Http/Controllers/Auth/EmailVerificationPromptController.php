@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Providers\AppServiceProvider;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
+use App\Providers\AppServiceProvider;
 use Illuminate\Http\Request;
 
 class EmailVerificationPromptController extends Controller

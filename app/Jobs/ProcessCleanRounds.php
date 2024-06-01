@@ -15,8 +15,6 @@ class ProcessCleanRounds implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle(): void
     {

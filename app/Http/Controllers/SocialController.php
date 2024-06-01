@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Providers\AppServiceProvider;
 use App\Jobs\ProcessUserCreated;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
+use App\Providers\AppServiceProvider;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
