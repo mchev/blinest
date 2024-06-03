@@ -12,6 +12,7 @@ use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -238,6 +239,7 @@ class RoomController extends Controller
         $moderators = User::publicModerators()->get();
         foreach ($moderators as $moderator) {
             $moderator->notify(new NewRoomAlert($room, $request->user(), $request->input('message')));
+            Cache::forget($moderator->id.'_unread_notifications');
         }
 
         return redirect()->back();
@@ -253,6 +255,7 @@ class RoomController extends Controller
 
         foreach ($room->moderators as $moderator) {
             $moderator->notify(new NewSuggestion($room, $request->get('suggestion'), $request->user()));
+            Cache::forget($moderator->id.'_unread_notifications');
         }
 
         return redirect()->back()->with('success', __('Understood!'));

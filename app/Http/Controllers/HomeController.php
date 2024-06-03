@@ -44,7 +44,6 @@ class HomeController extends Controller
                     ->isPublic()
                     ->whereNull('password')
                     ->orderByDesc('is_playing')
-                    ->limit(18)
                     ->get()
                     ->sortByDesc(function ($room) {
                         return $room->users_count;

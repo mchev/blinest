@@ -43,21 +43,24 @@ class HandleInertiaRequests extends Middleware
     {
 
         // dd($request->user()->created_at < now()->subMonths(3), floatval($request->user()->totalScores()->sum('score')) > 2000, $request->user()->id);
+        $user = $request->user();
 
         return array_merge(parent::share($request), [
-            'auth' => function () use ($request) {
+            'auth' => function () use ($user) {
                 return [
-                    'user' => $request->user() ? [
-                        'id' => $request->user()->id,
-                        'name' => $request->user()->name,
-                        'photo' => $request->user()->photo,
-                        'admin' => $request->user()->isAdministrator(),
-                        'is_public_moderator' => $request->user()->isPublicModerator(),
-                        'team' => $request->user()->team,
-                        'notifications' => $request->user()->unreadNotifications,
-                        'can' => Gate::forUser($request->user())->abilities(),
-                        'pending_requests' => $request->user()->teamRequests()->whereNull('declined_at')->pluck('team_id'),
-                        'declined_requests' => $request->user()->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
+                    'user' => $user ? [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'photo' => $user->photo,
+                        'admin' => $user->isAdministrator(),
+                        'is_public_moderator' => $user->isPublicModerator(),
+                        'team' => $user->team,
+                        'notifications' => Cache::rememberForever("{$user->id}_unread_notifications", function () use ($user) {
+                            return $user->unreadNotifications;
+                        }),
+                        'can' => Gate::forUser($user)->abilities(),
+                        'pending_requests' => $user->teamRequests()->whereNull('declined_at')->pluck('team_id'),
+                        'declined_requests' => $user->teamRequests()->whereNotNull('declined_at')->pluck('team_id'),
                     ] : null,
                 ];
             },

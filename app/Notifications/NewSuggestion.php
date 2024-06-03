@@ -19,6 +19,7 @@ class NewSuggestion extends Notification
      */
     public function __construct(public Room $room, public string $suggestion, protected User $user)
     {
+
     }
 
     /**

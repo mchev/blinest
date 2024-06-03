@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Models\TeamRequest;
 use App\Notifications\NewTeamRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 
 class TeamRequestController extends Controller
@@ -30,6 +31,7 @@ class TeamRequestController extends Controller
             ]);
 
             $team->owner->notify(new NewTeamRequest($teamRequest));
+            Cache::forget($team->owner->id.'_unread_notifications');
 
             return redirect()->back()->with('success', __('The request has been sent'));
         }

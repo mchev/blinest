@@ -19,6 +19,7 @@ class NewRoomAlert extends Notification
      */
     public function __construct(public Room $room, public User $user, public $message = null)
     {
+
     }
 
     /**

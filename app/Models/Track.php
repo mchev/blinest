@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 use Overtrue\LaravelVote\Traits\Votable;
 
 class Track extends Model
@@ -68,6 +69,7 @@ class Track extends Model
         if (! $this->playlist->is_public) {
             foreach ($this->playlist->moderators as $moderator) {
                 $moderator->notify(new TrackDeleted($this->playlist, $message));
+                Cache::forget($moderator->id.'_unread_notifications');
             }
         }
 
