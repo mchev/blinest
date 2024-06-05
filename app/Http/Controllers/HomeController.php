@@ -36,12 +36,11 @@ class HomeController extends Controller
 
         return Inertia::render('Home/Index', [
             'filters' => $request->all('search'),
-            'featured_rooms' => Room::where('is_featured', true)->get(),
+            'featured_rooms' => Room::where('is_featured', true)->limit(1)->get(),
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
                 'name' => $category->name,
-                'rooms' => $category->rooms()
-                    ->isPublic()
+                'rooms' => $category->publicRooms()
                     ->whereNull('password')
                     ->orderByDesc('is_playing')
                     ->get()

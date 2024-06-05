@@ -21,12 +21,12 @@ class Category extends Model
 
     public function publicRooms()
     {
-        return $this->rooms()->isPublic();
+        return $this->rooms()->isPublic()->with('currentRound');
     }
 
     public function privateRooms()
     {
-        return $this->rooms()->isPrivate();
+        return $this->rooms()->isPrivate()->with('currentRound');
     }
 
     public function scopeFilter($query, array $filters)
