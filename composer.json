@@ -29,7 +29,7 @@
         "psr/simple-cache": "^2.0",
         "pusher/pusher-php-server": "^7.0",
         "socialiteproviders/deezer": "^4.1",
-        "socialiteproviders/discord": "^4.1",
+        "socialiteproviders/discord": "^4.2",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/spotify": "^4.1",
