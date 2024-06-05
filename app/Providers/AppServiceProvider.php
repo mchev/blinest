@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
 
 // use Illuminate\Support\Facades\Queue;
 // use Illuminate\Queue\Events\JobFailed;
@@ -43,6 +44,13 @@ class AppServiceProvider extends ServiceProvider
         //     // $event->job
         //     // $event->exception
         // });
+
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
+            $event->extendSocialite('deezer', \SocialiteProviders\Deezer\Provider::class);
+            $event->extendSocialite('google', \SocialiteProviders\Google\Provider::class);
+            $event->extendSocialite('facebook', \SocialiteProviders\Facebook\Provider::class);
+        });
 
         $this->bootAuth();
         $this->bootRoute();
