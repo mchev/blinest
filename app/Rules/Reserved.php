@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\Room;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -15,6 +16,7 @@ class Reserved implements ValidationRule
         $reserved = [
             'admin',
             'admins',
+            'mchev',
             'administrateur',
             'administrator',
             'superadmin',
@@ -38,5 +40,25 @@ class Reserved implements ValidationRule
                 $fail('validation.reserved')->translate();
             }
         }
+
+        // Reserved moderators names
+        $names = Room::isPublic()
+            ->with('moderators:name')
+            ->get()
+            ->pluck('moderators.*.name')
+            ->flatten()
+            ->map(fn ($name) => strtolower($name))
+            ->unique()
+            ->values()
+            ->all();
+        $names[] = 'mchev';
+
+        foreach ($names as $name) {
+            if (str_contains(strtolower($value), $name)) {
+                $fail('validation.reserved')->translate();
+                break;
+            }
+        }
+
     }
 }
