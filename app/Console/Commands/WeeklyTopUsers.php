@@ -27,16 +27,17 @@ class WeeklyTopUsers extends Command
      */
     public function handle()
     {
-        $weekly_top_users = Cache::remember('weekly-top-10-users', now()->addDay(), function () {
-            return Score::with(['user', 'round.room' => function ($query) {
-                $query->where('rooms.is_public', true);
-            }])
-                ->where('scores.created_at', '>=', now()->subDays(30))
-                ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
-                ->groupBy('scores.user_id')
-                ->orderByDesc('total_score')
-                ->limit(10)
-                ->get();
-        });
+
+        $weekly_top_users = Score::with(['user', 'round.room' => function ($query) {
+            $query->where('rooms.is_public', true);
+        }])
+            ->where('scores.created_at', '>=', now()->subDays(7))
+            ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
+            ->groupBy('scores.user_id')
+            ->orderByDesc('total_score')
+            ->limit(10)
+            ->get();
+
+        Cache::put('weekly-top-10-users', $weekly_top_users);
     }
 }
