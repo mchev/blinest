@@ -36,32 +36,22 @@ class HomeController extends Controller
 
         return Inertia::render('Home/Index', [
             'filters' => $request->all('search'),
-            'featured_rooms' => Room::where('is_featured', true)->limit(1)->get(),
+            'featured_rooms' => Room::where('is_featured', true)->get(),
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
                 'name' => $category->name,
-                'rooms' => $category->publicRooms()
+                'rooms' => Room::where('category_id', $category->id)
+                    ->isPublic()
                     ->whereNull('password')
                     ->orderByDesc('is_playing')
-                    ->get()
-                    ->sortByDesc(function ($room) {
-                        return $room->users_count;
-                    })
-                    ->values()
-                    ->all(),
+                    ->get(),
             ]),
             'private_rooms' => Room::isPrivate()
                 ->whereNull('password')
-                ->whereHas('playlists')
                 ->with('owner')
                 ->orderByDesc('is_playing')
                 ->limit(18)
-                ->get()
-                ->sortByDesc(function ($room) {
-                    return $room->users_count;
-                })
-                ->values()
-                ->all(),
+                ->get(),
             'user_rooms' => $user
                 ? Cache::remember('homepage-moderatedrooms-'.$user->id, now()->addDay(), function () use ($user) {
                     return $user->moderatedRooms()
