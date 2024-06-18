@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
+import TopPlayers from './partials/TopPlayers.vue'
 import FeaturedRoom from './partials/FeaturedRoom.vue'
 
 defineProps({
@@ -12,6 +13,7 @@ defineProps({
   private_rooms: Object,
   user_rooms: Object,
   search_result: Object,
+  weekly_top_users: Object,
 })
 </script>
 <template>
@@ -28,17 +30,21 @@ defineProps({
     </section>
     <div v-else>
       <div class="flex flex-wrap lg:flex-nowrap">
-        <section v-if="categories.length" class="w-full lg:w-2/3">
+        <section v-if="categories.length" class="w-full lg:w-8/12">
           <div v-for="category in categories" :key="category.id" class="mb-4">
             <h3 class="text-center text-2xl font-bold uppercase text-shark-200">{{ __(category.name) }}</h3>
             <Rooms :rooms="category.rooms" :id="category.id" />
           </div>
+          <div class="relative mb-4">
+            <h2 class="text-center text-2xl font-bold uppercase text-shark-200">{{ __('Private rooms') }}</h2>
+            <rooms :rooms="private_rooms" id="privateRooms" />
+          </div>
         </section>
-        <aside class="order-last w-full lg:order-first lg:w-1/3 lg:pr-12">
+        <aside class="order-last w-full lg:order-first lg:w-4/12 lg:pr-12">
           <article class="my-6 hidden xl:flex">
             <div class="flex w-1/2 flex-col gap-2 p-4">
               <h3 class="text-xl">Soutenir Blinest</h3>
-              <p class="text-sm">Serveurs, dev, etc.</p>
+              <p class="text-sm">Financez les serveurs</p>
               <a href="https://donate.stripe.com/00g2bvf8i08X8De6oo" target="_blank" rel="external nofollow" data-umami-event="Faire un don" class="flex items-center justify-center gap-2 bg-red-500 px-2 py-1 text-center uppercase text-white hover:bg-red-400">
                 <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor">
                   <title>Stripe</title>
@@ -63,22 +69,7 @@ defineProps({
             <hr class="my-4 rounded-2xl border border-red-500" />
             <FeaturedRoom :room="featured_room" class="my-12" />
           </div>
-          <hr class="my-4 rounded-2xl border border-red-500" />
-          <article class="">
-            <figure class="mb-4 overflow-hidden rounded-2xl bg-shark-300">
-              <img src="https://images.nightcafe.studio/jobs/gKHqJO2OCf1UuLjAFgMA/gKHqJO2OCf1UuLjAFgMA--1--81ntq.jpg?tr=w-1600,c-at_max" class="object-cover" />
-            </figure>
-            <h2 class="text-2xl">Parties entre amis ou collègues</h2>
-            <p class="my-4">Lancez votre espace de jeu personnalisé en explorant nos playlists prêtes à l'emploi ou en créant les vôtres.</p>
-            <Link href="/create/room" class="flex items-center gap-2 bg-red-500 px-4 py-2 text-xl text-white hover:bg-red-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-plus">
-                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                <path d="M8 12h8" />
-                <path d="M12 8v8" />
-              </svg>
-              Créer une room
-            </Link>
-          </article>
+          <TopPlayers :list="weekly_top_users"/>
         </aside>
       </div>
       <section class="my-24 flex flex-wrap gap-4 bg-red-500 p-12 text-white">
@@ -92,12 +83,6 @@ defineProps({
         <Link href="/me" class="rounded-2xl bg-white px-4 py-2 text-xl text-red-500">
           {{ __('Mon compte') }}
         </Link>
-      </section>
-      <section v-if="private_rooms && private_rooms.length">
-        <div class="relative mb-6">
-          <h2 class="mb-1 text-xl font-medium text-neutral-100 lg:text-xl">{{ __('Private rooms') }}</h2>
-          <rooms :rooms="private_rooms" id="privateRooms" />
-        </div>
       </section>
       <section v-if="user_rooms && user_rooms.length">
         <div class="relative">

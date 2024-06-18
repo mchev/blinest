@@ -36,6 +36,7 @@ class HomeController extends Controller
 
         return Inertia::render('Home/Index', [
             'filters' => $request->all('search'),
+            'weekly_top_users' => Cache::get('weekly-top-10-users'),
             'featured_rooms' => Room::where('is_featured', true)->get(),
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
