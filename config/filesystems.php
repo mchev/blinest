@@ -3,6 +3,20 @@
 return [
 
     'disks' => [
+
+        'ovh' => [
+            'driver' => 's3',
+            'key' => env('OVH_ACCESS_KEY_ID'),
+            'secret' => env('OVH_SECRET_ACCESS_KEY'),
+            'region' => env('OVH_DEFAULT_REGION'),
+            'bucket' => env('OVH_BUCKET'),
+            'url' => env('OVH_URL'),
+            'endpoint' => env('OVH_ENDPOINT'),
+            'use_path_style_endpoint' => env('OVH_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'visibility' => 'public',
+        ],
+
         'contabo' => [
             'driver' => 's3',
             'key' => env('CONTABO_ACCESS_KEY_ID'),
