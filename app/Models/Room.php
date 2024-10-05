@@ -43,9 +43,8 @@ class Room extends Model
     protected function getUsersCountAttribute()
     {
         try {
-            $channelName = 'presence-rooms.' . $this->id;
-            $connections = app('reverb.client')->getChannelConnections($channelName);
-            return count($connections);
+            $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
+            return count($response->users);
         } catch (\Exception $e) {
             return 0;
         }
