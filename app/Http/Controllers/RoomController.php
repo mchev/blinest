@@ -191,6 +191,11 @@ class RoomController extends Controller
         return Redirect::back()->with('success', __('Options updated'));
     }
 
+    public function updateUserCount(Request $request, Room $room)
+    {
+        $room->update(['user_count' => $request->get('count')]);
+    }
+
     public function destroy(Room $room)
     {
         $room->deletePhoto();

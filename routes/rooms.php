@@ -30,6 +30,10 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::delete('rooms/{room}/picture/delete', [RoomController::class, 'deletePicture'])
         ->name('rooms.picture.delete');
 
+    // Update user count
+    Route::post('rooms/{room}/update-user-count', [RoomController::class, 'updateUserCount'])
+        ->name('rooms.update-user-count');
+
     // Rooms Messages
     Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
         ->name('rooms.message.store');

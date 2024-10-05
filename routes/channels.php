@@ -42,3 +42,7 @@ Broadcast::channel('chat-room.{id}', function ($user) {
         'photo' => $user->photo,
     ];
 });
+
+Broadcast::channel('room.count.{room}', function () {
+    return true;
+});

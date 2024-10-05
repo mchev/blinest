@@ -42,18 +42,28 @@ onMounted(() => {
       .here((usersHere) => {
         users.value = usersHere
         joining()
+        dispatchUserCount(usersHere.length)
       })
       .joining((user) => {
         users.value.push(user)
+        dispatchUserCount(users.value.length)
       })
       .leaving((user) => {
         users.value = users.value.filter((u) => u.id !== user.id)
+        dispatchUserCount(users.value.length)
       })
       .error((error) => {
         console.error(error)
       })
   }
 })
+
+const dispatchUserCount = (count) => {
+  Echo.private(`room.count.${props.room.id}`)
+    .whisper('updateUserCount', {
+      count: count
+    })
+}
 
 onUnmounted(() => {
   Echo.leave(channel)

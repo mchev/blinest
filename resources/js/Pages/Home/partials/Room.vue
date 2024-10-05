@@ -13,7 +13,7 @@ const round = ref(null)
 const playing = ref(props.room.is_playing)
 const progress = ref(0)
 
-const userCounter = ref(props.room.users_count)
+const userCounter = ref(props.room.user_count)
 
 const calculateProgression = () => {
     let current_track = round.value ? round.value.current : props.room.current_track_index
@@ -30,26 +30,29 @@ onMounted(() => {
     }
     Echo.channel(channel)
         .listen('RoundStarted', (e) => {
-            userCounter.value = e.round.room.users_count
             playing.value = true
             round.value = e.round
         })
         .listen('TrackPlayed', (e) => {
             props.room.value = e.room
-            userCounter.value = e.room.users_count
             round.value = e.round
             track.value = e.track
         })
         .listen('RoundFinished', (e) => {
-            userCounter.value = e.round.room.users_count
             playing.value = false
             round.value = e.round
             round.value.current = 0
+        })
+
+    Echo.private(`room.count.${props.room.id}`)
+        .listenForWhisper('updateUserCount', (e) => {
+            userCounter.value = e.count
         })
 })
 
 onUnmounted(() => {
     Echo.leave(channel)
+    Echo.leave('user-count')
 })
 </script>
 <template>
