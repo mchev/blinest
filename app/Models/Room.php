@@ -42,9 +42,13 @@ class Room extends Model
 
     protected function getUsersCountAttribute()
     {
-        $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
-
-        return count($response->users);
+        try {
+            $channelName = 'presence-rooms.' . $this->id;
+            $connections = app('reverb.client')->getChannelConnections($channelName);
+            return count($connections);
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     protected function getCurrentTrackIndexAttribute()

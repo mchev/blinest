@@ -29,9 +29,11 @@ class HomeController extends Controller
             ]);
         }
 
-        $categories = Cache::rememberForever('homepage-categories', function () {
-            return Category::all();
-        });
+        $categories = Category::with(['rooms' => function ($query) {
+            $query->isPublic()
+                ->whereNull('password')
+                ->orderByDesc('is_playing');
+        }])->get();
         $user = $request->user();
 
         return Inertia::render('Home/Index', [
@@ -41,11 +43,7 @@ class HomeController extends Controller
             'categories' => $categories->map(fn ($category) => [
                 'id' => $category->id,
                 'name' => $category->name,
-                'rooms' => Room::where('category_id', $category->id)
-                    ->isPublic()
-                    ->whereNull('password')
-                    ->orderByDesc('is_playing')
-                    ->get(),
+                'rooms' => $category->rooms,
             ]),
             'private_rooms' => Room::isPrivate()
                 ->whereNull('password')

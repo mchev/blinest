@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Room from './Room.vue'
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
@@ -37,6 +37,29 @@ const breakpoints = {
     itemsToShow: 5,
   },
 }
+
+const safeMaxSlide = computed(() => {
+  if (carousel.value && carousel.value.data.maxSlide.value) {
+    return Math.min(carousel.value.data.maxSlide.value, Number.MAX_SAFE_INTEGER)
+  }
+  return 0
+})
+
+const safeMinSlide = computed(() => {
+  if (carousel.value && carousel.value.data.minSlide.value) {
+    return Math.max(carousel.value.data.minSlide.value, 0)
+  }
+  return 0
+})
+
+const slidesArray = computed(() => {
+  const max = safeMaxSlide.value
+  const min = safeMinSlide.value
+  if (max >= min) {
+    return Array.from({ length: max - min + 1 }, (_, i) => i + min)
+  }
+  return []
+})
 </script>
 <template>
   <Carousel v-bind="settings" :breakpoints="breakpoints" ref="carousel" v-model="currentSlide" class="w-full max-w-full">
@@ -46,7 +69,13 @@ const breakpoints = {
   </Carousel>
   <aside v-if="carousel" class="flex w-full items-center justify-between my-2 px-2">
     <div class="items-center gap-3 hidden lg:flex">
-      <button v-for="slideIndex in carousel.data.maxSlide.value" v-show="slideIndex >= carousel.data.minSlide.value" :key="`${id}-pagination-${slideIndex}`" @click="carousel.slideTo(slideIndex)" class="h-4 rounded-full text-black transition-all" :class="currentSlide === slideIndex ? 'w-12 bg-red-500' : 'w-4 bg-shark-100'"></button>
+      <button 
+        v-for="slideIndex in slidesArray" 
+        :key="`${id}-pagination-${slideIndex}`" 
+        @click="carousel.slideTo(slideIndex)" 
+        class="h-4 rounded-full text-black transition-all" 
+        :class="currentSlide === slideIndex ? 'w-12 bg-red-500' : 'w-4 bg-shark-100'"
+      ></button>
     </div>
     <div class="flex items-center gap-3">
       <button @click="prev" class="group">
