@@ -42,12 +42,9 @@ class Room extends Model
 
     protected function getUsersCountAttribute()
     {
-        try {
-            $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
-            return count($response->users);
-        } catch (\Exception $e) {
-            return 0;
-        }
+        $response = pusher()->get('/channels/presence-rooms.'.$this->id.'/users');
+
+        return count($response->users);
     }
 
     protected function getCurrentTrackIndexAttribute()
