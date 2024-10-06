@@ -63,7 +63,7 @@ defineProps({
             <FeaturedRoom :room="featured_room" class="my-12" />
           </div>
           <TopPlayers :list="weekly_top_users"/>
-          <article>
+          <article class="my-6">
             <div class="">
               <h3 class="text-xl font-bold">Communauté et Support</h3>
               <p class="text-sm">Rejoignez-nous sur Discord pour :</p>
