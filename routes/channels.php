@@ -43,6 +43,6 @@ Broadcast::channel('chat-room.{id}', function ($user) {
     ];
 });
 
-Broadcast::channel('room.count.{room}', function () {
+Broadcast::channel('room.count.{room}', function ($user, Room $room) {
     return true;
 });

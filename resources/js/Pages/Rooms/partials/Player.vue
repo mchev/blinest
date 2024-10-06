@@ -1,134 +1,193 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 const props = defineProps({
-  room: Object,
-  channel: String,
+  room: {
+    type: Object,
+    required: true
+  },
+  channel: {
+    type: String,
+    required: true
+  }
 })
 
 const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped', 'track:currentTime'])
 
-const audio = new Audio()
+const audio = ref(new Audio())
 const track = ref(null)
 const loading = ref(true)
 const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
 const usersWithAllAnswers = ref([])
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+const isIOS = ref(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
 const countdown = ref(0)
 const countdowning = ref(false)
+const waitingForNextTrack = ref(false)
 
 const triggerUserGesture = () => {
-  console.info('User Gesture')
-  audio.play()
+  console.log('User gesture triggered')
+  audio.value.play().catch(error => console.error('Error playing audio:', error))
 }
 
 onMounted(() => {
-  audio.muted = true
-  window.addEventListener('volume-localstorage-changed', (event) => {
-    audio.volume = event.detail.volume
-  })
-  Echo.channel(props.channel)
-    .listen('TrackPlayed', (e) => {
-      console.info('Track played')
-      track.value = e.track
-      play()
-    })
-    .listen('TrackEnded', (e) => {
-      console.info('Track ended')
-      usersWithAllAnswers.value = []
-      stop()
-      startCountdown()
-    })
-    .listen('TrackPaused', () => {
-      pause()
-    })
-    .listen('TrackResumed', () => {
-      resume()
-    })
-    .listen('UserHasFoundAllTheAnswers', (e) => {
-      usersWithAllAnswers.value.push(e.user)
-    })
+  console.log('Player component mounted')
+  initializeAudio()
+  setupEventListeners()
 })
 
 onUnmounted(() => {
-  stop()
-  Echo.leave(props.channel)
+  console.log('Player component unmounted')
+  cleanup()
 })
 
+const initializeAudio = () => {
+  console.log('Initializing audio')
+  audio.value.muted = true
+  audio.value.volume = parseFloat(localStorage.getItem('volume') || '1')
+}
+
+const setupEventListeners = () => {
+  console.log('Setting up event listeners')
+  window.addEventListener('volume-localstorage-changed', handleVolumeChange)
+
+  const channel = Echo.channel(props.channel)
+  channel.listen('TrackPlayed', handleTrackPlayed)
+        .listen('TrackEnded', handleTrackEnded)
+        .listen('TrackPaused', pause)
+        .listen('TrackResumed', resume)
+        .listen('UserHasFoundAllTheAnswers', handleUserFoundAllAnswers)
+}
+
+const cleanup = () => {
+  console.log('Cleaning up')
+  stop()
+  Echo.leave(props.channel)
+  window.removeEventListener('volume-localstorage-changed', handleVolumeChange)
+  removeAudioEventListeners()
+}
+
+const handleVolumeChange = (event) => {
+  console.log('Volume changed:', event.detail.volume)
+  audio.value.volume = event.detail.volume
+}
+
+const handleTrackPlayed = (e) => {
+  console.log('Track played')
+  track.value = e.track
+  waitingForNextTrack.value = false
+  play()
+}
+
+const handleTrackEnded = () => {
+  console.log('Track ended')
+  usersWithAllAnswers.value = []
+  stop()
+  waitingForNextTrack.value = true
+  startCountdown()
+}
+
+const handleUserFoundAllAnswers = (e) => {
+  console.log('User found all answers')
+  usersWithAllAnswers.value.push(e.user)
+}
+
 const play = () => {
-  if (isPlaying.value) {
-    stop()
-  }
+  console.log('Playing track')
+  if (isPlaying.value) stop()
 
   loading.value = true
   error.value = null
   isPlaying.value = true
 
-  audio.src = track.value.preview_url
-  audio.crossOrigin = 'anonymous'
-  audio.load() // IOS Hack - Important
-  audio.muted = false
-  // audio.playbackRate = 0.55
-  // audio.preservesPitch = false
+  audio.value.src = track.value.preview_url
+  audio.value.crossOrigin = 'anonymous'
+  audio.value.load()
+  audio.value.muted = false
 
-  audio.addEventListener('error', () => {
-    if (audio.error.code === 13) {
-      error.value = `Erreur de lecture média. Veuillez vérifier votre périphérique de sortie audio. (${audio.error.message})`
-    } else {
-      error.value = audio.error.message
-    }
+  addAudioEventListeners()
+}
 
-    error.value = audio.error.message
-    isPlaying.value = false
-  })
+const addAudioEventListeners = () => {
+  console.log('Adding audio event listeners')
+  audio.value.addEventListener('error', handleAudioError)
+  audio.value.addEventListener('canplaythrough', handleCanPlayThrough)
+  audio.value.addEventListener('timeupdate', handleTimeUpdate)
+  audio.value.addEventListener('ended', handleAudioEnded)
+}
 
-  audio.addEventListener('canplaythrough', () => {
+const removeAudioEventListeners = () => {
+  console.log('Removing audio event listeners')
+  audio.value.removeEventListener('error', handleAudioError)
+  audio.value.removeEventListener('canplaythrough', handleCanPlayThrough)
+  audio.value.removeEventListener('timeupdate', handleTimeUpdate)
+  audio.value.removeEventListener('ended', handleAudioEnded)
+}
+
+const handleAudioError = () => {
+  console.error('Audio error:', audio.value.error)
+  error.value = audio.value.error.code === 13
+    ? `Erreur de lecture média. Veuillez vérifier votre périphérique de sortie audio. (${audio.value.error.message})`
+    : audio.value.error.message
+  isPlaying.value = false
+}
+
+const handleCanPlayThrough = () => {
+  if (!waitingForNextTrack.value) {
+    console.log('Audio can play through')
     loading.value = false
-    if (isIOS) {
-      console.log('iOS Player')
-      audio.pause() // IOS Hack
-      audio.currentTime = 0 // IOS Hack
-      audio.volume = localStorage.getItem('volume')
-      audio.play()
-    } else {
-      let playPromise = audio.play()
+    if (isIOS.value) {
+      audio.value.pause()
+      audio.value.currentTime = 0
     }
-  })
+    audio.value.play().catch(error => console.error('Error playing audio:', error))
+  }
+}
 
-  audio.addEventListener('timeupdate', () => {
-    emit('track:currentTime', audio.currentTime)
-    percent.value = parseInt((100 / props.room.track_duration) * (audio.currentTime + 0.25))
-  })
+const handleTimeUpdate = () => {
+  emit('track:currentTime', audio.value.currentTime)
+  percent.value = Math.min(100, parseInt((100 / props.room.track_duration) * (audio.value.currentTime + 0.25)))
+}
 
-  audio.addEventListener('ended', () => {
+const handleAudioEnded = () => {
+  console.log('Audio ended')
+  if (!waitingForNextTrack.value) {
     isPlaying.value = false
     loading.value = true
-    emit('track:ended', props.track)
-  })
+    emit('track:ended', track.value)
+  }
 }
 
 const pause = () => {
-  audio.pause()
-  emit('track:paused', props.track)
+  console.log('Pausing audio')
+  audio.value.pause()
+  emit('track:paused', track.value)
 }
 
 const resume = () => {
-  audio.play()
+  console.log('Resuming audio')
+  audio.value.play().catch(error => console.error('Error resuming audio:', error))
 }
 
 const stop = () => {
-  audio.pause()
-  emit('track:stopped', props.track)
+  console.log('Stopping audio')
+  audio.value.pause()
+  audio.value.currentTime = 0
+  isPlaying.value = false
+  loading.value = false
+  waitingForNextTrack.value = true
+  emit('track:stopped', track.value)
 }
 
 const startCountdown = () => {
+  console.log('Starting countdown')
   countdown.value = parseInt(props.room.pause_between_tracks)
   countdowning.value = true
-  let interval = setInterval(() => {
-    if (countdown.value === -1) {
+  const interval = setInterval(() => {
+    if (countdown.value <= 0) {
+      console.log('Countdown finished')
       clearInterval(interval)
       countdowning.value = false
     } else {
@@ -139,10 +198,14 @@ const startCountdown = () => {
 </script>
 <template>
   <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
-    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers.length">
-      <li v-for="user in usersWithAllAnswers" :key="user.id" class="absolute -top-8 z-20 rounded bg-teal-600 p-1 text-xs text-white" :style="'left:calc(' + (100 / props.room.track_duration) * user.time + '% - 0.25rem)'">
-        {{ user.name }}
-        <div class="absolute left-1 top-full mt-1 h-full h-0 w-full w-0 translate-y-[-50%] border-t-[8px] border-l-[8px] border-r-[8px] border-t-transparent border-l-transparent border-r-transparent border-t-teal-600"></div>
+    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers.length" class="absolute w-full">
+      <li v-for="(user, index) in usersWithAllAnswers" :key="user.id" 
+          class="absolute -top-12 z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg transform transition-all duration-300 ease-bounce"
+          :style="`left:calc(${(100 / props.room.track_duration) * user.time}% - 1rem); 
+                   animation-delay: ${index * 0.2}s;
+                   transform: translateY(${index * -5}px) scale(${1 - index * 0.05});`">
+        <span class="whitespace-nowrap select-none">{{ user.name }}</span>
+        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[8px] border-l-[8px] border-r-[8px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
       </li>
     </transition-group>
     <div v-if="error" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg text-red-500">
