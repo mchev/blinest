@@ -32,6 +32,7 @@ class HomeController extends Controller
         $categories = Category::with(['rooms' => function ($query) {
             $query->isPublic()
                 ->whereNull('password')
+                ->orderByDesc('user_count')
                 ->orderByDesc('is_playing');
         }])->get();
         $user = $request->user();
