@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, beforeUnmount } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { router, usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
@@ -68,14 +68,11 @@ const dispatchUserCount = (count) => {
     })
 }
 
-beforeUnmount(() => {
+onUnmounted(() => {
+  Echo.leave(channel)
   axios.post(`/rooms/${props.room.id}/update-user-count`, {
     count: users.value.length
   })
-})
-
-onUnmounted(() => {
-  Echo.leave(channel)
 })
 
 const joining = () => {
