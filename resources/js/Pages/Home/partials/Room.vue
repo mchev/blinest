@@ -1,11 +1,13 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import PlayingIcon from '@/Components/PlayingIcon.vue'
 
 const props = defineProps({
     room: Object,
 })
+
+const user = usePage().props.auth.user
 
 const channel = `rooms.${props.room.id}`
 const track = ref(null)
@@ -44,10 +46,12 @@ onMounted(() => {
             round.value.current = 0
         })
 
-    Echo.private(`room.count.${props.room.id}`)
-        .listenForWhisper('updateUserCount', (e) => {
-            userCounter.value = e.count
-        })
+    if (user) {
+        Echo.private(`room.count.${props.room.id}`)
+            .listenForWhisper('updatedUserCount', (e) => {
+                userCounter.value = e.count
+            })
+    }
 })
 
 onUnmounted(() => {

@@ -18,8 +18,7 @@ class RoundFinished implements ShouldBroadcast
      */
     public function __construct(
         public Round $round
-    ) {
-    }
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.

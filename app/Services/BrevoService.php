@@ -20,7 +20,7 @@ class BrevoService
     public function contacts()
     {
         $this->apiInstance = new \Brevo\Client\Api\ContactsApi(
-            new \GuzzleHttp\Client(),
+            new \GuzzleHttp\Client,
             $this->credentials
         );
 

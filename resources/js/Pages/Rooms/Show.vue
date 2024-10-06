@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, beforeUnmount } from 'vue'
 import { router, usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
@@ -43,6 +43,9 @@ onMounted(() => {
         users.value = usersHere
         joining()
         dispatchUserCount(usersHere.length)
+        axios.post(`/rooms/${props.room.id}/update-user-count`, {
+          count: usersHere.length
+        });
       })
       .joining((user) => {
         users.value.push(user)
@@ -60,10 +63,16 @@ onMounted(() => {
 
 const dispatchUserCount = (count) => {
   Echo.private(`room.count.${props.room.id}`)
-    .whisper('updateUserCount', {
+    .whisper('updatedUserCount', {
       count: count
     })
 }
+
+beforeUnmount(() => {
+  axios.post(`/rooms/${props.room.id}/update-user-count`, {
+    count: users.value.length
+  })
+})
 
 onUnmounted(() => {
   Echo.leave(channel)

@@ -13,7 +13,7 @@ class SpotifyService
 
     public function __construct()
     {
-        $this->api = new \SpotifyWebAPI\SpotifyWebAPI();
+        $this->api = new \SpotifyWebAPI\SpotifyWebAPI;
         $session = new \SpotifyWebAPI\Session(config('services.spotify.client_id'), config('services.spotify.client_secret'));
         $session->requestCredentialsToken();
         $this->api->setAccessToken($session->getAccessToken());

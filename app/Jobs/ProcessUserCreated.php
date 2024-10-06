@@ -20,9 +20,7 @@ class ProcessUserCreated implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(private User $user)
-    {
-    }
+    public function __construct(private User $user) {}
 
     /**
      * Execute the job.

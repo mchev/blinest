@@ -20,8 +20,7 @@ class ProcessImportTrack implements ShouldQueue
     public function __construct(
         public Playlist $playlist,
         public object $track
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.

@@ -17,10 +17,7 @@ class NewRoomAlert extends Notification
      *
      * @return void
      */
-    public function __construct(public Room $room, public User $user, public $message = null)
-    {
-
-    }
+    public function __construct(public Room $room, public User $user, public $message = null) {}
 
     /**
      * Get the notification's delivery channels.

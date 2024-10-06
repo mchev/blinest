@@ -17,10 +17,7 @@ class NewSuggestion extends Notification
      *
      * @return void
      */
-    public function __construct(public Room $room, public string $suggestion, protected User $user)
-    {
-
-    }
+    public function __construct(public Room $room, public string $suggestion, protected User $user) {}
 
     /**
      * Get the notification's delivery channels.

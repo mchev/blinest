@@ -16,9 +16,7 @@ class TrackDeleted extends Notification
      *
      * @return void
      */
-    public function __construct(public Playlist $playlist, public $message = null)
-    {
-    }
+    public function __construct(public Playlist $playlist, public $message = null) {}
 
     /**
      * Get the notification's delivery channels.

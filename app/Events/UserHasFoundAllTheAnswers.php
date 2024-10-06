@@ -19,8 +19,7 @@ class UserHasFoundAllTheAnswers implements ShouldBroadcastNow
     public function __construct(
         public Room $room,
         public array $user
-    ) {
-    }
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.

@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 
 class UserBanController extends Controller
 {
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function store(Request $request, User $user)
     {
