@@ -206,10 +206,9 @@ const startCountdown = () => {
       <li 
         v-for="(user, index) in usersWithAllAnswers" 
         :key="user.id" 
-        class="absolute z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg hover:z-30"
+        class="absolute z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg hover:z-30 -top-10"
         :style="`
           left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);
-          top: ${-48 + index * 5}px;
         `"
       >
         <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
