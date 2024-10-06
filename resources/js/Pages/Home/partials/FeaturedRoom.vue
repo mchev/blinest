@@ -69,7 +69,7 @@ onUnmounted(() => {
 		</Link>
 		<h2 class="text-2xl">{{ room.name }}</h2>
 		<p class="my-4">{{ room.description }}</p>
-		<Link :href="`/rooms/${room.slug}`" class="flex items-center gap-2 bg-red-500 px-4 py-2 text-xl text-white hover:bg-red-400">
+		<Link :href="`/rooms/${room.slug}`" class="flex rounded items-center gap-2 bg-red-500 px-4 py-2 text-xl text-white hover:bg-red-400">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-circle">
 				<circle cx="12" cy="12" r="10" />
 				<polygon points="10 8 16 12 10 16 10 8" />

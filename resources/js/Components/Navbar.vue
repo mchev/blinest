@@ -16,12 +16,15 @@ const user = usePage().props.auth?.user
 const showingSearchbar = ref(false)
 </script>
 <template>
-  <div class="md:flex md:flex-shrink-0">
-    <div class="flex w-full items-center justify-between px-4 py-2 md:flex-shrink-0 md:px-12">
+  <div class="md:flex md:flex-shrink-0 px-8 md:px-12">
+    <div class="w-full lg:w-1/4">
+    
       <Link :href="route('home')" title="Blinest">
-        <Logo class="w-24 fill-inherit lg:w-32" />
-        <p class="mt-1 hidden text-sm text-neutral-500 md:block">{{ __('Test your musical knowledge') }}</p>
+        <Logo class="w-24 fill-inherit lg:w-36 mt-2" />
+        <p class="mt-1 hidden text-sm text-neutral-400 md:block tracking-widest">{{ __('Tune In, Test Out!') }}</p>
       </Link>
+    </div>
+    <div class="flex w-full lg:w-3/4 items-center justify-between pl-2 pr-8 py-2 md:flex-shrink-0 ">
 
       <div class="mt-1 hidden items-center gap-2 md:flex">
         <SearchRooms class="transition hover:scale-[104%] focus:scale-[104%]" />
