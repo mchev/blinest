@@ -1,10 +1,12 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
 	room: Object,
 })
+
+const user = usePage().props.auth.user
 
 const channel = `rooms.${props.room.id}`
 const track = ref(null)
@@ -12,7 +14,7 @@ const round = ref(null)
 const playing = ref(props.room.is_playing)
 const progress = ref(0)
 
-const userCounter = ref(props.room.users_count)
+const userCounter = ref(props.room.user_count)
 
 const calculateProgression = () => {
 	let current_track = round.value ? round.value.current : props.room.current_track_index
@@ -29,23 +31,27 @@ onMounted(() => {
 	}
 	Echo.channel(channel)
 		.listen('RoundStarted', (e) => {
-			userCounter.value = e.round.room.users_count
 			playing.value = true
 			round.value = e.round
 		})
 		.listen('TrackPlayed', (e) => {
 			props.room.value = e.room
-			userCounter.value = e.room.users_count
 			round.value = e.round
 			track.value = e.track
 		})
 		.listen('RoundFinished', (e) => {
-			userCounter.value = e.round.room.users_count
 			playing.value = false
 			round.value = e.round
 			round.value.current = 0
 		})
 })
+
+if (user) {
+    Echo.private(`room.count.${props.room.id}`)
+        .listenForWhisper('updatedUserCount', (e) => {
+            userCounter.value = e.count
+        })
+}
 
 onUnmounted(() => {
 	Echo.leave(channel)
