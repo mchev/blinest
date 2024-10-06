@@ -198,16 +198,24 @@ const startCountdown = () => {
 </script>
 <template>
   <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
-    <transition-group name="list" tag="ul" v-if="usersWithAllAnswers.length" class="absolute w-full">
-      <li v-for="(user, index) in usersWithAllAnswers" :key="user.id" 
-          class="absolute -top-12 z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg transform transition-all duration-300 ease-bounce"
-          :style="`left:calc(${(100 / props.room.track_duration) * user.time}% - 1rem); 
-                   animation-delay: ${index * 0.2}s;
-                   transform: translateY(${index * -5}px) scale(${1 - index * 0.05});`">
-        <span class="whitespace-nowrap select-none">{{ user.name }}</span>
+    <TransitionGroup 
+      name="user-answer"
+      tag="ul"
+      class="absolute w-full"
+    >
+      <li 
+        v-for="(user, index) in usersWithAllAnswers" 
+        :key="user.id" 
+        class="absolute z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg hover:z-30"
+        :style="`
+          left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);
+          top: ${-48 + index * 5}px;
+        `"
+      >
+        <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
         <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[8px] border-l-[8px] border-r-[8px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
       </li>
-    </transition-group>
+    </TransitionGroup>
     <div v-if="error" class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg text-red-500">
       {{ error }}
     </div>
@@ -228,3 +236,20 @@ const startCountdown = () => {
   </div>
   <UserGestureModal @play="triggerUserGesture" />
 </template>
+<style scoped>
+.user-answer-move,
+.user-answer-enter-active,
+.user-answer-leave-active {
+  transition: all 0.5s ease;
+}
+
+.user-answer-enter-from,
+.user-answer-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.user-answer-leave-active {
+  position: absolute;
+}
+</style>
