@@ -63,7 +63,7 @@ onUnmounted(() => {
     <Link :rel="!room.is_public ? 'nofollow' : ''" :href="`/rooms/${room.slug}`" class="group w-full">
     <div class="flex flex-col items-center justify-center gap-4 rounded-[.6rem] border-2 border-red-500 p-[1rem]">
         <div class="w-full text-center">
-            <h3 class="truncate uppercase font-semibold" :title="room.name"><span class="hidden">Blind Test</span> {{ room.name }}</h3>
+            <h3 class="truncate font-semibold" :title="room.name"><span class="hidden">Blind Test</span> {{ room.name }}</h3>
             <div v-if="!room.is_public && room.owner" class="text-xs flex items-center gap-1 justify-center">
                 <img :src="room.owner.photo" :alt="room.owner.name" class="w-6 rounded-full" />
                 {{ room.owner.name }}
