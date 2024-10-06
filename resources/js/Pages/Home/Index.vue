@@ -57,6 +57,13 @@ defineProps({
                 {{ __('Donate') }}
               </a>
             </div>
+          </article>
+          <div v-for="featured_room in featured_rooms" :key="`featured-room-${featured_room.id}`">
+            <hr class="my-4 rounded-2xl border border-red-500" />
+            <FeaturedRoom :room="featured_room" class="my-12" />
+          </div>
+          <TopPlayers :list="weekly_top_users"/>
+          <article>
             <div class="">
               <h3 class="text-xl font-bold">Communauté et Support</h3>
               <p class="text-sm">Rejoignez-nous sur Discord pour :</p>
@@ -75,11 +82,6 @@ defineProps({
               </a>
             </div>
           </article>
-          <div v-for="featured_room in featured_rooms" :key="`featured-room-${featured_room.id}`">
-            <hr class="my-4 rounded-2xl border border-red-500" />
-            <FeaturedRoom :room="featured_room" class="my-12" />
-          </div>
-          <TopPlayers :list="weekly_top_users"/>
         </aside>
       </div>
     </div>
