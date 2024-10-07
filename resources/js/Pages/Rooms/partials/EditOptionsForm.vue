@@ -1,13 +1,14 @@
 <script setup>
-import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { Head, Link, usePage, useForm } from '@inertiajs/vue3'
+import { usePage, useForm } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import CheckboxInput from '@/Components/CheckboxInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 
 const props = defineProps({
-  room: Object,
+  room: {
+    type: Object,
+    required: true,
+  },
   modal: {
     type: Boolean,
     default: false,
@@ -35,9 +36,7 @@ const form = useForm({
 const update = () => {
   form.put(route('rooms.options', props.room.id), {
     preserveScroll: true,
-    onSuccess: () => {
-      emit('close')
-    },
+    onSuccess: () => emit('close'),
   })
 }
 </script>
@@ -47,7 +46,7 @@ const update = () => {
       <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium"
         >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
       >
-      <input id="tracks_by_round-range" type="range" min="1" max="100" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
+      <input id="tracks_by_round-range" type="range" min="1" max="50" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
 
       <label for="track_duration-range" class="mb-2 block text-sm font-medium"
         >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
@@ -66,20 +65,20 @@ const update = () => {
     </div>
 
     <div class="flex w-full flex-wrap gap-4">
-      <checkbox-input v-if="user.admin" v-model="form.is_featured" :error="form.errors.is_featured" :label="__('Featured')" />
-      <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" :label="__('Chatbox')" />
-      <checkbox-input v-model="form.is_random" :error="form.errors.is_random" :label="__('Random')" />
-      <checkbox-input v-model="form.is_autostart" :error="form.errors.is_autostart" :label="__('Autostart')" />
-      <checkbox-input v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
+      <CheckboxInput v-if="user.admin" v-model="form.is_featured" :error="form.errors.is_featured" :label="__('Featured')" />
+      <CheckboxInput v-model="form.is_chat_active" :error="form.errors.is_chat_active" :label="__('Chatbox')" />
+      <CheckboxInput v-model="form.is_random" :error="form.errors.is_random" :label="__('Random')" />
+      <CheckboxInput v-model="form.is_autostart" :error="form.errors.is_autostart" :label="__('Autostart')" />
+      <CheckboxInput v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
     </div>
 
     <div class="flex w-full flex-wrap">
-      <text-input v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
+      <TextInput v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
     </div>
 
     <div class="ml-auto flex items-center gap-2">
       <button v-if="modal" @click="$emit('close')" class="btn-secondary" type="button">{{ __('Close') }}</button>
-      <loading-button :loading="form.processing" class="btn-primary" form="optionsForm" type="submit">{{ __('Update') }}</loading-button>
+      <LoadingButton :loading="form.processing" class="btn-primary" form="optionsForm" type="submit">{{ __('Update') }}</LoadingButton>
     </div>
   </form>
 </template>

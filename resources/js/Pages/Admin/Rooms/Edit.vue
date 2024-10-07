@@ -89,7 +89,7 @@ const update = () => {
           </template>
           <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
             <div class="flex w-full flex-wrap">
-              <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="100" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Tracks by round')" />
+              <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="50" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Tracks by round')" />
 
               <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Track duration')" />
 

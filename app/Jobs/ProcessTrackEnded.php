@@ -15,7 +15,7 @@ class ProcessTrackEnded implements ShouldQueue
 
     public function __construct(
         public Round $round
-    ) { }
+    ) {}
 
     public function handle(): void
     {

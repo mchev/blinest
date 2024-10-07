@@ -45,17 +45,20 @@ const reset = () => {
     <Card>
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
-          <tr class="text-left font-bold">
-            <th class="px-2 pb-4 pt-6">{{ __('Name') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Moderators') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Category') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
-            <th class="px-2 pb-4 pt-6">{{ __('Autostart') }}</th>
-            <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
-          </tr>
-          <tr v-for="room in rooms.data" :key="room.id">
-            <td class="border-t">
+          <thead>
+            <tr class="text-left font-bold">
+              <th class="px-2 pb-4 pt-6">{{ __('Name') }}</th>
+              <th class="px-2 pb-4 pt-6">{{ __('Moderators') }}</th>
+              <th class="px-2 pb-4 pt-6">{{ __('Category') }}</th>
+              <th class="px-2 pb-4 pt-6">{{ __('Playlists') }}</th>
+              <th class="px-2 pb-4 pt-6">{{ __('Rounds played') }}</th>
+              <th class="px-2 pb-4 pt-6">{{ __('Autostart') }}</th>
+              <th class="px-2 pb-4 pt-6" colspan="2">{{ __('Visibility') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="room in rooms.data" :key="room.id">
+              <td class="border-t">
               <Link class="flex items-center px-2 py-4" :href="route('rooms.edit', room.id)">
                 <img v-if="room.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="room.photo" />
                 <div class="flex flex-col">
@@ -110,10 +113,11 @@ const reset = () => {
                 <icon name="cheveron-right" class="block h-6 w-6 fill-gray-400" />
               </Link>
             </td>
-          </tr>
-          <tr v-if="rooms && rooms.data.length === 0">
-            <td class="border-t px-2 py-4" colspan="6">{{ __('No rooms found') }}</td>
-          </tr>
+            </tr>
+            <tr v-if="rooms && rooms.data.length === 0">
+              <td class="border-t px-2 py-4" colspan="6">{{ __('No rooms found') }}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <Pagination :links="rooms.links" />

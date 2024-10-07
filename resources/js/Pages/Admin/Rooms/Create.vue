@@ -48,7 +48,7 @@ const store = () => {
           <div class="flex w-1/3 flex-col border-r p-8">
             <p class="mb-6 font-bold">{{ __('Options') }}</p>
 
-            <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="100" class="pb-6" :label="__('Tracks by round')" />
+            <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="50" class="pb-6" :label="__('Tracks by round')" />
 
             <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="pb-6" :label="__('Track duration')" />
 

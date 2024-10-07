@@ -54,7 +54,7 @@ class Round extends Model
             ]);
             $this->room()->update(['is_playing' => 0]);
         });
-        
+
         broadcast(new RoundFinished($this));
 
     }

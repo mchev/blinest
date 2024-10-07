@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Room;
 use App\Models\Round;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class ForceClearRounds extends Command
@@ -39,7 +39,7 @@ class ForceClearRounds extends Command
                 Room::where('is_playing', 1)->update(['is_playing' => 0]);
                 Round::whereNull('finished_at')->update([
                     'finished_at' => now(),
-                    'is_playing' => 0
+                    'is_playing' => 0,
                 ]);
 
                 DB::commit();
@@ -49,7 +49,8 @@ class ForceClearRounds extends Command
             return Command::SUCCESS;
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error("An error occurred: " . $e->getMessage());
+            $this->error('An error occurred: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

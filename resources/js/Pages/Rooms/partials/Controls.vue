@@ -7,9 +7,18 @@ import EditOptionsForm from './EditOptionsForm.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 
 const props = defineProps({
-  channel: String,
-  room: Object,
-  round: [Object, Boolean],
+  channel: {
+    type: String,
+    required: true,
+  },
+  room: {
+    type: Object,
+    required: true,
+  },
+  round: {
+    type: [Object, Boolean],
+    required: true,
+  },
 })
 
 const isPlaying = true
@@ -78,7 +87,7 @@ onUnmounted(() => {
   </div>
 
   <Modal :show="showingOptionsModal" @close="showingOptionsModal = false">
-    <Card>
+    <Card class="p-4">
       <template #header>  {{ __('Room options') }}</template>
       <EditOptionsForm :room="room" :modal="true" @close="showingOptionsModal = false" />
     </Card>

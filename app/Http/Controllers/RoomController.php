@@ -13,10 +13,10 @@ use App\Rules\Reserved;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -163,7 +163,7 @@ class RoomController extends Controller
     {
         $request->validate([
             'password' => ['nullable'],
-            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:100'],
+            'tracks_by_round' => ['required', 'integer', 'min:1', 'max:50'],
             'track_duration' => ['required', 'integer', 'min:5', 'max:30'],
             'pause_between_tracks' => ['required', 'integer', 'min:0', 'max:60'],
             'pause_between_rounds' => ['required', 'integer', 'min:0', 'max:60'],
@@ -227,12 +227,12 @@ class RoomController extends Controller
 
     public function start(Request $request, Room $room)
     {
-        if ($request->user()->hasRoomControl($room) && !$room->is_playing) {
+        if ($request->user()->hasRoomControl($room) && ! $room->is_playing) {
             DB::transaction(function () use ($room, $request) {
                 // Check if there's an active round
                 $activeRound = $room->currentRound()->first();
-                
-                if (!$activeRound) {
+
+                if (! $activeRound) {
                     // Create a new round
                     $round = $room->rounds()->create([
                         'current' => 1,
