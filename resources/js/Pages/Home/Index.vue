@@ -30,14 +30,18 @@ defineProps({
     </section>
     <div v-else>
       <div class="flex flex-wrap lg:flex-nowrap">
-        <section v-if="categories.length" class="w-full lg:w-3/4">
-          <div v-for="category in categories" :key="category.id" class="mb-4">
-            <h3 class="text-center text-2xl font-bold uppercase text-shark-200">{{ __(category.name) }}</h3>
+        <section v-if="categories.length" class="w-full lg:w-3/4 space-y-10">
+          <div v-for="category in categories" :key="category.id">
+            <h3 class="text-2xl pl-3">{{ __(category.name) }}</h3>
             <Rooms :rooms="category.rooms" :id="category.id" />
           </div>
-          <div class="relative mb-4">
-            <h2 class="text-center text-2xl font-bold uppercase text-shark-200">{{ __('Private rooms') }}</h2>
+          <div class="relative">
+            <h2 class="text-2xl pl-3">{{ __('Private rooms') }}</h2>
             <rooms :rooms="private_rooms" id="privateRooms" />
+          </div>
+          <div class="relative">
+            <h2 class="text-2xl pl-3">{{ __('My rooms') }}</h2>
+            <rooms :rooms="user_rooms" id="userRooms" />
           </div>
         </section>
         <aside class="order-last w-full lg:order-first lg:w-1/4 lg:pr-12">
@@ -53,6 +57,13 @@ defineProps({
                 {{ __('Donate') }}
               </a>
             </div>
+          </article>
+          <div v-for="featured_room in featured_rooms" :key="`featured-room-${featured_room.id}`">
+            <hr class="my-4 rounded-2xl border border-red-500" />
+            <FeaturedRoom :room="featured_room" class="my-12" />
+          </div>
+          <TopPlayers :list="weekly_top_users"/>
+          <article class="my-6">
             <div class="">
               <h3 class="text-xl font-bold">Communauté et Support</h3>
               <p class="text-sm">Rejoignez-nous sur Discord pour :</p>
@@ -71,31 +82,8 @@ defineProps({
               </a>
             </div>
           </article>
-          <div v-for="featured_room in featured_rooms" :key="`featured-room-${featured_room.id}`">
-            <hr class="my-4 rounded-2xl border border-red-500" />
-            <FeaturedRoom :room="featured_room" class="my-12" />
-          </div>
-          <TopPlayers :list="weekly_top_users"/>
         </aside>
       </div>
-      <section class="my-24 flex flex-wrap gap-4 bg-red-500 p-12 text-white">
-        <!-- <h2 class="text-center text-2xl uppercase">Meilleurs scores de la semaine</h2> -->
-        <Link href="/rankings" class="rounded-2xl bg-white px-4 py-2 text-xl text-red-500">
-          {{ __('Voir les classements') }}
-        </Link>
-        <Link href="/rooms" class="rounded-2xl bg-white px-4 py-2 text-xl text-red-500">
-          {{ __('Gérer mes rooms') }}
-        </Link>
-        <Link href="/me" class="rounded-2xl bg-white px-4 py-2 text-xl text-red-500">
-          {{ __('Mon compte') }}
-        </Link>
-      </section>
-      <section v-if="user_rooms && user_rooms.length">
-        <div class="relative">
-          <h2 class="mb-1 text-xl font-medium text-neutral-100 lg:text-xl">{{ __('My rooms') }}</h2>
-          <rooms :rooms="user_rooms" id="userRooms" />
-        </div>
-      </section>
     </div>
   </Layout>
 </template>
