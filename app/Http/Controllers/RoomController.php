@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -226,8 +227,26 @@ class RoomController extends Controller
 
     public function start(Request $request, Room $room)
     {
-        if ($request->user()->hasRoomControl($room) && ! $room->is_playing) {
-            StartRound::dispatch($room, $request->user());
+        if ($request->user()->hasRoomControl($room) && !$room->is_playing) {
+            DB::transaction(function () use ($room, $request) {
+                // Check if there's an active round
+                $activeRound = $room->currentRound()->first();
+                
+                if (!$activeRound) {
+                    // Create a new round
+                    $round = $room->rounds()->create([
+                        'current' => 1,
+                        'is_playing' => true,
+                        'user_id' => $request->user()->id,
+                    ]);
+
+                    // Update room status
+                    $room->update(['is_playing' => true]);
+
+                    // Dispatch the job to start the round
+                    StartRound::dispatch($room, $request->user());
+                }
+            });
 
             return redirect()->back();
         }

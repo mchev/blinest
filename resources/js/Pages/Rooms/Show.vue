@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { router, usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Icon from '@/Components/Icon.vue'
@@ -42,23 +42,32 @@ onMounted(() => {
       .here((usersHere) => {
         users.value = usersHere
         joining()
-        dispatchUserCount(usersHere.length)
-        axios.post(`/rooms/${props.room.id}/update-user-count`, {
-          count: usersHere.length
-        });
+        if (usersHere.length > 0 && usersHere[0].id === user.id) {
+          dispatchUserCount(usersHere.length)
+          updateServerUserCount(usersHere.length)
+        }
       })
       .joining((user) => {
         users.value.push(user)
-        dispatchUserCount(users.value.length)
+        if (users.value.length > 0 && users.value[0].id === user.id) {
+          dispatchUserCount(users.value.length)
+          updateServerUserCount(users.value.length)
+        }
       })
       .leaving((user) => {
         users.value = users.value.filter((u) => u.id !== user.id)
-        dispatchUserCount(users.value.length)
+        if (users.value.length > 0 && users.value[0].id === user.id) {
+          dispatchUserCount(users.value.length)
+          updateServerUserCount(users.value.length)
+        }
       })
       .error((error) => {
         console.error(error)
       })
   }
+
+  // Handle tab close or browser exit
+  window.addEventListener('beforeunload', handleUserLeave)
 })
 
 const dispatchUserCount = (count) => {
@@ -68,11 +77,29 @@ const dispatchUserCount = (count) => {
     })
 }
 
+const updateServerUserCount = (count) => {
+  if (count !== props.room.user_count) {
+    axios.post(`/rooms/${props.room.id}/update-user-count`, {
+      count: count
+    })
+  }
+}
+
+const handleUserLeave = () => {
+  if(users.value.length === 1 || users.value.length === 0) {
+    const newCount = users.value.length - 1
+    dispatchUserCount(newCount)
+    updateServerUserCount(newCount)
+  }
+}
+
+onBeforeUnmount(() => {
+  handleUserLeave()
+})
+
 onUnmounted(() => {
   Echo.leave(channel)
-  axios.post(`/rooms/${props.room.id}/update-user-count`, {
-    count: users.value.length
-  })
+  window.removeEventListener('beforeunload', handleUserLeave)
 })
 
 const joining = () => {

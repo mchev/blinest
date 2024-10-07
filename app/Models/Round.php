@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Round extends Model
 {
@@ -46,12 +47,16 @@ class Round extends Model
 
     public function stop()
     {
-        $this->update([
-            'is_playing' => false,
-            'finished_at' => Carbon::now(),
-        ]);
-        $this->room()->update(['is_playing' => false]);
+        DB::transaction(function () {
+            $this->update([
+                'is_playing' => 0,
+                'finished_at' => Carbon::now(),
+            ]);
+            $this->room()->update(['is_playing' => 0]);
+        });
+        
         broadcast(new RoundFinished($this));
+
     }
 
     public function playNextTrack()
@@ -64,7 +69,7 @@ class Round extends Model
         // All tracks has been played
         if ($this->current >= count($this->tracks)) {
             $this->stop();
-            if ($this->room->users_count > 0) {
+            if ($this->room->user_count > 0) {
                 ProcessRoundFinished::dispatch($this->room)
                     ->delay(now()->addSeconds($this->room->pause_between_rounds));
             }

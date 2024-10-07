@@ -59,7 +59,7 @@ class Room extends Model
 
     public function scopeIsPlaying()
     {
-        return $this->currentRound()->exists();
+        return $this->is_playing;
     }
 
     public function bookmarks(): MorphToMany

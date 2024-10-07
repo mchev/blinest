@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Round;
+use App\Events\TrackEnded;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,15 +31,23 @@ class ProcessTrackPlayed implements ShouldQueue
      */
     public function handle(): void
     {
+        $this->round->load('room');
+
         if ($this->round->isPlaying()) {
-
             // Broadcast the TrackEnded event
-            broadcast(new \App\Events\TrackEnded($this->round));
+            broadcast(new TrackEnded($this->round));
 
-            // Pause between next tracks
-            $this->round->load('room');
-            ProcessTrackEnded::dispatch($this->round)
-                ->delay(now()->addSeconds($this->round->room->pause_between_tracks));
+            // Check if this is the last track
+            $isLastTrack = $this->round->current >= count($this->round->tracks);
+
+            if ($isLastTrack) {
+                // If it's the last track, process immediately
+                ProcessTrackEnded::dispatch($this->round);
+            } else {
+                // If it's not the last track, add delay
+                ProcessTrackEnded::dispatch($this->round)
+                    ->delay(now()->addSeconds($this->round->room->pause_between_tracks));
+            }
         }
     }
 }

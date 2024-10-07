@@ -32,7 +32,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
 
     // Update user count
     Route::post('rooms/{room}/update-user-count', [RoomController::class, 'updateUserCount'])
-        ->name('rooms.update-user-count');
+        ->name('rooms.update-user-count')
+        ->middleware('throttle:10,1'); // Limit to 10 requests per minute
 
     // Rooms Messages
     Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])

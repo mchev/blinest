@@ -13,24 +13,12 @@ class ProcessTrackEnded implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $round;
+    public function __construct(
+        public Round $round
+    ) { }
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(Round $round)
-    {
-        $this->round = $round;
-    }
-
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        // Play
         $this->round->playNextTrack();
     }
 }

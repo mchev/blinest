@@ -18,6 +18,10 @@ const endingRound = ref(false)
 const showingOptionsModal = ref(false)
 
 const stopRound = () => {
+  if(!props.round) {
+    alert("Erreur : la room est en lecture mais aucune partie n'est en cours.")
+    return
+  }
   endingRound.value = true
   router.post(`/rounds/${props.round.id}/stop`, {
     preserveScroll: true,
