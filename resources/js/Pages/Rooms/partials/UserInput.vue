@@ -1,13 +1,6 @@
-<script>
-// use normal <script> to declare options
-export default {
-  inheritAttrs: false,
-}
-</script>
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
-import TextInput from '@/Components/TextInput.vue'
 import Volume from '@/Components/Volume.vue'
 
 const props = defineProps({
@@ -23,8 +16,46 @@ const text = ref('')
 const words = ref([])
 const message = ref(null)
 const answers = ref([])
-const user = usePage().props.auth.user
+const { auth } = usePage().props
+const user = auth.user
 const inputDisabled = ref(true)
+
+const focus = () => {
+  input.value?.focus()
+}
+
+const showMessage = (data) => {
+  message.value = data
+  setTimeout(() => {
+    message.value = null
+  }, 1600)
+}
+
+const check = async () => {
+  if (inputDisabled.value || text.value.length < 1 || !track.value) return
+
+  try {
+    const response = await axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
+      text: text.value,
+      words: words.value,
+      currentTime: props.currentTime
+    })
+
+    answers.value.push(...response.data.good_answers)
+    words.value = response.data.words
+    showMessage(response.data.message)
+    focus()
+  } catch (error) {
+    console.error('Error checking answer:', error)
+  }
+
+  text.value = ''
+}
+
+const pastedAnswer = (event) => {
+  event.preventDefault()
+  text.value = "Je copie colle et c'est mal. Je copie colle et c'est mal."
+}
 
 onMounted(() => {
   focus()
@@ -38,13 +69,13 @@ onMounted(() => {
       inputDisabled.value = false
       text.value = ''
     })
-    .listen('TrackEnded', (e) => {
+    .listen('TrackEnded', () => {
       inputDisabled.value = true
       text.value = ''
       words.value = []
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
-      if(e.user === user) {
+      if (e.user === user) {
         inputDisabled.value = true
       }
     })
@@ -54,47 +85,36 @@ onUnmounted(() => {
   Echo.leave(props.channel)
 })
 
-const focus = () => {
-  input.value.focus()
-}
+const messageClass = computed(() => ({
+  'bg-teal-600': message.value?.type === 'good',
+  'bg-orange-600': message.value?.type === 'almost',
+  'bg-red-700': message.value?.type === 'bad'
+}))
 
-const check = () => {
-  if(!inputDisabled.value) {
-    if (text.value.length >= 1 && track.value) {
-      axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, { text: text.value, words: words.value, currentTime: props.currentTime }).then((response) => {
-        answers.value.push(...response.data.good_answers)
-        words.value = response.data.words
-        showMessage(response.data.message)
-        focus()
-      })
-    }
-  } else {
-    console.info('Toutes les réponses ont déjà été trouvées.')
-  }
-  text.value = ''
-}
+const isAnswerFound = (answerId) => answers.value.some(a => a.id === answerId)
 
-const showMessage = (data) => {
-  message.value = data
-  setTimeout(() => {
-    message.value = null
-  }, 1600)
-}
-
-const pastedAnswer = (event) => {
-  event.preventDefault()
-  text.value = "Je copie colle et c'est mal. Je copie colle et c'est mal."
-  return false
-}
+const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
 </script>
+
 <template>
   <form class="flex w-full items-center justify-center" @submit.prevent="check">
     <div class="relative flex w-full items-center">
-      <blockquote v-if="message" class="absolute top-full right-0 mt-2 flex rounded-lg py-1 px-2 text-neutral-100 opacity-80" :class="{ 'bg-teal-600': message.type === 'good', 'bg-orange-600': message.type === 'almost', 'bg-red-700': message.type === 'bad' }">
+      <blockquote v-if="message" class="absolute top-full right-0 mt-2 flex rounded-lg py-1 px-2 text-neutral-100 opacity-80" :class="messageClass">
         {{ message.body }}
       </blockquote>
 
-      <input ref="input" v-model="text" type="text" class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0" :placeholder="__('Any idea?')" autofocus @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" autocomplete="off" maxlength="255" />
+      <input
+        ref="input"
+        v-model="text"
+        type="text"
+        class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0"
+        :placeholder="__('Any idea?')"
+        autofocus
+        @paste.prevent="pastedAnswer"
+        @drop.prevent="pastedAnswer"
+        autocomplete="off"
+        maxlength="255"
+      />
 
       <Volume class="-ml-1 flex h-14 items-center justify-center bg-neutral-700 p-2" />
 
@@ -106,7 +126,20 @@ const pastedAnswer = (event) => {
       </button>
     </div>
   </form>
-  <ul class="mt-2 flex gap-2">
-    <li v-for="answer in answers" :key="answer.id" class="flex items-center rounded-lg bg-teal-600 py-1 px-2 text-neutral-100"><span v-if="answer.type.svg_icon" class="mr-1" v-html="answer.type.svg_icon" /> {{ answer.value }}</li>
+  <ul v-if="track" class="mt-2 flex flex-wrap gap-2 text-sm">
+    <li
+      v-for="answer in track.answers"
+      :key="answer.id"
+      class="flex items-center rounded py-1 px-2 text-neutral-100"
+      :class="{ 'bg-neutral-700': !isAnswerFound(answer.id), 'bg-teal-600': isAnswerFound(answer.id) }"
+    >
+      <template v-if="isAnswerFound(answer.id)">
+        <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-1" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+        {{ getFoundAnswer(answer.id).value }}
+      </template>
+      <template v-else>
+        {{ __(answer.name) }} ?
+      </template>
+    </li>
   </ul>
 </template>
