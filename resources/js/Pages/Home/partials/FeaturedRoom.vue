@@ -14,7 +14,7 @@ const round = ref(null)
 const playing = ref(props.room.is_playing)
 const progress = ref(0)
 
-const userCounter = ref(props.room.user_count)
+const userCounter = ref(props.room.subscriptions)
 
 const calculateProgression = () => {
 	let current_track = round.value ? round.value.current : props.room.current_track_index

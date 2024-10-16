@@ -22,23 +22,8 @@ class ProcessRoundFinished implements ShouldQueue
         // Refresh the room model to ensure we have the latest data
         $this->room->refresh();
 
-        // Get the latest round for this room
-        $latestRound = $this->room->rounds()->latest()->first();
-
-        // Check if the latest round is older than 30 minutes
-        // This is to prevent starting new rounds if there's been no activity for a while
-        if ($latestRound && $latestRound->created_at < now()->subMinutes(30)) {
-            // If the latest round is older than 30 minutes, we don't start a new round
-            return;
-        }
-
         // Check if we should start a new round
-        // Conditions:
-        // 1. The room is not currently playing
-        // 2. There are users in the room (user count > 0)
-        // 3. The room is set to autostart
-        if (! $this->room->is_playing && $this->room->user_count > 0 && $this->room->is_autostart) {
-            // If all conditions are met, dispatch a job to start a new round
+        if (! $this->room->is_playing && $this->room->subscriptions > 0 && $this->room->is_autostart) {
             StartRound::dispatch($this->room);
         }
     }

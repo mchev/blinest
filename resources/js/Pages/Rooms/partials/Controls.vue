@@ -16,8 +16,8 @@ const props = defineProps({
     required: true,
   },
   round: {
-    type: [Object, Boolean],
-    required: true,
+    type: [Object, Boolean, null],
+    default: null,
   },
 })
 

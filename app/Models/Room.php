@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Http\Traits\HasPicture;
 use App\Http\Traits\Sluggable;
+use Illuminate\Broadcasting\BroadcastManager;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class Room extends Model
 {
@@ -25,6 +28,7 @@ class Room extends Model
     protected $appends = [
         'photo',
         'current_track_index',
+        'subscriptions',
     ];
 
     protected $hidden = ['discord_webhook_url'];
@@ -41,15 +45,19 @@ class Room extends Model
 
     protected function getCurrentTrackIndexAttribute()
     {
-        return Cache::remember('current_track_index_'.$this->id, now()->addMinutes(1), function () {
-            $latestRound = $this->rounds()->latest()->first(['current', 'is_playing']);
+        if ($this->is_playing) {
+            return Cache::remember('current_track_index_'.$this->id, now()->addMinutes(1), function () {
+                $latestRound = $this->rounds()->latest()->first(['current', 'is_playing']);
 
-            if ($latestRound && $latestRound->is_playing) {
-                return $latestRound->current;
-            }
+                if ($latestRound && $latestRound->is_playing) {
+                    return $latestRound->current;
+                }
 
-            return 0;
-        });
+                return 0;
+            });
+        }
+
+        return 0;
     }
 
     public function currentRound()
@@ -60,6 +68,29 @@ class Room extends Model
     public function scopeIsPlaying()
     {
         return $this->is_playing;
+    }
+
+    public function subscriptions(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                try {
+                    $broadcastManager = app(BroadcastManager::class);
+
+                    $channelInfo = $broadcastManager
+                        ->getPusher()
+                        ->get('/channels/'.'rooms.'.$this->id, [
+                            'info' => 'subscription_count',
+                        ]);
+
+                    return $channelInfo->subscription_count ?? 0;
+                } catch (\Exception $e) {
+                    Log::error('Error fetching subscription count for room '.$this->id.': '.$e->getMessage());
+
+                    return 0;
+                }
+            }
+        );
     }
 
     public function bookmarks(): MorphToMany

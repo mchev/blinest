@@ -12,6 +12,7 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
+
         if ($request->only('search')) {
             return Inertia::render('Home/Index', [
                 'filters' => $request->all('search'),
@@ -30,11 +31,9 @@ class HomeController extends Controller
         }
 
         $categories = Category::with(['rooms' => function ($query) {
-            $query->isPublic()
-                ->whereNull('password')
-                ->orderByDesc('user_count')
-                ->orderByDesc('is_playing');
+            $query->isPublic()->whereNull('password');
         }])->get();
+
         $user = $request->user();
 
         return Inertia::render('Home/Index', [

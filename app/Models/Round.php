@@ -69,10 +69,9 @@ class Round extends Model
         // All tracks has been played
         if ($this->current >= count($this->tracks)) {
             $this->stop();
-            if ($this->room->user_count > 0) {
-                ProcessRoundFinished::dispatch($this->room)
-                    ->delay(now()->addSeconds($this->room->pause_between_rounds));
-            }
+
+            ProcessRoundFinished::dispatch($this->room)
+                ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
             // Else play next track
         } else {

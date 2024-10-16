@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Room;
 use App\Models\Round;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class ForceClearRounds extends Command
@@ -45,6 +46,14 @@ class ForceClearRounds extends Command
                 DB::commit();
                 $this->info("Successfully updated $roomsAffected rooms and $roundsAffected rounds.");
             }
+
+            // clear cache artisan
+            Artisan::call('cache:clear');
+            $this->info('Cache cleared');
+
+            // Clear horizon scheduled tasks
+            Artisan::call('horizon:clear');
+            $this->info('Horizon scheduled tasks cleared');
 
             return Command::SUCCESS;
         } catch (\Exception $e) {

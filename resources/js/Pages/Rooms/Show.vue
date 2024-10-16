@@ -1,8 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
-import { router, usePage, Link } from '@inertiajs/vue3'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
-import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
@@ -44,21 +43,18 @@ onMounted(() => {
         joining()
         if (usersHere.length > 0 && usersHere[0].id === user.id) {
           dispatchUserCount(usersHere.length)
-          updateServerUserCount(usersHere.length)
         }
       })
       .joining((user) => {
         users.value.push(user)
         if (users.value.length > 0 && users.value[0].id === user.id) {
           dispatchUserCount(users.value.length)
-          updateServerUserCount(users.value.length)
         }
       })
       .leaving((user) => {
         users.value = users.value.filter((u) => u.id !== user.id)
         if (users.value.length > 0 && users.value[0].id === user.id) {
           dispatchUserCount(users.value.length)
-          updateServerUserCount(users.value.length)
         }
       })
       .error((error) => {
@@ -66,8 +62,6 @@ onMounted(() => {
       })
   }
 
-  // Handle tab close or browser exit
-  window.addEventListener('beforeunload', handleUserLeave)
 })
 
 const dispatchUserCount = (count) => {
@@ -77,29 +71,8 @@ const dispatchUserCount = (count) => {
     })
 }
 
-const updateServerUserCount = (count) => {
-  if (count !== props.room.user_count) {
-    axios.post(`/rooms/${props.room.id}/update-user-count`, {
-      count: count
-    })
-  }
-}
-
-const handleUserLeave = () => {
-  if(users.value.length === 1 || users.value.length === 0) {
-    const newCount = users.value.length - 1
-    dispatchUserCount(newCount)
-    updateServerUserCount(newCount)
-  }
-}
-
-onBeforeUnmount(() => {
-  handleUserLeave()
-})
-
 onUnmounted(() => {
   Echo.leave(channel)
-  window.removeEventListener('beforeunload', handleUserLeave)
 })
 
 const joining = () => {

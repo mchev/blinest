@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Head, usePage } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
@@ -15,6 +15,9 @@ defineProps({
   search_result: Object,
   weekly_top_users: Object,
 })
+
+const user = usePage().props.auth.user;
+
 </script>
 <template>
   <Head>
@@ -37,11 +40,11 @@ defineProps({
           </div>
           <div class="relative">
             <h2 class="text-2xl pl-3">{{ __('Private rooms') }}</h2>
-            <rooms :rooms="private_rooms" id="privateRooms" />
+            <Rooms :rooms="private_rooms" id="privateRooms" />
           </div>
-          <div class="relative">
+          <div v-if="user" class="relative">
             <h2 class="text-2xl pl-3">{{ __('My rooms') }}</h2>
-            <rooms :rooms="user_rooms" id="userRooms" />
+            <Rooms :rooms="user_rooms" id="userRooms" />
           </div>
         </section>
         <aside class="order-last w-full lg:order-first lg:w-1/4 lg:pr-12">
