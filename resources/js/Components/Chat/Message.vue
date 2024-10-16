@@ -37,16 +37,16 @@ const report = () => {
         </svg>
       </button>
     </div>
-    <time class="mr-2 text-xs italic text-neutral-500">{{ message.time }}</time>
-    <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 flex items-center" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-7 w-7 rounded-full" />
+    <div class="text-xs flex items-start gap-1">
+    <time class="text-neutral-500">{{ message.time }}</time>
+    <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 font-bold flex items-center whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
       {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </button>
-    <span v-else class="mr-1 flex items-center" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      <img :src="message.user.photo" :alt="message.user.name" class="mr-1 h-7 w-7 rounded-full" />
+    <span v-else class="mr-1 flex items-center font-bold whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
       {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
     </span>
     <span class="break-all whitespace-pre-wrap">{{ message.body }}</span>
     <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
+    </div>
   </div>
 </template>
