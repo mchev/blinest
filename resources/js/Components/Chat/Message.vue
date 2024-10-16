@@ -40,12 +40,12 @@ const report = () => {
     <div class="text-xs flex items-start gap-1">
     <time class="text-neutral-500">{{ message.time }}</time>
     <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 font-bold flex items-center whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
+      {{ message.user.name }} :
     </button>
     <span v-else class="mr-1 flex items-center font-bold whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      {{ message.user.name }} <sup v-if="message.user.team" class="mx-1 text-[9px] uppercase">[{{ message.user.team.name }}]</sup> :
+      {{ message.user.name }} :
     </span>
-    <span class="break-all whitespace-pre-wrap">{{ message.body }}</span>
+    <span class="whitespace-pre-wrap">{{ message.body }}</span>
     <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
     </div>
   </div>
