@@ -1,29 +1,45 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Moderation from './Moderation.vue'
 
 const props = defineProps({
-  room: Object,
-  message: Object,
+  room: {
+    type: Object,
+    required: true
+  },
+  message: {
+    type: Object,
+    required: true
+  },
 })
 
 const moderate = ref(false)
 const reporting = ref(false)
-const user = usePage().props.auth.user
-const isModerator = props.room.moderators.find((x) => x.id === user.id)
-const userIsPublicModerator = usePage().props.publicModerators.find((x) => x.id === user.id)
+const { auth, publicModerators } = usePage().props
+const user = auth.user
 
-const report = () => {
+const isModerator = computed(() => props.room.moderators.some(x => x.id === user.id))
+const userIsPublicModerator = computed(() => publicModerators.some(x => x.id === user.id))
+const isMessageFromPublicModerator = computed(() => publicModerators.some(x => x.id === props.message.user.id))
+const shouldShowReportButton = computed(() => !isMessageFromPublicModerator.value && (props.message.reports < 0 || reporting.value))
+
+const report = async () => {
+  if (reporting.value) return
   reporting.value = true
-  axios.post(`/rooms/${props.room.id}/message/${props.message.id}/report`).then((response) => {
+  try {
+    await axios.post(`/rooms/${props.room.id}/message/${props.message.id}/report`)
+  } catch (error) {
+    console.error('Failed to report message:', error)
+  } finally {
     reporting.value = false
-  })
+  }
 }
 </script>
+
 <template>
   <div class="group relative my-1 flex flex-wrap items-center text-sm hover:opacity-90">
-    <div v-if="!usePage().props.publicModerators.find((x) => x.id === message.user.id)" class="absolute top-0 right-0 items-center bg-neutral-800 py-1 px-2 group-hover:flex" :class="message.reports < 0 ? 'flex' : 'hidden'">
+    <div v-if="shouldShowReportButton" class="absolute top-0 right-0 items-center bg-neutral-800 py-1 px-2 group-hover:flex">
       <div v-if="reporting">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 animate-spin">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -37,16 +53,18 @@ const report = () => {
         </svg>
       </button>
     </div>
-    <div class="text-xs flex items-start gap-1">
-    <time class="text-neutral-500">{{ message.time }}</time>
-    <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 font-bold flex items-center whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      {{ message.user.name }} :
-    </button>
-    <span v-else class="mr-1 flex items-center font-bold whitespace-nowrap" :class="room.moderators.find((x) => x.id === message.user.id) ? 'text-purple-500' : 'text-neutral-400'">
-      {{ message.user.name }} :
-    </span>
-    <span class="whitespace-pre-wrap">{{ message.body }}</span>
-    <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
+    <div class="text-xs flex items-start">
+      <time class="text-neutral-500 mr-1">{{ message.time }}</time>
+      <p>
+        <button v-if="isModerator || userIsPublicModerator" @click="moderate = true" class="mr-1 font-bold whitespace-nowrap" :class="{'text-purple-500': room.moderators.some(x => x.id === message.user.id), 'text-neutral-400': !room.moderators.some(x => x.id === message.user.id)}">
+        {{ message.user.name }} :
+      </button>
+      <span v-else class="mr-1 font-bold whitespace-nowrap" :class="{'text-purple-500': room.moderators.some(x => x.id === message.user.id), 'text-neutral-400': !room.moderators.some(x => x.id === message.user.id)}">
+        {{ message.user.name }} :
+      </span>
+      <span class="whitespace-pre-wrap">{{ message.body }}</span>
+      <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
+      </p>
     </div>
   </div>
 </template>
