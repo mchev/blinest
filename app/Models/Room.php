@@ -79,7 +79,7 @@ class Room extends Model
 
                     $channelInfo = $broadcastManager
                         ->getPusher()
-                        ->get('/channels/'.'rooms.'.$this->id, [
+                        ->get('/channels/'.'private-chat-room.'.$this->id, [
                             'info' => 'subscription_count',
                         ]);
 
