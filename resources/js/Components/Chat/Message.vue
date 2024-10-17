@@ -22,7 +22,7 @@ const user = auth.user
 const isModerator = computed(() => props.room.moderators.some(x => x.id === user.id))
 const userIsPublicModerator = computed(() => publicModerators.some(x => x.id === user.id))
 const isMessageFromPublicModerator = computed(() => publicModerators.some(x => x.id === props.message.user.id))
-const shouldShowReportButton = computed(() => !isMessageFromPublicModerator.value && (props.message.reports < 0 || reporting.value))
+const shouldShowReportButton = computed(() => !isMessageFromPublicModerator.value)
 
 const report = async () => {
   if (reporting.value) return
