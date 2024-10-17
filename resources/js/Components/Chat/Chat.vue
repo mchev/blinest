@@ -73,7 +73,7 @@ const sendMessage = () => {
         </svg>
       </a>
     </div>
-    <div ref="messagesContainer" class="flex flex-1 flex-col-reverse overflow-y-scroll p-2">
+    <div ref="messagesContainer" class="flex flex-1 flex-col-reverse overflow-y-scroll gap-4 px-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
     <div class="flex w-full p-2">
