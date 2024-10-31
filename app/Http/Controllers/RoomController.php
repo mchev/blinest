@@ -232,20 +232,23 @@ class RoomController extends Controller
                 // Check if there's an active round
                 $activeRound = $room->currentRound()->first();
 
-                if (! $activeRound) {
-                    // Create a new round
-                    $round = $room->rounds()->create([
-                        'current' => 1,
-                        'is_playing' => true,
-                        'user_id' => $request->user()->id,
-                    ]);
-
-                    // Update room status
-                    $room->update(['is_playing' => true]);
-
-                    // Dispatch the job to start the round
-                    StartRound::dispatch($room, $request->user());
+                if ($activeRound) {
+                    $activeRound->stop();
                 }
+
+                // Create a new round
+                $room->rounds()->create([
+                    'current' => 1,
+                    'is_playing' => true,
+                    'user_id' => $request->user()->id,
+                ]);
+
+                // Update room status
+                $room->update(['is_playing' => true]);
+
+                // Dispatch the job to start the round
+                StartRound::dispatch($room, $request->user());
+
             });
 
             return redirect()->back();

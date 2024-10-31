@@ -8,7 +8,6 @@ use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,14 +48,14 @@ class Round extends Model
     {
         DB::transaction(function () {
             $this->update([
-                'is_playing' => 0,
-                'finished_at' => Carbon::now(),
+                'is_playing' => false,
+                'finished_at' => now(),
             ]);
-            $this->room()->update(['is_playing' => 0]);
+
+            $this->room->update(['is_playing' => false]);
         });
 
         broadcast(new RoundFinished($this));
-
     }
 
     public function playNextTrack()
