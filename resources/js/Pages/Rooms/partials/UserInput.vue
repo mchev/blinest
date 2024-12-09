@@ -31,25 +31,26 @@ const showMessage = (data) => {
   }, 1600)
 }
 
-const check = async () => {
+const check = () => {
   if (inputDisabled.value || text.value.length < 1 || !track.value) return
 
-  try {
-    const response = await axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
-      text: text.value,
-      words: words.value,
-      currentTime: props.currentTime
-    })
-
+  const currentText = text.value
+  text.value = ''
+  
+  axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
+    text: currentText,
+    words: words.value,
+    currentTime: props.currentTime
+  })
+  .then((response) => {
     answers.value.push(...response.data.good_answers)
     words.value = response.data.words
     showMessage(response.data.message)
     focus()
-  } catch (error) {
+  })
+  .catch(error => {
     console.error('Error checking answer:', error)
-  }
-
-  text.value = ''
+  })
 }
 
 const pastedAnswer = (event) => {

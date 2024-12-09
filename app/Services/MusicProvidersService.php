@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MusicProvidersService
 {
@@ -20,6 +21,11 @@ class MusicProvidersService
         foreach ($responses as $response) {
             if ($response->ok()) {
                 $merged = $merged->merge($response->collect());
+            } else {
+                Log::error('Failed to fetch results from provider', [
+                    'status' => $response->status(),
+                    'error' => $response->body(),
+                ]);
             }
         }
 
