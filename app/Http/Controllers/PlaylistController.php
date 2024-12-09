@@ -71,6 +71,9 @@ class PlaylistController extends Controller
                 || auth()->user()->isPlaylistModerator($playlist)
                 || auth()->user()->isAdministrator()
         ) {
+
+            $playlist->load('rooms.owner');
+            
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
                     'id' => $playlist->id,

@@ -22,6 +22,7 @@ use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+
 use Illuminate\Support\Facades\Route;
 // Audio Proxy
 use App\Http\Controllers\AudioProxyController;

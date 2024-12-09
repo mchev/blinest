@@ -12,7 +12,7 @@ class AppleMusicService
     {
         $term = Request::get('term');
 
-        $query = filter_var($term, FILTER_SANITIZE_STRING);
+        $query = htmlspecialchars($term, ENT_QUOTES, 'UTF-8');
         $query = trim($query);
         $query = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $query);
         $query = str_replace(' ', '+', $query);

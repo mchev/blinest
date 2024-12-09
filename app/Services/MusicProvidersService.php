@@ -14,6 +14,7 @@ class MusicProvidersService
             $pool->get(route('providers.deezer.search.track', ['term' => $term])),
             $pool->get(route('providers.itunes.search.track', ['term' => $term])),
             // $pool->get(route('providers.spotify.search.track', ['term' => $term])),
+            //$pool->get(route('providers.youtube.search.track', ['term' => $term])),
         ]);
 
         $merged = collect();
