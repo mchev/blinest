@@ -102,7 +102,7 @@ const play = () => {
   error.value = null
   isPlaying.value = true
 
-  audio.value.src = track.value.preview_url
+  audio.value.src = route('audio', { url: track.value.preview_url })
   audio.value.crossOrigin = 'anonymous'
   audio.value.load()
   audio.value.muted = false

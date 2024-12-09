@@ -52,6 +52,7 @@ class SpotifyService
             return collect($response->tracks->items)
                 ->filter(fn ($track) => $track->is_playable && $track->preview_url)
                 ->map(fn ($track) => $this->formatTrack($track));
+                
         } catch (SpotifyWebAPIException $e) {
             Log::error('Spotify search failed', [
                 'term' => Request::get('term'),

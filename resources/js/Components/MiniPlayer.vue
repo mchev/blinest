@@ -21,7 +21,7 @@ const play = () => {
   loading.value = true
   isPlaying.value = true
   
-  audio.src = props.track.preview_url
+  audio.src = route('audio', { url: props.track.preview_url })
   audio.crossOrigin = 'anonymous'  // Add CORS header
   
   audio.addEventListener('error', () => {

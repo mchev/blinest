@@ -23,6 +23,8 @@ use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
 use Illuminate\Support\Facades\Route;
+// Audio Proxy
+use App\Http\Controllers\AudioProxyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'logout.banned'])->group(function () {
+
+    // Audio proxy
+    Route::get('/audio', AudioProxyController::class)
+        ->name('audio');
 
     // Check user answer
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])

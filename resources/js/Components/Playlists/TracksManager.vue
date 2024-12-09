@@ -41,7 +41,7 @@ const editingAnswer = ref(false)
 const search_online = ref('')
 const providers = ref([
   { id: 1, provider: 'deezer', name: 'Deezer', enabled: true },
-  { id: 2, provider: 'spotify', name: 'Spotify', enabled: true },
+  // { id: 2, provider: 'spotify', name: 'Spotify', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
 ])
 const activeProviders = computed(() => 
