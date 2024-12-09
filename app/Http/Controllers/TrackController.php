@@ -84,7 +84,7 @@ class TrackController extends Controller
                 'artist_name' => ['required', 'max:255'],
                 'track_name' => ['required', 'max:255'],
                 'album_name' => ['required', 'max:255'],
-                'preview_url' => ['required', 'max:255'],
+                'preview_url' => ['required', 'max:2048'],
                 // 'release_date' => ['nullable', 'date'],
                 'artwork_url' => ['required'],
             ]);
