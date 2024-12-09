@@ -101,7 +101,6 @@ return [
     'pede',
     'pequenaud',
     'petasse',
-    'pignouf',
     'pouffe',
     'pouffiasse',
     'putain',

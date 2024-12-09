@@ -19,7 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const show = ref(true)
-const providers = ref(['Spotify', 'Deezer', 'Blinest likes'])
+const providers = ref(['Deezer', 'Blinest likes']) // Spotify is disabled
 const step = ref(1)
 const pp = ref(null)
 
