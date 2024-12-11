@@ -28,7 +28,7 @@ class SoundcloudMusicService
             $query = str_replace(' ', '+', $query);
 
             $url = 'https://api.soundcloud.com/tracks';
-            
+
             $response = Http::get($url, [
                 'client_id' => $this->clientId,
                 'q' => $query,
@@ -36,17 +36,18 @@ class SoundcloudMusicService
                 'linked_partitioning' => 1,
             ])->collect();
 
-            return isset($response['collection']) 
+            return isset($response['collection'])
                 ? collect($response['collection'])
-                    ->filter(fn ($track) => !empty($track['stream_url']))
+                    ->filter(fn ($track) => ! empty($track['stream_url']))
                     ->map(fn ($track) => $this->formatTrack($track))
                 : null;
 
         } catch (\Exception $e) {
             Log::error('Soundcloud search failed', [
                 'term' => $term,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -78,11 +79,11 @@ class SoundcloudMusicService
         try {
             $url = "https://api.soundcloud.com/playlists/{$provider_playlist_id}";
             $response = Http::get($url, ['client_id' => $this->clientId])->json();
-            
+
             $importedTracks = [];
-            
+
             foreach ($response['tracks'] as $track) {
-                if (!empty($track['stream_url'])) {
+                if (! empty($track['stream_url'])) {
                     $formattedTrack = $this->formatTrack($track);
                     $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formattedTrack)
                         ->onQueue('imports')
@@ -95,7 +96,7 @@ class SoundcloudMusicService
             Log::error('Soundcloud playlist import failed', [
                 'playlist_id' => $playlist->id,
                 'provider_playlist_id' => $provider_playlist_id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -111,7 +112,7 @@ class SoundcloudMusicService
             'artist_name' => $track['user']['username'],
             'track_name' => $track['title'],
             'album_name' => null, // SoundCloud doesn't have album concept
-            'preview_url' => $track['stream_url'] . "?client_id={$this->clientId}",
+            'preview_url' => $track['stream_url']."?client_id={$this->clientId}",
             'release_date' => Carbon::parse($track['created_at'])->format('Y-m-d'),
             'artwork_url' => $track['artwork_url'] ?? $track['user']['avatar_url'],
         ];

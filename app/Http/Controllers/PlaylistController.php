@@ -73,7 +73,7 @@ class PlaylistController extends Controller
         ) {
 
             $playlist->load('rooms.owner');
-            
+
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
                     'id' => $playlist->id,

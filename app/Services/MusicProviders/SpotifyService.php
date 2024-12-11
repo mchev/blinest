@@ -5,9 +5,9 @@ namespace App\Services\MusicProviders;
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use SpotifyWebAPI\Session as SpotifySession;
 use SpotifyWebAPI\SpotifyWebAPI;
 use SpotifyWebAPI\SpotifyWebAPIException;
@@ -15,11 +15,11 @@ use SpotifyWebAPI\SpotifyWebAPIException;
 class SpotifyService
 {
     protected SpotifyWebAPI $api;
-    
+
     public function __construct()
     {
         try {
-            $this->api = new SpotifyWebAPI();
+            $this->api = new SpotifyWebAPI;
             $session = new SpotifySession(
                 config('services.spotify.client_id'),
                 config('services.spotify.client_secret')
@@ -29,7 +29,7 @@ class SpotifyService
         } catch (\Exception $e) {
             Log::error('Spotify API initialization failed', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
             throw $e;
         }
@@ -46,18 +46,19 @@ class SpotifyService
             $response = $this->api->search($term, ['track', 'artist'], [
                 'include_external' => 'audio',
                 'market' => config('services.spotify.market', 'FR'),
-                'limit' => 50
+                'limit' => 50,
             ]);
 
             return collect($response->tracks->items)
                 ->filter(fn ($track) => $track->is_playable && $track->preview_url)
                 ->map(fn ($track) => $this->formatTrack($track));
-                
+
         } catch (SpotifyWebAPIException $e) {
             Log::error('Spotify search failed', [
                 'term' => Request::get('term'),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -73,11 +74,11 @@ class SpotifyService
             while ($offset !== null || $first) {
                 $playlistTracks = $this->api->getPlaylistTracks($provider_playlist_id, [
                     'offset' => $offset,
-                    'limit' => $batchSize
+                    'limit' => $batchSize,
                 ]);
 
                 $tracks = collect($playlistTracks->items)
-                    ->filter(fn ($item) => !empty($item->track?->id))
+                    ->filter(fn ($item) => ! empty($item->track?->id))
                     ->map(fn ($item) => $this->formatTrack($item->track));
 
                 foreach ($tracks as $formattedTrack) {
@@ -95,7 +96,7 @@ class SpotifyService
             Log::error('Spotify playlist import failed', [
                 'playlist_id' => $playlist->id,
                 'provider_playlist_id' => $provider_playlist_id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
