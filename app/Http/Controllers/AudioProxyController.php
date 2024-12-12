@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class AudioProxyController extends Controller
 {
-    const CACHE_TTL = 120; // 2 minutes
+    const CACHE_TTL = 30; // 30 seconds
 
     public function __invoke(Request $request)
     {

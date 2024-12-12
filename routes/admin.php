@@ -21,6 +21,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')->group(function () {
 
+    // Maintenance
+    Route::post('/force-clear-rounds', [DashboardController::class, 'forceClearRounds'])
+        ->name('force-clear-rounds');
+
+    Route::post('/clear-cache', [DashboardController::class, 'clearCache'])
+        ->name('clear-cache');
+
+    Route::post('/regenerate-top-10', [DashboardController::class, 'regenerateTop10'])
+        ->name('regenerate-top-10');
+
     // Storage Migration
     Route::get('/delete/track', function () {
         $track = \App\Models\Track::latest()->first();

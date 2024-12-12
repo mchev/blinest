@@ -39,5 +39,6 @@ class WeeklyTopUsers extends Command
             ->get();
 
         Cache::put('weekly-top-10-users', $weekly_top_users);
+        $this->info('Weekly top 10 users cached successfully');
     }
 }
