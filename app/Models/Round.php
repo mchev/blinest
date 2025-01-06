@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class Round extends Model
 {
@@ -77,15 +78,21 @@ class Round extends Model
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
 
-            if (@file_get_contents($track->preview_url)) {
+            try {
+                $response = Http::get(route('audio', ['url' => $track->preview_url]));
 
-                // Event
-                broadcast(new TrackPlayed($this, $track));
+                if ($response->successful()) {
+                    // Event
+                    broadcast(new TrackPlayed($this, $track));
 
-                // Job
-                ProcessTrackPlayed::dispatch($this)
-                    ->delay(now()->addSeconds($this->room->track_duration));
-            } else {
+                    // Job
+                    ProcessTrackPlayed::dispatch($this)
+                        ->delay(now()->addSeconds($this->room->track_duration));
+                } else {
+                    $track->deleteWithNotification();
+                    $this->playNextTrack();
+                }
+            } catch (\Exception $e) {
                 $track->deleteWithNotification();
                 $this->playNextTrack();
             }

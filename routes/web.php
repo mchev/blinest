@@ -37,6 +37,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Audio proxy
+Route::get('/audio', AudioProxyController::class)
+    ->name('audio');
+
 Route::middleware(['auth'])->group(function () {
 
     // Me
@@ -63,10 +67,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'logout.banned'])->group(function () {
-
-    // Audio proxy
-    Route::get('/audio', AudioProxyController::class)
-        ->name('audio');
 
     // Check user answer
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
