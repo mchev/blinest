@@ -32,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Model::unguard();
+
+        $this->commands([
+            \Laravel\Horizon\Console\ClearCommand::class,
+            \Laravel\Horizon\Console\TerminateCommand::class,
+        ]);
+
     }
 
     /**

@@ -31,6 +31,7 @@ class TrackPlayed implements ShouldBroadcast
         $this->track = [
             'id' => $track->id,
             'preview_url' => $track->preview_url,
+            'audio' => $track->audio,
             'answers' => $track->answers->map(function ($answer) {
                 return [
                     'id' => $answer->id,

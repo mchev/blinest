@@ -18,7 +18,7 @@ class RoomFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'category_id' => Category::inRandomOrder()->first()->id,
             'description' => $this->faker->optional()->text(),
-            //'photo_path' => $this->faker->imageUrl(360, 360, 'animals', true, 'cats'),
+            // 'photo_path' => $this->faker->imageUrl(360, 360, 'animals', true, 'cats'),
             'color' => $this->faker->safeHexColor(),
             'is_public' => rand(0, 1),
             'is_active' => rand(0, 1),

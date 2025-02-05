@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AudioProxyController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
@@ -23,7 +22,6 @@ use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
-// Audio Proxy
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,10 +34,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Audio proxy
-Route::get('/audio', AudioProxyController::class)
-    ->name('audio');
 
 Route::middleware(['auth'])->group(function () {
 

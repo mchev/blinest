@@ -14,22 +14,36 @@ class DeezerService
     {
         $term = Request::get('term');
 
-        $query = htmlspecialchars($term, ENT_QUOTES, 'UTF-8');
-        $query = trim($query);
-        $query = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $query);
-        $query = str_replace(' ', '+', $query);
+        $query = urlencode(trim($term));
 
-        $url = 'https://api.deezer.com/search/track?q='.$query;
+        $url = 'https://api.deezer.com/search/track?q='.$query.'&strict=on&limit=25';
 
-        $collection = Http::get($url)->collect();
+        $response = Http::get($url);
 
-        $results = (isset($collection['data'])) ? collect($collection['data']) : null;
+        if (! $response->successful()) {
+            return null;
+        }
 
-        $tracks = ($results) ? $results->where('readable')->map(function ($track) {
-            return $this->formatTrack($track);
-        }) : null;
+        $collection = $response->collect();
+        $results = $collection['data'] ?? null;
 
-        return $tracks;
+        return $results ? collect($results)
+            ->where('readable', true)
+            ->map(fn ($track) => $this->formatTrack($track)) : null;
+    }
+
+    public function getLiveTrackPreview($id)
+    {
+        $url = 'https://api.deezer.com/track/'.$id;
+        $response = Http::get($url);
+
+        if (! $response->successful()) {
+            return null;
+        }
+
+        $track = $response->collect();
+
+        return ($track['readable'] ?? false) ? $track['preview'] : null;
     }
 
     public function getReleaseDate($album)
@@ -66,12 +80,20 @@ class DeezerService
     {
         $url = 'https://api.deezer.com/playlist/'.$provider_playlist_id.'/tracks';
         $importedTracks = [];
+        $limit = 100;
 
         while ($url) {
-            $tracks = Http::get($url)->json();
+            $response = Http::get($url.'?limit='.$limit);
+
+            if (! $response->successful()) {
+                break;
+            }
+
+            $tracks = $response->json();
             foreach ($tracks['data'] as $track) {
                 $formatedTrack = $this->formatTrack($track);
-                $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formatedTrack)->onQueue('imports');
+                $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formatedTrack)
+                    ->onQueue('imports');
             }
             $url = $tracks['next'] ?? null;
         }
@@ -90,7 +112,7 @@ class DeezerService
             'track_name' => $track['title'],
             'album_name' => $track['album']['title'],
             'preview_url' => $track['preview'],
-            'release_date' => null, //$this->getReleaseDate($track['album']['id']), TOO SLOW!!
+            'release_date' => null, // $this->getReleaseDate($track['album']['id']), TOO SLOW!!
             'artwork_url' => $track['album']['cover_medium'],
         ];
     }

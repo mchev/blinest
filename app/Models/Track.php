@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Jobs\SendDiscordNotification;
 use App\Notifications\TrackDeleted;
+use App\Services\MusicProviders\DeezerService;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +36,30 @@ class Track extends Model
     public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
+    }
+
+    public function audio(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $cacheKey = "track_preview_{$this->id}";
+
+                return Cache::remember($cacheKey, now()->addHours(6), function () {
+                    switch ($this->provider) {
+                        case 'deezer':
+                            $deezerService = new DeezerService;
+
+                            return $deezerService->getLiveTrackPreview($this->provider_id);
+                        case 'spotify':
+                            return $this->preview_url;
+                        case 'itunes':
+                            return $this->preview_url;
+                        default:
+                            return null;
+                    }
+                });
+            }
+        );
     }
 
     public function getTrackUrlAttribute()
