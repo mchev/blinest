@@ -79,8 +79,15 @@ class Round extends Model
             $track = Track::find($this->tracks[$this->current - 1]);
 
             try {
+                $url = $track->audio ?? $track->preview_url;
 
-                $response = Http::get($track->audio);
+                if (! $url) {
+                    $this->playNextTrack();
+
+                    return;
+                }
+
+                $response = Http::get($url);
 
                 if ($response->successful()) {
                     // Event
