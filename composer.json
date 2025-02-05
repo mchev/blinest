@@ -13,7 +13,7 @@
         "ext-gd": "*",
         "getbrevo/brevo-php": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
-        "inertiajs/inertia-laravel": "^1.0",
+        "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^2.7",
         "jwilsson/spotify-web-api-php": "^6.1",
         "laravel/framework": "^11.9",

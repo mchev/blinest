@@ -106,6 +106,7 @@ class PlaylistController extends Controller
                     ->through(fn ($track) => [
                         'id' => $track->id,
                         'provider' => $track->provider,
+                        'audio' => $track->audio,
                         'preview_url' => $track->preview_url,
                         'answers' => $track->answers,
                         'dificulty' => $track->dificulty,
