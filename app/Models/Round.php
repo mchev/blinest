@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Round extends Model
 {
@@ -73,10 +74,20 @@ class Round extends Model
             ProcessRoundFinished::dispatch($this->room)
                 ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
-            // Else play next track
+        // Else play next track
         } else {
             $this->increment('current');
             $track = Track::find($this->tracks[$this->current - 1]);
+
+            // Check if track exists and has audio URL
+            if (!$track || !$track->audio) {
+                Log::error('Track not found or missing audio URL', [
+                    'track_id' => $this->tracks[$this->current - 1] ?? null,
+                    'round_id' => $this->id
+                ]);
+                $this->playNextTrack();
+                return;
+            }
 
             try {
                 $response = Http::get($track->audio);
@@ -93,6 +104,11 @@ class Round extends Model
                     $this->playNextTrack();
                 }
             } catch (\Exception $e) {
+                Log::error('Failed to play track', [
+                    'track_id' => $track->id,
+                    'round_id' => $this->id,
+                    'error' => $e->getMessage()
+                ]);
                 $track->deleteWithNotification();
                 $this->playNextTrack();
             }
