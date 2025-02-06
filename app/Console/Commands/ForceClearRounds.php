@@ -38,8 +38,8 @@ class ForceClearRounds extends Command
             $this->info('Horizon scheduled tasks cleared');
 
             // Terminate horizon
-            Artisan::call('horizon:terminate');
-            $this->info('Horizon terminated');
+            // Artisan::call('horizon:terminate');
+            // $this->info('Horizon terminated');
 
             DB::beginTransaction();
 
