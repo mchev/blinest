@@ -14,12 +14,13 @@ use App\Http\Controllers\TeamController;
 // Tracks
 use App\Http\Controllers\TeamRequestController;
 use App\Http\Controllers\TrackAnswerController;
-// Users
 use App\Http\Controllers\TrackController;
+// Users
 use App\Http\Controllers\UserBanController;
-// Music Providers Services
 use App\Http\Controllers\UserController;
+// Music Providers Services
 use App\Services\MusicProviders\AppleMusicService;
+use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
 use Illuminate\Support\Facades\Route;
@@ -197,6 +198,9 @@ Route::get('providers/itunes/search/track', [AppleMusicService::class, 'searchTr
 
 Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrack'])
     ->name('providers.spotify.search.track');
+
+Route::get('providers/audius/search/track', [AudiusService::class, 'searchTrack'])
+    ->name('providers.audius.search.track');
 
 // Images
 

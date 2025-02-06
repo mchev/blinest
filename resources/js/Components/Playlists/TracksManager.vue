@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
@@ -44,6 +44,7 @@ const providers = ref([
   // { id: 2, provider: 'spotify', name: 'Spotify', enabled: true },
   // { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
+  { id: 4, provider: 'audius', name: 'Audius', enabled: true },
 ])
 const activeProviders = computed(() => 
   providers.value.filter(p => p.enabled).map(p => p.provider)
@@ -53,38 +54,58 @@ const importingPlaylist = ref(false)
 const loading = ref(false)
 const results = ref([])
 
-watch(
-  search_online,
-  debounce(() => {
-    fecthMusicProviders()
-  }, 300),
-)
+// Debounced search with cancelation
+const searchController = ref(null)
+const debouncedSearch = debounce(async () => {
+  if (search_online.value.length > 1) {
+    loading.value = true
+    
+    // Cancel previous request if exists
+    if (searchController.value) {
+      searchController.value.abort()
+    }
+    
+    searchController.value = new AbortController()
+    
+    try {
+      const response = await axios.get(
+        route('tracks.search', props.playlist.id) + '?term=' + search_online.value,
+        { signal: searchController.value.signal }
+      )
+      results.value = response.data.tracks
+    } catch (err) {
+      if (err.name === 'AbortError') return
+      console.error(err)
+    } finally {
+      loading.value = false 
+    }
+  } else {
+    results.value = []
+  }
+}, 300)
 
+watch(search_online, debouncedSearch)
+
+// Optimized form updates
 watch(
   form,
   throttle(() => {
-    router.get(route('playlists.edit', props.playlist), pickBy(form), {
-      preserveScroll: true,
-      preserveState: true,
-    })
+    const data = pickBy(form)
+    if (Object.keys(data).length) {
+      loading.value = true
+      router.get(route('playlists.edit', props.playlist), data, {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['tracks'],
+        onSuccess: () => loading.value = false,
+      })
+    }
   }, 150),
   { deep: true },
 )
 
 const toggleProvider = (provider) => {
   provider.enabled = !provider.enabled
-}
-
-const fecthMusicProviders = () => {
-  if (search_online.value.length > 1) {
-    loading.value = true
-    axios.get(route('tracks.search', props.playlist.id) + '?term=' + search_online.value).then((response) => {
-      results.value = response.data.tracks
-      loading.value = false
-    })
-  } else {
-    results.value = []
-  }
 }
 
 const createAnswer = (track) => {
@@ -102,131 +123,195 @@ const closeModal = () => {
   editingAnswer.value = false
 }
 
-const addTrack = (track) => {
-  router.post(route('playlists.tracks.store', props.playlist.id), track, {
-    preserveScroll: true,
-    preserveState: true,
-    only: ['tracks'],
-    onSuccess: () => {
-      fecthMusicProviders()
-    },
-  })
-}
-
-const removeTrack = (track) => {
-  let id = track.added ? track.added.id : track.id
-  if (confirm('Voulez-vous vraiment supprimer cet extrait?')) {
-    router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
+const addTrack = async (track) => {
+  loading.value = true
+  try {
+    await router.post(route('playlists.tracks.store', props.playlist.id), track, {
       preserveScroll: true,
       preserveState: true,
-      onSuccess: () => {
-        fecthMusicProviders()
-      },
+      only: ['tracks'],
+      onSuccess: () => debouncedSearch(),
     })
+  } finally {
+    loading.value = false
   }
 }
 
-const updateDificulty = (e, track) => {
-  router.put(
-    route('playlists.tracks.update', [props.playlist.id, track]),
-    { dificulty: e.target.value },
-    {
-      preserveScroll: true,
-    },
-  )
+const removeTrack = async (track) => {
+  const id = track.added ? track.added.id : track.id
+  if (confirm('Voulez-vous vraiment supprimer cette piste ?')) {
+    loading.value = true
+    try {
+      await router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => debouncedSearch(),
+      })
+    } finally {
+      loading.value = false
+    }
+  }
 }
+
+const updateDificulty = async (e, track) => {
+  try {
+    await router.put(
+      route('playlists.tracks.update', [props.playlist.id, track]),
+      { dificulty: e.target.value },
+      { preserveScroll: true }
+    )
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+// Cleanup on unmount
+onMounted(() => {
+  return () => {
+    if (searchController.value) {
+      searchController.value.abort()
+    }
+  }
+})
 </script>
 <template>
   <Card>
     <template #header>
-      <div class="flex w-full items-center justify-between flex-wrap">
+      <div class="flex w-full flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4">
         <div>
-          <h3 class="text-xl font-bold">{{ __('Tracks manager') }} ({{ tracks.total }})</h3>
-          <ul class="flex items-center gap-2 text-xs font-normal flex-wrap">
-            <li class="text-teal-400">{{ __('Easy') }} {{ Math.round(playlist.difficulties.Easy / tracks.total * 100)
-              }}%,</li>
-            <li class="text-yellow-400">{{ __('Medium') }} {{ Math.round(playlist.difficulties.Medium / tracks.total *
-              100) }}%,</li>
-            <li class="text-orange-400">{{ __('Difficult') }} {{ Math.round(playlist.difficulties.Difficult /
-              tracks.total * 100) }}%,</li>
-            <li class="text-red-400">{{ __('Expert') }} {{ Math.round(playlist.difficulties.Expert / tracks.total * 100)
-              }}%</li>
-          </ul>
+          <h3 class="text-xl lg:text-2xl font-bold mb-2">{{ __('Tracks manager') }} <span class="text-blinest-500">({{ tracks.total }})</span></h3>
+          <div class="flex flex-wrap items-center gap-2 lg:gap-3 text-xs lg:text-sm">
+            <div class="flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-1.5 rounded-full bg-teal-400/10">
+              <div class="w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-full bg-teal-400"></div>
+              <span>{{ __('Easy') }} {{ Math.round(playlist.difficulties.Easy / tracks.total * 100) }}%</span>
+            </div>
+            <div class="flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-1.5 rounded-full bg-yellow-400/10">
+              <div class="w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-full bg-yellow-400"></div>
+              <span>{{ __('Medium') }} {{ Math.round(playlist.difficulties.Medium / tracks.total * 100) }}%</span>
+            </div>
+            <div class="flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-1.5 rounded-full bg-orange-400/10">
+              <div class="w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-full bg-orange-400"></div>
+              <span>{{ __('Difficult') }} {{ Math.round(playlist.difficulties.Difficult / tracks.total * 100) }}%</span>
+            </div>
+            <div class="flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-1.5 rounded-full bg-red-400/10">
+              <div class="w-1.5 lg:w-2 h-1.5 lg:h-2 rounded-full bg-red-400"></div>
+              <span>{{ __('Expert') }} {{ Math.round(playlist.difficulties.Expert / tracks.total * 100) }}%</span>
+            </div>
+          </div>
         </div>
-        <text-input v-model="form.search" prepend-icon="search" :placeholder="__('Search in playlist') + '...'" />
-        <div class="flex items-center gap-2 flex-wrap">
-          <button class="btn-secondary" @click="importingPlaylist = true">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="mr-2 w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            {{ __('Import') }}
-          </button>
-          <a :href="route('playlists.export', playlist)" target="_blank" class="btn-secondary"><svg
-              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="mr-2 h-4 w-4">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            {{ __('Export') }}
-          </a>
+
+        <div class="flex flex-col lg:flex-row w-full lg:w-auto items-stretch lg:items-center gap-4">
+          <text-input 
+            v-model="form.search" 
+            prepend-icon="search" 
+            :placeholder="__('Search in playlist') + '...'"
+            class="w-full lg:min-w-[300px]"
+          />
+          
+          <div class="flex items-center gap-2">
+            <button 
+              class="flex-1 lg:flex-none btn-secondary hover:bg-blinest-500 hover:text-white transition-colors duration-200" 
+              @click="importingPlaylist = true"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="mr-2 w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+              {{ __('Import') }}
+            </button>
+
+            <a 
+              :href="route('playlists.export', playlist)" 
+              target="_blank" 
+              class="flex-1 lg:flex-none btn-secondary hover:bg-blinest-500 hover:text-white transition-colors duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="mr-2 h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              {{ __('Export') }}
+            </a>
+          </div>
         </div>
       </div>
     </template>
-    <div>
-      <div class="mb-4 flex justify-between gap-2 p-2">
+
+    <div class="p-4">
+      <div class="mb-6 flex flex-col lg:flex-row justify-between gap-4">
         <!-- Search on streaming platforms -->
         <Dropdown placement="bottom-start" :auto-close="false" class="flex-grow">
           <template #default>
-            <TextInput class="w-full" v-model="search_online" prepend-icon="plus" append-icon="cheveron-down"
-              :loading="loading" :placeholder="__('Search on Deezer, Spotify and Apple music...')" />
+            <TextInput 
+              class="w-full" 
+              v-model="search_online" 
+              prepend-icon="plus" 
+              append-icon="cheveron-down"
+              :loading="loading" 
+              :placeholder="__('Search on Deezer, Spotify and Apple music...')" 
+            />
           </template>
+
           <template v-show="results.length" #dropdown>
-            <div v-if="results.length" class="flex gap-3 border-b-2 border-neutral-600 bg-neutral-900 p-3">
+            <div v-if="results.length" class="flex flex-wrap gap-2 lg:gap-3 border-b-2 border-neutral-700/50 bg-neutral-800 p-3 lg:p-4">
               <button
                 v-for="provider in providers"
                 :key="provider.id"
                 @click="toggleProvider(provider)"
-                class="flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors"
+                class="flex items-center gap-2 rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200"
                 :class="[
                   provider.enabled 
-                    ? 'bg-blinest-500 text-white' 
-                    : 'bg-neutral-700 text-neutral-400'
+                    ? 'bg-blinest-500 text-white shadow-lg shadow-blinest-500/20' 
+                    : 'bg-neutral-700 text-neutral-400 hover:bg-neutral-600'
                 ]"
               >
                 <Icon 
                   :name="provider.provider" 
-                  class="h-4 w-4" 
+                  class="h-3 lg:h-4 w-3 lg:w-4" 
                   :class="{ 'opacity-50': !provider.enabled }"
                 />
                 {{ provider.name }}
               </button>
             </div>
-            <ul v-if="results.length" class="max-h-80 overflow-y-auto bg-neutral-900">
+
+            <ul v-if="results.length" class="max-h-[50vh] lg:max-h-[480px] overflow-y-auto bg-neutral-800 divide-y divide-neutral-700/50">
               <li
                 v-for="result in results.filter(x => activeProviders.includes(x.provider))"
                 :key="result.id"
-                class="relative border-b border-neutral-600 px-2 py-3"
+                class="group p-2 lg:p-3 hover:bg-neutral-700/30 transition-colors duration-200"
               >
-                <div class="flex items-center gap-2">
-                  <div>
-                    <Icon :name="result.provider" :title="result.provider" class="h-6 w-6 flex-shrink-0" />
-                  </div>
-                  <div>
+                <div class="flex items-center gap-2 lg:gap-4">
+                  <Icon :name="result.provider" :title="result.provider" class="h-5 lg:h-6 w-5 lg:w-6 flex-shrink-0" />
+                  
+                  <div class="flex-shrink-0">
                     <MiniPlayer :key="`mini-player-results-${result.id}`" :track="result" />
                   </div>
-                  <div class="mr-2 flex w-80 flex-grow flex-col">
-                    <span class="max-w-[16rem] truncate break-normal font-bold">{{ result.artist_name }}</span>
-                    <span class="max-w-[16rem] truncate break-normal text-sm">{{ result.track_name }}</span>
+
+                  <div class="mr-2 lg:mr-4 flex flex-grow flex-col min-w-0">
+                    <span class="font-medium truncate">{{ result.artist_name }}</span>
+                    <span class="text-xs lg:text-sm text-neutral-400 truncate">{{ result.track_name }}</span>
                   </div>
-                  <div v-if="!result.added" class="ml-auto">
-                    <button :disabled="loading" class="btn-primary btn-sm" type="button" @click="addTrack(result)">{{
-                      __('Add') }}</button>
+
+                  <div v-if="!result.added" class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button 
+                      :disabled="loading" 
+                      class="btn-primary btn-sm hover:bg-blinest-600 transition-colors duration-200" 
+                      type="button" 
+                      @click="addTrack(result)"
+                    >
+                      {{ __('Add') }}
+                    </button>
                   </div>
-                  <div v-else class="ml-auto">
-                    <button :disabled="loading" class="btn-danger btn-sm" type="button" @click="removeTrack(result)">{{
-                      __('Remove') }}</button>
+                  <div v-else class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button 
+                      :disabled="loading" 
+                      class="btn-danger btn-sm hover:bg-red-600 transition-colors duration-200" 
+                      type="button" 
+                      @click="removeTrack(result)"
+                    >
+                      {{ __('Remove') }}
+                    </button>
                   </div>
                 </div>
               </li>
@@ -234,106 +319,143 @@ const updateDificulty = (e, track) => {
           </template>
         </Dropdown>
 
-        <SelectInput v-model="form.paginate">
+        <SelectInput 
+          v-model="form.paginate"
+          class="w-full lg:w-32"
+        >
           <option :value="5">5 / {{ tracks.total }}</option>
           <option :value="10">10 / {{ tracks.total }}</option>
           <option :value="15">15 / {{ tracks.total }}</option>
           <option :value="20">20 / {{ tracks.total }}</option>
         </SelectInput>
-
       </div>
 
-      <div v-if="tracks.data.length" class="mx-4 overflow-x-auto">
-        <table class="w-full whitespace-nowrap">
+      <div v-if="tracks.data.length" class="rounded-lg border border-neutral-700/50 overflow-x-auto" :class="{ 'opacity-50 pointer-events-none': loading }">
+        <table class="w-full min-w-[800px]">
           <thead>
-            <tr class="text-left font-bold">
-              <th class="px-6 pb-4 pt-6" colspan="2"></th>
-              <th class="px-6 pb-4 pt-6">{{ __('Answers') }}</th>
-              <th class="px-6 pb-4 pt-6">
+            <tr class="bg-neutral-800">
+              <th class="px-3 lg:px-4 py-2 lg:py-3" colspan="2"></th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">{{ __('Answers') }}</th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">
                 <Sortable field="dificulty" v-model="form.sortable">{{ __('Difficulty') }}</Sortable>
               </th>
-              <th class="px-6 pb-4 pt-6" colspan="2">
+              <th class="px-3 lg:px-4 py-2 lg:py-3" colspan="2">
                 <Sortable field="votes" v-model="form.sortable">{{ __('Votes') }}</Sortable>
               </th>
-              <th class="px-6 pb-4 pt-6" colspan="2">
+              <th class="px-3 lg:px-4 py-2 lg:py-3">
                 <Sortable field="created_at" v-model="form.sortable">{{ __('Created at') }}</Sortable>
               </th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3"></th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="track in tracks.data" :key="track.id">
-              <td class="border-t">
-                <a target="_blank" :href="track.provider_url"
-                  class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
-                  <Icon :name="track.provider" :title="track.provider" class="mr-2 h-6 w-6 flex-shrink-0" />
+          <tbody class="divide-y divide-neutral-700/50">
+            <tr 
+              v-for="track in tracks.data" 
+              :key="track.id"
+              class="group hover:bg-neutral-800/50 transition-colors duration-200"
+            >
+              <td class="px-2 lg:px-3 py-2">
+                <a 
+                  target="_blank" 
+                  :href="track.provider_url"
+                  class="flex items-center justify-center hover:text-blinest-500 transition-colors duration-200"
+                >
+                  <Icon :name="track.provider" :title="track.provider" class="h-4 lg:h-5 w-4 lg:w-5" />
                 </a>
               </td>
-              <td class="border-t">
-                <div class="flex items-center justify-center px-2 py-4 focus:text-blinest-500">
-                  <mini-player :key="`mini-player-list-${track.id}`" :track="track" />
-                </div>
+              <td class="px-2 lg:px-3 py-2">
+                <mini-player :key="`mini-player-list-${track.id}`" :track="track" />
               </td>
-              <td class="border-t">
-                <div class="flex flex-col items-start px-6 py-4 text-sm focus:text-blinest-500">
-                  <div v-for="answer in track.answers" :key="answer.id"
-                    class="cursor-pointer whitespace-normal break-words" @click="editAnswer(track, answer)">
-                    <span class="font-bold">{{ __(answer.type.name) }}:</span> {{ answer.value }} ({{ answer.score
-                    }}pts)
+              <td class="px-3 lg:px-4 py-2">
+                <div class="space-y-1">
+                  <div 
+                    v-for="answer in track.answers" 
+                    :key="answer.id"
+                    class="group/answer cursor-pointer hover:bg-neutral-700/30 rounded px-2 py-1 transition-colors duration-200" 
+                    @click="editAnswer(track, answer)"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs lg:text-sm font-medium">{{ __(answer.type.name) }}:</span>
+                      <span class="text-xs lg:text-sm text-neutral-400">{{ answer.value }}</span>
+                      <span class="text-[10px] lg:text-xs text-blinest-500 opacity-0 group-hover/answer:opacity-100 transition-opacity duration-200 ml-auto">
+                        {{ answer.score }}pts
+                      </span>
+                    </div>
                   </div>
-                  <button class="text-neutral-400" @click="createAnswer(track)">
-                    <Icon name="plus" class="inline-block h-4 w-4 flex-shrink-0 fill-neutral-400" />
+                  <button 
+                    class="flex items-center gap-1 text-[10px] lg:text-xs text-neutral-400 hover:text-white transition-colors duration-200" 
+                    @click="createAnswer(track)"
+                  >
+                    <Icon name="plus" class="h-2.5 lg:h-3 w-2.5 lg:w-3" />
                     {{ __('Add an answer') }}
                   </button>
                 </div>
               </td>
-              <td class="border-t">
-                <div class="flex items-start px-6 py-4 text-center text-sm">
-                  <SelectInput v-model="track.dificulty" :error="$page.props.errors.dificulty"
-                    @change="updateDificulty($event, track)">
-                    <option :value="0">{{ __('Easy') }}</option>
-                    <option :value="1">{{ __('Medium') }}</option>
-                    <option :value="2">{{ __('Difficult') }}</option>
-                    <option :value="3">{{ __('Expert') }}</option>
-                  </SelectInput>
+              <td class="px-3 lg:px-4 py-2">
+                <SelectInput 
+                  v-model="track.dificulty" 
+                  :error="$page.props.errors.dificulty"
+                  @change="updateDificulty($event, track)"
+                  class="w-24 lg:w-28 text-xs lg:text-sm"
+                >
+                  <option :value="0">{{ __('Easy') }}</option>
+                  <option :value="1">{{ __('Medium') }}</option>
+                  <option :value="2">{{ __('Difficult') }}</option>
+                  <option :value="3">{{ __('Expert') }}</option>
+                </SelectInput>
+              </td>
+              <td class="px-3 lg:px-4 py-2">
+                <div class="flex items-center gap-1 text-teal-400 text-xs lg:text-sm">
+                  <Icon name="thumb-up" class="h-3 lg:h-4 w-3 lg:w-4" />
+                  {{ track.up_votes }}
                 </div>
               </td>
-              <td class="border-t">
-                <div class="flex items-start px-6 py-4 text-center text-sm">
-                  <Icon name="thumb-up" class="mr-2 h-6 w-6 flex-shrink-0" /> {{ track.up_votes }}
+              <td class="px-3 lg:px-4 py-2">
+                <div class="flex items-center gap-1 text-red-400 text-xs lg:text-sm">
+                  <Icon name="thumb-down" class="h-3 lg:h-4 w-3 lg:w-4" />
+                  {{ track.down_votes }}
                 </div>
               </td>
-              <td class="border-t">
-                <div class="flex items-start px-6 py-4 text-center text-sm focus:text-blinest-500">
-                  <Icon name="thumb-down" class="mr-2 h-6 w-6 flex-shrink-0" /> {{ track.down_votes }}
-                </div>
+              <td class="px-3 lg:px-4 py-2 text-[10px] lg:text-xs text-neutral-400">
+                {{ track.created_at }}
               </td>
-              <td class="border-t">
-                <div class="flex flex-col items-start px-6 py-4 text-sm focus:text-blinest-500">
-                  {{ track.created_at }}
-                </div>
+              <td class="px-3 lg:px-4 py-2">
+                <button
+                  class="opacity-0 group-hover:opacity-100 fill-red-400 transition-all duration-200"
+                  @click="removeTrack(track)"
+                >
+                  <Icon name="delete" class="h-4 lg:h-5 w-4 lg:w-5" />
+                </button>
               </td>
-              <td class="border-t">
-                <Icon name="delete" class="mr-2 h-6 w-6 flex-shrink-0 cursor-pointer fill-red-400"
-                  @click="removeTrack(track)" />
-              </td>
-            </tr>
-            <tr v-if="tracks.length === 0">
-              <td class="border-t px-6 py-4" colspan="8">{{ __('No tracks found') }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div v-else class="p-2">
-        {{ __('Aucun extrait') }}
+      <div 
+        v-else 
+        class="flex flex-col items-center justify-center py-8 lg:py-12 text-sm lg:text-base text-neutral-400"
+      >
+        <Icon name="music-note" class="h-8 lg:h-12 w-8 lg:w-12 mb-3 lg:mb-4" />
+        {{ __('No tracks found') }}
       </div>
 
-      <Pagination class="p-8" :links="tracks.links" />
+      <Pagination class="mt-4 lg:mt-6" :links="tracks.links" />
 
-      <TrackAnswerForm v-if="creatingAnswer || (editingAnswer && selectedAnswer)" :answer="selectedAnswer"
-        :answer_types="answer_types" :show="editingAnswer || creatingAnswer" max-width="md" @close="closeModal" />
+      <TrackAnswerForm 
+        v-if="creatingAnswer || (editingAnswer && selectedAnswer)" 
+        :answer="selectedAnswer"
+        :answer_types="answer_types" 
+        :show="editingAnswer || creatingAnswer" 
+        max-width="md" 
+        @close="closeModal" 
+      />
     </div>
   </Card>
 
-  <ImportPlaylist v-if="importingPlaylist" @close="importingPlaylist = false" :playlist="playlist" />
+  <ImportPlaylist 
+    v-if="importingPlaylist" 
+    @close="importingPlaylist = false" 
+    :playlist="playlist" 
+  />
 </template>

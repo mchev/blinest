@@ -6,6 +6,7 @@ use App\Events\RoundFinished;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
+use App\Jobs\ProcessFailingTrack;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -74,44 +75,58 @@ class Round extends Model
             ProcessRoundFinished::dispatch($this->room)
                 ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
-        // Else play next track
-        } else {
-            $this->increment('current');
-            $track = Track::find($this->tracks[$this->current - 1]);
+            return;
+        }
 
-            // Check if track exists and has audio URL
-            if (!$track || !$track->audio) {
-                Log::error('Track not found or missing audio URL', [
-                    'track_id' => $this->tracks[$this->current - 1] ?? null,
-                    'round_id' => $this->id
-                ]);
+        // Get next track ID and increment counter in single query
+        $current = $this->current ?? 0;
+        $trackId = $this->tracks[$current];
+        $this->increment('current');
+
+        // Eager load track with audio attribute
+        $track = Track::with('answers')->find($trackId);
+
+        if (! $track) {
+            Log::error('Track not found', [
+                'track_id' => $trackId,
+                'round_id' => $this->id,
+            ]);
+            $this->playNextTrack();
+
+            return;
+        }
+
+        // Get audio URL without making additional queries
+        $audioUrl = $track->audio;
+        if (! $audioUrl) {
+            Log::error('Missing audio URL for track', [
+                'track_id' => $trackId,
+                'round_id' => $this->id,
+            ]);
+            $this->playNextTrack();
+
+            return;
+        }
+
+        try {
+            // Use async HTTP request to check audio URL
+            $response = Http::async()
+                ->timeout(5)
+                ->get($audioUrl)
+                ->wait();
+
+            if ($response->successful()) {
+                // Queue events/jobs together
+                broadcast(new TrackPlayed($this, $track));
+                ProcessTrackPlayed::dispatch($this)
+                    ->delay(now()->addSeconds($this->room->track_duration));
+            } else {
+                ProcessFailingTrack::dispatch($track, $response->body());
                 $this->playNextTrack();
-                return;
             }
-
-            try {
-                $response = Http::get($track->audio);
-
-                if ($response->successful()) {
-                    // Event
-                    broadcast(new TrackPlayed($this, $track));
-
-                    // Job
-                    ProcessTrackPlayed::dispatch($this)
-                        ->delay(now()->addSeconds($this->room->track_duration));
-                } else {
-                    $track->deleteWithNotification();
-                    $this->playNextTrack();
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to play track', [
-                    'track_id' => $track->id,
-                    'round_id' => $this->id,
-                    'error' => $e->getMessage()
-                ]);
-                $track->deleteWithNotification();
-                $this->playNextTrack();
-            }
+        } catch (\Exception $e) {
+            ProcessFailingTrack::dispatch($track, $e->getMessage());
+            $this->playNextTrack();
         }
     }
 

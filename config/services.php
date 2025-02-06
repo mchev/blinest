@@ -48,4 +48,8 @@ return [
         'webhook' => env('DISCORD_WEBHOOK_URL'),
     ],
 
+    'audius' => [
+        'app_name' => env('AUDIUS_APP_NAME', 'Blinest.com'),
+    ],
+
 ];

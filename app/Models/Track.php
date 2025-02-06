@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Jobs\SendDiscordNotification;
 use App\Notifications\TrackDeleted;
+use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,22 +43,13 @@ class Track extends Model
     {
         return Attribute::make(
             get: function () {
-                $cacheKey = "track_preview_{$this->id}";
-
-                return Cache::remember($cacheKey, now()->addHours(6), function () {
-                    switch ($this->provider) {
-                        case 'deezer':
-                            $deezerService = new DeezerService;
-
-                            return $deezerService->getLiveTrackPreview($this->provider_id);
-                        case 'spotify':
-                            return $this->preview_url;
-                        case 'itunes':
-                            return $this->preview_url;
-                        default:
-                            return null;
-                    }
-                });
+                return match ($this->provider) {
+                    'deezer' => (new DeezerService)->getLiveTrackPreview($this->provider_id),
+                    'spotify' => $this->preview_url,
+                    'itunes' => $this->preview_url,
+                    'audius' => (new AudiusService)->getLiveTrackPreview($this->provider_id),
+                    default => null,
+                };
             }
         );
     }

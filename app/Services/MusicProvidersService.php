@@ -11,10 +11,19 @@ class MusicProvidersService
     public function search(string $term)
     {
         try {
-            
+            // // Test Audius separately first
+            // $audiusResponse = Http::get(route('providers.audius.search.track', ['term' => $term]));
+            // Log::debug('Audius individual response', [
+            //     'status' => $audiusResponse->status(),
+            //     'body' => $audiusResponse->json()
+            // ]);
+
+            // die;
+
             $responses = Http::pool(fn (Pool $pool) => [
                 $pool->get(route('providers.deezer.search.track', ['term' => $term])),
                 $pool->get(route('providers.itunes.search.track', ['term' => $term])),
+                $pool->get(route('providers.audius.search.track', ['term' => $term])),
                 // $pool->get(route('providers.spotify.search.track', ['term' => $term])),
                 // $pool->get(route('providers.youtube.search.track', ['term' => $term])),
             ]);
@@ -45,9 +54,9 @@ class MusicProvidersService
         } catch (\Exception $e) {
             Log::error('Error in music provider search', [
                 'error' => $e->getMessage(),
-                'term' => $term
+                'term' => $term,
             ]);
-            
+
             return collect();
         }
     }

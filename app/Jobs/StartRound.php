@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\RoundFinished;
 use App\Events\RoundStarted;
 use App\Models\Room;
 use App\Models\User;
@@ -64,7 +65,14 @@ class StartRound implements ShouldQueue
                 // Play the first track
                 $round->playNextTrack();
             } else {
-                $round->delete();
+                $round->update([
+                    'is_playing' => false,
+                    'finished_at' => now(),
+                ]);
+                $round->room->update([
+                    'is_playing' => false,
+                ]);
+                broadcast(new RoundFinished($round));
                 Log::error('No tracks available for the room. Round aborted.');
             }
         } catch (\Exception $e) {

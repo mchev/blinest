@@ -80,13 +80,13 @@ class TrackController extends Controller
             Request::validate([
                 'provider' => ['required', 'max:50'],
                 'provider_id' => ['required', 'max:255'],
-                'provider_url' => ['required', 'url', 'max:255'],
+                'provider_url' => ['required', 'max:255'],
                 'artist_name' => ['required', 'max:255'],
                 'track_name' => ['required', 'max:255'],
-                'album_name' => ['required', 'max:255'],
+                'album_name' => ['nullable', 'max:255'],
                 'preview_url' => ['required', 'max:2048'],
                 // 'release_date' => ['nullable', 'date'],
-                'artwork_url' => ['required'],
+                'artwork_url' => ['required', 'max:255'],
             ]);
 
             // TRACK

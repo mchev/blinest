@@ -9,6 +9,7 @@ use App\Rules\Reserved;
 use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
@@ -71,8 +72,35 @@ class PlaylistController extends Controller
                 || auth()->user()->isPlaylistModerator($playlist)
                 || auth()->user()->isAdministrator()
         ) {
+            // Only eager load non-track related relations
+            $playlist->load(['rooms.owner', 'moderators']);
 
-            $playlist->load('rooms.owner');
+            // Calculate difficulties counts
+            $difficulties = Cache::remember('playlist_difficulties_'.$playlist->id, 30 * 60, function () use ($playlist) {
+                return $playlist->tracks()
+                    ->selectRaw('dificulty, count(*) as count')
+                    ->groupBy('dificulty')
+                    ->pluck('count', 'dificulty')
+                    ->toArray();
+            });
+
+            // Move the track relations to the paginated query
+            $tracks = $playlist->tracks()
+                ->with(['answers', 'upVoters', 'downVoters']) // Eager load only for paginated results
+                ->filter(Request::only('search', 'sortable'))
+                ->paginate(Request::get('paginate') ?? 5)
+                ->withQueryString();
+
+            $difficultyLabels = [
+                0 => 'Easy',
+                1 => 'Medium',
+                2 => 'Difficult',
+                3 => 'Expert',
+            ];
+
+            $difficultyStats = collect($difficultyLabels)->mapWithKeys(function ($label, $key) use ($difficulties) {
+                return [$label => $difficulties[$key] ?? 0];
+            });
 
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [
@@ -82,38 +110,34 @@ class PlaylistController extends Controller
                     'deleted_at' => $playlist->deleted_at,
                     'user_id' => $playlist->user_id,
                     'moderators' => $playlist->moderators,
-                    'rooms' => $playlist->rooms->map(fn ($room) => [
-                        'id' => $room->id,
-                        'slug' => $room->slug,
-                        'name' => $room->name,
-                        'photo' => $room->photo,
-                        'owner' => $room->owner,
-                    ]),
-                    'difficulties' => [
-                        'Easy' => $playlist->tracks()->where('dificulty', 0)->count(),
-                        'Medium' => $playlist->tracks()->where('dificulty', 1)->count(),
-                        'Difficult' => $playlist->tracks()->where('dificulty', 2)->count(),
-                        'Expert' => $playlist->tracks()->where('dificulty', 3)->count(),
-                    ],
+                    'rooms' => $playlist->rooms()
+                        ->select('id', 'slug', 'name', 'photo_path', 'user_id')
+                        ->with('owner:id,name') // Eager load only needed owner fields
+                        ->get()
+                        ->map(fn ($room) => [
+                            'id' => $room->id,
+                            'slug' => $room->slug,
+                            'name' => $room->name,
+                            'photo' => $room->photo,
+                            'owner' => $room->owner,
+                        ]),
+                    'difficulties' => $difficultyStats,
                 ],
-                'filters' => Request::all('search'),
-                'answer_types' => AnswerType::all(),
-                'tracks' => $playlist->tracks()
-                    ->filter(Request::only('search', 'sortable'))
-                    ->with('answers')
-                    ->paginate(Request::get('paginate') ?? 5)
-                    ->withQueryString()
-                    ->through(fn ($track) => [
-                        'id' => $track->id,
-                        'provider' => $track->provider,
-                        'audio' => $track->audio,
-                        'preview_url' => $track->preview_url,
-                        'answers' => $track->answers,
-                        'dificulty' => $track->dificulty,
-                        'up_votes' => $track->upVoters()->count(),
-                        'down_votes' => $track->downVoters()->count(),
-                        'created_at' => $track->created_at->format('d/m/Y'),
-                    ]),
+                'filters' => Request::only('search'),
+                'answer_types' => Cache::remember('answer_types', 60 * 24, function () {
+                    return AnswerType::all();
+                }),
+                'tracks' => $tracks->through(fn ($track) => [
+                    'id' => $track->id,
+                    'provider' => $track->provider,
+                    'audio' => $track->audio,
+                    'preview_url' => $track->preview_url,
+                    'answers' => $track->answers,
+                    'dificulty' => $track->dificulty,
+                    'up_votes' => $track->upVoters->count(),
+                    'down_votes' => $track->downVoters->count(),
+                    'created_at' => $track->created_at->format('d/m/Y'),
+                ]),
             ]);
         }
 
