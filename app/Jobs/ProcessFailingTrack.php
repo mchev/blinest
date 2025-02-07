@@ -7,6 +7,7 @@ use App\Notifications\TrackDeleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ProcessFailingTrack implements ShouldQueue
 {

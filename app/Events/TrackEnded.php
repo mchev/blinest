@@ -14,8 +14,18 @@ class TrackEnded implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * The round instance.
+     *
+     * @var Round
+     */
     public $round;
 
+    /**
+     * The track that ended.
+     *
+     * @var Track|null
+     */
     public $track;
 
     /**
@@ -24,7 +34,7 @@ class TrackEnded implements ShouldBroadcast
     public function __construct(Round $round)
     {
         $this->round = $round;
-        $this->track = Track::with('answers')->find($this->round->tracks[$this->round->current - 1]);
+        $this->track = $this->getCurrentTrack();
     }
 
     /**
@@ -32,6 +42,20 @@ class TrackEnded implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('rooms.'.$this->round->room->id);
+        return new Channel('rooms.'.$this->round->room_id);
+    }
+
+    /**
+     * Get the current track that just ended.
+     */
+    private function getCurrentTrack(): ?Track
+    {
+        $current = ($this->round->current ?? 1) - 1;
+
+        if ($current < 0 || ! isset($this->round->tracks[$current])) {
+            return null;
+        }
+
+        return Track::with('answers')->find($this->round->tracks[$current]);
     }
 }
