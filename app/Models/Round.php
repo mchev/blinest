@@ -109,11 +109,7 @@ class Round extends Model
         }
 
         try {
-            // Use async HTTP request to check audio URL
-            $response = Http::async()
-                ->timeout(5)
-                ->get($audioUrl)
-                ->wait();
+            $response = Http::timeout(5)->get($audioUrl);
 
             if ($response->successful()) {
                 // Track is valid, broadcast and queue next track
