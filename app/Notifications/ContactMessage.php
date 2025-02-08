@@ -14,16 +14,19 @@ class ContactMessage extends Notification implements ShouldQueue
 
     public $message;
 
-    private $user;
+    public $email;
+
+    private ?User $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $user, string $message)
+    public function __construct(?User $user, string $email, string $message)
     {
         $this->user = $user;
+        $this->email = $email;
         $this->message = $message;
     }
 
@@ -44,10 +47,15 @@ class ContactMessage extends Notification implements ShouldQueue
      */
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('Message de '.$this->user->name)
-            ->from($this->user->email, $this->user->name)
-            ->line($this->user->name.': '.$this->user->email)
-            ->line($this->message);
+        $mailMessage = (new MailMessage)
+            ->subject('Message de '.($this->user?->name ?? 'Visiteur'))
+            ->replyTo($this->email)
+            ->from($this->email);
+
+        if ($this->user) {
+            $mailMessage->line($this->user->name.': '.$this->user->email);
+        }
+
+        return $mailMessage->line($this->message);
     }
 }

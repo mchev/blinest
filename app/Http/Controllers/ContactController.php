@@ -16,8 +16,18 @@ class ContactController extends Controller
 
     public function send(Request $request)
     {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'message' => ['required', 'string'],
+        ]);
+
         $expeditor = User::where('email', config('mail.from.address'))->firstOrFail();
-        $expeditor->notify(new ContactMessage($request->user(), $request->message));
+
+        $expeditor->notify(new ContactMessage(
+            $request->user(),
+            $validated['email'],
+            $validated['message']
+        ));
 
         return Inertia::render('Contact/Sent');
     }

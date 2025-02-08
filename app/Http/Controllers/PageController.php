@@ -23,7 +23,7 @@ class PageController extends Controller
         if (auth()->user()) {
             $ban = auth()->user()->bans()->latest()->first();
         } else {
-            abort(403, config('ban.message'));
+            abort(403, config('ban.messages.user'));
         }
 
         return Inertia::render('Pages/Banned', [

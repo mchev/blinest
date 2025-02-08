@@ -1,12 +1,14 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Head, usePage, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
+import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Tip from '@/Components/Tip.vue'
 import Card from '@/Components/Card.vue'
 
 const form = useForm({
+  email: '',
   message: '',
 })
 
@@ -34,6 +36,14 @@ const send = () => {
         >
 
         <form @submit.prevent="send" id="roomForm" class="mt-4">
+          <text-input
+            v-model="form.email"
+            type="email"
+            :error="form.errors.email"
+            class="mb-4 w-full"
+            :label="__('Email')"
+            required
+          />
           <textarea-input v-model="form.message" :error="form.errors.message" rows="10" class="mb-4 w-full" :label="__('Message')" />
         </form>
         <template #footer>
