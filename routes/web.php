@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\FAQController;
-use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
@@ -201,12 +200,6 @@ Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrac
 
 Route::get('providers/audius/search/track', [AudiusService::class, 'searchTrack'])
     ->name('providers.audius.search.track');
-
-// Images
-
-Route::get('/img/{path}', [ImagesController::class, 'show'])
-    ->where('path', '.*')
-    ->name('image');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';

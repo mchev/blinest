@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -70,7 +69,7 @@ class UserController extends AdminController
                 'email' => $user->email,
                 'team_id' => ($user->team) ? $user->team->id : null,
                 'is_administrator' => $user->isAdministrator(),
-                'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                'photo' => $user->photo,
                 'deleted_at' => $user->deleted_at,
             ],
         ]);

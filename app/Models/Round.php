@@ -116,16 +116,23 @@ class Round extends Model
                 ->wait();
 
             if ($response->successful()) {
-                // Queue events/jobs together
+                // Track is valid, broadcast and queue next track
                 broadcast(new TrackPlayed($this, $track));
                 ProcessTrackPlayed::dispatch($this)
                     ->delay(now()->addSeconds($this->room->track_duration));
             } else {
-                ProcessFailingTrack::dispatch($track, $response->body());
+                // Handle HTTP error responses (404, 403, 500, etc.)
+                ProcessFailingTrack::dispatch($track, "Audio URL is invalid: {$response->status()}");
                 $this->playNextTrack();
             }
+
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            // Handle connection errors (timeout, DNS failure, etc.)
+            ProcessFailingTrack::dispatch($track, "Connection error: {$e->getMessage()}");
+            $this->playNextTrack();
         } catch (\Exception $e) {
-            ProcessFailingTrack::dispatch($track, $e->getMessage());
+            // Handle other unexpected errors
+            ProcessFailingTrack::dispatch($track, "Other error: {$e->getMessage()}");
             $this->playNextTrack();
         }
     }
