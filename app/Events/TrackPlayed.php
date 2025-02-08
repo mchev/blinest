@@ -30,6 +30,7 @@ class TrackPlayed implements ShouldBroadcast
         $this->room = $round->room;
         $this->track = [
             'id' => $track->id,
+            'provider' => $track->provider,
             'preview_url' => $track->preview_url,
             'audio' => $track->audio,
             'answers' => $track->answers->map(function ($answer) {

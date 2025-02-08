@@ -96,6 +96,14 @@ class Round extends Model
             return;
         }
 
+        if ($track->provider === 'youtube') {
+            broadcast(new TrackPlayed($this, $track));
+            ProcessTrackPlayed::dispatch($this)
+                ->delay(now()->addSeconds($this->room->track_duration));
+
+            return;
+        }
+
         // Get audio URL without making additional queries
         $audioUrl = $track->audio;
         if (! $audioUrl) {

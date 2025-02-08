@@ -48,7 +48,7 @@ class Track extends Model
                     'spotify' => $this->preview_url,
                     'itunes' => $this->preview_url,
                     'audius' => (new AudiusService)->getLiveTrackPreview($this->provider_id),
-                    default => null,
+                    default => $this->preview_url,
                 };
             }
         );

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -35,58 +35,80 @@ const form = useForm({
   paginate: props.filters.paginate ?? 5,
   sortable: props.filters.sortable,
 })
+
 const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
 const editingAnswer = ref(false)
 const search_online = ref('')
-const providers = ref([
-  { id: 1, provider: 'deezer', name: 'Deezer', enabled: true },
-  // { id: 2, provider: 'spotify', name: 'Spotify', enabled: true },
-  // { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
+const loading = ref(false)
+const searchLoading = ref(false)
+const results = ref([])
+const importingPlaylist = ref(false)
+
+// Get providers from localStorage or use defaults
+const getDefaultProviders = () => [
+  { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
-])
+]
+
+const providers = ref(
+  JSON.parse(localStorage.getItem('trackManagerProviders')) || getDefaultProviders()
+)
+
+// Watch providers changes and save to localStorage
+watch(providers, (newProviders) => {
+  localStorage.setItem('trackManagerProviders', JSON.stringify(newProviders))
+}, { deep: true })
+
 const activeProviders = computed(() => 
   providers.value.filter(p => p.enabled).map(p => p.provider)
 )
-const search = ref('')
-const importingPlaylist = ref(false)
-const loading = ref(false)
-const results = ref([])
 
-// Debounced search with cancelation
+// Improved search with AbortController and loading states
 const searchController = ref(null)
 const debouncedSearch = debounce(async () => {
-  if (search_online.value.length > 1) {
-    loading.value = true
-    
-    // Cancel previous request if exists
-    if (searchController.value) {
-      searchController.value.abort()
-    }
-    
-    searchController.value = new AbortController()
-    
-    try {
-      const response = await axios.get(
-        route('tracks.search', props.playlist.id) + '?term=' + search_online.value,
-        { signal: searchController.value.signal }
-      )
-      results.value = response.data.tracks
-    } catch (err) {
-      if (err.name === 'AbortError') return
-      console.error(err)
-    } finally {
-      loading.value = false 
-    }
-  } else {
+  if (search_online.value.length < 2) {
     results.value = []
+    return
+  }
+
+  searchLoading.value = true
+  
+  // Cancel previous request if exists
+  if (searchController.value) {
+    searchController.value.abort()
+  }
+  
+  searchController.value = new AbortController()
+  
+  try {
+    const response = await axios.get(
+      route('tracks.search', props.playlist.id),
+      {
+        params: {
+          term: search_online.value,
+          providers: activeProviders.value.join(',')
+        },
+        signal: searchController.value.signal
+      }
+    )
+    
+    results.value = response.data.tracks
+  } catch (err) {
+    if (err.name === 'AbortError') return
+    console.error('Search error:', err)
+  } finally {
+    searchLoading.value = false 
   }
 }, 300)
 
-watch(search_online, debouncedSearch)
+// Improved watchers
+watch([search_online, activeProviders], () => {
+  debouncedSearch()
+})
 
-// Optimized form updates
+// Optimized form updates with error handling
 watch(
   form,
   throttle(() => {
@@ -98,6 +120,10 @@ watch(
         preserveState: true,
         only: ['tracks'],
         onSuccess: () => loading.value = false,
+        onError: () => {
+          loading.value = false
+          // Handle error
+        }
       })
     }
   }, 150),
@@ -123,6 +149,7 @@ const closeModal = () => {
   editingAnswer.value = false
 }
 
+// Simplified track operations
 const addTrack = async (track) => {
   loading.value = true
   try {
@@ -132,24 +159,34 @@ const addTrack = async (track) => {
       only: ['tracks'],
       onSuccess: () => debouncedSearch(),
     })
+  } catch (error) {
+    console.error('Error adding track:', error)
   } finally {
     loading.value = false
   }
 }
 
 const removeTrack = async (track) => {
-  const id = track.added ? track.added.id : track.id
-  if (confirm('Voulez-vous vraiment supprimer cette piste ?')) {
-    loading.value = true
-    try {
-      await router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => debouncedSearch(),
-      })
-    } finally {
-      loading.value = false
-    }
+  if (!confirm('Voulez-vous vraiment supprimer cette piste ?')) {
+    return
+  }
+
+  if (!track.added) {
+    return
+  }
+
+  loading.value = true
+
+  try {
+    await router.delete(route('playlists.tracks.delete', [props.playlist.id, track.added]), {
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => debouncedSearch(),
+    })
+  } catch (error) {
+    console.error('Error removing track:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -158,14 +195,20 @@ const updateDificulty = async (e, track) => {
     await router.put(
       route('playlists.tracks.update', [props.playlist.id, track]),
       { dificulty: e.target.value },
-      { preserveScroll: true }
+      { 
+        preserveScroll: true,
+        onError: () => {
+          // Revert on error
+          track.dificulty = e.target._oldValue
+        }
+      }
     )
   } catch (err) {
-    console.error(err)
+    console.error('Error updating difficulty:', err)
   }
 }
 
-// Cleanup on unmount
+// Cleanup
 onMounted(() => {
   return () => {
     if (searchController.value) {
@@ -174,6 +217,8 @@ onMounted(() => {
   }
 })
 </script>
+
+<!-- Template remains the same -->
 <template>
   <Card>
     <template #header>
@@ -248,74 +293,111 @@ onMounted(() => {
               v-model="search_online" 
               prepend-icon="plus" 
               append-icon="cheveron-down"
-              :loading="loading" 
-              :placeholder="__('Search on Deezer, Spotify and Apple music...')" 
+              :loading="searchLoading" 
+              :placeholder="__('Search on Deezer, Audius, Apple music and Soundcloud...')" 
             />
           </template>
 
           <template v-show="results.length" #dropdown>
-            <div v-if="results.length" class="flex flex-wrap gap-2 lg:gap-3 border-b-2 border-neutral-700/50 bg-neutral-800 p-3 lg:p-4">
-              <button
-                v-for="provider in providers"
-                :key="provider.id"
-                @click="toggleProvider(provider)"
-                class="flex items-center gap-2 rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200"
-                :class="[
-                  provider.enabled 
-                    ? 'bg-blinest-500 text-white shadow-lg shadow-blinest-500/20' 
-                    : 'bg-neutral-700 text-neutral-400 hover:bg-neutral-600'
-                ]"
-              >
-                <Icon 
-                  :name="provider.provider" 
-                  class="h-3 lg:h-4 w-3 lg:w-4" 
-                  :class="{ 'opacity-50': !provider.enabled }"
-                />
-                {{ provider.name }}
-              </button>
-            </div>
+            <template v-if="search_online.length > 1">
+              <div class="flex flex-wrap gap-2 lg:gap-3 border-b-2 border-neutral-700/50 bg-neutral-800 p-3 lg:p-4">
+                <button
+                  v-for="provider in providers"
+                  :key="provider.id"
+                  @click="toggleProvider(provider)"
+                  class="flex items-center gap-2 rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200"
+                  :class="[
+                    provider.enabled 
+                      ? 'bg-blinest-500 text-white shadow-lg shadow-blinest-500/20' 
+                      : 'bg-neutral-700 text-neutral-400 hover:bg-neutral-600'
+                  ]"
+                >
+                  <Icon 
+                    :name="provider.provider" 
+                    class="h-3 lg:h-4 w-3 lg:w-4" 
+                    :class="{ 'opacity-50': !provider.enabled }"
+                  />
+                  {{ provider.name }}
+                </button>
+              </div>
 
-            <ul v-if="results.length" class="max-h-[50vh] lg:max-h-[480px] overflow-y-auto bg-neutral-800 divide-y divide-neutral-700/50">
-              <li
-                v-for="result in results.filter(x => activeProviders.includes(x.provider))"
-                :key="result.id"
-                class="group p-2 lg:p-3 hover:bg-neutral-700/30 transition-colors duration-200"
-              >
-                <div class="flex items-center gap-2 lg:gap-4">
-                  <Icon :name="result.provider" :title="result.provider" class="h-5 lg:h-6 w-5 lg:w-6 flex-shrink-0" />
-                  
-                  <div class="flex-shrink-0">
-                    <MiniPlayer :key="`mini-player-results-${result.id}`" :track="result" />
-                  </div>
-
-                  <div class="mr-2 lg:mr-4 flex flex-grow flex-col min-w-0">
-                    <span class="font-medium truncate">{{ result.artist_name }}</span>
-                    <span class="text-xs lg:text-sm text-neutral-400 truncate">{{ result.track_name }}</span>
-                  </div>
-
-                  <div v-if="!result.added" class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button 
-                      :disabled="loading" 
-                      class="btn-primary btn-sm hover:bg-blinest-600 transition-colors duration-200" 
-                      type="button" 
-                      @click="addTrack(result)"
-                    >
-                      {{ __('Add') }}
-                    </button>
-                  </div>
-                  <div v-else class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button 
-                      :disabled="loading" 
-                      class="btn-danger btn-sm hover:bg-red-600 transition-colors duration-200" 
-                      type="button" 
-                      @click="removeTrack(result)"
-                    >
-                      {{ __('Remove') }}
-                    </button>
+              <div class="relative">
+                <!-- Add overlay when adding/removing tracks -->
+                <div v-if="loading" 
+                     class="absolute inset-0 bg-neutral-900/50 flex items-center justify-center z-10">
+                  <div class="flex items-center gap-2 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 animate-spin">
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                    <span>{{ __('Loading...') }}</span>
                   </div>
                 </div>
-              </li>
-            </ul>
+
+                <ul v-if="results && results.length" class="max-h-[50vh] lg:max-h-[480px] overflow-y-auto bg-neutral-800 divide-y divide-neutral-700/50 w-[600px]">
+                  <li
+                    v-for="result in results.filter(x => activeProviders.includes(x.provider))"
+                    :key="result.id"
+                    class="group p-2 lg:p-3 hover:bg-neutral-700/30 transition-colors duration-200"
+                  >
+                    <div class="flex items-center gap-2 lg:gap-4">
+                      <Icon :name="result.provider" :title="result.provider" class="h-5 lg:h-6 w-5 lg:w-6 flex-shrink-0" />
+                      
+                      <div class="flex-shrink-0">
+                        <MiniPlayer :key="`mini-player-results-${result.id}`" :track="result" />
+                      </div>
+
+                      <div class="mr-2 lg:mr-4 flex flex-grow flex-col min-w-0">
+                        <span class="font-medium truncate max-w-[200px]">{{ result.artist_name }}</span>
+                        <span class="text-xs lg:text-sm text-neutral-400 truncate max-w-[200px]">{{ result.track_name }}</span>
+                      </div>
+
+                      <div class="flex items-center">
+                        <template v-if="loading">
+                          <div class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 animate-spin">
+                              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                            <span>{{ __('Loading...') }}</span>
+                          </div>
+                        </template>
+                        
+                        <template v-else>
+                          <button 
+                            v-if="!result.added"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-800 bg-white hover:bg-neutral-100 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+                            type="button"
+                            @click="addTrack(result)"
+                          >
+                            <Icon name="plus" class="size-4" />
+                            <span>{{ __('Add') }}</span>
+                          </button>
+                          
+                          <button 
+                            v-else
+                            class="flex items-center gap-2 text-neutral-400 hover:text-red-500 px-3 py-1.5 rounded-md transition-all duration-200" 
+                            type="button" 
+                            @click="removeTrack(result)"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            Déjà dans la playlist
+                          </button>
+                        </template>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              
+              <div v-if="searchLoading" class="p-4 text-center text-neutral-400">
+                {{ __('Searching...') }}
+              </div>
+              
+              <div v-else class="p-4 text-center text-neutral-400">
+                {{ __('No results found') }}
+              </div>
+            </template>
           </template>
         </Dropdown>
 
@@ -364,7 +446,7 @@ onMounted(() => {
                 </a>
               </td>
               <td class="px-2 lg:px-3 py-2">
-                <mini-player :key="`mini-player-list-${track.id}`" :track="track" />
+                <MiniPlayer :key="`mini-player-list-${track.id}`" :track="track" />
               </td>
               <td class="px-3 lg:px-4 py-2">
                 <div class="space-y-1">

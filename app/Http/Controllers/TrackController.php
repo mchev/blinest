@@ -38,33 +38,30 @@ class TrackController extends Controller
 
     public function search(Playlist $playlist)
     {
-        if (Auth::user()->id === $playlist->owner->id
-                || Auth::user()->isPlaylistModerator($playlist)
-                || Auth::user()->isAdministrator()
+        $user = Request::user();
+
+        if ($user->id === $playlist->owner->id
+                || $user->isPlaylistModerator($playlist)
+                || $user->isAdministrator()
         ) {
+            $searchResults = (new MusicProviders)->search(Request::get('term'), Request::get('providers'));
+
             return response()->json([
-                'filters' => Request::only('term'),
-                'tracks' => (new MusicProviders)->search(Request::get('term'))
-                    // ->sortBy('track_name')
-                    // ->unique(function ($item) {
-                    //     return $item['artist_name'].$item['track_name'];
-                    // })
-                    ->values()
-                    ->map(function ($track) use ($playlist) {
-                        return [
-                            'provider' => $track['provider'],
-                            'provider_id' => $track['provider_id'],
-                            'provider_url' => $track['provider_url'],
-                            'provider_popularity' => $track['provider_popularity'],
-                            'artist_name' => $track['artist_name'],
-                            'track_name' => $track['track_name'],
-                            'album_name' => $track['album_name'],
-                            'preview_url' => $track['preview_url'],
-                            // 'release_date' => $track['release_date'],
-                            'artwork_url' => $track['artwork_url'],
-                            'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
-                        ];
-                    }),
+                'filters' => Request::only('term', 'providers'),
+                'tracks' => $searchResults->values()->map(function ($track) use ($playlist) {
+                    return [
+                        'provider' => $track['provider'],
+                        'provider_id' => $track['provider_id'],
+                        'provider_url' => $track['provider_url'],
+                        'provider_popularity' => $track['provider_popularity'],
+                        'artist_name' => $track['artist_name'],
+                        'track_name' => $track['track_name'],
+                        'album_name' => $track['album_name'],
+                        'preview_url' => $track['preview_url'],
+                        'artwork_url' => $track['artwork_url'],
+                        'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
+                    ];
+                }),
             ]);
         }
     }

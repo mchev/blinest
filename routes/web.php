@@ -21,7 +21,9 @@ use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
+use App\Services\MusicProviders\SoundcloudService;
 use App\Services\MusicProviders\SpotifyService;
+use App\Services\MusicProviders\YouTubeMusicService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -200,6 +202,12 @@ Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrac
 
 Route::get('providers/audius/search/track', [AudiusService::class, 'searchTrack'])
     ->name('providers.audius.search.track');
+
+Route::get('providers/soundcloud/search/track', [SoundcloudService::class, 'searchTrack'])
+    ->name('providers.soundcloud.search.track');
+
+Route::get('providers/youtube/search/track', [YouTubeMusicService::class, 'searchTrack'])
+    ->name('providers.youtube.search.track');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';

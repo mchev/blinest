@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted, onMounted } from 'vue'
 import Spinner from '@/Components/Spinner.vue'
 import Icon from '@/Components/Icon.vue'
 
@@ -15,6 +15,19 @@ const loading = ref(false)
 const isPlaying = ref(false)
 const error = ref(false)
 const progress = ref(0)
+const youtubePlayerId = `youtube-player-${props.track.id}`
+const youtubePlayer = ref(null)
+const isYoutubeTrack = ref(false)
+
+onMounted(() => {
+  if (!window.YT && !window.YTScriptLoaded) {
+    window.YTScriptLoaded = true
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
+    const firstScriptTag = document.getElementsByTagName('script')[0]
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+  }
+})
 
 onUnmounted(() => {
   cleanup()
@@ -23,6 +36,10 @@ onUnmounted(() => {
 const cleanup = () => {
   stop()
   audio.removeEventListener('timeupdate', updateProgress)
+  if (youtubePlayer.value) {
+    youtubePlayer.value.destroy()
+    youtubePlayer.value = null
+  }
 }
 
 const updateProgress = () => {
@@ -34,42 +51,115 @@ const play = () => {
   loading.value = true
   isPlaying.value = true
   
-  audio.src = props.track.audio ?? props.track.preview_url
-  audio.crossOrigin = 'anonymous'
-  
-  audio.addEventListener('error', () => {
-    error.value = true
-    loading.value = false
-    isPlaying.value = false
-  }, { once: true })
+  isYoutubeTrack.value = props.track.provider === 'youtube'
 
-  audio.addEventListener('canplaythrough', () => {
-    loading.value = false
-    audio.play().catch((e) => {
-      console.error('Audio playback failed:', e)
-      error.value = true 
-      isPlaying.value = false
+  if (isYoutubeTrack.value) {
+    if (window.YT && window.YT.Player) {
+      initYoutubePlayer()
+    } else {
+      window.onYouTubeIframeAPIReady = () => {
+        initYoutubePlayer()
+      }
+    }
+  } else {
+    document.querySelectorAll('[id^="youtube-player-"]').forEach(player => {
+      if (window.YT) {
+        const ytPlayer = YT.get(player.id)
+        if (ytPlayer) {
+          ytPlayer.stopVideo()
+        }
+      }
     })
-  }, { once: true })
+    
+    audio.src = props.track.audio ?? props.track.preview_url
+    audio.crossOrigin = 'anonymous'
+    
+    audio.addEventListener('error', () => {
+      error.value = true
+      loading.value = false
+      isPlaying.value = false
+    }, { once: true })
 
-  audio.addEventListener('ended', () => {
-    isPlaying.value = false
-    progress.value = 0
+    audio.addEventListener('canplaythrough', () => {
+      loading.value = false
+      audio.play().catch((e) => {
+        console.error('Audio playback failed:', e)
+        error.value = true 
+        isPlaying.value = false
+      })
+    }, { once: true })
+
+    audio.addEventListener('ended', () => {
+      isPlaying.value = false
+      progress.value = 0
+    })
+
+    audio.addEventListener('timeupdate', updateProgress)
+  }
+}
+
+const initYoutubePlayer = () => {
+  const existingPlayer = YT.get(youtubePlayerId)
+  if (existingPlayer) {
+    youtubePlayer.value = existingPlayer
+    youtubePlayer.value.playVideo()
+    return
+  }
+
+  youtubePlayer.value = new YT.Player(youtubePlayerId, {
+    height: '1',
+    width: '1',
+    videoId: props.track.preview_url,
+    playerVars: {
+      'autoplay': 1,
+      'controls': 0,
+      'playsinline': 1
+    },
+    events: {
+      'onStateChange': (event) => {
+        if (event.data === YT.PlayerState.ENDED) {
+          isPlaying.value = false
+          progress.value = 0
+        }
+        if (event.data === YT.PlayerState.PLAYING) {
+          loading.value = false
+          document.querySelectorAll('[id^="youtube-player-"]').forEach(player => {
+            if (player.id !== youtubePlayerId && window.YT) {
+              const ytPlayer = YT.get(player.id)
+              if (ytPlayer && ytPlayer !== youtubePlayer.value) {
+                ytPlayer.stopVideo()
+              }
+            }
+          })
+        }
+      },
+      'onError': () => {
+        error.value = true
+        loading.value = false
+        isPlaying.value = false
+      }
+    }
   })
-
-  audio.addEventListener('timeupdate', updateProgress)
 }
 
 const stop = () => {
   isPlaying.value = false
   progress.value = 0
-  audio.pause()
-  audio.currentTime = 0
+  if (isYoutubeTrack.value && youtubePlayer.value) {
+    youtubePlayer.value.destroy()
+    youtubePlayer.value = null
+  } else {
+    audio.pause()
+    audio.currentTime = 0
+  }
 }
 </script>
 
 <template>
   <div class="flex items-center">
+    <div class="youtube-player-container hidden">
+      <div :id="youtubePlayerId"></div>
+    </div>
     <div class="relative">
       <Icon v-if="!isPlaying && !error" 
             name="play" 

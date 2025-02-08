@@ -70,7 +70,7 @@ class AudiusService
 
             $response = Http::get($url, [
                 'query' => $query,
-                'limit' => 25,
+                'limit' => 10,
                 'app_name' => config('services.audius.app_name'),
                 'search_type' => 'all',
             ]);

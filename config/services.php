@@ -52,4 +52,9 @@ return [
         'app_name' => env('AUDIUS_APP_NAME', 'Blinest.com'),
     ],
 
+    'soundcloud' => [
+        'client_id' => env('SOUNDCLOUD_CLIENT_ID'),
+        'client_secret' => env('SOUNDCLOUD_CLIENT_SECRET'),
+    ],
+
 ];
