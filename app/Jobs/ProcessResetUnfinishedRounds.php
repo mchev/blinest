@@ -40,9 +40,10 @@ class ProcessResetUnfinishedRounds implements ShouldQueue
                 'is_playing' => 0,
             ]);
 
-            $room = $round->room;
-            $room->update(['is_playing' => 0]);
-            $room->save();
+            if ($room = $round->room) {
+                $room->update(['is_playing' => 0]);
+                $room->save();
+            }
         }
     }
 }

@@ -67,17 +67,30 @@ const getDefaultProviders = () => [
   { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
+  { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
+  { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
 ]
 
-// Initialize providers from localStorage or defaults
-const providers = ref(
-  JSON.parse(localStorage.getItem('trackManagerProviders')) || getDefaultProviders()
-)
-
-// Persist provider settings
-watch(providers, (newProviders) => {
-  localStorage.setItem('trackManagerProviders', JSON.stringify(newProviders))
-}, { deep: true })
+// Initialize providers from localStorage or defaults, ensuring all providers exist
+const providers = ref((() => {
+  const defaultProviders = getDefaultProviders()
+  const storedProviders = JSON.parse(localStorage.getItem('trackManagerProviders')) || defaultProviders
+  
+  // Check if any new providers need to be added
+  const updatedProviders = [...storedProviders]
+  defaultProviders.forEach(defaultProvider => {
+    if (!storedProviders.some(p => p.provider === defaultProvider.provider)) {
+      updatedProviders.push(defaultProvider)
+    }
+  })
+  
+  // Update localStorage if providers were added
+  if (updatedProviders.length !== storedProviders.length) {
+    localStorage.setItem('trackManagerProviders', JSON.stringify(updatedProviders))
+  }
+  
+  return updatedProviders
+})())
 
 // Computed property for active providers
 const activeProviders = computed(() => 
@@ -105,14 +118,15 @@ const debouncedSearch = debounce(async () => {
   searchController.value = new AbortController()
   
   try {
-    const allProviders = providers.value.map(p => p.provider).join(',')
+    // Only use active providers instead of all providers
+    const activeProvidersString = activeProviders.value.join(',')
     
     const response = await axios.get(
       route('tracks.search', props.playlist.id),
       {
         params: {
           term: search_online.value,
-          providers: allProviders
+          providers: activeProvidersString // Use active providers only
         },
         signal: searchController.value.signal
       }
@@ -186,6 +200,12 @@ watch(
 
 const toggleProvider = (provider) => {
   provider.enabled = !provider.enabled
+  // Save updated providers to localStorage
+  localStorage.setItem('trackManagerProviders', JSON.stringify(providers.value))
+  // Trigger new search if there's a search term
+  if (search_online.value.length >= 2) {
+    debouncedSearch()
+  }
 }
 
 const createAnswer = (track) => {
@@ -447,7 +467,8 @@ const loading = ref(false)
                     :class="{
                       'bg-red-400/10 text-red-400': error.quota_exceeded,
                       'bg-yellow-400/10 text-yellow-400': error.status_code === 503,
-                      'bg-orange-400/10 text-orange-400': error.status_code === 400
+                      'bg-orange-400/10 text-orange-400': error.status_code === 400,
+                      'bg-orange-400/10 text-orange-400': error.status_code === 404
                     }"
                   >
                     <Icon :name="provider" class="h-4 lg:h-5 w-4 lg:w-5" />

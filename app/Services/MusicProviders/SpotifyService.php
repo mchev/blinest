@@ -40,26 +40,48 @@ class SpotifyService
         try {
             $term = Request::get('term');
             if (empty($term)) {
-                return null;
+                return collect([]);
             }
 
             $response = $this->api->search($term, ['track', 'artist'], [
-                'include_external' => 'audio',
                 'market' => config('services.spotify.market', 'FR'),
                 'limit' => 50,
             ]);
 
-            return collect($response->tracks->items)
-                ->filter(fn ($track) => $track->is_playable && $track->preview_url)
-                ->map(fn ($track) => $this->formatTrack($track));
+            $filteredTracks = collect($response->tracks->items)
+                ->filter(function ($track) {
+                    return $track->is_playable
+                        && ! empty($track->preview_url)
+                        && filter_var($track->preview_url, FILTER_VALIDATE_URL);
+                });
+
+            // If there are results but none with preview URLs, return an error
+            if ($response->tracks->total > 0 && $filteredTracks->isEmpty()) {
+                return collect([[
+                    'error' => true,
+                    'provider' => 'spotify',
+                    'message' => 'Spotify : Les pistes trouvées ne sont pas disponibles en streaming',
+                    'status_code' => 404,
+                ]]);
+            }
+
+            return $filteredTracks->map(fn ($track) => $this->formatTrack($track));
 
         } catch (SpotifyWebAPIException $e) {
             Log::error('Spotify search failed', [
                 'term' => Request::get('term'),
                 'error' => $e->getMessage(),
+                'context' => [
+                    'market' => config('services.spotify.market', 'FR'),
+                ],
             ]);
 
-            return null;
+            return collect([[
+                'error' => true,
+                'provider' => 'spotify',
+                'message' => 'Spotify : '.$e->getMessage(),
+                'status_code' => $e->getCode(),
+            ]]);
         }
     }
 

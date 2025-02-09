@@ -35,6 +35,10 @@ class MusicProvidersService
                         $pool->get(route('providers.audius.search.track', ['term' => $term])) : null,
                     in_array('youtube', $providers) ?
                         $pool->get(route('providers.youtube.search.track', ['term' => $term])) : null,
+                    in_array('spotify', $providers) ?
+                        $pool->get(route('providers.spotify.search.track', ['term' => $term])) : null,
+                    in_array('deezer', $providers) ?
+                        $pool->get(route('providers.deezer.search.track', ['term' => $term])) : null,
                 ]));
 
                 foreach ($responses as $response) {

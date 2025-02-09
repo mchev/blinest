@@ -4,18 +4,16 @@
 
 ### Requirements
 
-Blinest use Websockets a lot. So you will have to install soketi globaly :
+Blinest uses WebSockets for real-time communication. Laravel Reverb is used as the WebSocket server.
 
-https://docs.soketi.app/getting-started/installation/cli-installation
-
-Then go to your working directory and :
+Go to your working directory and:
 
 ```console
 composer install
 ```
 
 ```console
-php artisan key::generate
+php artisan key:generate
 ```
 
 ```console
@@ -31,18 +29,8 @@ php artisan migrate:fresh --seed
 npm run dev
 ```
 ```console
-soketi start
+php artisan reverb:start
 ```
 ```console
 php artisan horizon
 ```
-
-## Roadmap
-
-- [ ] Trivia games (rooms type?)
-- [ ] User Badges (reputation)
-- [ ] Chat emojis
-- [ ] Moderation : rooms name edition
-- [ ] Pro/Premium rooms
-- [x] Better translations
-- [x] Profile pages

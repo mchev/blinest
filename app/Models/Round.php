@@ -54,7 +54,9 @@ class Round extends Model
                 'finished_at' => now(),
             ]);
 
-            $this->room->update(['is_playing' => false]);
+            if ($this->room) {
+                $this->room->update(['is_playing' => false]);
+            }
         });
 
         broadcast(new RoundFinished($this));
