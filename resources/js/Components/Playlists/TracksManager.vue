@@ -17,16 +17,25 @@ import Sortable from '@/Components/Sortable.vue'
 import ImportPlaylist from './ImportPlaylist.vue'
 
 const props = defineProps({
-  playlist: Object,
-  answer_types: Object,
-  tracks: Object,
+  playlist: {
+    type: Object,
+    required: true
+  },
+  answer_types: {
+    type: Object,
+    required: true
+  },
+  tracks: {
+    type: Object,
+    required: true
+  },
   filters: {
     type: Object,
-    default: {
+    default: () => ({
       search: '',
       paginate: 5,
       sortable: null,
-    },
+    }),
   },
 })
 
@@ -40,42 +49,55 @@ const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
 const editingAnswer = ref(false)
 const search_online = ref('')
-const loading = ref(false)
 const searchLoading = ref(false)
 const results = ref([])
 const importingPlaylist = ref(false)
+const providerErrors = ref({})
 
-// Get providers from localStorage or use defaults
+// Loading states with TypeScript-like interface
+const loadingStates = ref({
+  search: false,
+  addTrack: null, // Track ID
+  removeTrack: null, // Track ID  
+  updateDifficulty: null, // Track ID
+})
+
+// Default providers with TypeScript-like interface
 const getDefaultProviders = () => [
   { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
 ]
 
+// Initialize providers from localStorage or defaults
 const providers = ref(
   JSON.parse(localStorage.getItem('trackManagerProviders')) || getDefaultProviders()
 )
 
-// Watch providers changes and save to localStorage
+// Persist provider settings
 watch(providers, (newProviders) => {
   localStorage.setItem('trackManagerProviders', JSON.stringify(newProviders))
 }, { deep: true })
 
+// Computed property for active providers
 const activeProviders = computed(() => 
   providers.value.filter(p => p.enabled).map(p => p.provider)
 )
 
-// Improved search with AbortController and loading states
+// Improved search with AbortController and error handling
 const searchController = ref(null)
 const debouncedSearch = debounce(async () => {
+  // Clear results immediately when search starts
+  results.value = []
+  providerErrors.value = {}
+  
   if (search_online.value.length < 2) {
-    results.value = []
     return
   }
 
   searchLoading.value = true
   
-  // Cancel previous request if exists
+  // Cancel any pending requests
   if (searchController.value) {
     searchController.value.abort()
   }
@@ -83,28 +105,60 @@ const debouncedSearch = debounce(async () => {
   searchController.value = new AbortController()
   
   try {
+    const allProviders = providers.value.map(p => p.provider).join(',')
+    
     const response = await axios.get(
       route('tracks.search', props.playlist.id),
       {
         params: {
           term: search_online.value,
-          providers: activeProviders.value.join(',')
+          providers: allProviders
         },
         signal: searchController.value.signal
       }
     )
     
     results.value = response.data.tracks
+    
+    // Update provider errors directly from the response
+    providerErrors.value = response.data.errors.reduce((acc, error) => {
+      if (error.provider) {
+        acc[error.provider] = {
+          message: error.message,
+          status_code: error.status_code,
+          quota_exceeded: error.quota_exceeded || false,
+          reset_time: error.reset_time
+        }
+      }
+      return acc
+    }, {})
+
+    // Handle YouTube quota exceeded
+    if (providerErrors.value.youtube?.quota_exceeded) {
+      const youtubeProvider = providers.value.find(p => p.provider === 'youtube')
+      if (youtubeProvider) {
+        youtubeProvider.enabled = false
+        localStorage.setItem('youtube_quota_reset_time', providerErrors.value.youtube.reset_time)
+      }
+    }
   } catch (err) {
     if (err.name === 'AbortError') return
+    
     console.error('Search error:', err)
+    // Add a generic error if the request fails completely
+    providerErrors.value = {
+      general: {
+        message: 'An error occurred while searching',
+        status_code: err.response?.status || 500
+      }
+    }
   } finally {
     searchLoading.value = false 
   }
-}, 300)
+}, 500)
 
-// Improved watchers
-watch([search_online, activeProviders], () => {
+// Watch search term changes
+watch([search_online], () => {
   debouncedSearch()
 })
 
@@ -120,13 +174,13 @@ watch(
         preserveState: true,
         only: ['tracks'],
         onSuccess: () => loading.value = false,
-        onError: () => {
+        onError: (errors) => {
           loading.value = false
-          // Handle error
+          console.error('Form update failed:', errors)
         }
       })
     }
-  }, 150),
+  }, 500),
   { deep: true },
 )
 
@@ -149,9 +203,13 @@ const closeModal = () => {
   editingAnswer.value = false
 }
 
-// Simplified track operations
+// Improved track operations with error handling
 const addTrack = async (track) => {
+  if (loadingStates.value.addTrack) return
+  
+  loadingStates.value.addTrack = track.id
   loading.value = true
+  
   try {
     await router.post(route('playlists.tracks.store', props.playlist.id), track, {
       preserveScroll: true,
@@ -162,65 +220,118 @@ const addTrack = async (track) => {
   } catch (error) {
     console.error('Error adding track:', error)
   } finally {
+    loadingStates.value.addTrack = null
     loading.value = false
   }
 }
 
 const removeTrack = async (track) => {
+  if (loadingStates.value.removeTrack) return
+  
   if (!confirm('Voulez-vous vraiment supprimer cette piste ?')) {
     return
   }
 
-  if (!track.added) {
-    return
-  }
-
+  loadingStates.value.removeTrack = track.id
   loading.value = true
+  const id = track.id ?? track.added
 
   try {
-    await router.delete(route('playlists.tracks.delete', [props.playlist.id, track.added]), {
+    await router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => debouncedSearch(),
+      only: ['tracks'],
     })
   } catch (error) {
     console.error('Error removing track:', error)
   } finally {
+    loadingStates.value.removeTrack = null
     loading.value = false
   }
 }
 
 const updateDificulty = async (e, track) => {
+  if (loadingStates.value.updateDifficulty) return
+  
+  loadingStates.value.updateDifficulty = track.id
+  const oldValue = e.target._oldValue
+  
   try {
     await router.put(
       route('playlists.tracks.update', [props.playlist.id, track]),
       { dificulty: e.target.value },
       { 
         preserveScroll: true,
+        preserveState: true,
+        only: ['tracks'],
         onError: () => {
-          // Revert on error
-          track.dificulty = e.target._oldValue
+          track.dificulty = oldValue
         }
       }
     )
   } catch (err) {
     console.error('Error updating difficulty:', err)
+    track.dificulty = oldValue
+  } finally {
+    loadingStates.value.updateDifficulty = null
   }
 }
 
-// Cleanup
+// Add this event listener setup in your script
 onMounted(() => {
+  router.on('start', () => {
+    loading.value = true
+  })
+  
+  router.on('finish', () => {
+    loading.value = false
+  })
+
+  // Check YouTube quota status
+  const resetTime = localStorage.getItem('youtube_quota_reset_time')
+  if (resetTime && new Date(resetTime) > new Date()) {
+    const youtubeProvider = providers.value.find(p => p.provider === 'youtube')
+    if (youtubeProvider) {
+      youtubeProvider.enabled = false
+      providerErrors.value.youtube = {
+        message: 'La recherche YouTube est temporairement indisponible - Le quota quotidien est dépassé',
+        reset_time: resetTime,
+        quota_exceeded: true
+      }
+    }
+  } else {
+    localStorage.removeItem('youtube_quota_reset_time')
+    localStorage.removeItem('provider_errors')
+  }
+
+  // Cleanup function
   return () => {
     if (searchController.value) {
       searchController.value.abort()
     }
   }
 })
+
+// Keep your existing loading ref
+const loading = ref(false)
 </script>
 
 <!-- Template remains the same -->
 <template>
-  <Card>
+  <!-- Global loading overlay -->
+  <div v-if="loading" 
+       class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="flex flex-col items-center gap-3 text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-8 animate-spin">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      <span class="text-sm">{{ __('Chargement...') }}</span>
+    </div>
+  </div>
+
+  <!-- Make sure Card has relative positioning -->
+  <Card class="relative">
     <template #header>
       <div class="flex w-full flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4">
         <div>
@@ -294,11 +405,11 @@ onMounted(() => {
               prepend-icon="plus" 
               append-icon="cheveron-down"
               :loading="searchLoading" 
-              :placeholder="__('Search on Deezer, Audius, Apple music and Soundcloud...')" 
+              placeholder="Rechercher sur les plateformes pour ajouter des pistes" 
             />
           </template>
 
-          <template v-show="results.length" #dropdown>
+          <template #dropdown>
             <template v-if="search_online.length > 1">
               <div class="flex flex-wrap gap-2 lg:gap-3 border-b-2 border-neutral-700/50 bg-neutral-800 p-3 lg:p-4">
                 <button
@@ -322,18 +433,34 @@ onMounted(() => {
               </div>
 
               <div class="relative">
-                <!-- Add overlay when adding/removing tracks -->
-                <div v-if="loading" 
-                     class="absolute inset-0 bg-neutral-900/50 flex items-center justify-center z-10">
-                  <div class="flex items-center gap-2 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 animate-spin">
-                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                    </svg>
-                    <span>{{ __('Loading...') }}</span>
+                <!-- Show provider errors section -->
+                <template v-if="Object.keys(providerErrors).length > 0">
+                  <div 
+                    v-for="(error, provider) in providerErrors" 
+                    :key="provider"
+                    class="flex items-center gap-2 lg:gap-3 p-3 lg:p-4 text-xs lg:text-sm"
+                    :class="{
+                      'bg-red-400/10 text-red-400': error.quota_exceeded,
+                      'bg-yellow-400/10 text-yellow-400': error.status_code === 503,
+                      'bg-orange-400/10 text-orange-400': error.status_code === 400
+                    }"
+                  >
+                    <Icon :name="provider" class="h-4 lg:h-5 w-4 lg:w-5" />
+                    <div class="flex flex-col">
+                      <span class="font-medium max-w-[400px]">{{ error.message }}</span>
+                      <span v-if="error.reset_time" class="text-[10px] lg:text-xs opacity-75">
+                        Le service sera disponible à nouveau le {{ new Date(error.reset_time).toLocaleString() }}
+                      </span>
+                      <span v-else-if="error.status_code === 503" class="text-[10px] lg:text-xs opacity-75">
+                        Veuillez réessayer dans quelques minutes
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </template>
 
-                <ul v-if="results && results.length" class="max-h-[50vh] lg:max-h-[480px] overflow-y-auto bg-neutral-800 divide-y divide-neutral-700/50 w-[600px]">
+                <!-- Results section -->
+                <ul v-if="results.filter(x => activeProviders.includes(x.provider)).length > 0" 
+                    class="max-h-[50vh] lg:max-h-[480px] overflow-y-auto bg-neutral-800 divide-y divide-neutral-700/50 w-[600px]">
                   <li
                     v-for="result in results.filter(x => activeProviders.includes(x.provider))"
                     :key="result.id"
@@ -364,12 +491,16 @@ onMounted(() => {
                         <template v-else>
                           <button 
                             v-if="!result.added"
-                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-800 bg-white hover:bg-neutral-100 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-800 bg-white hover:bg-neutral-100 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
                             @click="addTrack(result)"
+                            :disabled="loadingStates.addTrack === result.id"
                           >
-                            <Icon name="plus" class="size-4" />
-                            <span>{{ __('Add') }}</span>
+                            <svg v-if="loadingStates.addTrack === result.id" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 animate-spin">
+                              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                            <Icon v-else name="plus" class="size-4" />
+                            <span>{{ loadingStates.addTrack === result.id ? __('Adding...') : __('Add') }}</span>
                           </button>
                           
                           <button 
@@ -388,14 +519,21 @@ onMounted(() => {
                     </div>
                   </li>
                 </ul>
-              </div>
-              
-              <div v-if="searchLoading" class="p-4 text-center text-neutral-400">
-                {{ __('Searching...') }}
-              </div>
-              
-              <div v-else class="p-4 text-center text-neutral-400">
-                {{ __('No results found') }}
+
+                <!-- No results message -->
+                <div v-else-if="!searchLoading" class="p-4 text-center text-neutral-400">
+                  {{ __('Aucun résultat trouvé') }}
+                </div>
+
+                <!-- Loading message -->
+                <div v-if="searchLoading" class="p-4 text-center text-neutral-400">
+                  <div class="flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 animate-spin">
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                    {{ __('Recherche en cours...') }}
+                  </div>
+                </div>
               </div>
             </template>
           </template>
@@ -412,7 +550,7 @@ onMounted(() => {
         </SelectInput>
       </div>
 
-      <div v-if="tracks.data.length" class="rounded-lg border border-neutral-700/50 overflow-x-auto" :class="{ 'opacity-50 pointer-events-none': loading }">
+      <div v-if="tracks.data.length" class="w-full overflow-x-auto rounded-lg border border-neutral-700/50" :class="{ 'opacity-50 pointer-events-none': loading }">
         <table class="w-full min-w-[800px]">
           <thead>
             <tr class="bg-neutral-800">
@@ -442,7 +580,7 @@ onMounted(() => {
                   :href="track.provider_url"
                   class="flex items-center justify-center hover:text-blinest-500 transition-colors duration-200"
                 >
-                  <Icon :name="track.provider" :title="track.provider" class="h-4 lg:h-5 w-4 lg:w-5" />
+                  <Icon :name="track.provider" :title="track.provider" class="size-6" />
                 </a>
               </td>
               <td class="px-2 lg:px-3 py-2">
@@ -479,6 +617,7 @@ onMounted(() => {
                   :error="$page.props.errors.dificulty"
                   @change="updateDificulty($event, track)"
                   class="w-24 lg:w-28 text-xs lg:text-sm"
+                  :disabled="loadingStates.updateDifficulty === track.id"
                 >
                   <option :value="0">{{ __('Easy') }}</option>
                   <option :value="1">{{ __('Medium') }}</option>
@@ -503,10 +642,16 @@ onMounted(() => {
               </td>
               <td class="px-3 lg:px-4 py-2">
                 <button
-                  class="opacity-0 group-hover:opacity-100 fill-red-400 transition-all duration-200"
+                  class="fill-red-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  title="Supprimer de la playlist"
                   @click="removeTrack(track)"
+                  :disabled="loadingStates.removeTrack === track.id"
                 >
-                  <Icon name="delete" class="h-4 lg:h-5 w-4 lg:w-5" />
+                  <svg v-if="loadingStates.removeTrack === track.id" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 animate-spin">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                  </svg>
+                  <Icon v-else name="delete" class="size-5" />
                 </button>
               </td>
             </tr>

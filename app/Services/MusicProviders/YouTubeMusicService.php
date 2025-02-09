@@ -5,6 +5,7 @@ namespace App\Services\MusicProviders;
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -23,7 +24,25 @@ class YouTubeMusicService
         try {
             $term = Request::get('term');
             if (empty($term)) {
-                return null;
+                return collect([]);
+            }
+
+            // Check if quota is exceeded first
+            if ($this->isQuotaExceeded()) {
+                return collect([[
+                    'error' => true,
+                    'provider' => 'youtube',
+                    'message' => __('La recherche YouTube est temporairement indisponible - Le quota quotidien est dépassé'),
+                    'quota_exceeded' => true,
+                    'reset_time' => $this->getQuotaResetTime(),
+                    'status_code' => 429,
+                ]]);
+            }
+
+            // Check cache first
+            $cacheKey = 'youtube_search_'.md5($term);
+            if ($cachedResults = Cache::get($cacheKey)) {
+                return collect($cachedResults);
             }
 
             $query = urlencode(trim($term));
@@ -34,22 +53,25 @@ class YouTubeMusicService
                 'part' => 'snippet',
                 'q' => $query.' music',
                 'type' => 'video',
-                'videoCategoryId' => '10', // Music category
-                'maxResults' => 10,
+                'videoCategoryId' => '10',
+                'maxResults' => 5,
                 'videoEmbeddable' => true,
-                'fields' => 'items(id/videoId,snippet/title,snippet/channelTitle,snippet/publishedAt,snippet/thumbnails)',
+                // Optimize quota by requesting only needed fields
+                'fields' => 'items(id/videoId,snippet(title,channelTitle,publishedAt,thumbnails/default))',
             ]);
 
+            // Enhanced error handling
             if (! $response->successful()) {
-                throw new \Exception('Search failed: '.$response->body());
+                return collect([$this->handleApiError($response)]);
             }
 
             $data = $response->json();
+            $results = collect($data['items'] ?? [])->map(fn ($track) => $this->formatTrack($track));
 
-            return isset($data['items'])
-                ? collect($data['items'])
-                    ->map(fn ($track) => $this->formatTrack($track))
-                : null;
+            // Cache successful results
+            Cache::put($cacheKey, $results->toArray(), now()->addHours(1));
+
+            return $results;
 
         } catch (\Exception $e) {
             Log::error('YouTube Music search failed', [
@@ -57,84 +79,12 @@ class YouTubeMusicService
                 'error' => $e->getMessage(),
             ]);
 
-            return null;
-        }
-    }
-
-    public function findPlaylistById(string $id): object
-    {
-        try {
-            $response = Http::get('https://www.googleapis.com/youtube/v3/playlists', [
-                'key' => $this->apiKey,
-                'part' => 'snippet,contentDetails',
-                'id' => $id,
-            ]);
-
-            if (! $response->successful()) {
-                throw new \Exception('Playlist not found: '.$response->body());
-            }
-
-            $data = $response->json();
-            $playlist = $data['items'][0] ?? null;
-
-            if (! $playlist) {
-                throw new \Exception('Playlist not found');
-            }
-
-            return (object) [
-                'id' => $playlist['id'],
-                'name' => $playlist['snippet']['title'],
-                'description' => $playlist['snippet']['description'],
-                'tracks_count' => $playlist['contentDetails']['itemCount'],
-                'image' => $playlist['snippet']['thumbnails']['medium']['url'] ?? null,
-            ];
-        } catch (\Exception $e) {
-            return (object) [
-                'code' => 404,
-                'message' => $e->getMessage(),
-            ];
-        }
-    }
-
-    public function importPlaylist(Playlist $playlist, string $provider_playlist_id): int
-    {
-        try {
-            $importedTracks = [];
-            $pageToken = null;
-
-            do {
-                $response = Http::get('https://www.googleapis.com/youtube/v3/playlistItems', [
-                    'key' => $this->apiKey,
-                    'part' => 'snippet',
-                    'playlistId' => $provider_playlist_id,
-                    'maxResults' => 50,
-                    'pageToken' => $pageToken,
-                ]);
-
-                if (! $response->successful()) {
-                    throw new \Exception('Failed to import playlist: '.$response->body());
-                }
-
-                $data = $response->json();
-
-                foreach ($data['items'] as $item) {
-                    $formattedTrack = $this->formatTrack($item);
-                    $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formattedTrack)
-                        ->onQueue('imports')
-                        ->delay(now()->addSeconds(count($importedTracks) * 0.5));
-                }
-
-                $pageToken = $data['nextPageToken'] ?? null;
-            } while ($pageToken);
-
-            return count(array_filter($importedTracks));
-        } catch (\Exception $e) {
-            Log::error('YouTube Music playlist import failed', [
-                'playlist_id' => $playlist->id,
-                'provider_playlist_id' => $provider_playlist_id,
-                'error' => $e->getMessage(),
-            ]);
-            throw $e;
+            return collect([[
+                'error' => true,
+                'provider' => 'youtube',
+                'message' => __('YouTube service is temporarily unavailable'),
+                'status_code' => 500,
+            ]]);
         }
     }
 
@@ -160,5 +110,108 @@ class YouTubeMusicService
             'release_date' => Carbon::parse($track['snippet']['publishedAt'])->format('Y-m-d'),
             'artwork_url' => $track['snippet']['thumbnails']['default']['url'] ?? null,
         ];
+    }
+
+    protected function handleApiError($response): array
+    {
+        $body = $response->body();
+        $status = $response->status();
+
+        if ($status === 403 || $status === 429) {
+            if (str_contains(strtolower($body), 'quota') || $status === 429) {
+                $this->markQuotaExceeded();
+
+                return [
+                    'error' => true,
+                    'provider' => 'youtube',
+                    'message' => __('La recherche YouTube est temporairement indisponible - Le quota quotidien est dépassé'),
+                    'quota_exceeded' => true,
+                    'reset_time' => $this->getQuotaResetTime(),
+                    'status_code' => $status,
+                ];
+            }
+
+            return [
+                'error' => true,
+                'provider' => 'youtube',
+                'message' => 'API access denied',
+                'status_code' => $status,
+            ];
+        }
+
+        return [
+            'error' => true,
+            'provider' => 'youtube',
+            'message' => 'Service unavailable',
+            'status_code' => $status,
+        ];
+    }
+
+    protected function getQuotaResetTime(): string
+    {
+        return now()
+            ->setTimezone('America/Los_Angeles')
+            ->addDay()
+            ->startOfDay()
+            ->toISOString();
+    }
+
+    protected function processImportedTracks(Playlist $playlist, array $tracks): int
+    {
+        return collect($tracks)->map(function ($item, $index) use ($playlist) {
+            $formattedTrack = $this->formatTrack($item);
+
+            return ProcessImportTrack::dispatch($playlist, $formattedTrack)
+                ->onQueue('imports')
+                ->delay(now()->addSeconds($index * 0.5));
+        })->filter()->count();
+    }
+
+    protected function handleQuotaExceeded(): array
+    {
+        $this->markQuotaExceeded();
+        $resetTime = now()
+            ->setTimezone('America/Los_Angeles')
+            ->addDay()
+            ->startOfDay();
+
+        Log::warning('YouTube API quota exceeded', [
+            'reset_time' => $resetTime,
+        ]);
+
+        return [
+            'error' => true,
+            'message' => __('La recherche YouTube est temporairement indisponible - Le quota quotidien est dépassé'),
+            'provider' => 'youtube',
+            'reset_time' => $resetTime->toISOString(),
+            'quota_exceeded' => true,
+        ];
+    }
+
+    protected function isQuotaExceeded(): bool
+    {
+        if (Cache::has('youtube_api_quota_exceeded')) {
+            $resetTime = Cache::get('youtube_api_quota_reset_time');
+            if ($resetTime && now()->lessThan($resetTime)) {
+                return true;
+            }
+            // If we're past reset time, clear the cache
+            Cache::forget('youtube_api_quota_exceeded');
+            Cache::forget('youtube_api_quota_reset_time');
+        }
+
+        return false;
+    }
+
+    protected function markQuotaExceeded(): void
+    {
+        // Cache the quota exceeded status until midnight PST (when YouTube resets quotas)
+        $resetTime = now()
+            ->setTimezone('America/Los_Angeles')
+            ->addDay()
+            ->startOfDay();
+
+        Cache::put('youtube_api_quota_exceeded', true, $resetTime);
+        Cache::put('youtube_api_quota_reset_time', $resetTime, $resetTime);
     }
 }

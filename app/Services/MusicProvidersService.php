@@ -12,12 +12,21 @@ class MusicProvidersService
     public function search(string $term, ?string $providers = null)
     {
         try {
+            if (empty($term) || empty($providers)) {
+                return [
+                    'results' => collect(),
+                    'errors' => collect(),
+                ];
+            }
+
             // Generate a cache key based on search parameters
             $cacheKey = "music_search_{$providers}_{$term}";
 
             // Try to get results from cache first
             return Cache::remember($cacheKey, now()->addHours(24), function () use ($term, $providers) {
                 $providers = explode(',', $providers);
+                $merged = collect();
+                $errors = collect();
 
                 $responses = Http::pool(fn (Pool $pool) => array_filter([
                     in_array('itunes', $providers) ?
@@ -28,37 +37,60 @@ class MusicProvidersService
                         $pool->get(route('providers.youtube.search.track', ['term' => $term])) : null,
                 ]));
 
-                $merged = collect();
-
                 foreach ($responses as $response) {
                     if ($response->ok()) {
-                        $merged = $merged->merge($response->collect());
+                        $results = $response->collect();
+
+                        // Check if the response is an error response
+                        if ($results->first() && isset($results->first()['error'])) {
+                            $error = $results->first();
+                            Log::warning('Provider error encountered', $error);
+                            $errors->push($error);
+
+                            continue;
+                        }
+
+                        // Only merge valid results
+                        $validResults = $results->filter(function ($item) {
+                            return is_array($item) &&
+                                   ! isset($item['error']) &&
+                                   isset($item['provider']) &&
+                                   isset($item['provider_id']) &&
+                                   isset($item['preview_url']);
+                        });
+
+                        $merged = $merged->merge($validResults);
                     } else {
-                        Log::error('Failed to fetch results from provider', [
+                        Log::error('Provider request failed', [
+                            'url' => $response->effectiveUri(),
                             'status' => $response->status(),
-                            'error' => $response->body(),
+                            'body' => $response->body(),
                         ]);
                     }
                 }
 
-                $sorted = $merged->sortByDesc('provider_popularity')->sortByDesc(function ($item) use ($term) {
-                    $text1 = $item['artist_name'].' '.$item['track_name'];
-                    $text2 = $item['track_name'].' '.$item['artist_name'];
-                    $percent1 = similar_text($term, $text1, $percent1);
-                    $percent2 = similar_text($term, $text2, $percent2);
-
-                    return max($percent1, $percent2);
-                });
-
-                return $sorted;
+                return [
+                    'results' => $merged,
+                    'errors' => $errors,
+                ];
             });
         } catch (\Exception $e) {
-            Log::error('Error in music provider search', [
-                'error' => $e->getMessage(),
+            Log::error('Error in music provider search: '.$e->getMessage(), [
                 'term' => $term,
+                'providers' => $providers,
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            return collect();
+            return [
+                'results' => collect(),
+                'errors' => collect([
+                    [
+                        'error' => true,
+                        'message' => 'An unexpected error occurred',
+                        'status_code' => 500,
+                    ],
+                ]),
+            ];
         }
     }
 }

@@ -44,11 +44,11 @@ class TrackController extends Controller
                 || $user->isPlaylistModerator($playlist)
                 || $user->isAdministrator()
         ) {
-            $searchResults = (new MusicProviders)->search(Request::get('term'), Request::get('providers'));
+            $searchResponse = (new MusicProviders)->search(Request::get('term'), Request::get('providers'));
 
             return response()->json([
                 'filters' => Request::only('term', 'providers'),
-                'tracks' => $searchResults->values()->map(function ($track) use ($playlist) {
+                'tracks' => $searchResponse['results']->map(function ($track) use ($playlist) {
                     return [
                         'provider' => $track['provider'],
                         'provider_id' => $track['provider_id'],
@@ -62,6 +62,7 @@ class TrackController extends Controller
                         'added' => $playlist->hasProviderTrack($track['provider_id'])->select('id')->first(),
                     ];
                 }),
+                'errors' => $searchResponse['errors'],
             ]);
         }
     }
