@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\TrackVoted;
+use App\Jobs\ProcessDeletedTrack;
 use App\Jobs\SendDiscordNotification;
 use App\Models\Playlist;
 use App\Models\Room;
@@ -149,13 +150,16 @@ class TrackController extends Controller
 
     public function destroy(Playlist $playlist, Track $track)
     {
-        if (Auth::user()->id === $playlist->owner->id
-                || Auth::user()->isPlaylistModerator($playlist)
-                || Auth::user()->isAdministrator()
-        ) {
-            $track->deleteWithNotification();
+        $user = Request::user();
 
-            return Redirect::back()->with('Track deleted');
+        if ($user->id === $playlist->owner->id
+                || $user->isPlaylistModerator($playlist)
+                || $user->isAdministrator()
+        ) {
+
+            ProcessDeletedTrack::dispatch($track, $user);
+
+            return Redirect::back()->withSuccess('Track deleted');
         }
     }
 

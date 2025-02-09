@@ -235,12 +235,17 @@ const removeTrack = async (track) => {
   loadingStates.value.removeTrack = track.id
   loading.value = true
   const id = track.id ?? track.added
+  props.tracks.data = props.tracks.data.filter(t => t.id !== id);
+  results.value = results.value.filter(t => t.id !== id);
 
   try {
     await router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
       preserveScroll: true,
-      preserveState: true,
-      onSuccess: () => debouncedSearch(),
+      onSuccess: () => {
+        debouncedSearch();
+        props.tracks.data = props.tracks.data.filter(t => t.id !== id);
+        results.value = results.value.filter(t => t.id !== id);
+      },
       only: ['tracks'],
     })
   } catch (error) {

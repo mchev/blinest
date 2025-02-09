@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Jobs\SendDiscordNotification;
-use App\Notifications\TrackDeleted;
 use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 use Overtrue\LaravelVote\Traits\Votable;
 
 class Track extends Model
@@ -70,29 +67,6 @@ class Track extends Model
                     return null;
             }
         }
-    }
-
-    public function deleteWithNotification()
-    {
-        $message = 'Le titre '.$this->answers()->where('answer_type_id', 2)->first()?->value.' de '.$this->answers()->where('answer_type_id', 1)->first()?->value.' a été supprimé.';
-
-        // Public rooms discord notification
-        foreach ($this->playlist->rooms()->isPublic()->get() as $room) {
-            if ($room->discord_webhook_url) {
-                SendDiscordNotification::dispatch($room, $message, 'danger');
-            }
-        }
-
-        // Private rooms notifications
-        if (! $this->playlist->is_public) {
-            foreach ($this->playlist->moderators as $moderator) {
-                $moderator->notify(new TrackDeleted($this->playlist, $message));
-                Cache::forget($moderator->id.'_unread_notifications');
-            }
-        }
-
-        $this->answers()->delete();
-        $this->delete();
     }
 
     public function getUpvotesAttribute()

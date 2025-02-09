@@ -3,13 +3,14 @@
 namespace App\Jobs;
 
 use App\Models\Track;
+use App\Models\User;
 use App\Notifications\TrackDeleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-class ProcessFailingTrack implements ShouldQueue
+class ProcessDeletedTrack implements ShouldQueue
 {
     use Queueable;
 
@@ -18,7 +19,7 @@ class ProcessFailingTrack implements ShouldQueue
      */
     public function __construct(
         public Track $track,
-        public string $error
+        private ?User $user = null
     ) {}
 
     /**
@@ -26,15 +27,14 @@ class ProcessFailingTrack implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::error('Failed to play track', [
-            'track_id' => $this->track->id,
-            'round_id' => $this->track->round_id,
-            'error' => $this->error,
-        ]);
-
         $title = $this->track->answers()->where('answer_type_id', 2)->first()?->value ?? 'inconnu';
         $artist = $this->track->answers()->where('answer_type_id', 1)->first()?->value ?? 'inconnu';
-        $message = "Le titre {$title} de {$artist} a été supprimé.";
+
+        if ($this->user) {
+            $message = "Le titre {$title} de {$artist} a été supprimé par {$this->user->name}.";
+        } else {
+            $message = "Le titre {$title} de {$artist} a été supprimé automatiquement car l'aperçu n'est plus disponible sur {$this->track->provider}.";
+        }
 
         try {
             // Public rooms discord notification

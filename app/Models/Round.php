@@ -6,7 +6,6 @@ use App\Events\RoundFinished;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
-use App\Jobs\ProcessFailingTrack;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -126,17 +125,17 @@ class Round extends Model
                     ->delay(now()->addSeconds($this->room->track_duration));
             } else {
                 // Handle HTTP error responses (404, 403, 500, etc.)
-                ProcessFailingTrack::dispatch($track, "Audio URL is invalid: {$response->status()}");
+                ProcessDeletedTrack::dispatch($track);
                 $this->playNextTrack();
             }
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             // Handle connection errors (timeout, DNS failure, etc.)
-            ProcessFailingTrack::dispatch($track, "Connection error: {$e->getMessage()}");
+            ProcessDeletedTrack::dispatch($track);
             $this->playNextTrack();
         } catch (\Exception $e) {
             // Handle other unexpected errors
-            ProcessFailingTrack::dispatch($track, "Other error: {$e->getMessage()}");
+            ProcessDeletedTrack::dispatch($track);
             $this->playNextTrack();
         }
     }
