@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class MusicProvidersService
 {
-    public function search(string $term, ?string $providers = null)
+    public function search(User $user, string $term, ?string $providers = null)
     {
         try {
             if (empty($term) || empty($providers)) {
@@ -23,7 +24,7 @@ class MusicProvidersService
             $cacheKey = "music_search_{$providers}_{$term}";
 
             // Try to get results from cache first
-            return Cache::remember($cacheKey, now()->addHours(24), function () use ($term, $providers) {
+            return Cache::remember($cacheKey, now()->addHours(24), function () use ($user, $term, $providers) {
                 $providers = explode(',', $providers);
                 $merged = collect();
                 $errors = collect();
@@ -34,13 +35,13 @@ class MusicProvidersService
                     in_array('audius', $providers) ?
                         $pool->get(route('providers.audius.search.track', ['term' => $term])) : null,
                     in_array('youtube', $providers) ?
-                        $pool->get(route('providers.youtube.search.track', ['term' => $term])) : null,
+                        $user->isPublicModerator() ?
+                            $pool->get(route('providers.youtube.search.track', ['term' => $term])) :
+                            $pool->get(route('providers.youtubeapi.search.track', ['term' => $term])) : null,
                     in_array('spotify', $providers) ?
                         $pool->get(route('providers.spotify.search.track', ['term' => $term])) : null,
                     in_array('deezer', $providers) ?
                         $pool->get(route('providers.deezer.search.track', ['term' => $term])) : null,
-                    // in_array('jamendo', $providers) ?
-                    //     $pool->get(route('providers.jamendo.search.track', ['term' => $term])) : null,
                 ]));
 
                 foreach ($responses as $response) {

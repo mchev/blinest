@@ -45,7 +45,11 @@ class TrackController extends Controller
                 || $user->isPlaylistModerator($playlist)
                 || $user->isAdministrator()
         ) {
-            $searchResponse = (new MusicProviders)->search(Request::get('term'), Request::get('providers'));
+            $searchResponse = (new MusicProviders)->search(
+                $user,
+                Request::get('term'),
+                Request::get('providers')
+            );
 
             return response()->json([
                 'filters' => Request::only('term', 'providers'),

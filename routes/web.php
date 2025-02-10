@@ -21,9 +21,9 @@ use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
-use App\Services\MusicProviders\SoundcloudService;
 use App\Services\MusicProviders\SpotifyService;
 use App\Services\MusicProviders\YouTubeMusicService;
+use App\Services\MusicProviders\YoutubeWithoutApiService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -203,14 +203,13 @@ Route::get('providers/spotify/search/track', [SpotifyService::class, 'searchTrac
 Route::get('providers/audius/search/track', [AudiusService::class, 'searchTrack'])
     ->name('providers.audius.search.track');
 
-Route::get('providers/soundcloud/search/track', [SoundcloudService::class, 'searchTrack'])
-    ->name('providers.soundcloud.search.track');
+Route::get('providers/youtube/search/track', [YoutubeWithoutApiService::class, 'searchTrack'])
+    ->name('providers.youtube.search.track')
+    ->middleware('throttle:10,1');
 
-Route::get('providers/youtube/search/track', [YouTubeMusicService::class, 'searchTrack'])
-    ->name('providers.youtube.search.track');
-
-Route::get('providers/jamendo/search/track', [JamendoService::class, 'searchTrack'])
-    ->name('providers.jamendo.search.track');
+Route::get('providers/youtubeapi/search/track', [YouTubeMusicService::class, 'searchTrack'])
+    ->name('providers.youtubeapi.search.track')
+    ->middleware('throttle:10,1');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';
