@@ -6,6 +6,7 @@ use App\Events\RoundFinished;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
+use App\Jobs\ProcessDeletedTrack;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,10 +109,11 @@ class Round extends Model
         // Get audio URL without making additional queries
         $audioUrl = $track->audio;
         if (! $audioUrl) {
-            Log::error('Missing audio URL for track', [
+            Log::info('Missing audio URL for track', [
                 'track_id' => $trackId,
                 'round_id' => $this->id,
             ]);
+            ProcessDeletedTrack::dispatch($track);
             $this->playNextTrack();
 
             return;
