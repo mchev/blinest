@@ -22,6 +22,10 @@ return [
         'api_key' => env('YOUTUBE_API_KEY'),
     ],
 
+    'jamendo' => [
+        'api_key' => env('JAMENDO_API_KEY'),
+    ],
+
     'facebook' => [
         'client_id' => env('FACEBOOK_APP_ID'),
         'client_secret' => env('FACEBOOK_APP_SECRET'),

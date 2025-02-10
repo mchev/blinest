@@ -69,6 +69,7 @@ const getDefaultProviders = () => [
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
   { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
   { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
+  // { id: 7, provider: 'jamendo', name: 'Jamendo', enabled: true },
 ]
 
 // Initialize providers from localStorage or defaults, ensuring all providers exist

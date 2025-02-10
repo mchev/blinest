@@ -56,6 +56,8 @@ defineProps({
 
   <svg v-else-if="name === 'youtube'" role="img" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>YouTube</title><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
 
+  <svg v-else-if="name === 'jamendo'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0 0 6.92v13.84l12 6.94 12-6.94V6.92L12 0zm0 2 10.26 5.92v11.84L12 25.7 1.74 19.76V7.92L12 2z"/><path fill="currentColor" d="M9.22 17.88H7.54l4.03-8.09h1.68l-4.03 8.09zm6.43 0h-1.69l4.03-8.09h1.68l-4.02 8.09zm-9.63 0H4.33l2.01-4.04h1.69l-2.01 4.04zm8.44-4.04h-1.68l2.01-4.05h1.69l-2.02 4.05z"/></svg>
+
   <svg v-else-if="name === 'en'" enable-background="new 0 0 512 512" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
     <circle cx="256" cy="256" r="256" fill="#F0F0F0" />
     <g fill="#0052B4">

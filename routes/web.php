@@ -209,6 +209,9 @@ Route::get('providers/soundcloud/search/track', [SoundcloudService::class, 'sear
 Route::get('providers/youtube/search/track', [YouTubeMusicService::class, 'searchTrack'])
     ->name('providers.youtube.search.track');
 
+Route::get('providers/jamendo/search/track', [JamendoService::class, 'searchTrack'])
+    ->name('providers.jamendo.search.track');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';
 require __DIR__.'/rooms.php';

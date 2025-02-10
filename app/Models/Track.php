@@ -41,7 +41,7 @@ class Track extends Model
         return Attribute::make(
             get: function () {
                 return match ($this->provider) {
-                    'deezer' => (new DeezerService)->getLiveTrackPreview($this->provider_id),
+                    'deezer' => $this->created_at->year > 2023 ? (new DeezerService)->getLiveTrackPreview($this->provider_id) : $this->preview_url,
                     'spotify' => $this->preview_url,
                     'itunes' => $this->preview_url,
                     'audius' => (new AudiusService)->getLiveTrackPreview($this->provider_id),

@@ -39,6 +39,8 @@ class MusicProvidersService
                         $pool->get(route('providers.spotify.search.track', ['term' => $term])) : null,
                     in_array('deezer', $providers) ?
                         $pool->get(route('providers.deezer.search.track', ['term' => $term])) : null,
+                    // in_array('jamendo', $providers) ?
+                    //     $pool->get(route('providers.jamendo.search.track', ['term' => $term])) : null,
                 ]));
 
                 foreach ($responses as $response) {
