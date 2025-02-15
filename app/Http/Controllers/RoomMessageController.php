@@ -23,7 +23,13 @@ class RoomMessageController extends Controller
 
             // Bad Words Filter
             $badwords = trans('bad-words');
-            $body = str_ireplace($badwords, '*****', Request::input('body'));
+            
+            // Use regex to match whole words only
+            $badwordsregex = array_map(function ($word) {
+                return '/\b' . trim($word) . '\b/i';
+            }, $badwords);
+
+            $body = preg_replace($badwordsregex, '*****', Request::input('body'));
 
             $message = $room->messages()->create([
                 'user_id' => Auth::user()->id,
