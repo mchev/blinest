@@ -65,10 +65,10 @@ class UserController extends Controller
     {
         if (Auth::user()->id === $user->id) {
             $request->validate([
-                'name' => ['required', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved],
+                'name' => ['required', 'min:2', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved],
                 'email' => ['required', 'max:255', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
                 'password' => ['nullable', Rules\Password::defaults()],
-                'photo' => ['nullable', 'image'],
+                'photo' => ['nullable', 'image', 'max:1024'],
             ]);
 
             $user->update($request->only('name', 'email'));

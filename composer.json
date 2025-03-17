@@ -16,7 +16,7 @@
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^2.7",
         "jwilsson/spotify-web-api-php": "^6.1",
-        "laravel/framework": "^11.9",
+        "laravel/framework": "^12",
         "laravel/horizon": "^5.22",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
@@ -46,7 +46,7 @@
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^11",
         "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {
@@ -78,8 +78,9 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "compile": [
-            "@php artisan migrate:fresh --seed"
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ]
     },
     "extra": {
