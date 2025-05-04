@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class MusicProvidersService
 {
     private const CACHE_TTL = 300; // 5 minutes
+
     private const REQUEST_TIMEOUT = 5; // 5 seconds
 
     public function search(User $user, string $term, ?string $providers = null)
@@ -24,7 +25,7 @@ class MusicProvidersService
             }
 
             $providers = explode(',', $providers);
-            $cacheKey = "music_search:{$term}:" . implode(',', $providers);
+            $cacheKey = "music_search:{$term}:".implode(',', $providers);
 
             // Try to get cached results first
             if ($cached = Cache::get($cacheKey)) {
@@ -60,13 +61,13 @@ class MusicProvidersService
                         $error = $results->first();
                         Log::warning('Provider error encountered', $error);
                         $errors->push($error);
+
                         continue;
                     }
 
                     // Only merge valid results using a more efficient filter
-                    $validResults = $results->filter(fn ($item) => 
-                        is_array($item) &&
-                        !isset($item['error']) &&
+                    $validResults = $results->filter(fn ($item) => is_array($item) &&
+                        ! isset($item['error']) &&
                         isset($item['provider'], $item['provider_id'], $item['preview_url'])
                     );
 

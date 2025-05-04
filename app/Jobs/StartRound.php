@@ -51,7 +51,7 @@ class StartRound implements ShouldQueue
                 'user_id' => $this->user ? $this->user->id : null,
                 'is_playing' => true,
                 'tracks' => $this->room->is_random
-                    ? $this->room->tracks()->inRandomOrder()->take($this->room->tracks_by_round)->distinct()->pluck('id')
+                    ? $this->getRandomTracks()
                     : $this->room->tracks()->take($this->room->tracks_by_round)->distinct()->pluck('id'),
             ]);
 
@@ -79,5 +79,47 @@ class StartRound implements ShouldQueue
             // Handle any other exceptions that may occur during the round start process
             Log::error('Error starting round: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Get random tracks efficiently for large datasets
+     */
+    private function getRandomTracks()
+    {
+        $count = $this->room->tracks()->count();
+        $limit = $this->room->tracks_by_round;
+
+        // If we have fewer tracks than needed, return all tracks
+        if ($count <= $limit) {
+            return $this->room->tracks()->pluck('id');
+        }
+
+        // Get random tracks using offset
+        $tracks = collect();
+        $usedOffsets = collect();
+
+        while ($tracks->count() < $limit) {
+            // Generate a random offset
+            $offset = rand(0, $count - 1);
+
+            // Skip if we've already used this offset
+            if ($usedOffsets->contains($offset)) {
+                continue;
+            }
+
+            // Get the track at this offset
+            $track = $this->room->tracks()
+                ->select('id')
+                ->skip($offset)
+                ->take(1)
+                ->first();
+
+            if ($track) {
+                $tracks->push($track->id);
+                $usedOffsets->push($offset);
+            }
+        }
+
+        return $tracks;
     }
 }
