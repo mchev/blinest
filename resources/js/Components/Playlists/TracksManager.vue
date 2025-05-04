@@ -70,8 +70,9 @@ const getDefaultProviders = () => [
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
   { id: 5, provider: 'local', name: 'Blinest', enabled: true },
-//  { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
-//  { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
+  // Commented providers are excluded:
+  // { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
+  // { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
   // { id: 7, provider: 'jamendo', name: 'Jamendo', enabled: true },
 ]
 
@@ -79,19 +80,22 @@ const getDefaultProviders = () => [
 const providers = ref((() => {
   const defaultProviders = getDefaultProviders()
   const storedProviders = JSON.parse(localStorage.getItem('trackManagerProviders')) || defaultProviders
-  // Check if any new providers need to be added or deleted
   
-  const updatedProviders = [...storedProviders]
+  // Filter stored providers to only include those that exist in defaultProviders
+  const validStoredProviders = storedProviders.filter(storedProvider => 
+    defaultProviders.some(defaultProvider => defaultProvider.provider === storedProvider.provider)
+  )
   
-  // Add any new providers that don't exist in stored providers
+  // Add any missing default providers
+  const updatedProviders = [...validStoredProviders]
   defaultProviders.forEach(defaultProvider => {
-    if (!storedProviders.some(p => p.provider === defaultProvider.provider)) {
+    if (!validStoredProviders.some(p => p.provider === defaultProvider.provider)) {
       updatedProviders.push(defaultProvider)
     }
   })
   
-  // Update localStorage if providers were added
-  if (updatedProviders.length !== storedProviders.length) {
+  // Update localStorage if providers were modified
+  if (JSON.stringify(updatedProviders) !== JSON.stringify(storedProviders)) {
     localStorage.setItem('trackManagerProviders', JSON.stringify(updatedProviders))
   }
   
