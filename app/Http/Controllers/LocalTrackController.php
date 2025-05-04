@@ -84,7 +84,24 @@ class LocalTrackController extends Controller
      */
     public function destroy(LocalTrack $localTrack)
     {
-        //
+        try {
+            // Delete the files from storage
+            if (Storage::disk('ovh')->exists($localTrack->audio_path)) {
+                Storage::disk('ovh')->delete($localTrack->audio_path);
+            }
+            if (Storage::disk('ovh')->exists($localTrack->artwork_path)) {
+                Storage::disk('ovh')->delete($localTrack->artwork_path);
+            }
+
+            // Delete the database record
+            $localTrack->delete();
+
+            return Redirect::back()->withSuccess('La piste a été supprimée avec succès.');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la suppression de la piste: '.$e->getMessage());
+
+            return Redirect::back()->withError('Erreur lors de la suppression de la piste.');
+        }
     }
 
     /**

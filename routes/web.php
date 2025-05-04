@@ -146,6 +146,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::post('local-tracks', [LocalTrackController::class, 'store'])
         ->name('local-tracks.store');
 
+    // Route::delete('local-tracks/{localTrack}', [LocalTrackController::class, 'destroy'])
+    //     ->name('local-tracks.destroy');
+
     // Moderation
 
     Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
