@@ -42,11 +42,14 @@ class MusicProvidersService
                         $pool->get(route('providers.spotify.search.track', ['term' => $term])) : null,
                     in_array('deezer', $providers) ?
                         $pool->get(route('providers.deezer.search.track', ['term' => $term])) : null,
+                    in_array('local', $providers) ?
+                        $pool->get(route('providers.local.search.track', ['term' => $term])) : null,
                 ]));
 
                 foreach ($responses as $response) {
                     if ($response->ok()) {
                         $results = $response->collect();
+                        Log::info('Results: '.$results);
 
                         // Check if the response is an error response
                         if ($results->first() && isset($results->first()['error'])) {

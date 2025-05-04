@@ -1,26 +1,28 @@
 <?php
 
 use App\Http\Controllers\FAQController;
+use App\Http\Controllers\LocalTrackController;
 use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PlaylistController;
-use App\Http\Controllers\PlaylistModeratorController;
 // Moderation
+use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RankingController;
 // Teams
+use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RoundController;
-use App\Http\Controllers\TeamController;
 // Tracks
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamRequestController;
 use App\Http\Controllers\TrackAnswerController;
-use App\Http\Controllers\TrackController;
 // Users
+use App\Http\Controllers\TrackController;
 use App\Http\Controllers\UserBanController;
-use App\Http\Controllers\UserController;
 // Music Providers Services
+use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\AudiusService;
 use App\Services\MusicProviders\DeezerService;
+use App\Services\MusicProviders\LocalTrackService;
 use App\Services\MusicProviders\SpotifyService;
 use App\Services\MusicProviders\YouTubeMusicService;
 use App\Services\MusicProviders\YoutubeWithoutApiService;
@@ -141,6 +143,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::post('playlists/{playlist}/providers/import', [PlaylistController::class, 'importPlaylistFromProvider'])
         ->name('playlists.providers.import');
 
+    Route::post('local-tracks', [LocalTrackController::class, 'store'])
+        ->name('local-tracks.store');
+
     // Moderation
 
     Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
@@ -210,6 +215,11 @@ Route::get('providers/youtube/search/track', [YoutubeWithoutApiService::class, '
 Route::get('providers/youtubeapi/search/track', [YouTubeMusicService::class, 'searchTrack'])
     ->name('providers.youtubeapi.search.track')
     ->middleware('throttle:10,1');
+
+Route::get('providers/local/search/track', [LocalTrackService::class, 'searchTrack'])
+    ->name('providers.local.search.track');
+
+Route::get('/local-track/{track}/audio', [LocalTrackController::class, 'audio'])->name('local.track.audio');
 
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';

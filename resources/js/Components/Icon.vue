@@ -58,6 +58,10 @@ defineProps({
 
   <svg v-else-if="name === 'jamendo'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 0 0 6.92v13.84l12 6.94 12-6.94V6.92L12 0zm0 2 10.26 5.92v11.84L12 25.7 1.74 19.76V7.92L12 2z"/><path fill="currentColor" d="M9.22 17.88H7.54l4.03-8.09h1.68l-4.03 8.09zm6.43 0h-1.69l4.03-8.09h1.68l-4.02 8.09zm-9.63 0H4.33l2.01-4.04h1.69l-2.01 4.04zm8.44-4.04h-1.68l2.01-4.05h1.69l-2.02 4.05z"/></svg>
 
+  <svg v-else-if="name === 'local'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <path fill="currentColor" d="M71.5,59.3c-3.5-4-8.6-6.6-15.4-8a23,23,0,0,0,11.5-8,21.47,21.47,0,0,0,4.3-13.6c0-7.7-3-13.6-8.6-17.8S49.7,5.6,39.4,5.6H0v5.9H39.1c8.2,0,14.6,1.6,19,4.9s6.7,7.8,6.7,13.9-2.3,10.9-6.7,14.2-10.8,4.7-19,4.7H0v5.9H42.1c9,0,16.1,1.6,20.8,4.7s7.2,8.1,7.2,14.7-2.4,11.6-7.2,14.8S51.3,94,42.1,94H0v5.9H42.1c11.5,0,20.1-2.2,26-6.5S76.9,83,76.9,74.9a23.84,23.84,0,0,0-5.4-15.6Z"></path>
+  </svg>
+
   <svg v-else-if="name === 'en'" enable-background="new 0 0 512 512" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
     <circle cx="256" cy="256" r="256" fill="#F0F0F0" />
     <g fill="#0052B4">

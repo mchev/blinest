@@ -23,10 +23,10 @@ class RoomMessageController extends Controller
 
             // Bad Words Filter
             $badwords = trans('bad-words');
-            
+
             // Use regex to match whole words only
             $badwordsregex = array_map(function ($word) {
-                return '/\b' . trim($word) . '\b/i';
+                return '/\b'.trim($word).'\b/i';
             }, $badwords);
 
             $body = preg_replace($badwordsregex, '*****', Request::input('body'));

@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^2.7",
+        "james-heinrich/getid3": "^1.9",
         "jwilsson/spotify-web-api-php": "^6.1",
         "laravel/framework": "^12",
         "laravel/horizon": "^5.22",

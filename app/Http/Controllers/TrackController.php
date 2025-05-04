@@ -8,10 +8,14 @@ use App\Jobs\SendDiscordNotification;
 use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\Track;
+use App\Rules\AudioDuration;
 use App\Services\MusicProvidersService as MusicProviders;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\File;
 
 class TrackController extends Controller
 {
@@ -177,5 +181,54 @@ class TrackController extends Controller
     {
         Auth::user()->upvote($track);
         broadcast(new TrackVoted($room, $track));
+    }
+
+    public function upload(Playlist $playlist)
+    {
+        $validated = Request::validate([
+            'artist_name' => ['required', 'max:255'],
+            'track_name' => ['required', 'max:255'],
+            'audio' => ['required', 'file', 'mimes:mp3', 'max:1024', new AudioDuration(30)],
+            'artwork' => ['required', 'file', 'mimes:png,jpg,jpeg', 'max:512'],
+        ]);
+
+        try {
+            // Upload audio file
+            $audio_path = Storage::disk('ovh')->put('uploads', $validated['audio']);
+            $audio_url = config('filesystems.disks.ovh.url').'/'.$audio_path;
+
+            // Upload artwork file
+            $artwork_path = Storage::disk('ovh')->put('artworks', $validated['artwork']);
+            $artwork_url = config('filesystems.disks.ovh.url').'/'.$artwork_path;
+        } catch (\Exception $e) {
+            Log::error('Error uploading file: '.$e->getMessage());
+
+            return Redirect::back()->withError('Error uploading file');
+        }
+
+        // Create track record
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'preview_url' => $audio_path,
+            'artwork_url' => $artwork_path,
+            'provider' => 'local',
+            'provider_id' => $validated['audio']->hashName(),
+            'provider_url' => $audio_url,
+            'user_id' => auth()->id(), // Track the user who uploaded
+        ]);
+
+        // Create answer records for the track
+        $track->answers()->createMany([
+            [
+                'answer_type_id' => 1, // Artist
+                'value' => $validated['artist_name'],
+            ],
+            [
+                'answer_type_id' => 2, // Title
+                'value' => $validated['track_name'],
+            ],
+        ]);
+
+        return Redirect::back()->withSuccess('Track successfully added');
     }
 }

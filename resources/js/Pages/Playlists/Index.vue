@@ -46,13 +46,16 @@ const reset = () => {
     <Card class="my-4">
       <div class="overflow-x-auto">
         <table class="w-full whitespace-nowrap">
-          <tr class="text-left font-bold">
-            <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
-            <th class="px-6 pb-4 pt-6">{{ __('Owner') }}</th>
-            <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Moderators') }}</th>
-          </tr>
-          <tr v-for="playlist in playlists.data" :key="playlist.id">
-            <td class="border-t border-neutral-500">
+          <thead>
+            <tr class="text-left font-bold">
+              <th class="px-6 pb-4 pt-6">{{ __('Name') }}</th>
+              <th class="px-6 pb-4 pt-6">{{ __('Owner') }}</th>
+              <th class="px-6 pb-4 pt-6" colspan="2">{{ __('Moderators') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="playlist in playlists.data" :key="playlist.id">
+              <td class="border-t border-neutral-500">
               <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('playlists.edit', playlist.id)">
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 <div class="flex flex-col">
@@ -80,8 +83,9 @@ const reset = () => {
               <Link class="flex items-center px-4" :href="route('playlists.edit', playlist.id)" tabindex="-1">
                 <icon name="cheveron-right" class="block h-6 w-6" />
               </Link>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          </tbody>
           <tr v-if="playlists.length === 0">
             <td class="border-t border-neutral-500 px-6 py-4" colspan="4">{{ __('No playlists found') }}</td>
           </tr>

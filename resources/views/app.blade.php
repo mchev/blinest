@@ -11,6 +11,7 @@
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
         @endproduction
         
+        <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.all.js"></script>
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @routes()
         @inertiaHead

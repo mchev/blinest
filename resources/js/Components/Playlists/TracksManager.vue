@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch, computed, onMounted } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { useForm } from '@inertiajs/vue3'
+import { router, useForm, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -15,6 +14,7 @@ import debounce from 'lodash/debounce'
 import throttle from 'lodash/throttle'
 import Sortable from '@/Components/Sortable.vue'
 import ImportPlaylist from './ImportPlaylist.vue'
+import UploadTrack from './UploadTrack.vue'
 
 const props = defineProps({
   playlist: {
@@ -38,6 +38,8 @@ const props = defineProps({
     }),
   },
 })
+
+const isModerator = computed(() => usePage().props.auth.user.is_public_moderator)
 
 const form = useForm({
   search: props.filters.search,
@@ -67,8 +69,9 @@ const getDefaultProviders = () => [
   { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
   { id: 4, provider: 'audius', name: 'Audius', enabled: true },
-  { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
-  { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
+  { id: 5, provider: 'local', name: 'Blinest', enabled: true },
+//  { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
+//  { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
   // { id: 7, provider: 'jamendo', name: 'Jamendo', enabled: true },
 ]
 
@@ -76,9 +79,11 @@ const getDefaultProviders = () => [
 const providers = ref((() => {
   const defaultProviders = getDefaultProviders()
   const storedProviders = JSON.parse(localStorage.getItem('trackManagerProviders')) || defaultProviders
+  // Check if any new providers need to be added or deleted
   
-  // Check if any new providers need to be added
   const updatedProviders = [...storedProviders]
+  
+  // Add any new providers that don't exist in stored providers
   defaultProviders.forEach(defaultProvider => {
     if (!storedProviders.some(p => p.provider === defaultProvider.provider)) {
       updatedProviders.push(defaultProvider)
@@ -565,6 +570,8 @@ const loading = ref(false)
             </template>
           </template>
         </Dropdown>
+
+        <UploadTrack v-if="isModerator" :playlist="playlist" />
 
         <SelectInput 
           v-model="form.paginate"

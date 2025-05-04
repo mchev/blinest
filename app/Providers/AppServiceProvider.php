@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Carbon\Carbon;
+
 // use Illuminate\Support\Facades\Queue;
 // use Illuminate\Queue\Events\JobFailed;
 
@@ -52,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
         // });
 
         Carbon::setLocale(config('app.locale'));
-        
+
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
             $event->extendSocialite('deezer', \SocialiteProviders\Deezer\Provider::class);
