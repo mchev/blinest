@@ -92,7 +92,7 @@ const setHovering = (trackId, isHover) => {
 <template>
   <Card class="rounded-xl shadow-lg border border-neutral-800">
     <template #header>
-      <div class="flex w-full items-center justify-between">
+      <div class="flex w-full items-center justify-between flex-wrap gap-4">
         <h3 class="text-xl font-bold flex items-center">
           <Icon name="music" class="mr-2 h-5 w-5 text-purple-400" />
           {{ __('Playlist') }}
@@ -112,12 +112,10 @@ const setHovering = (trackId, isHover) => {
       <transition-group name="flip-list" tag="ul" class="space-y-4">
         <li v-for="track in tracks" 
             :key="track.id" 
-            class="rounded-lg bg-gradient-to-r from-black/20 to-black/40 shadow-md hover:shadow-lg transition-all duration-200 border border-black/50 overflow-hidden"
-            @mouseenter="setHovering(track.id, true)"
-            @mouseleave="setHovering(track.id, false)">
-          <div class="flex">
+            class="rounded-lg bg-gradient-to-r from-black/20 to-black/40 shadow-md hover:shadow-lg transition-all duration-200 border border-black/50 overflow-hidden">
+          <div class="flex flex-col sm:flex-row">
             <!-- Vinyl-style album artwork -->
-            <div class="relative w-28 h-28 flex-shrink-0">
+            <div class="relative w-full sm:w-28 h-28 flex-shrink-0">
               <!-- Vinyl base -->
               <div class="absolute inset-0 rounded-full bg-black/50 m-2 z-0"></div>
               <!-- Vinyl record with grooves -->
@@ -151,7 +149,7 @@ const setHovering = (trackId, isHover) => {
               <div class="flex flex-col h-full justify-between">
                 <div>
                   <ul class="space-y-2">
-                    <li v-for="answer in track.answers" :key="answer.id" class="flex items-start text-sm">
+                    <li v-for="answer in track.answers" :key="answer.id" class="flex items-start text-sm flex-wrap gap-2">
                       <div class="flex items-center gap-2">
                         <div v-if="getUserAnswerForTrackAndAnswer(track, answer)" 
                              class="relative flex items-center gap-1 rounded-md bg-gradient-to-r from-purple-600 to-purple-500 px-2 py-0.5 text-xs font-bold uppercase text-white shadow-sm" 
@@ -178,18 +176,8 @@ const setHovering = (trackId, isHover) => {
               </div>
             </div>
             
-            <div class="flex flex-col items-end justify-between p-3">
-              <!-- <a v-if="track.track_url" 
-                 class="flex items-center whitespace-nowrap text-xs font-medium px-3 py-1.5 rounded-full bg-neutral-700 hover:bg-purple-600 text-white transition-colors" 
-                 :href="track.track_url" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 :title="__('Listen on') + ' ' + track.provider">
-                <Icon :name="track.provider" class="mr-1.5 h-4 w-4" />
-                {{ __('Listen') }}
-              </a> -->
-              
-              <div class="flex items-center gap-3 mt-2" v-if="user">
+            <div class="flex flex-row sm:flex-col items-center justify-between p-3 gap-4 sm:gap-0">
+              <div class="flex items-center gap-3" v-if="user">
                 <button @click="voteTrackUp(track)" 
                         class="group flex flex-col items-center gap-1 transition-all duration-200"
                         :title="__('Upvote this track')">

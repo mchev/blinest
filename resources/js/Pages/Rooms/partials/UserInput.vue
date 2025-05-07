@@ -133,41 +133,43 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
           </svg>
         </button>
       </div>
-
-      <transition name="fade">
-        <blockquote 
-          v-if="message" 
-          class="mt-2 flex rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm"
-          :class="messageClass"
-        >
-          {{ message.body }}
-        </blockquote>
-      </transition>
     </div>
   </form>
 
-  <transition-group 
-    name="fade-slide" 
-    tag="ul" 
-    v-if="track" 
-    class="mt-4 flex flex-wrap gap-4 text-sm"
-  >
-    <li
-      v-for="answer in track.answers"
-      :key="answer.id"
-      class="flex items-center rounded-lg py-1.5 px-3 text-neutral-100 shadow-md transition-all duration-300"
-      :class="{
-        'bg-gradient-to-r from-neutral-700 to-neutral-800 border border-neutral-600': !isAnswerFound(answer.id),
-        'bg-gradient-to-r from-teal-600 to-teal-700 border border-teal-500 transform scale-105': isAnswerFound(answer.id)
-      }"
+  <div class="relative">
+    <transition-group 
+      name="fade-slide" 
+      tag="ul" 
+      v-if="track" 
+      class="flex flex-wrap gap-4 text-sm"
     >
-      <template v-if="isAnswerFound(answer.id)">
-        <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
-        <span class="font-medium">{{ getFoundAnswer(answer.id).value }}</span>
-      </template>
-      <template v-else>
-        <span class="font-medium opacity-80">{{ __(answer.name) }} ?</span>
-      </template>
-    </li>
-  </transition-group>
+      <li
+        v-for="answer in track.answers"
+        :key="answer.id"
+        class="flex items-center rounded-lg py-1.5 px-3 text-neutral-100 shadow-md transition-all duration-300"
+        :class="{
+          'bg-gradient-to-r from-neutral-700 to-neutral-800 border border-neutral-600': !isAnswerFound(answer.id),
+          'bg-gradient-to-r from-teal-600 to-teal-700 border border-teal-500 transform scale-105': isAnswerFound(answer.id)
+        }"
+      >
+        <template v-if="isAnswerFound(answer.id)">
+          <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+          <span class="font-medium">{{ getFoundAnswer(answer.id).value }}</span>
+        </template>
+        <template v-else>
+          <span class="font-medium opacity-80">{{ __(answer.name) }} ?</span>
+        </template>
+      </li>
+    </transition-group>
+
+    <transition name="fade">
+      <blockquote 
+        v-if="message" 
+        class="mt-2 absolute top-0 right-0 rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm"
+        :class="messageClass"
+      >
+        {{ message.body }}
+      </blockquote>
+    </transition>
+    </div>
 </template>
