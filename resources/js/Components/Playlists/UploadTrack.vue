@@ -135,14 +135,32 @@ async function extract30sSegment(file, start, duration = 30) {
             }
         }
 
+        // Get channel data
+        const leftChannel = newBuffer.getChannelData(0)
+        const rightChannel = newBuffer.getChannelData(1)
+        
+        // Find the maximum amplitude across both channels
+        let maxAmplitude = 0
+        for (let i = 0; i < leftChannel.length; i++) {
+            maxAmplitude = Math.max(maxAmplitude, Math.abs(leftChannel[i]), Math.abs(rightChannel[i]))
+        }
+        
+        // Calculate normalization factor (target peak at -1dB)
+        const targetPeak = 0.89 // -1dB
+        const normalizationFactor = maxAmplitude > 0 ? targetPeak / maxAmplitude : 1
+        
+        // Apply normalization
+        for (let i = 0; i < leftChannel.length; i++) {
+            leftChannel[i] *= normalizationFactor
+            rightChannel[i] *= normalizationFactor
+        }
+
         // Convert to MP3 using lamejs
         const mp3encoder = new window.lamejs.Mp3Encoder(2, sampleRate, 128)
         const mp3Data = []
         
         // Convert float32 to int16
         const sampleBlockSize = 1152 // must be multiple of 576
-        const leftChannel = newBuffer.getChannelData(0)
-        const rightChannel = newBuffer.getChannelData(1)
         
         for (let i = 0; i < leftChannel.length; i += sampleBlockSize) {
             const leftChunk = new Int16Array(sampleBlockSize)

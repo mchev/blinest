@@ -19,7 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const show = ref(true)
-const providers = ref(['Deezer', 'Blinest likes']) // Spotify is disabled
+const providers = ref(['Blinest likes']) // Spotify is disabled
 const step = ref(1)
 const pp = ref(null)
 
@@ -64,7 +64,7 @@ const importPlaylist = () => {
       <!-- Step 1 -->
       <Card class="shadow-none" v-if="step === 1">
         <form @submit.prevent="checkPlaylist" class="flex flex-col gap-4">
-          <Tip>{{ __('Only public playlists can be imported') }}<br />{{ __('Tracks that cannot be read by the site will not be imported') }}</Tip>
+          <Tip>Les imports depuis Deezer et Spotify ne sont plus disponibles.</Tip>
           <SelectInput v-model="checkForm.provider" :error="checkForm.provider.error" :label="__('Playlist source')" required>
             <option v-for="provider in providers" :value="provider">{{ provider }}</option>
           </SelectInput>
