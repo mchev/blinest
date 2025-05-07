@@ -77,8 +77,8 @@ onUnmounted(() => {
         <transition-group name="flip-list" tag="ul" class="space-y-2">
           <li v-for="(user, index) in userList" 
               :key="user.id" 
-              class="flex items-center gap-4 rounded-lg px-3 py-3 transition-all duration-200 hover:bg-neutral-800/70" 
-              :class="{ 'bg-gradient-to-r from-neutral-700/80 to-neutral-800/80 border border-neutral-700': me && me.id === user.id }">
+              class="flex items-center gap-4 rounded-lg px-3 py-3 transition-all duration-200 hover:bg-black/20" 
+              :class="{ 'bg-gradient-to-r from-black/20 to-black/40 border border-black/50': me && me.id === user.id }">
             <div class="flex items-center justify-center w-8 h-8 rounded-full" 
                  :class="{
                    'bg-yellow-500 text-neutral-900': index === 0,

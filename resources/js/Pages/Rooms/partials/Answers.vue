@@ -1,7 +1,7 @@
 <script setup>
-import { router } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import axios from 'axios'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
 import Tooltip from '@/Components/Tooltip.vue'
@@ -15,13 +15,24 @@ const user = usePage().props.auth.user
 const userAnswers = ref([])
 const round = ref(null)
 const tracks = ref([])
+const isHovering = ref({})
 
 const progressPercentage = computed(() => {
   if (!round.value) return 0
   return Math.round((round.value.current / round.value.tracks.length) * 100)
 })
 
+// Format track duration in MM:SS format
+const formatDuration = (seconds) => {
+  if (!seconds) return '0:00'
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
+}
+
 onMounted(() => {
+  if (!props.channel) return
+
   Echo.channel(props.channel)
     .listen('RoundStarted', (e) => {
       round.value = e.round
@@ -36,27 +47,35 @@ onMounted(() => {
       round.value = e.round
     })
     .listen('TrackVoted', (e) => {
-      let index = tracks.value.findIndex((x) => x.id === e.track.id)
-      tracks.value[index].downvotes = e.track.downvotes
-      tracks.value[index].upvotes = e.track.upvotes
+      const index = tracks.value.findIndex((x) => x.id === e.track.id)
+      if (index !== -1) {
+        tracks.value[index].downvotes = e.track.downvotes
+        tracks.value[index].upvotes = e.track.upvotes
+      }
     })
     .listen('NewScore', (e) => {
-      if (e.score.user_id === user.id) {
+      if (e.score.user_id === user?.id) {
         userAnswers.value.push(e.score)
       }
     })
 })
 
 onUnmounted(() => {
-  Echo.leave(props.channel)
+  if (props.channel) {
+    Echo.leave(props.channel)
+  }
 })
 
 const voteTrackDown = (track) => {
+  if (!round.value?.room?.id) return
   axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/downvote`)
+    .catch(error => console.error('Error downvoting track:', error))
 }
 
 const voteTrackUp = (track) => {
+  if (!round.value?.room?.id) return
   axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/upvote`)
+    .catch(error => console.error('Error upvoting track:', error))
 }
 
 const getUserAnswerForTrackAndAnswer = (track, answer) => {
@@ -64,6 +83,10 @@ const getUserAnswerForTrackAndAnswer = (track, answer) => {
     .filter(x => x.track_id === track.id)
     .flatMap(x => x.answers)
     .find(a => a.id === answer.id)
+}
+
+const setHovering = (trackId, isHover) => {
+  isHovering.value = { ...isHovering.value, [trackId]: isHover }
 }
 </script>
 <template>
@@ -87,12 +110,40 @@ const getUserAnswerForTrackAndAnswer = (track, answer) => {
 
     <div class="h-64 overflow-y-auto pr-2 md:h-80 2xl:h-96" style="scrollbar-width: thin; scrollbar-color: rgba(128, 90, 213, 0.5) rgba(0, 0, 0, 0.1);">
       <transition-group name="flip-list" tag="ul" class="space-y-4">
-        <li v-for="track in tracks" :key="track.id" class="rounded-lg bg-gradient-to-r from-neutral-800 to-neutral-900 shadow-md hover:shadow-lg transition-all duration-200 border border-neutral-700 overflow-hidden">
+        <li v-for="track in tracks" 
+            :key="track.id" 
+            class="rounded-lg bg-gradient-to-r from-black/20 to-black/40 shadow-md hover:shadow-lg transition-all duration-200 border border-black/50 overflow-hidden"
+            @mouseenter="setHovering(track.id, true)"
+            @mouseleave="setHovering(track.id, false)">
           <div class="flex">
-            <div class="relative">
-              <img :src="track.artwork_url" :alt="track.album_name" class="h-28 w-28 object-cover" />
-              <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 px-2 py-1 text-xs text-white truncate">
-                {{ track.album_name }}
+            <!-- Vinyl-style album artwork -->
+            <div class="relative w-28 h-28 flex-shrink-0">
+              <!-- Vinyl base -->
+              <div class="absolute inset-0 rounded-full bg-black/50 m-2 z-0"></div>
+              <!-- Vinyl record with grooves -->
+              <div class="absolute inset-0 rounded-full bg-neutral-800 m-3 z-10 
+                          flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-neutral-700 to-neutral-900 opacity-50 z-0">
+                  <!-- Vinyl grooves simulation -->
+                  <div class="absolute inset-0 bg-repeating-radial-gradient opacity-20"></div>
+                </div>
+                <!-- Center hole -->
+                <div class="absolute inset-0 flex items-center justify-center z-20">
+                  <div class="w-4 h-4 rounded-full bg-neutral-700 border-2 border-neutral-600"></div>
+                </div>
+                <!-- Album artwork with random rotation -->
+                <div class="absolute inset-0 z-10" 
+                     :style="`transform: rotate(${Math.floor(Math.random() * 20) - 10}deg)`">
+                  <img :src="track.artwork_url" 
+                       :alt="track.album_name" 
+                       class="h-full w-full object-cover rounded-full" />
+                </div>
+                <!-- Light reflection effect -->
+                <div class="absolute top-0 left-1/4 w-12 h-3 bg-white opacity-20 rounded-full transform -rotate-45 z-20"></div>
+                <div class="absolute bottom-1/4 right-1/3 w-8 h-2 bg-white opacity-10 rounded-full transform rotate-30 z-20"></div>
+              </div>
+              <div v-if="track.duration" class="absolute top-0 right-0 bg-black bg-opacity-80 px-2 py-1 text-xs text-white rounded-tr-lg z-30">
+                {{ formatDuration(track.duration) }}
               </div>
             </div>
             
@@ -116,7 +167,7 @@ const getUserAnswerForTrackAndAnswer = (track, answer) => {
                             {{ getUserAnswerForTrackAndAnswer(track, answer)?.order }}
                           </span>
                         </div>
-                        <div v-else class="rounded-md bg-neutral-700 px-2 py-0.5 text-xs font-bold uppercase text-neutral-300 shadow-sm">
+                        <div v-else class="rounded-md bg-black/30 px-2 py-0.5 text-xs font-bold uppercase text-neutral-300 shadow-sm">
                           {{ __(answer.type.name) }}
                         </div>
                         <span class="font-medium text-neutral-200">{{ answer.value }}</span>
@@ -127,38 +178,41 @@ const getUserAnswerForTrackAndAnswer = (track, answer) => {
               </div>
             </div>
             
-            <div class="flex flex-col items-end justify-between p-3 border-l border-neutral-700">
-              <a v-if="track.track_url" 
-                 class="flex items-center whitespace-nowrap text-xs text-neutral-400 hover:text-purple-400 transition-colors" 
+            <div class="flex flex-col items-end justify-between p-3">
+              <!-- <a v-if="track.track_url" 
+                 class="flex items-center whitespace-nowrap text-xs font-medium px-3 py-1.5 rounded-full bg-neutral-700 hover:bg-purple-600 text-white transition-colors" 
                  :href="track.track_url" 
                  target="_blank" 
+                 rel="noopener noreferrer"
                  :title="__('Listen on') + ' ' + track.provider">
-                {{ __('Listen on') }} 
-                <Icon :name="track.provider" class="ml-1 h-5 w-5" />
-              </a>
+                <Icon :name="track.provider" class="mr-1.5 h-4 w-4" />
+                {{ __('Listen') }}
+              </a> -->
               
-              <div class="flex items-center gap-4" v-if="user">
-                <Tooltip>
-                  <button @click="voteTrackUp(track)" 
-                          class="flex items-center gap-1 text-neutral-400 hover:text-green-400 transition-colors">
-                    <Icon name="thumb-up" class="h-5 w-5" />
-                    <span class="text-xs font-medium">{{ track.upvotes }}</span>
-                  </button>
-                  <template #tooltip>
-                    <div class="bg-neutral-800 px-2 py-1 rounded shadow-lg">{{ __('Like') }}</div>
-                  </template>
-                </Tooltip>
+              <div class="flex items-center gap-3 mt-2" v-if="user">
+                <button @click="voteTrackUp(track)" 
+                        class="group flex flex-col items-center gap-1 transition-all duration-200"
+                        :title="__('Upvote this track')">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-neutral-700 hover:bg-green-600 transition-all duration-200"
+                       :class="{ 'bg-green-600': track.user_voted_up }">
+                    <Icon name="thumb-up" class="h-5 w-5 text-white" />
+                  </div>
+                  <span class="px-2 py-0.5 rounded-md bg-neutral-800 text-xs font-medium text-white group-hover:bg-green-700 transition-colors">
+                    {{ track.upvotes }}
+                  </span>
+                </button>
                 
-                <Tooltip>
-                  <button @click="voteTrackDown(track)" 
-                          class="flex items-center gap-1 text-neutral-400 hover:text-red-400 transition-colors">
-                    <Icon name="thumb-down" class="h-5 w-5" />
-                    <span class="text-xs font-medium">{{ track.downvotes }}</span>
-                  </button>
-                  <template #tooltip>
-                    <div class="bg-neutral-800 px-2 py-1 rounded shadow-lg">{{ __('Don\'t like') }}</div>
-                  </template>
-                </Tooltip>
+                <button @click="voteTrackDown(track)" 
+                        class="group flex flex-col items-center gap-1 transition-all duration-200"
+                        :title="__('Downvote this track')">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-neutral-700 hover:bg-red-600 transition-all duration-200"
+                       :class="{ 'bg-red-600': track.user_voted_down }">
+                    <Icon name="thumb-down" class="h-5 w-5 text-white" />
+                  </div>
+                  <span class="px-2 py-0.5 rounded-md bg-neutral-800 text-xs font-medium text-white group-hover:bg-red-700 transition-colors">
+                    {{ track.downvotes }}
+                  </span>
+                </button>
               </div>
             </div>
           </div>

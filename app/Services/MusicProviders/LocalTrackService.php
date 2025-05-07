@@ -12,7 +12,6 @@ class LocalTrackService
     public function searchTrack(Request $request)
     {
         $term = $request->get('term');
-        Log::info('Searching for tracks with term: '.$term);
 
         if (empty($term)) {
             return collect([]);
