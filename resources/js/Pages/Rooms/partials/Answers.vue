@@ -115,7 +115,7 @@ const setHovering = (trackId, isHover) => {
             class="rounded-lg bg-gradient-to-r from-black/20 to-black/40 shadow-md hover:shadow-lg transition-all duration-200 border border-black/50 overflow-hidden">
           <div class="flex flex-col sm:flex-row">
             <!-- Vinyl-style album artwork -->
-            <div class="relative w-full sm:w-28 h-28 flex-shrink-0">
+            <div class="relative w-full w-28 h-28 flex-shrink-0">
               <!-- Vinyl base -->
               <div class="absolute inset-0 rounded-full bg-black/50 m-2 z-0"></div>
               <!-- Vinyl record with grooves -->
@@ -139,9 +139,6 @@ const setHovering = (trackId, isHover) => {
                 <!-- Light reflection effect -->
                 <div class="absolute top-0 left-1/4 w-12 h-3 bg-white opacity-20 rounded-full transform -rotate-45 z-20"></div>
                 <div class="absolute bottom-1/4 right-1/3 w-8 h-2 bg-white opacity-10 rounded-full transform rotate-30 z-20"></div>
-              </div>
-              <div v-if="track.duration" class="absolute top-0 right-0 bg-black bg-opacity-80 px-2 py-1 text-xs text-white rounded-tr-lg z-30">
-                {{ formatDuration(track.duration) }}
               </div>
             </div>
             

@@ -180,7 +180,7 @@ const listenRounds = () => {
             </div>
           </Card>
 
-          <Card class="mt-8">
+          <Card class="mt-8 hidden md:block">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Public Rooms') }}</span>
               <div class="flex flex-wrap gap-2">
