@@ -41,44 +41,185 @@ const update = () => {
 }
 </script>
 <template>
-  <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
-    <div class="flex w-full flex-wrap">
-      <label for="tracks_by_round-range" class="mb-2 block text-sm font-medium"
-        >{{ __('Tracks by round') }} : <span class="font-bold">{{ form.tracks_by_round }}</span></label
-      >
-      <input id="tracks_by_round-range" type="range" min="1" max="50" v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-      <label for="track_duration-range" class="mb-2 block text-sm font-medium"
-        >{{ __('Track duration') }} : <span class="font-bold">{{ form.track_duration }} {{ __('seconds') }}</span></label
-      >
-      <input id="track_duration-range" type="range" min="5" max="30" v-model="form.track_duration" :error="form.errors.track_duration" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-      <label for="pause_between_tracks-range" class="mb-2 block text-sm font-medium"
-        >{{ __('Pause between tracks') }} : <span class="font-bold">{{ form.pause_between_tracks }} {{ __('seconds') }}</span></label
-      >
-      <input id="pause_between_tracks-range" type="range" min="0" max="30" v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
-
-      <label for="pause_between_rounds-range" class="mb-2 block text-sm font-medium"
-        >{{ __('Pause between rounds') }} : <span class="font-bold">{{ form.pause_between_rounds }} {{ __('seconds') }}</span></label
-      >
-      <input id="pause_between_rounds-range" type="range" min="0" max="60" v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" step="1" class="mb-6 h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-700" />
+  <form @submit.prevent="update" id="optionsForm" class="space-y-6">
+    <!-- Track Settings Section -->
+    <div class="rounded-lg bg-neutral-800/50 p-5 shadow-md border border-neutral-700">
+      <h3 class="mb-4 text-lg font-semibold text-purple-400">{{ __('Track Settings') }}</h3>
+      
+      <div class="space-y-5">
+        <!-- Tracks by round -->
+        <div>
+          <div class="flex justify-between mb-2">
+            <label for="tracks_by_round-range" class="text-sm font-medium text-neutral-300">
+              {{ __('Tracks by round') }}
+            </label>
+            <span class="px-2 py-0.5 rounded bg-purple-900/50 text-purple-300 text-xs font-bold">
+              {{ form.tracks_by_round }}
+            </span>
+          </div>
+          <div class="relative">
+            <input 
+              id="tracks_by_round-range" 
+              type="range" 
+              min="1" 
+              max="50" 
+              v-model="form.tracks_by_round" 
+              :error="form.errors.tracks_by_round" 
+              step="1" 
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-neutral-700 accent-purple-500" 
+            />
+            <div class="absolute -bottom-4 left-0 text-xs text-neutral-500">1</div>
+            <div class="absolute -bottom-4 right-0 text-xs text-neutral-500">50</div>
+          </div>
+        </div>
+        
+        <!-- Track duration -->
+        <div class="mt-8">
+          <div class="flex justify-between mb-2">
+            <label for="track_duration-range" class="text-sm font-medium text-neutral-300">
+              {{ __('Track duration') }}
+            </label>
+            <span class="px-2 py-0.5 rounded bg-purple-900/50 text-purple-300 text-xs font-bold">
+              {{ form.track_duration }} {{ __('seconds') }}
+            </span>
+          </div>
+          <div class="relative">
+            <input 
+              id="track_duration-range" 
+              type="range" 
+              min="5" 
+              max="30" 
+              v-model="form.track_duration" 
+              :error="form.errors.track_duration" 
+              step="1" 
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-neutral-700 accent-purple-500" 
+            />
+            <div class="absolute -bottom-4 left-0 text-xs text-neutral-500">5s</div>
+            <div class="absolute -bottom-4 right-0 text-xs text-neutral-500">30s</div>
+          </div>
+        </div>
+        
+        <!-- Pause between tracks -->
+        <div class="mt-8">
+          <div class="flex justify-between mb-2">
+            <label for="pause_between_tracks-range" class="text-sm font-medium text-neutral-300">
+              {{ __('Pause between tracks') }}
+            </label>
+            <span class="px-2 py-0.5 rounded bg-purple-900/50 text-purple-300 text-xs font-bold">
+              {{ form.pause_between_tracks }} {{ __('seconds') }}
+            </span>
+          </div>
+          <div class="relative">
+            <input 
+              id="pause_between_tracks-range" 
+              type="range" 
+              min="0" 
+              max="30" 
+              v-model="form.pause_between_tracks" 
+              :error="form.errors.pause_between_tracks" 
+              step="1" 
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-neutral-700 accent-purple-500" 
+            />
+            <div class="absolute -bottom-4 left-0 text-xs text-neutral-500">0s</div>
+            <div class="absolute -bottom-4 right-0 text-xs text-neutral-500">30s</div>
+          </div>
+        </div>
+        
+        <!-- Pause between rounds -->
+        <div class="mt-8">
+          <div class="flex justify-between mb-2">
+            <label for="pause_between_rounds-range" class="text-sm font-medium text-neutral-300">
+              {{ __('Pause between rounds') }}
+            </label>
+            <span class="px-2 py-0.5 rounded bg-purple-900/50 text-purple-300 text-xs font-bold">
+              {{ form.pause_between_rounds }} {{ __('seconds') }}
+            </span>
+          </div>
+          <div class="relative">
+            <input 
+              id="pause_between_rounds-range" 
+              type="range" 
+              min="0" 
+              max="60" 
+              v-model="form.pause_between_rounds" 
+              :error="form.errors.pause_between_rounds" 
+              step="1" 
+              class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-neutral-700 accent-purple-500" 
+            />
+            <div class="absolute -bottom-4 left-0 text-xs text-neutral-500">0s</div>
+            <div class="absolute -bottom-4 right-0 text-xs text-neutral-500">60s</div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="flex w-full flex-wrap gap-4">
-      <CheckboxInput v-if="user.admin" v-model="form.is_featured" :error="form.errors.is_featured" :label="__('Featured')" />
-      <CheckboxInput v-model="form.is_chat_active" :error="form.errors.is_chat_active" :label="__('Chatbox')" />
-      <CheckboxInput v-model="form.is_random" :error="form.errors.is_random" :label="__('Random')" />
-      <CheckboxInput v-model="form.is_autostart" :error="form.errors.is_autostart" :label="__('Autostart')" />
-      <CheckboxInput v-model="form.has_password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
+    
+    <!-- Room Options Section -->
+    <div class="rounded-lg bg-neutral-800/50 p-5 shadow-md border border-neutral-700">
+      <h3 class="mb-4 text-lg font-semibold text-purple-400">{{ __('Room Options') }}</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CheckboxInput 
+          v-if="user.admin" 
+          v-model="form.is_featured" 
+          :error="form.errors.is_featured" 
+          :label="__('Featured')" 
+          class="bg-neutral-700/50 rounded-lg p-3 hover:bg-neutral-700 transition-colors duration-200"
+        />
+        <CheckboxInput 
+          v-model="form.is_chat_active" 
+          :error="form.errors.is_chat_active" 
+          :label="__('Chatbox')" 
+          class="bg-neutral-700/50 rounded-lg p-3 hover:bg-neutral-700 transition-colors duration-200"
+        />
+        <CheckboxInput 
+          v-model="form.is_random" 
+          :error="form.errors.is_random" 
+          :label="__('Random')" 
+          class="bg-neutral-700/50 rounded-lg p-3 hover:bg-neutral-700 transition-colors duration-200"
+        />
+        <CheckboxInput 
+          v-model="form.is_autostart" 
+          :error="form.errors.is_autostart" 
+          :label="__('Autostart')" 
+          class="bg-neutral-700/50 rounded-lg p-3 hover:bg-neutral-700 transition-colors duration-200"
+        />
+        <CheckboxInput 
+          v-model="form.has_password" 
+          :label="__('Password')" 
+          class="bg-neutral-700/50 rounded-lg p-3 hover:bg-neutral-700 transition-colors duration-200"
+        />
+      </div>
+      
+      <div class="mt-4" v-show="form.has_password">
+        <TextInput 
+          v-model="form.password" 
+          :error="form.errors.password" 
+          type="password" 
+          autocomplete="new-password" 
+          :label="__('Password')" 
+          class="bg-neutral-700/50 rounded-lg"
+        />
+      </div>
     </div>
-
-    <div class="flex w-full flex-wrap">
-      <TextInput v-show="form.has_password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />
-    </div>
-
-    <div class="ml-auto flex items-center gap-2">
-      <button v-if="modal" @click="$emit('close')" class="btn-secondary" type="button">{{ __('Close') }}</button>
-      <LoadingButton :loading="form.processing" class="btn-primary" form="optionsForm" type="submit">{{ __('Update') }}</LoadingButton>
+    
+    <!-- Form Actions -->
+    <div class="flex justify-end gap-3 pt-2">
+      <button 
+        v-if="modal" 
+        @click="$emit('close')" 
+        class="px-4 py-2 rounded-lg border border-neutral-600 bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition-colors duration-200" 
+        type="button"
+      >
+        {{ __('Close') }}
+      </button>
+      <LoadingButton 
+        :loading="form.processing" 
+        class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-medium transition-all duration-200" 
+        form="optionsForm" 
+        type="submit"
+      >
+        {{ __('Update') }}
+      </LoadingButton>
     </div>
   </form>
 </template>

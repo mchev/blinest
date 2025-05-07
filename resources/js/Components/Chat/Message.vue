@@ -23,6 +23,7 @@ const isModerator = computed(() => props.room.moderators.some(x => x.id === user
 const userIsPublicModerator = computed(() => publicModerators.some(x => x.id === user.id))
 const isMessageFromPublicModerator = computed(() => publicModerators.some(x => x.id === props.message.user.id))
 const shouldShowReportButton = computed(() => !isMessageFromPublicModerator.value)
+const isFromModerator = computed(() => props.room.moderators.some(x => x.id === props.message.user.id))
 
 const report = async () => {
   if (reporting.value) return
@@ -38,59 +39,98 @@ const report = async () => {
 </script>
 
 <template>
-  <div class="group hover:opacity-80 text-[13px] w-full">
-    <div class="flex items-start gap-2">
-      <img :src="message.user.photo" :alt="message.user.name" class="h-8 w-8 rounded-full" loading="lazy" />
-      <div class="flex-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
+  <div class="group relative p-2 rounded-lg transition-all duration-200 hover:bg-neutral-800/60 mb-1">
+    <div class="flex items-start gap-3">
+      <div class="relative">
+        <img 
+          :src="message.user.photo" 
+          :alt="message.user.name" 
+          class="h-10 w-10 rounded-full object-cover border-2" 
+          :class="isFromModerator ? 'border-purple-500' : 'border-neutral-700'"
+          loading="lazy" 
+        />
+        <div 
+          v-if="isFromModerator" 
+          class="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-0.5"
+          title="Room Moderator"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+      
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center gap-2 overflow-hidden">
             <button 
               v-if="isModerator || userIsPublicModerator" 
               @click="moderate = true" 
-              class="font-bold whitespace-nowrap"
+              class="font-bold text-sm hover:underline truncate"
               :class="{
-                'text-purple-500': room.moderators.some(x => x.id === message.user.id),
-                'text-neutral-400': !room.moderators.some(x => x.id === message.user.id)
+                'text-purple-400': isFromModerator,
+                'text-neutral-200': !isFromModerator
               }"
             >
               {{ message.user.name }}
             </button>
             <span 
               v-else 
-              class="font-bold whitespace-nowrap"
+              class="font-bold text-sm truncate"
               :class="{
-                'text-purple-500': room.moderators.some(x => x.id === message.user.id),
-                'text-neutral-400': !room.moderators.some(x => x.id === message.user.id)
+                'text-purple-400': isFromModerator,
+                'text-neutral-200': !isFromModerator
               }"
             >
               {{ message.user.name }}
             </span>
-            <span v-if="message.user.team_id" class="text-neutral-500 ml-1 text-xs">
-              | {{ message.user.team.name }}
+            <span 
+              v-if="message.user.team_id" 
+              class="px-1.5 py-0.5 bg-neutral-700/50 text-xs rounded-md text-neutral-300 truncate"
+            >
+              {{ message.user.team.name }}
             </span>
           </div>
 
-          <div class="flex items-center gap-2">
-            <div v-if="shouldShowReportButton" class="group-hover:flex items-center" :class="{ 'hidden': !message.reports }">
-              <div v-if="reporting" class="animate-spin">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-              </div>
-              <button v-else @click="report" class="flex items-center text-xs" :disabled="reporting">
-                <span class="mr-1 text-yellow-600">{{ message.reports }}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 text-red-500">
-                  <title>{{ __('Report this message') }}</title>
-                  <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-                </svg>
-              </button>
-            </div>
-            <time :datetime="message.timestamp" class="text-neutral-500 text-xs mr-2">{{ message.time }}</time>
-          </div>
+          <time 
+            :datetime="message.timestamp" 
+            class="text-neutral-500 text-xs whitespace-nowrap ml-2"
+          >
+            {{ message.time }}
+          </time>
         </div>
-        <p class="whitespace-pre-wrap break-words max-w-72 lg:max-w-52 xl:max-w-64">{{ message.body }}</p>
+        
+        <p class="text-neutral-100 whitespace-pre-wrap break-words text-sm leading-relaxed">
+          {{ message.body }}
+        </p>
       </div>
     </div>
+    
+    <!-- Report button -->
+    <div 
+      v-if="shouldShowReportButton" 
+      class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+    >
+      <div v-if="reporting" class="animate-spin bg-neutral-800 rounded-full p-1">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-neutral-300">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+        </svg>
+      </div>
+      <button 
+        v-else 
+        @click="report" 
+        class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 rounded-full px-2 py-1 transition-colors duration-200" 
+        :disabled="reporting"
+        :class="{ 'bg-red-900/50': message.reports }"
+      >
+        <span v-if="message.reports" class="text-yellow-500 font-medium text-xs">{{ message.reports }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 text-red-500">
+          <title>{{ __('Report this message') }}</title>
+          <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
   </div>
+  
   <Moderation v-if="moderate" :message="message" :room="room" @close="moderate = false" />
 </template>

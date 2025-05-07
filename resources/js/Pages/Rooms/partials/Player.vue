@@ -1,14 +1,12 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount, watch } from 'vue'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 const props = defineProps({
   room: {
     type: Object,
     required: true,
-    validator: (room) => {
-      return room.track_duration && room.pause_between_tracks
-    }
+    validator: (room) => room.track_duration && room.pause_between_tracks
   },
   channel: {
     type: String,
@@ -29,6 +27,7 @@ const usersWithAllAnswers = ref([])
 const countdown = ref(0)
 const countdowning = ref(false)
 const waitingForNextTrack = ref(false)
+const currentTime = ref(0)
 
 // YouTube specific state
 const youtubePlayer = ref(null)
@@ -49,11 +48,14 @@ watch(volume, (newVolume) => {
   if (youtubePlayer.value) {
     youtubePlayer.value.setVolume(newVolume * 100)
   }
+  localStorage.setItem('volume', newVolume.toString())
 })
 
 const triggerUserGesture = async () => {
   try {
     await audio.value.play()
+    audio.value.pause()
+    audio.value.currentTime = 0
   } catch (error) {
     console.error('Error during user gesture:', error)
   }
@@ -64,12 +66,16 @@ const initializeAudio = () => {
   audio.value.volume = volume.value
   
   if (!window.YT && !windowYTScriptLoaded.value) {
-    windowYTScriptLoaded.value = true
-    const tag = document.createElement('script')
-    tag.src = 'https://www.youtube.com/iframe_api'
-    const firstScriptTag = document.getElementsByTagName('script')[0]
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+    loadYouTubeAPI()
   }
+}
+
+const loadYouTubeAPI = () => {
+  windowYTScriptLoaded.value = true
+  const tag = document.createElement('script')
+  tag.src = 'https://www.youtube.com/iframe_api'
+  const firstScriptTag = document.getElementsByTagName('script')[0]
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
 }
 
 const getYoutubeVideoId = (url) => {
@@ -78,6 +84,8 @@ const getYoutubeVideoId = (url) => {
     if (url.includes('youtube.com')) {
       const urlParams = new URLSearchParams(new URL(url).search)
       return urlParams.get('v')
+    } else if (url.includes('youtu.be')) {
+      return new URL(url).pathname.substring(1)
     }
     return url // Assume direct video ID
   } catch {
@@ -115,6 +123,10 @@ const initYoutubePlayer = (videoId) => {
       onStateChange: (event) => {
         if (event.data === YT.PlayerState.ENDED) {
           handleAudioEnded()
+        } else if (event.data === YT.PlayerState.PLAYING) {
+          isPlaying.value = true
+        } else if (event.data === YT.PlayerState.PAUSED) {
+          isPlaying.value = false
         }
       },
       onError: (event) => {
@@ -139,6 +151,7 @@ const play = async () => {
   loading.value = true
   error.value = null
   isPlaying.value = true
+  currentTime.value = 0
 
   if (isYoutubeTrack.value) {
     const videoId = getYoutubeVideoId(track.value?.preview_url)
@@ -258,6 +271,7 @@ const handleAudioError = () => {
     : errorMessages[audio.value.error.code] || audio.value.error.message
     
   isPlaying.value = false
+  loading.value = false
 }
 
 const handleCanPlayThrough = async () => {
@@ -278,13 +292,14 @@ const handleCanPlayThrough = async () => {
 }
 
 const handleTimeUpdate = () => {
-  const currentTime = isYoutubeTrack.value && youtubePlayer.value
+  const time = isYoutubeTrack.value && youtubePlayer.value
     ? youtubePlayer.value.getCurrentTime()
     : audio.value.currentTime
 
-  emit('track:currentTime', currentTime)
+  currentTime.value = time
+  emit('track:currentTime', time)
   
-  const calculatedPercent = (100 / props.room.track_duration) * (currentTime + 0.25)
+  const calculatedPercent = (100 / props.room.track_duration) * (time + 0.25)
   percent.value = Math.min(100, Math.round(calculatedPercent))
 }
 
@@ -302,6 +317,7 @@ const pause = () => {
   } else {
     audio.value.pause()
   }
+  isPlaying.value = false
   emit('track:paused', track.value)
 }
 
@@ -311,6 +327,7 @@ const resume = async () => {
   } else {
     try {
       await audio.value.play()
+      isPlaying.value = true
     } catch (error) {
       console.error('Error resuming audio:', error)
     }
@@ -373,7 +390,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="youtube-player" class="hidden"></div>
-  <div id="player" class="relative flex h-4 w-full items-center rounded-t-lg bg-purple-200">
+  
+  <div id="player" class="relative mb-1 overflow-hidden rounded-lg bg-neutral-800 shadow-lg border border-neutral-700">
+    <!-- User answers markers -->
     <TransitionGroup 
       name="user-answer"
       tag="ul"
@@ -382,51 +401,85 @@ onBeforeUnmount(() => {
       <li 
         v-for="user in usersWithAllAnswers" 
         :key="user.id" 
-        class="absolute z-20 rounded-full bg-teal-600 p-2 text-xs text-white shadow-lg hover:z-30 -top-10"
+        class="absolute z-20 -top-8 rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white shadow-lg hover:z-30 transform transition-transform duration-200 hover:scale-110"
         :style="`left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);`"
       >
-        <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
-        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[8px] border-l-[8px] border-r-[8px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
+        <div class="flex items-center space-x-1">
+          <img :src="user.photo" class="h-4 w-4 rounded-full" v-if="user.photo" />
+          <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
+        </div>
+        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[6px] border-l-[6px] border-r-[6px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
       </li>
     </TransitionGroup>
 
+    <!-- Error state -->
     <template v-if="error">
-      <div class="flex h-4 w-full animate-pulse items-center justify-center rounded-t-lg text-red-500">
+      <div class="flex h-10 w-full items-center justify-center rounded-lg bg-red-900/30 text-red-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
         {{ error }}
       </div>
     </template>
 
+    <!-- Loading state -->
     <template v-else-if="loading && !countdowning">
-      <div class="flex h-4 w-full max-w-full animate-pulse items-center justify-center rounded-t-lg bg-purple-500">
-        {{ __('Loading') }}
-      </div>
-    </template>
-
-    <template v-else-if="countdowning && countdown !== -1">
-      <div class="flex max-w-full flex-grow flex-col">
-        <div class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
-          <div 
-            class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear"
-            :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
-          >
-            <span class="absolute inset-0 flex items-center justify-center text-sm text-neutral-600">
-              {{ __('Next track in') }} {{ countdown }}
-            </span>
-          </div>
+      <div class="flex h-10 w-full items-center justify-center rounded-lg bg-purple-900/30">
+        <div class="flex items-center space-x-2">
+          <div class="h-4 w-4 animate-spin rounded-full border-2 border-purple-500 border-t-transparent"></div>
+          <span class="text-sm font-medium text-purple-400">{{ __('Loading') }}</span>
         </div>
       </div>
     </template>
 
+    <!-- Countdown state -->
+    <template v-else-if="countdowning && countdown !== -1">
+      <div class="flex max-w-full flex-grow flex-col">
+        <div class="relative h-10 w-full overflow-hidden rounded-lg bg-neutral-800">
+          <div 
+            class="flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-purple-800 to-purple-600 text-white transition-all duration-1000 ease-linear"
+            :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
+          >
+          </div>
+          <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
+            {{ __('Next track in') }} {{ countdown }}s
+          </span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Playing state -->
     <template v-else>
-      <div class="w-full max-w-full">
+      <div class="relative h-10 w-full">
+        <!-- Red zone indicator (first 18%) -->
         <div 
-          class="absolute top-0 left-0 z-10 h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-red-600 to-transparent transition-all duration-500 ease-linear" 
-          :style="`width: ${percent}%; max-width: 18%`" 
+          class="absolute top-0 left-0 z-10 h-10 rounded-r-lg bg-gradient-to-r from-red-700 to-red-600/30 transition-all duration-500 ease-linear" 
+          :style="`width: ${Math.min(percent, 18)}%`" 
         />
+        
+        <!-- Progress bar -->
         <div 
-          class="shine absolute h-4 rounded-r-lg rounded-tl-lg bg-gradient-to-br from-purple-300 to-purple-400 transition-all duration-500 ease-linear" 
+          class="absolute top-0 left-0 h-10 bg-gradient-to-r from-purple-700 to-purple-500 transition-all duration-500 ease-linear" 
           :style="`width: ${percent}%`" 
-        />
+        >
+          <div class="absolute inset-0 opacity-20">
+            <div class="shine-wave"></div>
+          </div>
+        </div>
+        
+        <!-- Progress indicator -->
+        <div 
+          class="absolute top-0 h-10 w-1 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all duration-500 ease-linear" 
+          :style="`left: ${percent}%`" 
+        ></div>
+        
+        <!-- Time indicator -->
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="text-sm font-medium text-white">
+            {{ Math.floor(currentTime / 60) }}:{{ String(Math.floor(currentTime % 60)).padStart(2, '0') }} / 
+            {{ Math.floor(props.room.track_duration / 60) }}:{{ String(Math.floor(props.room.track_duration % 60)).padStart(2, '0') }}
+          </span>
+        </div>
       </div>
     </template>
   </div>
@@ -449,5 +502,29 @@ onBeforeUnmount(() => {
 
 .user-answer-leave-active {
   position: absolute;
+}
+
+.shine-wave {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
 }
 </style>

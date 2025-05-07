@@ -98,49 +98,71 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
 </script>
 
 <template>
-  <form class="flex w-full items-center justify-center" @submit.prevent="check">
-    <div class="relative flex w-full items-center">
-      <blockquote v-if="message" class="absolute top-full right-0 mt-2 flex rounded-lg py-1 px-2 text-neutral-100 opacity-80" :class="messageClass">
-        {{ message.body }}
-      </blockquote>
+  <form class="flex w-full items-center justify-center p-0 m-0" @submit.prevent="check">
+    <div class="relative flex w-full flex-col">
+      <div class="flex items-center shadow-lg rounded-lg overflow-hidden border border-neutral-600">
+        <input
+          ref="input"
+          v-model="text"
+          type="text"
+          class="h-14 w-full flex-grow border-none bg-neutral-800/80 px-4 text-xl font-medium text-white placeholder-neutral-400 focus:shadow-none focus:outline-none focus:ring-0 transition-all duration-200 backdrop-blur-sm"
+          :placeholder="__('Any idea?')"
+          autofocus
+          @paste.prevent="pastedAnswer"
+          @drop.prevent="pastedAnswer"
+          autocomplete="off"
+          maxlength="255"
+          :disabled="inputDisabled"
+        />
 
-      <input
-        ref="input"
-        v-model="text"
-        type="text"
-        class="h-14 w-full flex-grow rounded-none rounded-bl-md border-none bg-neutral-700 p-2 text-2xl uppercase focus:shadow-none focus:outline-none focus:ring-0"
-        :placeholder="__('Any idea?')"
-        autofocus
-        @paste.prevent="pastedAnswer"
-        @drop.prevent="pastedAnswer"
-        autocomplete="off"
-        maxlength="255"
-      />
+        <Volume class="flex h-14 items-center justify-center bg-neutral-800/80 p-2 border-l border-neutral-600" />
 
-      <Volume class="-ml-1 flex h-14 items-center justify-center bg-neutral-700 p-2" />
+        <button 
+          type="submit" 
+          class="h-14 px-5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-medium transition-all duration-200 flex items-center justify-center"
+          :disabled="inputDisabled || !text.trim()"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-6 w-6">
+            <title>{{ __('Send') }}</title>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+      </div>
 
-      <button type="submit" class="btn-send h-14">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="h-6 w-6">
-          <title>{{ __('Send') }}</title>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-        </svg>
-      </button>
+      <transition name="fade">
+        <blockquote 
+          v-if="message" 
+          class="mt-2 flex rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm"
+          :class="messageClass"
+        >
+          {{ message.body }}
+        </blockquote>
+      </transition>
     </div>
   </form>
-  <ul v-if="track" class="mt-2 flex flex-wrap gap-2 text-sm">
+
+  <transition-group 
+    name="fade-slide" 
+    tag="ul" 
+    v-if="track" 
+    class="mt-4 flex flex-wrap gap-4 text-sm"
+  >
     <li
       v-for="answer in track.answers"
       :key="answer.id"
-      class="flex items-center rounded py-1 px-2 text-neutral-100"
-      :class="{ 'bg-neutral-700': !isAnswerFound(answer.id), 'bg-teal-600': isAnswerFound(answer.id) }"
+      class="flex items-center rounded-lg py-1.5 px-3 text-neutral-100 shadow-md transition-all duration-300"
+      :class="{
+        'bg-gradient-to-r from-neutral-700 to-neutral-800 border border-neutral-600': !isAnswerFound(answer.id),
+        'bg-gradient-to-r from-teal-600 to-teal-700 border border-teal-500 transform scale-105': isAnswerFound(answer.id)
+      }"
     >
       <template v-if="isAnswerFound(answer.id)">
-        <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-1" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
-        {{ getFoundAnswer(answer.id).value }}
+        <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+        <span class="font-medium">{{ getFoundAnswer(answer.id).value }}</span>
       </template>
       <template v-else>
-        {{ __(answer.name) }} ?
+        <span class="font-medium opacity-80">{{ __(answer.name) }} ?</span>
       </template>
     </li>
-  </ul>
+  </transition-group>
 </template>

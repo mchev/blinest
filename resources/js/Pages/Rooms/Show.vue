@@ -108,80 +108,112 @@ const listenRounds = () => {
       <LoginForm :isFromModal="true" />
     </Modal>
 
-    <div v-if="!joined && user" class="flex h-full w-full items-center justify-center">
-      <Spinner />
-      <h2>{{ __('Loading') }}...</h2>
+    <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">
+      <Spinner class="h-8 w-8" />
+      <h2 class="text-xl font-medium text-neutral-200">{{ __('Loading') }}...</h2>
     </div>
 
     <Transition name="slide-right">
       <div v-if="joined || !user" class="h-full md:flex">
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="mb-4 flex flex-wrap gap-2 items-center justify-between">
-            <div class="flex items-center">
-              <h1 class="mr-2 text-xl font-bold">{{ room.name }}</h1>
+          <article class="mb-6 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <h1 class="text-2xl font-bold text-neutral-100">{{ room.name }}</h1>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
               <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
             </div>
           </article>
 
-          <Tip class="bg-orange-400 text-orange-800" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
-            <span class="font-bold">{{ __('This room is in manual start mode') }}</span>
-            <br />
-            {{ __('The person responsible for the room (moderators) must be present to start the game') }}
+          <Tip class="mb-6 bg-orange-400/10 border border-orange-400/20 text-orange-200" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
+            <div class="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              <div>
+                <span class="font-bold">{{ __('This room is in manual start mode') }}</span>
+                <p class="text-sm">{{ __('The person responsible for the room (moderators) must be present to start the game') }}</p>
+              </div>
+            </div>
           </Tip>
 
-          <div class="mb-4 md:mb-8" v-if="user">
+          <div class="mb-8 space-y-6" v-if="user">
             <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>
 
-          <div class="grid md:grid-cols-2 md:gap-8">
-            <Answers class="mb-4 md:mb-8" :users="users" :channel="channel" />
-            <Ranking class="mb-4 md:mb-8" :room="room" :users="users" :channel="channel" :data="data" />
+          <div class="grid gap-8 md:grid-cols-2">
+            <Answers class="mb-4 md:mb-0" :users="users" :channel="channel" />
+            <Ranking class="mb-4 md:mb-0" :room="room" :users="users" :channel="channel" :data="data" />
           </div>
 
-          <Card class="mb-8">
-            <div class="flex flex-col items-center gap-4 text-sm lg:flex-row lg:justify-between">
-              <div>
-                <div class="mx-auto flex flex-wrap items-center gap-4">
-                  <span class="uppercase text-neutral-500">{{ __('Mods') }}</span>
-                  <span v-for="moderator in room.moderators" class="flex items-center" :class="{ 'font-bold text-teal-500': users.find((x) => moderator.id === x.id) }"><img :src="moderator.photo" :alt="moderator.name" :title="moderator.name" class="mr-1 h-8 w-8 rounded-full" /> {{ moderator.name }}</span>
+          <Card class="mt-8">
+            <div class="flex flex-col items-center gap-6 text-sm lg:flex-row lg:justify-between">
+              <div class="w-full">
+                <div class="flex flex-wrap items-center gap-4">
+                  <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Moderators') }}</span>
+                  <div class="flex flex-wrap gap-3">
+                    <span v-for="moderator in room.moderators" 
+                          class="flex items-center space-x-2 rounded-full bg-neutral-700/50 px-3 py-1.5" 
+                          :class="{ 'ring-2 ring-teal-500': users.find((x) => moderator.id === x.id) }">
+                      <img :src="moderator.photo" 
+                           :alt="moderator.name" 
+                           :title="moderator.name" 
+                           class="h-6 w-6 rounded-full ring-1 ring-neutral-600" />
+                      <span class="font-medium" :class="{ 'text-teal-400': users.find((x) => moderator.id === x.id) }">
+                        {{ moderator.name }}
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
               <div class="flex items-center gap-4" v-if="user">
-                <button v-if="user.can.sendSuggestion" class="btn-secondary btn-sm bg-neutral-900" @click="sendingSuggestion = true">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-5 w-5">
+                <button v-if="user.can.sendSuggestion" 
+                        class="btn-secondary btn-sm flex items-center space-x-2 bg-neutral-700 hover:bg-neutral-600" 
+                        @click="sendingSuggestion = true">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                   </svg>
-                  {{ __('Send a suggestion') }}
+                  <span>{{ __('Send a suggestion') }}</span>
                 </button>
-                <span class="uppercase text-neutral-500">{{ room.tracks_count }}&nbsp;{{ __('audios') }}</span>
               </div>
             </div>
           </Card>
 
-          <Card>
-            <ul class="flex items-center flex-wrap">
-              <li class="badge" v-for="proom in public_rooms" :key="'room-' + proom.id">
-                <Link :href="route('rooms.show', proom.slug)" class="flex items-center gap-2">
-                  <img :src="proom.photo" :alt="proom.name" class="rounded-full h-5 w-5 shadow"/>
-                  {{ proom.name }}
+          <Card class="mt-8">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Public Rooms') }}</span>
+              <div class="flex flex-wrap gap-2">
+                <Link v-for="proom in public_rooms" 
+                      :key="'room-' + proom.id"
+                      :href="route('rooms.show', proom.slug)" 
+                      class="flex items-center space-x-2 rounded-full bg-neutral-700/50 px-3 py-1.5 hover:bg-neutral-600/50 transition-colors">
+                  <img :src="proom.photo" 
+                       :alt="proom.name" 
+                       class="h-5 w-5 rounded-full ring-1 ring-neutral-600"/>
+                  <span class="font-medium">{{ proom.name }}</span>
                 </Link>
-              </li>
-            </ul>
+              </div>
+            </div>
           </Card>
-
-
         </div>
 
-        <div v-if="user && displayChat && room.is_chat_active" class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-neutral-800 transition-all duration-300 md:h-full md:w-1/5">
+        <div v-if="user && displayChat && room.is_chat_active" 
+             class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-black/20 backdrop-blur-sm transition-all duration-300 md:h-full md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>
     </Transition>
 
-    <FinishedRoundModal v-if="round" :show="roundFinished" :round="round" :users_podium="users_podium" :teams_podium="teams_podium" @close="roundFinished = false" />
-    <SendSuggestionModal v-if="user && user.can.sendSuggestion" :show="sendingSuggestion" :room="room" @close="sendingSuggestion = false" />
+    <FinishedRoundModal v-if="round" 
+                       :show="roundFinished" 
+                       :round="round" 
+                       :users_podium="users_podium" 
+                       :teams_podium="teams_podium" 
+                       @close="roundFinished = false" />
+    <SendSuggestionModal v-if="user && user.can.sendSuggestion" 
+                        :show="sendingSuggestion" 
+                        :room="room" 
+                        @close="sendingSuggestion = false" />
   </RoomLayout>
 </template>

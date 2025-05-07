@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
@@ -13,6 +13,30 @@ const props = defineProps({
 
 const loading = ref(true)
 const scores = ref(null)
+const activeTab = ref('lifetime')
+
+const tabs = [
+  { id: 'lifetime', label: 'All-time' },
+  { id: 'teams', label: 'Teams' },
+  { id: 'week', label: 'Last 7 days' },
+]
+
+const currentScores = computed(() => {
+  if (!scores.value) return []
+  return scores.value[activeTab.value] || []
+})
+
+const userScore = computed(() => {
+  if (!scores.value?.user) return null
+  
+  if (activeTab.value === 'teams') {
+    return scores.value.user.team
+  } else if (activeTab.value === 'week') {
+    return scores.value.user.week
+  } else {
+    return scores.value.user.lifetime
+  }
+})
 
 onMounted(() => {
   axios.get(`/rooms/${props.room.id}/scores`).then((response) => {
@@ -20,118 +44,192 @@ onMounted(() => {
     scores.value = response.data
   })
 })
+
+const getMedalClass = (index) => {
+  if (index === 0) return 'from-yellow-400 to-yellow-600 text-yellow-100'
+  if (index === 1) return 'from-gray-300 to-gray-500 text-gray-100'
+  if (index === 2) return 'from-amber-600 to-amber-800 text-amber-100'
+  return ''
+}
 </script>
+
 <template>
   <Modal :show="show" maxWidth="5xl">
-    <div class="bg-neutral-800 text-sm">
-      <div class="flex items-center justify-between px-4 pt-2">
-        <h2 class="font-bold uppercase text-teal-500">{{ room.name }}</h2>
-        <button @click="$emit('close')" :title="__('Close')" class="hover:animate-[spin_.5s_ease-in-out] hover:text-white">
+    <div class="bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 rounded-lg overflow-hidden shadow-2xl border border-neutral-700">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-purple-900/50 to-purple-700/30 backdrop-blur-sm p-4 border-b border-neutral-700 flex items-center justify-between">
+        <h2 class="font-bold text-xl text-white flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          {{ room.name }} <span class="ml-2 text-sm font-normal text-purple-300">{{ __('Leaderboard') }}</span>
+        </h2>
+        <button @click="$emit('close')" :title="__('Close')" class="p-2 rounded-full hover:bg-neutral-700/50 transition-all duration-200 hover:text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
-      <div v-if="loading" class="flex w-full items-center justify-center p-12">
-        <Spinner />
+
+      <!-- Loading state -->
+      <div v-if="loading" class="flex w-full items-center justify-center p-16">
+        <Spinner class="h-12 w-12 text-purple-500" />
       </div>
-      <div v-else class="grid grid-cols-1 xl:grid-cols-3">
-        <Card class="m-4">
-          <template #header>
-            <div class="flex w-full items-center justify-between">
-              <h3 class="font-bold">{{ __('All-time') }}</h3>
-              <span v-if="scores.user.lifetime" class="font-bold text-white">{{ scores.user.lifetime.score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+
+      <!-- Content -->
+      <div v-else class="p-4">
+        <!-- Tabs -->
+        <div class="flex border-b border-neutral-700 mb-6">
+          <button 
+            v-for="tab in tabs" 
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            class="px-4 py-2 font-medium transition-all duration-200 border-b-2 -mb-px"
+            :class="activeTab === tab.id ? 'border-purple-500 text-white' : 'border-transparent hover:border-neutral-600 hover:text-white'"
+          >
+            {{ __(tab.label) }}
+          </button>
+        </div>
+
+        <!-- User's score highlight -->
+        <div v-if="userScore" class="mb-6 bg-gradient-to-r from-purple-900/30 to-purple-700/20 rounded-lg p-4 border border-purple-800/50 flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="bg-purple-700 rounded-full p-2 mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
-          </template>
+            <div>
+              <div class="text-sm text-purple-300">{{ __('Your Score') }}</div>
+              <div class="font-bold text-white">{{ userScore.total || userScore.score || 0 }} <span class="text-xs font-normal text-purple-300">{{ __('POINTS') }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 3 podium -->
+        <div v-if="currentScores.length > 0" class="mb-8">
+          <div class="flex items-end justify-center gap-4 h-64 mb-6">
+            <!-- 2nd place -->
+            <div v-if="currentScores[1]" class="flex flex-col items-center">
+              <div class="mb-2">
+                <img 
+                  :src="activeTab === 'teams' ? currentScores[1].team?.photo : currentScores[1].user?.photo" 
+                  :alt="activeTab === 'teams' ? currentScores[1].team?.name : currentScores[1].user?.name"
+                  class="h-16 w-16 rounded-full object-cover border-2 border-gray-300 shadow-lg"
+                  onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
+                />
+              </div>
+              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+                {{ activeTab === 'teams' ? currentScores[1].team?.name : currentScores[1].user?.name }}
+              </div>
+              <div class="text-gray-300 font-bold">{{ currentScores[1].total }} pts</div>
+              <div class="h-40 w-24 mt-2 bg-gradient-to-b from-gray-300 to-gray-500 rounded-t-lg flex items-center justify-center">
+                <span class="text-2xl font-bold text-white">2</span>
+              </div>
+            </div>
+            
+            <!-- 1st place -->
+            <div v-if="currentScores[0]" class="flex flex-col items-center scale-110 z-10">
+              <div class="mb-2">
+                <div class="relative">
+                  <img 
+                    :src="activeTab === 'teams' ? currentScores[0].team?.photo : currentScores[0].user?.photo" 
+                    :alt="activeTab === 'teams' ? currentScores[0].team?.name : currentScores[0].user?.name"
+                    class="h-20 w-20 rounded-full object-cover border-2 border-yellow-400 shadow-lg"
+                    onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
+                  />
+                  <div class="absolute -top-4 -right-4 bg-yellow-500 text-white h-8 w-8 rounded-full flex items-center justify-center shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+                {{ activeTab === 'teams' ? currentScores[0].team?.name : currentScores[0].user?.name }}
+              </div>
+              <div class="text-yellow-300 font-bold">{{ currentScores[0].total }} pts</div>
+              <div class="h-48 w-24 mt-2 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-t-lg flex items-center justify-center">
+                <span class="text-2xl font-bold text-white">1</span>
+              </div>
+            </div>
+            
+            <!-- 3rd place -->
+            <div v-if="currentScores[2]" class="flex flex-col items-center">
+              <div class="mb-2">
+                <img 
+                  :src="activeTab === 'teams' ? currentScores[2].team?.photo : currentScores[2].user?.photo" 
+                  :alt="activeTab === 'teams' ? currentScores[2].team?.name : currentScores[2].user?.name"
+                  class="h-16 w-16 rounded-full object-cover border-2 border-amber-600 shadow-lg"
+                  onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
+                />
+              </div>
+              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+                {{ activeTab === 'teams' ? currentScores[2].team?.name : currentScores[2].user?.name }}
+              </div>
+              <div class="text-amber-400 font-bold">{{ currentScores[2].total }} pts</div>
+              <div class="h-36 w-24 mt-2 bg-gradient-to-b from-amber-600 to-amber-800 rounded-t-lg flex items-center justify-center">
+                <span class="text-2xl font-bold text-white">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full leaderboard -->
+        <div class="overflow-hidden rounded-lg border border-neutral-700 bg-neutral-800/50 backdrop-blur-sm">
           <table class="w-full">
             <thead>
-              <tr>
-                <th class="border-b-2 p-2 text-left">#</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Name') }}</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Score') }}</th>
+              <tr class="bg-neutral-700/50">
+                <th class="p-3 text-left font-medium text-neutral-300">{{ __('Rank') }}</th>
+                <th class="p-3 text-left font-medium text-neutral-300">{{ __('Name') }}</th>
+                <th class="p-3 text-right font-medium text-neutral-300">{{ __('Score') }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(score, index) in scores.lifetime">
-                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
+              <tr 
+                v-for="(score, index) in currentScores" 
+                :key="index"
+                class="border-t border-neutral-700 hover:bg-neutral-700/30 transition-colors duration-150"
+              >
+                <td class="p-3 w-16">
+                  <div 
+                    v-if="index < 3" 
+                    class="w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center font-bold"
+                    :class="getMedalClass(index)"
+                  >
+                    {{ index + 1 }}
+                  </div>
+                  <div v-else class="text-neutral-400 font-medium">{{ index + 1 }}</div>
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center">
+                    <img 
+                      :src="activeTab === 'teams' ? score.team?.photo : score.user?.photo" 
+                      :alt="activeTab === 'teams' ? score.team?.name : score.user?.name"
+                      class="h-8 w-8 rounded-full object-cover mr-3"
+                      onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
+                    />
+                    <Link 
+                      :href="activeTab === 'teams' ? route('teams.show', { team: score.team.id }) : route('user.profile', score.user)"
+                      class="font-medium text-white hover:text-purple-300 transition-colors duration-150"
+                    >
+                      {{ activeTab === 'teams' ? score.team?.name : score.user?.name }}
+                    </Link>
+                  </div>
+                </td>
+                <td class="p-3 text-right">
+                  <span class="font-bold text-white">{{ score.total }}</span>
+                  <span class="text-xs text-neutral-400 ml-1">{{ __('PTS') }}</span>
+                </td>
+              </tr>
+              <tr v-if="currentScores.length === 0" class="border-t border-neutral-700">
+                <td colspan="3" class="p-6 text-center text-neutral-400">
+                  {{ __('No scores available yet') }}
+                </td>
               </tr>
             </tbody>
           </table>
-        </Card>
-        <Card class="m-4">
-          <template #header>
-            <div class="flex w-full items-center justify-between">
-              <h3 class="font-bold">{{ __('Teams') }}</h3>
-              <span v-if="scores.user.team" class="font-bold text-white">{{ scores.user.team.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
-            </div>
-          </template>
-          <table class="w-full">
-            <thead>
-              <tr>
-                <th class="border-b-2 p-2 text-left">#</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Name') }}</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Score') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(score, index) in scores.teams">
-                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('teams.show', score.team)">{{ score.team.name }}</Link></td>
-                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
-              </tr>
-            </tbody>
-          </table>
-        </Card>
-        <Card class="m-4">
-          <template #header>
-            <div class="flex w-full items-center justify-between">
-              <h3 class="font-bold">{{ __('Last 7 days') }}</h3>
-              <span v-if="scores.user.week.total" class="font-bold text-white">{{ scores.user.week.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
-            </div>
-          </template>
-          <table class="w-full">
-            <thead>
-              <tr>
-                <th class="border-b-2 p-2 text-left">#</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Name') }}</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Score') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(score, index) in scores.week">
-                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
-              </tr>
-            </tbody>
-          </table>
-        </Card>
-<!--         <Card class="m-4">
-          <template #header>
-            <div class="flex w-full items-center justify-between">
-              <h3 class="font-bold">{{ __('Last 30 days') }}</h3>
-              <span v-if="scores.user.month.total" class="font-bold text-white">{{ scores.user.month.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
-            </div>
-          </template>
-          <table class="w-full">
-            <thead>
-              <tr>
-                <th class="border-b-2 p-2 text-left">#</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Name') }}</th>
-                <th class="border-b-2 p-2 text-left">{{ __('Score') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(score, index) in scores.month">
-                <td class="border-b p-2 border-neutral-500">{{ index + 1 }}</td>
-                <td class="truncate border-b p-2 border-neutral-500"><Link :href="route('user.profile', score.user)">{{ score.user.name }}</Link></td>
-                <td class="border-b p-2 border-neutral-500">{{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup></td>
-              </tr>
-            </tbody>
-          </table>
-        </Card> -->
+        </div>
       </div>
     </div>
   </Modal>
