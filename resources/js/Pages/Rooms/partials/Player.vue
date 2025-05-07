@@ -137,7 +137,22 @@ const initYoutubePlayer = (videoId) => {
           101: 'Video playback not allowed',
           150: 'Video playback not allowed'
         }
-        error.value = `YouTube Error: ${errorMessages[event.data] || 'Unknown error'}`
+        const errorCode = event.data
+        const videoUrl = track.value?.preview_url
+        const trackProvider = track.value?.provider
+
+        error.value = `YouTube Error (${errorCode}): ${errorMessages[errorCode] || 'Unknown error'}
+          Details:
+          - Video ID: ${videoId}
+          - Video URL: ${videoUrl}
+          - Provider: ${trackProvider}
+          - Browser: ${navigator.userAgent}
+          ${errorCode === 5 ? `
+          Possible causes:
+          - Browser doesn't support HTML5 video
+          - YouTube player failed to initialize
+          - Network connectivity issues
+          ` : ''}`
         loading.value = false
         isPlaying.value = false
       }
@@ -266,9 +281,26 @@ const handleAudioError = () => {
     4: 'Audio not supported'
   }
 
-  error.value = audio.value.error.code === 13
-    ? `Media playback error. Please check your audio output device. (${audio.value.error.message})`
-    : errorMessages[audio.value.error.code] || audio.value.error.message
+  const errorCode = audio.value.error.code
+  const errorMessage = audio.value.error.message
+  const trackUrl = track.value?.audio
+  const trackProvider = track.value?.provider
+
+  // If we get an invalid audio URL error (code 4), try to reload once
+  if (errorCode === 4 && !audio.value.dataset.retried) {
+    audio.value.dataset.retried = 'true'
+    audio.value.load()
+    return
+  }
+
+  error.value = `Audio Error (${errorCode}): ${errorMessages[errorCode] || errorMessage}
+    ${errorCode === 4 ? `
+    Possible causes:
+    - Unsupported audio format
+    - Invalid audio URL: ${trackUrl}
+    - Provider: ${trackProvider}
+    - Browser: ${navigator.userAgent}
+    ` : ''}`
     
   isPlaying.value = false
   loading.value = false
@@ -416,11 +448,16 @@ onBeforeUnmount(() => {
     <div class="overflow-hidden rounded-lg">
       <!-- Error state -->
       <template v-if="error">
-        <div class="flex h-10 w-full items-center justify-center rounded-lg bg-red-900/30 text-red-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-          </svg>
-          {{ error }}
+        <div class="flex flex-col h-auto w-full p-3 rounded-lg bg-red-900/30 text-red-400">
+          <div class="flex items-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <span class="font-medium">{{ error.split('\n')[0] }}</span>
+          </div>
+          <div class="text-sm whitespace-pre-line pl-7">
+            {{ error.split('\n').slice(1).join('\n') }}
+          </div>
         </div>
       </template>
 
