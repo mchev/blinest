@@ -21,7 +21,11 @@ const user = auth.user
 const inputDisabled = ref(true)
 
 const focus = () => {
-  input.value?.focus()
+  if (input.value) {
+    input.value.focus()
+    input.value.click()
+    input.value.select()
+  }
 }
 
 const showMessage = (data) => {
@@ -69,6 +73,7 @@ onMounted(() => {
       answers.value = []
       inputDisabled.value = false
       text.value = ''
+      setTimeout(focus, 0)
     })
     .listen('TrackEnded', () => {
       inputDisabled.value = true
@@ -107,7 +112,7 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
           type="text"
           class="h-14 w-full flex-grow border-none bg-neutral-800/80 px-4 text-xl font-medium text-white placeholder-neutral-400 focus:shadow-none focus:outline-none focus:ring-0 transition-all duration-200 backdrop-blur-sm"
           :placeholder="__('Any idea?')"
-          autofocus
+          tabindex="0"
           @paste.prevent="pastedAnswer"
           @drop.prevent="pastedAnswer"
           autocomplete="off"
