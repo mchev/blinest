@@ -33,6 +33,33 @@ class Room extends Model
 
     protected $hidden = ['discord_webhook_url'];
 
+    protected $casts = [
+        'is_playing' => 'boolean',
+        'is_public' => 'boolean',
+        'is_autostart' => 'boolean',
+        'is_random' => 'boolean',
+        'is_featured' => 'boolean',
+    ];
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'user_id',
+        'category_id',
+        'password',
+        'is_public',
+        'is_autostart',
+        'is_random',
+        'is_featured',
+        'is_playing',
+        'tracks_by_round',
+        'track_duration',
+        'pause_between_rounds',
+        'discord_webhook_url',
+        'user_count',
+    ];
+
     public function getRouteKeyName()
     {
         return 'slug';
@@ -74,41 +101,23 @@ class Room extends Model
     {
         return Attribute::make(
             get: function () {
-                $cacheKey = 'room_subscription_count_'.$this->id;
-                
-                // Try to get from cache first to reduce API calls
-                if (Cache::has($cacheKey)) {
-                    return Cache::get($cacheKey);
-                }
-                
-                try {
-                    $broadcastManager = app(BroadcastManager::class);
-                    
-                    // Add timeout to prevent long-running requests
-                    $channelInfo = $broadcastManager
-                        ->getPusher()
-                        ->get('/channels/private-chat-room.'.$this->id, [
-                            'info' => 'subscription_count',
-                        ], 3); // Pass timeout as third parameter directly, not as an array
+                return Cache::remember('room_subscriptions_'.$this->id, now()->addSeconds(30), function () {
+                    try {
+                        $broadcastManager = app(BroadcastManager::class);
 
-                    $count = $channelInfo->subscription_count ?? 0;
-                    
-                    // Cache the result for 30 seconds
-                    Cache::put($cacheKey, $count, now()->addSeconds(30));
-                    
-                    return $count;
-                } catch (\Exception $e) {
-                    // Log more detailed error information
-                    Log::error('Error fetching subscription count for room '.$this->id, [
-                        'error' => $e->getMessage(),
-                        'code' => $e->getCode(),
-                    ]);
+                        $channelInfo = $broadcastManager
+                            ->getPusher()
+                            ->get('/channels/'.'private-chat-room.'.$this->id, [
+                                'info' => 'subscription_count',
+                            ]);
 
-                    // Return last cached value if available, otherwise 0
-                    return Cache::remember($cacheKey, now()->addSeconds(30), function () {
+                        return $channelInfo->subscription_count ?? 0;
+                    } catch (\Exception $e) {
+                        Log::error('Error fetching subscription count for room '.$this->id.': '.$e->getMessage());
+
                         return 0;
-                    });
-                }
+                    }
+                });
             }
         );
     }
