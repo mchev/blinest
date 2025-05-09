@@ -107,69 +107,69 @@ const getMedalClass = (index) => {
         </div>
 
         <!-- Top 3 podium -->
-        <div v-if="currentScores.length > 0" class="mb-8">
-          <div class="flex items-end justify-center gap-4 h-64 mb-6">
+        <div v-if="currentScores.length > 0" class="mb-4">
+          <div class="flex items-end justify-center gap-3 h-36 mb-3">
             <!-- 2nd place -->
             <div v-if="currentScores[1]" class="flex flex-col items-center">
-              <div class="mb-2">
+              <div class="mb-1">
                 <img 
                   :src="activeTab === 'teams' ? currentScores[1].team?.photo : currentScores[1].user?.photo" 
                   :alt="activeTab === 'teams' ? currentScores[1].team?.name : currentScores[1].user?.name"
-                  class="h-16 w-16 rounded-full object-cover border-2 border-gray-300 shadow-lg"
+                  class="h-12 w-12 rounded-full object-cover border-2 border-gray-300 shadow-lg"
                   onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
                 />
               </div>
-              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+              <div class="text-xs font-medium text-center text-white max-w-24 truncate">
                 {{ activeTab === 'teams' ? currentScores[1].team?.name : currentScores[1].user?.name }}
               </div>
-              <div class="text-gray-300 font-bold">{{ currentScores[1].total }} pts</div>
-              <div class="h-40 w-24 mt-2 bg-gradient-to-b from-gray-300 to-gray-500 rounded-t-lg flex items-center justify-center">
-                <span class="text-2xl font-bold text-white">2</span>
+              <div class="text-gray-300 text-sm font-bold">{{ currentScores[1].total }} pts</div>
+              <div class="h-24 w-20 mt-1 bg-gradient-to-b from-gray-300 to-gray-500 rounded-t-lg flex items-center justify-center">
+                <span class="text-xl font-bold text-white">2</span>
               </div>
             </div>
             
             <!-- 1st place -->
             <div v-if="currentScores[0]" class="flex flex-col items-center scale-110 z-10">
-              <div class="mb-2">
+              <div class="mb-1">
                 <div class="relative">
                   <img 
                     :src="activeTab === 'teams' ? currentScores[0].team?.photo : currentScores[0].user?.photo" 
                     :alt="activeTab === 'teams' ? currentScores[0].team?.name : currentScores[0].user?.name"
-                    class="h-20 w-20 rounded-full object-cover border-2 border-yellow-400 shadow-lg"
+                    class="h-14 w-14 rounded-full object-cover border-2 border-yellow-400 shadow-lg"
                     onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
                   />
-                  <div class="absolute -top-4 -right-4 bg-yellow-500 text-white h-8 w-8 rounded-full flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div class="absolute -top-2 -right-2 bg-yellow-500 text-white h-5 w-5 rounded-full flex items-center justify-center shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+              <div class="text-xs font-medium text-center text-white max-w-24 truncate">
                 {{ activeTab === 'teams' ? currentScores[0].team?.name : currentScores[0].user?.name }}
               </div>
-              <div class="text-yellow-300 font-bold">{{ currentScores[0].total }} pts</div>
-              <div class="h-48 w-24 mt-2 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-t-lg flex items-center justify-center">
-                <span class="text-2xl font-bold text-white">1</span>
+              <div class="text-yellow-300 text-sm font-bold">{{ currentScores[0].total }} pts</div>
+              <div class="h-32 w-20 mt-1 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-t-lg flex items-center justify-center">
+                <span class="text-xl font-bold text-white">1</span>
               </div>
             </div>
             
             <!-- 3rd place -->
             <div v-if="currentScores[2]" class="flex flex-col items-center">
-              <div class="mb-2">
+              <div class="mb-1">
                 <img 
                   :src="activeTab === 'teams' ? currentScores[2].team?.photo : currentScores[2].user?.photo" 
                   :alt="activeTab === 'teams' ? currentScores[2].team?.name : currentScores[2].user?.name"
-                  class="h-16 w-16 rounded-full object-cover border-2 border-amber-600 shadow-lg"
+                  class="h-12 w-12 rounded-full object-cover border-2 border-amber-600 shadow-lg"
                   onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
                 />
               </div>
-              <div class="text-sm font-medium text-center text-white max-w-24 truncate">
+              <div class="text-xs font-medium text-center text-white max-w-24 truncate">
                 {{ activeTab === 'teams' ? currentScores[2].team?.name : currentScores[2].user?.name }}
               </div>
-              <div class="text-amber-400 font-bold">{{ currentScores[2].total }} pts</div>
-              <div class="h-36 w-24 mt-2 bg-gradient-to-b from-amber-600 to-amber-800 rounded-t-lg flex items-center justify-center">
-                <span class="text-2xl font-bold text-white">3</span>
+              <div class="text-amber-400 text-sm font-bold">{{ currentScores[2].total }} pts</div>
+              <div class="h-20 w-20 mt-1 bg-gradient-to-b from-amber-600 to-amber-800 rounded-t-lg flex items-center justify-center">
+                <span class="text-xl font-bold text-white">3</span>
               </div>
             </div>
           </div>

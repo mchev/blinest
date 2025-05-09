@@ -14,9 +14,9 @@ const podiumColors = {
 };
 
 const podiumHeights = {
-  0: 'h-48',  // 1st place
-  1: 'h-40',  // 2nd place
-  2: 'h-36',  // 3rd place
+  0: 'h-32',  // 1st place
+  1: 'h-24',  // 2nd place
+  2: 'h-20',  // 3rd place
   3: 'h-28',  // 4th place
   4: 'h-24',  // 5th place
 };
@@ -33,24 +33,24 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
     </div>
     
     <!-- Podium stands -->
-    <div class="flex items-end justify-center gap-2 md:gap-4 h-64 relative z-10">
+    <div class="flex items-end justify-center gap-2 md:gap-4 h-48 relative z-10">
       <!-- 3rd place -->
       <div v-if="list[2]" class="podium-column">
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-14 w-14 rounded-full object-cover border-2 border-amber-600 shadow-lg" 
+              class="h-12 w-12 rounded-full object-cover border-2 border-amber-600 shadow-lg" 
               :src="list[2].user ? list[2].user.photo : (list[2].team ? list[2].team.photo : '')" 
               :alt="list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : 'Third place')"
             />
             <div class="medal bronze">3</div>
           </div>
-          <div class="mt-2 text-xs font-medium text-center text-white/80 max-w-20 truncate">
+          <div class="mt-1 text-xs font-medium text-center text-white/80 max-w-20 truncate">
             {{ list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : '') }}
           </div>
           <div class="text-amber-400 font-bold text-sm">{{ list[2].score || list[2].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-amber-600 to-amber-800">
-            <span class="text-xl font-bold">3</span>
+            <span class="text-lg font-bold">3</span>
           </div>
         </div>
       </div>
@@ -60,18 +60,18 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-16 w-16 rounded-full object-cover border-2 border-yellow-400 shadow-lg" 
+              class="h-14 w-14 rounded-full object-cover border-2 border-yellow-400 shadow-lg" 
               :src="list[0].user ? list[0].user.photo : (list[0].team ? list[0].team.photo : '')" 
               :alt="list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : 'First place')"
             />
             <div class="medal gold">1</div>
           </div>
-          <div class="mt-2 text-sm font-bold text-center text-white max-w-24 truncate">
+          <div class="mt-1 text-xs font-bold text-center text-white max-w-24 truncate">
             {{ list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : '') }}
           </div>
-          <div class="text-yellow-400 font-bold">{{ list[0].score || list[0].total || 0 }} pts</div>
+          <div class="text-yellow-400 font-bold text-sm">{{ list[0].score || list[0].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-yellow-400 to-yellow-600">
-            <span class="text-2xl font-bold">1</span>
+            <span class="text-xl font-bold">1</span>
           </div>
         </div>
       </div>
@@ -81,18 +81,18 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-14 w-14 rounded-full object-cover border-2 border-gray-300 shadow-lg" 
+              class="h-12 w-12 rounded-full object-cover border-2 border-gray-300 shadow-lg" 
               :src="list[1].user ? list[1].user.photo : (list[1].team ? list[1].team.photo : '')" 
               :alt="list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : 'Second place')"
             />
             <div class="medal silver">2</div>
           </div>
-          <div class="mt-2 text-xs font-medium text-center text-white/80 max-w-20 truncate">
+          <div class="mt-1 text-xs font-medium text-center text-white/80 max-w-20 truncate">
             {{ list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : '') }}
           </div>
           <div class="text-gray-300 font-bold text-sm">{{ list[1].score || list[1].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-gray-300 to-gray-400">
-            <span class="text-xl font-bold">2</span>
+            <span class="text-lg font-bold">2</span>
           </div>
         </div>
       </div>
@@ -145,12 +145,12 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 
 .podium-stand {
   height: 0;
-  width: 60px;
+  width: 50px;
   border-radius: 6px 6px 0 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 8px;
+  padding-top: 6px;
   color: white;
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
   animation: grow-up 1s ease-out forwards;
@@ -159,7 +159,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 
 .avatar-container {
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   animation: bounce-in 0.5s ease-out;
 }
 
@@ -167,14 +167,14 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 11px;
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }

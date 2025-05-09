@@ -137,7 +137,7 @@ const listenRounds = () => {
             </div>
           </Tip>
 
-          <div class="mb-8 space-y-6" v-if="user">
+          <div class="mb-8 space-y-2" v-if="user">
             <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>

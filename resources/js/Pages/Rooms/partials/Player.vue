@@ -448,7 +448,7 @@ onBeforeUnmount(() => {
     <div class="overflow-hidden rounded-lg">
       <!-- Error state -->
       <template v-if="error">
-        <div class="flex flex-col h-auto w-full p-3 rounded-lg bg-red-900/30 text-red-400">
+        <div class="flex flex-col h-auto w-full p-3 rounded-lg bg-red-900/20 text-red-300">
           <div class="flex items-center mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -463,10 +463,10 @@ onBeforeUnmount(() => {
 
       <!-- Loading state -->
       <template v-else-if="loading && !countdowning">
-        <div class="flex h-10 w-full items-center justify-center rounded-lg bg-purple-900/30">
+        <div class="flex h-6 w-full items-center justify-center rounded-lg bg-purple-900/20">
           <div class="flex items-center space-x-2">
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-purple-500 border-t-transparent"></div>
-            <span class="text-sm font-medium text-purple-400">{{ __('Loading') }}</span>
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-purple-400 border-t-transparent"></div>
+            <span class="text-sm font-medium text-purple-300">{{ __('Loading') }}</span>
           </div>
         </div>
       </template>
@@ -474,9 +474,9 @@ onBeforeUnmount(() => {
       <!-- Countdown state -->
       <template v-else-if="countdowning && countdown !== -1">
         <div class="flex max-w-full flex-grow flex-col">
-          <div class="relative h-10 w-full overflow-hidden rounded-lg bg-neutral-800">
+          <div class="relative h-6 w-full overflow-hidden rounded-lg bg-neutral-800">
             <div 
-              class="flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-purple-800 to-purple-600 text-white transition-all duration-1000 ease-linear"
+              class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-r from-purple-700/80 to-purple-600/80 text-white transition-all duration-1000 ease-linear"
               :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
             >
             </div>
@@ -489,35 +489,21 @@ onBeforeUnmount(() => {
 
       <!-- Playing state -->
       <template v-else>
-        <div class="relative h-10 w-full">
+        <div class="relative h-6 w-full">
           <!-- Red zone indicator (first 18%) -->
           <div 
-            class="absolute top-0 left-0 z-10 h-10 rounded-r-lg bg-gradient-to-r from-red-700 to-red-600/30 transition-all duration-500 ease-linear" 
+            class="absolute top-0 left-0 z-10 h-6 rounded-r-lg bg-gradient-to-r from-red-600/80 to-red-500/30 transition-all duration-500 ease-linear" 
             :style="`width: ${Math.min(percent, 18)}%`" 
           />
           
           <!-- Progress bar -->
           <div 
-            class="absolute top-0 left-0 h-10 bg-gradient-to-r from-purple-700 to-purple-500 transition-all duration-500 ease-linear" 
+            class="absolute top-0 left-0 h-6 bg-gradient-to-r from-purple-600/90 to-purple-500/90 transition-all duration-500 ease-linear" 
             :style="`width: ${percent}%`" 
           >
-            <div class="absolute inset-0 opacity-20">
+            <div class="absolute inset-0 opacity-10">
               <div class="shine-wave"></div>
             </div>
-          </div>
-          
-          <!-- Progress indicator -->
-          <div 
-            class="absolute top-0 h-10 w-1 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all duration-500 ease-linear" 
-            :style="`left: ${percent}%`" 
-          ></div>
-          
-          <!-- Time indicator -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <span class="text-sm font-medium text-white">
-              {{ Math.floor(currentTime / 60) }}:{{ String(Math.floor(currentTime % 60)).padStart(2, '0') }} / 
-              {{ Math.floor(props.room.track_duration / 60) }}:{{ String(Math.floor(props.room.track_duration % 60)).padStart(2, '0') }}
-            </span>
           </div>
         </div>
       </template>
@@ -553,7 +539,7 @@ onBeforeUnmount(() => {
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   animation: shine 2s infinite;

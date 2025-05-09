@@ -147,36 +147,87 @@ const focusInput = () => {
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
     <div class="flex w-full p-2 relative">
-      <form @submit.prevent="sendMessage" class="flex w-full text-sm relative">
-        <TextInput 
-          ref="inputRef"
-          v-model="body" 
-          autocomplete="off" 
-          :inputClass="['rounded-r-none', 'border-0', 'focus:ring-0', 'focus:ring-offset-0', 'focus:border-transparent', 'focus:outline-none']" 
-          class="flex-grow" 
-          @click="showEmojiPicker = false"
-          @input="handleInput"
-        />
-        <ul v-if="showMentions" class="absolute bottom-full left-0 w-full bg-neutral-700 rounded-t-md shadow-lg max-h-40 overflow-y-auto">
-          <li 
-            v-for="user in filteredUsers" 
-            :key="user.id" 
-            @click="selectUser(user.name)"
-            class="p-2 hover:bg-neutral-600 cursor-pointer"
+      <form 
+        @submit.prevent="sendMessage" 
+        class="flex w-full text-sm relative"
+        role="form"
+        aria-label="Message form"
+      >
+        <div class="relative flex-grow flex items-center bg-neutral-800/80 hover:bg-neutral-800 rounded-l-lg transition-colors duration-200 focus-within:bg-neutral-800 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:ring-offset-2 focus-within:ring-offset-neutral-900">
+          <TextInput 
+            ref="inputRef"
+            v-model="body" 
+            autocomplete="off" 
+            :inputClass="[
+              'rounded-l-lg',
+              'border-0', 
+              'focus:ring-0',
+              'focus:ring-offset-0',
+              'focus:border-transparent', 
+              'focus:outline-none',
+              'bg-transparent',
+              'text-base',
+              'py-3',
+              'pl-4',
+              'pr-12'
+            ]" 
+            class="flex-grow" 
+            @click="showEmojiPicker = false"
+            @input="handleInput"
+            :placeholder="__('Type your message...')"
+            aria-label="Message input"
+            aria-describedby="message-char-count"
+            maxlength="500"
+          />
+          <button 
+            type="button" 
+            class="absolute right-2 p-1.5 text-neutral-400 hover:text-neutral-200 transition-colors duration-200 focus:outline-none focus:text-neutral-200" 
+            @click="showEmojiPicker = !showEmojiPicker"
+            aria-label="Open emoji picker"
+            aria-expanded="showEmojiPicker"
+            aria-controls="emoji-picker"
           >
-            {{ user.name }}
-          </li>
-        </ul>
-        <button type="button" class="p-2 bg-indigo-500" @click="showEmojiPicker = !showEmojiPicker">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
-          </svg>
-        </button>
-        <button type="submit" class="rounded-r bg-indigo-600 p-2 text-neutral-100">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+            </svg>
+          </button>
+        </div>
+        <div id="message-char-count" class="sr-only" aria-live="polite">
+          {{ body.length }} characters remaining out of 500
+        </div>
+        <button 
+          type="submit" 
+          class="flex items-center justify-center min-w-[3rem] bg-indigo-600 hover:bg-indigo-700 rounded-r-lg text-neutral-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600"
+          :disabled="!body.trim()"
+          aria-label="Send message"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg>
         </button>
       </form>
-      <EmojiPicker v-if="showEmojiPicker" :native="true" @select="onSelectEmoji" class="absolute bottom-full right-0" />
+      <EmojiPicker 
+        v-if="showEmojiPicker" 
+        :native="true" 
+        @select="onSelectEmoji" 
+        class="absolute bottom-full right-0 z-50 shadow-xl rounded-lg border border-neutral-700 bg-neutral-800" 
+        id="emoji-picker"
+        role="dialog"
+        aria-label="Emoji picker"
+        :group-names="{
+          smileys_people: 'Smileys & Personnes',
+          animals_nature: 'Animaux & Nature',
+          food_drink: 'Nourriture & Boissons',
+          activities: 'Activités',
+          travel_places: 'Voyages & Lieux',
+          objects: 'Objets',
+          symbols: 'Symboles',
+          flags: 'Drapeaux',
+          recent: 'Récents'
+        }"
+        :static-texts="{
+          placeholder: 'Rechercher un emoji',
+          skinTone: 'Teint de peau'
+        }"
+      />
     </div>
   </div>
   <AlertModeratorsModal :room="room" :show="alertingModerators" @reported="reported = true" @close="alertingModerators = false" />
