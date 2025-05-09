@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
+    public function tracks(): HasMany
+    {
+        return $this->hasMany(Track::class);
+    }
+
     // Likes
     public function likes()
     {

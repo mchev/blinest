@@ -18,12 +18,48 @@ class ModeratorController extends Controller
                     $query->where('name', 'like', "%{$request->search}%")
                         ->orWhere('email', 'like', "%{$request->search}%");
                 }
+                $query->withCount('moderatedRooms')
+                    ->with([
+                        'scores' => function ($query) {
+                            $query->latest()->limit(1);
+                        },
+                        'tracks' => function ($query) {
+                            $query->whereHas('playlist', function ($q) {
+                                $q->where('is_public', true);
+                            })->latest()->limit(1);
+                        },
+                    ]);
             }])
             ->orderBy('name')
             ->get();
 
         return Inertia::render('Moderation/Moderators', [
-            'roomsWithModerators' => $roomsWithModerators,
+            'roomsWithModerators' => $roomsWithModerators->map(function ($room) {
+                return [
+                    'id' => $room->id,
+                    'name' => $room->name,
+                    'moderators' => $room->moderators->map(function ($moderator) {
+                        $lastActivity = max(
+                            $moderator->updated_at?->timestamp ?? 0,
+                            $moderator->scores->first()?->created_at?->timestamp ?? 0,
+                            $moderator->tracks->first()?->created_at?->timestamp ?? 0
+                        );
+                        $isInactive = $lastActivity < now()->subMonths(6)->timestamp;
+
+                        return [
+                            'id' => $moderator->id,
+                            'name' => $moderator->name,
+                            'email' => $moderator->email,
+                            'photo' => $moderator->photo,
+                            'last_connection' => $moderator->updated_at ? $moderator->updated_at->diffForHumans() : 'Jamais',
+                            'last_game_activity' => $moderator->scores->first()?->created_at ? $moderator->scores->first()->created_at->diffForHumans() : 'Jamais',
+                            'last_track_added' => $moderator->tracks->first()?->created_at ? $moderator->tracks->first()->created_at->diffForHumans() : 'Jamais',
+                            'moderated_rooms_count' => $moderator->moderated_rooms_count,
+                            'is_inactive' => $isInactive,
+                        ];
+                    }),
+                ];
+            }),
             'filters' => $request->only(['search']),
         ]);
     }
