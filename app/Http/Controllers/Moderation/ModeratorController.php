@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
+use App\Models\Room;
+use App\Models\TotalScore;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,86 +14,84 @@ class ModeratorController extends Controller
 {
     public function index(Request $request)
     {
-        $roomsWithModerators = \App\Models\Room::isPublic()
-            ->select('id', 'name')
+        $roomsWithModerators = Room::isPublic()
+            ->select('id', 'name', 'created_at')
+            ->withCount(['moderators'])
             ->with(['moderators' => function ($query) use ($request) {
                 if ($request->search) {
-                    $query->where('name', 'like', "%{$request->search}%")
-                        ->orWhere('email', 'like', "%{$request->search}%");
+                    $query->where(function ($q) use ($request) {
+                        $searchTerm = "%{$request->search}%";
+                        $q->where('name', 'like', $searchTerm)
+                            ->orWhere('email', 'like', $searchTerm);
+                    });
                 }
-                $query->withCount('moderatedRooms')
-                    ->with([
-                        'scores' => function ($query) {
-                            $query->latest()->limit(1);
-                        },
-                        'tracks' => function ($query) {
-                            $query->whereHas('playlist', function ($q) {
-                                $q->where('is_public', true);
-                            })->latest()->limit(1);
-                        },
-                    ]);
+
+                $query->select([
+                    'users.id',
+                    'users.name',
+                    'users.email',
+                    'users.updated_at',
+                    'users.photo_path',
+                ])
+                    ->withCount(['moderatedRooms', 'moderatedPlaylists'])
+                    ->with(['messages' => function ($q) {
+                        $q->latest()->take(1);
+                    }]);
             }])
             ->orderBy('name')
+            ->limit(50)
             ->get();
 
+        $moderatorIds = $roomsWithModerators->pluck('moderators.*.id')->flatten()->unique();
+
+        $latestScores = TotalScore::select('totalscorable_id', 'updated_at')
+            ->whereIn('totalscorable_id', $moderatorIds)
+            ->where('totalscorable_type', User::class)
+            ->groupBy('totalscorable_id')
+            ->selectRaw('MAX(updated_at) as latest_score_date')
+            ->get()
+            ->keyBy('totalscorable_id');
+
+        $sixMonthsAgo = now()->subMonths(6)->timestamp;
+
         return Inertia::render('Moderation/Moderators', [
-            'roomsWithModerators' => $roomsWithModerators->map(function ($room) {
+            'roomsWithModerators' => $roomsWithModerators->map(function ($room) use ($latestScores, $sixMonthsAgo) {
                 return [
                     'id' => $room->id,
                     'name' => $room->name,
-                    'moderators' => $room->moderators->map(function ($moderator) {
+                    'created_at' => $room->created_at->format('d/m/Y'),
+                    'moderators_count' => $room->moderators_count,
+                    'scores_count' => $room->scores_count,
+                    'moderators' => $room->moderators->map(function ($moderator) use ($latestScores, $sixMonthsAgo) {
+                        $lastScoreDate = $latestScores->get($moderator->id)?->latest_score_date;
+                        $lastMessageDate = $moderator->messages->first()?->created_at;
+
                         $lastActivity = max(
-                            $moderator->updated_at?->timestamp ?? 0,
-                            $moderator->scores->first()?->created_at?->timestamp ?? 0,
-                            $moderator->tracks->first()?->created_at?->timestamp ?? 0
+                            $lastScoreDate?->timestamp ?? 0,
+                            $lastMessageDate?->timestamp ?? 0
                         );
-                        $isInactive = $lastActivity < now()->subMonths(6)->timestamp;
 
                         return [
                             'id' => $moderator->id,
                             'name' => $moderator->name,
-                            'email' => $moderator->email,
-                            'photo' => $moderator->photo,
-                            'last_connection' => $moderator->updated_at ? $moderator->updated_at->diffForHumans() : 'Jamais',
-                            'last_game_activity' => $moderator->scores->first()?->created_at ? $moderator->scores->first()->created_at->diffForHumans() : 'Jamais',
-                            'last_track_added' => $moderator->tracks->first()?->created_at ? $moderator->tracks->first()->created_at->diffForHumans() : 'Jamais',
+                            'photo' => $moderator->profile_photo_url,
+                            'last_connection' => $moderator->updated_at 
+                                ? 'Connexion ' . $moderator->updated_at->diffForHumans()
+                                : 'Jamais connecté',
+                            'last_game_activity' => $lastScoreDate
+                                ? 'Score ' . Carbon::parse($lastScoreDate)->diffForHumans()
+                                : 'Aucun score enregistré',
+                            'last_message_date' => $lastMessageDate
+                                ? 'Message ' . $lastMessageDate->diffForHumans()
+                                : 'Aucun message enregistré',
                             'moderated_rooms_count' => $moderator->moderated_rooms_count,
-                            'is_inactive' => $isInactive,
+                            'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),
+                            'is_inactive' => $lastActivity < $sixMonthsAgo,
                         ];
                     }),
                 ];
             }),
             'filters' => $request->only(['search']),
         ]);
-    }
-
-    public function store(Request $request, User $user)
-    {
-        try {
-            if ($user->is_public_moderator) {
-                return back()->with('error', 'User is already a moderator.');
-            }
-
-            $user->update(['is_public_moderator' => true]);
-
-            return back()->with('success', 'User has been promoted to moderator successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to promote user to moderator. Please try again.');
-        }
-    }
-
-    public function destroy(User $user)
-    {
-        try {
-            if (! $user->is_public_moderator) {
-                return back()->with('error', 'User is not a moderator.');
-            }
-
-            $user->update(['is_public_moderator' => false]);
-
-            return back()->with('success', 'User has been demoted from moderator successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to demote user from moderator. Please try again.');
-        }
     }
 }
