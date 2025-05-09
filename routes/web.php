@@ -146,9 +146,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::post('local-tracks', [LocalTrackController::class, 'store'])
         ->name('local-tracks.store');
 
-    // Route::delete('local-tracks/{localTrack}', [LocalTrackController::class, 'destroy'])
-    //     ->name('local-tracks.destroy');
-
     // Moderation
 
     Route::post('playlists/{playlist}/moderators/attach', [PlaylistModeratorController::class, 'attach'])
@@ -196,6 +193,7 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('tracks.downvote');
     Route::post('rooms/{room}/tracks/{track}/upvote', [TrackController::class, 'upvote'])
         ->name('tracks.upvote');
+
 }); // End Auth/Banned middleware
 
 // Music providers
@@ -228,3 +226,36 @@ require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';
 require __DIR__.'/rooms.php';
 require __DIR__.'/admin.php';
+
+Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')->name('moderation.')->group(function () {
+    // Dashboard
+    Route::get('/', [App\Http\Controllers\Moderation\DashboardController::class, 'index'])->name('dashboard');
+
+    // Trashed Messages
+    Route::get('/trashed-messages', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'index'])->name('trashed-messages.index');
+    Route::post('/trashed-messages/{message}/restore', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'restore'])->name('trashed-messages.restore');
+    Route::delete('/trashed-messages/{message}', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'destroy'])->name('trashed-messages.destroy');
+
+    // Banned Users
+    Route::get('/banned-users', [App\Http\Controllers\Moderation\BannedUserController::class, 'index'])->name('banned-users.index');
+    Route::post('/banned-users/{user}/unban', [App\Http\Controllers\Moderation\BannedUserController::class, 'unban'])->name('banned-users.unban');
+    Route::post('/banned-users/{user}/ban', [App\Http\Controllers\Moderation\BannedUserController::class, 'ban'])->name('banned-users.ban');
+
+    // User Management
+    Route::get('/users', [App\Http\Controllers\Moderation\UserManagementController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [App\Http\Controllers\Moderation\UserManagementController::class, 'show'])->name('users.show');
+    Route::post('/users/{user}/warn', [App\Http\Controllers\Moderation\UserManagementController::class, 'warn'])->name('users.warn');
+    Route::post('/users/{user}/mute', [App\Http\Controllers\Moderation\UserManagementController::class, 'mute'])->name('users.mute');
+    Route::post('/users/{user}/unmute', [App\Http\Controllers\Moderation\UserManagementController::class, 'unmute'])->name('users.unmute');
+    Route::post('/users/{user}/ban', [App\Http\Controllers\Moderation\UserManagementController::class, 'ban'])->name('users.ban');
+
+    // Moderators
+    Route::get('/moderators', [App\Http\Controllers\Moderation\ModeratorController::class, 'index'])->name('moderators.index');
+    Route::post('/moderators/{user}', [App\Http\Controllers\Moderation\ModeratorController::class, 'store'])->name('moderators.store');
+    Route::delete('/moderators/{user}', [App\Http\Controllers\Moderation\ModeratorController::class, 'destroy'])->name('moderators.destroy');
+
+    // Tracks Manager
+    Route::get('/tracks', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index');
+    Route::delete('/tracks/{localTrack}', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
+
+});

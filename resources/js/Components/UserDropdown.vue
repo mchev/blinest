@@ -50,7 +50,7 @@ const isUrl = (...urls) => {
           </Link>
         </li>
         <li v-if="user.is_public_moderator">
-          <Link :href="route('moderation.index')" class="m-4 flex pl-2" :class="isUrl('moderation') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('moderation.dashboard')" class="m-4 flex pl-2" :class="isUrl('moderation') ? 'font-bold' : 'font-normal'">
             {{ __('Modération') }}
           </Link>
         </li>
