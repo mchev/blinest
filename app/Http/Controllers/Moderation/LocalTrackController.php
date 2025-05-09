@@ -13,9 +13,23 @@ class LocalTrackController extends Controller
     public function index(Request $request)
     {
         $query = LocalTrack::search($request->search)
+            ->with('user')
             ->orderBy('created_at', 'desc');
 
-        $tracks = $query->paginate($request->per_page ?? 15)->withQueryString();
+        $tracks = $query->paginate($request->per_page ?? 15)
+            ->withQueryString()
+            ->through(function ($track) {
+                return [
+                    'id' => $track->id,
+                    'artist_name' => $track->artist_name,
+                    'track_name' => $track->track_name,
+                    'audio_url' => $track->audio_url,
+                    'artwork_url' => $track->artwork_url,
+                    'user' => $track->user,
+                    'created_at' => $track->created_at->format('d/m/Y H:i'),
+                    'playlist_usage_count' => $track->playlist_usage_count,
+                ];
+            });
 
         return Inertia::render('Moderation/LocalTracks', [
             'tracks' => $tracks,

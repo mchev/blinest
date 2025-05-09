@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class LocalTrack extends Model
 {
@@ -14,6 +15,8 @@ class LocalTrack extends Model
         'artwork_path',
         'user_id',
     ];
+
+    protected $appends = ['audio_url', 'artwork_url', 'playlist_usage_count'];
 
     public function user(): BelongsTo
     {
@@ -26,5 +29,22 @@ class LocalTrack extends Model
             $query->where('artist_name', 'like', '%'.$search.'%')
                 ->orWhere('track_name', 'like', '%'.$search.'%');
         });
+    }
+
+    public function getAudioUrlAttribute()
+    {
+        return $this->audio_path ? Storage::url($this->audio_path) : null;
+    }
+
+    public function getArtworkUrlAttribute()
+    {
+        return $this->artwork_path ? Storage::url($this->artwork_path) : null;
+    }
+
+    public function getPlaylistUsageCountAttribute()
+    {
+        return Track::where('provider', 'local')
+            ->where('provider_id', $this->id)
+            ->count();
     }
 }

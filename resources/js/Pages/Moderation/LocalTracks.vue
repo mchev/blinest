@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import Layout from './Layout.vue'
 import Card from '@/Components/Card.vue'
+import Pagination from '@/Components/Pagination.vue'
 
 const props = defineProps({
   tracks: Object, // paginated
@@ -62,47 +63,42 @@ function deleteTrack(track) {
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Artiste</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Audio</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Uploader</th>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Ajouté le</th>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Utilisé dans</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="track in (tracks && tracks.data ? tracks.data : [])" :key="track.id" class="hover:bg-black/10">
                 <td class="px-4 py-2">
-                  <img v-if="track.artwork_path" :src="track.artwork_path" alt="Pochette" class="h-12 w-12 rounded object-cover border border-neutral-700" />
+                  <img v-if="track.artwork_url" :src="track.artwork_url" alt="Pochette" class="h-12 w-12 rounded object-cover border border-neutral-700" />
                   <span v-else class="text-neutral-500 italic">Pas de pochette</span>
                 </td>
                 <td class="px-4 py-2 text-white">{{ track.track_name }}</td>
                 <td class="px-4 py-2 text-white">{{ track.artist_name }}</td>
                 <td class="px-4 py-2">
-                  <audio v-if="track.audio_path" :src="track.audio_path" controls class="w-32" />
+                  <audio v-if="track.audio_url" :src="track.audio_url" controls class="w-32" />
                   <span v-else class="text-neutral-500 italic">Pas d'audio</span>
                 </td>
                 <td class="px-4 py-2 text-white">
                   <span v-if="track.user">{{ track.user.name }}</span>
                   <span v-else class="text-neutral-500 italic">Inconnu</span>
                 </td>
+                <td class="px-4 py-2 text-white">{{ track.created_at }}</td>
+                <td class="px-4 py-2 text-white">{{ track.playlist_usage_count }} playlist(s)</td>
                 <td class="px-4 py-2">
                   <button @click="deleteTrack(track)" class="text-red-500 hover:text-red-700 font-semibold">Supprimer</button>
                 </td>
               </tr>
               <tr v-if="!(tracks && tracks.data && tracks.data.length)">
-                <td colspan="6" class="px-4 py-6 text-center text-neutral-400">Aucune piste trouvée.</td>
+                <td colspan="8" class="px-4 py-6 text-center text-neutral-400">Aucune piste trouvée.</td>
               </tr>
             </tbody>
           </table>
         </div>
         <!-- Pagination -->
-        <div class="mt-6 flex justify-center">
-          <nav v-if="tracks && tracks.meta && tracks.meta.last_page > 1" class="flex gap-1">
-            <Link
-              v-for="page in (tracks && tracks.meta ? tracks.meta.last_page : 0)"
-              :key="page"
-              :href="tracks && tracks.links && tracks.links[page] && page !== tracks.meta.current_page ? tracks.links[page].url : '#'"
-              class="px-3 py-1 rounded text-sm font-medium"
-              :class="page === (tracks && tracks.meta ? tracks.meta.current_page : 1) ? 'bg-teal-500 text-white' : 'bg-neutral-800 text-neutral-300 hover:bg-teal-600 hover:text-white'"
-              v-html="page"
-            />
-          </nav>
+        <div class="mt-6">
+          <Pagination :links="tracks.links" />
         </div>
       </div>
     </Card>
