@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class LocalTrack extends Model
@@ -16,11 +17,17 @@ class LocalTrack extends Model
         'user_id',
     ];
 
-    protected $appends = ['audio_url', 'artwork_url', 'playlist_usage_count'];
+    protected $appends = ['audio_url', 'artwork_url'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function tracks(): HasMany
+    {
+        return $this->hasMany(Track::class, 'provider_id')
+            ->where('provider', 'local');
     }
 
     public function scopeSearch($query, $search)
@@ -39,12 +46,5 @@ class LocalTrack extends Model
     public function getArtworkUrlAttribute()
     {
         return $this->artwork_path ? Storage::url($this->artwork_path) : null;
-    }
-
-    public function getPlaylistUsageCountAttribute()
-    {
-        return Track::where('provider', 'local')
-            ->where('provider_id', $this->id)
-            ->count();
     }
 }
