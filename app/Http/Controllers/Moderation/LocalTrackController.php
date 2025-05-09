@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocalTrack;
-use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -15,9 +14,6 @@ class LocalTrackController extends Controller
     {
         $query = LocalTrack::search($request->search)
             ->with('user')
-            ->withCount(['tracks' => function ($query) {
-                $query->where('provider', 'local');
-            }])
             ->orderBy('created_at', 'desc');
 
         $tracks = $query->paginate($request->per_page ?? 15)
@@ -31,7 +27,6 @@ class LocalTrackController extends Controller
                     'artwork_url' => $track->artwork_url,
                     'user' => $track->user,
                     'created_at' => $track->created_at->format('d/m/Y H:i'),
-                    'playlist_usage_count' => $track->tracks_count,
                 ];
             });
 

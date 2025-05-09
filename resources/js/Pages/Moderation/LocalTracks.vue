@@ -64,7 +64,6 @@ function deleteTrack(track) {
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Audio</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Uploader</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Ajouté le</th>
-                <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Utilisé dans</th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-neutral-400">Actions</th>
               </tr>
             </thead>
@@ -85,13 +84,12 @@ function deleteTrack(track) {
                   <span v-else class="text-neutral-500 italic">Inconnu</span>
                 </td>
                 <td class="px-4 py-2 text-white">{{ track.created_at }}</td>
-                <td class="px-4 py-2 text-white">{{ track.playlist_usage_count }} playlist(s)</td>
                 <td class="px-4 py-2">
                   <button @click="deleteTrack(track)" class="text-red-500 hover:text-red-700 font-semibold">Supprimer</button>
                 </td>
               </tr>
               <tr v-if="!(tracks && tracks.data && tracks.data.length)">
-                <td colspan="8" class="px-4 py-6 text-center text-neutral-400">Aucune piste trouvée.</td>
+                <td colspan="7" class="px-4 py-6 text-center text-neutral-400">Aucune piste trouvée.</td>
               </tr>
             </tbody>
           </table>
