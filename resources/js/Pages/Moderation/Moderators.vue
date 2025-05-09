@@ -52,7 +52,7 @@ const debouncedSearch = debounce(() => {
                   v-model="showOnlyInactive"
                   class="rounded border-neutral-700 bg-neutral-800 text-teal-500 focus:ring-teal-500"
                 />
-                <label for="showOnlyInactive" class="text-sm text-neutral-300">Afficher uniquement les modérateurs inactifs (>6 mois)</label>
+                <label for="showOnlyInactive" class="text-sm text-neutral-300">Afficher uniquement les modérateurs inactifs (>8 mois)</label>
               </div>
               <form @submit.prevent="submitSearch" class="flex gap-2">
                 <input

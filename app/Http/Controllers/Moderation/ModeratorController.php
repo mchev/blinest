@@ -52,7 +52,7 @@ class ModeratorController extends Controller
             ->get()
             ->keyBy('totalscorable_id');
 
-        $sixMonthsAgo = now()->subMonths(6)->timestamp;
+        $sixMonthsAgo = now()->subMonths(8);
 
         return Inertia::render('Moderation/Moderators', [
             'roomsWithModerators' => $roomsWithModerators->map(function ($room) use ($latestScores, $sixMonthsAgo) {
@@ -67,8 +67,8 @@ class ModeratorController extends Controller
                         $lastMessageDate = $moderator->messages->first()?->created_at;
 
                         $lastActivity = max(
-                            $lastScoreDate?->timestamp ?? 0,
-                            $lastMessageDate?->timestamp ?? 0
+                            $lastScoreDate ? Carbon::parse($lastScoreDate) : Carbon::create(0),
+                            $lastMessageDate ?? Carbon::create(0)
                         );
 
                         return [
@@ -86,7 +86,7 @@ class ModeratorController extends Controller
                                 : 'Aucun message enregistré',
                             'moderated_rooms_count' => $moderator->moderated_rooms_count,
                             'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),
-                            'is_inactive' => $lastActivity < $sixMonthsAgo,
+                            'is_inactive' => $lastActivity->isBefore($sixMonthsAgo),
                         ];
                     }),
                 ];
