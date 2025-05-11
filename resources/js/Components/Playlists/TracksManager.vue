@@ -592,7 +592,10 @@ const loading = ref(false)
         <table class="w-full min-w-[800px]">
           <thead>
             <tr class="bg-neutral-800">
-              <th class="px-3 lg:px-4 py-2 lg:py-3" colspan="2"></th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3">
+                <Sortable field="provider" v-model="form.sortable">{{ __('Origin') }}</Sortable>
+              </th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3"></th>
               <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">{{ __('Answers') }}</th>
               <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">
                 <Sortable field="dificulty" v-model="form.sortable">{{ __('Difficulty') }}</Sortable>
