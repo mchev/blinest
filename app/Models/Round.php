@@ -98,7 +98,7 @@ class Round extends Model
             return;
         }
 
-        if ($track->provider === 'youtube') {
+        if ($track->provider === 'youtube' || $track->provider === 'local') {
             broadcast(new TrackPlayed($this, $track));
             ProcessTrackPlayed::dispatch($this)
                 ->delay(now()->addSeconds($this->room->track_duration));
@@ -120,7 +120,7 @@ class Round extends Model
         }
 
         try {
-            $response = Http::timeout(5)->get($audioUrl);
+            $response = Http::retry(3, 100)->timeout(3)->get($audioUrl);
 
             if ($response->successful()) {
                 // Track is valid, broadcast and queue next track
