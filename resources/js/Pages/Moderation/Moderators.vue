@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce'
 const props = defineProps({
   roomsWithModerators: Array,
   filters: Object,
+  stats: Object,
 })
 
 const search = ref(props.filters?.search || '')
@@ -71,19 +72,15 @@ const debouncedSearch = debounce(() => {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-neutral-800/50 rounded-lg p-4">
               <div class="text-sm text-neutral-400 mb-1">Salles publiques</div>
-              <div class="text-2xl font-bold text-white">{{ roomsWithModerators.length }}</div>
+              <div class="text-2xl font-bold text-white">{{ stats.total_rooms }}</div>
             </div>
             <div class="bg-neutral-800/50 rounded-lg p-4">
               <div class="text-sm text-neutral-400 mb-1">Modérateurs actifs</div>
-              <div class="text-2xl font-bold text-white">
-                {{ roomsWithModerators.reduce((acc, room) => acc + room.moderators.filter(m => !m.is_inactive).length, 0) }}
-              </div>
+              <div class="text-2xl font-bold text-white">{{ stats.active_moderators }}</div>
             </div>
             <div class="bg-neutral-800/50 rounded-lg p-4">
               <div class="text-sm text-neutral-400 mb-1">Modérateurs inactifs</div>
-              <div class="text-2xl font-bold text-white">
-                {{ roomsWithModerators.reduce((acc, room) => acc + room.moderators.filter(m => m.is_inactive).length, 0) }}
-              </div>
+              <div class="text-2xl font-bold text-white">{{ stats.inactive_moderators }}</div>
             </div>
           </div>
         </div>

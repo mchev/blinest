@@ -54,44 +54,57 @@ class ModeratorController extends Controller
 
         $sixMonthsAgo = now()->subMonths(8);
 
+        // On prépare la structure enrichie pour roomsWithModerators
+        $roomsWithModeratorsMapped = $roomsWithModerators->map(function ($room) use ($latestScores, $sixMonthsAgo) {
+            return [
+                'id' => $room->id,
+                'name' => $room->name,
+                'created_at' => $room->created_at->format('d/m/Y'),
+                'moderators_count' => $room->moderators_count,
+                'scores_count' => $room->scores_count,
+                'moderators' => $room->moderators->map(function ($moderator) use ($latestScores, $sixMonthsAgo) {
+                    $lastScoreDate = $latestScores->get($moderator->id)?->latest_score_date;
+                    $lastMessageDate = $moderator->messages->first()?->created_at;
+
+                    $lastActivity = max(
+                        $lastScoreDate ? Carbon::parse($lastScoreDate) : Carbon::create(0),
+                        $lastMessageDate ?? Carbon::create(0)
+                    );
+
+                    return [
+                        'id' => $moderator->id,
+                        'name' => $moderator->name,
+                        'photo' => $moderator->profile_photo_url,
+                        'last_connection' => $moderator->updated_at
+                            ? 'Connexion '.$moderator->updated_at->diffForHumans()
+                            : 'Jamais connecté',
+                        'last_game_activity' => $lastScoreDate
+                            ? 'Score '.Carbon::parse($lastScoreDate)->diffForHumans()
+                            : 'Aucun score enregistré',
+                        'last_message_date' => $lastMessageDate
+                            ? 'Message '.$lastMessageDate->diffForHumans()
+                            : 'Aucun message enregistré',
+                        'moderated_rooms_count' => $moderator->moderated_rooms_count,
+                        'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),
+                        'is_inactive' => $lastActivity->isBefore($sixMonthsAgo),
+                    ];
+                }),
+            ];
+        });
+
+        // On extrait tous les modérateurs enrichis, puis uniques par id
+        $allModeratorsEnriched = $roomsWithModeratorsMapped->pluck('moderators')->flatten(1)->unique('id');
+        $activeModerators = $allModeratorsEnriched->where('is_inactive', false)->count();
+        $inactiveModerators = $allModeratorsEnriched->where('is_inactive', true)->count();
+
         return Inertia::render('Moderation/Moderators', [
-            'roomsWithModerators' => $roomsWithModerators->map(function ($room) use ($latestScores, $sixMonthsAgo) {
-                return [
-                    'id' => $room->id,
-                    'name' => $room->name,
-                    'created_at' => $room->created_at->format('d/m/Y'),
-                    'moderators_count' => $room->moderators_count,
-                    'scores_count' => $room->scores_count,
-                    'moderators' => $room->moderators->map(function ($moderator) use ($latestScores, $sixMonthsAgo) {
-                        $lastScoreDate = $latestScores->get($moderator->id)?->latest_score_date;
-                        $lastMessageDate = $moderator->messages->first()?->created_at;
-
-                        $lastActivity = max(
-                            $lastScoreDate ? Carbon::parse($lastScoreDate) : Carbon::create(0),
-                            $lastMessageDate ?? Carbon::create(0)
-                        );
-
-                        return [
-                            'id' => $moderator->id,
-                            'name' => $moderator->name,
-                            'photo' => $moderator->profile_photo_url,
-                            'last_connection' => $moderator->updated_at
-                                ? 'Connexion '.$moderator->updated_at->diffForHumans()
-                                : 'Jamais connecté',
-                            'last_game_activity' => $lastScoreDate
-                                ? 'Score '.Carbon::parse($lastScoreDate)->diffForHumans()
-                                : 'Aucun score enregistré',
-                            'last_message_date' => $lastMessageDate
-                                ? 'Message '.$lastMessageDate->diffForHumans()
-                                : 'Aucun message enregistré',
-                            'moderated_rooms_count' => $moderator->moderated_rooms_count,
-                            'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),
-                            'is_inactive' => $lastActivity->isBefore($sixMonthsAgo),
-                        ];
-                    }),
-                ];
-            }),
+            'roomsWithModerators' => $roomsWithModeratorsMapped,
             'filters' => $request->only(['search']),
+            'stats' => [
+                'total_rooms' => $roomsWithModerators->count(),
+                'active_moderators' => $activeModerators,
+                'inactive_moderators' => $inactiveModerators,
+            ],
         ]);
     }
 }
