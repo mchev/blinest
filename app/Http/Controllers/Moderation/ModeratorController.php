@@ -75,14 +75,14 @@ class ModeratorController extends Controller
                             'id' => $moderator->id,
                             'name' => $moderator->name,
                             'photo' => $moderator->profile_photo_url,
-                            'last_connection' => $moderator->updated_at 
-                                ? 'Connexion ' . $moderator->updated_at->diffForHumans()
+                            'last_connection' => $moderator->updated_at
+                                ? 'Connexion '.$moderator->updated_at->diffForHumans()
                                 : 'Jamais connecté',
                             'last_game_activity' => $lastScoreDate
-                                ? 'Score ' . Carbon::parse($lastScoreDate)->diffForHumans()
+                                ? 'Score '.Carbon::parse($lastScoreDate)->diffForHumans()
                                 : 'Aucun score enregistré',
                             'last_message_date' => $lastMessageDate
-                                ? 'Message ' . $lastMessageDate->diffForHumans()
+                                ? 'Message '.$lastMessageDate->diffForHumans()
                                 : 'Aucun message enregistré',
                             'moderated_rooms_count' => $moderator->moderated_rooms_count,
                             'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),

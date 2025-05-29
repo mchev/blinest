@@ -257,5 +257,6 @@ Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')-
     // Tracks Manager
     Route::get('/tracks', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index');
     Route::delete('/tracks/{localTrack}', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
+    Route::put('/tracks/{localTrack}', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'update'])->name('tracks.update');
 
 });

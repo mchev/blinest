@@ -13,8 +13,13 @@ class LocalTrackController extends Controller
     public function index(Request $request)
     {
         $query = LocalTrack::search($request->search)
-            ->with('user')
-            ->orderBy('created_at', 'desc');
+            ->with('user');
+
+        // Add sorting
+        $sortBy = $request->sort_by ?? 'created_at';
+        $sortDirection = $request->sort_direction ?? 'desc';
+
+        $query->orderBy($sortBy, $sortDirection);
 
         $tracks = $query->paginate($request->per_page ?? 15)
             ->withQueryString()
@@ -32,8 +37,20 @@ class LocalTrackController extends Controller
 
         return Inertia::render('Moderation/LocalTracks', [
             'tracks' => $tracks,
-            'filters' => $request->only(['search', 'per_page']),
+            'filters' => $request->only(['search', 'per_page', 'sort_by', 'sort_direction']),
         ]);
+    }
+
+    public function update(Request $request, LocalTrack $localTrack)
+    {
+        $validated = $request->validate([
+            'track_name' => 'required|string|max:255',
+            'artist_name' => 'required|string|max:255',
+        ]);
+
+        $localTrack->update($validated);
+
+        return back()->with('success', 'Track updated successfully.');
     }
 
     public function destroy(LocalTrack $localTrack)
