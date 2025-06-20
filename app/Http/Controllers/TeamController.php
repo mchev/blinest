@@ -122,9 +122,9 @@ class TeamController extends Controller
         }
 
         if ($team->members()->where('id', Auth::user()->id)->exists()) {
-            Auth::user()->update([
-                'team_id' => null,
-            ]);
+            $user = Auth::user();
+            $user->team()->dissociate();
+            $user->save();
 
             return redirect()->route('teams.index')->with('success', __('You have left the team').' '.$team->name);
         } else {
@@ -135,6 +135,7 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         if (Auth::user()->id === $team->user_id && $team->members->count() === 1) {
+            $team->members()->update(['team_id' => null]);
             $team->delete();
 
             return redirect()->route('teams.index')->with('success', __('The Team').' '.$team->name.' '.__('has been deleted'));
