@@ -29,9 +29,9 @@ class WeeklyTopUsers extends Command
     {
 
         $weekly_top_users = Score::with('user')
-            ->whereHas('round.room', function ($query) {
-                $query->where('is_public', true);
-            })
+            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
+            ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+            ->where('rooms.is_public', true)
             ->where('scores.created_at', '>=', now()->subDays(7))
             ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
             ->groupBy('scores.user_id')
