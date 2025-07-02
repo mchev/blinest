@@ -13,12 +13,7 @@ class UserManagementController extends Controller
     public function index(Request $request)
     {
         $query = User::query()
-            ->when($request->search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
+            ->filter(['search' => $request->search])
             ->when($request->sort_by, function ($query, $sortBy) use ($request) {
                 $direction = $request->sort_direction === 'asc' ? 'asc' : 'desc';
                 $query->orderBy($sortBy, $direction);

@@ -96,7 +96,7 @@ const currentYear = new Date().getFullYear()
           &copy; {{ currentYear }} Blinest. {{ __('All rights reserved.') }}
         </div>
         <div class="text-gray-500">
-          {{ __('Made with') }} ❤️ {{ __('in France') }}
+          {{ __('Site personnel fait bénévolement avec') }} ❤️ {{ __('en France') }}
         </div>
       </div>
     </div>

@@ -12,6 +12,20 @@ class ProfileController extends Controller
 {
     public function show(User $user): InertiaResponse
     {
+        // Score evolution: get daily cumulative score
+        $scoreHistory = $user->scores()
+            ->selectRaw('DATE(created_at) as date, SUM(score) as daily_score')
+            ->groupByRaw('DATE(created_at)')
+            ->orderBy('date')
+            ->get()
+            ->map(function ($row, $i) use (&$cumulative) {
+                $cumulative = ($cumulative ?? 0) + $row->daily_score;
+
+                return [
+                    'date' => $row->date,
+                    'total_score' => round($cumulative, 1),
+                ];
+            });
 
         return Inertia::render('Profiles/Show', [
             'user' => [
@@ -47,6 +61,7 @@ class ProfileController extends Controller
                     ]),
                 'likes' => $user->likes()->paginate(5, ['*'], 'likes'),
                 'bookmarks' => $user->bookmarkedRooms()->paginate(5, ['*'], 'bookmarks'),
+                'score_evolution' => $scoreHistory,
             ],
         ]);
     }

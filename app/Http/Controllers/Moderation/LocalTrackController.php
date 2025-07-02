@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessDeletedTrack;
 use App\Models\LocalTrack;
+use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -53,7 +55,7 @@ class LocalTrackController extends Controller
         return back()->with('success', 'Track updated successfully.');
     }
 
-    public function destroy(LocalTrack $localTrack)
+    public function destroy(Request $request, LocalTrack $localTrack)
     {
         // Delete the files from S3 storage if they exist
         if ($localTrack->audio_path) {
@@ -64,7 +66,15 @@ class LocalTrackController extends Controller
             Storage::delete($localTrack->artwork_path);
         }
 
-        // Delete the database record
+        // Delete the playlist tracks associated with the local track
+        $tracks = Track::where('provider', 'local')->where('provider_id', $localTrack->id)->get();
+
+        // Dispatch the deletion of the tracks
+        foreach ($tracks as $track) {
+            ProcessDeletedTrack::dispatch($track, $request->user());
+        }
+
+        // Delete the local track
         $localTrack->delete();
 
         return back()->with('success', 'Track and associated files deleted successfully.');

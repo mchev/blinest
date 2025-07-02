@@ -37,6 +37,8 @@
         "vue-loader": "^17.0.0",
         "vue3-carousel": "^0.1.48",
         "vue3-emoji-picker": "^1.1.8",
-        "ziggy-js": "^2.2.1"
+        "ziggy-js": "^2.2.1",
+        "vue-chartjs": "^5.3.1",
+        "chart.js": "^4.4.1"
     }
 }

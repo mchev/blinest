@@ -93,7 +93,13 @@ class RoundController extends Controller
                     // Else Checking all words
                     foreach ($answerWords as $word) {
                         foreach ($userWords as $userWord) {
-                            if (strlen($userWord) < 5) {
+                            // Comparaison de nombres, années, etc.
+                            if (is_numeric($userWord) && is_numeric($word)) {
+                                if ($userWord === $word) {
+                                    $goodWords[] = $word;
+                                }
+                                // Comparaison de mots courts
+                            } elseif (strlen($userWord) < 5) {
                                 if ($userWord === $word) {
                                     $goodWords[] = $word;
                                 }

@@ -38,6 +38,7 @@ watch(() => props.errors, (newErrors) => {
 }, { immediate: true })
 
 const performSearch = debounce(() => {
+  selectedUser.value = null;
   router.get(
     route('moderation.users.index'),
     { search: search.value },
