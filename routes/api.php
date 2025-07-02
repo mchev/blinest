@@ -22,4 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'index'])
         ->name('users');
+
+    // Réactions sur les messages
+    Route::get('/messages/{message}/reactions', [\App\Http\Controllers\Api\MessageReactionController::class, 'index']);
+    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Api\MessageReactionController::class, 'store']);
 });

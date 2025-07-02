@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Moderation from './Moderation.vue'
 
@@ -36,6 +36,74 @@ const report = async () => {
     reporting.value = false
   }
 }
+
+// --- Réactions ---
+const reactions = ref([])
+const userReaction = ref(null)
+const showEmojiPicker = ref(false)
+const emojiList = [
+  '👍', '😂', '❤️', '🔥', '😮', '😢', '👏', '😡', '🎉', '😎', '🤔', '🙌', '💯', '🎵', '🥁', '🎸', '🎤', '🎻', '🎺', '🎷', '🥁', '🎶', '😊', '😃', '😞', '😉', '😛', '😲', '😘', '😕', '🤑'
+]
+
+const fetchReactions = async () => {
+  const { data } = await axios.get(`/api/messages/${props.message.id}/reactions`)
+  reactions.value = data.reactions || data // supporte [{emoji, count}] ou {reactions, userReaction}
+  userReaction.value = data.userReaction || null
+}
+
+const toggleReaction = async (emoji) => {
+  // Si l'utilisateur a déjà réagi avec cet emoji, on retire
+  if (userReaction.value === emoji) {
+    await axios.post(`/api/messages/${props.message.id}/reactions`, { emoji })
+    // toggle off
+  } else {
+    // Si une autre réaction existe, on la retire d'abord
+    if (userReaction.value) {
+      await axios.post(`/api/messages/${props.message.id}/reactions`, { emoji: userReaction.value })
+    }
+    await axios.post(`/api/messages/${props.message.id}/reactions`, { emoji })
+  }
+  // La maj se fait via Echo
+}
+
+const listenForReactions = () => {
+  if (!window.Echo) return
+  window.Echo.private(`chat.message.${props.message.id}`)
+    .listen('MessageReactionUpdated', (e) => {
+      reactions.value = e.reactions
+      userReaction.value = e.userReaction || null
+    })
+}
+
+// --- Click outside directive ---
+function useClickOutside(targetRef, callback) {
+  const handler = (event) => {
+    if (targetRef.value && !targetRef.value.contains(event.target)) {
+      callback()
+    }
+  }
+  onMounted(() => {
+    document.addEventListener('mousedown', handler)
+    document.addEventListener('touchstart', handler)
+  })
+  onUnmounted(() => {
+    document.removeEventListener('mousedown', handler)
+    document.removeEventListener('touchstart', handler)
+  })
+}
+
+const emojiPickerRef = ref(null)
+useClickOutside(emojiPickerRef, () => { showEmojiPicker.value = false })
+
+onMounted(() => {
+  fetchReactions()
+  listenForReactions()
+})
+onUnmounted(() => {
+  if (window.Echo) {
+    window.Echo.private(`chat.message.${props.message.id}`).stopListening('MessageReactionUpdated')
+  }
+})
 </script>
 
 <template>
@@ -61,7 +129,7 @@ const report = async () => {
       </div>
       
       <div class="flex-1 min-w-0">
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex items-center justify-between mb-1 relative">
           <div class="flex items-center gap-2 overflow-hidden">
             <button 
               v-if="isModerator || userIsPublicModerator" 
@@ -91,18 +159,56 @@ const report = async () => {
               {{ message.user.team.name }}
             </span>
           </div>
-
-          <time 
-            :datetime="message.timestamp" 
-            class="text-neutral-500 text-xs whitespace-nowrap ml-2"
-          >
-            {{ message.time }}
-          </time>
+          <div class="flex items-center gap-1">
+            <time 
+              :datetime="message.timestamp" 
+              class="text-neutral-500 text-xs whitespace-nowrap ml-2"
+            >
+              {{ message.time }}
+            </time>
+            <!-- Bouton emoji à droite, n'apparaît qu'au survol du message -->
+            <button
+              v-if="!userReaction"
+              class="hidden group-hover:flex absolute top-full right-0 items-center justify-center ml-2 px-2 py-1 rounded-full bg-neutral-800/70 hover:bg-neutral-700 text-xl transition shadow-lg border border-neutral-700"
+              @click="showEmojiPicker = !showEmojiPicker"
+              title="Ajouter une réaction"
+              style="width: 2.5rem; height: 2.5rem;"
+            >
+              😊
+            </button>
+            <div
+              v-if="showEmojiPicker"
+              ref="emojiPickerRef"
+              class="absolute z-10 right-0 mt-10 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
+            >
+              <button
+                v-for="emoji in emojiList"
+                :key="emoji"
+                class="text-xl hover:scale-125 transition-transform"
+                @click="toggleReaction(emoji); showEmojiPicker = false"
+              >
+                {{ emoji }}
+              </button>
+            </div>
+          </div>
         </div>
         
         <p class="text-neutral-100 whitespace-pre-wrap break-words text-sm leading-relaxed">
           {{ message.body }}
         </p>
+        <!-- Réactions -->
+        <div class="flex gap-1 mt-2 flex-wrap items-center relative">
+          <button
+            v-for="reaction in reactions"
+            :key="reaction.emoji"
+            class="flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-700/70 hover:bg-neutral-600 text-sm transition"
+            :class="{'ring-2 ring-yellow-400': userReaction === reaction.emoji}"
+            @click="toggleReaction(reaction.emoji)"
+          >
+            <span>{{ reaction.emoji }}</span>
+            <span class="font-medium text-xs">{{ reaction.count }}</span>
+          </button>
+        </div>
       </div>
     </div>
     

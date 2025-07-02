@@ -69,4 +69,9 @@ class Message extends Model
 
         return $this->created_at->diffForHumans();
     }
+
+    public function reactions()
+    {
+        return $this->hasMany(MessageReaction::class);
+    }
 }

@@ -46,3 +46,8 @@ Broadcast::channel('chat-room.{id}', function ($user) {
 Broadcast::channel('room.count.{room}', function ($user, Room $room) {
     return true;
 });
+
+// Canal pour les réactions sur un message du chat
+Broadcast::channel('chat.message.{messageId}', function ($user, $messageId) {
+    return (bool) $user;
+});
