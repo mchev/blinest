@@ -16,10 +16,13 @@ class MessageReactionUpdated implements ShouldBroadcastNow
 
     public $reactions;
 
-    public function __construct($messageId, $reactions)
+    public $userReaction;
+
+    public function __construct($messageId, $reactions, $userReaction = null)
     {
         $this->messageId = $messageId;
         $this->reactions = $reactions;
+        $this->userReaction = $userReaction;
     }
 
     public function broadcastOn()
@@ -32,6 +35,7 @@ class MessageReactionUpdated implements ShouldBroadcastNow
         return [
             'messageId' => $this->messageId,
             'reactions' => $this->reactions,
+            'userReaction' => $this->userReaction,
         ];
     }
 }

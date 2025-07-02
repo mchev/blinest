@@ -14,13 +14,25 @@ class MessageReactionController extends Controller
     // Liste les réactions d'un message
     public function index(Message $message)
     {
-        $reactions = $message->reactions()
-            ->select('emoji')
-            ->selectRaw('count(*) as count')
+        $reactions = $message->reactions
             ->groupBy('emoji')
-            ->get();
+            ->map(function ($group) {
+                return [
+                    'emoji' => $group[0]->emoji,
+                    'count' => $group->count(),
+                    'users' => $group->map(fn ($r) => [
+                        'id' => $r->user->id,
+                        'name' => $r->user->name,
+                    ])->values(),
+                ];
+            })->values();
 
-        return response()->json($reactions);
+        $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
+
+        return response()->json([
+            'reactions' => $reactions,
+            'userReaction' => $userReaction,
+        ]);
     }
 
     // Ajoute ou retire une réaction
@@ -36,12 +48,20 @@ class MessageReactionController extends Controller
             ->first();
         if ($reaction) {
             $reaction->delete();
-            $reactions = $message->reactions()
-                ->select('emoji')
-                ->selectRaw('count(*) as count')
+            $reactions = $message->reactions
                 ->groupBy('emoji')
-                ->get();
-            broadcast(new MessageReactionUpdated($message->id, $reactions));
+                ->map(function ($group) {
+                    return [
+                        'emoji' => $group[0]->emoji,
+                        'count' => $group->count(),
+                        'users' => $group->map(fn ($r) => [
+                            'id' => $r->user->id,
+                            'name' => $r->user->name,
+                        ])->values(),
+                    ];
+                })->values();
+            $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
+            broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
 
             return response()->json(['removed' => true]);
         } else {
@@ -50,12 +70,20 @@ class MessageReactionController extends Controller
                 'user_id' => $user->id,
                 'emoji' => $request->emoji,
             ]);
-            $reactions = $message->reactions()
-                ->select('emoji')
-                ->selectRaw('count(*) as count')
+            $reactions = $message->reactions
                 ->groupBy('emoji')
-                ->get();
-            broadcast(new MessageReactionUpdated($message->id, $reactions));
+                ->map(function ($group) {
+                    return [
+                        'emoji' => $group[0]->emoji,
+                        'count' => $group->count(),
+                        'users' => $group->map(fn ($r) => [
+                            'id' => $r->user->id,
+                            'name' => $r->user->name,
+                        ])->values(),
+                    ];
+                })->values();
+            $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
+            broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
 
             return response()->json(['added' => true]);
         }

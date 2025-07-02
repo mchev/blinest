@@ -108,6 +108,27 @@ onUnmounted(() => {
 
 <template>
   <div class="group relative p-2 rounded-lg transition-all duration-200 hover:bg-neutral-800/60 mb-1">
+    <!-- Menu d'action discret, horizontal, au survol -->
+    <div class="absolute top-2 right-2 flex-row gap-2 hidden group-hover:flex z-20">
+      <button
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition"
+        @click="showEmojiPicker = !showEmojiPicker"
+        title="Réagir"
+        type="button"
+      >
+        😊
+      </button>
+      <button
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition"
+        @click="report"
+        title="Signaler"
+        type="button"
+      >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-red-400">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+      </svg>
+      </button>
+    </div>
     <div class="flex items-start gap-3">
       <div class="relative">
         <img 
@@ -166,30 +187,6 @@ onUnmounted(() => {
             >
               {{ message.time }}
             </time>
-            <!-- Bouton emoji à droite, n'apparaît qu'au survol du message -->
-            <button
-              v-if="!userReaction"
-              class="hidden group-hover:flex absolute top-full right-0 items-center justify-center ml-2 px-2 py-1 rounded-full bg-neutral-800/70 hover:bg-neutral-700 text-xl transition shadow-lg border border-neutral-700"
-              @click="showEmojiPicker = !showEmojiPicker"
-              title="Ajouter une réaction"
-              style="width: 2.5rem; height: 2.5rem;"
-            >
-              😊
-            </button>
-            <div
-              v-if="showEmojiPicker"
-              ref="emojiPickerRef"
-              class="absolute z-10 right-0 mt-10 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
-            >
-              <button
-                v-for="emoji in emojiList"
-                :key="emoji"
-                class="text-xl hover:scale-125 transition-transform"
-                @click="toggleReaction(emoji); showEmojiPicker = false"
-              >
-                {{ emoji }}
-              </button>
-            </div>
           </div>
         </div>
         
@@ -198,42 +195,40 @@ onUnmounted(() => {
         </p>
         <!-- Réactions -->
         <div class="flex gap-1 mt-2 flex-wrap items-center relative">
-          <button
-            v-for="reaction in reactions"
-            :key="reaction.emoji"
-            class="flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-700/70 hover:bg-neutral-600 text-sm transition"
-            :class="{'ring-2 ring-yellow-400': userReaction === reaction.emoji}"
-            @click="toggleReaction(reaction.emoji)"
-          >
-            <span>{{ reaction.emoji }}</span>
-            <span class="font-medium text-xs">{{ reaction.count }}</span>
-          </button>
+          <div v-for="reaction in reactions" :key="reaction.emoji" class="relative group/emoji">
+            <button
+              class="flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-700/70 hover:bg-neutral-600 text-sm transition"
+              :class="{'ring-2 ring-yellow-400': userReaction === reaction.emoji}"
+              @click="toggleReaction(reaction.emoji)"
+              type="button"
+            >
+              <span>{{ reaction.emoji }}</span>
+              <span class="font-medium text-xs">{{ reaction.count }}</span>
+            </button>
+            <span
+              v-if="reaction.users && reaction.users.length"
+              class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-20 px-2 py-1 rounded bg-neutral-900 text-xs text-neutral-200 shadow-lg opacity-0 group-hover/emoji:opacity-100 transition-opacity whitespace-nowrap"
+            >
+              {{ reaction.users.map(u => u.name).join(', ') }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
     
-    <!-- Report button -->
-    <div 
-      v-if="shouldShowReportButton" 
-      class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+    <!-- Sélecteur d'emojis flottant -->
+    <div
+      v-if="showEmojiPicker"
+      ref="emojiPickerRef"
+      class="absolute z-40 right-2 top-12 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
     >
-      <div v-if="reporting" class="animate-spin bg-neutral-800 rounded-full p-1">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-neutral-300">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-        </svg>
-      </div>
-      <button 
-        v-else 
-        @click="report" 
-        class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 rounded-full px-2 py-1 transition-colors duration-200" 
-        :disabled="reporting"
-        :class="{ 'bg-red-900/50': message.reports }"
+      <button
+        v-for="emoji in emojiList"
+        :key="emoji"
+        class="text-xl hover:scale-125 transition-transform"
+        @click="toggleReaction(emoji); showEmojiPicker = false"
       >
-        <span v-if="message.reports" class="text-yellow-500 font-medium text-xs">{{ message.reports }}</span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 text-red-500">
-          <title>{{ __('Report this message') }}</title>
-          <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-        </svg>
+        {{ emoji }}
       </button>
     </div>
   </div>
