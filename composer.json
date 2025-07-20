@@ -19,6 +19,7 @@
         "jwilsson/spotify-web-api-php": "^6.1",
         "laravel/framework": "^12",
         "laravel/horizon": "^5.22",
+        "laravel/nightwatch": "^1.11",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.14",
