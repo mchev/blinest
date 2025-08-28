@@ -7,7 +7,16 @@
         <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
         @production
-            <script async src="https://stats.pegase.io/script.js" data-website-id="f330893a-1490-47c0-8e3f-2e0fb4a88818"></script>
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YLB1LND9B"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-4YLB1LND9B');
+            </script>
+
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
         @endproduction
         
