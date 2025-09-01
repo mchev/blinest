@@ -132,10 +132,12 @@ const statCards = [
                     <div class="flex items-center justify-between">
                       <div class="flex-1 min-w-0">
                         <p class="text-sm text-white truncate">{{ user.name }}</p>
-                        <p class="mt-1 text-xs text-neutral-400">{{ user.email }}</p>
+                        <p v-if="user.team_name" class="mt-1 text-xs text-neutral-400">{{ user.team_name }}</p>
+                        <p v-if="user.reason" class="mt-1 text-xs text-orange-400">{{ user.reason }}</p>
                       </div>
-                      <div class="ml-4 text-xs text-neutral-400">
-                        {{ user.banned_at }}
+                      <div class="ml-4 text-xs text-neutral-400 text-right">
+                        le {{ user.banned_at }} par {{ user.moderator_name }}
+                        <p v-if="user.duration" class="mt-1 text-xs text-neutral-400">Durée : {{ user.duration }}</p>
                       </div>
                     </div>
                   </li>

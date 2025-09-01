@@ -48,7 +48,7 @@ class DashboardController extends Controller
                     return [
                         'id' => $message->id,
                         'body' => $message->body,
-                        'deleted_at' => $message->deleted_at->format('Y-m-d H:i:s'),
+                        'deleted_at' => $message->deleted_at->format('d/m/Y H:i:s'),
                         'user' => [
                             'id' => $message->user->id,
                             'name' => $message->user->name,
@@ -59,16 +59,21 @@ class DashboardController extends Controller
                         ],
                     ];
                 }),
-            'banned_users' => User::onlyTrashed()
-                ->latest('deleted_at')
+            'banned_users' => User::banned()
+                ->with('team', 'bans')
+                ->latest()
                 ->take(5)
                 ->get()
                 ->map(function ($user) {
+                    $ban = $user->bans()->latest()->first();
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
-                        'email' => $user->email,
-                        'banned_at' => $user->deleted_at->format('Y-m-d H:i:s'),
+                        'reason' => $ban->comment,
+                        'duration' => $ban->expires_at ? $ban->expires_at->diffForHumans() : 'Permanent',
+                        'moderator_name' => $ban->createdBy->name,
+                        'team_name' => $user->team?->name,
+                        'banned_at' => $ban->created_at->format('d/m/Y H:i:s'),
                     ];
                 }),
             'recent_moderators' => User::publicModerators()
