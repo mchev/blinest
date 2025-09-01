@@ -11,7 +11,7 @@ class BannedUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::onlyTrashed()
+        $query = User::banned()
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
@@ -20,7 +20,7 @@ class BannedUserController extends Controller
                 $direction = $request->sort_direction === 'asc' ? 'asc' : 'desc';
                 $query->orderBy($sortBy, $direction);
             }, function ($query) {
-                $query->latest('deleted_at');
+                $query->latest();
             });
 
         $bannedUsers = $query->paginate($request->per_page ?? 10)
@@ -54,11 +54,11 @@ class BannedUserController extends Controller
     public function unban(User $user)
     {
         try {
-            if (! $user->trashed()) {
+            if (! $user->isBanned()) {
                 return back()->with('error', 'User is not banned.');
             }
 
-            $user->restore();
+            $user->unban();
 
             return back()->with('success', 'User has been unbanned successfully.');
         } catch (\Exception $e) {
