@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use Mchev\Banhammer\Models\Ban;
 
 class DashboardController extends Controller
 {
@@ -23,9 +24,8 @@ class DashboardController extends Controller
             'total_playlists' => Playlist::count(),
             'public_playlists' => Playlist::where('is_public', true)->count(),
             'private_playlists' => Playlist::where('is_public', false)->count(),
-            'total_messages' => Message::count(),
-            'deleted_messages' => Message::onlyTrashed()->count(),
-            'banned_users' => User::onlyTrashed()->count(),
+            'todays_messages' => Message::whereDate('created_at', Carbon::today())->count(),
+            'banned_users' => User::banned()->count(),
             'moderators' => User::publicModerators()->count(),
         ];
 
@@ -34,7 +34,7 @@ class DashboardController extends Controller
             'new_users_today' => User::whereDate('created_at', Carbon::today())->count(),
             'new_messages_today' => Message::whereDate('created_at', Carbon::today())->count(),
             'deleted_messages_today' => Message::onlyTrashed()->whereDate('deleted_at', Carbon::today())->count(),
-            'banned_users_today' => User::onlyTrashed()->whereDate('deleted_at', Carbon::today())->count(),
+            'banned_users_today' => Ban::whereDate('created_at', Carbon::today())->count(),
         ];
 
         // Recent Activity
@@ -66,6 +66,7 @@ class DashboardController extends Controller
                 ->get()
                 ->map(function ($user) {
                     $ban = $user->bans()->latest()->first();
+
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -74,18 +75,6 @@ class DashboardController extends Controller
                         'moderator_name' => $ban->createdBy->name,
                         'team_name' => $user->team?->name,
                         'banned_at' => $ban->created_at->format('d/m/Y H:i:s'),
-                    ];
-                }),
-            'recent_moderators' => User::publicModerators()
-                ->latest('updated_at')
-                ->take(5)
-                ->get()
-                ->map(function ($moderator) {
-                    return [
-                        'id' => $moderator->id,
-                        'name' => $moderator->name,
-                        'email' => $moderator->email,
-                        'promoted_at' => $moderator->updated_at->format('Y-m-d H:i:s'),
                     ];
                 }),
         ];
