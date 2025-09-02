@@ -28,6 +28,11 @@ class Playlist extends Model
         $query->where('is_public', true);
     }
 
+    public function scopeIsNotPublic($query)
+    {
+        $query->where('is_public', false);
+    }
+
     public function tracks(): HasMany
     {
         return $this->hasMany(Track::class);
