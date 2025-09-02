@@ -108,7 +108,7 @@ class DashboardController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            return redirect()->back()->with('error', 'Une erreur est survenue lors du chargement du tableau de bord.');
+            return redirect()->back()->with('error', 'Une erreur est survenue lors du chargement du tableau de bord.' . $e->getMessage());
         }
     }
 }
