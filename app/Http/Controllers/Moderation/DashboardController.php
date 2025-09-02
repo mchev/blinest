@@ -46,6 +46,10 @@ class DashboardController extends Controller
                     ->latest('deleted_at')
                     ->take(5)
                     ->get()
+                    ->filter(function ($message) {
+                        // Filtrer les messages qui ont des relations valides
+                        return $message->user && $message->room;
+                    })
                     ->map(function ($message) {
                         return [
                             'id' => $message->id,
@@ -75,8 +79,8 @@ class DashboardController extends Controller
                             'reason' => $ban?->comment ?? 'Aucune raison spécifiée',
                             'duration' => $ban?->expires_at ? $ban->expires_at->diffForHumans() : 'Permanent',
                             'moderator_name' => $ban?->createdBy?->name ?? 'Système',
-                            'team_name' => $user->team?->name,
-                            'banned_at' => $ban?->created_at->format('d/m/Y H:i:s') ?? 'Date inconnue',
+                            'team_name' => $user->team?->name ?? null,
+                            'banned_at' => $ban?->created_at?->format('d/m/Y H:i:s') ?? 'Date inconnue',
                         ];
                     }),
             ];
@@ -108,7 +112,7 @@ class DashboardController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            return redirect()->back()->with('error', 'Une erreur est survenue lors du chargement du tableau de bord.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Une erreur est survenue lors du chargement du tableau de bord.'.$e->getMessage());
         }
     }
 }
