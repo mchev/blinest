@@ -160,7 +160,6 @@ const statCards = [
                       <p class="text-sm font-medium text-white truncate">{{ room.name }}</p>
                       <div class="mt-1 flex items-center gap-4 text-xs text-neutral-400">
                         <span>{{ room.messages_count }} messages</span>
-                        <span>{{ room.users_count }} utilisateurs</span>
                         <span v-if="room.is_public" class="text-teal-400">Publique</span>
                         <span v-else class="text-neutral-400">Privée</span>
                       </div>

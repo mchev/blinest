@@ -280,4 +280,10 @@ class User extends Authenticatable
             }
         );
     }
+
+    // BAN RELATIONSHIPS
+    public function bans()
+    {
+        return $this->morphMany(\Mchev\Banhammer\Models\Ban::class, 'bannable');
+    }
 }
