@@ -8,11 +8,20 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class Reserved implements ValidationRule
 {
+
+    public function __construct(
+        protected ?string $currentName = null
+    ) { }
+
     /**
      * Run the validation rule.
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // Allow user to keep their current reserved name
+        if ($this->currentName && strtolower($value) === strtolower($this->currentName)) {
+            return;
+        }
         $reserved = [
             'admin',
             'admins',

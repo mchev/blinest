@@ -33,7 +33,7 @@ class AppleMusicService
                 'track_name' => $track['trackName'],
                 'album_name' => $track['collectionName'],
                 'preview_url' => $track['previewUrl'],
-                'release_date' => Carbon::parse($track['releaseDate'])->format('Y-m-d'),
+                'release_date' => isset($track['releaseDate']) ? Carbon::parse($track['releaseDate'])->format('Y-m-d') : null,
                 'artwork_url' => $track['artworkUrl100'],
             ];
         }) : null;
