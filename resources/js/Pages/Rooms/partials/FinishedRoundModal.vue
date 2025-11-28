@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 import Podium from './Podium.vue'
@@ -9,18 +9,27 @@ const props = defineProps({
   users_podium: Array,
   teams_podium: Array,
   show: Boolean,
+  room: {
+    type: Object,
+    default: null
+  }
 })
 
 const emit = defineEmits(['close'])
 
-const countdown = ref(parseInt(props.round.room.pause_between_rounds))
+// Use room from props if available, otherwise try round.room
+const room = computed(() => props.room || props.round?.room)
+
+const countdown = ref(parseInt(room.value?.pause_between_rounds || 0))
 const users_results = ref(null)
 const teams_results = ref(null)
 
 watch(
   () => props.round,
   (value) => {
-    countdown.value = parseInt(props.round.room.pause_between_rounds)
+    if (room.value) {
+      countdown.value = parseInt(room.value.pause_between_rounds || 0)
+    }
   },
 )
 
@@ -103,14 +112,14 @@ const close = () => {
         {{ __('No scores') }}
       </div>
       <template #footer>
-        <div class="flex w-full items-center gap-6">
-          <div class="flex flex-grow flex-col">
-            <div v-if="round.room.is_autostart" class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
-              <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(props.round.room.pause_between_rounds)) * 100 + '%'">
-                <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">{{ __('Next game in') }} {{ countdown }}</span>
+          <div class="flex w-full items-center gap-6">
+            <div class="flex flex-grow flex-col">
+              <div v-if="room && room.is_autostart" class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
+                <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(room.pause_between_rounds || 1)) * 100 + '%'">
+                  <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">{{ __('Next game in') }} {{ countdown }}</span>
+                </div>
               </div>
             </div>
-          </div>
           <div class="ml-auto flex items-center">
             <button type="button" class="btn-secondary mr-2" @click="$emit('close')">{{ __('Close') }}</button>
           </div>

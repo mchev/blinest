@@ -43,10 +43,29 @@ class TrackPlayed implements ShouldBroadcast
     }
 
     /**
+     * Get the data to broadcast.
+     */
+    public function broadcastWith(): array
+    {
+        $roundData = $this->round->toArray();
+
+        // Include the track start timestamp
+        if ($this->round->current_track_started_at) {
+            $roundData['current_track_started_at'] = $this->round->current_track_started_at->toIso8601String();
+        }
+
+        return [
+            'round' => $roundData,
+            'room' => $this->room->toArray(),
+            'track' => $this->track,
+        ];
+    }
+
+    /**
      * Get the channels the event should broadcast on.
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('rooms.'.$this->round['room_id']);
+        return new Channel('rooms.'.$this->round->room_id);
     }
 }

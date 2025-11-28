@@ -25,6 +25,7 @@ class Round extends Model
         'current',
         'finished_at',
         'is_playing',
+        'current_track_started_at',
     ];
 
     protected function casts(): array
@@ -32,6 +33,7 @@ class Round extends Model
         return [
             'tracks' => 'object',
             'finished_at' => 'datetime',
+            'current_track_started_at' => 'datetime',
         ];
     }
 
@@ -99,6 +101,13 @@ class Round extends Model
         }
 
         if ($track->provider === 'youtube' || $track->provider === 'local') {
+            // Record the timestamp when the track starts playing
+            try {
+                $this->update(['current_track_started_at' => now()]);
+            } catch (\Exception $e) {
+                // Column might not exist yet, log and continue
+                Log::warning('Could not update current_track_started_at: '.$e->getMessage());
+            }
             broadcast(new TrackPlayed($this, $track));
             ProcessTrackPlayed::dispatch($this)
                 ->delay(now()->addSeconds($this->room->track_duration));
@@ -123,7 +132,13 @@ class Round extends Model
             $response = Http::retry(3, 100)->timeout(3)->get($audioUrl);
 
             if ($response->successful()) {
-                // Track is valid, broadcast and queue next track
+                // Track is valid, record timestamp and broadcast
+                try {
+                    $this->update(['current_track_started_at' => now()]);
+                } catch (\Exception $e) {
+                    // Column might not exist yet, log and continue
+                    Log::warning('Could not update current_track_started_at: '.$e->getMessage());
+                }
                 broadcast(new TrackPlayed($this, $track));
                 ProcessTrackPlayed::dispatch($this)
                     ->delay(now()->addSeconds($this->room->track_duration));

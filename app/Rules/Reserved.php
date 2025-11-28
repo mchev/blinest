@@ -8,10 +8,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class Reserved implements ValidationRule
 {
-
     public function __construct(
         protected ?string $currentName = null
-    ) { }
+    ) {}
 
     /**
      * Run the validation rule.

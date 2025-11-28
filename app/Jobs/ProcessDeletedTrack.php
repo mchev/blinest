@@ -37,10 +37,13 @@ class ProcessDeletedTrack implements ShouldQueue
         }
 
         try {
-            // Public rooms discord notification
-            foreach ($this->track->playlist->rooms()->isPublic()->get() as $room) {
-                if ($room->discord_webhook_url) {
-                    SendDiscordNotification::dispatch($room, $message, 'danger');
+            // Only send notifications in production
+            if (app()->environment('production')) {
+                // Public rooms discord notification
+                foreach ($this->track->playlist->rooms()->isPublic()->get() as $room) {
+                    if ($room->discord_webhook_url) {
+                        SendDiscordNotification::dispatch($room, $message, 'danger');
+                    }
                 }
             }
 

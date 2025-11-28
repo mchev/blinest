@@ -56,7 +56,7 @@ class RoundController extends Controller
             $request->validate([
                 'text' => 'required|string|min:1|max:255',
                 'words' => 'nullable|array',
-                'currentTime' => 'required|numeric',
+                'currentTime' => 'required|numeric|min:0',
             ]);
 
             $user = $request->user();
@@ -65,7 +65,20 @@ class RoundController extends Controller
             $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
                 return $round->room->track_duration;
             });
-            $speedBonus = ($request->input('currentTime') < ($trackDuration * 0.18));
+
+            // Security: Validate currentTime is within reasonable bounds
+            // Allow some tolerance for network/processing delays (max 5 seconds over track duration)
+            $currentTime = (float) $request->input('currentTime');
+            $maxAllowedTime = $trackDuration + 5;
+
+            if ($currentTime < 0 || $currentTime > $maxAllowedTime) {
+                // Invalid time, reject the request
+                return response()->json([
+                    'error' => 'Invalid time',
+                ], 400);
+            }
+
+            $speedBonus = ($currentTime < ($trackDuration * 0.18));
 
             // Updates the words array
             $sanitized = sanitizeString($request->input('text'));

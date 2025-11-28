@@ -3,6 +3,13 @@ import { ref, onMounted } from 'vue'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
 
+const props = defineProps({
+  forceShow: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const show = ref(false)
 const emit = defineEmits(['play'])
 
@@ -10,6 +17,15 @@ const triggerUserGesture = () => {
   emit('play')
   show.value = false
 }
+
+// Expose method to show modal programmatically
+const showModal = () => {
+  show.value = true
+}
+
+defineExpose({
+  showModal
+})
 
 onMounted(() => {
   var autoPlayAllowed = true
@@ -24,7 +40,7 @@ onMounted(() => {
         }
       })
       .then(function () {
-        if (!autoPlayAllowed) {
+        if (!autoPlayAllowed || props.forceShow) {
           show.value = true
         }
       })

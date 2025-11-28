@@ -223,6 +223,68 @@ class RoomController extends Controller
                 StartRound::dispatch($room, $request->user());
             }
         }
+
+        // Return current round and track information if a round is playing
+        $currentRound = $room->currentRound()->first();
+
+        // Refresh the round to ensure we have the latest current_track_started_at
+        if ($currentRound) {
+            $currentRound->refresh();
+        }
+
+        if ($currentRound && $currentRound->is_playing) {
+            // Get the current track being played
+            // Convert tracks to array since it's cast as object
+            $tracks = (array) $currentRound->tracks;
+            $currentTrackIndex = $currentRound->current ?? 0;
+            if ($currentTrackIndex > 0 && isset($tracks[$currentTrackIndex - 1])) {
+                $trackId = $tracks[$currentTrackIndex - 1];
+                $track = \App\Models\Track::with('answers')->find($trackId);
+
+                if ($track) {
+                    // Calculate elapsed time since track started
+                    $startTime = 0;
+                    if ($currentRound->current_track_started_at) {
+                        // current_track_started_at is already a Carbon instance due to the datetime cast
+                        $startedAt = $currentRound->current_track_started_at;
+                        // Calculate elapsed seconds: time since track started
+                        // diffInSeconds returns the absolute difference by default
+                        // We want: elapsed = now - startedAt (positive if startedAt is in the past)
+                        $elapsedSeconds = $startedAt->diffInSeconds(now());
+                        // Don't allow negative time or time beyond track duration
+                        $startTime = max(0, min($elapsedSeconds, $room->track_duration));
+                    }
+
+                    return response()->json([
+                        'round' => [
+                            'id' => $currentRound->id,
+                            'current' => $currentRound->current,
+                            'is_playing' => $currentRound->is_playing,
+                            'current_track_started_at' => $currentRound->current_track_started_at?->toIso8601String(),
+                        ],
+                        'track' => [
+                            'id' => $track->id,
+                            'provider' => $track->provider,
+                            'preview_url' => $track->preview_url,
+                            'audio' => $track->audio,
+                            'answers' => $track->answers->map(function ($answer) {
+                                return [
+                                    'id' => $answer->id,
+                                    'name' => $answer->type->name,
+                                ];
+                            }),
+                        ],
+                        'room' => [
+                            'id' => $room->id,
+                            'is_playing' => $room->is_playing,
+                        ],
+                        'startTime' => $startTime, // Time in seconds to start the track
+                    ]);
+                }
+            }
+        }
+
+        return response()->json(['round' => null, 'track' => null, 'startTime' => 0]);
     }
 
     public function start(Request $request, Room $room)

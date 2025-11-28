@@ -11,6 +11,14 @@ const props = defineProps({
   channel: {
     type: String,
     required: true
+  },
+  initialTrack: {
+    type: Object,
+    default: null
+  },
+  initialStartTime: {
+    type: Number,
+    default: 0
   }
 })
 
@@ -28,6 +36,10 @@ const countdown = ref(0)
 const countdowning = ref(false)
 const waitingForNextTrack = ref(false)
 const currentTime = ref(0)
+const pendingStartTime = ref(0) // Store startTime to apply after audio loads
+const hasHandledInitialTrack = ref(false) // Flag to prevent double playback
+const userGestureModal = ref(null) // Reference to UserGestureModal
+let playerChannel = null // Store channel reference to prevent multiple listeners
 
 // YouTube specific state
 const youtubePlayer = ref(null)
@@ -53,9 +65,21 @@ watch(volume, (newVolume) => {
 
 const triggerUserGesture = async () => {
   try {
+    // Preserve the startTime if we're joining mid-track
+    const preservedTime = pendingStartTime.value > 0 ? pendingStartTime.value : 0
     await audio.value.play()
     audio.value.pause()
-    audio.value.currentTime = 0
+    // Only reset to 0 if we don't have a startTime to preserve
+    audio.value.currentTime = preservedTime
+    if (preservedTime > 0) {
+      currentTime.value = preservedTime
+      const calculatedPercent = (100 / props.room.track_duration) * (preservedTime + 0.25)
+      percent.value = Math.min(100, Math.round(calculatedPercent))
+    }
+    // Now that we have user interaction, try to play again
+    if (isPlaying.value && track.value) {
+      await audio.value.play()
+    }
   } catch (error) {
     console.error('Error during user gesture:', error)
   }
@@ -100,7 +124,7 @@ const cleanupYoutubePlayer = () => {
   }
 }
 
-const initYoutubePlayer = (videoId) => {
+const initYoutubePlayer = (videoId, startTime = 0) => {
   cleanupYoutubePlayer()
   
   const player = new YT.Player('youtube-player', {
@@ -117,6 +141,14 @@ const initYoutubePlayer = (videoId) => {
       onReady: (event) => {
         youtubePlayer.value = event.target
         youtubePlayer.value.setVolume(volume.value * 100)
+        // Set start time if provided
+        if (startTime > 0) {
+          youtubePlayer.value.seekTo(startTime, true)
+          currentTime.value = startTime
+          // Update percent based on startTime
+          const calculatedPercent = (100 / props.room.track_duration) * (startTime + 0.25)
+          percent.value = Math.min(100, Math.round(calculatedPercent))
+        }
         loading.value = false
         startYoutubeProgress()
       },
@@ -160,13 +192,25 @@ const initYoutubePlayer = (videoId) => {
   })
 }
 
-const play = async () => {
+const play = async (startTime = 0) => {
   if (isPlaying.value) await stop()
 
+  // Clear waitingForNextTrack when we start playing
+  waitingForNextTrack.value = false
+  
   loading.value = true
   error.value = null
   isPlaying.value = true
-  currentTime.value = 0
+  pendingStartTime.value = startTime
+  currentTime.value = startTime
+  
+  // Initialize percent based on startTime if joining mid-track
+  if (startTime > 0) {
+    const calculatedPercent = (100 / props.room.track_duration) * (startTime + 0.25)
+    percent.value = Math.min(100, Math.round(calculatedPercent))
+  } else {
+    percent.value = 0
+  }
 
   if (isYoutubeTrack.value) {
     const videoId = getYoutubeVideoId(track.value?.preview_url)
@@ -178,19 +222,40 @@ const play = async () => {
     }
 
     if (window.YT?.Player) {
-      initYoutubePlayer(videoId)
+      initYoutubePlayer(videoId, startTime)
     } else {
-      window.onYouTubeIframeAPIReady = () => initYoutubePlayer(videoId)
+      window.onYouTubeIframeAPIReady = () => initYoutubePlayer(videoId, startTime)
     }
     return
   }
 
   try {
+    // Set up audio source
     audio.value.src = track.value.audio
     audio.value.crossOrigin = 'anonymous'
-    audio.value.load()
     audio.value.muted = false
+    
+    // Add event listeners before loading
     addAudioEventListeners()
+    
+    // Load the audio - handleCanPlayThrough will apply the startTime
+    audio.value.load()
+    
+    // If we have a startTime, also try to set it early (but handleCanPlayThrough is the main handler)
+    if (startTime > 0) {
+      // Try to set it as soon as metadata is available
+      const trySetStartTime = () => {
+        if (audio.value.readyState >= 1) { // HAVE_METADATA
+          try {
+            audio.value.currentTime = startTime
+            currentTime.value = startTime
+          } catch (e) {
+            // Ignore - handleCanPlayThrough will handle it
+          }
+        }
+      }
+      audio.value.addEventListener('loadedmetadata', trySetStartTime, { once: true })
+    }
   } catch (e) {
     error.value = `Error loading audio: ${e.message}`
     loading.value = false
@@ -201,8 +266,18 @@ const play = async () => {
 const setupEventListeners = () => {
   window.addEventListener('volume-localstorage-changed', handleVolumeChange)
 
-  const channel = Echo.channel(props.channel)
-  channel
+  // Clean up existing listeners to prevent duplicates
+  if (playerChannel) {
+    playerChannel.stopListening('TrackPlayed')
+    playerChannel.stopListening('TrackEnded')
+    playerChannel.stopListening('TrackPaused')
+    playerChannel.stopListening('TrackResumed')
+    playerChannel.stopListening('UserHasFoundAllTheAnswers')
+  }
+
+  // Create new listeners
+  playerChannel = Echo.channel(props.channel)
+  playerChannel
     .listen('TrackPlayed', handleTrackPlayed)
     .listen('TrackEnded', handleTrackEnded)
     .listen('TrackPaused', pause)
@@ -215,6 +290,17 @@ const setupEventListeners = () => {
 
 const cleanup = () => {
   stop()
+  
+  // Clean up Echo listeners
+  if (playerChannel) {
+    playerChannel.stopListening('TrackPlayed')
+    playerChannel.stopListening('TrackEnded')
+    playerChannel.stopListening('TrackPaused')
+    playerChannel.stopListening('TrackResumed')
+    playerChannel.stopListening('UserHasFoundAllTheAnswers')
+    playerChannel = null
+  }
+  
   Echo.leave(props.channel)
   window.removeEventListener('volume-localstorage-changed', handleVolumeChange)
   removeAudioEventListeners()
@@ -227,6 +313,10 @@ const handleVolumeChange = (event) => {
 }
 
 const handleTrackPlayed = (e) => {
+  // Prevent playing the same track multiple times
+  if (track.value && track.value.id === e.track.id && isPlaying.value) {
+    return // Already playing this track
+  }
   track.value = e.track
   waitingForNextTrack.value = false
   play()
@@ -250,6 +340,8 @@ const addAudioEventListeners = () => {
 
   const events = {
     error: handleAudioError,
+    loadedmetadata: handleCanPlayThrough,
+    loadeddata: handleCanPlayThrough,
     canplaythrough: handleCanPlayThrough,
     timeupdate: handleTimeUpdate,
     ended: handleAudioEnded
@@ -263,6 +355,8 @@ const addAudioEventListeners = () => {
 const removeAudioEventListeners = () => {
   const events = {
     error: handleAudioError,
+    loadedmetadata: handleCanPlayThrough,
+    loadeddata: handleCanPlayThrough,
     canplaythrough: handleCanPlayThrough,
     timeupdate: handleTimeUpdate,
     ended: handleAudioEnded
@@ -306,20 +400,97 @@ const handleAudioError = () => {
   loading.value = false
 }
 
+const applyStartTime = () => {
+  if (pendingStartTime.value > 0 && audio.value.readyState >= 2) {
+    try {
+      const timeDiff = Math.abs(audio.value.currentTime - pendingStartTime.value)
+      if (timeDiff > 0.5) {
+        audio.value.currentTime = pendingStartTime.value
+        currentTime.value = pendingStartTime.value
+        // Update percent based on current time
+        const calculatedPercent = (100 / props.room.track_duration) * (pendingStartTime.value + 0.25)
+        percent.value = Math.min(100, Math.round(calculatedPercent))
+        return true
+      }
+    } catch (e) {
+      console.warn('Could not set currentTime:', e)
+    }
+  }
+  return false
+}
+
 const handleCanPlayThrough = async () => {
   if (waitingForNextTrack.value) return
 
+  const targetStartTime = pendingStartTime.value
+
+  // Apply the start time BEFORE playing - this is critical
+  if (targetStartTime > 0 && audio.value.readyState >= 2) {
+    try {
+      audio.value.currentTime = targetStartTime
+      currentTime.value = targetStartTime
+      const calculatedPercent = (100 / props.room.track_duration) * (targetStartTime + 0.25)
+      percent.value = Math.min(100, Math.round(calculatedPercent))
+    } catch (e) {
+      console.warn('Could not set currentTime before play:', e)
+    }
+  }
+
   loading.value = false
   
-  if (isIOS.value) {
+  // For iOS, we need to pause and set time before playing
+  if (isIOS.value && targetStartTime > 0) {
     audio.value.pause()
-    audio.value.currentTime = 0
+    try {
+      audio.value.currentTime = targetStartTime
+      currentTime.value = targetStartTime
+    } catch (e) {
+      console.warn('Player::handleCanPlayThrough - Could not set currentTime on iOS:', e)
+    }
   }
   
   try {
     await audio.value.play()
+    
+    // CRITICAL: Verify and re-apply startTime AFTER play() - browsers often reset it
+    if (targetStartTime > 0) {
+      // Wait a tiny bit for the browser to settle, then check and fix
+      setTimeout(() => {
+        const actualTime = audio.value.currentTime
+        const timeDiff = Math.abs(actualTime - targetStartTime)
+        
+        if (timeDiff > 0.2) { // If more than 200ms off, fix it
+          try {
+            audio.value.currentTime = targetStartTime
+            currentTime.value = targetStartTime
+            const calculatedPercent = (100 / props.room.track_duration) * (targetStartTime + 0.25)
+            percent.value = Math.min(100, Math.round(calculatedPercent))
+          } catch (e) {
+            console.warn('Could not fix startTime:', e)
+          }
+        }
+        
+        // Clear pendingStartTime after we've applied it
+        pendingStartTime.value = 0
+      }, 50) // Small delay to let browser settle
+    }
   } catch (error) {
-    console.error('Error playing audio:', error)
+    // If NotAllowedError, show user gesture modal
+    if (error.name === 'NotAllowedError' && userGestureModal.value) {
+      userGestureModal.value.showModal()
+    }
+    // If play failed, try to apply startTime when it succeeds
+    if (targetStartTime > 0) {
+      audio.value.addEventListener('play', () => {
+        try {
+          audio.value.currentTime = targetStartTime
+          currentTime.value = targetStartTime
+          pendingStartTime.value = 0
+        } catch (e) {
+          console.warn('Could not apply startTime on play event:', e)
+        }
+      }, { once: true })
+    }
   }
 }
 
@@ -409,9 +580,62 @@ const startYoutubeProgress = () => {
   }, 100)
 }
 
+// Watch for initialTrack to be set (in case it's set after mount)
+watch(() => [props.initialTrack, props.initialStartTime], (newValue, oldValue) => {
+  // Safely destructure newValue and oldValue
+  const [newTrack, newStartTime] = newValue || [null, null]
+  const [oldTrack, oldStartTime] = oldValue || [null, null]
+  
+  // If initialTrack was null and is now set (joining mid-track after mount)
+  // This is the key case: we mounted without a track, now we have one
+  if (!oldTrack && newTrack && hasHandledInitialTrack.value) {
+    track.value = newTrack
+    const startTime = newStartTime || 0
+    waitingForNextTrack.value = false
+    loading.value = false
+    play(startTime)
+    return
+  }
+  
+  // Play if we have a new track and:
+  // 1. We don't have a track yet, OR
+  // 2. The track ID has changed (new track)
+  const shouldPlay = newTrack && (
+    !track.value || 
+    (track.value && track.value.id !== newTrack.id)
+  )
+  
+  if (shouldPlay) {
+    track.value = newTrack
+    const startTime = newStartTime || 0
+    waitingForNextTrack.value = false
+    loading.value = false
+    play(startTime)
+  } else if (newTrack && track.value && track.value.id === newTrack.id && newStartTime !== oldStartTime && newStartTime !== currentTime.value) {
+    // If it's the same track but the start time changed (e.g., a re-sync)
+    play(newStartTime) // Re-play from the new start time
+  }
+}, { immediate: true, deep: true }) // immediate: true to catch initial values
+
 onMounted(() => {
   initializeAudio()
   setupEventListeners()
+  
+  // If we have an initial track at mount time, play it immediately
+  if (props.initialTrack) {
+    track.value = props.initialTrack
+    const startTime = props.initialStartTime || 0
+    hasHandledInitialTrack.value = true
+    waitingForNextTrack.value = false
+    loading.value = false
+    play(startTime)
+  } else {
+    // If no initial track at mount, mark as handled and wait for watcher to catch it
+    hasHandledInitialTrack.value = true
+    waitingForNextTrack.value = true
+    // The watcher with immediate: true will catch it if it's set synchronously
+    // Otherwise it will catch it when joining() sets it
+  }
 })
 
 onBeforeUnmount(() => {
@@ -510,7 +734,7 @@ onBeforeUnmount(() => {
     </div>
   </div>
 
-  <UserGestureModal @play="triggerUserGesture" />
+  <UserGestureModal ref="userGestureModal" @play="triggerUserGesture" />
 </template>
 
 <style scoped>

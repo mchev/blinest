@@ -23,7 +23,8 @@ const props = defineProps({
 })
 
 const user = usePage().props.auth.user
-const channel = `rooms.${props.room.id}`
+const room = ref({ ...props.room }) // Create a local reactive copy
+const channel = `rooms.${room.value.id}`
 const round = ref(null)
 const joined = ref(false)
 const users = ref([])
@@ -34,6 +35,9 @@ const displayChat = ref(true)
 const currentTime = ref(0)
 const users_podium = ref([])
 const teams_podium = ref([])
+const initialTrack = ref(null)
+const initialStartTime = ref(0)
+let roundsChannel = null // Store channel reference to prevent multiple listeners
 
 onMounted(() => {
   if (user) {
@@ -65,32 +69,59 @@ onMounted(() => {
 })
 
 const dispatchUserCount = (count) => {
-  Echo.private(`room.count.${props.room.id}`)
+  Echo.private(`room.count.${room.value.id}`)
     .whisper('updatedUserCount', {
       count: count
     })
 }
 
 onUnmounted(() => {
+  // Clean up listeners
+  if (roundsChannel) {
+    roundsChannel.stopListening('RoundStarted')
+    roundsChannel.stopListening('RoundFinished')
+    roundsChannel.stopListening('TrackPlayed')
+  }
   Echo.leave(channel)
 })
 
 const joining = () => {
-  axios.get(`/rooms/${props.room.id}/joined`).then(() => {
+  axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
+    // If there's a current round and track, use them immediately
+    if (response.data.round && response.data.track) {
+      round.value = response.data.round
+      initialTrack.value = response.data.track
+      initialStartTime.value = response.data.startTime || 0
+      if (response.data.room) {
+        Object.assign(room.value, response.data.room) // Update local room ref
+      }
+    } else {
+      initialTrack.value = null
+      initialStartTime.value = 0
+    }
     joined.value = true
     listenRounds()
+  }).catch((error) => {
+    console.error('Error joining room:', error)
   })
 }
 
 const listenRounds = () => {
-  Echo.channel(channel)
+  // Clean up existing listeners to prevent duplicates
+  if (roundsChannel) {
+    roundsChannel.stopListening('RoundStarted')
+    roundsChannel.stopListening('RoundFinished')
+    roundsChannel.stopListening('TrackPlayed')
+  }
+  
+  // Create new listeners
+  roundsChannel = Echo.channel(channel)
+  roundsChannel
     .listen('RoundStarted', (e) => {
-      console.warn('Round started')
       round.value = e.round
       roundFinished.value = false
     })
     .listen('RoundFinished', (e) => {
-      console.warn('Round finished')
       round.value = e.round
       users_podium.value = e.users_podium
       teams_podium.value = e.teams_podium
@@ -98,7 +129,12 @@ const listenRounds = () => {
     })
     .listen('TrackPlayed', (e) => {
       round.value = e.round
-      props.room.value = e.room
+      if (e.room) {
+        Object.assign(room.value, e.room) // Update local room ref
+      }
+      // Clear initial track since we're now receiving live updates
+      initialTrack.value = null
+      initialStartTime.value = 0
     })
 }
 </script>
@@ -110,7 +146,10 @@ const listenRounds = () => {
 
     <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">
       <Spinner class="h-8 w-8" />
-      <h2 class="text-xl font-medium text-neutral-200">{{ __('Loading') }}...</h2>
+      <div class="flex flex-col">
+        <h2 class="text-xl font-medium text-neutral-200">{{ __('Loading') }}...</h2>
+        <p class="text-sm text-neutral-400 mt-1">{{ __('Connecting to the room') }}</p>
+      </div>
     </div>
 
     <Transition name="slide-right">
@@ -138,7 +177,7 @@ const listenRounds = () => {
           </Tip>
 
           <div class="mb-8 space-y-2" v-if="user">
-            <Player :room="room" :channel="channel" @track:currentTime="currentTime = $event" />
+            <Player :room="room" :channel="channel" :initialTrack="initialTrack" :initialStartTime="initialStartTime" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
           </div>
 
@@ -212,6 +251,7 @@ const listenRounds = () => {
     <FinishedRoundModal v-if="round" 
                        :show="roundFinished" 
                        :round="round" 
+                       :room="room"
                        :users_podium="users_podium" 
                        :teams_podium="teams_podium" 
                        @close="roundFinished = false" />

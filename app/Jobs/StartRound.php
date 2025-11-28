@@ -46,6 +46,16 @@ class StartRound implements ShouldQueue
     public function handle(): void
     {
         try {
+            // Check if there's already an active round for this room
+            $activeRound = $this->room->currentRound()->first();
+            if ($activeRound && $activeRound->is_playing) {
+                Log::info('Round already active for room', [
+                    'room_id' => $this->room->id,
+                    'round_id' => $activeRound->id,
+                ]);
+
+                return; // Don't create a new round if one is already playing
+            }
 
             $round = $this->room->rounds()->create([
                 'user_id' => $this->user ? $this->user->id : null,
