@@ -18,7 +18,7 @@
     "Album": "Album",
     "Alert sent": "Alerte envoyée",
     "Alerting moderators": "Alerte modération",
-    "All-time": "Tout les temps",
+    "All-time": "Tous les temps",
     "Allow playing": "Autoriser la lecture",
     "Anime": "Anime",
     "Anonymous": "Anonyme",
@@ -481,5 +481,8 @@
     "Load more scores!": "Voir plus de scores !",
     "Your bookmarks!": "Vos favoris !",
     "No likes found": "Aucun like trouvé",
-    "No bookmarks found": "Aucun favori trouvé"
+    "No bookmarks found": "Aucun favori trouvé",
+    "Spotlight": "Mise en lumière",
+    "Blinest supports this organic farming and farm inn project in Burgundy. Help Camille finalize her project to open a convivial inn where visitors can enjoy homemade dishes made from her own harvests.": "Blinest soutient ce projet de maraîchage bio et ferme auberge en Bourgogne. Aidez Camille à finaliser son projet pour ouvrir une auberge conviviale où les visiteurs pourront déguster des plats faits maison préparés à partir de ses propres récoltes.",
+    "Support this project": "Soutenir ce projet"
 }
