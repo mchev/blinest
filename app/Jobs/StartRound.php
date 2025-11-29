@@ -48,7 +48,7 @@ class StartRound implements ShouldQueue
         try {
             // Refresh room to get latest state
             $this->room->refresh();
-            
+
             // Check if there's already an active round for this room
             $activeRound = $this->room->currentRound()->first();
             if ($activeRound && $activeRound->is_playing) {
@@ -69,6 +69,7 @@ class StartRound implements ShouldQueue
                         'room_id' => $this->room->id,
                         'round_id' => $activeRound->id,
                     ]);
+
                     return;
                 }
             } else {

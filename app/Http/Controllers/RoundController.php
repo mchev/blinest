@@ -140,14 +140,17 @@ class RoundController extends Controller
                     }
 
                     // Flamme - Bonus speed (18% of the room track duration)
-                    if ($speedBonus) {
+                    // Only apply speed bonus if the base score is not 0
+                    $actualSpeedBonus = false;
+                    if ($speedBonus && $answer->score > 0) {
                         $score += 0.5;
+                        $actualSpeedBonus = true;
                     }
 
                     $answers[] = [
                         'id' => $answer->id,
                         'order' => $order,
-                        'speedBonus' => $speedBonus,
+                        'speedBonus' => $actualSpeedBonus,
                         'name' => $answer->type->name,
                     ];
 
