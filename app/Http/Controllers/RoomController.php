@@ -298,9 +298,9 @@ class RoomController extends Controller
                     $activeRound->stop();
                 }
 
-                // Create a new round
+                // Create a new round (current will be set by StartRound when tracks are added)
                 $room->rounds()->create([
-                    'current' => 1,
+                    'current' => 0,
                     'is_playing' => true,
                     'user_id' => $request->user()->id,
                 ]);

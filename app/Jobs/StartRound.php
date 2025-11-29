@@ -46,24 +46,41 @@ class StartRound implements ShouldQueue
     public function handle(): void
     {
         try {
+            // Refresh room to get latest state
+            $this->room->refresh();
+            
             // Check if there's already an active round for this room
             $activeRound = $this->room->currentRound()->first();
             if ($activeRound && $activeRound->is_playing) {
-                Log::info('Round already active for room', [
-                    'room_id' => $this->room->id,
-                    'round_id' => $activeRound->id,
+                // Check if the round has tracks - if not, it might be a newly created round that needs setup
+                // (e.g., from manual start in RoomController::start())
+                if (empty($activeRound->tracks)) {
+                    // Round exists but has no tracks - set it up
+                    $round = $activeRound;
+                    $round->update([
+                        'tracks' => $this->room->is_random
+                            ? $this->getRandomTracks()
+                            : $this->room->tracks()->take($this->room->tracks_by_round)->distinct()->pluck('id'),
+                        'current' => 0, // Reset to 0 to start from first track
+                    ]);
+                } else {
+                    // Round already has tracks and is playing - don't create a new one
+                    Log::info('Round already active for room', [
+                        'room_id' => $this->room->id,
+                        'round_id' => $activeRound->id,
+                    ]);
+                    return;
+                }
+            } else {
+                // Create a new round
+                $round = $this->room->rounds()->create([
+                    'user_id' => $this->user ? $this->user->id : null,
+                    'is_playing' => true,
+                    'tracks' => $this->room->is_random
+                        ? $this->getRandomTracks()
+                        : $this->room->tracks()->take($this->room->tracks_by_round)->distinct()->pluck('id'),
                 ]);
-
-                return; // Don't create a new round if one is already playing
             }
-
-            $round = $this->room->rounds()->create([
-                'user_id' => $this->user ? $this->user->id : null,
-                'is_playing' => true,
-                'tracks' => $this->room->is_random
-                    ? $this->getRandomTracks()
-                    : $this->room->tracks()->take($this->room->tracks_by_round)->distinct()->pluck('id'),
-            ]);
 
             if (! empty($round->tracks)) {
                 $this->room->update([
