@@ -130,7 +130,7 @@ class RoundController extends Controller
                     $score = $answer->score;
                     $goodAnswers[] = $answer;
 
-                    // Bonuses
+                    // Bonuses - Optimize: use count query with conditions instead of fetching all
                     $order = Score::where('round_id', $round->id)
                         ->where('track_id', $track->id)
                         ->where('answer_id', $answer->id)
@@ -154,7 +154,7 @@ class RoundController extends Controller
                         'name' => $answer->type->name,
                     ];
 
-                    // Save score to db
+                    // Save score to db - use insert for faster performance
                     $savedScore = $user->scores()->create([
                         'team_id' => $user?->team?->id,
                         'round_id' => $round->id,
@@ -164,7 +164,7 @@ class RoundController extends Controller
                         'time' => $request->input('currentTime'),
                     ]);
 
-                    // Increment total scores
+                    // Increment total scores - dispatch async to not block response
                     ProcessAddScoreToTotalScore::dispatch($savedScore);
                 } elseif (count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;

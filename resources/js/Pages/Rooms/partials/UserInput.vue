@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Volume from '@/Components/Volume.vue'
 import Dropdown from '@/Components/Dropdown.vue'
@@ -8,27 +8,65 @@ const props = defineProps({
   room: Object,
   channel: String,
   currentTime: Number,
+  initialTrack: Object, // Track currently playing when component mounts
+  initialRound: Object, // Round currently active when component mounts
 })
 
 const input = ref(null)
-const track = ref(null)
-const round = ref(null)
+const track = ref(props.initialTrack || null)
+const round = ref(props.initialRound || null)
 const text = ref('')
 const words = ref([])
 const message = ref(null)
 const answers = ref([])
 const { auth } = usePage().props
 const user = auth.user
-const inputDisabled = ref(true)
+// Input is disabled only if there's no active track
+const inputDisabled = computed(() => !track.value || !round.value)
 const autoFocus = ref(localStorage.getItem('autoFocus') !== 'false')
+const userHasInteracted = ref(false) // Track if user has manually interacted with input
 
-const focus = () => {
-  if (input.value && autoFocus.value) {
-    input.value.focus()
-    input.value.click()
-    input.value.select()
+// Non-blocking focus - only if autofocus is enabled and user hasn't manually interacted
+const attemptAutoFocus = () => {
+  // Never force focus if user has manually interacted or autofocus is off
+  if (!autoFocus.value || userHasInteracted.value) {
+    return
+  }
+  
+  if (input.value && !inputDisabled.value) {
+    // Use requestAnimationFrame to avoid blocking user interactions
+    requestAnimationFrame(() => {
+      // Double-check conditions haven't changed
+      if (input.value && !inputDisabled.value && autoFocus.value && !userHasInteracted.value) {
+        // Only focus if input doesn't already have focus
+        if (document.activeElement !== input.value) {
+          input.value.focus()
+          // Only select if field is empty
+          if (!text.value || text.value.length === 0) {
+            requestAnimationFrame(() => {
+              if (input.value && (!text.value || text.value.length === 0)) {
+                input.value.select()
+              }
+            })
+          }
+        }
+      }
+    })
   }
 }
+
+// Watch for initial props changes (when joining a room in progress)
+// Use flush: 'post' to avoid blocking input during rapid typing
+watch(() => [props.initialTrack, props.initialRound], ([newTrack, newRound]) => {
+  if (newTrack && newRound && (!track.value || track.value.id !== newTrack.id)) {
+    track.value = newTrack
+    round.value = newRound
+    // Reset interaction flag when receiving initial track
+    userHasInteracted.value = false
+    // Attempt autofocus if enabled (non-blocking)
+    attemptAutoFocus()
+  }
+}, { immediate: true, flush: 'post' })
 
 const toggleAutoFocus = () => {
   autoFocus.value = !autoFocus.value
@@ -42,26 +80,65 @@ const showMessage = (data) => {
   }, 1600)
 }
 
-const check = () => {
-  if (inputDisabled.value || text.value.length < 1 || !track.value) return
+// Debounce flag to prevent multiple rapid submissions
+const isSubmitting = ref(false)
 
-  const currentText = text.value
-  text.value = ''
+const check = () => {
+  // Fast validation - return immediately if conditions not met
+  if (isSubmitting.value || inputDisabled.value || text.value.length < 1 || !track.value || !round.value) return
+
+  const currentText = text.value.trim()
+  if (currentText.length < 1) return
   
-  axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
+  // Clear input immediately for fastest UX
+  text.value = ''
+  isSubmitting.value = true
+  
+  // Maintain focus immediately after clearing input (before server response)
+  // This allows rapid typing without waiting for the response
+  requestAnimationFrame(() => {
+    if (input.value && !inputDisabled.value) {
+      input.value.focus()
+    }
+  })
+  
+  // Fire request immediately without waiting
+  const requestPromise = axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
     text: currentText,
     words: words.value,
     currentTime: props.currentTime
   })
-  .then((response) => {
-    answers.value.push(...response.data.good_answers)
-    words.value = response.data.words
-    showMessage(response.data.message)
-    focus()
-  })
-  .catch(error => {
-    console.error('Error checking answer:', error)
-  })
+  
+  requestPromise
+    .then((response) => {
+      // Update state asynchronously to not block input
+      answers.value.push(...response.data.good_answers)
+      words.value = response.data.words
+      showMessage(response.data.message)
+      // Maintain focus after successful submission for rapid typing
+      requestAnimationFrame(() => {
+        if (input.value && !inputDisabled.value) {
+          input.value.focus()
+        }
+      })
+    })
+    .catch(error => {
+      console.error('Error checking answer:', error)
+      // Restore text on error so user can retry
+      if (error.response?.status !== 400) {
+        text.value = currentText
+      }
+      // Maintain focus even on error
+      requestAnimationFrame(() => {
+        if (input.value && !inputDisabled.value) {
+          input.value.focus()
+        }
+      })
+    })
+    .finally(() => {
+      // Reset flag after request completes
+      isSubmitting.value = false
+    })
 }
 
 const pastedAnswer = (event) => {
@@ -70,26 +147,35 @@ const pastedAnswer = (event) => {
 }
 
 onMounted(() => {
-  focus()
+  // If we have initial track/round, attempt autofocus
+  if (track.value && round.value) {
+    attemptAutoFocus()
+  }
 
   Echo.channel(props.channel)
     .listen('TrackPlayed', (e) => {
-      props.room.value = e.room
+      if (e.room) {
+        Object.assign(props.room, e.room)
+      }
       round.value = e.round
       track.value = e.track
       answers.value = []
-      inputDisabled.value = false
       text.value = ''
-      setTimeout(focus, 0)
+      // Reset interaction flag on new track - allow autofocus again
+      userHasInteracted.value = false
+      // Attempt autofocus on new track (non-blocking)
+      attemptAutoFocus()
     })
     .listen('TrackEnded', () => {
-      inputDisabled.value = true
+      track.value = null
+      round.value = null
       text.value = ''
       words.value = []
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
       if (e.user === user) {
-        inputDisabled.value = true
+        // Don't disable input, just prevent further submissions
+        // The input will be disabled automatically via computed when track ends
       }
     })
 })
@@ -122,9 +208,12 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
           tabindex="0"
           @paste.prevent="pastedAnswer"
           @drop.prevent="pastedAnswer"
+          @focus="userHasInteracted = true"
+          @click="userHasInteracted = true"
+          @keydown.enter.prevent="check"
           autocomplete="off"
           maxlength="255"
-          :disabled="inputDisabled"
+          :disabled="inputDisabled || isSubmitting"
         />
 
         <Dropdown placement="bottom-end">

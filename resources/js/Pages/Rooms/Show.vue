@@ -178,7 +178,7 @@ const listenRounds = () => {
 
           <div class="mb-8 space-y-2" v-if="user">
             <Player :room="room" :channel="channel" :initialTrack="initialTrack" :initialStartTime="initialStartTime" @track:currentTime="currentTime = $event" />
-            <UserInput :channel="channel" :currentTime="currentTime" :room="room" />
+            <UserInput :channel="channel" :currentTime="currentTime" :room="room" :initialTrack="initialTrack" :initialRound="round" />
           </div>
 
           <div class="grid gap-8 md:grid-cols-2">
