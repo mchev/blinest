@@ -130,21 +130,31 @@ class RoundController extends Controller
                     $score = $answer->score;
                     $goodAnswers[] = $answer;
 
-                    // Bonuses - Optimize: use count query with conditions instead of fetching all
-                    $order = Score::where('round_id', $round->id)
-                        ->where('track_id', $track->id)
-                        ->where('answer_id', $answer->id)
-                        ->count() + 1;
-                    if ($order < 4) {
-                        $score += 0.5;
-                    }
+                    // Only apply bonuses if the base score is greater than 0
+                    if ($answer->score > 0) {
+                        // Bonuses - Optimize: use count query with conditions instead of fetching all
+                        $order = Score::where('round_id', $round->id)
+                            ->where('track_id', $track->id)
+                            ->where('answer_id', $answer->id)
+                            ->count() + 1;
+                        if ($order < 4) {
+                            $score += 0.5;
+                        }
 
-                    // Flamme - Bonus speed (18% of the room track duration)
-                    // Only apply speed bonus if the base score is not 0
-                    $actualSpeedBonus = false;
-                    if ($speedBonus && $answer->score > 0) {
-                        $score += 0.5;
-                        $actualSpeedBonus = true;
+                        // Flamme - Bonus speed (18% of the room track duration)
+                        // Only apply speed bonus if the base score is not 0
+                        $actualSpeedBonus = false;
+                        if ($speedBonus) {
+                            $score += 0.5;
+                            $actualSpeedBonus = true;
+                        }
+                    } else {
+                        // No bonuses for 0-point answers
+                        $order = Score::where('round_id', $round->id)
+                            ->where('track_id', $track->id)
+                            ->where('answer_id', $answer->id)
+                            ->count() + 1;
+                        $actualSpeedBonus = false;
                     }
 
                     $answers[] = [

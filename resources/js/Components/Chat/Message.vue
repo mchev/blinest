@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Moderation from './Moderation.vue'
 
@@ -93,7 +93,90 @@ function useClickOutside(targetRef, callback) {
 }
 
 const emojiPickerRef = ref(null)
+const messageRef = ref(null)
+const emojiPickerPosition = ref({ top: 'auto', bottom: 'auto' })
+
 useClickOutside(emojiPickerRef, () => { showEmojiPicker.value = false })
+
+// Calculate emoji picker position based on messages container, not viewport
+const calculateEmojiPickerPosition = () => {
+  if (!messageRef.value || !emojiPickerRef.value) return
+  
+  // Find the messages container (parent scrollable container)
+  const messagesContainer = messageRef.value.closest('.overflow-y-auto') || 
+                           messageRef.value.closest('[class*="overflow"]') ||
+                           null
+  
+  if (!messagesContainer) {
+    // Fallback to viewport if container not found
+    const messageRect = messageRef.value.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const pickerHeight = emojiPickerRef.value.offsetHeight || 200
+    const spaceBelow = viewportHeight - messageRect.bottom
+    const spaceAbove = messageRect.top
+    const margin = 20
+    
+    if (spaceBelow < (pickerHeight + margin) && spaceAbove > (pickerHeight + margin)) {
+      emojiPickerPosition.value = { bottom: '100%', top: 'auto', marginBottom: '8px' }
+    } else {
+      emojiPickerPosition.value = { top: '100%', bottom: 'auto', marginTop: '8px' }
+    }
+    return
+  }
+  
+  // Calculate position relative to messages container
+  const messageRect = messageRef.value.getBoundingClientRect()
+  const containerRect = messagesContainer.getBoundingClientRect()
+  const pickerHeight = emojiPickerRef.value.offsetHeight || 200
+  
+  // Calculate space relative to container
+  // Space below = distance from message bottom to container bottom
+  const spaceBelow = containerRect.bottom - messageRect.bottom
+  // Space above = distance from container top to message top
+  const spaceAbove = messageRect.top - containerRect.top
+  
+  // Add some margin (20px) for better UX
+  const margin = 20
+  
+  // If not enough space below but enough space above, show above
+  if (spaceBelow < (pickerHeight + margin) && spaceAbove > (pickerHeight + margin)) {
+    emojiPickerPosition.value = { bottom: '100%', top: 'auto', marginBottom: '8px' }
+  } else {
+    emojiPickerPosition.value = { top: '100%', bottom: 'auto', marginTop: '8px' }
+  }
+}
+
+// Watch for emoji picker visibility changes
+const toggleEmojiPicker = () => {
+  showEmojiPicker.value = !showEmojiPicker.value
+  if (showEmojiPicker.value) {
+    // Calculate position after Vue updates the DOM
+    nextTick(() => {
+      calculateEmojiPickerPosition()
+    })
+  }
+}
+
+// Handle scroll and resize to recalculate position
+const handleRecalculate = () => {
+  if (showEmojiPicker.value) {
+    calculateEmojiPickerPosition()
+  }
+}
+
+// Watch for emoji picker visibility to add/remove listeners
+watch(showEmojiPicker, (isVisible) => {
+  if (isVisible) {
+    nextTick(() => {
+      calculateEmojiPickerPosition()
+      window.addEventListener('scroll', handleRecalculate, { passive: true })
+      window.addEventListener('resize', handleRecalculate, { passive: true })
+    })
+  } else {
+    window.removeEventListener('scroll', handleRecalculate)
+    window.removeEventListener('resize', handleRecalculate)
+  }
+})
 
 onMounted(() => {
   fetchReactions()
@@ -103,16 +186,19 @@ onUnmounted(() => {
   if (window.Echo) {
     window.Echo.private(`chat.message.${props.message.id}`).stopListening('MessageReactionUpdated')
   }
+  // Cleanup scroll and resize listeners
+  window.removeEventListener('scroll', handleRecalculate)
+  window.removeEventListener('resize', handleRecalculate)
 })
 </script>
 
 <template>
-  <div class="group relative p-2 rounded-lg transition-all duration-200 hover:bg-neutral-800/60 mb-1">
+  <div ref="messageRef" class="group relative p-2 rounded-lg transition-all duration-200 hover:bg-neutral-800/60 mb-1">
     <!-- Menu d'action discret, horizontal, au survol -->
     <div class="absolute top-2 right-2 flex-row gap-2 hidden group-hover:flex z-20">
       <button
         class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition"
-        @click="showEmojiPicker = !showEmojiPicker"
+        @click="toggleEmojiPicker"
         title="Réagir"
         type="button"
       >
@@ -220,7 +306,13 @@ onUnmounted(() => {
     <div
       v-if="showEmojiPicker"
       ref="emojiPickerRef"
-      class="absolute z-40 right-2 top-12 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
+      class="absolute z-40 right-2 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
+      :style="{
+        top: emojiPickerPosition.top,
+        bottom: emojiPickerPosition.bottom,
+        marginTop: emojiPickerPosition.marginTop || '0',
+        marginBottom: emojiPickerPosition.marginBottom || '0'
+      }"
     >
       <button
         v-for="emoji in emojiList"
