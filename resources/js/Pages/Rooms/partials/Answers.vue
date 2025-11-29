@@ -156,9 +156,9 @@ const setHovering = (trackId, isHover) => {
                   <ul class="space-y-1 sm:space-y-2" role="list">
                     <li v-for="answer in track.answers" 
                         :key="answer.id" 
-                        class="flex items-start text-xs sm:text-sm flex-wrap gap-1 sm:gap-2"
+                        class="flex items-start text-xs sm:text-sm gap-1 sm:gap-2"
                         role="listitem">
-                      <div class="flex items-center gap-1 sm:gap-2 min-w-0">
+                      <div class="flex items-start gap-1 sm:gap-2 min-w-0 flex-wrap">
                         <div v-if="getUserAnswerForTrackAndAnswer(track, answer)" 
                              class="relative flex items-center gap-1 rounded-md bg-gradient-to-r from-purple-600 to-purple-500 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase text-white shadow-sm flex-shrink-0" 
                              :class="{ 'mr-1': getUserAnswerForTrackAndAnswer(track, answer)?.order < 4 }">
@@ -182,7 +182,7 @@ const setHovering = (trackId, isHover) => {
                             {{ __(answer.type.name) }}
                           </span>
                         </div>
-                        <span class="font-medium text-neutral-200 truncate" :title="answer.value">
+                        <span class="font-medium text-neutral-200 whitespace-normal leading-relaxed flex-1 min-w-0">
                           {{ answer.value }}
                         </span>
                       </div>
@@ -192,32 +192,34 @@ const setHovering = (trackId, isHover) => {
               </div>
             </div>
             
-            <div class="flex flex-row sm:flex-col items-center justify-between p-2 sm:p-3 gap-2 sm:gap-0">
-              <div class="flex items-center gap-2 sm:gap-3" v-if="user">
+            <div class="flex flex-row sm:flex-col items-center justify-between p-2 sm:p-3 gap-2 sm:gap-1">
+              <div class="flex items-center gap-1.5 sm:gap-2" v-if="user">
                 <button @click="voteTrackUp(track)" 
-                        class="group flex flex-col items-center gap-0.5 sm:gap-1 transition-all duration-200"
+                        class="group flex items-center gap-1 transition-all duration-200"
                         :title="__('Upvote this track')"
                         :aria-label="__('Upvote this track')"
                         :aria-pressed="track.user_voted_up">
-                  <div class="flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-neutral-700 hover:bg-green-600 transition-all duration-200"
+                  <div class="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-neutral-700/50 hover:bg-green-600 transition-all duration-200"
                        :class="{ 'bg-green-600': track.user_voted_up }">
-                    <Icon name="thumb-up" class="h-3.5 w-3.5 sm:h-5 sm:w-5 text-white" aria-hidden="true" />
+                    <Icon name="thumb-up" class="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" aria-hidden="true" />
                   </div>
-                  <span class="px-1.5 sm:px-2 py-0.5 rounded-md bg-neutral-800 text-[10px] sm:text-xs font-medium text-white group-hover:bg-green-700 transition-colors">
+                  <span class="text-[10px] sm:text-xs font-medium text-neutral-400 group-hover:text-green-400 transition-colors min-w-[1.5rem] text-center"
+                        :class="{ 'text-green-400': track.user_voted_up }">
                     {{ track.upvotes }}
                   </span>
                 </button>
                 
                 <button @click="voteTrackDown(track)" 
-                        class="group flex flex-col items-center gap-0.5 sm:gap-1 transition-all duration-200"
+                        class="group flex items-center gap-1 transition-all duration-200"
                         :title="__('Downvote this track')"
                         :aria-label="__('Downvote this track')"
                         :aria-pressed="track.user_voted_down">
-                  <div class="flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-neutral-700 hover:bg-red-600 transition-all duration-200"
+                  <div class="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-neutral-700/50 hover:bg-red-600 transition-all duration-200"
                        :class="{ 'bg-red-600': track.user_voted_down }">
-                    <Icon name="thumb-down" class="h-3.5 w-3.5 sm:h-5 sm:w-5 text-white" aria-hidden="true" />
+                    <Icon name="thumb-down" class="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" aria-hidden="true" />
                   </div>
-                  <span class="px-1.5 sm:px-2 py-0.5 rounded-md bg-neutral-800 text-[10px] sm:text-xs font-medium text-white group-hover:bg-red-700 transition-colors">
+                  <span class="text-[10px] sm:text-xs font-medium text-neutral-400 group-hover:text-red-400 transition-colors min-w-[1.5rem] text-center"
+                        :class="{ 'text-red-400': track.user_voted_down }">
                     {{ track.downvotes }}
                   </span>
                 </button>
