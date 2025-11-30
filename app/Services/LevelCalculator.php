@@ -23,7 +23,7 @@ class LevelCalculator
 
         // 2. Seniority bonus - 50 XP per month (max 12 months = 600 XP)
         // Recalculate as it changes over time
-        $monthsSeniority = $user->created_at->diffInMonths(now());
+        $monthsSeniority = $user->created_at ? $user->created_at->diffInMonths(now()) : 0;
         $seniorityBonus = min($monthsSeniority * 50, 600);
 
         // 3. Rooms created bonus - 100 XP per room created (max 10 rooms = 1000 XP)
@@ -186,7 +186,7 @@ class LevelCalculator
 
         // Recalculate dynamic bonuses that can change (seniority, team, streak)
         // These are quick checks and don't require expensive queries
-        $monthsSeniority = $user->created_at->diffInMonths(now());
+        $monthsSeniority = $user->created_at ? $user->created_at->diffInMonths(now()) : 0;
         $seniorityBonus = min($monthsSeniority * 50, 600);
         $teamBonus = $user->hasTeam() ? 200 : 0;
         $consecutiveDaysStreak = $this->calculateConsecutiveDaysStreak($user);
@@ -325,7 +325,7 @@ class LevelCalculator
 
         // Use cached values when available to avoid expensive queries
         $scorePublicRooms = $this->getScoreFromPublicRooms($user);
-        $monthsSeniority = $user->created_at->diffInMonths(now());
+        $monthsSeniority = $user->created_at ? $user->created_at->diffInMonths(now()) : 0;
 
         // Use cached values for metrics that rarely change
         $roomsCreatedCount = $userLevel?->rooms_created_count ?? $user->rooms()->count();
