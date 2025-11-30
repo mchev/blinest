@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Score;
+use App\Services\LevelCalculator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,21 +32,23 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
         $user = $this->score->user;
         $team = $this->score->team;
         $room = $this->score?->round?->room;
+        $score = $this->score->score;
 
         if ($user && $room) {
             $user->totalScores()->updateOrCreate(
                 ['room_id' => $room->id]
-            )->increment('score', $this->score->score);
+            )->increment('score', $score);
 
             if ($team) {
                 $team->totalScores()->updateOrCreate(
                     ['room_id' => $room->id]
-                )->increment('score', $this->score->score);
+                )->increment('score', $score);
             }
 
-            // Update user level in queue if score is from a public room
+            // Increment XP directly if score is from a public room
+            // 1 point = 1 XP, so we increment by the score amount
             if ($room->is_public && ! $room->password) {
-                UpdateUserLevel::dispatch($user);
+                app(LevelCalculator::class)->incrementXp($user, (int) $score);
             }
         }
     }
