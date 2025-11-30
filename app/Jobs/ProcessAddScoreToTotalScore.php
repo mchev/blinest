@@ -33,7 +33,7 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
         $room = $this->score?->round?->room;
         $score = $this->score->score;
 
-        if ($user && $room && $score > 0) {
+        if ($user && $room) {
             $user->totalScores()->updateOrCreate(
                 ['room_id' => $room->id]
             )->increment('score', $score);
