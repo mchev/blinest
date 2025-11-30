@@ -42,15 +42,17 @@ class LevelCalculator
 
         // 6. Rounds played bonus - 2 XP per round played (max 500 rounds = 1000 XP)
         // Use cached value if available, otherwise calculate
-        $roundsPlayedCount = $userLevel?->rounds_played_count ?? DB::table('scores')
+        $roundsPlayedCount = $userLevel?->rounds_played_count ?? (int) DB::table('scores')
             ->where('user_id', $user->id)
-            ->distinct('round_id')
+            ->distinct()
             ->count('round_id');
         $roundsPlayedBonus = min($roundsPlayedCount * 2, 1000);
 
         // 7. Correct answers bonus - 1 XP per 10 correct answers (max 5000 answers = 500 XP)
-        // Use cached value if available, otherwise calculate
-        $correctAnswersCount = $userLevel?->correct_answers_count ?? $user->scores()->count();
+        // Use cached value if available, otherwise calculate (use count('id') for better performance)
+        $correctAnswersCount = $userLevel?->correct_answers_count ?? (int) DB::table('scores')
+            ->where('user_id', $user->id)
+            ->count('id');
         $correctAnswersBonus = min(intval($correctAnswersCount / 10), 500);
 
         // 8. Tracks liked bonus - 5 XP per track liked (max 200 tracks = 1000 XP)
@@ -64,12 +66,16 @@ class LevelCalculator
         $messagesBonus = min(intval($messagesCount / 5), 200);
 
         // 10. Unique rooms played bonus - 10 XP per unique room (max 50 rooms = 500 XP)
-        // Use cached value if available, otherwise calculate
-        $uniqueRoomsCount = $userLevel?->unique_rooms_played_count ?? DB::table('scores')
-            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->where('scores.user_id', $user->id)
-            ->distinct('rounds.room_id')
-            ->count('rounds.room_id');
+        // Use cached value if available, otherwise calculate (optimized with subquery)
+        $uniqueRoomsCount = $userLevel?->unique_rooms_played_count ?? (int) DB::table('rounds')
+            ->whereIn('id', function ($query) use ($user) {
+                $query->select('round_id')
+                    ->from('scores')
+                    ->where('user_id', $user->id)
+                    ->distinct();
+            })
+            ->distinct()
+            ->count('room_id');
         $uniqueRoomsBonus = min($uniqueRoomsCount * 10, 500);
 
         // 11. Consecutive days streak bonus - 10 XP per day (max 30 days = 300 XP)
@@ -194,21 +200,24 @@ class LevelCalculator
     {
         $userLevel = $userLevel ?? $user->userLevel;
 
-        // Use cached value if available and recent (within last hour)
-        if ($userLevel?->best_round_score && $userLevel->last_calculated_at && $userLevel->last_calculated_at->gt(now()->subHour())) {
+        // Use cached value if available and recent (within last 24 hours for this expensive metric)
+        if ($userLevel?->best_round_score && $userLevel->last_calculated_at && $userLevel->last_calculated_at->gt(now()->subDay())) {
             return (float) $userLevel->best_round_score;
         }
 
         // Otherwise calculate (expensive query - only when needed)
-        $bestScore = DB::table('scores')
-            ->where('user_id', $user->id)
-            ->select('round_id', DB::raw('SUM(score) as round_total'))
-            ->groupBy('round_id')
-            ->orderByDesc('round_total')
-            ->limit(1)
-            ->value('round_total');
+        // Optimized: use raw query to avoid loading all data into memory
+        $bestScore = DB::selectOne(
+            'SELECT SUM(score) as round_total 
+             FROM scores 
+             WHERE user_id = ? 
+             GROUP BY round_id 
+             ORDER BY round_total DESC 
+             LIMIT 1',
+            [$user->id]
+        );
 
-        return $bestScore ? (float) $bestScore : 0.0;
+        return $bestScore?->round_total ? (float) $bestScore->round_total : 0.0;
     }
 
     /**
@@ -240,21 +249,30 @@ class LevelCalculator
         $shouldRecalculateMetrics = ! $userLevel || ! $userLevel->last_calculated_at || $userLevel->last_calculated_at->lt(now()->subHour());
 
         if ($shouldRecalculateMetrics) {
-            // Recalculate expensive metrics
-            $roundsPlayedCount = DB::table('scores')
+            // Recalculate expensive metrics using optimized queries
+            // Use subqueries to avoid loading all data into memory
+
+            // Rounds played: count distinct round_ids
+            $roundsPlayedCount = (int) DB::table('scores')
                 ->where('user_id', $user->id)
-                ->distinct('round_id')
+                ->distinct()
                 ->count('round_id');
 
-            $correctAnswersCount = DB::table('scores')
+            // Correct answers: simple count (already indexed on user_id)
+            $correctAnswersCount = (int) DB::table('scores')
                 ->where('user_id', $user->id)
-                ->count();
+                ->count('id');
 
-            $uniqueRoomsCount = DB::table('scores')
-                ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-                ->where('scores.user_id', $user->id)
-                ->distinct('rounds.room_id')
-                ->count('rounds.room_id');
+            // Unique rooms: optimized with exists subquery
+            $uniqueRoomsCount = (int) DB::table('rounds')
+                ->whereIn('id', function ($query) use ($user) {
+                    $query->select('round_id')
+                        ->from('scores')
+                        ->where('user_id', $user->id)
+                        ->distinct();
+                })
+                ->distinct()
+                ->count('room_id');
         } else {
             // Use cached values
             $roundsPlayedCount = $userLevel->rounds_played_count ?? 0;

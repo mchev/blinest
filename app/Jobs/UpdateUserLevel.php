@@ -36,9 +36,13 @@ class UpdateUserLevel implements ShouldQueue
         public ?\DateTimeInterface $loginDate = null,
         public bool $useHeavyQueue = false
     ) {
-        // Use dedicated queue for heavy calculations (initial or batch)
+        // Auto-detect if this is an initial calculation (no userLevel exists)
+        // Initial calculations are expensive and should use the heavy queue
+        $isInitialCalculation = ! $this->user->userLevel;
+
+        // Use dedicated queue for heavy calculations (initial, batch, or explicitly requested)
         // This prevents blocking the main queue with expensive operations
-        $this->queue = $useHeavyQueue ? 'level-calculations' : null;
+        $this->queue = ($useHeavyQueue || $isInitialCalculation) ? 'level-calculations' : null;
     }
 
     /**
