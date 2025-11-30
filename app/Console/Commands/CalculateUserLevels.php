@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\UpdateUserLevel;
 use App\Models\User;
-use App\Services\LevelCalculator;
 use Illuminate\Console\Command;
 
 class CalculateUserLevels extends Command
@@ -25,7 +25,7 @@ class CalculateUserLevels extends Command
     /**
      * Execute the console command.
      */
-    public function handle(LevelCalculator $calculator): int
+    public function handle(): int
     {
         $query = User::query();
 
@@ -47,21 +47,25 @@ class CalculateUserLevels extends Command
             return Command::SUCCESS;
         }
 
-        $this->info("Calculating levels for {$count} users...");
+        $this->info("Dispatching level calculations for {$count} users to 'level-calculations' queue...");
+        $this->info('This will run in the background without blocking the site.');
 
         $bar = $this->getOutput()->createProgressBar($count);
         $bar->start();
 
-        $query->chunk(100, function ($users) use ($calculator, $bar) {
+        // All calculations from this command use the heavy queue to avoid blocking the site
+        $query->chunk(100, function ($users) use ($bar) {
             foreach ($users as $user) {
-                $calculator->updateUserLevel($user);
+                // Use dedicated queue for all calculations from this command
+                UpdateUserLevel::dispatch($user, null, true);
                 $bar->advance();
             }
         });
 
         $bar->finish();
         $this->newLine();
-        $this->info("Successfully calculated levels for {$count} users.");
+        $this->info("Successfully dispatched {$count} level calculations to queue.");
+        $this->info('Monitor progress in Horizon dashboard.');
 
         return Command::SUCCESS;
     }

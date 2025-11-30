@@ -178,6 +178,19 @@ return [
             'nice' => 8,
             'rest' => 0.5,
         ],
+        'supervisor-level-calculations' => [
+            'connection' => 'redis',
+            'queue' => ['level-calculations'],
+            'balance' => 'simple',
+            'maxProcesses' => 2,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 1,
+            'timeout' => 300,
+            'nice' => 0,
+            'rest' => 0,
+        ],
     ],
 
     'environments' => [
@@ -187,11 +200,19 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'supervisor-level-calculations' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
         ],
 
         'local' => [
             'supervisor-1' => [
                 'maxProcesses' => 3,
+            ],
+            'supervisor-level-calculations' => [
+                'maxProcesses' => 1,
             ],
         ],
     ],

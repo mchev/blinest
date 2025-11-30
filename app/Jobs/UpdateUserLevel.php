@@ -19,16 +19,26 @@ class UpdateUserLevel implements ShouldQueue
      *
      * @var int
      */
-    public $timeout = 120;
+    public $timeout = 300;
+
+    /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
         public User $user,
-        public ?\DateTimeInterface $loginDate = null
+        public ?\DateTimeInterface $loginDate = null,
+        public bool $useHeavyQueue = false
     ) {
-        //
+        // Use dedicated queue for heavy calculations (initial or batch)
+        // This prevents blocking the main queue with expensive operations
+        $this->queue = $useHeavyQueue ? 'level-calculations' : null;
     }
 
     /**
