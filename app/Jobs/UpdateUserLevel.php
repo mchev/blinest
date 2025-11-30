@@ -45,6 +45,7 @@ class UpdateUserLevel implements ShouldQueue
      */
     public function handle(LevelCalculator $calculator): void
     {
-        $calculator->updateUserLevel($this->user, $this->loginDate);
+        // $calculator->updateUserLevel($this->user, $this->loginDate);
+        return;
     }
 }
