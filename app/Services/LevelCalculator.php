@@ -5,56 +5,75 @@ namespace App\Services;
 use App\Events\UserLevelUpdated;
 use App\Models\User;
 use App\Models\UserLevel;
+use Illuminate\Support\Facades\DB;
 
 class LevelCalculator
 {
     /**
      * Calculate the total XP for a user based on various factors.
+     * Uses cached values from user_levels when available to avoid expensive queries.
      */
-    public function calculateTotalXp(User $user): int
+    public function calculateTotalXp(User $user, ?UserLevel $userLevel = null): int
     {
+        $userLevel = $userLevel ?? $user->userLevel;
+
         // 1. Score from public rooms (main factor) - 1 point = 1 XP
+        // Use TotalScore table (already aggregated) instead of scores table
         $scorePublicRooms = $this->getScoreFromPublicRooms($user);
 
         // 2. Seniority bonus - 50 XP per month (max 12 months = 600 XP)
+        // Recalculate as it changes over time
         $monthsSeniority = $user->created_at->diffInMonths(now());
         $seniorityBonus = min($monthsSeniority * 50, 600);
 
         // 3. Rooms created bonus - 100 XP per room created (max 10 rooms = 1000 XP)
-        $roomsCreatedCount = $user->rooms()->count();
+        // Use cached value if available, otherwise calculate (rarely changes)
+        $roomsCreatedCount = $userLevel?->rooms_created_count ?? $user->rooms()->count();
         $roomsCreatedBonus = min($roomsCreatedCount * 100, 1000);
 
         // 4. Team membership bonus - 200 XP if in a team
+        // Recalculate as it can change
         $teamBonus = $user->hasTeam() ? 200 : 0;
 
         // 5. Playlists created bonus - 50 XP per playlist (max 20 playlists = 1000 XP)
-        $playlistsCreatedCount = $user->playlists()->count();
+        // Use cached value if available, otherwise calculate (rarely changes)
+        $playlistsCreatedCount = $userLevel?->playlists_created_count ?? $user->playlists()->count();
         $playlistsCreatedBonus = min($playlistsCreatedCount * 50, 1000);
 
         // 6. Rounds played bonus - 2 XP per round played (max 500 rounds = 1000 XP)
-        $roundsPlayedCount = $user->scores()->distinct()->count('round_id');
+        // Use cached value if available, otherwise calculate
+        $roundsPlayedCount = $userLevel?->rounds_played_count ?? DB::table('scores')
+            ->where('user_id', $user->id)
+            ->distinct('round_id')
+            ->count('round_id');
         $roundsPlayedBonus = min($roundsPlayedCount * 2, 1000);
 
         // 7. Correct answers bonus - 1 XP per 10 correct answers (max 5000 answers = 500 XP)
-        $correctAnswersCount = $user->scores()->count();
+        // Use cached value if available, otherwise calculate
+        $correctAnswersCount = $userLevel?->correct_answers_count ?? $user->scores()->count();
         $correctAnswersBonus = min(intval($correctAnswersCount / 10), 500);
 
         // 8. Tracks liked bonus - 5 XP per track liked (max 200 tracks = 1000 XP)
-        $tracksLikedCount = $user->likes()->count();
+        // Use cached value if available, otherwise calculate (rarely changes)
+        $tracksLikedCount = $userLevel?->tracks_liked_count ?? $user->likes()->count();
         $tracksLikedBonus = min($tracksLikedCount * 5, 1000);
 
         // 9. Messages sent bonus - 1 XP per 5 messages (max 1000 messages = 200 XP)
-        $messagesCount = $user->messages()->count();
+        // Use cached value if available, otherwise calculate (rarely changes)
+        $messagesCount = $userLevel?->messages_count ?? $user->messages()->count();
         $messagesBonus = min(intval($messagesCount / 5), 200);
 
         // 10. Unique rooms played bonus - 10 XP per unique room (max 50 rooms = 500 XP)
-        $uniqueRoomsCount = $user->scores()
+        // Use cached value if available, otherwise calculate
+        $uniqueRoomsCount = $userLevel?->unique_rooms_played_count ?? DB::table('scores')
             ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->distinct()
+            ->where('scores.user_id', $user->id)
+            ->distinct('rounds.room_id')
             ->count('rounds.room_id');
         $uniqueRoomsBonus = min($uniqueRoomsCount * 10, 500);
 
         // 11. Consecutive days streak bonus - 10 XP per day (max 30 days = 300 XP)
+        // Recalculate as it changes daily
         $consecutiveDaysStreak = $this->calculateConsecutiveDaysStreak($user);
         $streakBonus = min($consecutiveDaysStreak * 10, 300);
 
@@ -120,11 +139,18 @@ class LevelCalculator
      */
     public function getScoreFromPublicRooms(User $user): float
     {
+        // Optimize: Use whereIn instead of whereHas to avoid subquery
+        $publicRoomIds = DB::table('rooms')
+            ->where('is_public', true)
+            ->whereNull('password')
+            ->pluck('id');
+
+        if ($publicRoomIds->isEmpty()) {
+            return 0.0;
+        }
+
         return (float) $user->totalScores()
-            ->whereHas('room', function ($query) {
-                $query->where('is_public', true)
-                    ->whereNull('password');
-            })
+            ->whereIn('room_id', $publicRoomIds)
             ->sum('score');
     }
 
@@ -162,11 +188,21 @@ class LevelCalculator
 
     /**
      * Get best round score for a user.
+     * Uses cached value from user_levels if available to avoid expensive query.
      */
-    public function getBestRoundScore(User $user): float
+    public function getBestRoundScore(User $user, ?UserLevel $userLevel = null): float
     {
-        $bestScore = $user->scores()
-            ->selectRaw('SUM(score) as round_total')
+        $userLevel = $userLevel ?? $user->userLevel;
+
+        // Use cached value if available and recent (within last hour)
+        if ($userLevel?->best_round_score && $userLevel->last_calculated_at && $userLevel->last_calculated_at->gt(now()->subHour())) {
+            return (float) $userLevel->best_round_score;
+        }
+
+        // Otherwise calculate (expensive query - only when needed)
+        $bestScore = DB::table('scores')
+            ->where('user_id', $user->id)
+            ->select('round_id', DB::raw('SUM(score) as round_total'))
             ->groupBy('round_id')
             ->orderByDesc('round_total')
             ->limit(1)
@@ -177,6 +213,7 @@ class LevelCalculator
 
     /**
      * Calculate and update user level.
+     * Optimized to use cached values from user_levels and TotalScore table.
      */
     public function updateUserLevel(User $user, ?\DateTimeInterface $loginDate = null): UserLevel
     {
@@ -188,23 +225,50 @@ class LevelCalculator
             $userLevel->refresh();
         }
 
-        $totalXp = $this->calculateTotalXp($user);
-        $levelData = $this->calculateLevel($totalXp);
-
+        // Use cached values when available to avoid expensive queries
         $scorePublicRooms = $this->getScoreFromPublicRooms($user);
         $monthsSeniority = $user->created_at->diffInMonths(now());
-        $roomsCreatedCount = $user->rooms()->count();
-        $roundsPlayedCount = $user->scores()->distinct()->count('round_id');
-        $correctAnswersCount = $user->scores()->count();
-        $tracksLikedCount = $user->likes()->count();
-        $messagesCount = $user->messages()->count();
-        $playlistsCreatedCount = $user->playlists()->count();
-        $uniqueRoomsCount = $user->scores()
-            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->distinct()
-            ->count('rounds.room_id');
-        $bestRoundScore = $this->getBestRoundScore($user);
+
+        // Use cached values for metrics that rarely change
+        $roomsCreatedCount = $userLevel?->rooms_created_count ?? $user->rooms()->count();
+        $playlistsCreatedCount = $userLevel?->playlists_created_count ?? $user->playlists()->count();
+        $tracksLikedCount = $userLevel?->tracks_liked_count ?? $user->likes()->count();
+        $messagesCount = $userLevel?->messages_count ?? $user->messages()->count();
+
+        // For metrics that change frequently, recalculate but use cached if recent
+        // Only recalculate if last calculation was more than 1 hour ago
+        $shouldRecalculateMetrics = ! $userLevel || ! $userLevel->last_calculated_at || $userLevel->last_calculated_at->lt(now()->subHour());
+
+        if ($shouldRecalculateMetrics) {
+            // Recalculate expensive metrics
+            $roundsPlayedCount = DB::table('scores')
+                ->where('user_id', $user->id)
+                ->distinct('round_id')
+                ->count('round_id');
+
+            $correctAnswersCount = DB::table('scores')
+                ->where('user_id', $user->id)
+                ->count();
+
+            $uniqueRoomsCount = DB::table('scores')
+                ->join('rounds', 'scores.round_id', '=', 'rounds.id')
+                ->where('scores.user_id', $user->id)
+                ->distinct('rounds.room_id')
+                ->count('rounds.room_id');
+        } else {
+            // Use cached values
+            $roundsPlayedCount = $userLevel->rounds_played_count ?? 0;
+            $correctAnswersCount = $userLevel->correct_answers_count ?? 0;
+            $uniqueRoomsCount = $userLevel->unique_rooms_played_count ?? 0;
+        }
+
+        // Best round score - use cached if recent, otherwise recalculate
+        $bestRoundScore = $this->getBestRoundScore($user, $userLevel);
         $consecutiveDaysStreak = $this->calculateConsecutiveDaysStreak($user);
+
+        // Calculate total XP using cached values
+        $totalXp = $this->calculateTotalXp($user, $userLevel);
+        $levelData = $this->calculateLevel($totalXp);
 
         $oldLevel = $userLevel?->level ?? 1;
         $newLevel = $levelData['level'];
