@@ -30,6 +30,9 @@ class TeamRequest extends Model
         ]);
         $this->user->notify(new TeamRequestApproved($this));
         $this->user->teamRequests()->delete();
+
+        // Update user level in queue when joining a team
+        \App\Jobs\UpdateUserLevel::dispatch($this->user);
     }
 
     public function reject()

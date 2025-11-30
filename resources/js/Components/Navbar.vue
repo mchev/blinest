@@ -1,54 +1,46 @@
 <script setup>
-import { ref } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Logo from '@/Components/Logo.vue'
 import Icon from '@/Components/Icon.vue'
-import Dropdown from '@/Components/Dropdown.vue'
-import MainMenu from '@/Components/MainMenu.vue'
 import SearchRooms from '@/Components/SearchRooms.vue'
 import UserDropdown from '@/Components/UserDropdown.vue'
 import Notifications from '@/Components/Notifications/Notifications.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
-import SocialIcon from '@/Components/SocialIcon.vue'
+import LevelDisplay from '@/Components/LevelDisplay.vue'
 
 const user = usePage().props.auth?.user
-
-const showingSearchbar = ref(false)
 </script>
 <template>
-  <div class="md:flex md:flex-shrink-0 px-8 md:px-12">
+  <div class="md:flex md:flex-shrink-0 px-8 md:px-12 border-b border-neutral-800/50 bg-gradient-to-b from-neutral-900/95 to-neutral-900/80 backdrop-blur-md">
     <div class="w-full lg:w-1/4">
-    
-      <Link :href="route('home')" title="Blinest">
-        <Logo class="w-24 fill-inherit lg:w-36 mt-2" />
-        <p class="mt-1 hidden text-sm text-neutral-400 md:block tracking-widest">{{ __('Tune In, Test Out!') }}</p>
+      <Link :href="route('home')" title="Blinest" class="group transition-all duration-200 hover:scale-[102%]">
+        <Logo class="w-24 fill-inherit lg:w-36 mt-2 transition-all duration-200 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]" />
+        <p class="mt-1 hidden text-sm text-neutral-400 md:block tracking-widest group-hover:text-neutral-300 transition-colors duration-200">{{ __('Tune In, Test Out!') }}</p>
       </Link>
     </div>
-    <div class="flex w-full lg:w-3/4 items-center justify-between pl-2 pr-8 py-2 md:flex-shrink-0 ">
+    <div class="flex w-full lg:w-3/4 items-center justify-between pl-2 pr-8 py-2 md:flex-shrink-0">
 
-      <div class="mt-1 hidden items-center gap-2 md:flex">
+      <div class="mt-1 hidden items-center gap-3 md:flex">
         <SearchRooms class="transition hover:scale-[104%] focus:scale-[104%]" />
-        <Link :href="route('faq')" title="FAQ" class="text-neutral-500 transition hover:text-inherit">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
-            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
-          </svg>
+        <Link :href="route('faq')" title="FAQ" class="group relative text-neutral-400 hover:text-blue-400 transition-all duration-200 hover:scale-110">
+          <Icon name="faq" class="h-6 w-6 drop-shadow-[0_0_4px_currentColor]" />
+          <span class="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 animate-pulse" />
         </Link>
       </div>
 
-      <div class="flex items-center justify-end gap-4">
-        <a href="https://shop.blinest.com" :title="__('Blinest Shop')" class="text-green-500 hover:text-green-400 transition-colors duration-200" data-umami-event="Shop button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-          </svg>
-        </a>
-        <Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')" class="text-yellow-500 hover:text-yellow-400 transition-colors duration-200">
-          <Icon name="podium" class="h-5 w-5" />
+      <div class="flex items-center justify-end gap-3">
+        <Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')" class="group relative text-yellow-500 hover:text-yellow-400 transition-all duration-200 hover:scale-110">
+          <Icon name="trophy" class="h-6 w-6 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" />
+          <span class="absolute -top-1 -right-1 h-2 w-2 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 animate-pulse" />
         </Link>
-        <a href="https://discord.com/invite/uKyVgcxcFa" target="_blank" rel="external nofollow" :title="__('Join the Blinest community on Discord')" class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200" data-umami-event="Discord button">
-          <SocialIcon name="discord" class="h-5 w-5" />
-        </a>
         <Notifications v-if="user" />
         <LanguageSwitcher class="mx-1" />
+        <LevelDisplay
+          v-if="user"
+          :level="user.level || 1"
+          :current-xp="user.current_xp || 0"
+          :xp-for-next-level="user.xp_for_next_level || 100"
+        />
         <UserDropdown v-if="user" />
         <div v-if="!user" class="flex gap-4">
           <Link :href="route('login')" :title="__('Login')" class="rounded-lg px-3 py-1.5 font-medium text-white hover:bg-slate-700 transition-colors duration-200">

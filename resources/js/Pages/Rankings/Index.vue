@@ -1,53 +1,33 @@
 <script setup>
-import { watch } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
-import TextInput from '@/Components/TextInput.vue'
+import { Head } from '@inertiajs/vue3'
+import { usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import RankingTabs from './partials/RankingTabs.vue'
 
-const props = defineProps({
-  bestUsers: Object,
-  bestTeams: Object,
-})
+const page = usePage()
+const __ = (key, replace = {}) => {
+  let translation = page.props.language[key] ? page.props.language[key] : key
+  Object.keys(replace).forEach(function (key) {
+    translation = translation.replace(':' + key, replace[key])
+  })
+  return translation
+}
 </script>
+
 <template>
-  <Head :title="__('Rankings') + ' - ' + __('Top 50')" />
+  <Head :title="__('Rankings')" />
   <AppLayout>
     <section>
-      <div class="mx-auto py-8 px-4 text-center">
-        <div class="mx-auto mb-8 lg:mb-16">
-          <h2 class="mb-4 text-4xl font-extrabold">{{ __('Top 50') }}</h2>
-          <p>{{ __('public rooms') }}</p>
+      <div class="mx-auto py-8 px-4">
+        <div class="mx-auto mb-8 text-center">
+          <h1 class="mb-4 text-5xl font-extrabold bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent">
+            {{ __('Rankings') }}
+          </h1>
+          <p class="text-lg text-neutral-400">{{ __('Compete with the best players') }}</p>
         </div>
-        <div>
-          <section class="mb-8">
-            <ul class="flex flex-wrap items-center justify-center">
-              <li v-for="(score, index) in bestUsers" :key="score.user.id" class="m-4 flex flex-col items-center">
-                <div class="relative">
-                  <span class="absolute -left-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 p-1 text-neutral-700">{{ index + 1 }}</span>
-                  <Link :href="route('user.profile', score.user)"><img :src="score.user.photo" class="mb-2 h-20 w-20 rounded-full" /></Link>
-                </div>
-                <Link :href="route('user.profile', score.user)" class="mb-1 font-bold">{{ score.user.name }}</Link>
-                <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
-              </li>
-            </ul>
-          </section>
-          <section class="mb-4">
-            <h3 class="mb-4 text-3xl font-bold">{{ __('Teams') }}</h3>
-            <ul class="flex flex-wrap items-center justify-center">
-              <li v-for="(score, index) in bestTeams" :key="score.team.id">
-                <Link :href="route('teams.show', score.team.id)" class="m-4 flex flex-col items-center">
-                  <div class="relative">
-                    <span class="absolute -left-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 p-1 text-neutral-700">{{ index + 1 }}</span>
-                    <img :src="score.team.photo" class="mb-2 h-20 w-20 rounded-full" />
-                  </div>
-                  <span class="mb-1 font-bold">{{ score.team.name }}</span>
-                  <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
-                </Link>
-              </li>
-            </ul>
-          </section>
-        </div>
+
+        <!-- Tabs Navigation -->
+        <RankingTabs />
       </div>
     </section>
   </AppLayout>

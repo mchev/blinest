@@ -12,6 +12,8 @@ class ProfileController extends Controller
 {
     public function show(User $user): InertiaResponse
     {
+        $user->loadMissing('userLevel');
+
         // Score evolution: get daily cumulative score
         $scoreHistory = $user->scores()
             ->selectRaw('DATE(created_at) as date, SUM(score) as daily_score')
@@ -33,6 +35,9 @@ class ProfileController extends Controller
                 'name' => $user->name,
                 'photo' => $user->photo,
                 'team' => $user->team,
+                'level' => $user->userLevel?->level ?? 1,
+                'current_xp' => $user->userLevel?->current_xp ?? 0,
+                'xp_for_next_level' => $user->userLevel?->xp_for_next_level ?? 100,
                 'created_at_from_now' => $user->created_at->diffForHumans(null, true),
                 'total_score' => $user->totalScores()->sum('score'),
                 'total_public_score' => $user->totalScores()->whereHas('room', function ($query) {

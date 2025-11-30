@@ -2,21 +2,42 @@
 import { router } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 
-defineProps({
-  links: Array,
+const props = defineProps({
+  links: {
+    type: Array,
+    required: true,
+  },
 })
 
 const visit = (url) => {
-  router.visit(url, { preserveState: true, preserveScroll: true }, { only: ['categories'] })
+  if (url) {
+    router.visit(url, { preserveState: true, preserveScroll: true })
+  }
 }
 </script>
+
 <template>
-  <div v-if="links.length > 3">
-    <div :class="$attrs.class" class="m-6 flex flex-wrap justify-end">
-      <template v-for="(link, key) in links">
-        <div v-if="link.url === null" :key="key" class="mb-1 mr-1 rounded bg-neutral-700 px-4 py-3 text-sm leading-4 text-neutral-300" v-html="link.label" />
-        <button v-else :key="`link-${key}`" class="mb-1 mr-1 rounded px-4 py-3 text-sm leading-4 hover:bg-neutral-500" :class="link.active ? 'bg-neutral-500' : 'bg-neutral-700'" @click="visit(link.url)" v-html="link.label" />
+  <div v-if="links.length > 3" class="mt-6 sm:mt-8">
+    <div class="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+      <template v-for="(link, key) in links" :key="key">
+        <span
+          v-if="!link.url"
+          class="rounded-lg bg-neutral-800 px-2 py-1.5 text-xs font-medium text-neutral-500 sm:px-4 sm:py-2 sm:text-sm"
+          v-html="link.label"
+        />
+        <Link
+          v-else
+          :href="link.url"
+          class="rounded-lg px-2 py-1.5 text-xs font-medium transition-colors duration-200 sm:px-4 sm:py-2 sm:text-sm"
+          :class="
+            link.active
+              ? 'bg-yellow-500 text-white'
+              : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 hover:text-white'
+          "
+          v-html="link.label"
+        />
       </template>
     </div>
   </div>
 </template>
+

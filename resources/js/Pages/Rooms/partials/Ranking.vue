@@ -3,6 +3,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
+import LevelBadge from '@/Components/LevelBadge.vue'
 import PodiumModal from './PodiumModal.vue'
 
 const props = defineProps({
@@ -57,7 +58,6 @@ onUnmounted(() => {
       <template #header>
         <div class="flex w-full items-center justify-between">
           <h3 class="text-xl font-bold flex items-center">
-            <Icon name="trophy" class="mr-2 h-5 w-5 text-yellow-400" />
             {{ __('Ranking') }}
           </h3>
           <div class="flex items-center">
@@ -67,7 +67,7 @@ onUnmounted(() => {
                     @click="showPodiumModal = true" 
                     :title="__('Show rankings for this room')"
                     class="text-neutral-400 hover:text-yellow-400 transition-colors">
-              <Icon name="podium" class="h-6 w-6" />
+                    <Icon name="trophy" class="size-6" />
             </button>
           </div>
         </div>
@@ -100,10 +100,11 @@ onUnmounted(() => {
                    }" />
             </div>
             <div class="flex flex-grow flex-col min-w-0">
-              <div class="mb-1 sm:mb-2 flex items-center">
+              <div class="mb-1 sm:mb-2 flex items-center gap-2">
                 <Link :href="route('user.profile', user)" class="font-medium text-neutral-100 hover:text-yellow-400 transition-colors truncate">
                   {{ user.name }}
-                </Link> 
+                </Link>
+                <LevelBadge v-if="user.level" :level="user.level" size="sm" variant="compact" />
                 <Link v-if="user.team" 
                       :href="route('teams.show', user.team)" 
                       class="ml-2 rounded-full bg-neutral-700/50 px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] uppercase text-neutral-300 hover:bg-neutral-600/50 transition-colors whitespace-nowrap">

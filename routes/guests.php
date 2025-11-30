@@ -3,6 +3,7 @@
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
@@ -17,6 +18,10 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 // FAQ
 Route::get('/faq', [FAQController::class, 'index'])
     ->name('faq');
+
+// Level System
+Route::get('/level-system', [LevelController::class, 'index'])
+    ->name('level-system');
 
 // Pages
 Route::get('/pages/{slug}', [PageController::class, 'show'])

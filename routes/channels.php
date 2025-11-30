@@ -19,11 +19,14 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('rooms.{room}', function ($user, Room $room) {
+    $user->loadMissing('userLevel');
+
     return [
         'id' => $user->id,
         'name' => $user->name,
         'team' => $user->team,
         'photo' => $user->photo,
+        'level' => $user->userLevel?->level ?? 1,
         'score' => [
             'answers' => [],
             'points' => 0,

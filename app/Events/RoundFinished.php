@@ -35,10 +35,13 @@ class RoundFinished implements ShouldBroadcast
      */
     public function broadcastWith()
     {
+        $usersPodium = $this->round->usersPodium()->with('user.userLevel')->get();
+        $teamsPodium = $this->round->teamsPodium;
+
         return [
             'round' => $this->round->load('room'),
-            'users_podium' => $this->round->usersPodium,
-            'teams_podium' => $this->round->teamsPodium,
+            'users_podium' => $usersPodium,
+            'teams_podium' => $teamsPodium,
         ];
     }
 }

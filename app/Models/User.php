@@ -185,6 +185,11 @@ class User extends Authenticatable
         return $this->morphMany(TotalScore::class, 'totalscorable');
     }
 
+    public function userLevel(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(UserLevel::class);
+    }
+
     public function scoreByRoom(Room $room)
     {
         return $this->scores()

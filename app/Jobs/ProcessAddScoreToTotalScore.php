@@ -42,6 +42,11 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
                     ['room_id' => $room->id]
                 )->increment('score', $this->score->score);
             }
+
+            // Update user level in queue if score is from a public room
+            if ($room->is_public && ! $room->password) {
+                UpdateUserLevel::dispatch($user);
+            }
         }
     }
 }

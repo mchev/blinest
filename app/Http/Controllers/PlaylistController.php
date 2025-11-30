@@ -63,6 +63,9 @@ class PlaylistController extends Controller
 
         $playlist->moderators()->attach(auth()->user());
 
+        // Update user level in queue when creating a playlist
+        \App\Jobs\UpdateUserLevel::dispatch(auth()->user());
+
         return Redirect::route('playlists.edit', $playlist)->with('success', __('Playlist created'));
     }
 

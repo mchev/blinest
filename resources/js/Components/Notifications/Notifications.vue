@@ -51,13 +51,17 @@ const hideItemBeforeRefresh = (notification) => {
     </div>
     <dropdown placement="bottom-end" :autoClose="false">
       <template #default>
-        <div class="relative" title="Notifications">
-          <div v-if="notifications.length" class="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center truncate rounded-full bg-red-500 p-1 text-xs">
-            {{ notifications.length }}
+        <div class="relative group cursor-pointer transition-all duration-200 hover:scale-110" title="Notifications">
+          <div v-if="notifications.length" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center truncate rounded-full bg-gradient-to-br from-red-500 to-red-600 border-2 border-neutral-900 text-[10px] font-bold text-white shadow-lg shadow-red-500/50 z-10">
+            {{ notifications.length > 99 ? '99+' : notifications.length }}
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400 group-hover:text-white transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            <path d="M18 8A6 6 0 0 0 6 8" />
+            <circle cx="18" cy="8" r="1" fill="currentColor" class="text-red-500" />
           </svg>
+          <div v-if="notifications.length" class="absolute inset-0 rounded-full bg-red-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         </div>
       </template>
       <template #dropdown>

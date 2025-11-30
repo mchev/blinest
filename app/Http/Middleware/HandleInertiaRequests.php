@@ -41,9 +41,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request)
     {
-
-        // dd($request->user()->created_at < now()->subMonths(3), floatval($request->user()->totalScores()->sum('score')) > 2000, $request->user()->id);
-        $user = $request->user();
+        $user = $request->user()?->load('userLevel');
 
         return array_merge(parent::share($request), [
             'auth' => function () use ($user) {
@@ -55,6 +53,9 @@ class HandleInertiaRequests extends Middleware
                         'admin' => $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,
+                        'level' => $user->userLevel?->level ?? 1,
+                        'current_xp' => $user->userLevel?->current_xp ?? 0,
+                        'xp_for_next_level' => $user->userLevel?->xp_for_next_level ?? 100,
                         'notifications' => Cache::rememberForever("{$user->id}_unread_notifications", function () use ($user) {
                             return $user->unreadNotifications;
                         }),

@@ -93,9 +93,17 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::post('/users/notifications/{notification}/read', [UserController::class, 'markNotificationAsRead']);
     Route::post('/users/notifications/{notification}/done', [UserController::class, 'markNotificationAsDone']);
 
-    // Ranking
+    // Rankings
     Route::get('rankings', [RankingController::class, 'index'])
         ->name('rankings.index');
+    Route::get('rankings/level', [RankingController::class, 'byLevel'])
+        ->name('rankings.level');
+    Route::get('rankings/score', [RankingController::class, 'byScore'])
+        ->name('rankings.score');
+    Route::get('rankings/week', [RankingController::class, 'byWeek'])
+        ->name('rankings.week');
+    Route::get('rankings/teams', [RankingController::class, 'byTeams'])
+        ->name('rankings.teams');
 
     Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
         ->name('rooms.scores.index');

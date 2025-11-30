@@ -188,7 +188,7 @@ class Round extends Model
     {
         return $this->scores()
             ->select([\DB::raw('SUM(score) as total'), 'user_id'])
-            ->with('user')
+            ->with('user.userLevel')
             ->groupBy('user_id')
             ->orderByDesc('total');
     }

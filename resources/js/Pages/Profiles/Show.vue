@@ -3,6 +3,7 @@ import { ref, defineAsyncComponent, computed } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Badge from '@/Components/Badge.vue'
+import LevelBadge from '@/Components/LevelBadge.vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart,
@@ -107,6 +108,7 @@ const chartOptions = {
             </div>
             <h1 class="text-4xl font-extrabold text-white flex items-center gap-2 mb-1 drop-shadow-lg">
               {{ user.name }}
+              <LevelBadge v-if="user.level" :level="user.level" size="lg" variant="default" />
               <Badge v-if="user.team" color="primary" :text="user.team.name" class="ml-2" />
             </h1>
             <div class="flex flex-wrap gap-2 justify-center text-red-400 text-base font-semibold">

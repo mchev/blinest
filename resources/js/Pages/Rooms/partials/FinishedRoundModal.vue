@@ -2,6 +2,7 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
+import LevelBadge from '@/Components/LevelBadge.vue'
 import Podium from './Podium.vue'
 
 const props = defineProps({
@@ -91,7 +92,10 @@ const close = () => {
           <ul class="max-h-48 overflow-auto">
             <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
-              <span class="flex-grow">{{ result.user.name }}</span>
+              <span class="flex-grow flex items-center gap-2">
+                {{ result.user.name }}
+                <LevelBadge v-if="result.user.level" :level="result.user.level" size="sm" variant="compact" />
+              </span>
               <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
