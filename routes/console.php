@@ -26,5 +26,5 @@ Schedule::job(new CleanEmptyPlaylists)->dailyAt('06:30')->emailOutputOnFailure(c
 // Clean rooms without playlists
 Schedule::job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(config('app.admin_email'));
 
-// Update user levels daily to ensure seniority and other metrics are up to date
-Schedule::command('users:calculate-levels')->dailyAt('08:00')->emailOutputOnFailure(config('app.admin_email'));
+// // Update user levels daily to ensure seniority and other metrics are up to date
+// Schedule::command('users:calculate-levels')->dailyAt('08:00')->emailOutputOnFailure(config('app.admin_email'));
