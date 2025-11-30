@@ -6,6 +6,7 @@ use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
 use App\Jobs\ProcessAddScoreToTotalScore;
+use App\Jobs\UpdateUserLevel;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
@@ -176,6 +177,12 @@ class RoundController extends Controller
 
                     // Increment total scores - dispatch async to not block response
                     ProcessAddScoreToTotalScore::dispatch($savedScore);
+
+                    // Update user level instantly if the score is from a public room
+                    if ($round->room->isPublic() && $score > 0) {
+                        UpdateUserLevel::dispatch($user)->onQueue('level-calculations');
+                    }
+
                 } elseif (count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;
                 }

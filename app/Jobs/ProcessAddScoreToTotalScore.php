@@ -38,10 +38,6 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
                 ['room_id' => $room->id]
             )->increment('score', $score);
 
-            if ($room->isPublic()) {
-                UpdateUserLevel::dispatch($user);
-            }
-
             if ($team) {
                 $team->totalScores()->updateOrCreate(
                     ['room_id' => $room->id]

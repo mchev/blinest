@@ -26,23 +26,18 @@ class UpdateUserLevel implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue;
+    public $queue = 'level-calculations';
 
     /**
      * Create a new job instance.
      */
     public function __construct(
         public User $user,
-        public ?\DateTimeInterface $loginDate = null,
-        public bool $useHeavyQueue = false
+        public ?\DateTimeInterface $loginDate = null
     ) {
         // Auto-detect if this is an initial calculation (no userLevel exists)
         // Initial calculations are expensive and should use the heavy queue
         $isInitialCalculation = ! $this->user->userLevel;
-
-        // Use dedicated queue for heavy calculations (initial, batch, or explicitly requested)
-        // This prevents blocking the main queue with expensive operations
-        $this->queue = ($useHeavyQueue || $isInitialCalculation) ? 'level-calculations' : null;
     }
 
     /**
@@ -50,9 +45,6 @@ class UpdateUserLevel implements ShouldQueue
      */
     public function handle(LevelCalculator $calculator): void
     {
-        // Refresh user to ensure we have the latest data after queue serialization
-        $this->user->refresh();
-
         $calculator->updateUserLevel($this->user, $this->loginDate);
     }
 }

@@ -15,7 +15,7 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => 'level-calculations',
-            'retry_after' => 300,
+            'retry_after' => 90,
             'block_for' => null,
             'after_commit' => false,
         ],
