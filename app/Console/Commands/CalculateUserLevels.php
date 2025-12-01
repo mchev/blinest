@@ -13,7 +13,7 @@ class CalculateUserLevels extends Command
      *
      * @var string
      */
-    protected $signature = 'users:calculate-levels {--force : Force recalculation for all users}';
+    protected $signature = 'users:calculate-levels {user_id? : The ID of a specific user to calculate} {--force : Force recalculation for all users}';
 
     /**
      * The console command description.
@@ -27,6 +27,26 @@ class CalculateUserLevels extends Command
      */
     public function handle(): int
     {
+        $userId = $this->argument('user_id');
+
+        // If a specific user ID is provided, only process that user
+        if ($userId !== null) {
+            $user = User::find($userId);
+
+            if (! $user) {
+                $this->error("User with ID {$userId} not found.");
+
+                return Command::FAILURE;
+            }
+
+            $this->info("Dispatching level calculation for user #{$userId} ({$user->name}) to 'level-calculations' queue...");
+            UpdateUserLevel::dispatch($user, null, true);
+            $this->info('Level calculation dispatched. Monitor progress in Horizon dashboard.');
+
+            return Command::SUCCESS;
+        }
+
+        // Original behavior for multiple users
         $query = User::query();
 
         if (! $this->option('force')) {
@@ -54,7 +74,7 @@ class CalculateUserLevels extends Command
         $bar->start();
 
         // All calculations from this command use the heavy queue to avoid blocking the site
-        $query->chunk(100, function ($users) use ($bar) {
+        $query->chunk(20, function ($users) use ($bar) {
             foreach ($users as $user) {
                 // Use dedicated queue for all calculations from this command
                 UpdateUserLevel::dispatch($user, null, true);

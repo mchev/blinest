@@ -15,29 +15,12 @@ class UpdateUserLevel implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The number of seconds the job can run before timing out.
-     *
-     * @var int
-     */
-    public $timeout = 300;
-
-    /**
-     * The name of the queue the job should be sent to.
-     *
-     * @var string|null
-     */
-    public $queue = 'level-calculations';
-
-    /**
      * Create a new job instance.
      */
     public function __construct(
-        public User $user,
-        public ?\DateTimeInterface $loginDate = null
+        public User $user
     ) {
-        // Auto-detect if this is an initial calculation (no userLevel exists)
-        // Initial calculations are expensive and should use the heavy queue
-        $isInitialCalculation = ! $this->user->userLevel;
+        $this->onQueue('level-calculations');
     }
 
     /**
@@ -45,7 +28,6 @@ class UpdateUserLevel implements ShouldQueue
      */
     public function handle(LevelCalculator $calculator): void
     {
-        // $calculator->updateUserLevel($this->user, $this->loginDate);
-
+        $calculator->updateUserLevel($this->user);
     }
 }
