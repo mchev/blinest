@@ -18,16 +18,20 @@ class UpdateUserLevel implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public User $user
+        public User $user,
+        public ?string $type = null,
     ) {
         $this->onQueue('level-calculations');
+        $this->tries = 3;
     }
 
     /**
      * Execute the job.
      */
-    public function handle(LevelCalculator $calculator): void
+    public function handle(): void
     {
-        $calculator->updateUserLevel($this->user);
+        $type = $this->type ?? 'score';
+        $calculator = new LevelCalculator($this->user, $type);
+        $calculator->update();
     }
 }

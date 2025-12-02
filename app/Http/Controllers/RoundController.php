@@ -6,7 +6,6 @@ use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
 use App\Jobs\ProcessAddScoreToTotalScore;
-use App\Jobs\UpdateUserLevel;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;

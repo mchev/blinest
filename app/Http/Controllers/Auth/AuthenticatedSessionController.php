@@ -38,6 +38,11 @@ class AuthenticatedSessionController extends Controller
             'ip' => $request->ip(),
         ]);
 
+        UpdateUserLevel::dispatch(
+            user: $user,
+            type: 'login',
+        );
+
         if ($request->isFromModal) {
             return redirect()->back();
         }

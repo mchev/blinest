@@ -19,7 +19,18 @@ const props = defineProps({
   },
 })
 
-const user = usePage().props.auth?.user
+const page = usePage()
+const user = page.props.auth?.user
+
+// Translation function for script setup
+const __ = (key, replace = {}) => {
+  const translation = page.props.language?.[key] || key
+  let result = translation
+  Object.keys(replace).forEach((k) => {
+    result = result.replace(`:${k}`, replace[k])
+  })
+  return result
+}
 
 // Reactive state for real-time updates
 const currentLevel = ref(props.level)
@@ -119,6 +130,58 @@ const levelColor = computed(() => {
   }
   return 'text-neutral-400 hover:text-neutral-300'
 })
+
+// Calcul des XP pour chaque métrique
+const metricsXp = computed(() => {
+  if (!user?.level_metrics) return null
+  
+  const metrics = user.level_metrics
+  
+  return {
+    score: {
+      label: __('Total score'),
+      value: metrics.score_public_rooms,
+      xp: metrics.score_public_rooms, // 1 point = 1 XP
+      max: null,
+    },
+    seniority: {
+      label: __('Seniority'),
+      value: Math.round(metrics.seniority_months),
+      xp: Math.min(Math.round(metrics.seniority_months) * 50, 600), // 50 XP par mois, max 600
+      max: 600,
+    },
+    streak: {
+      label: __('Consecutive days streak'),
+      value: metrics.consecutive_days_streak,
+      xp: Math.min(metrics.consecutive_days_streak * 10, 300), // 10 XP par jour, max 300
+      max: 300,
+    },
+    rooms: {
+      label: __('Rooms created'),
+      value: metrics.rooms_created_count,
+      xp: Math.min(metrics.rooms_created_count * 100, 1000), // 100 XP par room, max 1000
+      max: 1000,
+    },
+    playlists: {
+      label: __('Playlists created'),
+      value: metrics.playlists_created_count,
+      xp: Math.min(metrics.playlists_created_count * 20, 2000), // 20 XP par playlist, max 2000
+      max: 2000,
+    },
+    likes: {
+      label: __('Tracks liked'),
+      value: metrics.tracks_liked_count,
+      xp: Math.min(metrics.tracks_liked_count * 5, 1000), // 5 XP par like, max 1000
+      max: 1000,
+    },
+    team: {
+      label: __('Team'),
+      value: metrics.has_team ? __('Yes') : __('No'),
+      xp: metrics.has_team ? 200 : 0, // 200 XP si dans une équipe
+      max: 200,
+    },
+  }
+})
 </script>
 
 <template>
@@ -183,9 +246,76 @@ const levelColor = computed(() => {
               {{ currentXpForNextLevel - currentXpValue }} {{ __('XP') }}
             </span>
           </div>
+        </div>
+
+        <!-- Métriques détaillées -->
+        <div v-if="metricsXp" class="pt-2 border-t border-neutral-700 space-y-2">
+          <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+            {{ __('XP Breakdown') }}
+          </h4>
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.score.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.score.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.score.xp.toLocaleString() }} XP</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.seniority.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.seniority.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.seniority.xp.toLocaleString() }} XP</span>
+                <span v-if="metricsXp.seniority.xp >= metricsXp.seniority.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.streak.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.streak.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.streak.xp.toLocaleString() }} XP</span>
+                <span v-if="metricsXp.streak.xp >= metricsXp.streak.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.rooms.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.rooms.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.rooms.xp.toLocaleString() }} XP</span>
+                <span v-if="metricsXp.rooms.xp >= metricsXp.rooms.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.playlists.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.playlists.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.playlists.xp.toLocaleString() }} XP</span>
+                <span v-if="metricsXp.playlists.xp >= metricsXp.playlists.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.likes.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.likes.value.toLocaleString() }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.likes.xp.toLocaleString() }} XP</span>
+                <span v-if="metricsXp.likes.xp >= metricsXp.likes.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-neutral-300">{{ metricsXp.team.label }}</span>
+              <span class="text-neutral-400">
+                {{ metricsXp.team.value }} → 
+                <span class="font-semibold text-green-400">{{ metricsXp.team.xp }} XP</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lien vers plus d'infos -->
+        <div class="pt-2 border-t border-neutral-700">
           <Link
             :href="route('level-system')"
-            class="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors mt-2 pt-2 border-t border-neutral-700 cursor-pointer"
+            class="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
             @click.stop
           >
             <svg

@@ -40,7 +40,7 @@ class CalculateUserLevels extends Command
             }
 
             $this->info("Dispatching level calculation for user #{$userId} ({$user->name}) to 'level-calculations' queue...");
-            UpdateUserLevel::dispatch($user, null, true);
+            UpdateUserLevel::dispatch($user);
             $this->info('Level calculation dispatched. Monitor progress in Horizon dashboard.');
 
             return Command::SUCCESS;
@@ -77,7 +77,7 @@ class CalculateUserLevels extends Command
         $query->chunk(20, function ($users) use ($bar) {
             foreach ($users as $user) {
                 // Use dedicated queue for all calculations from this command
-                UpdateUserLevel::dispatch($user, null, true);
+                UpdateUserLevel::dispatch($user);
                 $bar->advance();
             }
         });
