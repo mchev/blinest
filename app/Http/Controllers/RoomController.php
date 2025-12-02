@@ -113,7 +113,10 @@ class RoomController extends Controller
         $room->moderators()->attach($request->user());
 
         // Update user level in queue when creating a room
-        \App\Jobs\UpdateUserLevel::dispatch($request->user());
+        \App\Jobs\UpdateUserLevel::dispatch(
+            user: $request->user(),
+            type: 'rooms_count'
+        );
 
         return Redirect::route('rooms.edit', $room->id)->with('success', __('Room created'));
     }

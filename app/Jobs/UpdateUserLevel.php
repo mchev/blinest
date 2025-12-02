@@ -23,6 +23,7 @@ class UpdateUserLevel implements ShouldQueue
     ) {
         $this->onQueue('level-calculations');
         $this->tries = 3;
+        $this->afterCommit();
     }
 
     /**

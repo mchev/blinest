@@ -54,29 +54,11 @@ const metrics = [
   {
     title: __('Playlists created'),
     description: __('Reward for creating playlists and contributing to the game content.'),
-    formula: __('50 XP per playlist'),
-    max: __('1000 XP (20 playlists maximum)'),
+    formula: __('20 XP per playlist'),
+    max: __('2000 XP (100 playlists maximum)'),
     icon: 'playlist',
     color: 'text-indigo-500',
     bgColor: 'bg-indigo-500/10',
-  },
-  {
-    title: __('Rounds played'),
-    description: __('Reward for participating in game rounds.'),
-    formula: __('2 XP per round'),
-    max: __('1000 XP (500 rounds maximum)'),
-    icon: 'game',
-    color: 'text-pink-500',
-    bgColor: 'bg-pink-500/10',
-  },
-  {
-    title: __('Correct answers'),
-    description: __('Reward for your accuracy and knowledge.'),
-    formula: __('1 XP per 10 correct answers'),
-    max: __('500 XP (5000 answers maximum)'),
-    icon: 'check',
-    color: 'text-emerald-500',
-    bgColor: 'bg-emerald-500/10',
   },
   {
     title: __('Tracks liked'),
@@ -86,24 +68,6 @@ const metrics = [
     icon: 'heart',
     color: 'text-red-500',
     bgColor: 'bg-red-500/10',
-  },
-  {
-    title: __('Messages sent'),
-    description: __('Reward for participating in the community chat.'),
-    formula: __('1 XP per 5 messages'),
-    max: __('200 XP (1000 messages maximum)'),
-    icon: 'message',
-    color: 'text-cyan-500',
-    bgColor: 'bg-cyan-500/10',
-  },
-  {
-    title: __('Unique rooms played'),
-    description: __('Reward for exploring different rooms and diversifying your gameplay.'),
-    formula: __('10 XP per unique room'),
-    max: __('500 XP (50 rooms maximum)'),
-    icon: 'explore',
-    color: 'text-orange-500',
-    bgColor: 'bg-orange-500/10',
   },
   {
     title: __('Consecutive days streak'),
@@ -210,7 +174,7 @@ const levelProgression = [
                   <path v-else-if="metric.icon === 'calendar'" stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                   <path v-else-if="metric.icon === 'room'" stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                   <path v-else-if="metric.icon === 'playlist'" stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
-                  <path v-else-if="metric.icon === 'game'" stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25A2.25 2.25 0 018 10.5H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                  <path v-else-if="metric.icon === 'team'" stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                   <path v-else-if="metric.icon === 'check'" stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   <path v-else-if="metric.icon === 'heart'" stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                   <path v-else-if="metric.icon === 'message'" stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
@@ -254,15 +218,15 @@ const levelProgression = [
           </li>
           <li class="flex items-start gap-2">
             <span class="text-blue-400 mt-1">•</span>
+            <span>{{ __('When you like or unlike a track') }}</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-blue-400 mt-1">•</span>
             <span>{{ __('When you join a team') }}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-blue-400 mt-1">•</span>
             <span>{{ __('When you log in (if not updated in the last hour)') }}</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
-            <span>{{ __('Daily via automatic calculation (at 8:00 AM)') }}</span>
           </li>
         </ul>
       </div>

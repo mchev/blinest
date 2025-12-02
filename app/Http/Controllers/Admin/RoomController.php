@@ -87,6 +87,14 @@ class RoomController extends AdminController
             'photo_path' => Request::file('photo') ? Request::file('photo')->store('rooms') : null,
         ]);
 
+        $room->moderators()->attach(Auth::user());
+
+        // Update user level in queue when creating a room
+        \App\Jobs\UpdateUserLevel::dispatch(
+            user: Auth::user(),
+            type: 'rooms_count'
+        );
+
         return Redirect::route('admin.rooms.edit', $room)->with('success', __('Room created'));
     }
 

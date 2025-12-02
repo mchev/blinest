@@ -59,9 +59,7 @@ class HandleInertiaRequests extends Middleware
                         'total_xp' => $user->userLevel?->total_xp ?? 0,
                         'level_metrics' => $user->userLevel ? [
                             'score_public_rooms' => $user->userLevel->score_public_rooms ?? 0,
-                            'seniority_months' => Cache::remember('user_seniority_in_months_v2_'.$user->id, 604800, function () use ($user) {
-                                return (int) round($user->created_at->diffInMonths(now()));
-                            }),
+                            'seniority_months' => $user->userLevel->months_seniority ?? 0,
                             'consecutive_days_streak' => $user->userLevel->consecutive_days_streak ?? 0,
                             'rooms_created_count' => $user->userLevel->rooms_created_count ?? 0,
                             'playlists_created_count' => $user->userLevel->playlists_created_count ?? 0,

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\UserLevelUpdated;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\UserLevel;
@@ -39,19 +40,38 @@ class LevelCalculator
             case 'score':
                 $this->updateScore();
                 break;
-                // case 'likes_count':
-                //     $this->updateLikesCount();
-                //     break;
-                // case 'playlists_count':
-                //     $this->updatePlaylistsCount();
-                //     break;
-                // case 'rooms_count':
-                //     $this->updateRoomsCount();
-                //     break;
+            case 'playlists_count':
+                $this->updatePlaylist();
+                break;
+            case 'rooms_count':
+                $this->updateRoom();
+                break;
+            case 'likes_count':
+                $this->updateLikes();
+                break;
         }
 
         $this->calculateLevelData();
+
+        // Remove xp_needed if it exists (it's not a database column)
+        // Use setRawAttributes to ensure it's not saved
+        $attributes = $this->userLevel->getAttributes();
+        unset($attributes['xp_needed']);
+        $this->userLevel->setRawAttributes($attributes);
+
         $this->userLevel->save();
+
+        // Refresh user to ensure we have the latest userLevel data
+        $this->user->refresh();
+        $this->user->load('userLevel');
+
+        // Broadcast the level update event
+        broadcast(new UserLevelUpdated($this->user, [
+            'level' => $this->userLevel->level,
+            'current_xp' => $this->userLevel->current_xp,
+            'xp_for_next_level' => $this->userLevel->xp_for_next_level,
+            'total_xp' => $this->userLevel->total_xp,
+        ]));
 
         return $this->userLevel;
     }
@@ -100,6 +120,28 @@ class LevelCalculator
             ->sum('score');
 
         $this->userLevel->score_public_rooms = $totalScore;
+    }
+
+    public function updatePlaylist(): void
+    {
+        $playlistsCount = $this->user->playlists()->count();
+
+        $this->userLevel->playlists_created_count = $playlistsCount;
+    }
+
+    public function updateRoom(): void
+    {
+        $roomsCount = $this->user->rooms()->count();
+
+        $this->userLevel->rooms_created_count = $roomsCount;
+    }
+
+    public function updateLikes(): void
+    {
+        // Use the likes() method which is more reliable
+        $likesCount = $this->user->likes()->count();
+
+        $this->userLevel->tracks_liked_count = $likesCount;
     }
 
     /**
@@ -151,30 +193,37 @@ class LevelCalculator
         $this->userLevel->current_xp = max(0, $currentXp);
         $this->userLevel->xp_for_next_level = $xpForNextLevel;
         $this->userLevel->last_calculated_at = now();
+        $this->userLevel->months_seniority = $userSeniorityInMonths;
 
     }
 
     // Check if UserLevel exists for the user, if not, initialize it
     public function getUserLevel(): UserLevel
     {
-        return $this->user->userLevel ?? UserLevel::create([
-            'user_id' => $this->user->id,
-            'level' => 1,
-            'total_xp' => 0,
-            'current_xp' => 0,
-            'score_public_rooms' => 0,
-            'rooms_created_count' => 0,
-            'months_seniority' => 0,
-            'rounds_played_count' => 0,
-            'correct_answers_count' => 0,
-            'tracks_liked_count' => 0,
-            'messages_count' => 0,
-            'playlists_created_count' => 0,
-            'unique_rooms_played_count' => 0,
-            'best_round_score' => 0,
-            'consecutive_days_streak' => 0,
-            'last_login_date' => null,
-            'last_calculated_at' => null,
-        ]);
+        $userLevel = $this->user->userLevel;
+
+        if (! $userLevel) {
+            $userLevel = UserLevel::create([
+                'user_id' => $this->user->id,
+                'level' => 1,
+                'total_xp' => 0,
+                'current_xp' => 0,
+                'score_public_rooms' => 0,
+                'rooms_created_count' => 0,
+                'months_seniority' => 0,
+                'rounds_played_count' => 0,
+                'correct_answers_count' => 0,
+                'tracks_liked_count' => 0,
+                'messages_count' => 0,
+                'playlists_created_count' => 0,
+                'unique_rooms_played_count' => 0,
+                'best_round_score' => 0,
+                'consecutive_days_streak' => 0,
+                'last_login_date' => null,
+                'last_calculated_at' => null,
+            ]);
+        }
+
+        return $userLevel;
     }
 }

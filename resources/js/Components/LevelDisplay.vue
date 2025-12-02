@@ -41,6 +41,7 @@ const currentXpForNextLevel = ref(props.xpForNextLevel)
 const isUpdating = ref(false)
 const isLevelUp = ref(false)
 const previousLevel = ref(props.level)
+const isScoreUpdated = ref(false)
 
 // Update when props change
 watch(() => props.level, (newLevel) => {
@@ -74,31 +75,46 @@ const triggerLevelUpAnimation = () => {
   }, 1500)
 }
 
+const triggerScoreUpdateAnimation = () => {
+  isScoreUpdated.value = true
+  setTimeout(() => {
+    isScoreUpdated.value = false
+  }, 600)
+}
+
 // Listen for real-time level updates
 onMounted(() => {
   if (user && window.Echo) {
     const channel = window.Echo.private(`App.Models.User.${user.id}`)
     
-    channel.listen('.user.level.updated', (data) => {
-      const wasLevelUp = data.level > currentLevel.value
-      
-      currentLevel.value = data.level
-      currentXpValue.value = data.current_xp
-      currentXpForNextLevel.value = data.xp_for_next_level
-      
-      if (wasLevelUp) {
-        triggerLevelUpAnimation()
-      } else {
-        triggerUpdateAnimation()
-      }
-    })
-    
-    channel.error((error) => {
-      // Silently handle errors - level updates will sync on next page load
-      if (import.meta.env.DEV) {
-        console.error('Echo channel error for user level:', error)
-      }
-    })
+    channel
+      .listen('.user.level.updated', (data) => {
+        const wasLevelUp = data.level > currentLevel.value
+        
+        currentLevel.value = data.level
+        currentXpValue.value = data.current_xp
+        currentXpForNextLevel.value = data.xp_for_next_level
+        
+        // Update metrics if provided
+        if (data.level_metrics) {
+          levelMetrics.value = data.level_metrics
+        }
+        
+        // Trigger score update animation
+        triggerScoreUpdateAnimation()
+        
+        if (wasLevelUp) {
+          triggerLevelUpAnimation()
+        } else {
+          triggerUpdateAnimation()
+        }
+      })
+      .error((error) => {
+        // Silently handle errors - level updates will sync on next page load
+        if (import.meta.env.DEV) {
+          console.error('Echo channel error for user level:', error)
+        }
+      })
   }
 })
 
@@ -131,11 +147,21 @@ const levelColor = computed(() => {
   return 'text-neutral-400 hover:text-neutral-300'
 })
 
+// Reactive state for metrics
+const levelMetrics = ref(user?.level_metrics || null)
+
+// Update metrics when props change
+watch(() => user?.level_metrics, (newMetrics) => {
+  if (newMetrics) {
+    levelMetrics.value = newMetrics
+  }
+})
+
 // Calcul des XP pour chaque métrique
 const metricsXp = computed(() => {
-  if (!user?.level_metrics) return null
+  if (!levelMetrics.value) return null
   
-  const metrics = user.level_metrics
+  const metrics = levelMetrics.value
   
   return {
     score: {
@@ -188,7 +214,10 @@ const metricsXp = computed(() => {
   <dropdown placement="bottom-end">
     <template #default>
       <div 
-        class="cursor-pointer flex items-center justify-center h-10 w-10 transition-all duration-300"
+        :class="[
+          'cursor-pointer flex items-center justify-center h-10 w-10 transition-all duration-300',
+          isScoreUpdated ? 'animate-score-update' : ''
+        ]"
       >
         <LevelBadge 
           :level="currentLevel" 
@@ -203,7 +232,7 @@ const metricsXp = computed(() => {
     </template>
 
     <template #dropdown>
-      <div class="w-64 p-4 space-y-3">
+      <div class="w-72 sm:w-80 p-4 space-y-3">
         <!-- Header -->
         <div class="text-center">
           <div class="flex items-center justify-center gap-3 mb-3">
@@ -249,64 +278,108 @@ const metricsXp = computed(() => {
         </div>
 
         <!-- Métriques détaillées -->
-        <div v-if="metricsXp" class="pt-2 border-t border-neutral-700 space-y-2">
-          <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+        <div v-if="metricsXp" class="pt-2 border-t border-neutral-700">
+          <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
             {{ __('XP Breakdown') }}
           </h4>
-          <div class="space-y-1.5">
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.score.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.score.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.score.xp.toLocaleString() }} XP</span>
-              </span>
+          <div class="space-y-2">
+            <!-- Total score -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-medium text-neutral-300 mb-0.5">{{ metricsXp.score.label }}</div>
+                <div class="text-[10px] text-neutral-500">{{ metricsXp.score.value.toLocaleString() }} points</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.score.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.seniority.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.seniority.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.seniority.xp.toLocaleString() }} XP</span>
-                <span v-if="metricsXp.seniority.xp >= metricsXp.seniority.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
-              </span>
+            
+            <!-- Ancienneté -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.seniority.label }}</div>
+                  <span v-if="metricsXp.seniority.xp >= metricsXp.seniority.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
+                </div>
+                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.seniority.value.toLocaleString() }} mois</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.seniority.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.streak.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.streak.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.streak.xp.toLocaleString() }} XP</span>
-                <span v-if="metricsXp.streak.xp >= metricsXp.streak.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
-              </span>
+            
+            <!-- Streak -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.streak.label }}</div>
+                  <span v-if="metricsXp.streak.xp >= metricsXp.streak.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
+                </div>
+                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.streak.value.toLocaleString() }} jours</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.streak.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.rooms.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.rooms.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.rooms.xp.toLocaleString() }} XP</span>
-                <span v-if="metricsXp.rooms.xp >= metricsXp.rooms.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
-              </span>
+            
+            <!-- Rooms créées -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.rooms.label }}</div>
+                  <span v-if="metricsXp.rooms.xp >= metricsXp.rooms.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
+                </div>
+                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.rooms.value.toLocaleString() }} rooms</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.rooms.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.playlists.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.playlists.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.playlists.xp.toLocaleString() }} XP</span>
-                <span v-if="metricsXp.playlists.xp >= metricsXp.playlists.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
-              </span>
+            
+            <!-- Playlists créées -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.playlists.label }}</div>
+                  <span v-if="metricsXp.playlists.xp >= metricsXp.playlists.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
+                </div>
+                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.playlists.value.toLocaleString() }} playlists</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.playlists.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.likes.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.likes.value.toLocaleString() }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.likes.xp.toLocaleString() }} XP</span>
-                <span v-if="metricsXp.likes.xp >= metricsXp.likes.max" class="text-yellow-400 ml-1" :title="__('Maximum reached')">(max)</span>
-              </span>
+            
+            <!-- Tracks likées -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.likes.label }}</div>
+                  <span v-if="metricsXp.likes.xp >= metricsXp.likes.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
+                </div>
+                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.likes.value.toLocaleString() }} likes</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.likes.xp.toLocaleString() }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
-            <div class="flex justify-between items-center text-xs">
-              <span class="text-neutral-300">{{ metricsXp.team.label }}</span>
-              <span class="text-neutral-400">
-                {{ metricsXp.team.value }} → 
-                <span class="font-semibold text-green-400">{{ metricsXp.team.xp }} XP</span>
-              </span>
+            
+            <!-- Team -->
+            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-medium text-neutral-300 mb-0.5">{{ metricsXp.team.label }}</div>
+                <div class="text-[10px] text-neutral-500">{{ metricsXp.team.value }}</div>
+              </div>
+              <div class="flex-shrink-0 text-right">
+                <div class="text-sm font-bold text-green-400">{{ metricsXp.team.xp }}</div>
+                <div class="text-[10px] text-neutral-500">XP</div>
+              </div>
             </div>
           </div>
         </div>

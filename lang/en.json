@@ -79,6 +79,7 @@
     "300 XP (30 days maximum)": "300 XP (30 days maximum)",
     "In real-time when you score points in public rooms": "In real-time when you score points in public rooms",
     "When you create a room or playlist": "When you create a room or playlist",
+    "When you like or unlike a track": "When you like or unlike a track",
     "When you join a team": "When you join a team",
     "When you log in (if not updated in the last hour)": "When you log in (if not updated in the last hour)",
     "Daily via automatic calculation (at 8:00 AM)": "Daily via automatic calculation (at 8:00 AM)",
@@ -96,5 +97,6 @@
     "XP Breakdown": "XP Breakdown",
     "Total score": "Total score",
     "Team": "Team",
-    "Maximum reached": "Maximum reached"
+    "Maximum reached": "Maximum reached",
+    "Deleted user": "Deleted user"
 }

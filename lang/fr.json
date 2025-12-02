@@ -237,6 +237,7 @@
     "300 XP (30 days maximum)": "300 XP (30 jours maximum)",
     "In real-time when you score points in public rooms": "En temps réel lorsque vous marquez des points dans les rooms publiques",
     "When you create a room or playlist": "Lorsque vous créez une room ou une playlist",
+    "When you like or unlike a track": "Lorsque vous likez ou unlikiez un track",
     "When you join a team": "Lorsque vous rejoignez une équipe",
     "When you log in (if not updated in the last hour)": "Lors de la connexion (si non mis à jour dans la dernière heure)",
     "Daily via automatic calculation (at 8:00 AM)": "Quotidiennement via un calcul automatique (à 8h00)",
@@ -574,5 +575,6 @@
     "XP Breakdown": "Détail des XP",
     "Total score": "Score total",
     "Team": "Team",
-    "Maximum reached": "Maximum atteint"
+    "Maximum reached": "Maximum atteint",
+    "Deleted user": "Utilisateur supprimé"
 }

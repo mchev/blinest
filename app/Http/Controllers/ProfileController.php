@@ -78,6 +78,12 @@ class ProfileController extends Controller
             ->where('votable_id', $track->id)
             ->delete();
 
+        // Update user level in queue when unliking a track
+        \App\Jobs\UpdateUserLevel::dispatch(
+            user: $request->user(),
+            type: 'likes_count'
+        );
+
         return back();
     }
 }

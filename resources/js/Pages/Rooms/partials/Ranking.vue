@@ -101,9 +101,12 @@ onUnmounted(() => {
             </div>
             <div class="flex flex-grow flex-col min-w-0">
               <div class="mb-1 sm:mb-2 flex items-center gap-2">
-                <Link :href="route('user.profile', user)" class="font-medium text-neutral-100 hover:text-yellow-400 transition-colors truncate">
+                <Link v-if="user?.id" :href="route('user.profile', { user: user.id })" class="font-medium text-neutral-100 hover:text-yellow-400 transition-colors truncate">
                   {{ user.name }}
                 </Link>
+                <span v-else class="font-medium text-neutral-400 truncate">
+                  {{ user?.name || __('Deleted user') }}
+                </span>
                 <LevelBadge v-if="user.level" :level="user.level" size="sm" variant="compact" />
                 <Link v-if="user.team" 
                       :href="route('teams.show', user.team)" 

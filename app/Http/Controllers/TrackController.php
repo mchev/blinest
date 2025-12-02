@@ -175,12 +175,24 @@ class TrackController extends Controller
     {
         Auth::user()->downvote($track);
         broadcast(new TrackVoted($room, $track));
+
+        // Update user level in queue when unliking a track
+        \App\Jobs\UpdateUserLevel::dispatch(
+            user: Auth::user(),
+            type: 'likes_count'
+        );
     }
 
     public function upvote(Room $room, Track $track)
     {
         Auth::user()->upvote($track);
         broadcast(new TrackVoted($room, $track));
+
+        // Update user level in queue when liking a track
+        \App\Jobs\UpdateUserLevel::dispatch(
+            user: Auth::user(),
+            type: 'likes_count'
+        );
     }
 
     public function upload(Playlist $playlist)

@@ -210,11 +210,18 @@ const getMedalClass = (index) => {
                       onerror="this.src='https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'"
                     />
                     <Link 
-                      :href="activeTab === 'teams' ? route('teams.show', { team: score.team.id }) : route('user.profile', score.user)"
+                      v-if="activeTab === 'teams' ? score.team?.id : score.user?.id"
+                      :href="activeTab === 'teams' ? route('teams.show', { team: score.team.id }) : route('user.profile', { user: score.user.id })"
                       class="font-medium text-white hover:text-purple-300 transition-colors duration-150"
                     >
                       {{ activeTab === 'teams' ? score.team?.name : score.user?.name }}
                     </Link>
+                    <span 
+                      v-else
+                      class="font-medium text-neutral-400"
+                    >
+                      {{ activeTab === 'teams' ? score.team?.name : (score.user?.name || __('Deleted user')) }}
+                    </span>
                   </div>
                 </td>
                 <td class="p-3 text-right">

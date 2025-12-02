@@ -140,8 +140,8 @@ const getLevelInfo = (item) => {
 
           <!-- Photo -->
           <Link
-            v-if="type !== 'teams' && item.user"
-            :href="route('user.profile', item.user.id)"
+            v-if="type !== 'teams' && item.user?.id"
+            :href="route('user.profile', { user: item.user.id })"
             class="relative flex-shrink-0 transition-transform duration-200 hover:scale-105"
           >
             <div class="relative">
@@ -190,12 +190,18 @@ const getLevelInfo = (item) => {
         <div class="flex flex-1 flex-col gap-2 min-w-0 sm:flex-row sm:items-center sm:gap-4">
           <div class="flex-1 min-w-0">
             <Link
-              v-if="type !== 'teams' && item.user"
-              :href="route('user.profile', item.user.id)"
+              v-if="type !== 'teams' && item.user?.id"
+              :href="route('user.profile', { user: item.user.id })"
               class="block truncate text-base font-bold text-white transition-colors hover:text-yellow-400 sm:text-lg"
             >
               {{ item.user.name }}
             </Link>
+            <span
+              v-else-if="type !== 'teams' && item.user"
+              class="block truncate text-base font-bold text-neutral-400 sm:text-lg"
+            >
+              {{ item.user?.name || __('Deleted user') }}
+            </span>
             <Link
               v-else-if="type === 'teams' && item.team"
               :href="route('teams.show', item.team.id)"
