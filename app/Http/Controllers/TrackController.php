@@ -11,6 +11,7 @@ use App\Models\Track;
 use App\Rules\AudioDuration;
 use App\Services\MusicProvidersService as MusicProviders;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -133,7 +134,11 @@ class TrackController extends Controller
                 }
             }
 
-            return Redirect::back()->with('Track added');
+            // Invalidate cache
+            Cache::forget('playlist_total_tracks_'.$playlist->id);
+            Cache::forget('playlist_difficulties_'.$playlist->id);
+
+            return Redirect::back()->with('success', __('Track added'));
         }
     }
 
@@ -157,8 +162,15 @@ class TrackController extends Controller
             }
 
             // TRACK
-            if (!empty($updateData)) {
+            if (! empty($updateData)) {
                 $track->update($updateData);
+
+                // Invalidate cache if difficulty changed
+                if (Request::has('dificulty')) {
+                    Cache::forget('playlist_difficulties_'.$playlist->id);
+                }
+
+                return redirect()->back()->with('success', __('Track updated'));
             }
 
             return redirect()->back();
@@ -176,7 +188,11 @@ class TrackController extends Controller
 
             ProcessDeletedTrack::dispatch($track, $user);
 
-            return Redirect::back()->withSuccess('Track deleted');
+            // Invalidate cache
+            Cache::forget('playlist_total_tracks_'.$playlist->id);
+            Cache::forget('playlist_difficulties_'.$playlist->id);
+
+            return Redirect::back()->with('success', __('Track deleted'));
         }
     }
 

@@ -82,7 +82,7 @@ class RoundController extends Controller
 
             // Updates the words array
             $sanitized = sanitizeString($request->input('text'));
-            
+
             // Check for hint command (!indice or !hint)
             $textLower = strtolower(trim($request->input('text')));
             if ($textLower === '!indice' || $textLower === '!hint') {
@@ -106,7 +106,7 @@ class RoundController extends Controller
                     ]);
                 }
             }
-            
+
             $newWords = explode(' ', $sanitized);
             $userWords = array_unique(array_merge($newWords, $request->input('words')));
 

@@ -415,19 +415,22 @@ onUnmounted(() => {
 <template>
     <div>
         <button 
-            class="flex gap-2 items-center btn-secondary hover:bg-blinest-500 hover:text-white transition-colors duration-200"
+            class="flex gap-2 items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-neutral-200 bg-neutral-700/50 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-all duration-200 hover:border-blinest-500/50 hover:text-white"
             @click="uploadingTrack = true"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15m0-3-3-3m0 0-3 3m3-3V15" />
             </svg>
-            <span>Importer depuis l'ordinateur</span>
+            <span>{{ __('Upload MP3 file') }}</span>
         </button>
 
         <Modal :show="uploadingTrack" @close="close" max-width="2xl">
             <div class="p-6 bg-neutral-900 rounded-lg">
-                <h1 class="text-2xl font-bold text-white mb-1">Importer un audio</h1>
-                <p class="text-sm text-neutral-400 mb-6">Tous les champs sont obligatoires. Vous pouvez trouver des mp3 à l'adresse suivante : <a href="https://emp3juice.la/" target="_blank" class="text-blinest-400 hover:text-blinest-300 underline transition-colors">emp3juice.la</a></p>
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold text-white mb-2">{{ __('Upload a song from your computer') }}</h1>
+                    <p class="text-sm text-neutral-400 mb-3">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
+                    <p class="text-xs text-neutral-500">{{ __('All fields are required. You can find MP3 files at') }} <a href="https://emp3juice.la/" target="_blank" class="text-blinest-400 hover:text-blinest-300 underline transition-colors">emp3juice.la</a></p>
+                </div>
                 
                 <form @submit.prevent="uploadTrack" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

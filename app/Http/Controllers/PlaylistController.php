@@ -33,17 +33,25 @@ class PlaylistController extends Controller
                 ->with('moderators', 'owner')
                 ->paginate(5)
                 ->withQueryString()
-                ->through(fn ($playlist) => [
-                    'id' => $playlist->id,
-                    'name' => $playlist->name,
-                    'description' => $playlist->description,
-                    'owner' => $playlist->owner,
-                    'moderators' => $playlist->moderators->map(fn ($moderator) => [
-                        'id' => $moderator->id,
-                        'name' => $moderator->name,
-                    ]),
-                    'deleted_at' => $playlist->deleted_at,
-                ]),
+                ->through(function ($playlist) {
+                    $totalTracks = Cache::remember('playlist_total_tracks_'.$playlist->id, 30 * 60, function () use ($playlist) {
+                        return $playlist->tracks()->count();
+                    });
+
+                    return [
+                        'id' => $playlist->id,
+                        'name' => $playlist->name,
+                        'description' => $playlist->description,
+                        'owner' => $playlist->owner,
+                        'moderators' => $playlist->moderators->map(fn ($moderator) => [
+                            'id' => $moderator->id,
+                            'name' => $moderator->name,
+                        ]),
+                        'deleted_at' => $playlist->deleted_at,
+                        'total_tracks' => $totalTracks,
+                        'updated_at' => $playlist->updated_at,
+                    ];
+                }),
         ]);
     }
 
@@ -94,8 +102,11 @@ class PlaylistController extends Controller
             // Move the track relations to the paginated query
             $tracks = $playlist->tracks()
                 ->with(['answers', 'upVoters', 'downVoters']) // Eager load only for paginated results
-                ->filter(Request::only('search', 'sortable'))
-                ->paginate(Request::get('paginate') ?? 5)
+                ->filter(Request::only('search', 'sortable', 'difficulty', 'provider', 'minUpvotes', 'minDownvotes'))
+                ->when(! Request::has('sortable'), function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                })
+                ->paginate(Request::get('paginate') ?? 10)
                 ->withQueryString();
 
             $difficultyLabels = [
@@ -107,6 +118,11 @@ class PlaylistController extends Controller
 
             $difficultyStats = collect($difficultyLabels)->mapWithKeys(function ($label, $key) use ($difficulties) {
                 return [$label => $difficulties[$key] ?? 0];
+            });
+
+            // Get total tracks count (unfiltered)
+            $totalTracks = Cache::remember('playlist_total_tracks_'.$playlist->id, 30 * 60, function () use ($playlist) {
+                return $playlist->tracks()->count();
             });
 
             return Inertia::render('Playlists/Edit', [
@@ -129,6 +145,7 @@ class PlaylistController extends Controller
                             'owner' => $room->owner,
                         ]),
                     'difficulties' => $difficultyStats,
+                    'total_tracks' => $totalTracks,
                 ],
                 'filters' => Request::only('search'),
                 'answer_types' => Cache::remember('answer_types_'.app()->getLocale(), 60 * 24, function () {

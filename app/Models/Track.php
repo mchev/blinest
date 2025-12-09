@@ -81,16 +81,35 @@ class Track extends Model
 
     public function scopeFilter($query, array $filters)
     {
+        // Check if we need vote counts for filtering or sorting
+        $needsUpvotes = isset($filters['minUpvotes']) || (isset($filters['sortable']) && $filters['sortable']['field'] == 'votes' && $filters['sortable']['direction'] == 'asc');
+        $needsDownvotes = isset($filters['minDownvotes']) || (isset($filters['sortable']) && $filters['sortable']['field'] == 'votes' && $filters['sortable']['direction'] == 'desc');
+
+        if ($needsUpvotes) {
+            $query->withTotalUpvotes();
+        }
+        if ($needsDownvotes) {
+            $query->withTotalDownvotes();
+        }
+
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->whereRelation('answers', function ($query) use ($search) {
                 $query->where('value', 'like', '%'.$search.'%');
             });
+        })->when($filters['difficulty'] ?? null, function ($query, $difficulty) {
+            $query->where('dificulty', $difficulty);
+        })->when($filters['provider'] ?? null, function ($query, $provider) {
+            $query->where('provider', $provider);
+        })->when($filters['minUpvotes'] ?? null, function ($query, $minUpvotes) {
+            $query->having('total_upvotes', '>=', $minUpvotes);
+        })->when($filters['minDownvotes'] ?? null, function ($query, $minDownvotes) {
+            $query->havingRaw('ABS(total_downvotes) >= ?', [$minDownvotes]);
         })->when($filters['sortable'] ?? null, function ($query, $sortable) {
             if ($sortable['field'] == 'votes') {
                 if ($sortable['direction'] == 'asc') {
-                    $query->withTotalUpvotes()->orderByDesc('total_upvotes');
+                    $query->orderByDesc('total_upvotes');
                 } else {
-                    $query->withTotalDownvotes()->orderBy('total_downvotes');
+                    $query->orderBy('total_downvotes');
                 }
             } else {
                 $query->orderBy($sortable['field'], $sortable['direction']);
