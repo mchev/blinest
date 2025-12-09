@@ -82,6 +82,31 @@ class RoundController extends Controller
 
             // Updates the words array
             $sanitized = sanitizeString($request->input('text'));
+            
+            // Check for hint command (!indice or !hint)
+            $textLower = strtolower(trim($request->input('text')));
+            if ($textLower === '!indice' || $textLower === '!hint') {
+                if ($track->hint) {
+                    return response()->json([
+                        'message' => [
+                            'type' => 'hint',
+                            'body' => $track->hint,
+                        ],
+                        'words' => $request->input('words', []),
+                        'good_answers' => [],
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => [
+                            'type' => 'bad',
+                            'body' => __('No hint available'),
+                        ],
+                        'words' => $request->input('words', []),
+                        'good_answers' => [],
+                    ]);
+                }
+            }
+            
             $newWords = explode(' ', $sanitized);
             $userWords = array_unique(array_merge($newWords, $request->input('words')));
 

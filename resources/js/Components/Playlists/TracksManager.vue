@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
 import Pagination from '@/Components/Pagination.vue'
 import TrackAnswerForm from './TrackAnswerForm.vue'
+import TrackHintForm from './TrackHintForm.vue'
 import MiniPlayer from '@/Components/MiniPlayer.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import pickBy from 'lodash/pickBy'
@@ -50,6 +51,7 @@ const form = useForm({
 const selectedAnswer = ref(null)
 const creatingAnswer = ref(false)
 const editingAnswer = ref(false)
+const editingHint = ref(null)
 const search_online = ref('')
 const searchLoading = ref(false)
 const results = ref([])
@@ -231,6 +233,7 @@ const closeModal = () => {
   selectedAnswer.value = null
   creatingAnswer.value = false
   editingAnswer.value = false
+  editingHint.value = null
 }
 
 // Improved track operations with error handling
@@ -311,6 +314,10 @@ const updateDificulty = async (e, track) => {
   } finally {
     loadingStates.value.updateDifficulty = null
   }
+}
+
+const editHint = (track) => {
+  editingHint.value = track
 }
 
 // Add this event listener setup in your script
@@ -597,6 +604,7 @@ const loading = ref(false)
               </th>
               <th class="px-3 lg:px-4 py-2 lg:py-3"></th>
               <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">{{ __('Answers') }}</th>
+              <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">{{ __('Hint') }}</th>
               <th class="px-3 lg:px-4 py-2 lg:py-3 text-left">
                 <Sortable field="dificulty" v-model="form.sortable">{{ __('Difficulty') }}</Sortable>
               </th>
@@ -649,6 +657,22 @@ const loading = ref(false)
                   >
                     <Icon name="plus" class="h-2.5 lg:h-3 w-2.5 lg:w-3" />
                     {{ __('Add an answer') }}
+                  </button>
+                </div>
+              </td>
+              <td class="px-3 lg:px-4 py-2 max-w-[200px]">
+                <div class="flex flex-col gap-1 min-w-0">
+                  <div v-if="track.hint" class="flex items-center gap-1.5 text-xs text-neutral-400 truncate max-w-full" :title="track.hint">
+                    <Icon name="hint" class="h-3 w-3 flex-shrink-0 text-yellow-400" />
+                    <span class="truncate">{{ track.hint }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="flex items-center gap-1 text-xs text-neutral-400 hover:text-white transition-colors whitespace-nowrap"
+                    @click="editHint(track)"
+                  >
+                    <Icon :name="track.hint ? 'edit' : 'plus'" class="h-3 w-3 flex-shrink-0" />
+                    <span class="truncate">{{ track.hint ? __('Edit hint') : __('Add hint') }}</span>
                   </button>
                 </div>
               </td>
@@ -715,6 +739,14 @@ const loading = ref(false)
         :answer="selectedAnswer"
         :answer_types="answer_types" 
         :show="editingAnswer || creatingAnswer" 
+        max-width="md" 
+        @close="closeModal" 
+      />
+
+      <TrackHintForm 
+        v-if="editingHint" 
+        :track="{ ...editingHint, playlist_id: playlist.id }"
+        :show="!!editingHint" 
         max-width="md" 
         @close="closeModal" 
       />

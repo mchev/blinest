@@ -144,13 +144,22 @@ class TrackController extends Controller
                 || Auth::user()->isAdministrator()
         ) {
             Request::validate([
-                'dificulty' => ['required', 'integer', 'min:0', 'max:5'],
+                'dificulty' => ['nullable', 'integer', 'min:0', 'max:5'],
+                'hint' => ['nullable', 'string', 'max:255'],
             ]);
 
+            $updateData = [];
+            if (Request::has('dificulty')) {
+                $updateData['dificulty'] = Request::get('dificulty');
+            }
+            if (Request::has('hint')) {
+                $updateData['hint'] = Request::get('hint');
+            }
+
             // TRACK
-            $track->update([
-                'dificulty' => Request::get('dificulty'),
-            ]);
+            if (!empty($updateData)) {
+                $track->update($updateData);
+            }
 
             return redirect()->back();
         }

@@ -77,7 +77,9 @@ class PlaylistController extends AdminController
                 ]),
             ],
             'filters' => Request::all('search'),
-            'answer_types' => AnswerType::all(),
+            'answer_types' => AnswerType::all()->sortBy(function ($answerType) {
+                return __($answerType->name);
+            }, SORT_REGULAR, false)->values(),
             'tracks' => $playlist->tracks()
                 ->filter(Request::only('search'))
                 ->paginate(5)
@@ -88,6 +90,8 @@ class PlaylistController extends AdminController
                     'provider_url' => $track->provider_url,
                     'preview_url' => $track->preview_url,
                     'answers' => $track->answers,
+                    'dificulty' => $track->dificulty,
+                    'hint' => $track->hint,
                     // 'up_votes' => $track->upVoters()->count(),
                     // 'down_votes' => $track->downVoters()->count(),
                     'created_at' => $track->created_at->format('d/m/Y'),

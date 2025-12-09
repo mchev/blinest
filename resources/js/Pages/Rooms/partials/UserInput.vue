@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Volume from '@/Components/Volume.vue'
 import Dropdown from '@/Components/Dropdown.vue'
+import Icon from '@/Components/Icon.vue'
 
 const props = defineProps({
   room: Object,
@@ -187,7 +188,8 @@ onUnmounted(() => {
 const messageClass = computed(() => ({
   'bg-teal-600': message.value?.type === 'good',
   'bg-orange-600': message.value?.type === 'almost',
-  'bg-red-700': message.value?.type === 'bad'
+  'bg-red-700': message.value?.type === 'bad',
+  'bg-blue-600': message.value?.type === 'hint'
 }))
 
 const isAnswerFound = (answerId) => answers.value.some(a => a.id === answerId)
@@ -297,10 +299,11 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
     <transition name="fade">
       <blockquote 
         v-if="message" 
-        class="mt-2 absolute top-0 right-0 rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm"
+        class="mt-2 absolute top-0 right-0 rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm flex items-center gap-2"
         :class="messageClass"
       >
-        {{ message.body }}
+        <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-yellow-300 flex-shrink-0" />
+        <span>{{ message.body }}</span>
       </blockquote>
     </transition>
     </div>

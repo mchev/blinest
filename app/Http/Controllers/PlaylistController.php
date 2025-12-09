@@ -131,8 +131,10 @@ class PlaylistController extends Controller
                     'difficulties' => $difficultyStats,
                 ],
                 'filters' => Request::only('search'),
-                'answer_types' => Cache::remember('answer_types', 60 * 24, function () {
-                    return AnswerType::all();
+                'answer_types' => Cache::remember('answer_types_'.app()->getLocale(), 60 * 24, function () {
+                    return AnswerType::all()->sortBy(function ($answerType) {
+                        return __($answerType->name);
+                    }, SORT_REGULAR, false)->values();
                 }),
                 'tracks' => $tracks->through(fn ($track) => [
                     'id' => $track->id,
@@ -141,6 +143,7 @@ class PlaylistController extends Controller
                     'preview_url' => $track->preview_url,
                     'answers' => $track->answers,
                     'dificulty' => $track->dificulty,
+                    'hint' => $track->hint,
                     'up_votes' => $track->upVoters->count(),
                     'down_votes' => $track->downVoters->count(),
                     'created_at' => $track->created_at->format('d/m/Y'),
