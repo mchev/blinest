@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { usePage, Link } from '@inertiajs/vue3'
-import Dropdown from '@/Components/Dropdown.vue'
+import { usePage } from '@inertiajs/vue3'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import LevelModal from '@/Components/LevelModal.vue'
 
 const props = defineProps({
   level: {
@@ -36,12 +36,14 @@ const __ = (key, replace = {}) => {
 const currentLevel = ref(props.level)
 const currentXpValue = ref(props.currentXp)
 const currentXpForNextLevel = ref(props.xpForNextLevel)
+const totalXp = ref(user?.total_xp ?? 0)
 
 // Animation states
 const isUpdating = ref(false)
 const isLevelUp = ref(false)
 const previousLevel = ref(props.level)
 const isScoreUpdated = ref(false)
+const showModal = ref(false)
 
 // Update when props change
 watch(() => props.level, (newLevel) => {
@@ -94,6 +96,7 @@ onMounted(() => {
         currentLevel.value = data.level
         currentXpValue.value = data.current_xp
         currentXpForNextLevel.value = data.xp_for_next_level
+        totalXp.value = data.total_xp ?? 0
         
         // Update metrics if provided
         if (data.level_metrics) {
@@ -211,203 +214,33 @@ const metricsXp = computed(() => {
 </script>
 
 <template>
-  <dropdown placement="bottom-end">
-    <template #default>
-      <div 
-        :class="[
-          'cursor-pointer flex items-center justify-center h-10 w-10 transition-all duration-300',
-          isScoreUpdated ? 'animate-score-update' : ''
-        ]"
-      >
-        <LevelBadge 
-          :level="currentLevel" 
-          :current-xp="currentXpValue"
-          :xp-for-next-level="currentXpForNextLevel"
-          size="lg" 
-          variant="compact"
-          :is-level-up="isLevelUp"
-          :is-updating="isUpdating"
-        />
-      </div>
-    </template>
+  <div>
+    <div 
+      :class="[
+        'cursor-pointer flex items-center justify-center h-10 w-10 transition-all duration-300',
+        isScoreUpdated ? 'animate-score-update' : ''
+      ]"
+      @click="showModal = true"
+    >
+      <LevelBadge 
+        :level="currentLevel" 
+        :current-xp="currentXpValue"
+        :xp-for-next-level="currentXpForNextLevel"
+        size="lg" 
+        variant="compact"
+        :is-level-up="isLevelUp"
+        :is-updating="isUpdating"
+      />
+    </div>
 
-    <template #dropdown>
-      <div class="w-72 sm:w-80 p-4 space-y-3">
-        <!-- Header -->
-        <div class="text-center">
-          <div class="flex items-center justify-center gap-3 mb-3">
-            <LevelBadge :level="currentLevel" size="lg" variant="default" />
-            <span :class="['text-2xl font-bold', levelColor]">
-              {{ __('Level') }} {{ currentLevel }}
-            </span>
-          </div>
-          <p class="text-sm text-neutral-400">
-            {{ currentXpValue }} / {{ currentXpForNextLevel }} {{ __('XP') }}
-          </p>
-        </div>
-
-        <!-- Barre de progression -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs font-semibold text-neutral-400">
-            <span>{{ __('Progress to next level') }}</span>
-            <span>{{ Math.round(progressPercentage) }}%</span>
-          </div>
-          <div class="relative h-2 w-full overflow-hidden rounded-full bg-neutral-800">
-            <div
-              :class="[
-                'h-full transition-all duration-500 ease-out rounded-full',
-                currentLevel >= 50 ? 'bg-purple-500' :
-                currentLevel >= 30 ? 'bg-yellow-500' :
-                currentLevel >= 20 ? 'bg-blue-500' :
-                currentLevel >= 10 ? 'bg-green-500' :
-                'bg-neutral-500',
-              ]"
-              :style="{ width: `${progressPercentage}%` }"
-            />
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="pt-2 border-t border-neutral-700">
-          <div class="flex justify-between text-xs mb-2">
-            <span class="text-neutral-400">{{ __('XP needed') }}</span>
-            <span :class="['font-bold', levelColor]">
-              {{ currentXpForNextLevel - currentXpValue }} {{ __('XP') }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Métriques détaillées -->
-        <div v-if="metricsXp" class="pt-2 border-t border-neutral-700">
-          <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-            {{ __('XP Breakdown') }}
-          </h4>
-          <div class="space-y-2">
-            <!-- Total score -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="text-xs font-medium text-neutral-300 mb-0.5">{{ metricsXp.score.label }}</div>
-                <div class="text-[10px] text-neutral-500">{{ metricsXp.score.value.toLocaleString() }} points</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.score.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Ancienneté -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.seniority.label }}</div>
-                  <span v-if="metricsXp.seniority.xp >= metricsXp.seniority.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
-                </div>
-                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.seniority.value.toLocaleString() }} mois</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.seniority.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Streak -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.streak.label }}</div>
-                  <span v-if="metricsXp.streak.xp >= metricsXp.streak.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
-                </div>
-                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.streak.value.toLocaleString() }} jours</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.streak.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Rooms créées -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.rooms.label }}</div>
-                  <span v-if="metricsXp.rooms.xp >= metricsXp.rooms.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
-                </div>
-                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.rooms.value.toLocaleString() }} rooms</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.rooms.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Playlists créées -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.playlists.label }}</div>
-                  <span v-if="metricsXp.playlists.xp >= metricsXp.playlists.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
-                </div>
-                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.playlists.value.toLocaleString() }} playlists</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.playlists.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Tracks likées -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <div class="text-xs font-medium text-neutral-300">{{ metricsXp.likes.label }}</div>
-                  <span v-if="metricsXp.likes.xp >= metricsXp.likes.max" class="text-[9px] px-1 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium" :title="__('Maximum reached')">MAX</span>
-                </div>
-                <div class="text-[10px] text-neutral-500 mt-0.5">{{ metricsXp.likes.value.toLocaleString() }} likes</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.likes.xp.toLocaleString() }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-            
-            <!-- Team -->
-            <div class="flex items-start justify-between gap-3 py-2 px-2.5 rounded-lg bg-neutral-800/30 hover:bg-neutral-800/50 transition-colors border border-neutral-700/50">
-              <div class="flex-1 min-w-0">
-                <div class="text-xs font-medium text-neutral-300 mb-0.5">{{ metricsXp.team.label }}</div>
-                <div class="text-[10px] text-neutral-500">{{ metricsXp.team.value }}</div>
-              </div>
-              <div class="flex-shrink-0 text-right">
-                <div class="text-sm font-bold text-green-400">{{ metricsXp.team.xp }}</div>
-                <div class="text-[10px] text-neutral-500">XP</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Lien vers plus d'infos -->
-        <div class="pt-2 border-t border-neutral-700">
-          <Link
-            :href="route('level-system')"
-            class="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
-            @click.stop
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-4 w-4"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4M12 8h.01" />
-            </svg>
-            {{ __('How does it work?') }}
-          </Link>
-        </div>
-      </div>
-    </template>
-  </dropdown>
+    <LevelModal
+      :show="showModal"
+      :level="currentLevel"
+      :current-xp="currentXpValue"
+      :xp-for-next-level="currentXpForNextLevel"
+      :total-xp="totalXp"
+      :level-metrics="levelMetrics"
+      @close="showModal = false"
+    />
+  </div>
 </template>

@@ -188,10 +188,14 @@ class LevelCalculator
         $currentXp = $totalXp - $xpForCurrentLevel;
         $xpNeededForNext = $xpForNextLevel - $totalXp;
 
+        // Calculate the XP required to go from current level to next level
+        // This is the difference between the threshold for next level and current level threshold
+        $xpRequiredForNextLevel = $xpForNextLevel - $xpForCurrentLevel;
+
         $this->userLevel->level = $level;
         $this->userLevel->total_xp = $totalXp;
         $this->userLevel->current_xp = max(0, $currentXp);
-        $this->userLevel->xp_for_next_level = $xpForNextLevel;
+        $this->userLevel->xp_for_next_level = $xpRequiredForNextLevel;
         $this->userLevel->last_calculated_at = now();
         $this->userLevel->months_seniority = $userSeniorityInMonths;
 
