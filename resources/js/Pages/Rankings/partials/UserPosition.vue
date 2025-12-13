@@ -1,9 +1,13 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import LevelModal from '@/Components/LevelModal.vue'
 
 const page = usePage()
+const showLevelModal = ref(false)
+const levelModalData = ref(null)
+
 const __ = (key, replace = {}) => {
   let translation = page.props.language[key] ? page.props.language[key] : key
   Object.keys(replace).forEach(function (key) {
@@ -74,7 +78,17 @@ const positionBadge = computed(() => {
         </div>
       </div>
       <div class="flex items-center gap-2 sm:gap-3">
-        <LevelBadge v-if="type === 'level' && user.level" :level="user.level || 1" size="lg" variant="default" />
+        <LevelBadge
+          v-if="type === 'level' && user.level"
+          :level="user.level || 1"
+          :current-xp="user.current_xp"
+          :xp-for-next-level="user.xp_for_next_level"
+          :total-xp="user.total_xp"
+          :level-metrics="user.level_metrics"
+          size="lg"
+          variant="default"
+          @click="(data) => { levelModalData = data; showLevelModal = true }"
+        />
         <Link
           :href="route('user.profile', user)"
           class="rounded-lg bg-yellow-500/20 px-3 py-1.5 text-xs font-medium text-yellow-400 transition-colors hover:bg-yellow-500/30 sm:px-4 sm:py-2 sm:text-sm"
@@ -83,6 +97,16 @@ const positionBadge = computed(() => {
         </Link>
       </div>
     </div>
+    <LevelModal
+      v-if="levelModalData"
+      :show="showLevelModal"
+      :level="levelModalData.level"
+      :current-xp="levelModalData.currentXp"
+      :xp-for-next-level="levelModalData.xpForNextLevel"
+      :total-xp="levelModalData.totalXp"
+      :level-metrics="levelModalData.levelMetrics"
+      @close="showLevelModal = false"
+    />
   </div>
 </template>
 

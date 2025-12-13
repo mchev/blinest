@@ -1,7 +1,8 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import LevelModal from '@/Components/LevelModal.vue'
 
 const page = usePage()
 const __ = (key, replace = {}) => {
@@ -22,6 +23,49 @@ const props = defineProps({
     required: true, // 'level', 'score', 'week', 'teams'
   },
 })
+
+// Modal state
+const showModal = ref(false)
+const modalData = ref({
+  level: 1,
+  currentXp: 0,
+  xpForNextLevel: 100,
+  totalXp: 0,
+  levelMetrics: null,
+})
+const isLoading = ref(false)
+
+// Fetch user level metrics
+const fetchUserLevelMetrics = async (userId) => {
+  if (isLoading.value) return
+
+  isLoading.value = true
+  try {
+    const response = await fetch(route('rankings.users.level-metrics', { user: userId }))
+    const data = await response.json()
+    
+    modalData.value = {
+      level: data.level,
+      currentXp: data.current_xp,
+      xpForNextLevel: data.xp_for_next_level,
+      totalXp: data.total_xp,
+      levelMetrics: data.level_metrics,
+    }
+    showModal.value = true
+  } catch (error) {
+    console.error('Error fetching user level metrics:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Handle user click
+const handleUserClick = (event, item) => {
+  if (props.type === 'level' && item.user?.id) {
+    event.preventDefault()
+    fetchUserLevelMetrics(item.user.id)
+  }
+}
 
 const getMedalIcon = (itemIndex, currentPage) => {
   if (currentPage === 1 && itemIndex === 0) return '🥇'
@@ -140,7 +184,7 @@ const getLevelInfo = (item) => {
 
           <!-- Photo -->
           <Link
-            v-if="type !== 'teams' && item.user?.id"
+            v-if="type !== 'teams' && type !== 'level' && item.user?.id"
             :href="route('user.profile', { user: item.user.id })"
             class="relative flex-shrink-0 transition-transform duration-200 hover:scale-105"
           >
@@ -173,6 +217,41 @@ const getLevelInfo = (item) => {
               />
             </div>
           </Link>
+          <button
+            v-else-if="type === 'level' && item.user?.id"
+            @click="handleUserClick($event, item)"
+            :disabled="isLoading"
+            class="relative flex-shrink-0 transition-transform duration-200 hover:scale-105 cursor-pointer disabled:opacity-50"
+          >
+            <div class="relative">
+              <img
+                :src="item.user.photo"
+                :alt="item.user.name"
+                class="h-11 w-11 rounded-full border-2 object-cover shadow-md sm:h-14 sm:w-14"
+                :class="
+                  items.current_page === 1 && index === 0
+                    ? 'border-yellow-400 ring-2 ring-yellow-500/30'
+                    : items.current_page === 1 && index === 1
+                      ? 'border-gray-300 ring-2 ring-gray-400/30'
+                      : items.current_page === 1 && index === 2
+                        ? 'border-amber-600 ring-2 ring-amber-700/30'
+                        : 'border-neutral-600'
+                "
+              />
+              <!-- Online indicator (optional) -->
+              <div
+                v-if="items.current_page === 1 && index < 3"
+                class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-neutral-900"
+                :class="
+                  index === 0
+                    ? 'bg-yellow-400'
+                    : index === 1
+                      ? 'bg-gray-300'
+                      : 'bg-amber-600'
+                "
+              />
+            </div>
+          </button>
           <Link
             v-else-if="type === 'teams' && item.team"
             :href="route('teams.show', item.team.id)"
@@ -190,12 +269,20 @@ const getLevelInfo = (item) => {
         <div class="flex flex-1 flex-col gap-2 min-w-0 sm:flex-row sm:items-center sm:gap-4">
           <div class="flex-1 min-w-0">
             <Link
-              v-if="type !== 'teams' && item.user?.id"
+              v-if="type !== 'teams' && type !== 'level' && item.user?.id"
               :href="route('user.profile', { user: item.user.id })"
               class="block truncate text-base font-bold text-white transition-colors hover:text-yellow-400 sm:text-lg"
             >
               {{ item.user.name }}
             </Link>
+            <button
+              v-else-if="type === 'level' && item.user?.id"
+              @click="handleUserClick($event, item)"
+              :disabled="isLoading"
+              class="block truncate text-base font-bold text-white transition-colors hover:text-yellow-400 sm:text-lg text-left cursor-pointer disabled:opacity-50"
+            >
+              {{ item.user.name }}
+            </button>
             <span
               v-else-if="type !== 'teams' && item.user"
               class="block truncate text-base font-bold text-neutral-400 sm:text-lg"
@@ -300,4 +387,15 @@ const getLevelInfo = (item) => {
       </div>
     </div>
   </div>
+
+  <!-- Level Modal -->
+  <LevelModal
+    :show="showModal"
+    :level="modalData.level"
+    :current-xp="modalData.currentXp"
+    :xp-for-next-level="modalData.xpForNextLevel"
+    :total-xp="modalData.totalXp"
+    :level-metrics="modalData.levelMetrics"
+    @close="showModal = false"
+  />
 </template>

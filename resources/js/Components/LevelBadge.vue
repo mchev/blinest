@@ -29,6 +29,14 @@ const props = defineProps({
     type: Number,
     default: null,
   },
+  totalXp: {
+    type: Number,
+    default: null,
+  },
+  levelMetrics: {
+    type: Object,
+    default: null,
+  },
   isLevelUp: {
     type: Boolean,
     default: false,
@@ -37,10 +45,26 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  clickable: {
+    type: Boolean,
+    default: true,
+  },
 })
+
+const emit = defineEmits(['click'])
 
 const page = usePage()
 const user = page.props.auth?.user
+
+// Translation function
+const __ = (key, replace = {}) => {
+  const translation = page.props.language?.[key] || key
+  let result = translation
+  Object.keys(replace).forEach((k) => {
+    result = result.replace(`:${k}`, replace[k])
+  })
+  return result
+}
 
 // Get XP data from props or user
 const currentXpValue = computed(() => {
@@ -50,6 +74,33 @@ const currentXpValue = computed(() => {
 const xpForNext = computed(() => {
   return props.xpForNextLevel !== null ? props.xpForNextLevel : (user?.xp_for_next_level ?? 100)
 })
+
+const totalXpValue = computed(() => {
+  return props.totalXp !== null ? props.totalXp : (user?.total_xp ?? 0)
+})
+
+// Check if badge should be clickable (has all necessary data or is current user)
+const isClickable = computed(() => {
+  if (!props.clickable) return false
+  // If we have all the necessary props, it's clickable
+  if (props.currentXp !== null && props.xpForNextLevel !== null && props.totalXp !== null) {
+    return true
+  }
+  // If it's the current user's badge, it's clickable
+  return user !== null
+})
+
+const handleClick = () => {
+  if (isClickable.value) {
+    emit('click', {
+      level: props.level,
+      currentXp: currentXpValue.value,
+      xpForNextLevel: xpForNext.value,
+      totalXp: totalXpValue.value,
+      levelMetrics: props.levelMetrics,
+    })
+  }
+}
 
 // Calculate progress percentage
 const progressPercentage = computed(() => {
@@ -112,8 +163,10 @@ const sizeConfig = computed(() => {
       sizeConfig.container,
       isLevelUp ? 'animate-level-up' : '',
       isUpdating && !isLevelUp ? 'animate-xp-update' : '',
+      isClickable ? 'cursor-pointer hover:opacity-80 transition-opacity' : '',
     ]"
     :title="`${__('Level')} ${level}`"
+    @click="handleClick"
   >
     <!-- Simple circle with progress ring (GeoGuessr style) -->
     <div 
@@ -179,8 +232,12 @@ const sizeConfig = computed(() => {
   <!-- Variant minimal : étoile simple -->
   <div
     v-else
-    class="inline-flex items-center justify-center gap-1"
+    :class="[
+      'inline-flex items-center justify-center gap-1',
+      isClickable ? 'cursor-pointer hover:opacity-80 transition-opacity' : '',
+    ]"
     :title="`${__('Level')} ${level}`"
+    @click="handleClick"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"

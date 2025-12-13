@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import LevelInfo from '@/Components/LevelInfo.vue'
 
 const props = defineProps({
   show: {
@@ -46,79 +47,13 @@ const __ = (key, replace = {}) => {
   return result
 }
 
-// Calcul du pourcentage de progression
-const progressPercentage = computed(() => {
-  if (props.xpForNextLevel === 0) return 100
-  return Math.min((props.currentXp / props.xpForNextLevel) * 100, 100)
-})
-
-// Couleur selon le niveau
+// Couleur selon le niveau (pour le header)
 const levelColor = computed(() => {
   if (props.level >= 50) return 'text-purple-500'
   if (props.level >= 30) return 'text-yellow-500'
   if (props.level >= 20) return 'text-blue-500'
   if (props.level >= 10) return 'text-green-500'
   return 'text-neutral-400'
-})
-
-const levelBgColor = computed(() => {
-  if (props.level >= 50) return 'bg-purple-500'
-  if (props.level >= 30) return 'bg-yellow-500'
-  if (props.level >= 20) return 'bg-blue-500'
-  if (props.level >= 10) return 'bg-green-500'
-  return 'bg-neutral-500'
-})
-
-// Calcul des XP pour chaque métrique
-const metricsXp = computed(() => {
-  if (!props.levelMetrics) return null
-  
-  const metrics = props.levelMetrics
-  
-  return {
-    score: {
-      label: __('Total score'),
-      value: metrics.score_public_rooms,
-      xp: metrics.score_public_rooms,
-      max: null,
-    },
-    seniority: {
-      label: __('Seniority'),
-      value: Math.round(metrics.seniority_months),
-      xp: Math.min(Math.round(metrics.seniority_months) * 50, 600),
-      max: 600,
-    },
-    streak: {
-      label: __('Consecutive days streak'),
-      value: metrics.consecutive_days_streak,
-      xp: Math.min(metrics.consecutive_days_streak * 10, 300),
-      max: 300,
-    },
-    rooms: {
-      label: __('Rooms created'),
-      value: metrics.rooms_created_count,
-      xp: Math.min(metrics.rooms_created_count * 100, 1000),
-      max: 1000,
-    },
-    playlists: {
-      label: __('Playlists created'),
-      value: metrics.playlists_created_count,
-      xp: Math.min(metrics.playlists_created_count * 20, 2000),
-      max: 2000,
-    },
-    likes: {
-      label: __('Tracks liked'),
-      value: metrics.tracks_liked_count,
-      xp: Math.min(metrics.tracks_liked_count * 5, 1000),
-      max: 1000,
-    },
-    team: {
-      label: __('Team'),
-      value: metrics.has_team ? __('Yes') : __('No'),
-      xp: metrics.has_team ? 200 : 0,
-      max: 200,
-    },
-  }
 })
 </script>
 
@@ -152,71 +87,14 @@ const metricsXp = computed(() => {
 
       <!-- Content -->
       <div class="px-6 py-6 space-y-6">
-        <!-- Progression Section -->
-        <div class="bg-neutral-800/50 rounded-xl p-6 border border-neutral-700">
-          <div class="mb-4">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-semibold text-neutral-400">{{ __('XP in this level') }}</span>
-              <span :class="['text-sm font-bold', levelColor]">
-                {{ currentXp }} / {{ xpForNextLevel }} {{ __('XP') }}
-              </span>
-            </div>
-            <div class="relative h-3 w-full overflow-hidden rounded-full bg-neutral-700">
-              <div
-                :class="['h-full transition-all duration-500 ease-out rounded-full', levelBgColor]"
-                :style="{ width: `${progressPercentage}%` }"
-              />
-            </div>
-            <div class="flex justify-between text-xs text-neutral-500 mt-2">
-              <span>{{ __('Progress to next level') }}</span>
-              <span>{{ Math.round(progressPercentage) }}%</span>
-            </div>
-          </div>
-          
-          <div class="pt-4 border-t border-neutral-700">
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-neutral-400">{{ __('XP needed') }}</span>
-              <span :class="['text-lg font-bold', levelColor]">
-                {{ xpForNextLevel - currentXp }} {{ __('XP') }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- XP Breakdown -->
-        <div v-if="metricsXp" class="bg-neutral-800/50 rounded-xl p-6 border border-neutral-700">
-          <h3 class="text-lg font-bold text-neutral-300 mb-4">
-            {{ __('XP Breakdown') }}
-          </h3>
-          <div class="space-y-3">
-            <div
-              v-for="(metric, key) in metricsXp"
-              :key="key"
-              class="flex items-center justify-between p-3 bg-neutral-900/50 rounded-lg"
-            >
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="text-sm font-semibold text-neutral-300">{{ metric.label }}</span>
-                  <span
-                    v-if="metric.max && metric.xp >= metric.max"
-                    class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded font-semibold"
-                  >
-                    {{ __('MAX') }}
-                  </span>
-                </div>
-                <p class="text-xs text-neutral-500">
-                  {{ metric.value }} {{ key === 'seniority' ? __('months') : key === 'streak' ? __('days') : key === 'team' ? '' : key === 'score' ? __('points') : '' }}
-                </p>
-              </div>
-              <div class="text-right">
-                <p :class="['text-lg font-bold', metric.xp > 0 ? levelColor : 'text-neutral-500']">
-                  {{ metric.xp }}
-                </p>
-                <p class="text-xs text-neutral-500">{{ __('XP') }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <LevelInfo
+          :level="level"
+          :current-xp="currentXp"
+          :xp-for-next-level="xpForNextLevel"
+          :total-xp="totalXp"
+          :level-metrics="levelMetrics"
+          :compact="false"
+        />
 
         <!-- Info Link -->
         <div class="text-center pt-2">

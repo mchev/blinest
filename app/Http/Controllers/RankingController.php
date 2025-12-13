@@ -316,4 +316,38 @@ class RankingController extends Controller
 
         return response()->json($scores);
     }
+
+    // Get user level metrics for modal
+    public function userLevelMetrics(\App\Models\User $user)
+    {
+        $user->loadMissing('userLevel');
+
+        if (! $user->userLevel) {
+            return response()->json([
+                'level' => 1,
+                'current_xp' => 0,
+                'xp_for_next_level' => 100,
+                'total_xp' => 0,
+                'level_metrics' => null,
+            ]);
+        }
+
+        $userLevel = $user->userLevel;
+
+        return response()->json([
+            'level' => $userLevel->level,
+            'current_xp' => $userLevel->current_xp,
+            'xp_for_next_level' => $userLevel->xp_for_next_level,
+            'total_xp' => $userLevel->total_xp,
+            'level_metrics' => [
+                'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
+                'seniority_months' => $userLevel->months_seniority ?? 0,
+                'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
+                'rooms_created_count' => $userLevel->rooms_created_count ?? 0,
+                'playlists_created_count' => $userLevel->playlists_created_count ?? 0,
+                'tracks_liked_count' => $userLevel->tracks_liked_count ?? 0,
+                'has_team' => $user->hasTeam(),
+            ],
+        ]);
+    }
 }

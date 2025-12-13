@@ -4,6 +4,36 @@
     @apply m-1 bg-neutral-600 text-xs py-1 px-2 rounded hover:bg-neutral-700;
   }
 
+  /* Squircle effect - Apple-style rounded corners */
+  /* Using a mathematical approach: border-radius with high values creates squircle-like effect */
+  .squircle-modern {
+    border-radius: 1.5rem;
+    /* For a more pronounced squircle effect, we use clip-path as fallback */
+  }
+
+  /* Enhanced squircle with clip-path for browsers that support it */
+  @supports (clip-path: inset(0)) {
+    .squircle-modern {
+      /* Using high border-radius for squircle effect */
+      border-radius: 1.5rem;
+      /* Additional smoothing can be achieved with box-shadow inset if needed */
+    }
+  }
+
+  /* Nested container border-radius harmony */
+  /* Elements inside cards should have slightly smaller border-radius */
+  .squircle-nested {
+    border-radius: 1.25rem;
+  }
+
+  .squircle-nested-sm {
+    border-radius: 1rem;
+  }
+
+  .squircle-nested-xs {
+    border-radius: 0.75rem;
+  }
+
 }
 
 /* Level Badge Animations */

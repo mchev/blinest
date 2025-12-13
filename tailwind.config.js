@@ -12,6 +12,11 @@ export default {
       fontFamily: {
         'sans': ['Poppins', ...defaultTheme.fontFamily.sans],
       },
+      borderRadius: {
+        'squircle': '1.5rem',
+        'squircle-sm': '1.25rem',
+        'squircle-xs': '1rem',
+      },
       colors: {
         'red': {  DEFAULT: '#DD5E5E',  50: '#FDF6F6',  100: '#F9E5E5',  200: '#F2C3C3',  300: '#EBA1A1',  400: '#E48080',  500: '#DD5E5E',  600: '#D33030',  700: '#A72323',  800: '#791A1A',  900: '#4B1010',  950: '#340B0B'},
         'shark': {  DEFAULT: '#272B2C',  50: '#A9B1B3',  100: '#9EA7A9',  200: '#899496',  300: '#748083',  400: '#616A6D',  500: '#4D5557',  600: '#3A4042',  700: '#272B2C',  800: '#0D0E0E',  900: '#000000',  950: '#000000'},

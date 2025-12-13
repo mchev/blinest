@@ -658,5 +658,16 @@
     "Total score": "Score total",
     "Team": "Team",
     "Maximum reached": "Maximum atteint",
-    "Deleted user": "Utilisateur supprimé"
+    "Deleted user": "Utilisateur supprimé",
+    "Bookmarks": "Favoris",
+    "Evolution": "Évolution",
+    "Scores": "Scores",
+    "Likes": "Likes",
+    "Room": "Room",
+    "Last played": "Dernière partie",
+    "No scores found": "Aucun score trouvé",
+    "View all": "Voir tout",
+    "Load more": "Charger plus",
+    "Community": "Communauté",
+    "Not enough data for score evolution": "Pas assez de données pour l'évolution du score"
 }

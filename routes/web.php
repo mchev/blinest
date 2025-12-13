@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
     // Profile
     Route::get('profile/{user}', [ProfileController::class, 'show'])
         ->name('user.profile');
+    Route::get('profile/{user}/score-evolution', [ProfileController::class, 'scoreEvolution'])
+        ->name('user.profile.score-evolution');
     Route::delete('profile/likes/{track}', [ProfileController::class, 'unlikeTrack'])
         ->name('profiles.likes.delete');
 
@@ -104,6 +106,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rankings.week');
     Route::get('rankings/teams', [RankingController::class, 'byTeams'])
         ->name('rankings.teams');
+    Route::get('rankings/users/{user}/level-metrics', [RankingController::class, 'userLevelMetrics'])
+        ->name('rankings.users.level-metrics');
 
     Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
         ->name('rooms.scores.index');

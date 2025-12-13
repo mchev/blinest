@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import LevelModal from '@/Components/LevelModal.vue'
 import PodiumModal from './PodiumModal.vue'
 
 const props = defineProps({
@@ -18,6 +19,8 @@ const scores = ref([])
 const userList = ref(props?.users)
 const track = ref(null)
 const showPodiumModal = ref(false)
+const showLevelModal = ref(false)
+const levelModalData = ref(null)
 
 watch(
   () => props.users,
@@ -107,7 +110,17 @@ onUnmounted(() => {
                 <span v-else class="font-medium text-neutral-400 truncate">
                   {{ user?.name || __('Deleted user') }}
                 </span>
-                <LevelBadge v-if="user.level" :level="user.level" size="sm" variant="compact" />
+                <LevelBadge
+                  v-if="user.level"
+                  :level="user.level"
+                  :current-xp="user.current_xp"
+                  :xp-for-next-level="user.xp_for_next_level"
+                  :total-xp="user.total_xp"
+                  :level-metrics="user.level_metrics"
+                  size="sm"
+                  variant="compact"
+                  @click="(data) => { levelModalData = data; showLevelModal = true }"
+                />
                 <Link v-if="user.team" 
                       :href="route('teams.show', user.team)" 
                       class="ml-2 rounded-full bg-neutral-700/50 px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] uppercase text-neutral-300 hover:bg-neutral-600/50 transition-colors whitespace-nowrap">
@@ -158,5 +171,15 @@ onUnmounted(() => {
     </Card>
 
     <PodiumModal v-if="me && showPodiumModal" :room="room" :show="showPodiumModal" @close="showPodiumModal = false" />
+    <LevelModal
+      v-if="levelModalData"
+      :show="showLevelModal"
+      :level="levelModalData.level"
+      :current-xp="levelModalData.currentXp"
+      :xp-for-next-level="levelModalData.xpForNextLevel"
+      :total-xp="levelModalData.totalXp"
+      :level-metrics="levelModalData.levelMetrics"
+      @close="showLevelModal = false"
+    />
   </div>
 </template>

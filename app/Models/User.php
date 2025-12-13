@@ -93,8 +93,12 @@ class User extends Authenticatable
             });
     }
 
-    public function hasTeam()
+    public function hasTeam(): bool
     {
+        if ($this->relationLoaded('team')) {
+            return $this->team !== null;
+        }
+
         return $this->team()->exists();
     }
 
