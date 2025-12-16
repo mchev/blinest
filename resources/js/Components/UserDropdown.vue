@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Dropdown from '@/Components/Dropdown.vue'
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 
 const user = usePage().props.auth.user
 
@@ -18,7 +19,7 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <img :src="user.photo" class="h-10 w-10 rounded-full" :alt="user.name" />
+          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-neutral-700/50 group-hover:border-neutral-600 transition-colors" :alt="user.name" />
         </div>
       </div>
     </template>
@@ -53,6 +54,12 @@ const isUrl = (...urls) => {
           <Link :href="route('moderation.dashboard')" class="m-4 flex pl-2" :class="isUrl('moderation') ? 'font-bold' : 'font-normal'">
             {{ __('Modération') }}
           </Link>
+        </li>
+        <li class="border-t border-neutral-700/50 my-2">
+          <div class="m-4 flex items-center justify-between pl-2">
+            <span class="text-sm text-neutral-400">{{ __('Language') }}</span>
+            <LanguageSwitcher :standalone="false" />
+          </div>
         </li>
         <li>
           <Link href="/logout" method="post" as="button" class="m-4 flex pl-2 text-red-500">

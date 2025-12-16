@@ -51,11 +51,11 @@ const hideItemBeforeRefresh = (notification) => {
     </div>
     <dropdown placement="bottom-end" :autoClose="false">
       <template #default>
-        <div class="relative group cursor-pointer transition-all duration-200 hover:scale-110" title="Notifications">
+        <div class="relative group flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800/50 border border-neutral-700/50 cursor-pointer transition-all duration-200 hover:scale-110 hover:bg-neutral-700/50 hover:border-red-500/50" title="Notifications">
           <div v-if="notifications.length" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center truncate rounded-full bg-gradient-to-br from-red-500 to-red-600 border-2 border-neutral-900 text-[10px] font-bold text-white shadow-lg shadow-red-500/50 z-10">
             {{ notifications.length > 99 ? '99+' : notifications.length }}
           </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-400 group-hover:text-white transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-neutral-400 group-hover:text-white transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             <path d="M18 8A6 6 0 0 0 6 8" />

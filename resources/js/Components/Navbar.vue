@@ -5,7 +5,6 @@ import Icon from '@/Components/Icon.vue'
 import SearchRooms from '@/Components/SearchRooms.vue'
 import UserDropdown from '@/Components/UserDropdown.vue'
 import Notifications from '@/Components/Notifications/Notifications.vue'
-import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import LevelDisplay from '@/Components/LevelDisplay.vue'
 
 const user = usePage().props.auth?.user
@@ -29,12 +28,10 @@ const user = usePage().props.auth?.user
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')" class="group relative text-yellow-500 hover:text-yellow-400 transition-all duration-200 hover:scale-110">
-          <Icon name="trophy" class="h-6 w-6 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" />
-          <span class="absolute -top-1 -right-1 h-2 w-2 bg-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 animate-pulse" />
+        <Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')" class="group flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800/50 border border-neutral-700/50 text-yellow-500 hover:text-yellow-400 hover:bg-neutral-700/50 hover:border-yellow-500/50 transition-all duration-200 hover:scale-110">
+          <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" />
         </Link>
         <Notifications v-if="user" />
-        <LanguageSwitcher class="mx-1" />
         <LevelDisplay
           v-if="user"
           :level="user.level || 1"

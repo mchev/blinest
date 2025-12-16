@@ -28,14 +28,14 @@ const url = 'https://blinest.com' + usePage().url
     <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
     <meta name="twitter:image" content="https://blinest.com/images/statics/screenshot.png" />
   </Head>
-  <div class="text-white">
+  <div class="text-white h-screen overflow-hidden">
     <div id="dropdown" />
-    <div class="md:flex md:flex-col">
-      <div class="md:flex md:h-screen md:flex-col">
+    <div class="md:flex md:flex-col h-full">
+      <div class="md:flex md:h-full md:flex-col">
         <Navbar />
-        <div class="md:flex md:flex-grow md:overflow-hidden">
+        <div class="md:flex md:flex-grow md:overflow-hidden md:min-h-0">
           <Transition name="slide-right" appear>
-            <div v-if="$slots.default" class="flex flex-col justify-between px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:pb-4" scroll-region>
+            <div v-if="$slots.default" class="flex flex-col justify-between px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:pb-4 md:min-h-0" scroll-region>
               <flash-messages />
               <slot />
               <Footer />

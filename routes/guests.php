@@ -44,6 +44,13 @@ Route::get('/callback/{provider}', [SocialController::class, 'callback'])
 // Language
 
 Route::get('language/{language}', function ($language) {
+    $availableLocales = config('app.available_locales', ['fr', 'en']);
+    
+    // Valider que la langue demandée est disponible
+    if (!in_array($language, $availableLocales)) {
+        abort(404, 'Language not available');
+    }
+    
     Session()->put('locale', $language);
 
     return redirect()->back();

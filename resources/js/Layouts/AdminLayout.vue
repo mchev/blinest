@@ -12,10 +12,10 @@ defineProps({
 })
 </script>
 <template>
-  <div class="text-neutral-700">
+  <div class="text-neutral-700 h-screen overflow-hidden">
     <div id="dropdown" />
-    <div class="md:flex md:flex-col">
-      <div class="md:flex md:h-screen md:flex-col">
+    <div class="md:flex md:flex-col h-full">
+      <div class="md:flex md:h-full md:flex-col">
         <div class="text-white md:flex md:flex-shrink-0">
           <div class="flex items-center justify-between px-6 py-4 md:w-56 md:flex-shrink-0 md:justify-center">
             <Link class="mt-1" href="/">
@@ -45,9 +45,9 @@ defineProps({
             </div>
           </div>
         </div>
-        <div class="md:flex md:flex-grow md:overflow-hidden">
-          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto py-12 px-4 md:block" />
-          <div class="px-4 py-8 text-neutral-100 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
+        <div class="md:flex md:flex-grow md:overflow-hidden md:min-h-0">
+          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto py-12 px-4 md:block md:min-h-0" />
+          <div class="px-4 py-8 text-neutral-100 md:flex-1 md:overflow-y-auto md:p-12 md:min-h-0" scroll-region>
             <flash-messages />
             <slot />
           </div>
