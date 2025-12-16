@@ -88,30 +88,30 @@ const confirmRestore = () => {
           <template #header>
             <div>
               <h3 class="text-lg font-bold text-neutral-200">{{ __('Statistics') }}</h3>
-              <p class="text-xs text-neutral-400 mt-0.5">{{ __('Playlist overview') }}</p>
+              <p class="text-sm text-neutral-200 mt-0.5">{{ __('Playlist overview') }}</p>
             </div>
           </template>
           
           <div class="p-4 lg:p-5 space-y-4">
             <!-- Total Tracks -->
-            <div class="flex items-center justify-between rounded-lg bg-neutral-800/30 p-3 border border-neutral-700/50">
+            <div class="flex items-center justify-between rounded-lg bg-neutral-800/40 p-3 border border-neutral-700/50">
               <div class="flex items-center gap-2">
-                <Icon name="music" class="h-5 w-5 text-blinest-400" />
-                <span class="text-sm text-neutral-300">{{ __('Total tracks') }}</span>
+                <Icon name="music" class="h-5 w-5 text-teal-400" />
+                <span class="text-sm font-medium text-neutral-200">{{ __('Total tracks') }}</span>
               </div>
               <span class="text-lg font-bold text-neutral-100">{{ playlist.total_tracks || 0 }}</span>
             </div>
 
             <!-- Difficulty Distribution -->
             <div class="space-y-2">
-              <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wide">{{ __('Difficulty distribution') }}</h4>
+              <h4 class="text-sm font-semibold text-neutral-200 uppercase tracking-wide">{{ __('Difficulty distribution') }}</h4>
               <div class="space-y-2">
                 <div v-for="(difficulty, key) in { Easy: 'Easy', Medium: 'Medium', Difficult: 'Difficult', Expert: 'Expert' }" :key="key">
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="text-neutral-400">{{ __(difficulty) }}</span>
-                    <span class="text-neutral-300 font-medium">
+                  <div class="flex items-center justify-between text-sm mb-1">
+                    <span class="text-neutral-200 font-medium">{{ __(difficulty) }}</span>
+                    <span class="text-neutral-100 font-medium">
                       {{ playlist.difficulties[difficulty] || 0 }} 
-                      <span class="text-neutral-500">
+                      <span class="text-neutral-300">
                         ({{ playlist.total_tracks > 0 ? Math.round((playlist.difficulties[difficulty] || 0) / playlist.total_tracks * 100) : 0 }}%)
                       </span>
                     </span>
@@ -139,7 +139,7 @@ const confirmRestore = () => {
           <template #header>
             <div>
               <h3 class="text-lg font-bold text-neutral-200">{{ __('Playlist settings') }}</h3>
-              <p class="text-xs text-neutral-400 mt-0.5">{{ __('Edit playlist information and transfer ownership') }}</p>
+              <p class="text-sm text-neutral-200 mt-0.5">{{ __('Edit playlist information and transfer ownership') }}</p>
             </div>
           </template>
           
@@ -165,7 +165,7 @@ const confirmRestore = () => {
             </div>
             
             <!-- Owner Transfer -->
-            <div class="rounded-lg border border-neutral-700/50 bg-neutral-800/30 p-3">
+            <div class="rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-3">
               <select-input 
                 v-model="form.user_id" 
                 :error="form.errors.user_id" 
@@ -176,7 +176,7 @@ const confirmRestore = () => {
                   {{ moderator.name }}
                 </option>
               </select-input>
-              <p class="text-xs text-neutral-400 leading-relaxed">
+              <p class="text-sm text-neutral-200 leading-relaxed">
                 {{ __('Transfer the playlist management to a moderator') }}
               </p>
             </div>
@@ -186,7 +186,7 @@ const confirmRestore = () => {
             <div class="flex items-center justify-between gap-3">
               <button 
                 v-if="!playlist.deleted_at" 
-                class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all" 
+                class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all" 
                 tabindex="-1" 
                 type="button" 
                 @click="destroy"

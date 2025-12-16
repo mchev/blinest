@@ -412,7 +412,7 @@ const loading = ref(false)
           <!-- Actions - Right-aligned, flush with edge -->
           <div class="flex items-center gap-1.5 pr-4 lg:pr-5">
             <button 
-              class="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-300 bg-neutral-800/50 hover:bg-neutral-700 border border-neutral-700/50 hover:border-blinest-500/50 rounded-lg transition-all duration-200 hover:text-white" 
+              class="group flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-200 bg-neutral-800/50 hover:bg-neutral-700 border border-neutral-700/50 hover:border-teal-500/50 rounded-lg transition-all duration-200 hover:text-white" 
               @click="importingPlaylist = true"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 transition-transform duration-200 group-hover:scale-110">
@@ -424,7 +424,7 @@ const loading = ref(false)
             <a 
               :href="route('playlists.export', playlist)" 
               target="_blank" 
-              class="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-300 bg-neutral-800/50 hover:bg-neutral-700 border border-neutral-700/50 hover:border-blinest-500/50 rounded-lg transition-all duration-200 hover:text-white"
+              class="group flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-200 bg-neutral-800/50 hover:bg-neutral-700 border border-neutral-700/50 hover:border-teal-500/50 rounded-lg transition-all duration-200 hover:text-white"
               :title="__('Export playlist to Excel spreadsheet')"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 transition-transform duration-200 group-hover:scale-110">
@@ -447,21 +447,21 @@ const loading = ref(false)
               v-model="form.search" 
               prepend-icon="search" 
               :placeholder="__('Search in playlist') + '...'"
-              class="w-full bg-neutral-900/50 border-neutral-600/50 focus:border-blinest-500/50"
+              class="w-full"
             />
             <!-- Subtle loading indicator for search -->
-            <div v-if="isSearching" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin text-neutral-400">
+            <div v-if="isSearching" class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="animate-spin text-teal-400">
                 <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
               </svg>
             </div>
           </div>
             
             <div class="flex items-center gap-3">
-              <div class="text-xs text-neutral-400 whitespace-nowrap">
+              <div class="text-sm text-neutral-200 whitespace-nowrap">
                 <template v-if="form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes">
                   {{ tracks.total }} {{ __('results') }} 
-                  <span class="text-neutral-500">/ {{ playlist.total_tracks || tracks.total }} {{ __('tracks total') }}</span>
+                  <span class="text-neutral-400">/ {{ playlist.total_tracks || tracks.total }} {{ __('tracks total') }}</span>
                 </template>
                 <template v-else>
                   {{ tracks.total }} {{ __('tracks') }}
@@ -485,7 +485,7 @@ const loading = ref(false)
           <!-- Filters Row -->
           <div class="flex flex-wrap items-center gap-2 border-t border-neutral-700/30 pt-3">
             <div class="flex items-center gap-2">
-              <span class="text-xs text-neutral-400">{{ __('Filter by') }}:</span>
+              <span class="text-sm font-medium text-neutral-200">{{ __('Filter by') }}:</span>
             </div>
             
             <SelectInput 
@@ -536,7 +536,7 @@ const loading = ref(false)
 
             <button
               v-if="form.difficulty || form.provider || form.minUpvotes || form.minDownvotes"
-              class="ml-auto px-3 py-1.5 text-xs text-neutral-400 hover:text-neutral-200 transition-colors"
+              class="ml-auto px-3 py-1.5 text-sm text-neutral-200 hover:text-neutral-100 transition-colors"
               @click="form.difficulty = ''; form.provider = ''; form.minUpvotes = ''; form.minDownvotes = ''"
             >
               {{ __('Clear filters') }}
@@ -546,10 +546,10 @@ const loading = ref(false)
       </div>
 
       <!-- Add Tracks Section -->
-      <div class="mb-6 rounded-lg border border-neutral-700/50 bg-neutral-800/30 p-4 lg:p-5">
+      <div class="mb-6 rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-4 lg:p-5">
         <div class="mb-3">
           <h4 class="mb-1.5 text-sm font-semibold text-neutral-200">{{ __('Search for songs to add to your playlist') }}</h4>
-          <p class="text-xs text-neutral-400">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Audius and Blinest') }}</p>
+          <p class="text-sm text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Audius and Blinest') }}</p>
         </div>
         <Dropdown placement="bottom-start" :auto-close="false" class="w-full">
           <template #default>
@@ -566,7 +566,7 @@ const loading = ref(false)
           <template #dropdown>
             <template v-if="search_online.length > 1">
               <div class="border-b-2 border-neutral-700/50 bg-neutral-800 p-3 lg:p-4">
-                <p class="mb-3 text-xs text-neutral-400">{{ __('Select the platforms to search on') }}:</p>
+                <p class="mb-3 text-sm text-neutral-200">{{ __('Select the platforms to search on') }}:</p>
                 <div class="flex flex-wrap gap-2 lg:gap-3">
                   <button
                     v-for="provider in providers"
@@ -575,7 +575,7 @@ const loading = ref(false)
                     class="flex items-center gap-2 rounded-full px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-medium transition-all duration-200"
                     :class="[
                       provider.enabled 
-                        ? 'bg-blinest-500 text-white shadow-lg shadow-blinest-500/20' 
+                        ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20' 
                         : 'bg-neutral-700 text-neutral-400 hover:bg-neutral-600'
                     ]"
                   >
@@ -606,10 +606,10 @@ const loading = ref(false)
                     <Icon :name="provider" class="h-4 lg:h-5 w-4 lg:w-5" />
                     <div class="flex flex-col">
                       <span class="font-medium max-w-[400px]">{{ error.message }}</span>
-                      <span v-if="error.reset_time" class="text-[10px] lg:text-xs opacity-75">
+                      <span v-if="error.reset_time" class="text-xs lg:text-sm opacity-90">
                         Le service sera disponible à nouveau le {{ new Date(error.reset_time).toLocaleString() }}
                       </span>
-                      <span v-else-if="error.status_code === 503" class="text-[10px] lg:text-xs opacity-75">
+                      <span v-else-if="error.status_code === 503" class="text-xs lg:text-sm opacity-90">
                         Veuillez réessayer dans quelques minutes
                       </span>
                     </div>
@@ -626,7 +626,7 @@ const loading = ref(false)
                   >
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <Icon :name="result.provider" :title="result.provider" class="h-5 w-5 flex-shrink-0 text-neutral-400" />
+                        <Icon :name="result.provider" :title="result.provider" class="h-5 w-5 flex-shrink-0 text-neutral-300" />
                         
                         <div class="flex-shrink-0">
                           <MiniPlayer :key="`mini-player-results-${result.id}`" :track="result" />
@@ -634,13 +634,13 @@ const loading = ref(false)
 
                         <div class="flex flex-col min-w-0 flex-1">
                           <span class="text-sm font-medium text-neutral-200 truncate">{{ result.artist_name }}</span>
-                          <span class="text-xs text-neutral-400 truncate">{{ result.track_name }}</span>
+                          <span class="text-sm text-neutral-200 truncate">{{ result.track_name }}</span>
                         </div>
                       </div>
 
                       <div class="flex items-center justify-end sm:justify-start">
                         <template v-if="loading">
-                          <div class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-400">
+                          <div class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 animate-spin">
                               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                             </svg>
@@ -665,7 +665,7 @@ const loading = ref(false)
                           
                           <button 
                             v-else
-                            class="flex items-center gap-2 text-neutral-400 hover:text-red-500 px-3 py-2 rounded-lg transition-all duration-200 whitespace-nowrap" 
+                            class="flex items-center gap-2 text-sm text-neutral-200 hover:text-red-500 px-3 py-2 rounded-lg transition-all duration-200 whitespace-nowrap" 
                             type="button" 
                             @click="removeTrack(result)"
                           >
@@ -682,12 +682,12 @@ const loading = ref(false)
                 </ul>
 
                 <!-- No results message -->
-                <div v-else-if="!searchLoading" class="p-4 text-center text-neutral-400">
+                <div v-else-if="!searchLoading" class="p-4 text-center text-sm text-neutral-200">
                   {{ __('Aucun résultat trouvé') }}
                 </div>
 
                 <!-- Loading message -->
-                <div v-if="searchLoading" class="p-4 text-center text-neutral-400">
+                <div v-if="searchLoading" class="p-4 text-center text-sm text-neutral-200">
                   <div class="flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 animate-spin">
                       <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
@@ -699,8 +699,8 @@ const loading = ref(false)
             </template>
             <template v-else>
               <div class="p-4 lg:p-6 text-center">
-                <p class="text-sm text-neutral-400 mb-2">{{ __('Start typing to search for songs') }}</p>
-                <p class="text-xs text-neutral-500">{{ __('Example: "Bohemian Rhapsody" or "Queen"') }}</p>
+                <p class="text-sm text-neutral-200 mb-2">{{ __('Start typing to search for songs') }}</p>
+                <p class="text-sm text-neutral-300">{{ __('Example: "Bohemian Rhapsody" or "Queen"') }}</p>
               </div>
             </template>
           </template>
@@ -710,7 +710,7 @@ const loading = ref(false)
         <div v-if="isModerator" class="mt-4 pt-4 border-t border-neutral-700/50">
           <div class="mb-3">
             <h4 class="mb-1.5 text-sm font-semibold text-neutral-200">{{ __('Upload a song from your computer') }}</h4>
-            <p class="text-xs text-neutral-400">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
+            <p class="text-sm text-neutral-200">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
           </div>
           <UploadTrack :playlist="playlist" />
         </div>
@@ -737,19 +737,19 @@ const loading = ref(false)
         <table class="w-full">
           <thead>
             <tr class="bg-neutral-800">
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400"></th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">{{ __('Answers') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">{{ __('Hint') }}</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
+              <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-neutral-200"></th>
+              <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-neutral-200">{{ __('Answers') }}</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-neutral-200">{{ __('Hint') }}</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-neutral-200">
                 <Sortable field="dificulty" v-model="form.sortable">{{ __('Difficulty') }}</Sortable>
               </th>
-              <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-neutral-400">
+              <th class="px-4 py-3 text-center text-sm font-semibold uppercase tracking-wider text-neutral-200">
                 <Sortable field="votes" v-model="form.sortable">{{ __('Votes') }}</Sortable>
               </th>
-              <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
+              <th class="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-neutral-200">
                 <Sortable field="created_at" v-model="form.sortable">{{ __('Created at') }}</Sortable>
               </th>
-              <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-neutral-400">{{ __('Actions') }}</th>
+              <th class="px-4 py-3 text-right text-sm font-semibold uppercase tracking-wider text-neutral-200">{{ __('Actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-700/50">
@@ -763,7 +763,7 @@ const loading = ref(false)
                   <a 
                     target="_blank" 
                     :href="track.provider_url"
-                    class="flex items-center hover:text-blinest-500 transition-colors flex-shrink-0"
+                    class="flex items-center hover:text-teal-500 transition-colors flex-shrink-0"
                     :title="track.provider"
                   >
                     <Icon :name="track.provider" class="h-4 w-4" />
@@ -780,13 +780,13 @@ const loading = ref(false)
                     @click="editAnswer(track, answer)"
                   >
                     <div class="flex items-center gap-2 min-w-0 flex-1">
-                      <span class="text-xs font-semibold text-neutral-300 whitespace-nowrap">{{ __(answer.type.name) }}:</span>
-                      <span class="text-xs text-neutral-400 truncate">{{ answer.value }}</span>
+                      <span class="text-sm font-semibold text-neutral-200 whitespace-nowrap">{{ __(answer.type.name) }}:</span>
+                      <span class="text-sm text-neutral-200 truncate">{{ answer.value }}</span>
                     </div>
-                    <span class="ml-2 text-[10px] text-blinest-500 font-semibold whitespace-nowrap">{{ answer.score }}pts</span>
+                    <span class="ml-2 text-xs text-teal-400 font-semibold whitespace-nowrap">{{ answer.score }}pts</span>
                   </div>
                   <button 
-                    class="flex w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-600 px-2.5 py-1.5 text-xs text-neutral-400 transition-colors hover:border-neutral-500 hover:bg-neutral-700/20 hover:text-neutral-300" 
+                    class="flex w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-600 px-2.5 py-1.5 text-sm text-neutral-200 transition-colors hover:border-neutral-500 hover:bg-neutral-700/20 hover:text-neutral-100" 
                     @click="createAnswer(track)"
                   >
                     <Icon name="plus" class="h-3 w-3" />
@@ -798,11 +798,11 @@ const loading = ref(false)
                 <div class="flex flex-col gap-1.5 min-w-0">
                   <div v-if="track.hint" class="flex items-start gap-2 rounded-md bg-yellow-400/5 border border-yellow-400/20 px-2.5 py-1.5" :title="track.hint">
                     <Icon name="hint" class="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                    <span class="text-xs text-neutral-300 flex-1">{{ track.hint }}</span>
+                    <span class="text-sm text-neutral-200 flex-1">{{ track.hint }}</span>
                   </div>
                   <button
                     type="button"
-                    class="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-300 transition-colors"
+                    class="flex items-center gap-1.5 text-sm text-neutral-200 hover:text-neutral-100 transition-colors"
                     @click="editHint(track)"
                   >
                     <Icon :name="track.hint ? 'edit' : 'plus'" class="h-3 w-3" />
@@ -836,7 +836,7 @@ const loading = ref(false)
                   </div>
                 </div>
               </td>
-              <td class="px-4 py-3 text-sm text-neutral-400">
+              <td class="px-4 py-3 text-sm text-neutral-200">
                 {{ track.created_at }}
               </td>
               <td class="px-4 py-3">
@@ -901,7 +901,7 @@ const loading = ref(false)
 
       <div 
         v-else 
-        class="flex flex-col items-center justify-center py-8 lg:py-12 text-sm lg:text-base text-neutral-400"
+        class="flex flex-col items-center justify-center py-8 lg:py-12 text-sm lg:text-base text-neutral-200"
       >
         <Icon name="music-note" class="h-8 lg:h-12 w-8 lg:w-12 mb-3 lg:mb-4" />
         {{ __('No tracks found') }}

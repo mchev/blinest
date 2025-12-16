@@ -28,12 +28,12 @@
         </tr>
         <tr v-for="user in users.data" :key="user.id" class="focus-within:bg-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
           <td class="border-t">
-            <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.users.edit', user.id)">
+            <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('admin.users.edit', user.id)">
               {{ user.id }}
             </Link>
           </td>
           <td class="border-t">
-            <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.users.edit', user.id)">
+            <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('admin.users.edit', user.id)">
               <img v-if="user.photo" class="-my-2 mr-2 block h-10 w-10 rounded-full" :src="user.photo" />
               {{ user.name }}
               <icon v-if="user.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />

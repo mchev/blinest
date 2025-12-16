@@ -415,7 +415,7 @@ onUnmounted(() => {
 <template>
     <div>
         <button 
-            class="flex gap-2 items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-neutral-200 bg-neutral-700/50 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-all duration-200 hover:border-blinest-500/50 hover:text-white"
+            class="flex gap-2 items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-neutral-200 bg-neutral-700/50 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-all duration-200 hover:border-teal-500/50 hover:text-white"
             @click="uploadingTrack = true"
         >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
@@ -429,7 +429,7 @@ onUnmounted(() => {
                 <div class="mb-6">
                     <h1 class="text-2xl font-bold text-white mb-2">{{ __('Upload a song from your computer') }}</h1>
                     <p class="text-sm text-neutral-400 mb-3">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
-                    <p class="text-xs text-neutral-500">{{ __('All fields are required. You can find MP3 files at') }} <a href="https://emp3juice.la/" target="_blank" class="text-blinest-400 hover:text-blinest-300 underline transition-colors">emp3juice.la</a></p>
+                    <p class="text-xs text-neutral-500">{{ __('All fields are required. You can find MP3 files at') }} <a href="https://emp3juice.la/" target="_blank" class="text-teal-400 hover:text-teal-300 underline transition-colors">emp3juice.la</a></p>
                 </div>
                 
                 <form @submit.prevent="uploadTrack" class="space-y-6">
@@ -497,7 +497,7 @@ onUnmounted(() => {
                                 <!-- Loading Indicator -->
                                 <div v-if="isGeneratingWaveform" class="absolute inset-0 flex items-center justify-center bg-neutral-800/70 backdrop-blur-sm z-10">
                                     <div class="flex flex-col items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-6 animate-spin text-blinest-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-6 animate-spin text-teal-500">
                                             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                                         </svg>
                                         <span class="text-xs text-white mt-2">Génération de la forme d'onde...</span>

@@ -132,12 +132,26 @@ class RoundController extends Controller
                     foreach ($answerWords as $word) {
                         foreach ($userWords as $userWord) {
                             // Comparaison de nombres, années, etc.
+                            // Pour les nombres, comparaison stricte uniquement (pas de tolérance)
                             if (is_numeric($userWord) && is_numeric($word)) {
-                                if ($userWord === $word) {
+                                // Normaliser les types pour comparer les valeurs numériques
+                                // Convertir en string pour une comparaison cohérente
+                                // Cela gère les cas où l'un est une string et l'autre un int
+                                $userWordNormalized = (string) $userWord;
+                                $wordNormalized = (string) $word;
+
+                                // Comparaison stricte : les valeurs doivent être identiques
+                                // Exemple : "1984" ne correspond pas à "1983"
+                                if ($userWordNormalized === $wordNormalized) {
                                     $goodWords[] = $word;
                                 }
-                                // Comparaison de mots courts
-                            } elseif (strlen($userWord) < 5) {
+
+                                // Ne pas continuer avec les autres comparaisons pour les nombres
+                                continue;
+                            }
+
+                            // Comparaison de mots courts
+                            if (strlen($userWord) < 5) {
                                 if ($userWord === $word) {
                                     $goodWords[] = $word;
                                 }

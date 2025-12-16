@@ -34,7 +34,7 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
         <a 
           :href="track.provider_url"
           target="_blank"
-          class="text-neutral-400 hover:text-blinest-500 transition-colors"
+          class="text-neutral-400 hover:text-teal-500 transition-colors"
         >
           <Icon :name="track.provider" class="h-5 w-5" />
         </a>
@@ -100,14 +100,14 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
         @click="$emit('edit-answer', track, answer)"
       >
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <span class="text-xs font-medium text-neutral-300">{{ __(answer.type.name) }}:</span>
-          <span class="text-xs text-neutral-400 truncate">{{ answer.value }}</span>
+          <span class="text-sm font-medium text-neutral-200">{{ __(answer.type.name) }}:</span>
+          <span class="text-sm text-neutral-200 truncate">{{ answer.value }}</span>
         </div>
-        <span class="ml-2 text-[10px] text-blinest-500 font-medium">{{ answer.score }}pts</span>
+        <span class="ml-2 text-xs text-teal-400 font-medium">{{ answer.score }}pts</span>
       </div>
       <button
         type="button"
-        class="flex w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-600 px-2.5 py-1.5 text-xs text-neutral-400 transition-colors hover:border-neutral-500 hover:text-neutral-300"
+        class="flex w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-600 px-2.5 py-1.5 text-sm text-neutral-200 transition-colors hover:border-neutral-500 hover:text-neutral-100"
         @click="$emit('create-answer', track)"
       >
         <Icon name="plus" class="h-3 w-3" />
@@ -118,12 +118,12 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
     <!-- Hint -->
     <div v-if="track.hint" class="mb-3 flex items-start gap-2 rounded-md bg-yellow-400/5 border border-yellow-400/20 px-2.5 py-1.5">
       <Icon name="hint" class="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
-      <p class="text-xs text-neutral-300 flex-1">{{ track.hint }}</p>
+      <p class="text-sm text-neutral-200 flex-1">{{ track.hint }}</p>
     </div>
     <button
       v-else
       type="button"
-      class="mb-3 flex w-full items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-300 transition-colors"
+      class="mb-3 flex w-full items-center gap-1.5 text-sm text-neutral-200 hover:text-neutral-100 transition-colors"
       @click="$emit('edit-hint', track)"
     >
       <Icon name="plus" class="h-3 w-3" />
@@ -146,7 +146,7 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
         </SelectInput>
       </div>
       
-      <div class="flex items-center gap-4 text-xs text-neutral-400">
+      <div class="flex items-center gap-4 text-sm text-neutral-200">
         <div class="flex items-center gap-1">
           <Icon name="thumb-up" class="h-3.5 w-3.5 text-teal-400" />
           <span>{{ track.up_votes }}</span>
@@ -155,7 +155,7 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
           <Icon name="thumb-down" class="h-3.5 w-3.5 text-red-400" />
           <span>{{ track.down_votes }}</span>
         </div>
-        <span class="text-[10px]">{{ track.created_at }}</span>
+        <span class="text-xs">{{ track.created_at }}</span>
       </div>
     </div>
   </div>

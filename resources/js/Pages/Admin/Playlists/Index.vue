@@ -69,7 +69,7 @@ const reset = () => {
               </Link>
             </td>
             <td class="border-t">
-              <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('admin.playlists.edit', playlist.id)">
+              <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('admin.playlists.edit', playlist.id)">
                 <img v-if="playlist.photo" class="-my-2 mr-2 block h-5 w-5 rounded-full" :src="playlist.photo" />
                 {{ playlist.name }}
                 <icon v-if="playlist.deleted_at" name="trash" class="ml-2 h-3 w-3 flex-shrink-0 fill-gray-400" />

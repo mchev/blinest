@@ -145,7 +145,7 @@ const deleteUser = () => {
               <tbody>
               <tr v-for="score in user.scores.data" :key="score.room_id">
                 <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4 focus:text-blinest-500" :href="route('rooms.show', score.room_slug)">
+                  <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('rooms.show', score.room_slug)">
                     <div class="flex flex-col">
                       {{ score.name }}
                     </div>

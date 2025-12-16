@@ -3,7 +3,7 @@
     <Head :title="`${form.name}`" />
     <div class="mb-8 flex max-w-3xl justify-start">
       <h1 class="text-3xl font-bold">
-        <Link class="text-gray-400 hover:text-blinest-600" :href="route('admin.users')">Users</Link>
+        <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.users')">Users</Link>
         <span class="font-medium text-gray-400">/</span>
         {{ form.name }}
       </h1>

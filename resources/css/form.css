@@ -1,12 +1,14 @@
 @layer components {
   .form-label {
-    @apply mb-2 block text-stone-400 select-none;
+    @apply mb-2 block text-stone-200 text-sm font-medium select-none;
   }
 
   .form-input,
   .form-textarea,
   .form-select {
-    @apply py-2 leading-normal block w-full border border-stone-700/50 bg-stone-800 font-sans rounded text-left appearance-none relative focus:border-stone-400 focus:ring;
+    @apply py-2.5 leading-normal block w-full border border-stone-700/50 bg-stone-800/80 font-sans rounded-lg text-left appearance-none relative transition-all duration-200;
+    @apply focus:border-teal-500/50 focus:ring-2 focus:ring-teal-500/20 focus:bg-stone-800;
+    @apply text-stone-200;
 
     &::placeholder {
       @apply text-stone-400 opacity-100;

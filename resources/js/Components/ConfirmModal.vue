@@ -36,7 +36,7 @@ const variantClasses = computed(() => {
   const variants = {
     danger: 'bg-red-500 hover:bg-red-600',
     warning: 'bg-yellow-500 hover:bg-yellow-600',
-    info: 'bg-blinest-500 hover:bg-blinest-600',
+    info: 'bg-teal-500 hover:bg-teal-600',
   }
   return variants[props.variant] || variants.danger
 })
@@ -70,8 +70,8 @@ const handleClose = () => {
           </div>
         </div>
         <div v-else class="flex-shrink-0">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blinest-500/10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-blinest-500">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-teal-500/10">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-teal-500">
               <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
             </svg>
           </div>

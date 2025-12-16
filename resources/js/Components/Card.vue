@@ -4,7 +4,7 @@
       'flex flex-col bg-slate-800/50 backdrop-blur-sm shadow-lg',
       'border border-neutral-700/50',
       'squircle-modern',
-      'overflow-hidden',
+      'h-auto',
       'transition-all duration-200 ease-out',
       'hover:border-neutral-600/50 hover:shadow-xl',
       'focus-within:ring-2 focus-within:ring-neutral-500/20 focus-within:border-neutral-600',
@@ -21,6 +21,7 @@
         'border-b border-neutral-700/20',
         'bg-gradient-to-b from-neutral-800/20 via-neutral-800/10 to-transparent',
         'backdrop-blur-sm',
+        'flex-shrink-0',
       ]"
     >
       <div class="flex items-center gap-3">
@@ -29,7 +30,6 @@
     </header>
     <main
       :class="[
-        'flex-1',
         $slots.header ? 'px-5 py-5 sm:px-6 sm:py-6' : 'px-5 py-5 sm:px-6 sm:py-6',
       ]"
     >
