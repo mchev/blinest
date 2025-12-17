@@ -11,9 +11,3 @@
 :root {
   color-scheme: dark;
 }
-
-html,
-body {
-  overflow: hidden;
-  height: 100%;
-}

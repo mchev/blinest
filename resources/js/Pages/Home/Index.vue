@@ -26,46 +26,6 @@ const user = usePage().props.auth.user;
   </Head>
   <Layout>
     <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
-    
-    <!-- Hero Section -->
-    <div v-if="!search_result" class="relative mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-red-900 to-slate-900 shadow-2xl">
-      <div class="absolute inset-0 bg-[url('/images/music-pattern.svg')] opacity-10"></div>
-      <div class="relative z-10 px-6 py-16 sm:px-12 md:py-20 lg:flex lg:items-center lg:px-16">
-        <div class="lg:w-3/5">
-          <h2 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
-            <span class="block">{{ __('Discover Music') }}</span>
-            <span class="block text-red-400">{{ __('Test Your Knowledge') }}</span>
-          </h2>
-          <p class="mt-6 max-w-lg text-xl text-gray-300">
-            {{ __('Join thousands of music lovers in multiplayer quizzes across all genres. Challenge friends and climb the leaderboard!') }}
-          </p>
-          <div class="mt-10 flex flex-wrap gap-4">
-            <a href="#featured" class="transform rounded-full bg-red-500 px-8 py-3 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-red-400 hover:shadow-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-              {{ __('Featured Rooms') }}
-            </a>
-            <a href="#categories" class="transform rounded-full bg-slate-700 px-8 py-3 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-slate-600 hover:shadow-slate-500/30 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-              {{ __('Browse Categories') }}
-            </a>
-          </div>
-        </div>
-        <div class="mt-12 hidden lg:mt-0 lg:block lg:w-2/5">
-          <div class="relative">
-            <div class="absolute -left-10 top-0 h-72 w-72 rounded-full bg-red-500 opacity-20 blur-3xl"></div>
-            <div class="absolute -right-10 bottom-0 h-72 w-72 rounded-full bg-blue-500 opacity-20 blur-3xl"></div>
-            <div class="relative">
-              <svg viewBox="0 0 200 200" class="h-80 w-80 fill-white/10">
-                <path d="M139.4 31.8c15.1 11.3 25.9 27.8 29.7 47.3 3.8 19.5 0.5 42.1-12.3 56.9-12.8 14.8-35.1 21.7-55.3 19.5-20.2-2.3-38.3-13.8-50.5-30.2-12.2-16.4-18.5-37.7-12.4-55.4 6.1-17.7 24.6-31.7 43.9-40.1 19.3-8.4 39.4-11.2 56.9-2z"></path>
-              </svg>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-32 w-32 text-white/80">
-                  <path d="M8 5.25a.75.75 0 01.75.75v3.25H12a.75.75 0 010 1.5H8.75V14a.75.75 0 01-1.5 0V5.25A.75.75 0 018 5.25zm9.195-1.944a.75.75 0 01.451.331A23.296 23.296 0 0121 12c0 2.786-.987 5.292-2.554 6.913a.75.75 0 11-1.048-1.074A7.25 7.25 0 0019.75 12a7.25 7.25 0 00-2.352-5.339.75.75 0 01.451-1.355zm-2.652 3.195a.75.75 0 010 1.097A3.751 3.751 0 0016.75 12c0 1.093-.473 2.077-1.217 2.757a.75.75 0 01-1.098-1.02A2.25 2.25 0 0015.25 12c0-.605-.243-1.152-.638-1.552a.75.75 0 01.021-1.096z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Search Results -->
     <section v-if="search_result" class="mb-16">

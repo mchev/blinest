@@ -1,9 +1,7 @@
 <script setup>
-import { ref } from 'vue'
 import Icon from '@/Components/Icon.vue'
 import MiniPlayer from '@/Components/MiniPlayer.vue'
 import SelectInput from '@/Components/SelectInput.vue'
-import Dropdown from '@/Components/Dropdown.vue'
 
 const props = defineProps({
   track: {
@@ -41,54 +39,30 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
         <MiniPlayer :key="`mini-player-card-${track.id}`" :track="track" />
       </div>
       
-      <Dropdown placement="bottom-end">
-        <button
-          type="button"
-          class="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-700 hover:text-white transition-colors"
-          :disabled="props.loadingStates?.removeTrack === track.id"
+      <button
+        type="button"
+        class="flex h-8 w-8 items-center justify-center rounded-lg text-red-400 transition-colors hover:bg-red-400/10 hover:text-red-300 disabled:opacity-50"
+        :title="__('Delete')"
+        :disabled="props.loadingStates?.removeTrack === track.id"
+        @click="$emit('remove', track)"
+      >
+        <svg
+          v-if="props.loadingStates?.removeTrack === track.id"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="animate-spin"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-          </svg>
-        </button>
-        
-        <template #dropdown>
-          <div class="min-w-[180px] py-1">
-            <button
-              type="button"
-              class="w-full px-4 py-2 text-left text-sm text-neutral-300 hover:bg-neutral-700 transition-colors"
-              @click="$emit('create-answer', track)"
-            >
-              <div class="flex items-center gap-2">
-                <Icon name="plus" class="h-4 w-4" />
-                <span>{{ __('Add an answer') }}</span>
-              </div>
-            </button>
-            <button
-              type="button"
-              class="w-full px-4 py-2 text-left text-sm text-neutral-300 hover:bg-neutral-700 transition-colors"
-              @click="$emit('edit-hint', track)"
-            >
-              <div class="flex items-center gap-2">
-                <Icon :name="track.hint ? 'edit' : 'plus'" class="h-4 w-4" />
-                <span>{{ track.hint ? __('Edit hint') : __('Add hint') }}</span>
-              </div>
-            </button>
-            <div class="my-1 border-t border-neutral-700"></div>
-            <button
-              type="button"
-              class="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-400/10 transition-colors"
-              @click="$emit('remove', track)"
-              :disabled="props.loadingStates?.removeTrack === track.id"
-            >
-              <div class="flex items-center gap-2">
-                <Icon name="delete" class="h-4 w-4" />
-                <span>{{ __('Delete') }}</span>
-              </div>
-            </button>
-          </div>
-        </template>
-      </Dropdown>
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <Icon v-else name="delete" class="h-4 w-4 text-red-400" />
+      </button>
     </div>
 
     <!-- Answers -->

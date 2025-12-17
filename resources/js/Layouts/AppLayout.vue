@@ -1,5 +1,4 @@
 <script setup>
-import { ref, watch } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
@@ -28,7 +27,7 @@ const url = 'https://blinest.com' + usePage().url
     <meta name="twitter:description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
     <meta name="twitter:image" content="https://blinest.com/images/statics/screenshot.png" />
   </Head>
-  <div class="text-white h-screen overflow-hidden">
+  <div class="text-white min-h-screen">
     <div id="dropdown" />
     <div class="md:flex md:flex-col h-full">
       <div class="md:flex md:h-full md:flex-col">
