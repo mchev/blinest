@@ -68,8 +68,8 @@ onUnmounted(() => {
 			</figure>
 		</Link>
 		<p class="my-4">{{ room.description }}</p>
-		<Link :href="`/rooms/${room.slug}`" class="flex rounded items-center gap-2 bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-400">
-			{{ __('Join') }} {{ room.name }}
+		<Link :href="`/rooms/${room.slug}`" class="flex items-center justify-center gap-2 rounded-lg bg-red-500 px-6 py-3 text-center font-medium text-white transition-all duration-300 hover:bg-red-400 hover:shadow-lg hover:shadow-red-500/20">
+			{{ __('Play Now') }}
 		</Link>
 	</article>
 </template>

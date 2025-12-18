@@ -3,6 +3,7 @@ import { Head, usePage } from '@inertiajs/vue3'
 import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
+import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 import Footer from '@/Components/Footer.vue'
 
 const url = 'https://blinest.com' + usePage().url
@@ -34,7 +35,7 @@ const url = 'https://blinest.com' + usePage().url
         <Navbar />
         <div class="md:flex md:flex-grow md:overflow-hidden md:min-h-0">
           <Transition name="slide-right" appear>
-            <div v-if="$slots.default" class="flex flex-col justify-between px-4 py-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:pb-4 md:min-h-0" scroll-region>
+            <div v-if="$slots.default" class="flex flex-col justify-between px-4 py-4 pb-20 md:pb-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:min-h-0" scroll-region>
               <flash-messages />
               <slot />
               <Footer />
@@ -43,5 +44,6 @@ const url = 'https://blinest.com' + usePage().url
         </div>
       </div>
     </div>
+    <MobileBottomNav />
   </div>
 </template>

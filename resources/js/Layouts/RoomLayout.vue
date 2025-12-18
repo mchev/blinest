@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/vue3'
 import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
+import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 
 const room = computed(() => usePage().props.room)
 </script>
@@ -36,7 +37,7 @@ const room = computed(() => usePage().props.room)
 
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right" appear>
-            <div v-if="$slots.default" class="md:flex-1">
+            <div v-if="$slots.default" class="pb-20 md:pb-0 md:flex-1">
               <FlashMessages />
               <slot />
             </div>
@@ -44,5 +45,6 @@ const room = computed(() => usePage().props.room)
         </div>
       </div>
     </div>
+    <MobileBottomNav />
   </div>
 </template>
