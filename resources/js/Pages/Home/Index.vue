@@ -21,8 +21,10 @@ const user = usePage().props.auth.user;
 </script>
 <template>
   <Head>
-    <title>{{ __('Free multiplayer music quizzes') }}</title>
-    <meta head-key="description" name="description" content="Simple et efficace! Blind-tests multijoueurs, Années 2000, Disney, Chanson française, Années 80, etc." />
+    <title>{{ __('Free multiplayer music quizzes') }} | Blinest - Quiz musicaux gratuits</title>
+    <meta head-key="description" name="description" content="Jouez à des quiz musicaux multijoueurs gratuits en ligne ! Rejoignez des milliers de joueurs pour tester vos connaissances musicales. Blind-tests pour tous les goûts : Années 2000, Disney, Chanson française, Années 80, Rock, Pop, Rap, et bien plus encore." />
+    <meta name="keywords" content="quiz musical, blind test, quiz musique, test musical, quiz multijoueur, jeu musical en ligne, quiz gratuit, blind test gratuit, quiz années 2000, quiz disney, quiz chanson française, quiz rock, quiz pop" />
+    <link rel="canonical" href="https://blinest.com/" />
   </Head>
   <Layout>
     <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>

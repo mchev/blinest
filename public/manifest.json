@@ -1,0 +1,49 @@
+{
+  "name": "Blinest - Quiz musicaux gratuits",
+  "short_name": "Blinest",
+  "description": "Quiz musicaux multijoueurs gratuits pour toutes et tous",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "music", "entertainment"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Rooms",
+      "short_name": "Rooms",
+      "description": "Voir toutes les rooms",
+      "url": "/rooms",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Rankings",
+      "short_name": "Rankings",
+      "description": "Voir les classements",
+      "url": "/rankings",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
+

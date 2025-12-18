@@ -9,11 +9,25 @@
     @apply flex items-center justify-center rounded-md bg-yellow-500 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg;
   }
   .btn-secondary {
-    @apply flex items-center justify-center rounded-md bg-black/20 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-black/30 hover:shadow-lg focus:bg-black/30 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-black/30 active:shadow-lg;
+    @apply relative flex items-center justify-center gap-2 rounded-lg border border-neutral-700/50 bg-neutral-800/40 backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-neutral-200 transition-all duration-200 ease-out;
+    @apply hover:bg-neutral-700/50 hover:border-neutral-600/50 hover:text-white hover:shadow-md hover:shadow-black/20;
+    @apply focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900;
+    @apply active:bg-neutral-700/60 active:scale-[0.98];
+    @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-neutral-800/40 disabled:hover:border-neutral-700/50 disabled:active:scale-100;
+    @apply min-h-[2.5rem] touch-manipulation;
+    
+    /* Amélioration pour mobile */
+    @media (max-width: 768px) {
+      @apply min-h-[2.75rem] px-3 py-2.5;
+    }
   }
 
   .btn-sm {
-    @apply text-xs px-4 py-1.5;
+    @apply text-xs px-3 py-1.5 min-h-[2rem];
+    
+    @media (max-width: 768px) {
+      @apply min-h-[2.25rem] px-2.5 py-1.5;
+    }
   }
   .btn-lg {
     @apply text-xl;

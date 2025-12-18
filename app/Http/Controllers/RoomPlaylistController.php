@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class RoomPlaylistController extends Controller
 {
@@ -15,6 +16,9 @@ class RoomPlaylistController extends Controller
                 'playlist_id' => ['required', 'integer', 'exists:playlists,id'],
             ]);
             $room->playlists()->syncWithoutDetaching($request->playlist_id);
+            
+            // Invalidate tracks_count cache
+            Cache::forget("room_{$room->id}_tracks_count");
 
             return redirect()->back();
         }
@@ -29,6 +33,9 @@ class RoomPlaylistController extends Controller
                 'playlist_id' => ['required', 'integer', 'exists:playlists,id'],
             ]);
             $room->playlists()->detach($request->playlist_id);
+            
+            // Invalidate tracks_count cache
+            Cache::forget("room_{$room->id}_tracks_count");
 
             return redirect()->back();
         }

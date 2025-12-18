@@ -137,6 +137,11 @@ class TrackController extends Controller
             // Invalidate cache
             Cache::forget('playlist_total_tracks_'.$playlist->id);
             Cache::forget('playlist_difficulties_'.$playlist->id);
+            
+            // Invalidate tracks_count cache for all rooms using this playlist
+            foreach ($playlist->rooms()->pluck('id') as $roomId) {
+                Cache::forget("room_{$roomId}_tracks_count");
+            }
 
             return Redirect::back()->with('success', __('Track added'));
         }
@@ -191,6 +196,11 @@ class TrackController extends Controller
             // Invalidate cache
             Cache::forget('playlist_total_tracks_'.$playlist->id);
             Cache::forget('playlist_difficulties_'.$playlist->id);
+            
+            // Invalidate tracks_count cache for all rooms using this playlist
+            foreach ($playlist->rooms()->pluck('id') as $roomId) {
+                Cache::forget("room_{$roomId}_tracks_count");
+            }
 
             return Redirect::back()->with('success', __('Track deleted'));
         }

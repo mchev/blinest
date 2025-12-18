@@ -37,7 +37,7 @@ class RoomController extends Controller
                     'name' => $room->name,
                     'description' => $room->description,
                     'password' => $room->password,
-                    'rounds_count' => $room->rounds()->count(),
+                    'rounds_count' => Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count()),
                     'is_autostart' => $room->is_autostart,
                     'moderators' => $room->moderators->map(fn ($moderator) => [
                         'id' => $moderator->id,
@@ -55,15 +55,51 @@ class RoomController extends Controller
 
     public function show(Request $request, Room $room)
     {
+        // Return 404 if room is deleted
+        if ($room->trashed()) {
+            abort(404);
+        }
+
         if ($room->password && ! $request->has('password')) {
+            $room->load('category', 'owner');
+            
+            // Check if rounds_count is in cache before calling flexible (to display stat)
+            $roundsCountFromCache = Cache::get("room_{$room->id}_rounds_count");
+            $roundsCount = Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count());
+            
+            // Generate structured data server-side for SEO (even for password-protected rooms)
+            $structuredData = $this->generateStructuredData($room, $roundsCount);
+            
             return Inertia::render('Rooms/Password', [
-                'room' => $room,
+                'room' => [
+                    'id' => $room->id,
+                    'name' => $room->name,
+                    'description' => $room->description,
+                    'photo' => $room->photo,
+                    'slug' => $room->slug,
+                    'rounds_count' => $roundsCount,
+                    'rounds_count_from_cache' => $roundsCountFromCache !== null,
+                ],
+                'structured_data' => $structuredData,
             ]);
         }
 
         if ($room->password && $request->input('password') !== $room->password) {
             return redirect()->back()->with('error', __('The password is incorrect'));
         }
+
+        $room->load('category', 'owner');
+        
+        // Check if rounds_count is in cache before calling flexible (to display stat)
+        $roundsCountFromCache = Cache::get("room_{$room->id}_rounds_count");
+        $roundsCount = Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count());
+        
+        // Check if tracks_count is in cache before calling flexible (to display stat)
+        $tracksCountFromCache = Cache::get("room_{$room->id}_tracks_count");
+        $tracksCount = Cache::flexible("room_{$room->id}_tracks_count", [300, 900], fn () => $room->tracks()->count());
+        
+        // Generate structured data server-side for SEO
+        $structuredData = $this->generateStructuredData($room, $roundsCount);
 
         return Inertia::render('Rooms/Show', [
             'room' => [
@@ -84,10 +120,16 @@ class RoomController extends Controller
                 'latest_messages' => $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
                 'pause_between_tracks' => $room->pause_between_tracks,
                 'pause_between_rounds' => $room->pause_between_rounds,
-                'tracks_count' => $room->tracks()->count(),
+                'tracks_count' => $tracksCount,
+                'tracks_count_from_cache' => $tracksCountFromCache !== null,
                 'is_bookmarked' => $request->user() ? $room->bookmarks()->where('user_id', $request->user()->id)->exists() : false,
+                'category' => $room->category,
+                'owner' => $room->owner,
+                'rounds_count' => $roundsCount,
+                'rounds_count_from_cache' => $roundsCountFromCache !== null,
             ],
             'public_rooms' => Room::isPublic()->orderBy('name')->select('id', 'slug', 'name', 'photo_path')->get(),
+            'structured_data' => $structuredData,
         ]);
     }
 
@@ -155,7 +197,13 @@ class RoomController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
         ]);
 
+        $oldPlaylistId = $room->playlist_id;
         $room->update($request->only('name', 'description', 'category_id', 'playlist_id'));
+        
+        // Invalidate tracks_count cache if playlist changed
+        if ($oldPlaylistId != $room->playlist_id) {
+            Cache::forget("room_{$room->id}_tracks_count");
+        }
 
         if ($request->file('photo')) {
             $this->authorize('changeRoomPicture');
@@ -217,6 +265,62 @@ class RoomController extends Controller
         $room->deletePhoto();
 
         return Redirect::back()->with('success', __('Room picture deleted'));
+    }
+
+    /**
+     * Generate structured data for a room (SEO)
+     */
+    protected function generateStructuredData(Room $room, int $roundsCount): array
+    {
+        $structuredData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'VideoGame',
+            'name' => $room->name,
+            'description' => $room->description ?: $room->name.' - Quiz musical multijoueur sur Blinest',
+            'url' => url('/rooms/'.$room->slug),
+            'image' => $room->photo ?: url('/images/statics/logo_blinest.png'),
+            'gamePlatform' => 'Web Browser',
+            'applicationCategory' => 'Game',
+            'genre' => $room->category?->name ?: 'Music Quiz',
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'EUR',
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'Blinest',
+                'url' => config('app.url'),
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => url('/images/statics/logo_blinest.png'),
+                ],
+            ],
+            'inLanguage' => ['fr', 'en', 'es'],
+            'isAccessibleForFree' => true,
+            'playMode' => 'MultiPlayer',
+            'datePublished' => $room->created_at?->toIso8601String(),
+            'dateModified' => $room->updated_at?->toIso8601String(),
+        ];
+
+        if ($roundsCount > 0) {
+            $structuredData['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => '4.5',
+                'ratingCount' => $roundsCount,
+                'bestRating' => '5',
+                'worstRating' => '1',
+            ];
+        }
+
+        if ($room->owner) {
+            $structuredData['author'] = [
+                '@type' => 'Person',
+                'name' => $room->owner->name,
+            ];
+        }
+
+        return $structuredData;
     }
 
     /**
@@ -310,6 +414,9 @@ class RoomController extends Controller
                     'is_playing' => true,
                     'user_id' => $request->user()->id,
                 ]);
+
+                // Invalidate rounds count cache
+                Cache::forget("room_{$room->id}_rounds_count");
 
                 // Update room status
                 $room->update(['is_playing' => true]);

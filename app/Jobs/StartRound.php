@@ -81,6 +81,9 @@ class StartRound implements ShouldQueue
                         ? $this->getRandomTracks()
                         : $this->room->tracks()->take($this->room->tracks_by_round)->distinct()->pluck('id'),
                 ]);
+                
+                // Invalidate rounds count cache
+                \Illuminate\Support\Facades\Cache::forget("room_{$this->room->id}_rounds_count");
             }
 
             if (! empty($round->tracks)) {

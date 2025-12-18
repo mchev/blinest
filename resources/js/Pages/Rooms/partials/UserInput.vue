@@ -76,9 +76,11 @@ const toggleAutoFocus = () => {
 
 const showMessage = (data) => {
   message.value = data
+  // Hints should display longer (5 seconds) than other messages (1.6 seconds)
+  const duration = data?.type === 'hint' ? 5000 : 1600
   setTimeout(() => {
     message.value = null
-  }, 1600)
+  }, duration)
 }
 
 // Debounce flag to prevent multiple rapid submissions
