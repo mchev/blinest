@@ -21,9 +21,8 @@ const user = usePage().props.auth?.user
 
       <div class="mt-1 hidden items-center gap-3 md:flex">
         <SearchRooms class="transition hover:scale-[104%] focus:scale-[104%]" />
-        <Link :href="route('faq')" title="FAQ" class="group relative text-neutral-400 hover:text-blue-400 transition-all duration-200 hover:scale-110">
+        <Link :href="route('faq')" title="FAQ" class="text-neutral-400 hover:text-blue-400 transition-all duration-200 hover:scale-110">
           <Icon name="faq" class="h-6 w-6 drop-shadow-[0_0_4px_currentColor]" />
-          <span class="absolute -top-1 -right-1 h-2 w-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 animate-pulse" />
         </Link>
       </div>
 

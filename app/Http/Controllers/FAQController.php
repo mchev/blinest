@@ -13,8 +13,10 @@ class FAQController extends Controller
     {
         return Inertia::render('FAQ/Index', [
             'filters' => Request::all('search'),
-            'faqs' => FAQ::orderBy('question')
+            'faqs' => FAQ::withTotalUpvotes()
                 ->filter(Request::only('search'))
+                ->orderByDesc('total_upvotes')
+                ->orderBy('question')
                 ->paginate(6),
         ]);
     }

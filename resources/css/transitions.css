@@ -1,11 +1,15 @@
 .faq-move, /* apply transition to moving elements */
 .faq-enter-active,
 .faq-leave-active {
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.faq-enter-from {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
 }
 .faq-leave-to {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateY(-10px) scale(0.98);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving
