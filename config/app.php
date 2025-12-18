@@ -4,7 +4,7 @@ return [
 
     'admin_email' => env('ADMIN_EMAIL', null),
     'timezone' => env('APP_TIMEZONE', 'Europe/Paris'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -16,7 +16,7 @@ return [
     |
     */
     'locale' => env('APP_LOCALE', 'fr'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Available Locales
@@ -27,7 +27,7 @@ return [
     |
     */
     'available_locales' => ['fr', 'en', 'es'],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Locale Names

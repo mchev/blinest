@@ -109,10 +109,10 @@ class RoundController extends Controller
 
             $newWords = explode(' ', $sanitized);
             // Filtrer les chaînes vides et sanitiser les mots du client
-            $newWords = array_filter($newWords, fn($w) => !empty(trim($w)));
+            $newWords = array_filter($newWords, fn ($w) => ! empty(trim($w)));
             $clientWords = $request->input('words', []);
             // Sanitiser et filtrer les mots du client pour éviter les injections
-            $clientWords = is_array($clientWords) ? array_filter(array_map('trim', $clientWords), fn($w) => !empty($w)) : [];
+            $clientWords = is_array($clientWords) ? array_filter(array_map('trim', $clientWords), fn ($w) => ! empty($w)) : [];
             $userWords = array_unique(array_merge($newWords, $clientWords));
 
             $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
@@ -129,97 +129,79 @@ class RoundController extends Controller
                 $goodWords = [];
                 $score = 0;
 
-                // Optimisation : vérification exacte rapide en premier (cas le plus courant)
+                // Vérification exacte rapide en premier (cas le plus courant)
                 if ($sanitized === $value) {
                     $goodWords = $answerWords;
-                } else {
-                    // Vérification mot par mot (plus performant que Levenshtein global)
+                } elseif (levenshtein($sanitized, $value) < 3) {
+                    // Levenshtein global : si la phrase entière est proche, accepter tous les mots
+                    // Mais vérifier que les nombres correspondent strictement
+                    $canAcceptLevenshtein = true;
+
                     foreach ($answerWords as $word) {
-                        $wordFound = false;
-                        
-                        foreach ($userWords as $userWord) {
-                            // Cas 1 : Comparaison exacte (le plus rapide, cas le plus courant)
-                            if ($userWord === $word) {
-                                $goodWords[] = $word;
-                                $wordFound = true;
+                        if (is_numeric($word)) {
+                            $wordFound = false;
+                            foreach ($userWords as $userWord) {
+                                if (is_numeric($userWord)) {
+                                    $userWordNormalized = (string) $userWord;
+                                    $wordNormalized = (string) $word;
+                                    if ($userWordNormalized === $wordNormalized) {
+                                        $wordFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (! $wordFound) {
+                                $canAcceptLevenshtein = false;
                                 break;
                             }
-                            
-                            // Cas 2 : Nombres - comparaison stricte uniquement (pas de tolérance)
+                        }
+                    }
+
+                    if ($canAcceptLevenshtein) {
+                        $goodWords = $answerWords;
+                    } else {
+                        // Si les nombres ne correspondent pas, faire la vérification mot par mot
+                        foreach ($answerWords as $word) {
+                            foreach ($userWords as $userWord) {
+                                // Comparaison de nombres - stricte uniquement
+                                if (is_numeric($userWord) && is_numeric($word)) {
+                                    $userWordNormalized = (string) $userWord;
+                                    $wordNormalized = (string) $word;
+                                    if ($userWordNormalized === $wordNormalized) {
+                                        $goodWords[] = $word;
+                                    }
+                                } elseif (strlen($userWord) < 5) {
+                                    // Mots courts de l'utilisateur - comparaison exacte uniquement
+                                    if ($userWord === $word) {
+                                        $goodWords[] = $word;
+                                    }
+                                } elseif (levenshtein($userWord, $word) < 1.55) {
+                                    // Mots longs - Levenshtein avec tolérance
+                                    $goodWords[] = $word;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Vérification mot par mot
+                    foreach ($answerWords as $word) {
+                        foreach ($userWords as $userWord) {
+                            // Comparaison de nombres - stricte uniquement
                             if (is_numeric($userWord) && is_numeric($word)) {
                                 $userWordNormalized = (string) $userWord;
                                 $wordNormalized = (string) $word;
                                 if ($userWordNormalized === $wordNormalized) {
                                     $goodWords[] = $word;
-                                    $wordFound = true;
                                 }
-                                // Ne pas continuer avec Levenshtein pour les nombres
-                                break;
-                            }
-                            
-                            // Cas 3 : Mots courts de la réponse (< 5 caractères) - comparaison stricte uniquement
-                            // Si le mot de la réponse est court, on ne doit jamais utiliser Levenshtein
-                            if (strlen($word) < 5 && !is_numeric($word)) {
-                                // Pour les mots courts de la réponse, on ne fait que la comparaison exacte (déjà fait ci-dessus)
-                                // Si on arrive ici, le mot ne correspond pas strictement
-                                continue;
-                            }
-                            
-                            // Cas 4 : Mots longs (>= 5 caractères) - Levenshtein (le plus coûteux, en dernier)
-                            // On applique Levenshtein seulement si les deux mots sont longs
-                            if (strlen($userWord) >= 5 && strlen($word) >= 5 && !is_numeric($userWord) && !is_numeric($word)) {
-                                if (levenshtein($userWord, $word) < 1.55) {
+                            } elseif (strlen($userWord) < 5) {
+                                // Mots courts de l'utilisateur - comparaison exacte uniquement
+                                if ($userWord === $word) {
                                     $goodWords[] = $word;
-                                    $wordFound = true;
-                                    break;
                                 }
+                            } elseif (levenshtein($userWord, $word) < 1.55) {
+                                // Mots longs - Levenshtein avec tolérance
+                                $goodWords[] = $word;
                             }
-                        }
-                    }
-                    
-                    // Si aucun mot ne correspond, vérifier Levenshtein global (dernier recours, coûteux)
-                    if (empty($goodWords) && levenshtein($sanitized, $value) < 3) {
-                        // Mais avant d'accepter, vérifier que les nombres et mots courts correspondent strictement
-                        $canAcceptLevenshtein = true;
-                        
-                        foreach ($answerWords as $word) {
-                            // Vérifier les nombres
-                            if (is_numeric($word)) {
-                                $wordFound = false;
-                                foreach ($userWords as $userWord) {
-                                    if (is_numeric($userWord)) {
-                                        $userWordNormalized = (string) $userWord;
-                                        $wordNormalized = (string) $word;
-                                        if ($userWordNormalized === $wordNormalized) {
-                                            $wordFound = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!$wordFound) {
-                                    $canAcceptLevenshtein = false;
-                                    break;
-                                }
-                            }
-                            
-                            // Vérifier les mots courts
-                            if (strlen($word) < 5 && !is_numeric($word)) {
-                                $wordFound = false;
-                                foreach ($userWords as $userWord) {
-                                    if (strlen($userWord) < 5 && !is_numeric($userWord) && $userWord === $word) {
-                                        $wordFound = true;
-                                        break;
-                                    }
-                                }
-                                if (!$wordFound) {
-                                    $canAcceptLevenshtein = false;
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if ($canAcceptLevenshtein) {
-                            $goodWords = $answerWords;
                         }
                     }
                 }

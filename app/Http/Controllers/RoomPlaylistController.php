@@ -16,7 +16,7 @@ class RoomPlaylistController extends Controller
                 'playlist_id' => ['required', 'integer', 'exists:playlists,id'],
             ]);
             $room->playlists()->syncWithoutDetaching($request->playlist_id);
-            
+
             // Invalidate tracks_count cache
             Cache::forget("room_{$room->id}_tracks_count");
 
@@ -33,7 +33,7 @@ class RoomPlaylistController extends Controller
                 'playlist_id' => ['required', 'integer', 'exists:playlists,id'],
             ]);
             $room->playlists()->detach($request->playlist_id);
-            
+
             // Invalidate tracks_count cache
             Cache::forget("room_{$room->id}_tracks_count");
 

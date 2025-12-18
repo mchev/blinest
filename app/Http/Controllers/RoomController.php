@@ -62,14 +62,14 @@ class RoomController extends Controller
 
         if ($room->password && ! $request->has('password')) {
             $room->load('category', 'owner');
-            
+
             // Check if rounds_count is in cache before calling flexible (to display stat)
             $roundsCountFromCache = Cache::get("room_{$room->id}_rounds_count");
             $roundsCount = Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count());
-            
+
             // Generate structured data server-side for SEO (even for password-protected rooms)
             $structuredData = $this->generateStructuredData($room, $roundsCount);
-            
+
             return Inertia::render('Rooms/Password', [
                 'room' => [
                     'id' => $room->id,
@@ -89,15 +89,15 @@ class RoomController extends Controller
         }
 
         $room->load('category', 'owner');
-        
+
         // Check if rounds_count is in cache before calling flexible (to display stat)
         $roundsCountFromCache = Cache::get("room_{$room->id}_rounds_count");
         $roundsCount = Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count());
-        
+
         // Check if tracks_count is in cache before calling flexible (to display stat)
         $tracksCountFromCache = Cache::get("room_{$room->id}_tracks_count");
         $tracksCount = Cache::flexible("room_{$room->id}_tracks_count", [300, 900], fn () => $room->tracks()->count());
-        
+
         // Generate structured data server-side for SEO
         $structuredData = $this->generateStructuredData($room, $roundsCount);
 
@@ -199,7 +199,7 @@ class RoomController extends Controller
 
         $oldPlaylistId = $room->playlist_id;
         $room->update($request->only('name', 'description', 'category_id', 'playlist_id'));
-        
+
         // Invalidate tracks_count cache if playlist changed
         if ($oldPlaylistId != $room->playlist_id) {
             Cache::forget("room_{$room->id}_tracks_count");
