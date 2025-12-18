@@ -289,8 +289,8 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
         }"
       >
         <template v-if="isAnswerFound(answer.id)">
-          <span v-if="getFoundAnswer(answer.id).type.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
-          <span class="font-medium">{{ getFoundAnswer(answer.id).value }}</span>
+          <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+          <span class="font-medium">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
         </template>
         <template v-else>
           <span class="font-medium opacity-80">{{ __(answer.name) }} ?</span>

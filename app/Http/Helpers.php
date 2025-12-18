@@ -25,8 +25,13 @@ if (! function_exists('sanitizeString')) {
             'et ',
         ];
 
-        // Remove all between parenthesis
-        $string = preg_replace("/\([^)]+\)/", '', $string);
+        // Remove all between parenthesis (including nested parentheses)
+        // Use a recursive approach to handle nested parentheses
+        while (preg_match("/\([^()]*\)/", $string)) {
+            $string = preg_replace("/\([^()]*\)/", '', $string);
+        }
+        // Remove any remaining opening or closing parentheses
+        $string = str_replace(['(', ')'], '', $string);
 
         // Slugify to clean special characters
         $string = Str::slug($string, ' ');

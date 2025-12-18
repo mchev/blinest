@@ -263,6 +263,7 @@ class RoundController extends Controller
                         'order' => $order,
                         'speedBonus' => $actualSpeedBonus,
                         'name' => $answer->type->name,
+                        'value' => $answer->value, // Include original value with parentheses for display
                     ];
 
                     // Save score to db - use insert for faster performance
