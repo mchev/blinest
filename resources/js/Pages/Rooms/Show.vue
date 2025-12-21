@@ -187,6 +187,9 @@ const listenRounds = () => {
           </div>
 
           <Card class="mt-8">
+            <template #header v-if="room.description">
+              <h3 class="text-sm">{{ room.description }}</h3>
+            </template>
             <div class="flex flex-col items-center gap-6 text-sm lg:flex-row lg:justify-between">
               <div class="w-full">
                 <div class="flex flex-wrap items-center gap-4">

@@ -1,16 +1,29 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import axios from 'axios'
 import TextInput from '@/Components/TextInput.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
+import ConfirmModal from '@/Components/ConfirmModal.vue'
 import debounce from 'lodash/debounce'
 
 const props = defineProps({
   playlist: Object,
 })
+
+const page = usePage()
+
+// Translation function for script setup
+const __ = (key, replace = {}) => {
+  const translation = page.props.language?.[key] || key
+  let result = translation
+  Object.keys(replace).forEach((k) => {
+    result = result.replace(`:${k}`, replace[k])
+  })
+  return result
+}
 
 const search = ref('')
 const searching = ref(false)
@@ -18,6 +31,9 @@ const users = ref(null)
 const form = useForm({
   user_id: null,
 })
+
+const showDeleteModal = ref(false)
+const moderatorToDelete = ref(null)
 
 const isOwner = computed(() => {
   return props.playlist.moderators.some(m => m.id === props.playlist.user_id)
@@ -55,15 +71,22 @@ const attach = (user) => {
 }
 
 const detach = (user) => {
-  if (!confirm(__('Are you sure you want to remove this moderator?'))) {
-    return
-  }
+  moderatorToDelete.value = user
+  showDeleteModal.value = true
+}
+
+const confirmDetach = () => {
+  if (!moderatorToDelete.value) return
+  
   form
     .transform((data) => ({
-      user_id: user.id,
+      user_id: moderatorToDelete.value.id,
     }))
     .delete(`/playlists/${props.playlist.id}/moderators/detach`, {
       preserveScroll: true,
+      onSuccess: () => {
+        moderatorToDelete.value = null
+      }
     })
 }
 
@@ -195,4 +218,16 @@ const isModerator = (userId) => {
       </div>
     </div>
   </Card>
+
+  <!-- Delete Moderator Confirmation Modal -->
+  <ConfirmModal
+    :show="showDeleteModal"
+    :title="__('Remove moderator')"
+    :message="moderatorToDelete ? __('Are you sure you want to remove :name as a moderator?', { name: moderatorToDelete.name }) : __('Are you sure you want to remove this moderator?')"
+    :confirm-text="__('Remove')"
+    :cancel-text="__('Cancel')"
+    variant="danger"
+    @close="showDeleteModal = false; moderatorToDelete = null"
+    @confirm="confirmDetach"
+  />
 </template>
