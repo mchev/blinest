@@ -21,7 +21,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    required: true, // 'level', 'score', 'week', 'teams'
+    required: true, // 'level', 'score', 'elo', 'week', 'teams'
   },
 })
 
@@ -298,9 +298,9 @@ const getLevelInfo = (item) => {
               {{ item.team.name }}
             </Link>
 
-            <!-- Level Badge (for non-level rankings) -->
+            <!-- Level Badge (for non-level, non-elo rankings) -->
             <div
-              v-if="type !== 'level' && type !== 'teams' && (item.user?.userLevel?.level || item.userLevel?.level)"
+              v-if="type !== 'level' && type !== 'elo' && type !== 'teams' && (item.user?.userLevel?.level || item.userLevel?.level)"
               class="mt-1.5 sm:mt-2 flex items-center gap-1.5"
             >
               <LevelBadge
@@ -313,6 +313,24 @@ const getLevelInfo = (item) => {
                 :elo="item.user?.elo || item.elo || 1500"
                 size="sm"
                 variant="minimal"
+              />
+            </div>
+
+            <!-- ELO Badge (for elo ranking) -->
+            <div
+              v-if="type === 'elo'"
+              class="mt-1.5 sm:mt-2 flex items-center gap-1.5"
+            >
+              <EloBadge
+                :elo="item.elo || item.user?.elo || 1500"
+                size="sm"
+                variant="compact"
+              />
+              <LevelBadge
+                v-if="item.user?.userLevel?.level || item.userLevel?.level"
+                :level="item.user?.userLevel?.level || item.userLevel?.level || 1"
+                size="sm"
+                variant="compact"
               />
             </div>
 
@@ -385,8 +403,14 @@ const getLevelInfo = (item) => {
                         : 'text-white'
                 "
               >
-                {{ formatNumber(type === 'teams' ? item.total_score : (item.total_score || item.score)) }}
-                <span class="ml-1 text-xs font-normal text-neutral-400 sm:text-sm">{{ __('PTS') }}</span>
+                <template v-if="type === 'elo'">
+                  {{ formatNumber(item.elo || item.user?.elo || 1500) }}
+                  <span class="ml-1 text-xs font-normal text-neutral-400 sm:text-sm">{{ __('ELO') }}</span>
+                </template>
+                <template v-else>
+                  {{ formatNumber(type === 'teams' ? item.total_score : (item.total_score || item.score)) }}
+                  <span class="ml-1 text-xs font-normal text-neutral-400 sm:text-sm">{{ __('PTS') }}</span>
+                </template>
               </div>
             </div>
           </div>

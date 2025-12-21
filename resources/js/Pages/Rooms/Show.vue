@@ -190,7 +190,7 @@ const listenRounds = () => {
             <template #header v-if="room.description">
               <h3 class="text-sm">{{ room.description }}</h3>
             </template>
-            <div class="flex flex-col items-center gap-6 text-sm lg:flex-row lg:justify-between">
+            <div class="flex flex-col gap-6 text-sm lg:flex-row lg:justify-between">
               <div class="w-full">
                 <div class="flex flex-wrap items-center gap-4">
                   <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Moderators') }}</span>
@@ -209,19 +209,19 @@ const listenRounds = () => {
                   </div>
                 </div>
               </div>
-              <div class="flex items-center gap-4" v-if="user">
-                <button type="button" class="btn-secondary btn-sm">
+              <div class="flex flex-wrap md:flex-nowrap items-center gap-2 sm:gap-3 lg:gap-4" v-if="user">
+                <button type="button" class="btn-secondary btn-sm flex-shrink-0 whitespace-nowrap">
                   <span class="font-medium">{{ room.tracks_count_from_cache ? room.tracks_count : '-' }}</span>
                   <span>{{ __('Tracks') }}</span>
                 </button>
                 <button v-if="room.rounds_count_from_cache && room.rounds_count > 0" 
                         type="button" 
-                        class="btn-secondary whitespace-nowrap btn-sm">
+                        class="btn-secondary btn-sm flex-shrink-0 whitespace-nowrap">
                   <span class="font-medium">{{ room.rounds_count }}</span>
                   <span>{{ __('Rounds played') }}</span>
                 </button>
                 <button v-if="user.can.sendSuggestion" 
-                        class="btn-secondary btn-sm whitespace-nowrap" 
+                        class="btn-secondary btn-sm flex-shrink-0 whitespace-nowrap" 
                         @click="sendingSuggestion = true">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />

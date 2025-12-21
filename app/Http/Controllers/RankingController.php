@@ -248,6 +248,47 @@ class RankingController extends Controller
         ]);
     }
 
+    public function byElo()
+    {
+        $user = Auth::user();
+
+        // Paginated by ELO
+        $topByElo = \App\Models\User::query()
+            ->whereNotNull('elo')
+            ->with('userLevel')
+            ->orderByDesc('elo')
+            ->paginate(50)
+            ->through(function ($user) {
+                return [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'photo' => $user->photo,
+                        'elo' => $user->elo ?? 1500,
+                        'userLevel' => $user->userLevel,
+                    ],
+                    'elo' => $user->elo ?? 1500,
+                ];
+            });
+
+        // User position
+        $userPosition = null;
+        if ($user) {
+            $userElo = $user->elo ?? 1500;
+            $userEloPosition = \App\Models\User::query()
+                ->whereNotNull('elo')
+                ->where('elo', '>', $userElo)
+                ->count() + 1;
+            $userPosition = $userEloPosition;
+        }
+
+        return Inertia::render('Rankings/Elo', [
+            'topByElo' => $topByElo,
+            'userPosition' => $userPosition,
+            'userElo' => $user ? ($user->elo ?? 1500) : 1500,
+        ]);
+    }
+
     public function byTeams()
     {
         $user = Auth::user();

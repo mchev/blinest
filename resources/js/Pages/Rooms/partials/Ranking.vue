@@ -3,7 +3,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
-import EloBadge from '@/Components/EloBadge.vue'
+import UserProfileBadge from '@/Components/UserProfileBadge.vue'
 import PodiumModal from './PodiumModal.vue'
 
 const props = defineProps({
@@ -89,34 +89,26 @@ onUnmounted(() => {
               <span class="text-base sm:text-lg font-bold">{{ index + 1 }}</span>
             </div>
             <div class="flex items-center">
-              <img :src="user.photo" 
-                   :alt="user.name" 
-                   class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full shadow-lg ring-2" 
-                   :class="{
-                     'ring-yellow-500': index === 0,
-                     'ring-neutral-400': index === 1,
-                     'ring-amber-700': index === 2,
-                     'ring-neutral-700': index > 2
-                   }" />
+              <UserProfileBadge
+                :user="user"
+                size="md"
+                variant="badge"
+                :show-level="true"
+                :show-elo="true"
+                :ring-color="index === 0 ? 'ring-yellow-500' : index === 1 ? 'ring-neutral-400' : index === 2 ? 'ring-amber-700' : 'ring-neutral-700'"
+              />
             </div>
             <div class="flex flex-grow flex-col min-w-0">
-              <div class="mb-1 sm:mb-2 flex items-center gap-2">
+              <div class="mb-1 sm:mb-2 flex items-center gap-2 flex-wrap">
                 <Link v-if="user?.id" :href="route('user.profile', { user: user.id })" class="font-medium text-neutral-100 hover:text-yellow-400 transition-colors truncate">
                   {{ user.name }}
                 </Link>
                 <span v-else class="font-medium text-neutral-400 truncate">
                   {{ user?.name || __('Deleted user') }}
                 </span>
-                <!-- ELO pendant les parties (plus pertinent pour évaluer la compétence) -->
-                <EloBadge
-                  v-if="user.elo"
-                  :elo="user.elo"
-                  size="sm"
-                  variant="compact"
-                />
                 <Link v-if="user.team" 
                       :href="route('teams.show', user.team)" 
-                      class="ml-2 rounded-full bg-neutral-700/50 px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] uppercase text-neutral-300 hover:bg-neutral-600/50 transition-colors whitespace-nowrap">
+                      class="rounded-full bg-neutral-700/50 px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] uppercase text-neutral-300 hover:bg-neutral-600/50 transition-colors whitespace-nowrap">
                   {{ user.team.name }}
                 </Link>
               </div>

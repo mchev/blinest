@@ -20,6 +20,7 @@ const currentPath = computed(() => {
 const tabs = [
   { id: 'level', label: __('Level'), icon: 'shield', route: route('rankings.level') },
   { id: 'score', label: __('Score'), icon: 'trophy', route: route('rankings.score') },
+  { id: 'elo', label: __('ELO'), icon: 'star', route: route('rankings.elo') },
   { id: 'week', label: __('Top Week'), icon: 'calendar', route: route('rankings.week') },
   { id: 'teams', label: __('Teams'), icon: 'users', route: route('rankings.teams') },
 ]
@@ -95,6 +96,19 @@ const isActive = (tab) => {
           <circle cx="9" cy="7" r="4" />
           <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <svg
+          v-else-if="tab.icon === 'star'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4 sm:h-5 sm:w-5"
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
         {{ tab.label }}
       </Link>

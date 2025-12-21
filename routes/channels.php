@@ -31,6 +31,10 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
         'current_xp' => $user->userLevel?->current_xp ?? 0,
         'xp_for_next_level' => $user->userLevel?->xp_for_next_level ?? 100,
         'total_xp' => $user->userLevel?->total_xp ?? 0,
+        'userLevel' => $user->userLevel ? [
+            'level' => $user->userLevel->level,
+            'rounds_played_count' => $user->userLevel->rounds_played_count ?? 0,
+        ] : null,
         'level_metrics' => $user->userLevel ? [
             'score_public_rooms' => $user->userLevel->score_public_rooms ?? 0,
             'seniority_months' => $user->userLevel->months_seniority ?? 0,
