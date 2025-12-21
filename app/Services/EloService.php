@@ -318,25 +318,22 @@ class EloService
             return 0;
         }
 
-        // Récupérer les rounds précédents dans la même room, triés par ID décroissant
-        // (les IDs sont séquentiels, donc plus sûr que finished_at)
-        $previousRounds = Round::where('room_id', $round->room_id)
-            ->where('id', '<', $round->id)
-            ->whereNotNull('finished_at')
-            ->orderByDesc('id')
-            ->pluck('id');
-
-        if ($previousRounds->isEmpty()) {
-            // C'est le premier round de la room, streak = 1
-            return 1;
-        }
+        // Limiter à 200 rounds précédents pour éviter les problèmes de placeholders SQL
+        // (MySQL limite à 65,535 placeholders par requête)
+        // 200 rounds est largement suffisant pour calculer un win streak
+        $maxPreviousRounds = 200;
 
         // Récupérer les standings des rounds précédents pour ce joueur dans cette room
-        // Triés par round_id décroissant pour avoir l'ordre chronologique
-        $previousStandings = RoundStanding::whereIn('round_id', $previousRounds)
+        // On utilise directement une requête sur RoundStanding avec une limite
+        // pour éviter de charger tous les IDs de rounds en mémoire
+        $previousStandings = RoundStanding::where('room_id', $round->room_id)
             ->where('user_id', $userId)
-            ->where('room_id', $round->room_id)
+            ->whereHas('round', function ($query) use ($round) {
+                $query->where('id', '<', $round->id)
+                    ->whereNotNull('finished_at');
+            })
             ->orderByDesc('round_id')
+            ->limit($maxPreviousRounds)
             ->get(['round_id', 'position']);
 
         // Si le joueur n'a pas de standings dans les rounds précédents, c'est sa première victoire
