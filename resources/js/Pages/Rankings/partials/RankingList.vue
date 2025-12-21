@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import EloBadge from '@/Components/EloBadge.vue'
 import LevelModal from '@/Components/LevelModal.vue'
 
 const page = usePage()
@@ -300,12 +301,18 @@ const getLevelInfo = (item) => {
             <!-- Level Badge (for non-level rankings) -->
             <div
               v-if="type !== 'level' && type !== 'teams' && (item.user?.userLevel?.level || item.userLevel?.level)"
-              class="mt-1.5 sm:mt-2"
+              class="mt-1.5 sm:mt-2 flex items-center gap-1.5"
             >
               <LevelBadge
                 :level="item.user?.userLevel?.level || item.userLevel?.level || 1"
                 size="sm"
                 variant="compact"
+              />
+              <EloBadge
+                v-if="item.user?.elo || item.elo"
+                :elo="item.user?.elo || item.elo || 1500"
+                size="sm"
+                variant="minimal"
               />
             </div>
 

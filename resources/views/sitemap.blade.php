@@ -28,7 +28,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
   @endforeach
 
   <url>
-    <loc>https://blinest.com/faq</loc>
+    <loc>https://blinest.com/docs/faq</loc>
     <lastmod>2023-01-26T15:27:50+00:00</lastmod>
     <priority>0.50</priority>
   </url>

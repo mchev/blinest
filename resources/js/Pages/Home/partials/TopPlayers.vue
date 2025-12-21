@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Link } from '@inertiajs/vue3'
+import EloBadge from '@/Components/EloBadge.vue'
 
 const props = defineProps({
 	list: Object,
@@ -18,7 +19,10 @@ const props = defineProps({
                 </div>
                 <Link v-if="score.user?.id" :href="route('user.profile', { user: score.user.id })" class="mb-1 font-bold">{{ score.user.name }}</Link>
                 <span v-else class="mb-1 font-bold text-neutral-400">{{ score.user?.name || __('Deleted user') }}</span>
-                <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
+                <div class="flex flex-col items-center gap-1">
+                  <span>{{ score.total_score }}<sup>{{ __('PTS') }}</sup></span>
+                  <EloBadge v-if="score.user?.elo" :elo="score.user.elo" size="sm" variant="minimal" />
+                </div>
               </li>
             </ul>
 	</article>

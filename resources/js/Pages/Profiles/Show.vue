@@ -6,6 +6,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import Badge from '@/Components/Badge.vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
+import EloBadge from '@/Components/EloBadge.vue'
 import LevelInfo from '@/Components/LevelInfo.vue'
 import LevelModal from '@/Components/LevelModal.vue'
 import ScoresTab from './partials/ScoresTab.vue'
@@ -138,9 +139,15 @@ const chartOptions = {
               {{ user.created_at_from_now }}
             </div>
 
-            <div class="mb-6 w-full squircle-nested border border-neutral-700/50 bg-neutral-800/50 p-4">
-              <div class="text-4xl font-bold text-white">{{ user.total_score }}</div>
-              <div class="text-xs text-neutral-400">{{ __('PTS') }}</div>
+            <div class="mb-6 grid w-full grid-cols-2 gap-3">
+              <div class="squircle-nested border border-neutral-700/50 bg-neutral-800/50 p-4">
+                <div class="text-4xl font-bold text-white">{{ user.total_score }}</div>
+                <div class="text-xs text-neutral-400">{{ __('PTS') }}</div>
+              </div>
+              <div class="squircle-nested border border-neutral-700/50 bg-neutral-800/50 p-4 flex flex-col items-center justify-center">
+                <EloBadge :elo="user.elo" size="md" variant="compact" />
+                <div class="text-xs text-neutral-400 mt-1">{{ __('ELO') }}</div>
+              </div>
             </div>
 
             <div class="grid w-full grid-cols-3 gap-2">

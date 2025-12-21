@@ -194,6 +194,11 @@ class User extends Authenticatable
         return $this->hasOne(UserLevel::class);
     }
 
+    public function roundStandings(): HasMany
+    {
+        return $this->hasMany(RoundStanding::class);
+    }
+
     public function scoreByRoom(Room $room)
     {
         return $this->scores()

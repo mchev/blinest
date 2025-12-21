@@ -11,7 +11,7 @@ class FAQController extends Controller
 {
     public function index()
     {
-        return Inertia::render('FAQ/Index', [
+        return Inertia::render('docs/faq/Index', [
             'filters' => Request::all('search'),
             'faqs' => FAQ::withTotalUpvotes()
                 ->filter(Request::only('search'))

@@ -42,7 +42,7 @@ const currentYear = new Date().getFullYear()
               <Link href="/" class="text-gray-400 hover:text-white transition-colors">{{ __('Home') }}</Link>
             </li>
             <li>
-              <Link href="/faq" class="text-gray-400 hover:text-white transition-colors">{{ __('FAQ') }}</Link>
+              <Link :href="route('docs.faq')" class="text-gray-400 hover:text-white transition-colors">{{ __('FAQ') }}</Link>
             </li>
             <li>
               <Link href="/contact" class="text-gray-400 hover:text-white transition-colors">{{ __('Contact') }}</Link>

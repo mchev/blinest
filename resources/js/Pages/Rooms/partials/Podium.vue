@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import LevelBadge from '@/Components/LevelBadge.vue'
+import EloBadge from '@/Components/EloBadge.vue'
 
 const props = defineProps({
   list: Object,
@@ -50,7 +50,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
             {{ list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : '') }}
           </div>
           <div class="flex items-center justify-center gap-1 mt-0.5">
-            <LevelBadge v-if="list[2].user?.level" :level="list[2].user.level" size="sm" variant="compact" />
+            <EloBadge v-if="list[2].user?.elo" :elo="list[2].user.elo" size="sm" variant="compact" />
           </div>
           <div class="text-amber-400 font-bold text-sm">{{ list[2].score || list[2].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-amber-600 to-amber-800">
@@ -74,7 +74,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
             {{ list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : '') }}
           </div>
           <div class="flex items-center justify-center gap-1 mt-0.5">
-            <LevelBadge v-if="list[0].user?.level" :level="list[0].user.level" size="sm" variant="compact" />
+            <EloBadge v-if="list[0].user?.elo" :elo="list[0].user.elo" size="sm" variant="compact" />
           </div>
           <div class="text-yellow-400 font-bold text-sm">{{ list[0].score || list[0].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-yellow-400 to-yellow-600">
@@ -98,7 +98,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
             {{ list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : '') }}
           </div>
           <div class="flex items-center justify-center gap-1 mt-0.5">
-            <LevelBadge v-if="list[1].user?.level" :level="list[1].user.level" size="sm" variant="compact" />
+            <EloBadge v-if="list[1].user?.elo" :elo="list[1].user.elo" size="sm" variant="compact" />
           </div>
           <div class="text-gray-300 font-bold text-sm">{{ list[1].score || list[1].total || 0 }} pts</div>
           <div class="podium-stand bg-gradient-to-b from-gray-300 to-gray-400">
@@ -123,7 +123,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
             {{ list[3].user ? list[3].user.name : (list[3].team ? list[3].team.name : '') }}
           </div>
           <div class="flex items-center gap-1 mt-0.5">
-            <LevelBadge v-if="list[3].user?.level" :level="list[3].user.level" size="sm" variant="minimal" />
+            <EloBadge v-if="list[3].user?.elo" :elo="list[3].user.elo" size="sm" variant="compact" />
           </div>
           <div class="text-purple-400 text-[10px] font-bold">{{ list[3].score || list[3].total || 0 }} pts</div>
         </div>
@@ -142,7 +142,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
             {{ list[4].user ? list[4].user.name : (list[4].team ? list[4].team.name : '') }}
           </div>
           <div class="flex items-center gap-1 mt-0.5">
-            <LevelBadge v-if="list[4].user?.level" :level="list[4].user.level" size="sm" variant="minimal" />
+            <EloBadge v-if="list[4].user?.elo" :elo="list[4].user.elo" size="sm" variant="compact" />
           </div>
           <div class="text-blue-400 text-[10px] font-bold">{{ list[4].score || list[4].total || 0 }} pts</div>
         </div>

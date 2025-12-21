@@ -31,6 +31,7 @@ return new class extends Migration
             match ($driver = $connection->getDriverName()) {
                 'mysql' => $table->char('key_hash', 16)->charset('binary')->virtualAs('unhex(md5(`key`))'),
                 'pgsql' => $table->uuid('key_hash')->storedAs('md5("key")::uuid'),
+                'sqlite' => $table->string('key_hash', 32), // SQLite doesn't support generated columns easily
                 default => throw new RuntimeException("Unsupported database driver [{$driver}]."),
             };
             $table->text('value');
@@ -48,6 +49,7 @@ return new class extends Migration
             match ($driver = $connection->getDriverName()) {
                 'mysql' => $table->char('key_hash', 16)->charset('binary')->virtualAs('unhex(md5(`key`))'),
                 'pgsql' => $table->uuid('key_hash')->storedAs('md5("key")::uuid'),
+                'sqlite' => $table->string('key_hash', 32), // SQLite doesn't support generated columns easily
                 default => throw new RuntimeException("Unsupported database driver [{$driver}]."),
             };
             $table->bigInteger('value')->nullable();
@@ -67,6 +69,7 @@ return new class extends Migration
             match ($driver = $connection->getDriverName()) {
                 'mysql' => $table->char('key_hash', 16)->charset('binary')->virtualAs('unhex(md5(`key`))'),
                 'pgsql' => $table->uuid('key_hash')->storedAs('md5("key")::uuid'),
+                'sqlite' => $table->string('key_hash', 32), // SQLite doesn't support generated columns easily
                 default => throw new RuntimeException("Unsupported database driver [{$driver}]."),
             };
             $table->string('aggregate');

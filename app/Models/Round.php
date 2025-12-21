@@ -7,6 +7,7 @@ use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
 use App\Jobs\ProcessDeletedTrack;
+use App\Jobs\ProcessRoundElo;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -63,6 +64,11 @@ class Round extends Model
         });
 
         broadcast(new RoundFinished($this));
+
+        // Dispatcher le job pour calculer l'ELO et nettoyer les scores
+        // On ajoute un petit délai pour s'assurer que tous les scores sont bien enregistrés
+        ProcessRoundElo::dispatch($this)
+            ->delay(now()->addSeconds(2));
     }
 
     public function playNextTrack()
@@ -187,7 +193,11 @@ class Round extends Model
     public function usersPodium()
     {
         return $this->scores()
-            ->select([\DB::raw('SUM(score) as total'), 'user_id'])
+            ->select([
+                \DB::raw('SUM(score) as total'),
+                'user_id',
+                \DB::raw('MAX(team_id) as team_id'), // Prendre le team_id le plus récent si plusieurs
+            ])
             ->with('user.userLevel')
             ->groupBy('user_id')
             ->orderByDesc('total');
@@ -201,5 +211,10 @@ class Round extends Model
             ->with('team')
             ->groupBy('team_id')
             ->orderByDesc('total');
+    }
+
+    public function standings(): HasMany
+    {
+        return $this->hasMany(RoundStanding::class);
     }
 }

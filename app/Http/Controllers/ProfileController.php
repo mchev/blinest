@@ -129,6 +129,7 @@ class ProfileController extends Controller
                 'total_xp' => $userLevel?->total_xp ?? 0,
                 'level_metrics' => $levelMetrics,
                 'created_at_from_now' => $user->created_at->diffForHumans(null, true),
+                'elo' => $user->elo ?? 1500,
                 'total_score' => (float) ($totalScoresQuery->total_score ?? 0),
                 'total_public_score' => (float) ($totalScoresQuery->total_public_score ?? 0),
                 'total_private_score' => (float) ($totalScoresQuery->total_private_score ?? 0),

@@ -1,5 +1,6 @@
 <script setup>
-import { Head, usePage } from '@inertiajs/vue3'
+import { Head, Link, usePage } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
@@ -17,6 +18,7 @@ defineProps({
 })
 
 const user = usePage().props.auth.user;
+const showBanner = ref(true)
 
 </script>
 <template>
@@ -28,6 +30,42 @@ const user = usePage().props.auth.user;
   </Head>
   <Layout>
     <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
+
+    <!-- New Features Banner -->
+    <div v-if="showBanner" class="mb-8 rounded-2xl bg-gradient-to-r from-purple-600/20 via-blue-600/20 to-teal-600/20 border border-purple-500/30 p-6 shadow-lg">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 text-purple-400">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+            </svg>
+            <h2 class="text-xl font-bold text-white">Nouveau : Systèmes de progression</h2>
+          </div>
+          <p class="text-neutral-300 text-sm mb-3">
+            On a ajouté trois systèmes pour récompenser votre activité : les <strong>Scores</strong>, les <strong>Levels</strong> et l'<strong>ELO</strong>. 
+            Pas toujours évident de s'y retrouver ? On t'explique tout ça ici.
+          </p>
+          <Link 
+            :href="route('docs.index')" 
+            class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-purple-500 hover:to-blue-500 hover:shadow-lg hover:shadow-purple-500/20"
+          >
+            Découvrir
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
+        </div>
+        <button 
+          @click="showBanner = false"
+          class="flex-shrink-0 text-neutral-400 hover:text-white transition-colors"
+          aria-label="Fermer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <!-- Search Results -->
     <section v-if="search_result" class="mb-16">

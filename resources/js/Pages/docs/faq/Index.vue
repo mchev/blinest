@@ -55,7 +55,7 @@ onMounted(() => {
 watch(
   form,
   throttle(() => {
-    router.get('/faq', pickBy(form), {
+    router.get('/docs/faq', pickBy(form), {
       remember: 'forget',
       preserveState: true,
     })

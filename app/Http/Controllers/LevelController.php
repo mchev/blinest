@@ -8,6 +8,6 @@ class LevelController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Level/Index');
+        return Inertia::render('docs/level/Index');
     }
 }

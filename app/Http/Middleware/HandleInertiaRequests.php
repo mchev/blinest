@@ -53,6 +53,7 @@ class HandleInertiaRequests extends Middleware
                         'admin' => $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,
+                        'elo' => $user->elo ?? 1500,
                         'level' => $user->userLevel?->level ?? 1,
                         'current_xp' => $user->userLevel?->current_xp ?? 0,
                         'xp_for_next_level' => $user->userLevel?->xp_for_next_level ?? 100,

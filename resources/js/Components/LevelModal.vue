@@ -99,7 +99,7 @@ const levelColor = computed(() => {
         <!-- Info Link -->
         <div class="text-center pt-2">
           <Link
-            :href="route('level-system')"
+            :href="route('docs.level')"
             class="text-sm text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center gap-1"
             @click="$emit('close')"
           >

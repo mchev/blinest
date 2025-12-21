@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Docs\EloController;
+use App\Http\Controllers\Docs\OverviewController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LevelController;
@@ -19,9 +21,18 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/faq', [FAQController::class, 'index'])
     ->name('faq');
 
-// Level System
-Route::get('/level-system', [LevelController::class, 'index'])
-    ->name('level-system');
+// Documentation
+Route::get('/docs', [OverviewController::class, 'index'])
+    ->name('docs.index');
+
+Route::get('/docs/level', [LevelController::class, 'index'])
+    ->name('docs.level');
+
+Route::get('/docs/faq', [FAQController::class, 'index'])
+    ->name('docs.faq');
+
+Route::get('/docs/elo', [EloController::class, 'index'])
+    ->name('docs.elo');
 
 // Pages
 Route::get('/pages/{slug}', [PageController::class, 'show'])
