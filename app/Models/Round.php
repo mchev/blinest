@@ -68,9 +68,7 @@ class Round extends Model
             ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
         // Calcul de l'ELO et nettoyage des scores
-        if ($this->room->isPublic()) {
-            ProcessRoundElo::dispatch($this)->afterCommit();
-        }
+        ProcessRoundElo::dispatch($this)->afterCommit();
 
         broadcast(new RoundFinished($this));
     }
