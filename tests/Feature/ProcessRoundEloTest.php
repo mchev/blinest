@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Events\UserEloUpdated;
 use App\Jobs\ProcessRoundElo;
 use App\Models\AnswerType;
 use App\Models\Category;
@@ -14,6 +15,7 @@ use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class ProcessRoundEloTest extends TestCase
@@ -722,5 +724,241 @@ class ProcessRoundEloTest extends TestCase
 
         $this->assertNotNull($standing);
         $this->assertEquals($expectedTotal, (float) $standing->total_score);
+    }
+
+    /**
+     * Test que l'événement UserEloUpdated est broadcasté après la mise à jour des ELOs
+     */
+    public function test_user_elo_updated_event_is_broadcasted(): void
+    {
+        // Mocker les événements pour vérifier qu'ils sont broadcastés
+        Event::fake([UserEloUpdated::class]);
+
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner9@test.com',
+            'password' => bcrypt('password'),
+            'elo' => 1500,
+        ]);
+        $room = Room::create([
+            'name' => 'Test Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+        ]);
+
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist',
+            'user_id' => $owner->id,
+        ]);
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'test606',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+        $trackAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $answerType->id,
+            'value' => 'Test Artist',
+            'score' => 1.0,
+        ]);
+
+        // Créer des scores pour chaque joueur
+        foreach ($users as $index => $user) {
+            Score::create([
+                'user_id' => $user->id,
+                'round_id' => $round->id,
+                'track_id' => $track->id,
+                'answer_id' => $trackAnswer->id,
+                'score' => 10.0 - ($index * 2),
+                'time' => 5.0,
+            ]);
+        }
+
+        // Exécuter le job
+        $job = new ProcessRoundElo($round);
+        $job->handle(app(\App\Services\EloService::class));
+
+        // Vérifier que l'événement UserEloUpdated a été broadcasté pour chaque utilisateur
+        Event::assertDispatched(UserEloUpdated::class, function ($event) use ($users, $room) {
+            // Vérifier que l'événement concerne un des utilisateurs de la room
+            $userIds = $users->pluck('id')->toArray();
+
+            return in_array($event->user->id, $userIds)
+                && $event->room->id === $room->id
+                && is_int($event->elo)
+                && $event->elo !== 1500; // L'ELO devrait avoir changé
+        });
+
+        // Vérifier que l'événement a été broadcasté exactement 3 fois (une fois par utilisateur)
+        Event::assertDispatched(UserEloUpdated::class, 3);
+
+        // Vérifier les données broadcastées pour chaque utilisateur
+        foreach ($users as $user) {
+            $user->refresh();
+            Event::assertDispatched(UserEloUpdated::class, function ($event) use ($user, $room) {
+                return $event->user->id === $user->id
+                    && $event->room->id === $room->id
+                    && $event->elo === $user->elo;
+            });
+        }
+    }
+
+    /**
+     * Test que l'événement UserEloUpdated n'est PAS broadcasté pour une room privée
+     */
+    public function test_user_elo_updated_event_is_not_broadcasted_for_private_room(): void
+    {
+        Event::fake([UserEloUpdated::class]);
+
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner10@test.com',
+            'password' => bcrypt('password'),
+            'elo' => 1500,
+        ]);
+        $room = Room::create([
+            'name' => 'Private Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+        ]);
+
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist',
+            'user_id' => $owner->id,
+        ]);
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'test707',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+        $trackAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $answerType->id,
+            'value' => 'Test Artist',
+            'score' => 1.0,
+        ]);
+
+        foreach ($users as $user) {
+            Score::create([
+                'user_id' => $user->id,
+                'round_id' => $round->id,
+                'track_id' => $track->id,
+                'answer_id' => $trackAnswer->id,
+                'score' => 5.0,
+                'time' => 10.0,
+            ]);
+        }
+
+        // Exécuter le job
+        $job = new ProcessRoundElo($round);
+        $job->handle(app(\App\Services\EloService::class));
+
+        // Vérifier que l'événement UserEloUpdated n'a PAS été broadcasté
+        Event::assertNotDispatched(UserEloUpdated::class);
+    }
+
+    /**
+     * Test que l'événement UserEloUpdated n'est PAS broadcasté avec moins de 3 joueurs
+     */
+    public function test_user_elo_updated_event_is_not_broadcasted_with_less_than_three_players(): void
+    {
+        Event::fake([UserEloUpdated::class]);
+
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner11@test.com',
+            'password' => bcrypt('password'),
+            'elo' => 1500,
+        ]);
+        $room = Room::create([
+            'name' => 'Test Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(2)->create(['elo' => 1500]);
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+        ]);
+
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist',
+            'user_id' => $owner->id,
+        ]);
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'test808',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+        $trackAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $answerType->id,
+            'value' => 'Test Artist',
+            'score' => 1.0,
+        ]);
+
+        foreach ($users as $user) {
+            Score::create([
+                'user_id' => $user->id,
+                'round_id' => $round->id,
+                'track_id' => $track->id,
+                'answer_id' => $trackAnswer->id,
+                'score' => 5.0,
+                'time' => 10.0,
+            ]);
+        }
+
+        // Exécuter le job
+        $job = new ProcessRoundElo($round);
+        $job->handle(app(\App\Services\EloService::class));
+
+        // Vérifier que l'événement UserEloUpdated n'a PAS été broadcasté
+        Event::assertNotDispatched(UserEloUpdated::class);
     }
 }

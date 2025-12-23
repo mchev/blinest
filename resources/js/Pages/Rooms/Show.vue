@@ -112,6 +112,7 @@ const listenRounds = () => {
     roundsChannel.stopListening('RoundStarted')
     roundsChannel.stopListening('RoundFinished')
     roundsChannel.stopListening('TrackPlayed')
+    roundsChannel.stopListening('UserEloUpdated')
   }
   
   // Create new listeners
@@ -135,6 +136,13 @@ const listenRounds = () => {
       // Clear initial track since we're now receiving live updates
       initialTrack.value = null
       initialStartTime.value = 0
+    })
+    .listen('UserEloUpdated', (e) => {
+      // Mettre à jour l'ELO de l'utilisateur dans la liste des utilisateurs
+      const userIndex = users.value.findIndex((u) => u.id === e.user_id)
+      if (userIndex !== -1) {
+        users.value[userIndex].elo = e.elo
+      }
     })
 }
 </script>

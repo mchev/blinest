@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\UserEloUpdated;
 use App\Models\Round;
 use App\Services\EloService;
 use Illuminate\Bus\Queueable;
@@ -40,9 +41,11 @@ class ProcessRoundElo implements ShouldQueue
             return;
         }
 
+        $eloUpdates = [];
+
         try {
             // Utiliser un lock pour éviter les race conditions
-            DB::transaction(function () use ($eloService) {
+            DB::transaction(function () use ($eloService, &$eloUpdates) {
                 // Vérifier avec lock pour éviter les doublons
                 $lock = DB::table('rounds')
                     ->where('id', $this->round->id)
@@ -68,7 +71,9 @@ class ProcessRoundElo implements ShouldQueue
 
                 // Toujours créer les standings (même pour rooms privées ou < 3 joueurs)
                 // Le service déterminera si is_elo_counted = true ou false
-                $standings = $eloService->updateElosForRound($this->round);
+                $result = $eloService->updateElosForRound($this->round);
+                $standings = $result['standings'];
+                $eloUpdates = $result['elo_updates'];
 
                 // Vérifier que les standings ont bien été créés avant de supprimer les scores
                 if (empty($standings)) {
@@ -97,6 +102,11 @@ class ProcessRoundElo implements ShouldQueue
                 // Même si standings est vide (podium vide), on nettoie quand même les scores orphelins
                 $this->cleanupIndividualScores();
             });
+
+            // Broadcaster les événements de mise à jour d'ELO après la transaction
+            foreach ($eloUpdates as $update) {
+                broadcast(new UserEloUpdated($update['user'], $this->round->room, $update['elo']));
+            }
         } catch (\Exception $e) {
             Log::error('ProcessRoundElo: Error processing round ELO', [
                 'round_id' => $this->round->id,

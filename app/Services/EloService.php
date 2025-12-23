@@ -125,7 +125,7 @@ class EloService
      * Crée les standings pour tous les joueurs d'un round
      * Met à jour l'ELO uniquement si les conditions sont remplies (room publique, 3+ joueurs)
      *
-     * @return array Données des standings créées
+     * @return array Tableau avec 'standings' et 'elo_updates' pour broadcaster après la transaction
      */
     public function updateElosForRound(Round $round): array
     {
@@ -139,7 +139,10 @@ class EloService
 
         // Si aucun joueur, ne rien faire
         if ($podium->isEmpty()) {
-            return [];
+            return [
+                'standings' => [],
+                'elo_updates' => [],
+            ];
         }
 
         // Vérifier les conditions pour compter l'ELO
@@ -231,6 +234,8 @@ class EloService
         // Enregistrer les standings et mettre à jour les ELO des utilisateurs (seulement si is_elo_counted)
         // Note: Cette méthode est appelée depuis une transaction dans ProcessRoundElo
         // On ne crée pas de nouvelle transaction ici pour éviter les transactions imbriquées
+        $eloUpdates = [];
+
         foreach ($standings as $standingData) {
             RoundStanding::create($standingData);
 
@@ -239,11 +244,20 @@ class EloService
                 $user = $users->get($standingData['user_id']);
                 if ($user) {
                     $user->update(['elo' => $standingData['elo_after']]);
+                    // Stocker les informations pour broadcaster après la transaction
+                    $eloUpdates[] = [
+                        'user' => $user,
+                        'elo' => $standingData['elo_after'],
+                    ];
                 }
             }
         }
 
-        return $standings;
+        // Retourner les standings et les mises à jour d'ELO pour broadcaster après la transaction
+        return [
+            'standings' => $standings,
+            'elo_updates' => $eloUpdates,
+        ];
     }
 
     /**
