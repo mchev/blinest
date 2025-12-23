@@ -21,6 +21,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('rooms.{room}', function ($user, Room $room) {
     $user->loadMissing('userLevel');
 
+    // Count rounds played in public rooms (where ELO was counted)
+    // This helps detect if user has played even if their ELO returned to 1500
+    $publicRoundsPlayed = \App\Models\RoundStanding::where('user_id', $user->id)
+        ->where('is_elo_counted', true)
+        ->count();
+
     return [
         'id' => $user->id,
         'name' => $user->name,
@@ -35,6 +41,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
             'level' => $user->userLevel->level,
             'rounds_played_count' => $user->userLevel->rounds_played_count ?? 0,
         ] : null,
+        'public_rounds_played_count' => $publicRoundsPlayed,
         'level_metrics' => $user->userLevel ? [
             'score_public_rooms' => $user->userLevel->score_public_rooms ?? 0,
             'seniority_months' => $user->userLevel->months_seniority ?? 0,

@@ -53,19 +53,20 @@ const __ = (key, replace = {}) => {
   return result
 }
 
-// Check if user has played any rounds
+// Check if user has played any rounds in public rooms
+// ELO is only calculated for public rooms with 3+ players
+// A user can have ELO = 1500 even after playing (if they lost enough), so we also check public_rounds_played_count
 const hasPlayed = computed(() => {
-  // Check if user has rounds_played_count > 0
-  if (props.user.userLevel?.rounds_played_count !== undefined) {
-    return props.user.userLevel.rounds_played_count > 0
+  // If ELO is different from 1500, they've definitely played in public rooms
+  if (props.user.elo != null && props.user.elo !== 1500) {
+    return true
   }
-  // Fallback: if elo is exactly 1500 (default), assume not played
-  // This is not perfect but better than showing 1500 for everyone
-  if (props.user.elo === 1500) {
-    return false
+  // If ELO is 1500 but they have public rounds played, they've played (ELO returned to 1500)
+  if (props.user.public_rounds_played_count !== undefined && props.user.public_rounds_played_count > 0) {
+    return true
   }
-  // If elo is different from 1500, they've definitely played
-  return props.user.elo !== 1500
+  // Otherwise, they haven't played in public rooms
+  return false
 })
 
 // Size configurations
