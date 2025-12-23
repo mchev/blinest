@@ -63,12 +63,16 @@ class Round extends Model
             }
         });
 
-        broadcast(new RoundFinished($this));
+        // Relance une partie si la partie est terminée et que la partie suivante est autorisée
+        ProcessRoundFinished::dispatch($this->room)
+            ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
-        // Dispatcher le job pour calculer l'ELO et nettoyer les scores
-        // On ajoute un petit délai pour s'assurer que tous les scores sont bien enregistrés
-        ProcessRoundElo::dispatch($this)
-            ->delay(now()->addSeconds(2));
+        // Calcul de l'ELO et nettoyage des scores
+        if ($this->room->isPublic()) {
+            ProcessRoundElo::dispatch($this)->afterCommit();
+        }
+
+        broadcast(new RoundFinished($this));
     }
 
     public function playNextTrack()
@@ -81,9 +85,6 @@ class Round extends Model
         // All tracks has been played
         if ($this->current >= count($this->tracks)) {
             $this->stop();
-
-            ProcessRoundFinished::dispatch($this->room)
-                ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
             return;
         }
