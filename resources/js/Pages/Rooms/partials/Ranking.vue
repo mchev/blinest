@@ -11,40 +11,109 @@ const props = defineProps({
   users: Array,
   channel: String,
   data: Object,
+  initialTrack: {
+    type: Object,
+    default: null,
+  },
 })
 
 const me = usePage().props.auth.user
 const scores = ref([])
 const userList = ref(props?.users)
-const track = ref(null)
+const track = ref(props?.initialTrack || null)
 const showPodiumModal = ref(false)
+
+// Initialiser les scores depuis Redis si disponibles
+const initializeScoresFromRedis = () => {
+  if (!props.data?.scores) {
+    return
+  }
+
+  const redisScores = props.data.scores
+
+  // Mettre à jour les scores des users
+  userList.value.forEach((user) => {
+    const userId = user.id
+    const userScore = redisScores[userId] || 0
+
+    // Initialiser le score si nécessaire
+    if (!user.score) {
+      user.score = { total: 0, answers: [] }
+    }
+
+    // Mettre à jour le score total depuis Redis
+    user.score.total = userScore
+  })
+
+  // Trier par score décroissant
+  userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
+}
 
 watch(
   () => props.users,
   (value) => {
     userList.value = value
+    // Réinitialiser les scores si les users changent
+    initializeScoresFromRedis()
   },
 )
 
+watch(
+  () => props.data,
+  () => {
+    // Réinitialiser les scores si data change
+    initializeScoresFromRedis()
+  },
+  { deep: true }
+)
+
 onMounted(() => {
+  // Initialiser les scores depuis Redis au montage
+  initializeScoresFromRedis()
+
   Echo.channel(props.channel)
     .listen('NewScore', (e) => {
       scores.value.push(e.score)
       let index = userList.value.findIndex((x) => x.id === e.score.user_id)
-      userList.value[index].score.total = e.score.total
-      userList.value[index].score.answers.push(...e.score.answers)
-      userList.value.sort((a, b) => b.score.total - a.score.total)
+      if (index !== -1) {
+        if (!userList.value[index].score) {
+          userList.value[index].score = { total: 0, answers: [] }
+        }
+        userList.value[index].score.total = e.score.total
+        // Ajouter les nouvelles réponses (éviter les doublons)
+        e.score.answers.forEach((newAnswer) => {
+          const existingIndex = userList.value[index].score.answers.findIndex((a) => a.id === newAnswer.id)
+          if (existingIndex === -1) {
+            userList.value[index].score.answers.push(newAnswer)
+          } else {
+            // Mettre à jour la réponse existante
+            userList.value[index].score.answers[existingIndex] = newAnswer
+          }
+        })
+        userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
+      }
     })
     .listen('TrackPlayed', (e) => {
       track.value = e.track
       userList.value.map((x) => {
         if (x.score) return (x.score.answers = [])
       })
+      // Réinitialiser les scores depuis Redis après un nouveau track
+      if (props.data?.scores) {
+        initializeScoresFromRedis()
+      }
     })
     .listen('RoundStarted', () => {
       userList.value.forEach((x) => {
-        x.score.total = 0
+        if (x.score) {
+          x.score.total = 0
+          x.score.answers = []
+        }
       })
+      // Réinitialiser les scores depuis Redis après un nouveau round
+      if (props.data?.scores) {
+        initializeScoresFromRedis()
+      }
     })
 })
 

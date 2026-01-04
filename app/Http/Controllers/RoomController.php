@@ -389,6 +389,7 @@ class RoomController extends Controller
                             'is_playing' => $room->is_playing,
                         ],
                         'startTime' => $startTime, // Time in seconds to start the track
+                        'scores' => app(\App\Services\RoundScoreService::class)->getAllScores($currentRound->id), // [userId => score, ...]
                     ]);
                 }
             }

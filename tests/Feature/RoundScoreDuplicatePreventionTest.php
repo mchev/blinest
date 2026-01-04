@@ -68,6 +68,9 @@ class RoundScoreDuplicatePreventionTest extends TestCase
         );
         $this->assertTrue($result1, 'First record should succeed');
 
+        // Ajouter le score (recordTrackDetails ne l'ajoute pas automatiquement)
+        $roundScoreService->addScore($roundId, $userId, $score);
+
         // Vérifier que le score a été ajouté
         $totalScore = $roundScoreService->getUserScore($roundId, $userId);
         $this->assertEquals($score, $totalScore);
@@ -105,12 +108,14 @@ class RoundScoreDuplicatePreventionTest extends TestCase
 
         // Ajouter une première réponse
         $roundScoreService->recordTrackDetails($roundId, $userId, $trackId, 10.0, null, 5.0, 1);
+        $roundScoreService->addScore($roundId, $userId, 5.0);
         $foundAnswers = $roundScoreService->getFoundAnswerIds($roundId, $userId, $trackId);
         $this->assertCount(1, $foundAnswers);
         $this->assertContains(1, $foundAnswers);
 
         // Ajouter une deuxième réponse différente
         $roundScoreService->recordTrackDetails($roundId, $userId, $trackId, 12.0, null, 3.0, 2);
+        $roundScoreService->addScore($roundId, $userId, 3.0);
         $foundAnswers = $roundScoreService->getFoundAnswerIds($roundId, $userId, $trackId);
         $this->assertCount(2, $foundAnswers);
         $this->assertContains(1, $foundAnswers);
@@ -135,8 +140,11 @@ class RoundScoreDuplicatePreventionTest extends TestCase
 
         // Ajouter plusieurs réponses différentes
         $roundScoreService->recordTrackDetails($roundId, $userId, $trackId, 10.0, null, 5.0, 1);
+        $roundScoreService->addScore($roundId, $userId, 5.0);
         $roundScoreService->recordTrackDetails($roundId, $userId, $trackId, 12.0, null, 3.0, 2);
+        $roundScoreService->addScore($roundId, $userId, 3.0);
         $roundScoreService->recordTrackDetails($roundId, $userId, $trackId, 14.0, null, 2.0, 3);
+        $roundScoreService->addScore($roundId, $userId, 2.0);
 
         $foundAnswers = $roundScoreService->getFoundAnswerIds($roundId, $userId, $trackId);
         $this->assertCount(3, $foundAnswers);
@@ -186,7 +194,7 @@ class RoundScoreDuplicatePreventionTest extends TestCase
         // Simuler plusieurs tentatives "simultanées" d'ajouter la même réponse
         $results = [];
         for ($i = 0; $i < 10; $i++) {
-            $results[] = $roundScoreService->recordTrackDetails(
+            $result = $roundScoreService->recordTrackDetails(
                 $roundId,
                 $userId,
                 $trackId,
@@ -195,6 +203,11 @@ class RoundScoreDuplicatePreventionTest extends TestCase
                 $score,
                 $answerId
             );
+            $results[] = $result;
+            // Ajouter le score seulement si c'est une nouvelle réponse
+            if ($result) {
+                $roundScoreService->addScore($roundId, $userId, $score);
+            }
         }
 
         // Seule la première devrait réussir

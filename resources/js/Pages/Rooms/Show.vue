@@ -105,6 +105,13 @@ const joining = () => {
       initialTrack.value = null
       initialStartTime.value = 0
     }
+    // Passer les scores au composant Ranking via data
+    if (response.data.scores) {
+      data.value = {
+        scores: response.data.scores,
+        roundId: response.data.round?.id
+      }
+    }
     joined.value = true
     listenRounds()
   }).catch((error) => {
@@ -197,7 +204,7 @@ const listenRounds = () => {
 
           <div class="grid gap-8 md:grid-cols-2">
             <Answers class="mb-4 md:mb-0" :users="users" :channel="channel" />
-            <Ranking class="mb-4 md:mb-0" :room="room" :users="users" :channel="channel" :data="data" />
+            <Ranking class="mb-4 md:mb-0" :room="room" :users="users" :channel="channel" :data="data" :initialTrack="initialTrack" />
           </div>
 
           <Card class="mt-8">

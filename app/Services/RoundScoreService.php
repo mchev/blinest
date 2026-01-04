@@ -69,6 +69,7 @@ class RoundScoreService
 
         // Si answer_id est fourni, vérifier atomiquement s'il existe déjà
         if ($answerId !== null) {
+            // Set par joueur (pour vérifier les doublons)
             $wasAdded = Redis::sadd($answersKey, $answerId);
             Redis::expire($answersKey, self::REDIS_TTL);
 
@@ -76,6 +77,12 @@ class RoundScoreService
             if ($wasAdded === 0) {
                 return false;
             }
+
+            // Set global par réponse (pour compter l'ordre de manière atomique)
+            // Format: round:{roundId}:answer:{answerId}:players = Set de user_ids
+            $globalAnswerKey = "round:{$roundId}:answer:{$answerId}:players";
+            Redis::sadd($globalAnswerKey, $userId);
+            Redis::expire($globalAnswerKey, self::REDIS_TTL);
         }
 
         // Stocker les détails complets dans un hash pour l'historique
@@ -173,24 +180,16 @@ class RoundScoreService
      */
     public function countPlayersWhoFoundAnswer(int $roundId, int $trackId, int $answerId, ?int $excludeUserId = null): int
     {
-        // Parcourir tous les joueurs et compter ceux qui ont cette réponse dans leur Set
-        $pattern = "round:{$roundId}:answers:*:{$trackId}";
-        $keys = Redis::keys($pattern);
-        $count = 0;
+        // Utiliser le Set global par réponse pour un comptage atomique et rapide
+        // Format: round:{roundId}:answer:{answerId}:players = Set de user_ids
+        $globalAnswerKey = "round:{$roundId}:answer:{$answerId}:players";
+        $count = Redis::scard($globalAnswerKey);
 
-        foreach ($keys as $key) {
-            // Extraire l'user_id de la clé (format: round:{roundId}:answers:{userId}:{trackId})
-            $parts = explode(':', $key);
-            $userId = isset($parts[3]) ? (int) $parts[3] : null;
-
-            // Exclure l'utilisateur spécifié si fourni
-            if ($excludeUserId !== null && $userId === $excludeUserId) {
-                continue;
-            }
-
-            $isMember = Redis::sismember($key, $answerId);
+        // Si l'utilisateur doit être exclu et qu'il est dans le Set, soustraire 1
+        if ($excludeUserId !== null && $count > 0) {
+            $isMember = Redis::sismember($globalAnswerKey, $excludeUserId);
             if ($isMember) {
-                $count++;
+                $count--;
             }
         }
 

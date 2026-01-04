@@ -15,6 +15,7 @@ use App\Models\TrackAnswer;
 use App\Models\User;
 use App\Services\RoundScoreService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
@@ -28,6 +29,8 @@ class ProcessRoundFinalizationTest extends TestCase
         parent::setUp();
         // Nettoyer Redis avant chaque test
         Redis::flushall();
+        // Mocker les jobs pour éviter les erreurs de broadcast dans UpdateUserLevel
+        Bus::fake();
     }
 
     protected function tearDown(): void
