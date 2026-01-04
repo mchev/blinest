@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class RoundStanding extends Model
         'average_response_time',
         'fast_answers_count',
         'total_answers_count',
+        'tracks_history',
         'win_streak',
     ];
 
@@ -38,8 +40,19 @@ class RoundStanding extends Model
             'average_response_time' => 'decimal:3',
             'fast_answers_count' => 'integer',
             'total_answers_count' => 'integer',
+            'tracks_history' => 'array', // null sera converti en [] lors de l'accès
             'win_streak' => 'integer',
         ];
+    }
+
+    /**
+     * Accessor pour tracks_history : garantir qu'on retourne toujours un array
+     */
+    protected function tracksHistory(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value === null ? [] : (is_array($value) ? $value : json_decode($value, true) ?? []),
+        );
     }
 
     public function round(): BelongsTo

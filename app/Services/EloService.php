@@ -25,6 +25,12 @@ class EloService
     private const TARGET_AVERAGE_ELO = 1500;
 
     /**
+     * Pourcentage minimum de tracks qu'un joueur doit avoir joué pour que son ELO soit compté
+     * (0.8 = 80%)
+     */
+    private const MIN_TRACKS_PLAYED_PERCENTAGE = 0.8;
+
+    /**
      * Calcule le changement d'ELO pour un joueur basé sur sa position et les ELO des adversaires
      * Utilise un calcul individuel contre chaque adversaire (plus précis)
      *
@@ -125,17 +131,31 @@ class EloService
      * Crée les standings pour tous les joueurs d'un round
      * Met à jour l'ELO uniquement si les conditions sont remplies (room publique, 3+ joueurs)
      *
+     * @param  Round  $round  Le round à traiter
+     * @param  \Illuminate\Support\Collection|null  $podium  Podium depuis Redis (optionnel, sera calculé si null)
+     * @param  array  $tracksHistory  Historique des tracks par user_id depuis Redis [userId => [['track_id' => int, 'response_time' => float, 'position' => int, 'score' => float], ...], ...]
      * @return array Tableau avec 'standings' et 'elo_updates' pour broadcaster après la transaction
      */
-    public function updateElosForRound(Round $round): array
+    public function updateElosForRound(Round $round, ?\Illuminate\Support\Collection $podium = null, array $tracksHistory = []): array
     {
         // S'assurer que la relation room est chargée
         if (! $round->relationLoaded('room')) {
             $round->load('room');
         }
 
-        // Récupérer le podium des joueurs avec leurs scores totaux
-        $podium = $round->usersPodium()->get();
+        // Si podium n'est pas fourni, le calculer depuis les standings ou scores
+        if ($podium === null) {
+            // Essayer depuis les standings d'abord (si round terminé)
+            if ($round->finished_at && $round->standings()->exists()) {
+                $podium = $round->standings()
+                    ->select('user_id', 'total_score as total', 'team_id')
+                    ->orderByDesc('total_score')
+                    ->get();
+            } else {
+                // Sinon, depuis les scores (compatibilité avec ancien système)
+                $podium = $round->usersPodium()->get();
+            }
+        }
 
         // Si aucun joueur, ne rien faire
         if ($podium->isEmpty()) {
@@ -153,11 +173,37 @@ class EloService
         $users = User::whereIn('id', $userIds)->get()->keyBy('id');
 
         // Récupérer les scores de tous les joueurs pour calculer les métriques de performance
-        // IMPORTANT: Faire ça avant que les scores soient supprimés
-        $scoresByUser = $round->scores()
-            ->whereIn('user_id', $userIds)
-            ->get()
-            ->groupBy('user_id');
+        // Si on utilise Redis, les scores individuels peuvent ne plus exister
+        // On utilise les standings ou on calcule depuis Redis
+        $scoresByUser = collect();
+        if ($round->scores()->exists()) {
+            $scoresByUser = $round->scores()
+                ->whereIn('user_id', $userIds)
+                ->get()
+                ->groupBy('user_id');
+        }
+
+        // Calculer le nombre total de tracks dans le round
+        $totalTracksInRound = count($round->tracks ?? []);
+
+        // Utiliser l'historique des tracks depuis Redis (fourni en paramètre)
+        // Calculer le nombre de tracks écoutées depuis l'historique
+        $tracksPlayedByUser = collect();
+        if (! empty($tracksHistory)) {
+            foreach ($tracksHistory as $userId => $history) {
+                // Compter les tracks uniques (par track_id)
+                $uniqueTrackIds = collect($history)->pluck('track_id')->unique();
+                $tracksPlayedByUser[$userId] = $uniqueTrackIds->count();
+            }
+        } else {
+            // Fallback : calculer depuis les scores DB (pour les anciens rounds)
+            // Compter les tracks distinctes pour chaque joueur depuis les scores
+            foreach ($userIds as $userId) {
+                $userScores = $scoresByUser->get($userId, collect());
+                $uniqueTrackIds = $userScores->pluck('track_id')->unique();
+                $tracksPlayedByUser[$userId] = $uniqueTrackIds->count();
+            }
+        }
 
         // Récupérer la durée des tracks pour calculer les réponses rapides
         $trackDuration = $round->room->track_duration ?? 30;
@@ -166,6 +212,29 @@ class EloService
         // Préparer les données pour le calcul
         $standings = [];
         $totalPlayers = $podium->count();
+
+        // Créer une collection des joueurs valides (qui ont joué assez de tracks) pour le calcul d'ELO
+        $validPlayersForElo = collect();
+        foreach ($podium as $podiumEntry) {
+            $userId = $podiumEntry->user_id;
+            $tracksPlayed = $tracksPlayedByUser->get($userId, 0);
+            $tracksPlayedPercentage = $totalTracksInRound > 0
+                ? $tracksPlayed / $totalTracksInRound
+                : 0;
+            $hasPlayedEnoughTracks = $tracksPlayedPercentage >= self::MIN_TRACKS_PLAYED_PERCENTAGE;
+
+            if ($hasPlayedEnoughTracks) {
+                $validPlayersForElo->push($podiumEntry);
+            }
+        }
+
+        // Nombre de joueurs valides pour le calcul d'ELO
+        $totalValidPlayers = $validPlayersForElo->count();
+
+        // Si moins de 3 joueurs valides, ne pas compter l'ELO pour personne
+        if ($totalValidPlayers < 3) {
+            $isEloCounted = false;
+        }
 
         foreach ($podium as $index => $podiumEntry) {
             $userId = $podiumEntry->user_id;
@@ -180,19 +249,39 @@ class EloService
             $totalScore = (float) $podiumEntry->total;
 
             // Calculer les métriques de performance
+            // Si on utilise Redis, les scores individuels peuvent ne plus exister
+            // On calcule les métriques depuis les scores DB si disponibles, sinon valeurs par défaut
             $userScores = $scoresByUser->get($userId, collect());
-            $performanceMetrics = $this->calculatePerformanceMetrics($userScores, $speedBonusThreshold);
+            if ($userScores->isEmpty()) {
+                // Pas de scores individuels (utilisation de Redis), métriques par défaut
+                $performanceMetrics = [
+                    'average_response_time' => null,
+                    'fast_answers_count' => 0,
+                    'total_answers_count' => 0,
+                ];
+            } else {
+                $performanceMetrics = $this->calculatePerformanceMetrics($userScores, $speedBonusThreshold);
+            }
 
             // Calculer le win streak
             $winStreak = $this->calculateWinStreak($round, $userId, $position);
 
-            // Calculer l'ELO seulement si on doit le compter
-            if ($isEloCounted) {
+            // Vérifier si le joueur a joué assez de tracks pour que son ELO soit compté
+            $tracksPlayed = $tracksPlayedByUser->get($userId, 0);
+            $tracksPlayedPercentage = $totalTracksInRound > 0
+                ? $tracksPlayed / $totalTracksInRound
+                : 0;
+            $hasPlayedEnoughTracks = $tracksPlayedPercentage >= self::MIN_TRACKS_PLAYED_PERCENTAGE;
+
+            // Calculer l'ELO seulement si on doit le compter ET si le joueur a joué assez de tracks
+            $isEloCountedForUser = $isEloCounted && $hasPlayedEnoughTracks;
+
+            if ($isEloCountedForUser) {
                 // Compter le nombre de rounds de placement joués par ce joueur
                 $placementRoundsPlayed = $this->getPlacementRoundsPlayed($userId);
 
-                // Récupérer les ELO des autres joueurs (adversaires)
-                $opponentElos = $podium->reject(function ($entry) use ($userId) {
+                // Récupérer les ELO des autres joueurs valides (adversaires qui ont aussi joué assez de tracks)
+                $opponentElos = $validPlayersForElo->reject(function ($entry) use ($userId) {
                     return $entry->user_id === $userId;
                 })->map(function ($entry) use ($users) {
                     $opponentUser = $users->get($entry->user_id);
@@ -200,17 +289,49 @@ class EloService
                     return $opponentUser ? ($opponentUser->elo ?? self::INITIAL_ELO) : self::INITIAL_ELO;
                 });
 
+                // Calculer la position parmi les joueurs valides seulement
+                // Trier les joueurs valides par score total décroissant pour obtenir la position correcte
+                $sortedValidPlayers = $validPlayersForElo->sortByDesc('total')->values();
+                $validPosition = $sortedValidPlayers->search(function ($entry) use ($userId) {
+                    return $entry->user_id === $userId;
+                });
+                $validPosition = $validPosition !== false ? $validPosition + 1 : $position;
+
                 // Calculer le changement d'ELO avec le nouveau système
-                $eloChange = $this->calculateEloChange($userElo, $opponentElos, $position, $totalPlayers, $placementRoundsPlayed);
+                // Utiliser la position parmi les joueurs valides et le nombre de joueurs valides
+                $eloChange = $this->calculateEloChange($userElo, $opponentElos, $validPosition, $totalValidPlayers, $placementRoundsPlayed);
 
                 // Appliquer la protection contre l'inflation/déflation
                 $eloChange = $this->applyInflationProtection($eloChange, $userElo);
+
+                // Ajuster le changement d'ELO proportionnellement au ratio de tracks jouées
+                // Si le joueur a joué 90% des tracks, il reçoit 90% du changement d'ELO
+                // Cela permet aux joueurs arrivés en milieu de partie de faire évoluer leur ELO
+                // mais de manière proportionnelle au nombre de tracks jouées
+                $eloChange = (int) round($eloChange * $tracksPlayedPercentage);
 
                 $eloAfter = $userElo + $eloChange;
             } else {
                 // Pas de changement d'ELO si les conditions ne sont pas remplies
                 $eloChange = 0;
                 $eloAfter = $userElo;
+            }
+
+            // Récupérer l'historique des tracks depuis Redis
+            // Si vide, construire depuis les scores DB (pour les anciens rounds)
+            $userTracksHistory = $tracksHistory[$userId] ?? [];
+            if (empty($userTracksHistory) && $scoresByUser->has($userId)) {
+                // Construire l'historique depuis les scores DB pour compatibilité
+                $userScores = $scoresByUser->get($userId);
+                $userTracksHistory = $userScores->map(function ($score) {
+                    return [
+                        'track_id' => $score->track_id,
+                        'answer_id' => $score->answer_id,
+                        'response_time' => $score->time,
+                        'position' => null, // Ne peut pas être calculé sans comparer avec les autres
+                        'score' => $score->score,
+                    ];
+                })->values()->toArray();
             }
 
             $standings[] = [
@@ -223,10 +344,11 @@ class EloService
                 'elo_before' => $userElo,
                 'elo_after' => $eloAfter,
                 'elo_change' => $eloChange,
-                'is_elo_counted' => $isEloCounted,
+                'is_elo_counted' => $isEloCountedForUser,
                 'average_response_time' => $performanceMetrics['average_response_time'],
                 'fast_answers_count' => $performanceMetrics['fast_answers_count'],
                 'total_answers_count' => $performanceMetrics['total_answers_count'],
+                'tracks_history' => $userTracksHistory,
                 'win_streak' => $winStreak,
             ];
         }
@@ -240,6 +362,7 @@ class EloService
             RoundStanding::create($standingData);
 
             // Mettre à jour l'ELO de l'utilisateur seulement si is_elo_counted = true
+            // (cela inclut maintenant la vérification du pourcentage de tracks jouées)
             if ($standingData['is_elo_counted']) {
                 $user = $users->get($standingData['user_id']);
                 if ($user) {

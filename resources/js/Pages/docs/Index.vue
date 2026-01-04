@@ -186,6 +186,7 @@ const __ = (key, replace = {}) => {
                 <li>C'est affiché <strong>pendant les parties</strong> pour évaluer la compétence</li>
                 <li>Système de <strong>placement</strong> pour les nouveaux joueurs (10 premiers rounds)</li>
                 <li>K-factor variable selon ton niveau d'expérience</li>
+                <li><strong>Calcul proportionnel</strong> : Si tu arrives en milieu de partie, ton ELO évolue proportionnellement aux tracks jouées (minimum 80%)</li>
               </ul>
             </div>
             <div class="mt-4">

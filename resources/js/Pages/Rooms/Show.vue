@@ -95,6 +95,12 @@ const joining = () => {
       if (response.data.room) {
         Object.assign(room.value, response.data.room) // Update local room ref
       }
+      // Enregistrer que le joueur a écouté cette track (même s'il rejoint en cours)
+      if (response.data.round.id && response.data.track.id) {
+        axios.post(`/rounds/${response.data.round.id}/tracks/${response.data.track.id}/listened`).catch(() => {
+          // Ignorer les erreurs silencieusement
+        })
+      }
     } else {
       initialTrack.value = null
       initialStartTime.value = 0

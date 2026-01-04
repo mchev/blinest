@@ -7,7 +7,7 @@ use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
 use App\Jobs\ProcessDeletedTrack;
-use App\Jobs\ProcessRoundElo;
+use App\Jobs\ProcessRoundFinalization;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -67,8 +67,8 @@ class Round extends Model
         ProcessRoundFinished::dispatch($this->room)
             ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
-        // Calcul de l'ELO et nettoyage des scores
-        ProcessRoundElo::dispatch($this)->afterCommit();
+        // Agrégation finale : ELO, standings, total_scores en batch
+        ProcessRoundFinalization::dispatch($this)->afterCommit();
 
         broadcast(new RoundFinished($this));
     }
@@ -169,9 +169,19 @@ class Round extends Model
         return $this->is_playing;
     }
 
-    public function userScore(User $user)
+    public function userScore(User $user): float
     {
-        return floatval($user->scores()->where('round_id', $this->id)->sum('score'));
+        // Si le round est en cours, utiliser Redis (plus performant)
+        if ($this->is_playing && ! $this->finished_at) {
+            $roundScoreService = app(\App\Services\RoundScoreService::class);
+
+            return $roundScoreService->getUserScore($this->id, $user->id);
+        }
+
+        // Sinon, utiliser les standings (déjà agrégés)
+        $standing = $this->standings()->where('user_id', $user->id)->first();
+
+        return $standing ? (float) $standing->total_score : 0.0;
     }
 
     public function room(): BelongsTo
@@ -191,15 +201,37 @@ class Round extends Model
 
     public function usersPodium()
     {
-        return $this->scores()
+        // Si le round est en cours, utiliser Redis (plus performant)
+        if ($this->is_playing && ! $this->finished_at) {
+            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $podium = $roundScoreService->getPodium($this->id, 100);
+
+            // Convertir en format compatible avec l'ancien système
+            // On charge les users et teams pour avoir les relations
+            $userIds = array_keys($podium);
+            $users = \App\Models\User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+
+            return collect($podium)->map(function ($total, $userId) use ($users) {
+                $user = $users->get($userId);
+
+                return (object) [
+                    'user_id' => $userId,
+                    'total' => $total,
+                    'team_id' => $user?->team?->id,
+                    'user' => $user,
+                ];
+            })->values();
+        }
+
+        // Sinon, utiliser les standings (déjà agrégés)
+        return $this->standings()
             ->select([
-                \DB::raw('SUM(score) as total'),
                 'user_id',
-                \DB::raw('MAX(team_id) as team_id'), // Prendre le team_id le plus récent si plusieurs
+                'total_score as total',
+                'team_id',
             ])
             ->with('user.userLevel')
-            ->groupBy('user_id')
-            ->orderByDesc('total');
+            ->orderByDesc('total_score');
     }
 
     public function teamsPodium()

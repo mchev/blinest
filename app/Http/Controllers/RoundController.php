@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
-use App\Jobs\ProcessAddScoreToTotalScore;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
+use App\Services\RoundScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -115,7 +115,19 @@ class RoundController extends Controller
             $clientWords = is_array($clientWords) ? array_filter(array_map('trim', $clientWords), fn ($w) => ! empty($w)) : [];
             $userWords = array_unique(array_merge($newWords, $clientWords));
 
-            $alreadyFoundAnswersIds = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->pluck('answer_id');
+            // Récupérer les answer_ids déjà trouvés depuis Redis (nouveau système)
+            // Fallback vers scores DB pour compatibilité avec anciens rounds
+            $roundScoreService = app(RoundScoreService::class);
+            $alreadyFoundAnswersIds = $roundScoreService->getFoundAnswerIds($round->id, $user->id, $track->id);
+
+            // Si Redis est vide, fallback vers scores DB (anciens rounds)
+            if (empty($alreadyFoundAnswersIds)) {
+                $alreadyFoundAnswersIds = $user->scores()
+                    ->where('round_id', $round->id)
+                    ->where('track_id', $track->id)
+                    ->pluck('answer_id')
+                    ->toArray();
+            }
 
             $trackAnswers = Cache::rememberForever('track-'.$track->id.'-answers', function () use ($track) {
                 return $track->answers;
@@ -248,19 +260,26 @@ class RoundController extends Controller
                         'value' => $answer->value, // Include original value with parentheses for display
                     ];
 
-                    // Save score to db - use insert for faster performance
-                    $savedScore = $user->scores()->create([
-                        'team_id' => $user?->team?->id,
-                        'round_id' => $round->id,
-                        'track_id' => $track->id,
-                        'answer_id' => $answer->id,
-                        'score' => $score,
-                        'time' => $request->input('currentTime'),
-                    ]);
+                    // Utiliser Redis pour les scores en temps réel (plus performant)
+                    // On ne crée plus de Score en DB pendant le round
+                    $roundScoreService = app(RoundScoreService::class);
+                    $roundScoreService->addScore($round->id, $user->id, $score);
 
-                    // Increment total scores - dispatch async to not block response
-                    // This will also update the user level if the score is from a public room
-                    ProcessAddScoreToTotalScore::dispatch($savedScore);
+                    // Enregistrer les détails de la track (pour l'historique)
+                    $roundScoreService->recordTrackDetails(
+                        $round->id,
+                        $user->id,
+                        $track->id,
+                        $request->input('currentTime'),
+                        null, // position sera calculée à la fin du round
+                        $score,
+                        $answer->id // answer_id pour recoupements
+                    );
+
+                    // Pour la compatibilité et les métriques, on peut encore créer un Score
+                    // mais seulement si nécessaire (pour les métriques de performance)
+                    // Pour l'instant, on stocke juste le total dans Redis
+                    // Les métriques détaillées seront calculées depuis Redis si nécessaire
 
                 } elseif (count($goodWords) >= (count($answerWords) / 2)) {
                     $almostAnswers = true;
@@ -268,7 +287,13 @@ class RoundController extends Controller
             }
 
             if (! empty($goodAnswers)) {
-                $totalUserAnswers = $user->scores()->where('round_id', $round->id)->where('track_id', $track->id)->count();
+                // Récupérer le score total depuis Redis
+                $roundScoreService = app(RoundScoreService::class);
+                $totalScore = $roundScoreService->getUserScore($round->id, $user->id);
+
+                // Pour compter les réponses, on peut utiliser Redis ou compter depuis les goodAnswers
+                // Pour l'instant, on utilise le count des goodAnswers de cette requête
+                $totalUserAnswers = count($goodAnswers);
                 $totalTrackAnswers = $trackAnswers->count();
                 $message = $this->getMessage('good');
 
@@ -278,7 +303,7 @@ class RoundController extends Controller
                     'user_id' => $user->id,
                     'track_id' => $track->id,
                     'answers' => $answers,
-                    'total' => $round->userScore($user),
+                    'total' => $totalScore,
                     'time' => $request->input('currentTime'),
                 ]));
 
@@ -303,5 +328,32 @@ class RoundController extends Controller
                 'message' => $message,
             ], 200);
         }
+    }
+
+    /**
+     * Enregistre qu'un joueur a écouté une track (même sans trouver de réponse)
+     * Utilise Redis pour éviter les écritures DB pendant le round
+     */
+    public function trackListened(Request $request, Round $round, Track $track)
+    {
+        $user = $request->user();
+
+        // Vérifier que la track fait partie du round
+        $tracks = (array) $round->tracks;
+        if (! in_array($track->id, $tracks)) {
+            return response()->json(['error' => 'Track not in round'], 400);
+        }
+
+        // Vérifier que le round est en cours
+        if ($round->finished_at) {
+            return response()->json(['error' => 'Round is finished'], 400);
+        }
+
+        // Enregistrer dans Redis (plus performant que DB)
+        // On enregistre juste que la track a été écoutée (sans score si pas de réponse trouvée)
+        $roundScoreService = app(RoundScoreService::class);
+        $roundScoreService->recordTrackDetails($round->id, $user->id, $track->id);
+
+        return response()->json(['success' => true], 200);
     }
 }

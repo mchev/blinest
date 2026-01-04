@@ -171,13 +171,13 @@ class Room extends Model
             ->orderBy('total', 'DESC');
     }
 
-    public function weekUsersScores(): HasManyThrough
+    public function weekUsersScores(): HasMany
     {
-        return $this->hasManyThrough(Score::class, Round::class)
-            ->selectRaw('MAX(scores.created_at) as max_created_at, scores.user_id, SUM(scores.score) as total')
-            ->where('scores.created_at', '>=', now()->subDays(7))
+        return $this->hasMany(\App\Models\RoundStanding::class, 'room_id')
+            ->selectRaw('MAX(round_standings.created_at) as max_created_at, round_standings.user_id, SUM(round_standings.total_score) as total')
+            ->where('round_standings.created_at', '>=', now()->subDays(7))
             ->with('user')
-            ->groupBy('user_id')
+            ->groupBy('round_standings.user_id')
             ->orderByDesc('total')
             ->limit(10);
     }

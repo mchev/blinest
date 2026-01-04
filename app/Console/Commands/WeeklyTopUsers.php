@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Score;
+use App\Models\RoundStanding;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,16 +25,16 @@ class WeeklyTopUsers extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-
-        $weekly_top_users = Score::with('user')
-            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+        // Utiliser round_standings au lieu de scores (plus performant et cohérent)
+        $weekly_top_users = RoundStanding::with('user')
+            ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
+            ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
-            ->where('scores.created_at', '>=', now()->subDays(7))
-            ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
-            ->groupBy('scores.user_id')
+            ->where('round_standings.created_at', '>=', now()->subDays(7))
+            ->selectRaw('round_standings.user_id, ROUND(SUM(round_standings.total_score), 1) as total_score')
+            ->groupBy('round_standings.user_id')
             ->orderByDesc('total_score')
             ->limit(10)
             ->get();

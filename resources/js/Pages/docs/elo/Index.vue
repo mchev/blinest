@@ -38,10 +38,11 @@ const __ = (key, replace = {}) => {
           <li><a href="#calcul-changements" class="text-blue-400 hover:text-blue-300">5. Calcul des changements d'ELO</a></li>
           <li><a href="#k-factor" class="text-blue-400 hover:text-blue-300">6. K-factor variable</a></li>
           <li><a href="#conditions" class="text-blue-400 hover:text-blue-300">7. Conditions pour compter l'ELO</a></li>
-          <li><a href="#metriques" class="text-blue-400 hover:text-blue-300">8. Métriques de performance</a></li>
-          <li><a href="#win-streak" class="text-blue-400 hover:text-blue-300">9. Win Streak</a></li>
-          <li><a href="#protection" class="text-blue-400 hover:text-blue-300">10. Protection contre l'inflation/déflation</a></li>
-          <li><a href="#faq" class="text-blue-400 hover:text-blue-300">11. FAQ</a></li>
+          <li><a href="#tracks-jouees" class="text-blue-400 hover:text-blue-300">8. Tracks jouées et calcul proportionnel</a></li>
+          <li><a href="#metriques" class="text-blue-400 hover:text-blue-300">9. Métriques de performance</a></li>
+          <li><a href="#win-streak" class="text-blue-400 hover:text-blue-300">10. Win Streak</a></li>
+          <li><a href="#protection" class="text-blue-400 hover:text-blue-300">11. Protection contre l'inflation/déflation</a></li>
+          <li><a href="#faq" class="text-blue-400 hover:text-blue-300">12. FAQ</a></li>
         </ul>
       </div>
 
@@ -257,6 +258,10 @@ const __ = (key, replace = {}) => {
             <span class="text-green-400 mt-1">✅</span>
             <span><strong>Le round est terminé</strong> (vous avez participé jusqu'à la fin)</span>
           </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-400 mt-1">✅</span>
+            <span><strong>Vous avez joué au moins 80% des tracks</strong> du round</span>
+          </li>
         </ul>
 
         <h3 class="text-xl font-semibold mb-3 mt-6">Votre ELO n'est PAS mis à jour si :</h3>
@@ -271,7 +276,7 @@ const __ = (key, replace = {}) => {
           </li>
           <li class="flex items-start gap-2">
             <span class="text-red-400 mt-1">❌</span>
-            <span>Vous quittez le round avant la fin</span>
+            <span>Vous avez joué moins de 80% des tracks du round</span>
           </li>
         </ul>
 
@@ -282,9 +287,89 @@ const __ = (key, replace = {}) => {
         </div>
       </section>
 
+      <!-- Tracks jouées -->
+      <section id="tracks-jouees" class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
+        <h2 class="text-2xl font-bold mb-4">8. Tracks jouées et calcul proportionnel</h2>
+        
+        <h3 class="text-xl font-semibold mb-3 mt-6">Comment ça fonctionne ?</h3>
+        <p class="text-neutral-300 mb-4">
+          Le système enregistre toutes les tracks que vous avez jouées dans un round, même si vous êtes arrivé en milieu de partie. Cela permet un calcul d'ELO plus juste et équitable.
+        </p>
+
+        <h3 class="text-xl font-semibold mb-3 mt-6">Seuil minimum : 80% des tracks</h3>
+        <p class="text-neutral-300 mb-4">
+          Pour que votre ELO soit compté, vous devez avoir joué <strong>au moins 80% des tracks</strong> du round. Par exemple :
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-neutral-300 mb-4">
+          <li><strong>Round de 10 tracks</strong> : Vous devez avoir joué au moins 8 tracks</li>
+          <li><strong>Round de 5 tracks</strong> : Vous devez avoir joué au moins 4 tracks</li>
+        </ul>
+        <div class="bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded mb-4">
+          <p class="text-white font-semibold">
+            <strong>Pourquoi 80% ?</strong> Ce seuil garantit que vous avez participé à une partie significative du round, ce qui rend le calcul d'ELO plus fiable.
+          </p>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3 mt-6">Calcul proportionnel du changement d'ELO</h3>
+        <p class="text-neutral-300 mb-4">
+          Si vous avez joué au moins 80% des tracks, votre changement d'ELO est <strong>proportionnel au nombre de tracks jouées</strong> :
+        </p>
+        <div class="bg-purple-900/20 border border-purple-500/30 p-4 rounded mb-4">
+          <p class="text-white font-mono text-lg font-semibold text-center">
+            <strong>Changement ELO final = Changement ELO calculé × (Tracks jouées / Tracks totales)</strong>
+          </p>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3 mt-6">Exemples concrets</h3>
+        <div class="space-y-4 mb-4">
+          <div class="bg-slate-800/50 rounded-lg p-4">
+            <p class="text-white font-semibold mb-2">Exemple 1 : Round complet (10/10 tracks)</p>
+            <p class="text-neutral-300 text-sm">
+              Vous avez joué toutes les 10 tracks d'un round. Le système calcule un changement d'ELO de +20 points.
+              <br><strong>Résultat :</strong> Vous recevez 100% du changement → <strong>+20 points</strong>
+            </p>
+          </div>
+          <div class="bg-slate-800/50 rounded-lg p-4">
+            <p class="text-white font-semibold mb-2">Exemple 2 : Arrivée en milieu de partie (9/10 tracks)</p>
+            <p class="text-neutral-300 text-sm">
+              Vous êtes arrivé après le début et avez joué 9 tracks sur 10. Le système calcule un changement d'ELO de +20 points.
+              <br><strong>Résultat :</strong> Vous recevez 90% du changement → <strong>+18 points</strong> (20 × 0.9)
+            </p>
+          </div>
+          <div class="bg-slate-800/50 rounded-lg p-4">
+            <p class="text-white font-semibold mb-2">Exemple 3 : Arrivée tardive (8/10 tracks)</p>
+            <p class="text-neutral-300 text-sm">
+              Vous êtes arrivé tard et avez joué 8 tracks sur 10 (exactement le minimum). Le système calcule un changement d'ELO de +20 points.
+              <br><strong>Résultat :</strong> Vous recevez 80% du changement → <strong>+16 points</strong> (20 × 0.8)
+            </p>
+          </div>
+          <div class="bg-slate-800/50 rounded-lg p-4">
+            <p class="text-white font-semibold mb-2">Exemple 4 : Pas assez de tracks (7/10 tracks)</p>
+            <p class="text-neutral-300 text-sm">
+              Vous avez joué seulement 7 tracks sur 10 (70% < 80%).
+              <br><strong>Résultat :</strong> Votre ELO <strong>n'est pas compté</strong> pour ce round
+            </p>
+          </div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3 mt-6">Avantages de ce système</h3>
+        <ul class="list-disc list-inside space-y-2 text-neutral-300 mb-4">
+          <li><strong>Équité</strong> : Les joueurs arrivés en milieu de partie peuvent quand même faire évoluer leur ELO</li>
+          <li><strong>Proportionnalité</strong> : Plus vous jouez de tracks, plus votre ELO peut évoluer</li>
+          <li><strong>Fiabilité</strong> : Le seuil de 80% garantit que seuls les joueurs ayant participé significativement comptent</li>
+          <li><strong>Flexibilité</strong> : Vous n'êtes pas pénalisé si vous rejoignez une partie en cours</li>
+        </ul>
+
+        <div class="bg-green-900/20 border-l-4 border-green-500 p-4 rounded">
+          <p class="text-white font-semibold">
+            <strong>En résumé :</strong> Si vous rejoignez une partie en cours et jouez au moins 80% des tracks restantes, votre ELO évoluera proportionnellement au nombre de tracks que vous avez réellement jouées.
+          </p>
+        </div>
+      </section>
+
       <!-- Métriques -->
       <section id="metriques" class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">8. Métriques de performance</h2>
+        <h2 class="text-2xl font-bold mb-4">9. Métriques de performance</h2>
         <p class="text-neutral-300 mb-4">
           En plus de l'ELO, le système enregistre plusieurs métriques pour chaque round :
         </p>
@@ -313,7 +398,7 @@ const __ = (key, replace = {}) => {
 
       <!-- Win Streak -->
       <section id="win-streak" class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">9. Win Streak</h2>
+        <h2 class="text-2xl font-bold mb-4">10. Win Streak</h2>
         
         <h3 class="text-xl font-semibold mb-3 mt-6">Qu'est-ce que le Win Streak ?</h3>
         <p class="text-neutral-300 mb-4">
@@ -345,7 +430,7 @@ const __ = (key, replace = {}) => {
 
       <!-- Protection -->
       <section id="protection" class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">10. Protection contre l'inflation/déflation</h2>
+        <h2 class="text-2xl font-bold mb-4">11. Protection contre l'inflation/déflation</h2>
         
         <h3 class="text-xl font-semibold mb-3 mt-6">Pourquoi cette protection ?</h3>
         <p class="text-neutral-300 mb-4">
@@ -370,7 +455,7 @@ const __ = (key, replace = {}) => {
 
       <!-- FAQ -->
       <section id="faq" class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">11. FAQ - Questions Fréquentes</h2>
+        <h2 class="text-2xl font-bold mb-4">12. FAQ - Questions Fréquentes</h2>
 
         <div class="space-y-6">
           <div class="bg-slate-800/50 rounded-lg p-5">
@@ -390,9 +475,25 @@ const __ = (key, replace = {}) => {
               <li>La room est <strong>publique</strong></li>
               <li>Il y a <strong>au moins 3 joueurs</strong></li>
               <li>Le round est <strong>terminé</strong></li>
+              <li>Vous avez joué <strong>au moins 80% des tracks</strong> du round</li>
             </ul>
             <p class="text-neutral-300 mt-2">
               Si une de ces conditions n'est pas remplie, votre ELO reste inchangé, mais vos statistiques sont quand même enregistrées.
+            </p>
+          </div>
+
+          <div class="bg-slate-800/50 rounded-lg p-5">
+            <h3 class="text-lg font-semibold text-blue-400 mb-3">Que se passe-t-il si j'arrive en milieu de partie ?</h3>
+            <p class="text-neutral-300 mb-2">
+              Si vous rejoignez une partie en cours, votre ELO peut quand même évoluer, mais de manière proportionnelle :
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-neutral-300 mb-2">
+              <li>Si vous jouez <strong>au moins 80% des tracks</strong> restantes, votre ELO sera compté</li>
+              <li>Le changement d'ELO sera <strong>proportionnel</strong> au nombre de tracks que vous avez jouées</li>
+              <li>Par exemple : si vous jouez 9 tracks sur 10, vous recevrez 90% du changement d'ELO calculé</li>
+            </ul>
+            <p class="text-neutral-300 mt-2">
+              <strong>Exemple :</strong> Le système calcule un changement de +20 points, mais vous avez joué 9/10 tracks. Vous recevrez +18 points (20 × 0.9).
             </p>
           </div>
 
@@ -486,7 +587,11 @@ const __ = (key, replace = {}) => {
           </li>
           <li class="flex items-start gap-2">
             <span class="text-green-400 mt-1">✅</span>
-            <span><strong>Conditions</strong> : Seulement les rooms publiques avec 3+ joueurs comptent pour l'ELO</span>
+            <span><strong>Conditions</strong> : Seulement les rooms publiques avec 3+ joueurs et 80%+ de tracks jouées</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-400 mt-1">✅</span>
+            <span><strong>Calcul proportionnel</strong> : L'ELO évolue proportionnellement au nombre de tracks jouées</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-green-400 mt-1">✅</span>

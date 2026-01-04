@@ -158,14 +158,14 @@ class RankingController extends Controller
     {
         $user = Auth::user();
 
-        // Paginated Week (last 7 days)
+        // Paginated Week (last 7 days) - Utiliser round_standings au lieu de scores
         // First, get the total count without ORDER BY
-        $total = \App\Models\Score::query()
-            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+        $total = \App\Models\RoundStanding::query()
+            ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
+            ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
-            ->where('scores.created_at', '>=', now()->subDays(7))
-            ->groupBy('scores.user_id')
+            ->where('round_standings.created_at', '>=', now()->subDays(7))
+            ->groupBy('round_standings.user_id')
             ->get()
             ->count();
 
@@ -174,13 +174,13 @@ class RankingController extends Controller
         $currentPage = request()->get('page', 1);
         $offset = ($currentPage - 1) * $perPage;
 
-        $userIdsPaginated = \App\Models\Score::query()
-            ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-            ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+        $userIdsPaginated = \App\Models\RoundStanding::query()
+            ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
+            ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
-            ->where('scores.created_at', '>=', now()->subDays(7))
-            ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
-            ->groupBy('scores.user_id')
+            ->where('round_standings.created_at', '>=', now()->subDays(7))
+            ->selectRaw('round_standings.user_id, ROUND(SUM(round_standings.total_score), 1) as total_score')
+            ->groupBy('round_standings.user_id')
             ->orderByDesc('total_score')
             ->offset($offset)
             ->limit($perPage)
@@ -191,8 +191,8 @@ class RankingController extends Controller
             ->get()
             ->keyBy('id');
 
-        $topWeek = $userIdsPaginated->map(function ($score) use ($users) {
-            $user = $users->get($score->user_id);
+        $topWeek = $userIdsPaginated->map(function ($standing) use ($users) {
+            $user = $users->get($standing->user_id);
 
             return [
                 'user' => $user ? [
@@ -202,7 +202,7 @@ class RankingController extends Controller
                     'elo' => $user->elo ?? 1500,
                     'userLevel' => $user->userLevel,
                 ] : null,
-                'total_score' => (float) $score->total_score,
+                'total_score' => (float) $standing->total_score,
             ];
         })->filter(fn ($item) => $item['user'] !== null);
 
@@ -218,24 +218,24 @@ class RankingController extends Controller
         $userPosition = null;
         $userWeekScore = null;
         if ($user) {
-            $userWeekScore = \App\Models\Score::query()
-                ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-                ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+            $userWeekScore = \App\Models\RoundStanding::query()
+                ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
+                ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
                 ->where('rooms.is_public', true)
-                ->where('scores.user_id', $user->id)
-                ->where('scores.created_at', '>=', now()->subDays(7))
-                ->selectRaw('ROUND(SUM(scores.score), 1) as total_score')
+                ->where('round_standings.user_id', $user->id)
+                ->where('round_standings.created_at', '>=', now()->subDays(7))
+                ->selectRaw('ROUND(SUM(round_standings.total_score), 1) as total_score')
                 ->first();
 
             if ($userWeekScore) {
-                $userWeekPosition = \App\Models\Score::query()
-                    ->join('rounds', 'scores.round_id', '=', 'rounds.id')
-                    ->join('rooms', 'rounds.room_id', '=', 'rooms.id')
+                $userWeekPosition = \App\Models\RoundStanding::query()
+                    ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
+                    ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
                     ->where('rooms.is_public', true)
-                    ->where('scores.created_at', '>=', now()->subDays(7))
-                    ->selectRaw('scores.user_id, ROUND(SUM(scores.score), 1) as total_score')
-                    ->groupBy('scores.user_id')
-                    ->havingRaw('ROUND(SUM(scores.score), 1) > ?', [$userWeekScore->total_score])
+                    ->where('round_standings.created_at', '>=', now()->subDays(7))
+                    ->selectRaw('round_standings.user_id, ROUND(SUM(round_standings.total_score), 1) as total_score')
+                    ->groupBy('round_standings.user_id')
+                    ->havingRaw('ROUND(SUM(round_standings.total_score), 1) > ?', [$userWeekScore->total_score])
                     ->count() + 1;
                 $userPosition = $userWeekPosition;
             }

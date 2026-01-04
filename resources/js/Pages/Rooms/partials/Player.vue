@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, onBeforeUnmount, watch } from 'vue'
+import axios from 'axios'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
 
 const props = defineProps({
@@ -319,6 +320,14 @@ const handleTrackPlayed = (e) => {
   }
   track.value = e.track
   waitingForNextTrack.value = false
+  
+  // Enregistrer que le joueur a écouté cette track (même sans trouver de réponse)
+  if (e.round && e.round.id && e.track && e.track.id) {
+    axios.post(`/rounds/${e.round.id}/tracks/${e.track.id}/listened`).catch(() => {
+      // Ignorer les erreurs silencieusement (peut arriver si le round est terminé)
+    })
+  }
+  
   play()
 }
 
