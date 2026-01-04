@@ -5,22 +5,43 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessUserCreated;
 use App\Models\User;
 use App\Providers\AppServiceProvider;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
 {
     public function redirect($provider)
     {
-        return Socialite::driver($provider)->redirect();
+        try {
+            return Socialite::driver($provider)->redirect();
+        } catch (\Exception $e) {
+            Log::error("Social auth redirect failed for provider: {$provider}", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('login')
+                ->with('error', __('Authentication service temporarily unavailable. Please try again later.'));
+        }
     }
 
     public function callback($provider)
     {
-        $getInfo = Socialite::driver($provider)->user();
-        $user = $this->createUser($getInfo, $provider);
-        auth()->login($user);
+        try {
+            $getInfo = Socialite::driver($provider)->user();
+            $user = $this->createUser($getInfo, $provider);
+            auth()->login($user);
 
-        return redirect()->intended(AppServiceProvider::HOME);
+            return redirect()->intended(AppServiceProvider::HOME);
+        } catch (\Exception $e) {
+            Log::error("Social auth callback failed for provider: {$provider}", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('login')
+                ->with('error', __('Failed to authenticate with :provider. Please try again.', ['provider' => ucfirst($provider)]));
+        }
     }
 
     public function createUser($getInfo, $provider)
