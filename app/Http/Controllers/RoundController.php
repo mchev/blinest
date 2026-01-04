@@ -252,6 +252,24 @@ class RoundController extends Controller
                         $actualSpeedBonus = false;
                     }
 
+                    // Vérifier atomiquement si cette réponse a déjà été trouvée
+                    // recordTrackDetails retourne false si la réponse existe déjà
+                    $roundScoreService = app(RoundScoreService::class);
+                    $wasNewAnswer = $roundScoreService->recordTrackDetails(
+                        $round->id,
+                        $user->id,
+                        $track->id,
+                        $request->input('currentTime'),
+                        null, // position sera calculée à la fin du round
+                        $score,
+                        $answer->id // answer_id pour recoupements
+                    );
+
+                    // Si la réponse existait déjà, ignorer cette requête
+                    if (! $wasNewAnswer) {
+                        continue;
+                    }
+
                     $answers[] = [
                         'id' => $answer->id,
                         'order' => $order,
@@ -262,19 +280,7 @@ class RoundController extends Controller
 
                     // Utiliser Redis pour les scores en temps réel (plus performant)
                     // On ne crée plus de Score en DB pendant le round
-                    $roundScoreService = app(RoundScoreService::class);
                     $roundScoreService->addScore($round->id, $user->id, $score);
-
-                    // Enregistrer les détails de la track (pour l'historique)
-                    $roundScoreService->recordTrackDetails(
-                        $round->id,
-                        $user->id,
-                        $track->id,
-                        $request->input('currentTime'),
-                        null, // position sera calculée à la fin du round
-                        $score,
-                        $answer->id // answer_id pour recoupements
-                    );
 
                     // Pour la compatibilité et les métriques, on peut encore créer un Score
                     // mais seulement si nécessaire (pour les métriques de performance)

@@ -58,17 +58,47 @@ class RoundScoreService
     /**
      * Enregistre les détails d'une track écoutée par un joueur
      * Structure: {track_id, answer_id, response_time, position, score}
+     *
+     * @return bool true si la réponse a été ajoutée (nouvelle), false si elle existait déjà
      */
-    public function recordTrackDetails(int $roundId, int $userId, int $trackId, ?float $responseTime = null, ?int $position = null, ?float $score = null, ?int $answerId = null): void
+    public function recordTrackDetails(int $roundId, int $userId, int $trackId, ?float $responseTime = null, ?int $position = null, ?float $score = null, ?int $answerId = null): bool
     {
+        // Utiliser un Set Redis pour stocker les réponses trouvées (atomique)
+        // Format: round:{roundId}:answers:{userId}:{trackId} = Set d'answer_ids
+        $answersKey = "round:{$roundId}:answers:{$userId}:{$trackId}";
+
+        // Si answer_id est fourni, vérifier atomiquement s'il existe déjà
+        if ($answerId !== null) {
+            $wasAdded = Redis::sadd($answersKey, $answerId);
+            Redis::expire($answersKey, self::REDIS_TTL);
+
+            // Si la réponse existait déjà (wasAdded = 0), ne pas continuer
+            if ($wasAdded === 0) {
+                return false;
+            }
+        }
+
+        // Stocker les détails complets dans un hash pour l'historique
         $key = "round:{$roundId}:tracks:{$userId}";
 
         // Récupérer l'historique existant
         $history = Redis::get($key);
         $tracks = $history ? json_decode($history, true) : [];
 
-        // Vérifier si cette track existe déjà (mise à jour) ou ajouter
-        $existingIndex = array_search($trackId, array_column($tracks, 'track_id'));
+        // Chercher si cette combinaison track_id + answer_id existe déjà
+        $existingIndex = false;
+        if ($answerId !== null) {
+            foreach ($tracks as $index => $trackData) {
+                if (isset($trackData['track_id']) && $trackData['track_id'] == $trackId
+                    && isset($trackData['answer_id']) && $trackData['answer_id'] == $answerId) {
+                    $existingIndex = $index;
+                    break;
+                }
+            }
+        } else {
+            // Si pas d'answer_id, chercher juste par track_id (pour compatibilité)
+            $existingIndex = array_search($trackId, array_column($tracks, 'track_id'));
+        }
 
         $trackData = [
             'track_id' => $trackId,
@@ -89,6 +119,8 @@ class RoundScoreService
         // Sauvegarder dans Redis
         Redis::set($key, json_encode($tracks));
         Redis::expire($key, self::REDIS_TTL);
+
+        return true;
     }
 
     /**
@@ -111,6 +143,15 @@ class RoundScoreService
      */
     public function getFoundAnswerIds(int $roundId, int $userId, int $trackId): array
     {
+        // Utiliser le Set Redis pour une vérification rapide et atomique
+        $answersKey = "round:{$roundId}:answers:{$userId}:{$trackId}";
+        $answerIds = Redis::smembers($answersKey);
+
+        if (! empty($answerIds)) {
+            return array_map('intval', $answerIds);
+        }
+
+        // Fallback vers l'historique JSON (pour compatibilité avec anciens rounds)
         $history = $this->getTracksHistory($roundId, $userId);
         $answerIds = [];
 
