@@ -225,13 +225,14 @@ class RoundController extends Controller
                     $score = $answer->score;
                     $goodAnswers[] = $answer;
 
+                    // Calculer l'ordre (premier, deuxième, troisième) AVANT d'ajouter la réponse
+                    // On compte combien de joueurs ont déjà trouvé cette réponse (sans nous)
+                    $roundScoreService = app(RoundScoreService::class);
+                    $playersWhoFoundAnswer = $roundScoreService->countPlayersWhoFoundAnswer($round->id, $track->id, $answer->id, $user->id);
+                    $order = $playersWhoFoundAnswer + 1; // +1 car on est le prochain
+
                     // Only apply bonuses if the base score is greater than 0
                     if ($answer->score > 0) {
-                        // Bonuses - Optimize: use count query with conditions instead of fetching all
-                        $order = Score::where('round_id', $round->id)
-                            ->where('track_id', $track->id)
-                            ->where('answer_id', $answer->id)
-                            ->count() + 1;
                         if ($order < 4) {
                             $score += 0.5;
                         }
@@ -245,16 +246,11 @@ class RoundController extends Controller
                         }
                     } else {
                         // No bonuses for 0-point answers
-                        $order = Score::where('round_id', $round->id)
-                            ->where('track_id', $track->id)
-                            ->where('answer_id', $answer->id)
-                            ->count() + 1;
                         $actualSpeedBonus = false;
                     }
 
                     // Vérifier atomiquement si cette réponse a déjà été trouvée
                     // recordTrackDetails retourne false si la réponse existe déjà
-                    $roundScoreService = app(RoundScoreService::class);
                     $wasNewAnswer = $roundScoreService->recordTrackDetails(
                         $round->id,
                         $user->id,
@@ -297,9 +293,8 @@ class RoundController extends Controller
                 $roundScoreService = app(RoundScoreService::class);
                 $totalScore = $roundScoreService->getUserScore($round->id, $user->id);
 
-                // Pour compter les réponses, on peut utiliser Redis ou compter depuis les goodAnswers
-                // Pour l'instant, on utilise le count des goodAnswers de cette requête
-                $totalUserAnswers = count($goodAnswers);
+                // Compter toutes les réponses trouvées par l'utilisateur pour cette track (depuis Redis)
+                $totalUserAnswers = $roundScoreService->countFoundAnswersForUser($round->id, $user->id, $track->id);
                 $totalTrackAnswers = $trackAnswers->count();
                 $message = $this->getMessage('good');
 

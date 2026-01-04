@@ -165,6 +165,64 @@ class RoundScoreService
     }
 
     /**
+     * Compte combien de joueurs ont trouvé une réponse spécifique
+     * Utilisé pour calculer l'ordre (premier, deuxième, troisième)
+     *
+     * @param  int|null  $excludeUserId  Si fourni, exclut cet utilisateur du comptage
+     * @return int Nombre de joueurs ayant trouvé cette réponse
+     */
+    public function countPlayersWhoFoundAnswer(int $roundId, int $trackId, int $answerId, ?int $excludeUserId = null): int
+    {
+        // Parcourir tous les joueurs et compter ceux qui ont cette réponse dans leur Set
+        $pattern = "round:{$roundId}:answers:*:{$trackId}";
+        $keys = Redis::keys($pattern);
+        $count = 0;
+
+        foreach ($keys as $key) {
+            // Extraire l'user_id de la clé (format: round:{roundId}:answers:{userId}:{trackId})
+            $parts = explode(':', $key);
+            $userId = isset($parts[3]) ? (int) $parts[3] : null;
+
+            // Exclure l'utilisateur spécifié si fourni
+            if ($excludeUserId !== null && $userId === $excludeUserId) {
+                continue;
+            }
+
+            $isMember = Redis::sismember($key, $answerId);
+            if ($isMember) {
+                $count++;
+            }
+        }
+
+        // Fallback vers Score DB si Redis est vide (compatibilité avec anciens rounds)
+        if ($count === 0) {
+            $query = \App\Models\Score::where('round_id', $roundId)
+                ->where('track_id', $trackId)
+                ->where('answer_id', $answerId);
+
+            if ($excludeUserId !== null) {
+                $query->where('user_id', '!=', $excludeUserId);
+            }
+
+            $count = $query->count();
+        }
+
+        return $count;
+    }
+
+    /**
+     * Compte le nombre total de réponses trouvées par un joueur pour une track
+     *
+     * @return int Nombre de réponses trouvées
+     */
+    public function countFoundAnswersForUser(int $roundId, int $userId, int $trackId): int
+    {
+        $foundAnswers = $this->getFoundAnswerIds($roundId, $userId, $trackId);
+
+        return count($foundAnswers);
+    }
+
+    /**
      * Récupère le nombre de tracks écoutées par un joueur
      */
     public function getTracksListenedCount(int $roundId, int $userId): int
