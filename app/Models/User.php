@@ -222,8 +222,12 @@ class User extends Authenticatable
 
     public function weekScoreByRoom(Room $room)
     {
-        return $this->scoreByRoom($room)
-            ->where('created_at', '>=', now()->subDays(7));
+        // Utiliser RoundStanding au lieu de Score pour la semaine
+        return $this->roundStandings()
+            ->where('room_id', $room->id)
+            ->where('created_at', '>=', now()->subDays(7))
+            ->selectRaw('MAX(created_at) as created_at, user_id, SUM(total_score) as total')
+            ->groupBy('user_id');
     }
 
     public function monthScoreByRoom(Room $room)

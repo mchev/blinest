@@ -74,11 +74,11 @@ class Team extends Model
 
     public function scoreByRoom(Room $room)
     {
-        return $this->scores()
-            ->whereRelation('round', function ($query) use ($room) {
-                $query->where('room_id', $room->id);
-            })
-            ->selectRaw('created_at, team_id, SUM(score) as total');
+        // Utiliser TotalScore au lieu de Score pour les équipes
+        return $this->totalScores()
+            ->where('room_id', $room->id)
+            ->selectRaw('MAX(updated_at) as created_at, totalscorable_id as team_id, SUM(score) as total')
+            ->groupBy('totalscorable_id');
     }
 
     public function purge()

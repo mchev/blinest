@@ -346,9 +346,9 @@ class RankingController extends Controller
     public function roomScores(Room $room)
     {
         $scores = Cache::remember($room->slug.'-scores', now()->addMinutes(10), fn () => [
-            'week' => $room->weekUsersScores,
+            'week' => $room->weekUsersScores()->with('user.userLevel')->get(),
             // 'month' => $room->monthUsersScores,
-            'lifetime' => $room->lifetimeUsersScores,
+            'lifetime' => $room->lifetimeUsersScores()->with('user.userLevel')->get(),
             'teams' => $room->lifetimeTeamsScores,
             'user' => [
                 'week' => Auth::user()->weekScoreByRoom($room)->first(),

@@ -4,8 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">        
         <link rel="canonical" href="{{ url()->current() }}" />
-        <link rel="icon" type="image/x-icon" href="/favicon.svg">
-        <link rel="manifest" href="/manifest.json">
+        
+        <!-- Favicons -->
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
         
         <!-- PWA / Standalone Mode -->
         <meta name="mobile-web-app-capable" content="yes">

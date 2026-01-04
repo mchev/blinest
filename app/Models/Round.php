@@ -223,6 +223,28 @@ class Round extends Model
             })->values();
         }
 
+        // Si le round est terminé mais que les standings n'existent pas encore,
+        // utiliser Redis (le job ProcessRoundFinalization n'a peut-être pas encore terminé)
+        if ($this->finished_at && ! $this->standings()->exists()) {
+            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $podium = $roundScoreService->getPodium($this->id, 100);
+
+            // Convertir en format compatible avec l'ancien système
+            $userIds = array_keys($podium);
+            $users = \App\Models\User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+
+            return collect($podium)->map(function ($total, $userId) use ($users) {
+                $user = $users->get($userId);
+
+                return (object) [
+                    'user_id' => $userId,
+                    'total' => $total,
+                    'team_id' => $user?->team?->id,
+                    'user' => $user,
+                ];
+            })->values();
+        }
+
         // Sinon, utiliser les standings (déjà agrégés)
         return $this->standings()
             ->select([
@@ -236,9 +258,69 @@ class Round extends Model
 
     public function teamsPodium()
     {
-        return $this->scores()
+        // Si le round est en cours, utiliser Redis (plus performant)
+        if ($this->is_playing && ! $this->finished_at) {
+            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $podium = $roundScoreService->getPodium($this->id, 100);
+
+            // Convertir en format compatible avec l'ancien système
+            $userIds = array_keys($podium);
+            $users = \App\Models\User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
+
+            // Grouper par équipe
+            $teamsScores = [];
+            foreach ($podium as $userId => $total) {
+                $user = $users->get($userId);
+                if ($user && $user->team) {
+                    $teamId = $user->team->id;
+                    if (! isset($teamsScores[$teamId])) {
+                        $teamsScores[$teamId] = [
+                            'team_id' => $teamId,
+                            'total' => 0,
+                            'team' => $user->team,
+                        ];
+                    }
+                    $teamsScores[$teamId]['total'] += $total;
+                }
+            }
+
+            return collect($teamsScores)->sortByDesc('total')->values();
+        }
+
+        // Si le round est terminé mais que les standings n'existent pas encore,
+        // utiliser Redis (le job ProcessRoundFinalization n'a peut-être pas encore terminé)
+        if ($this->finished_at && ! $this->standings()->exists()) {
+            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $podium = $roundScoreService->getPodium($this->id, 100);
+
+            // Convertir en format compatible avec l'ancien système
+            $userIds = array_keys($podium);
+            $users = \App\Models\User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
+
+            // Grouper par équipe
+            $teamsScores = [];
+            foreach ($podium as $userId => $total) {
+                $user = $users->get($userId);
+                if ($user && $user->team) {
+                    $teamId = $user->team->id;
+                    if (! isset($teamsScores[$teamId])) {
+                        $teamsScores[$teamId] = [
+                            'team_id' => $teamId,
+                            'total' => 0,
+                            'team' => $user->team,
+                        ];
+                    }
+                    $teamsScores[$teamId]['total'] += $total;
+                }
+            }
+
+            return collect($teamsScores)->sortByDesc('total')->values();
+        }
+
+        // Sinon, utiliser les standings (déjà agrégés)
+        return $this->standings()
             ->whereNotNull('team_id')
-            ->select([\DB::raw('SUM(score) as total'), 'team_id'])
+            ->select([\DB::raw('SUM(total_score) as total'), 'team_id'])
             ->with('team')
             ->groupBy('team_id')
             ->orderByDesc('total');
