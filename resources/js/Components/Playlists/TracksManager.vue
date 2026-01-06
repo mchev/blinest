@@ -78,11 +78,11 @@ const loadingStates = ref({
 const getDefaultProviders = () => [
   { id: 2, provider: 'youtube', name: 'Youtube', enabled: true },
   { id: 3, provider: 'itunes', name: 'Apple music', enabled: true },
-  { id: 4, provider: 'audius', name: 'Audius', enabled: true },
   { id: 5, provider: 'local', name: 'Blinest', enabled: true },
+  { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
   // Commented providers are excluded:
+  // { id: 4, provider: 'audius', name: 'Audius', enabled: true },
   // { id: 5, provider: 'spotify', name: 'Spotify', enabled: true },
-  // { id: 6, provider: 'deezer', name: 'Deezer', enabled: true },
   // { id: 7, provider: 'jamendo', name: 'Jamendo', enabled: true },
 ]
 
@@ -506,8 +506,9 @@ const loading = ref(false)
               <option value="">{{ __('All providers') }}</option>
               <option value="youtube">YouTube</option>
               <option value="itunes">Apple Music</option>
-              <option value="audius">Audius</option>
+              <option value="deezer">Deezer</option>
               <option value="local">Blinest</option>
+              <!-- <option value="audius">Audius</option> -->
             </SelectInput>
 
             <SelectInput 
@@ -549,7 +550,7 @@ const loading = ref(false)
       <div class="mb-6 rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-4 lg:p-5">
         <div class="mb-3">
           <h4 class="mb-1.5 text-sm font-semibold text-neutral-200">{{ __('Search for songs to add to your playlist') }}</h4>
-          <p class="text-sm text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Audius and Blinest') }}</p>
+          <p class="text-sm text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Deezer and Blinest') }}</p>
         </div>
         <Dropdown placement="bottom-start" :auto-close="false" class="w-full">
           <template #default>

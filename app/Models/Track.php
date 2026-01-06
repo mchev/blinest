@@ -41,7 +41,12 @@ class Track extends Model
         return Attribute::make(
             get: function () {
                 return match ($this->provider) {
-                    'deezer' => $this->created_at->year > 2023 ? (new DeezerService)->getLiveTrackPreview($this->provider_id) : $this->preview_url,
+                    // Deezer URLs now contain expiring hdnea tokens (266+ chars) - always fetch live
+                    // Fallback to stored preview_url for old tracks that might still work
+                    'deezer' => (new DeezerService)->getLiveTrackPreview($this->provider_id)
+                        ?? ($this->preview_url && ! str_starts_with($this->preview_url, 'deezer://')
+                            ? $this->preview_url
+                            : null),
                     'spotify' => $this->preview_url,
                     'itunes' => $this->preview_url,
                     'audius' => (new AudiusService)->getLiveTrackPreview($this->provider_id),

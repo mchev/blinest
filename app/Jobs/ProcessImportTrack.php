@@ -27,6 +27,8 @@ class ProcessImportTrack implements ShouldQueue
      */
     public function handle(): ?Track
     {
+        // Note: For Deezer, preview_url is a placeholder (deezer://{id}) that will be resolved
+        // dynamically via getLiveTrackPreview() when the track is read (see Track::audio())
         if ($this->track->preview_url && $this->track->artwork_url) {
             if ($this->playlist->tracks()->where('provider', $this->track->provider)->where('provider_id', $this->track->provider_id)->doesntExist()) {
                 $track = $this->playlist->tracks()->create([

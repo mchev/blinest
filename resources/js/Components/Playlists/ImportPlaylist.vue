@@ -19,7 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const show = ref(true)
-const providers = ref(['Blinest likes']) // Spotify is disabled
+const providers = ref(['Blinest likes', 'Deezer']) // Spotify is disabled
 const step = ref(1)
 const pp = ref(null)
 
@@ -64,7 +64,7 @@ const importPlaylist = () => {
       <!-- Step 1 -->
       <Card class="shadow-none" v-if="step === 1">
         <form @submit.prevent="checkPlaylist" class="flex flex-col gap-4">
-          <Tip>Les imports depuis Deezer et Spotify ne sont plus disponibles.</Tip>
+          <Tip v-if="checkForm.provider === 'Spotify'">Les imports depuis Spotify ne sont plus disponibles.</Tip>
           <SelectInput v-model="checkForm.provider" :error="checkForm.provider.error" :label="__('Playlist source')" required>
             <option v-for="provider in providers" :value="provider">{{ provider }}</option>
           </SelectInput>

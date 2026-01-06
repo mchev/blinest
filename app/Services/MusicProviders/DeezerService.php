@@ -56,16 +56,72 @@ class DeezerService
 
     public function getLiveTrackPreview($id)
     {
-        $url = 'https://api.deezer.com/track/'.$id;
-        $response = Http::get($url);
+        // Cache the preview URL for 5 minutes to avoid excessive API calls
+        // Even though URLs expire, caching reduces load and most URLs are valid for longer
+        $cacheKey = "deezer_preview_url:{$id}";
 
-        if (! $response->successful()) {
-            return null;
-        }
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($id) {
+            try {
+                $url = 'https://api.deezer.com/track/'.$id;
+                // Retry up to 2 times with 100ms delay, timeout of 2 seconds per attempt
+                $response = Http::retry(2, 100)->timeout(2)->get($url);
 
-        $track = $response->collect();
+                if (! $response->successful()) {
+                    Log::warning('Deezer getLiveTrackPreview failed', [
+                        'track_id' => $id,
+                        'status' => $response->status(),
+                    ]);
 
-        return ($track['readable'] ?? false) ? $track['preview'] : null;
+                    return null;
+                }
+
+                $track = $response->collect();
+
+                if (! ($track['readable'] ?? false)) {
+                    Log::debug('Deezer track not readable', [
+                        'track_id' => $id,
+                    ]);
+
+                    return null;
+                }
+
+                $previewUrl = $track['preview'] ?? null;
+
+                if (! $previewUrl) {
+                    Log::debug('Deezer track has no preview URL', [
+                        'track_id' => $id,
+                    ]);
+
+                    return null;
+                }
+
+                // Verify URL length fits in database (should be ~266 chars with hdnea)
+                if (strlen($previewUrl) > 2048) {
+                    Log::warning('Deezer preview URL too long', [
+                        'track_id' => $id,
+                        'url_length' => strlen($previewUrl),
+                    ]);
+                }
+
+                return $previewUrl;
+
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Handle timeout/connection errors specifically
+                Log::warning('Deezer getLiveTrackPreview connection error', [
+                    'track_id' => $id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return null;
+            } catch (\Exception $e) {
+                Log::error('Deezer getLiveTrackPreview exception', [
+                    'track_id' => $id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return null;
+            }
+        });
     }
 
     public function getReleaseDate($album)
@@ -120,7 +176,8 @@ class DeezerService
 
                 $tracks = $response->json();
                 foreach ($tracks['data'] as $track) {
-                    $formatedTrack = $this->formatTrack($track);
+                    // Use formatTrack with forStorage=true to get placeholder for storage
+                    $formatedTrack = $this->formatTrack($track, true);
                     $importedTracks[] = ProcessImportTrack::dispatch($playlist, $formatedTrack)
                         ->onQueue('imports')
                         ->delay(now()->addSeconds(count($importedTracks) * 0.5)); // Rate limiting
@@ -140,8 +197,14 @@ class DeezerService
         }
     }
 
-    public function formatTrack(array $track): object
+    public function formatTrack(array $track, bool $forStorage = false): object
     {
+        // For search results: return real URL for immediate preview
+        // For storage: return placeholder to avoid storing expiring URLs
+        $previewUrl = $forStorage
+            ? 'deezer://'.$track['id'] // Placeholder for storage - will be fetched live via getLiveTrackPreview()
+            : ($track['preview'] ?? null); // Real URL for search results preview
+
         return (object) [
             'provider' => 'deezer',
             'provider_id' => $track['id'],
@@ -150,7 +213,7 @@ class DeezerService
             'artist_name' => $track['artist']['name'],
             'track_name' => $track['title'],
             'album_name' => $track['album']['title'],
-            'preview_url' => $track['preview'],
+            'preview_url' => $previewUrl,
             'release_date' => null, // $this->getReleaseDate($track['album']['id']), TOO SLOW!!
             'artwork_url' => $track['album']['cover_medium'],
         ];

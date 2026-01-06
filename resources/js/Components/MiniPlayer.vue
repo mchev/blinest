@@ -61,7 +61,7 @@ const play = () => {
         initYoutubePlayer()
       }
     }
-  } else {
+    } else {
     document.querySelectorAll('[id^="youtube-player-"]').forEach(player => {
       if (window.YT) {
         const ytPlayer = YT.get(player.id)
@@ -71,7 +71,20 @@ const play = () => {
       }
     })
     
-    audio.src = props.track.audio ?? props.track.preview_url
+    // Use audio attribute if available (for stored tracks), otherwise use preview_url (for search results)
+    // Note: For Deezer search results, preview_url contains the real URL (not placeholder)
+    let audioUrl = props.track.audio ?? props.track.preview_url
+    
+    // Safety check: if we somehow get a Deezer placeholder, don't try to play it
+    if (audioUrl && audioUrl.startsWith('deezer://')) {
+      console.warn('Deezer placeholder URL detected in MiniPlayer, cannot play:', audioUrl)
+      error.value = true
+      loading.value = false
+      isPlaying.value = false
+      return
+    }
+    
+    audio.src = audioUrl
     audio.crossOrigin = 'anonymous'
     
     audio.addEventListener('error', () => {
