@@ -272,20 +272,31 @@ class RoomController extends Controller
      */
     protected function generateStructuredData(Room $room, int $roundsCount): array
     {
+        $description = $room->description ?: sprintf(
+            '%s est un quiz musical multijoueur gratuit sur Blinest. Les joueurs doivent identifier des chansons en écoutant des extraits audio.',
+            $room->name
+        );
+
         $structuredData = [
             '@context' => 'https://schema.org',
             '@type' => 'VideoGame',
             'name' => $room->name,
-            'description' => $room->description ?: $room->name.' - Quiz musical multijoueur sur Blinest',
+            'description' => $description,
             'url' => url('/rooms/'.$room->slug),
             'image' => $room->photo ?: url('/images/statics/logo_blinest.png'),
             'gamePlatform' => 'Web Browser',
             'applicationCategory' => 'Game',
             'genre' => $room->category?->name ?: 'Music Quiz',
+            'gameItem' => [
+                '@type' => 'Thing',
+                'name' => 'Blind test musical',
+                'description' => 'Jeu où les participants identifient des chansons en écoutant uniquement des extraits audio',
+            ],
             'offers' => [
                 '@type' => 'Offer',
                 'price' => '0',
                 'priceCurrency' => 'EUR',
+                'availability' => 'https://schema.org/InStock',
             ],
             'publisher' => [
                 '@type' => 'Organization',
@@ -299,8 +310,17 @@ class RoomController extends Controller
             'inLanguage' => ['fr', 'en', 'es'],
             'isAccessibleForFree' => true,
             'playMode' => 'MultiPlayer',
+            'numberOfPlayers' => [
+                'minValue' => 1,
+                'maxValue' => 100,
+            ],
             'datePublished' => $room->created_at?->toIso8601String(),
             'dateModified' => $room->updated_at?->toIso8601String(),
+            'mainEntity' => [
+                '@type' => 'Thing',
+                'name' => 'Blind test musical multijoueur',
+                'description' => 'Jeu où plusieurs joueurs identifient simultanément des chansons en écoutant des extraits audio',
+            ],
         ];
 
         if ($roundsCount > 0) {

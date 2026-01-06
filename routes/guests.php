@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Docs\CreateContentController;
 use App\Http\Controllers\Docs\EloController;
+use App\Http\Controllers\Docs\GlossaryController;
+use App\Http\Controllers\Docs\HowToController;
 use App\Http\Controllers\Docs\OverviewController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
@@ -33,6 +36,15 @@ Route::get('/docs/faq', [FAQController::class, 'index'])
 
 Route::get('/docs/elo', [EloController::class, 'index'])
     ->name('docs.elo');
+
+Route::get('/docs/glossary', [GlossaryController::class, 'index'])
+    ->name('docs.glossary');
+
+Route::get('/docs/howto', [HowToController::class, 'index'])
+    ->name('docs.howto');
+
+Route::get('/docs/create-content', [CreateContentController::class, 'index'])
+    ->name('docs.create-content');
 
 // Pages
 Route::get('/pages/{slug}', [PageController::class, 'show'])

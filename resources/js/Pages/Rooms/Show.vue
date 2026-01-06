@@ -149,19 +149,6 @@ const listenRounds = () => {
       // Clear initial track since we're now receiving live updates
       initialTrack.value = null
       initialStartTime.value = 0
-      // Mettre à jour les scores depuis Redis pour le round actuel
-      if (e.round?.id) {
-        axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
-          if (response.data.scores) {
-            data.value = {
-              scores: response.data.scores,
-              roundId: e.round.id
-            }
-          }
-        }).catch(() => {
-          // Ignorer les erreurs silencieusement
-        })
-      }
     })
     .listen('UserEloUpdated', (e) => {
       // Mettre à jour l'ELO de l'utilisateur dans la liste des utilisateurs

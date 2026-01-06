@@ -28,8 +28,37 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
   @endforeach
 
   <url>
+    <loc>https://blinest.com/docs</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://blinest.com/docs/glossary</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.55</priority>
+  </url>
+
+  <url>
+    <loc>https://blinest.com/docs/howto</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://blinest.com/docs/create-content</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.55</priority>
+  </url>
+
+  <url>
     <loc>https://blinest.com/docs/faq</loc>
     <lastmod>2023-01-26T15:27:50+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
 
