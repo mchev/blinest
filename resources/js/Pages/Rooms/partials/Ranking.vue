@@ -95,13 +95,12 @@ onMounted(() => {
     })
     .listen('TrackPlayed', (e) => {
       track.value = e.track
+      // Seulement réinitialiser les réponses (answers) pour la nouvelle track
+      // Les scores totaux restent cumulatifs pour tout le round
       userList.value.map((x) => {
         if (x.score) return (x.score.answers = [])
       })
-      // Réinitialiser les scores depuis Redis après un nouveau track
-      if (props.data?.scores) {
-        initializeScoresFromRedis()
-      }
+      // Ne PAS réinitialiser les scores totaux - ils sont cumulatifs pour tout le round
     })
     .listen('RoundStarted', () => {
       userList.value.forEach((x) => {

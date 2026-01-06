@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.6",
+            "version": "3.369.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b1e1846a4b6593b6916764d86fc0890a31727370"
+                "reference": "8678ee11ac680d462fabbecb455112a17aa7728d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b1e1846a4b6593b6916764d86fc0890a31727370",
-                "reference": "b1e1846a4b6593b6916764d86fc0890a31727370",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8678ee11ac680d462fabbecb455112a17aa7728d",
+                "reference": "8678ee11ac680d462fabbecb455112a17aa7728d",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.6"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.7"
             },
-            "time": "2026-01-02T19:09:23+00:00"
+            "time": "2026-01-05T19:05:14+00:00"
         },
         {
             "name": "brick/math",
@@ -3751,16 +3751,16 @@
         },
         {
             "name": "mchev/banhammer",
-            "version": "v2.4.2",
+            "version": "v2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mchev/banhammer.git",
-                "reference": "cba7fb6b3307c8a48c39f5c633586fbff4578eee"
+                "reference": "eeb650c641c44c2fbfa2d8d5f645ce4fa693a4c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mchev/banhammer/zipball/cba7fb6b3307c8a48c39f5c633586fbff4578eee",
-                "reference": "cba7fb6b3307c8a48c39f5c633586fbff4578eee",
+                "url": "https://api.github.com/repos/mchev/banhammer/zipball/eeb650c641c44c2fbfa2d8d5f645ce4fa693a4c8",
+                "reference": "eeb650c641c44c2fbfa2d8d5f645ce4fa693a4c8",
                 "shasum": ""
             },
             "require": {
@@ -3807,7 +3807,7 @@
             ],
             "support": {
                 "issues": "https://github.com/mchev/banhammer/issues",
-                "source": "https://github.com/mchev/banhammer/tree/v2.4.2"
+                "source": "https://github.com/mchev/banhammer/tree/v2.4.3"
             },
             "funding": [
                 {
@@ -3815,7 +3815,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-28T14:11:40+00:00"
+            "time": "2026-01-04T18:42:56+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10164,16 +10164,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.26.0",
+            "version": "v1.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "69dcca060ecb15e4b564af63d1f642c81a241d6f"
+                "reference": "c67b4195b75491e4dfc6b00b1c78b68d86f54c90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/69dcca060ecb15e4b564af63d1f642c81a241d6f",
-                "reference": "69dcca060ecb15e4b564af63d1f642c81a241d6f",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/c67b4195b75491e4dfc6b00b1c78b68d86f54c90",
+                "reference": "c67b4195b75491e4dfc6b00b1c78b68d86f54c90",
                 "shasum": ""
             },
             "require": {
@@ -10184,9 +10184,9 @@
                 "php": "^8.2.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.90.0",
-                "illuminate/view": "^12.40.1",
-                "larastan/larastan": "^3.8.0",
+                "friendsofphp/php-cs-fixer": "^3.92.4",
+                "illuminate/view": "^12.44.0",
+                "larastan/larastan": "^3.8.1",
                 "laravel-zero/framework": "^12.0.4",
                 "mockery/mockery": "^1.6.12",
                 "nunomaduro/termwind": "^2.3.3",
@@ -10227,7 +10227,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2025-11-25T21:15:52+00:00"
+            "time": "2026-01-05T16:49:17+00:00"
         },
         {
             "name": "laravel/roster",
