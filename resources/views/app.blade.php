@@ -5,6 +5,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">        
         <link rel="canonical" href="{{ url()->current() }}" />
         
+        <!-- Open Graph / Facebook Meta Tags -->
+        <meta property="og:url" content="{{ url()->current() }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Blinest - Quiz musicaux gratuits et multijoueurs" />
+        <meta property="og:description" content="Jouez à des quiz musicaux multijoueurs gratuits ! Blind-tests en ligne pour tous les goûts : Années 2000, Disney, Chanson française, Années 80, Rock, Pop, et bien plus encore." />
+        <meta property="og:image" content="{{ url('images/statics/screenshot.png') }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Blinest - Quiz musicaux multijoueurs" />
+        <meta property="og:site_name" content="Blinest" />
+        <meta property="og:locale" content="fr_FR" />
+        
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@blinest" />
+        <meta name="twitter:creator" content="@blinest" />
+        <meta property="twitter:domain" content="blinest.com" />
+        <meta property="twitter:url" content="{{ url()->current() }}" />
+        <meta name="twitter:title" content="Blinest - Quiz musicaux gratuits et multijoueurs" />
+        <meta name="twitter:description" content="Jouez à des quiz musicaux multijoueurs gratuits ! Blind-tests en ligne pour tous les goûts : Années 2000, Disney, Chanson française, Années 80, Rock, Pop, et bien plus encore." />
+        <meta name="twitter:image" content="{{ url('images/statics/screenshot.png') }}" />
+        <meta name="twitter:image:alt" content="Blinest - Quiz musicaux multijoueurs" />
+        
         <!-- Favicons -->
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
