@@ -119,6 +119,23 @@ const joining = () => {
   })
 }
 
+const fetchRoundScores = async (roundId) => {
+  if (!roundId) {
+    return
+  }
+  try {
+    const response = await axios.get(`/rounds/${roundId}/scores`)
+    if (response.data.scores) {
+      data.value = {
+        scores: response.data.scores,
+        roundId: roundId
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching round scores:', error)
+  }
+}
+
 const listenRounds = () => {
   // Clean up existing listeners to prevent duplicates
   if (roundsChannel) {
@@ -134,6 +151,10 @@ const listenRounds = () => {
     .listen('RoundStarted', (e) => {
       round.value = e.round
       roundFinished.value = false
+      // Récupérer les scores depuis Redis pour le nouveau round
+      if (e.round?.id) {
+        fetchRoundScores(e.round.id)
+      }
     })
     .listen('RoundFinished', (e) => {
       round.value = e.round
@@ -149,6 +170,10 @@ const listenRounds = () => {
       // Clear initial track since we're now receiving live updates
       initialTrack.value = null
       initialStartTime.value = 0
+      // Récupérer les scores depuis Redis pour s'assurer qu'ils sont à jour
+      if (e.round?.id) {
+        fetchRoundScores(e.round.id)
+      }
     })
     .listen('UserEloUpdated', (e) => {
       // Mettre à jour l'ELO de l'utilisateur dans la liste des utilisateurs

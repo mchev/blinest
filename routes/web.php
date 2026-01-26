@@ -73,6 +73,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rounds.track.check');
     Route::post('rounds/{round}/tracks/{track}/listened', [RoundController::class, 'trackListened'])
         ->name('rounds.tracks.listened');
+    Route::get('rounds/{round}/scores', [RoundController::class, 'scores'])
+        ->name('rounds.scores');
 
     // Public moderation group
     Route::middleware('auth.moderator')->group(function () {

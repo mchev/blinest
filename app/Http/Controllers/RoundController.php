@@ -357,4 +357,15 @@ class RoundController extends Controller
 
         return response()->json(['success' => true], 200);
     }
+
+    /**
+     * Récupère tous les scores d'un round depuis Redis
+     */
+    public function scores(Round $round)
+    {
+        $roundScoreService = app(RoundScoreService::class);
+        $scores = $roundScoreService->getAllScores($round->id);
+
+        return response()->json(['scores' => $scores], 200);
+    }
 }

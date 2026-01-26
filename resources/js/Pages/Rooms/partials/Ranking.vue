@@ -97,22 +97,30 @@ onMounted(() => {
       track.value = e.track
       // Seulement réinitialiser les réponses (answers) pour la nouvelle track
       // Les scores totaux restent cumulatifs pour tout le round
-      userList.value.map((x) => {
-        if (x.score) return (x.score.answers = [])
+      userList.value.forEach((x) => {
+        if (x.score) {
+          x.score.answers = []
+        }
       })
+      // Mettre à jour les scores depuis Redis pour s'assurer qu'ils sont à jour
       // Ne PAS réinitialiser les scores totaux - ils sont cumulatifs pour tout le round
+      if (props.data?.scores) {
+        initializeScoresFromRedis()
+      }
     })
-    .listen('RoundStarted', () => {
+    .listen('RoundStarted', (e) => {
+      // Réinitialiser tous les scores à 0 d'abord
       userList.value.forEach((x) => {
         if (x.score) {
           x.score.total = 0
           x.score.answers = []
+        } else {
+          // Initialiser le score si nécessaire
+          x.score = { total: 0, answers: [] }
         }
       })
       // Réinitialiser les scores depuis Redis après un nouveau round
-      if (props.data?.scores) {
-        initializeScoresFromRedis()
-      }
+      // Le watch sur props.data se chargera de mettre à jour les scores quand ils seront disponibles
     })
 })
 
