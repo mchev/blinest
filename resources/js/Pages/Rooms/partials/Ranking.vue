@@ -19,11 +19,23 @@ const props = defineProps({
 
 const me = usePage().props.auth.user
 const scores = ref([])
-const userList = ref(props?.users)
+const userList = ref([])
 const track = ref(props?.initialTrack || null)
 const showPodiumModal = ref(false)
 
-// Initialiser les scores depuis Redis si disponibles
+// Initialiser la liste des utilisateurs avec leurs scores
+const initializeUserList = () => {
+  userList.value = props.users.map((user) => ({
+    ...user,
+    score: {
+      total: 0,
+      answers: [],
+    },
+  }))
+}
+
+// Initialiser les scores depuis Redis UNIQUEMENT au montage ou lors d'un nouveau round
+// Cette fonction ne doit PAS être appelée pendant la partie (pour éviter d'écraser les scores en temps réel)
 const initializeScoresFromRedis = () => {
   if (!props.data?.scores) {
     return
@@ -31,7 +43,7 @@ const initializeScoresFromRedis = () => {
 
   const redisScores = props.data.scores
 
-  // Mettre à jour les scores des users
+  // Mettre à jour les scores des users depuis Redis
   userList.value.forEach((user) => {
     const userId = user.id
     const userScore = redisScores[userId] || 0
@@ -49,54 +61,85 @@ const initializeScoresFromRedis = () => {
   userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
 }
 
+// Mettre à jour les scores UNIQUEMENT via les événements NewScore (source de vérité pendant la partie)
+const updateScoreFromEvent = (scoreData) => {
+  const index = userList.value.findIndex((x) => x.id === scoreData.user_id)
+  if (index === -1) {
+    return
+  }
+
+  // Initialiser le score si nécessaire
+  if (!userList.value[index].score) {
+    userList.value[index].score = { total: 0, answers: [] }
+  }
+
+  // Mettre à jour le score total depuis l'événement (source de vérité)
+  userList.value[index].score.total = scoreData.total
+
+  // Mettre à jour les réponses trouvées
+  scoreData.answers.forEach((newAnswer) => {
+    const existingIndex = userList.value[index].score.answers.findIndex((a) => a.id === newAnswer.id)
+    if (existingIndex === -1) {
+      userList.value[index].score.answers.push(newAnswer)
+    } else {
+      // Mettre à jour la réponse existante
+      userList.value[index].score.answers[existingIndex] = newAnswer
+    }
+  })
+
+  // Trier par score décroissant
+  userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
+}
+
+// Watch uniquement pour mettre à jour la liste des utilisateurs (nouveaux joueurs qui rejoignent)
 watch(
   () => props.users,
-  (value) => {
-    userList.value = value
-    // Réinitialiser les scores si les users changent
-    initializeScoresFromRedis()
-  },
-)
+  (newUsers) => {
+    // Mettre à jour la liste des utilisateurs
+    const existingUserIds = new Set(userList.value.map((u) => u.id))
+    
+    newUsers.forEach((newUser) => {
+      const existingIndex = userList.value.findIndex((u) => u.id === newUser.id)
+      if (existingIndex === -1) {
+        // Nouvel utilisateur - l'ajouter avec un score initialisé
+        userList.value.push({
+          ...newUser,
+          score: {
+            total: 0,
+            answers: [],
+          },
+        })
+      } else {
+        // Utilisateur existant - mettre à jour ses infos mais préserver son score
+        userList.value[existingIndex] = {
+          ...newUser,
+          score: userList.value[existingIndex].score || { total: 0, answers: [] },
+        }
+      }
+    })
 
-watch(
-  () => props.data,
-  () => {
-    // Réinitialiser les scores si data change
-    initializeScoresFromRedis()
+    // Supprimer les utilisateurs qui ne sont plus dans la liste
+    userList.value = userList.value.filter((u) => newUsers.some((nu) => nu.id === u.id))
   },
-  { deep: true }
 )
 
 onMounted(() => {
-  // Initialiser les scores depuis Redis au montage
+  // Initialiser la liste des utilisateurs
+  initializeUserList()
+
+  // Initialiser les scores depuis Redis UNIQUEMENT au montage (pour les joueurs qui rejoignent en cours)
   initializeScoresFromRedis()
 
   Echo.channel(props.channel)
     .listen('NewScore', (e) => {
+      // Source de vérité : utiliser UNIQUEMENT les événements NewScore pour mettre à jour les scores
       scores.value.push(e.score)
-      let index = userList.value.findIndex((x) => x.id === e.score.user_id)
-      if (index !== -1) {
-        if (!userList.value[index].score) {
-          userList.value[index].score = { total: 0, answers: [] }
-        }
-        userList.value[index].score.total = e.score.total
-        // Ajouter les nouvelles réponses (éviter les doublons)
-        e.score.answers.forEach((newAnswer) => {
-          const existingIndex = userList.value[index].score.answers.findIndex((a) => a.id === newAnswer.id)
-          if (existingIndex === -1) {
-            userList.value[index].score.answers.push(newAnswer)
-          } else {
-            // Mettre à jour la réponse existante
-            userList.value[index].score.answers[existingIndex] = newAnswer
-          }
-        })
-        userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
-      }
+      updateScoreFromEvent(e.score)
     })
     .listen('TrackPlayed', (e) => {
       track.value = e.track
       // Seulement réinitialiser les réponses (answers) pour la nouvelle track
-      // Les scores totaux restent cumulatifs pour tout le round et se mettent à jour automatiquement via NewScore
+      // Les scores totaux restent cumulatifs pour tout le round
       userList.value.forEach((x) => {
         if (x.score) {
           x.score.answers = []
@@ -105,18 +148,18 @@ onMounted(() => {
       // Ne PAS toucher aux scores totaux - ils se mettent à jour automatiquement via les événements NewScore
     })
     .listen('RoundStarted', (e) => {
-      // Réinitialiser tous les scores à 0 d'abord
+      // Réinitialiser tous les scores à 0 pour le nouveau round
       userList.value.forEach((x) => {
         if (x.score) {
           x.score.total = 0
           x.score.answers = []
         } else {
-          // Initialiser le score si nécessaire
           x.score = { total: 0, answers: [] }
         }
       })
-      // Réinitialiser les scores depuis Redis après un nouveau round
-      // Le watch sur props.data se chargera de mettre à jour les scores quand ils seront disponibles
+      
+      // Ne PAS initialiser depuis Redis ici - les scores se mettront à jour automatiquement via les événements NewScore
+      // Si un joueur rejoint en cours de partie, ses scores seront initialisés au montage du composant
     })
 })
 
