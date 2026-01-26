@@ -170,10 +170,7 @@ const listenRounds = () => {
       // Clear initial track since we're now receiving live updates
       initialTrack.value = null
       initialStartTime.value = 0
-      // Récupérer les scores depuis Redis pour s'assurer qu'ils sont à jour
-      if (e.round?.id) {
-        fetchRoundScores(e.round.id)
-      }
+      // Ne PAS récupérer les scores - ils se mettent à jour automatiquement via les événements NewScore
     })
     .listen('UserEloUpdated', (e) => {
       // Mettre à jour l'ELO de l'utilisateur dans la liste des utilisateurs
