@@ -5,7 +5,7 @@ import Logo from '@/Components/Logo.vue'
 import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
-import Socialite from './Socialite.vue'
+import SocialiteRegister from './SocialiteRegister.vue'
 
 const form = useForm({
   name: '',
@@ -42,7 +42,7 @@ const register = () => {
         </form>
       </Card>
 
-      <Socialite />
+      <SocialiteRegister />
     </div>
   </AppLayout>
 </template>

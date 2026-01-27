@@ -701,5 +701,21 @@
     "Vue d'ensemble": "Vue d'ensemble",
     "Glossaire": "Glossaire",
     "ELO": "ELO",
-    "Levels": "Levels"
+    "Levels": "Levels",
+    "Facebook login is no longer available": "La connexion Facebook n'est plus disponible",
+    "Don't worry! You can still access your account. Follow these simple steps:": "Ne vous inquiétez pas ! Vous pouvez toujours accéder à votre compte. Suivez ces étapes simples :",
+    "Find your email address": "Trouvez votre adresse e-mail",
+    "When you created your account with Facebook, we saved your email address.": "Lorsque vous avez créé votre compte avec Facebook, nous avons enregistré votre adresse e-mail.",
+    "This is the email address you used on Facebook.": "C'est l'adresse e-mail que vous avez utilisée sur Facebook.",
+    "Tip: Check your Facebook account settings to find the email address you used.": "Astuce : Vérifiez les paramètres de votre compte Facebook pour trouver l'adresse e-mail que vous avez utilisée.",
+    "Reset your password": "Réinitialisez votre mot de passe",
+    "Click the button below to reset your password.": "Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe.",
+    "We will send you an email with instructions.": "Nous vous enverrons un e-mail avec les instructions.",
+    "Reset my password": "Réinitialiser mon mot de passe",
+    "Log in with your email and new password": "Connectez-vous avec votre e-mail et votre nouveau mot de passe",
+    "Once you've set your new password, come back here and log in normally with your email and password.": "Une fois que vous avez défini votre nouveau mot de passe, revenez ici et connectez-vous normalement avec votre e-mail et votre mot de passe.",
+    "All your data, scores, and progress will be exactly the same!": "Toutes vos données, scores et progression seront exactement les mêmes !",
+    "Good news:": "Bonne nouvelle :",
+    "You won't lose anything! Your account, scores, level, and all your progress are safe. You just need to set a password to log in.": "Vous ne perdrez rien ! Votre compte, vos scores, votre niveau et toute votre progression sont en sécurité. Vous devez simplement définir un mot de passe pour vous connecter.",
+    "Got it, thanks!": "Compris, merci !"
 }
