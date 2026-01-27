@@ -92,6 +92,39 @@ const user = usePage().props.auth.user;
           </div>
         </div>
         
+        <!-- Batilo Promotion -->
+        <div class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900 via-orange-800 to-amber-900 shadow-lg border border-orange-700/50">
+          <div class="p-6">
+            <div class="mb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-orange-300">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+              <h3 class="text-xl font-bold text-white">Batilo</h3>
+            </div>
+            <p class="mb-3 text-orange-100 leading-relaxed">
+              Vous êtes en <strong class="text-white">auto-construction</strong> ou <strong class="text-white">particulier en rénovation</strong> ?
+            </p>
+            <p class="mb-3 text-sm text-orange-200 leading-relaxed">
+              Découvrez <strong class="text-white">Batilo</strong>, une application en ligne <strong class="text-white">gratuite</strong> pour simplifier la gestion de votre chantier.
+            </p>
+            <p class="mb-4 text-sm text-orange-200">
+              Missions, intervenants, budget, etc. <strong class="text-white">Tout au même endroit</strong>.
+            </p>
+            <a 
+              href="https://batilo.fr" 
+              target="_blank" 
+              rel="external nofollow" 
+              class="flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-center font-semibold text-orange-700 transition-all duration-300 hover:bg-orange-50 hover:shadow-lg hover:shadow-orange-500/20"
+              data-umami-event="Batilo banner click"
+            >
+              <span>Découvrir Batilo</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        
         <!-- Featured Rooms -->
         <div v-for="featured_room in featured_rooms" :key="`featured-room-${featured_room.id}`" class="mb-10">
           <div class="mb-4 flex items-center">
