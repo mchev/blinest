@@ -91,13 +91,20 @@ const updateScoreFromEvent = (scoreData) => {
   userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
 }
 
-// Watch uniquement pour mettre à jour la liste des utilisateurs (nouveaux joueurs qui rejoignent)
+// Watch pour synchroniser la liste des utilisateurs avec props.users
 watch(
   () => props.users,
   (newUsers) => {
-    // Mettre à jour la liste des utilisateurs
-    const existingUserIds = new Set(userList.value.map((u) => u.id))
+    if (!newUsers || newUsers.length === 0) {
+      // Si props.users est vide, ne rien faire (évite de supprimer tous les joueurs)
+      // Cela peut arriver temporairement lors de mises à jour
+      return
+    }
+
+    // Créer un Set des IDs des nouveaux utilisateurs pour un accès rapide
+    const newUserIds = new Set(newUsers.map((u) => u.id))
     
+    // Étape 1 : Ajouter ou mettre à jour les utilisateurs de props.users
     newUsers.forEach((newUser) => {
       const existingIndex = userList.value.findIndex((u) => u.id === newUser.id)
       if (existingIndex === -1) {
@@ -118,14 +125,33 @@ watch(
       }
     })
 
-    // Supprimer les utilisateurs qui ne sont plus dans la liste
-    userList.value = userList.value.filter((u) => newUsers.some((nu) => nu.id === u.id))
+    // Étape 2 : Ne supprimer QUE les utilisateurs qui ne sont vraiment plus dans props.users
+    // ET qui n'ont jamais eu d'activité (pas de score ET pas de réponses)
+    // IMPORTANT : Ne jamais supprimer un utilisateur qui est dans props.users
+    userList.value = userList.value.filter((u) => {
+      // Toujours garder les utilisateurs qui sont dans props.users
+      if (newUserIds.has(u.id)) {
+        return true
+      }
+      // Garder aussi les joueurs actifs (avec score ou réponses) même s'ils ne sont plus dans props.users
+      // (peut arriver temporairement lors de mises à jour asynchrones)
+      if (u.score && (u.score.total > 0 || (u.score.answers && u.score.answers.length > 0))) {
+        return true
+      }
+      // Supprimer uniquement les utilisateurs qui ne sont plus dans props.users ET qui n'ont jamais joué
+      return false
+    })
   },
+  { immediate: true } // Exécuter immédiatement pour synchroniser dès le départ
 )
 
 onMounted(() => {
-  // Initialiser la liste des utilisateurs
-  initializeUserList()
+  // Le watch avec immediate: true a déjà initialisé userList, donc on n'a pas besoin de initializeUserList()
+  // Mais on s'assure que tous les utilisateurs sont bien présents
+  if (props.users && props.users.length > 0 && userList.value.length === 0) {
+    // Si userList est vide (ne devrait pas arriver avec immediate: true), l'initialiser
+    initializeUserList()
+  }
 
   // Initialiser les scores depuis Redis UNIQUEMENT au montage (pour les joueurs qui rejoignent en cours)
   initializeScoresFromRedis()
