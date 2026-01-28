@@ -65,6 +65,23 @@ const initializeScoresFromRedis = () => {
 const updateScoreFromEvent = (scoreData) => {
   const index = userList.value.findIndex((x) => x.id === scoreData.user_id)
   if (index === -1) {
+    // Si l'utilisateur n'existe pas dans la liste, essayer de le trouver dans props.users
+    // Cela peut arriver si un joueur rejoint et envoie une réponse avant que le watch ne se déclenche
+    const userFromProps = props.users?.find((u) => u.id === scoreData.user_id)
+    if (userFromProps) {
+      // Ajouter l'utilisateur avec son score depuis l'événement
+      userList.value.push({
+        ...userFromProps,
+        score: {
+          total: scoreData.total || 0,
+          answers: scoreData.answers || [],
+        },
+      })
+      // Trier après ajout
+      userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
+      return
+    }
+    // Si l'utilisateur n'existe toujours pas, ignorer l'événement
     return
   }
 
@@ -74,20 +91,26 @@ const updateScoreFromEvent = (scoreData) => {
   }
 
   // Mettre à jour le score total depuis l'événement (source de vérité)
-  userList.value[index].score.total = scoreData.total
+  // Utiliser Math.max pour éviter les régressions de score (ne jamais diminuer le score)
+  userList.value[index].score.total = Math.max(
+    userList.value[index].score.total || 0,
+    scoreData.total || 0
+  )
 
   // Mettre à jour les réponses trouvées
-  scoreData.answers.forEach((newAnswer) => {
-    const existingIndex = userList.value[index].score.answers.findIndex((a) => a.id === newAnswer.id)
-    if (existingIndex === -1) {
-      userList.value[index].score.answers.push(newAnswer)
-    } else {
-      // Mettre à jour la réponse existante
-      userList.value[index].score.answers[existingIndex] = newAnswer
-    }
-  })
+  if (scoreData.answers && Array.isArray(scoreData.answers)) {
+    scoreData.answers.forEach((newAnswer) => {
+      const existingIndex = userList.value[index].score.answers.findIndex((a) => a.id === newAnswer.id)
+      if (existingIndex === -1) {
+        userList.value[index].score.answers.push(newAnswer)
+      } else {
+        // Mettre à jour la réponse existante
+        userList.value[index].score.answers[existingIndex] = newAnswer
+      }
+    })
+  }
 
-  // Trier par score décroissant
+  // Trier par score décroissant après chaque mise à jour
   userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
 }
 
@@ -108,19 +131,33 @@ watch(
     newUsers.forEach((newUser) => {
       const existingIndex = userList.value.findIndex((u) => u.id === newUser.id)
       if (existingIndex === -1) {
-        // Nouvel utilisateur - l'ajouter avec un score initialisé
+        // Nouvel utilisateur - l'ajouter avec un score initialisé depuis Redis si disponible
+        const newUserScore = props.data?.scores?.[newUser.id] || 0
         userList.value.push({
           ...newUser,
           score: {
-            total: 0,
+            total: newUserScore,
             answers: [],
           },
         })
       } else {
         // Utilisateur existant - mettre à jour ses infos mais préserver son score
-        userList.value[existingIndex] = {
-          ...newUser,
-          score: userList.value[existingIndex].score || { total: 0, answers: [] },
+        // Si le score n'existe pas encore, essayer de le récupérer depuis Redis
+        const existingScore = userList.value[existingIndex].score
+        if (!existingScore || existingScore.total === 0) {
+          const redisScore = props.data?.scores?.[newUser.id] || 0
+          userList.value[existingIndex] = {
+            ...newUser,
+            score: {
+              total: redisScore,
+              answers: existingScore?.answers || [],
+            },
+          }
+        } else {
+          userList.value[existingIndex] = {
+            ...newUser,
+            score: existingScore,
+          }
         }
       }
     })
@@ -141,8 +178,41 @@ watch(
       // Supprimer uniquement les utilisateurs qui ne sont plus dans props.users ET qui n'ont jamais joué
       return false
     })
+    
+    // Trier après chaque mise à jour pour maintenir l'ordre correct
+    userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
   },
   { immediate: true } // Exécuter immédiatement pour synchroniser dès le départ
+)
+
+// Watch pour synchroniser les scores depuis Redis quand ils changent (ex: nouveau joueur rejoint)
+watch(
+  () => props.data?.scores,
+  (newScores) => {
+    if (!newScores || typeof newScores !== 'object') {
+      return
+    }
+
+    // Mettre à jour les scores de tous les utilisateurs depuis Redis
+    userList.value.forEach((user) => {
+      const userId = user.id
+      const redisScore = newScores[userId]
+      
+      if (redisScore !== undefined) {
+        // Initialiser le score si nécessaire
+        if (!user.score) {
+          user.score = { total: 0, answers: [] }
+        }
+        
+        // Mettre à jour le score total depuis Redis (utiliser Math.max pour éviter les régressions)
+        user.score.total = Math.max(user.score.total || 0, redisScore || 0)
+      }
+    })
+    
+    // Trier après la mise à jour
+    userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
+  },
+  { deep: true } // Deep watch pour détecter les changements dans l'objet scores
 )
 
 onMounted(() => {
@@ -172,6 +242,8 @@ onMounted(() => {
         }
       })
       // Ne PAS toucher aux scores totaux - ils se mettent à jour automatiquement via les événements NewScore
+      // Trier après la mise à jour
+      userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
     })
     .listen('RoundStarted', (e) => {
       // Réinitialiser tous les scores à 0 pour le nouveau round
@@ -186,6 +258,8 @@ onMounted(() => {
       
       // Ne PAS initialiser depuis Redis ici - les scores se mettront à jour automatiquement via les événements NewScore
       // Si un joueur rejoint en cours de partie, ses scores seront initialisés au montage du composant
+      // Trier après la réinitialisation
+      userList.value.sort((a, b) => (b.score?.total || 0) - (a.score?.total || 0))
     })
 })
 

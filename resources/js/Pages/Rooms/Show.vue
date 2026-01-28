@@ -54,6 +54,10 @@ onMounted(() => {
         if (users.value.length > 0 && users.value[0].id === user.id) {
           dispatchUserCount(users.value.length)
         }
+        // Si un round est en cours, récupérer les scores depuis Redis pour le nouveau joueur
+        if (round.value?.id) {
+          fetchRoundScores(round.value.id)
+        }
       })
       .leaving((user) => {
         users.value = users.value.filter((u) => u.id !== user.id)

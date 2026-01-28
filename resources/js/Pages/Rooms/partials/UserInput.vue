@@ -96,8 +96,8 @@ const check = () => {
   // Mark as submitting immediately to prevent double submissions
   isSubmitting.value = true
   
-  // Store what was submitted
-  const submittedText = currentText
+  // Store what was submitted - preserve original text including spaces
+  const submittedText = text.value // Keep original, not trimmed, to preserve user input
   
   // Fire request immediately without waiting
   const requestPromise = axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
@@ -106,68 +106,73 @@ const check = () => {
     currentTime: props.currentTime
   })
   
-  // Clear input AFTER starting the request, but use nextTick to ensure DOM sync
-  // This prevents race conditions where user types while DOM is updating
-  // The key is to check if user typed something NEW before clearing
-  nextTick(() => {
-    // Capture current text value - if user typed very fast, this will be different
-    const currentTextValue = text.value
-    
-    // Only clear if text still matches what we submitted (user didn't continue typing)
-    // This preserves rapid typing where user submits and immediately types next answer
-    if (currentTextValue === submittedText || currentTextValue.trim() === submittedText) {
-      // Safe to clear - user hasn't started typing next answer yet
-      text.value = ''
-      
-      // Maintain focus immediately after clearing input (before server response)
-      // This allows rapid typing without waiting for the response
-      requestAnimationFrame(() => {
-        if (input.value && !inputDisabled.value) {
-          input.value.focus()
-        }
-      })
-    }
-    // If text changed, user already started typing next answer - preserve it, don't clear
-  })
+  // DON'T clear input here - wait for server response to avoid losing user input
+  // The input will be cleared only after successful response or if user typed something new
   
   requestPromise
     .then((response) => {
       // Update state asynchronously to not block input
-      answers.value.push(...response.data.good_answers)
-      words.value = response.data.words
+      if (response.data.good_answers && response.data.good_answers.length > 0) {
+        answers.value.push(...response.data.good_answers)
+      }
+      words.value = response.data.words || []
       showMessage(response.data.message)
       
-      // If user typed something new while request was processing, preserve it
-      // Otherwise ensure input is cleared and focused for next answer
-      if (text.value === '' || text.value.trim() === '') {
-        // Input is empty, maintain focus for next input
+      // Only clear input if text still matches what we submitted (user didn't continue typing)
+      // This preserves rapid typing where user submits and immediately types next answer
+      const currentTextValue = text.value.trim()
+      if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
+        // Safe to clear - user hasn't started typing next answer yet
+        text.value = ''
+        
+        // Maintain focus for next input
+        nextTick(() => {
+          requestAnimationFrame(() => {
+            if (input.value && !inputDisabled.value) {
+              input.value.focus()
+            }
+          })
+        })
+      }
+      // If text changed, user already started typing next answer - preserve it, don't clear
+    })
+    .catch(error => {
+      console.error('Error checking answer:', error)
+      
+      // Always reset submitting flag, even on error
+      isSubmitting.value = false
+      
+      // Restore text on error so user can retry (unless it's a validation error)
+      // Only restore if input is empty (user didn't type something new)
+      if (error.response?.status !== 400) {
+        const currentTextValue = text.value.trim()
+        if (currentTextValue === '' || currentTextValue === currentText) {
+          // Restore original text if user hasn't typed something new
+          text.value = submittedText
+        }
+      } else {
+        // For 400 errors (validation), clear the input but don't restore
+        // This allows user to retry with correct input
+        const currentTextValue = text.value.trim()
+        if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
+          text.value = ''
+        }
+      }
+      
+      // Maintain focus even on error
+      nextTick(() => {
         requestAnimationFrame(() => {
           if (input.value && !inputDisabled.value) {
             input.value.focus()
           }
         })
-      }
-      // If text exists, user is typing next answer - don't interfere
-    })
-    .catch(error => {
-      console.error('Error checking answer:', error)
-      // Restore text on error so user can retry
-      if (error.response?.status !== 400) {
-        // Only restore if input is empty (user didn't type something new)
-        if (text.value === '' || text.value.trim() === '') {
-          text.value = submittedText
-        }
-      }
-      // Maintain focus even on error
-      requestAnimationFrame(() => {
-        if (input.value && !inputDisabled.value) {
-          input.value.focus()
-        }
       })
     })
     .finally(() => {
-      // Reset flag after request completes
-      isSubmitting.value = false
+      // Reset flag after request completes (if not already reset in catch)
+      if (isSubmitting.value) {
+        isSubmitting.value = false
+      }
     })
 }
 

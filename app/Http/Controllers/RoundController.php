@@ -62,6 +62,7 @@ class RoundController extends Controller
             $user = $request->user();
             $goodAnswers = [];
             $almostAnswers = false;
+            $duplicateAnswers = []; // Track duplicate answers to inform user
             $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
                 return $round->room->track_duration;
             });
@@ -261,8 +262,10 @@ class RoundController extends Controller
                         $answer->id // answer_id pour recoupements
                     );
 
-                    // Si la réponse existait déjà, ignorer cette requête
+                    // Si la réponse existait déjà, l'ajouter aux doublons et continuer
                     if (! $wasNewAnswer) {
+                        $duplicateAnswers[] = $answer;
+
                         continue;
                     }
 
@@ -298,15 +301,17 @@ class RoundController extends Controller
                 $totalTrackAnswers = $trackAnswers->count();
                 $message = $this->getMessage('good');
 
-                // Broadcast score to everyone
-                broadcast(new NewScore([
-                    'room_id' => $round->room->id,
-                    'user_id' => $user->id,
-                    'track_id' => $track->id,
-                    'answers' => $answers,
-                    'total' => $totalScore,
-                    'time' => $request->input('currentTime'),
-                ]));
+                // Broadcast score to everyone (only if we have new answers)
+                if (! empty($answers)) {
+                    broadcast(new NewScore([
+                        'room_id' => $round->room->id,
+                        'user_id' => $user->id,
+                        'track_id' => $track->id,
+                        'answers' => $answers,
+                        'total' => $totalScore,
+                        'time' => $request->input('currentTime'),
+                    ]));
+                }
 
                 // If user has found all the answers send the bubble to the player
                 if ($totalUserAnswers === $totalTrackAnswers) {
@@ -317,6 +322,13 @@ class RoundController extends Controller
                         'time' => $request->input('currentTime'),
                     ]));
                 }
+            } elseif (! empty($duplicateAnswers)) {
+                // Si toutes les réponses sont des doublons, informer l'utilisateur
+                // mais ne pas retourner un message "bad" car les réponses étaient correctes
+                $message = [
+                    'type' => 'good',
+                    'body' => __('You have already found these answers'),
+                ];
             } elseif ($almostAnswers) {
                 $message = $this->getMessage('almost');
             } else {
