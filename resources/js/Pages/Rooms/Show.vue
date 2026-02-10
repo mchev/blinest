@@ -79,14 +79,12 @@ function resyncRoomAfterReconnect() {
 onMounted(() => {
   if (user) {
     Echo.join(channel)
-      .here(() => {
-        joining()
-      })
       .error((err) => {
         console.error(err)
       })
-    // Appeler joining() tout de suite : GET /joined + POST presence-joined (état + enregistrement).
-    // Ne pas dépendre uniquement de .here() qui peut ne pas être émis en prod par Reverb.
+    // Une seule fois : GET /joined + POST presence-joined (état + liste joueurs).
+    // Ne pas appeler joining() aussi dans .here() : la 2e réponse GET pouvait écraser
+    // initialTrack/currentTrack après que le Player ait démarré et coupait la lecture.
     joining()
 
     const conn = window.Echo?.connector?.pusher?.connection
