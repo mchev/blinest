@@ -85,6 +85,9 @@ onMounted(() => {
       .error((err) => {
         console.error(err)
       })
+    // Appeler joining() tout de suite : GET /joined + POST presence-joined (état + enregistrement).
+    // Ne pas dépendre uniquement de .here() qui peut ne pas être émis en prod par Reverb.
+    joining()
 
     const conn = window.Echo?.connector?.pusher?.connection
     if (conn) {
