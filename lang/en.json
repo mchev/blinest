@@ -147,5 +147,10 @@
     "Vue d'ensemble": "Overview",
     "Glossaire": "Glossary",
     "ELO": "ELO",
-    "Levels": "Levels"
+    "Levels": "Levels",
+    "Connection problem, please try again": "Connection problem, please try again",
+    "The round has changed, try again on the next track": "The round has changed, try again on the next track",
+    "Connected": "Connected",
+    "Reconnecting…": "Reconnecting…",
+    "Waiting for other players…": "Waiting for other players…"
 }

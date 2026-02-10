@@ -7,6 +7,7 @@ const props = defineProps({
 })
 
 const user = usePage().props.auth.user
+const cardRef = ref(null)
 
 const channel = `rooms.${props.room.id}`
 const track = ref(null)
@@ -21,6 +22,46 @@ const calculateProgression = () => {
 	progress.value = (current_track / props.room.tracks_by_round) * 100
 }
 
+let echoChannel = null
+let countChannel = null
+let observer = null
+
+function subscribeEcho() {
+	if (echoChannel) return
+	echoChannel = Echo.channel(channel)
+	echoChannel
+		.listen('RoundStarted', (e) => {
+			playing.value = true
+			round.value = e.round
+		})
+		.listen('TrackPlayed', (e) => {
+			round.value = e.round
+			track.value = e.track
+		})
+		.listen('RoundFinished', (e) => {
+			playing.value = false
+			round.value = e.round
+			if (round.value) round.value.current = 0
+		})
+	if (user) {
+		countChannel = Echo.private(`room.count.${props.room.id}`)
+		countChannel.listenForWhisper('updatedUserCount', (e) => {
+			userCounter.value = e.count
+		})
+	}
+}
+
+function leaveEcho() {
+	if (echoChannel) {
+		Echo.leave(channel)
+		echoChannel = null
+	}
+	if (countChannel) {
+		Echo.leave(`room.count.${props.room.id}`)
+		countChannel = null
+	}
+}
+
 watch(round, (value) => {
 	calculateProgression()
 })
@@ -29,36 +70,29 @@ onMounted(() => {
 	if (props.room) {
 		calculateProgression()
 	}
-	Echo.channel(channel)
-		.listen('RoundStarted', (e) => {
-			playing.value = true
-			round.value = e.round
-		})
-		.listen('TrackPlayed', (e) => {
-			props.room.value = e.room
-			round.value = e.round
-			track.value = e.track
-		})
-		.listen('RoundFinished', (e) => {
-			playing.value = false
-			round.value = e.round
-			round.value.current = 0
-		})
+	if (!cardRef.value) return
+	observer = new IntersectionObserver(
+		(entries) => {
+			if (entries[0].isIntersecting) {
+				subscribeEcho()
+			} else {
+				leaveEcho()
+			}
+		},
+		{ rootMargin: '100px', threshold: 0 }
+	)
+	observer.observe(cardRef.value)
 })
 
-if (user) {
-    Echo.private(`room.count.${props.room.id}`)
-        .listenForWhisper('updatedUserCount', (e) => {
-            userCounter.value = e.count
-        })
-}
-
 onUnmounted(() => {
-	Echo.leave(channel)
+	if (observer && cardRef.value) {
+		observer.disconnect()
+	}
+	leaveEcho()
 })
 </script>
 <template>
-	<article>
+	<article ref="cardRef">
 		<Link :href="`/rooms/${room.slug}`">
 			<figure class="relative mb-4 overflow-hidden rounded-2xl bg-shark-300 transition hover:scale-105">
 				<img :src="room.photo" class="max-h-52 w-full object-cover" />

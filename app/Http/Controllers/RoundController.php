@@ -341,6 +341,11 @@ class RoundController extends Controller
                 'message' => $message,
             ], 200);
         }
+
+        // Round ended or track mismatch: explicit response so the client can handle it
+        $error = $round->finished_at ? 'round_ended' : 'track_mismatch';
+
+        return response()->json(['error' => $error], 409);
     }
 
     /**

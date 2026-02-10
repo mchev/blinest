@@ -2,10 +2,12 @@
     "agents": [
         "cursor"
     ],
-    "editors": [
-        "cursor",
-        "vscode"
-    ],
-    "guidelines": [],
-    "herd_mcp": true
+    "guidelines": true,
+    "herd_mcp": true,
+    "mcp": true,
+    "sail": false,
+    "skills": [
+        "inertia-vue-development",
+        "tailwindcss-development"
+    ]
 }

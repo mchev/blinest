@@ -11,6 +11,7 @@ const props = defineProps({
 })
 
 const user = usePage().props.auth.user
+const cardRef = ref(null)
 
 const channel = computed(() => `rooms.${props.room.id}`)
 const track = ref(null)
@@ -26,13 +27,56 @@ const calculateProgression = () => {
 }
 
 // Computed properties for better readability
-const currentTrackDisplay = computed(() => 
+const currentTrackDisplay = computed(() =>
     round.value ? round.value.current : props.room.current_track_index
 )
 
 const isPasswordProtected = computed(() => !!props.room.password)
 const isManualStart = computed(() => !props.room.is_autostart)
 const isPrivateRoom = computed(() => !props.room.is_public)
+
+let echoChannel = null
+let countChannel = null
+let observer = null
+
+function subscribeEcho() {
+    if (echoChannel) return
+    echoChannel = Echo.channel(channel.value)
+    echoChannel
+        .listen('RoundStarted', (e) => {
+            playing.value = true
+            round.value = e.round
+            progress.value = 0
+        })
+        .listen('TrackPlayed', (e) => {
+            round.value = e.round
+            track.value = e.track
+            progress.value = round.value?.current === 1 ? 0 : ((round.value?.current - 1) / props.room.tracks_by_round) * 100
+        })
+        .listen('RoundFinished', (e) => {
+            playing.value = false
+            round.value = e.round
+            if (round.value) round.value.current = 0
+            progress.value = 100
+        })
+    if (user) {
+        countChannel = Echo.private(`room.count.${props.room.id}`)
+        countChannel.listenForWhisper('updatedUserCount', (e) => {
+            userCounter.value = e.count
+        })
+    }
+}
+
+function leaveEcho() {
+    if (echoChannel) {
+        Echo.leave(channel.value)
+        echoChannel = null
+    }
+    if (countChannel) {
+        Echo.leave(`room.count.${props.room.id}`)
+        countChannel = null
+    }
+}
 
 watch(() => round.value, (newValue, oldValue) => {
     if (newValue !== oldValue) {
@@ -44,44 +88,31 @@ onMounted(() => {
     if (props.room) {
         calculateProgression()
     }
-    
-    const echoChannel = Echo.channel(channel.value)
-    
-    echoChannel.listen('RoundStarted', (e) => {
-        playing.value = true
-        round.value = e.round
-        progress.value = 0
-    })
-    .listen('TrackPlayed', (e) => {
-        props.room.value = e.room
-        round.value = e.round
-        track.value = e.track
-        progress.value = round.value.current === 1 ? 0 : ((round.value.current - 1) / props.room.tracks_by_round) * 100
-    })
-    .listen('RoundFinished', (e) => {
-        playing.value = false
-        round.value = e.round
-        round.value.current = 0
-        progress.value = 100
-    })
-
-    if (user) {
-        Echo.private(`room.count.${props.room.id}`)
-            .listenForWhisper('updatedUserCount', (e) => {
-                userCounter.value = e.count
-            })
-    }
+    if (!cardRef.value) return
+    observer = new IntersectionObserver(
+        (entries) => {
+            const entry = entries[0]
+            if (entry.isIntersecting) {
+                subscribeEcho()
+            } else {
+                leaveEcho()
+            }
+        },
+        { rootMargin: '100px', threshold: 0 }
+    )
+    observer.observe(cardRef.value)
 })
 
 onUnmounted(() => {
-    Echo.leave(channel.value)
-    if (user) {
-        Echo.leave(`room.count.${props.room.id}`)
+    if (observer && cardRef.value) {
+        observer.disconnect()
     }
+    leaveEcho()
 })
 </script>
 <template>
-    <Link :rel="isPrivateRoom ? 'nofollow' : ''" :href="`/rooms/${room.slug}`" class="group w-full">
+    <div ref="cardRef" class="w-full">
+        <Link :rel="isPrivateRoom ? 'nofollow' : ''" :href="`/rooms/${room.slug}`" class="group w-full block">
         <div class="overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-700 hover:border-red-500">
             <!-- Room Header -->
             <div class="relative">
@@ -143,5 +174,6 @@ onUnmounted(() => {
                 </div>
             </div>
         </div>
-    </Link>
+        </Link>
+    </div>
 </template>

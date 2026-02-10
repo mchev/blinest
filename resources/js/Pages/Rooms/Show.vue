@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Card from '@/Components/Card.vue'
@@ -18,17 +18,29 @@ import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 
 const props = defineProps({
-  room: Object,
-  public_rooms: Object,
+  room: {
+    type: Object,
+    required: true,
+    validator: (v) => v && typeof v.id !== 'undefined',
+  },
+  public_rooms: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const user = usePage().props.auth.user
-const room = ref({ ...props.room }) // Create a local reactive copy
+const room = ref({ ...props.room })
 const channel = `rooms.${room.value.id}`
 const round = ref(null)
 const joined = ref(false)
-const users = ref([])
-const data = ref(null)
+/** Single source of truth: server RoomState (users, scores, roundId) + client-side answersByUser from NewScore */
+const roomState = ref({
+  users: [],
+  scores: {},
+  roundId: null,
+  answersByUser: {},
+})
 const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
@@ -37,128 +49,177 @@ const users_podium = ref([])
 const teams_podium = ref([])
 const initialTrack = ref(null)
 const initialStartTime = ref(0)
-let roundsChannel = null // Store channel reference to prevent multiple listeners
+const currentTrack = ref(null)
+let roundsChannel = null
+/** 'connected' | 'reconnecting' for connection indicator */
+const connectionState = ref('connected')
+
+function dispatchUserCount(count) {
+  Echo.private(`room.count.${room.value.id}`).whisper('updatedUserCount', { count })
+}
+
+function callPresenceLeft() {
+  axios.post(`/rooms/${room.value.id}/presence-left`).catch(() => {})
+}
+
+function resyncRoomAfterReconnect() {
+  if (!joined.value) return
+  axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
+    if (response.data.users) roomState.value.users = response.data.users
+    if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
+    if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
+    axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
+      if (res.data?.users) roomState.value.users = res.data.users
+      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
+    }).catch(() => {})
+  }).catch(() => {})
+}
 
 onMounted(() => {
   if (user) {
     Echo.join(channel)
-      .here((usersHere) => {
-        users.value = usersHere
+      .here(() => {
         joining()
-        if (usersHere.length > 0 && usersHere[0].id === user.id) {
-          dispatchUserCount(usersHere.length)
-        }
       })
-      .joining((user) => {
-        users.value.push(user)
-        if (users.value.length > 0 && users.value[0].id === user.id) {
-          dispatchUserCount(users.value.length)
-        }
-        // Si un round est en cours, récupérer les scores depuis Redis pour le nouveau joueur
-        if (round.value?.id) {
-          fetchRoundScores(round.value.id)
-        }
+      .error((err) => {
+        console.error(err)
       })
-      .leaving((user) => {
-        users.value = users.value.filter((u) => u.id !== user.id)
-        if (users.value.length > 0 && users.value[0].id === user.id) {
-          dispatchUserCount(users.value.length)
-        }
-      })
-      .error((error) => {
-        console.error(error)
-      })
-  }
 
+    const conn = window.Echo?.connector?.pusher?.connection
+    if (conn) {
+      conn.bind('state_change', (states) => {
+        if (states.current === 'connecting' || states.current === 'reconnecting') {
+          connectionState.value = 'reconnecting'
+        } else if (states.current === 'connected') {
+          connectionState.value = 'connected'
+          if (states.previous === 'disconnected' || states.previous === 'unavailable' || states.previous === 'failed') {
+            resyncRoomAfterReconnect()
+          }
+        }
+      })
+    }
+  }
+  window.addEventListener('beforeunload', callPresenceLeft)
 })
 
-const dispatchUserCount = (count) => {
-  Echo.private(`room.count.${room.value.id}`)
-    .whisper('updatedUserCount', {
-      count: count
-    })
-}
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', callPresenceLeft)
+  callPresenceLeft()
+})
 
 onUnmounted(() => {
-  // Clean up listeners
   if (roundsChannel) {
     roundsChannel.stopListening('RoundStarted')
     roundsChannel.stopListening('RoundFinished')
     roundsChannel.stopListening('TrackPlayed')
+    roundsChannel.stopListening('UserEloUpdated')
+    roundsChannel.stopListening('RoomState')
+    roundsChannel.stopListening('NewScore')
   }
   Echo.leave(channel)
 })
 
 const joining = () => {
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
-    // If there's a current round and track, use them immediately
     if (response.data.round && response.data.track) {
       round.value = response.data.round
       initialTrack.value = response.data.track
+      currentTrack.value = response.data.track
       initialStartTime.value = response.data.startTime || 0
       if (response.data.room) {
-        Object.assign(room.value, response.data.room) // Update local room ref
+        Object.assign(room.value, response.data.room)
       }
-      // Enregistrer que le joueur a écouté cette track (même s'il rejoint en cours)
       if (response.data.round.id && response.data.track.id) {
-        axios.post(`/rounds/${response.data.round.id}/tracks/${response.data.track.id}/listened`).catch(() => {
-          // Ignorer les erreurs silencieusement
-        })
+        axios.post(`/rounds/${response.data.round.id}/tracks/${response.data.track.id}/listened`).catch(() => {})
       }
     } else {
       initialTrack.value = null
       initialStartTime.value = 0
+      currentTrack.value = null
     }
-    // Passer les scores au composant Ranking via data
-    if (response.data.scores) {
-      data.value = {
-        scores: response.data.scores,
-        roundId: response.data.round?.id
-      }
+    // Initial room state from server (single source of truth)
+    if (response.data.users) {
+      roomState.value.users = response.data.users
+    }
+    if (response.data.scores && typeof response.data.scores === 'object') {
+      roomState.value.scores = response.data.scores
+    }
+    if (response.data.roundId != null) {
+      roomState.value.roundId = response.data.roundId
+    }
+    if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
+      dispatchUserCount(roomState.value.users.length)
     }
     joined.value = true
     listenRounds()
-  }).catch((error) => {
-    console.error('Error joining room:', error)
+    // Notify server we joined so it broadcasts RoomState to everyone (fixes invisibility).
+    // Apply response state immediately so we see ourselves when alone (avoids missing the broadcast).
+    axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
+      if (res.data?.users) roomState.value.users = res.data.users
+      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
+      if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
+        dispatchUserCount(roomState.value.users.length)
+      }
+    }).catch(() => {})
+  }).catch((err) => {
+    console.error('Error joining room:', err)
   })
 }
 
 const fetchRoundScores = async (roundId) => {
-  if (!roundId) {
-    return
-  }
+  if (!roundId) return
   try {
-    const response = await axios.get(`/rounds/${roundId}/scores`)
-    if (response.data.scores) {
-      data.value = {
-        scores: response.data.scores,
-        roundId: roundId
-      }
+    const res = await axios.get(`/rounds/${roundId}/scores`)
+    if (res.data.scores) {
+      roomState.value.scores = { ...roomState.value.scores, ...res.data.scores }
     }
-  } catch (error) {
-    console.error('Error fetching round scores:', error)
+  } catch (e) {
+    console.error('Error fetching round scores:', e)
   }
 }
 
 const listenRounds = () => {
-  // Clean up existing listeners to prevent duplicates
   if (roundsChannel) {
     roundsChannel.stopListening('RoundStarted')
     roundsChannel.stopListening('RoundFinished')
     roundsChannel.stopListening('TrackPlayed')
     roundsChannel.stopListening('UserEloUpdated')
+    roundsChannel.stopListening('RoomState')
+    roundsChannel.stopListening('NewScore')
   }
-  
-  // Create new listeners
   roundsChannel = Echo.channel(channel)
   roundsChannel
+    .listen('RoomState', (e) => {
+      if (e.users) roomState.value.users = e.users
+      if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
+      if (e.roundId != null) roomState.value.roundId = e.roundId
+      if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
+        dispatchUserCount(roomState.value.users.length)
+      }
+    })
+    .listen('NewScore', (e) => {
+      const score = e.score || e
+      const uid = score.user_id
+      if (uid != null) {
+        roomState.value.scores = { ...roomState.value.scores, [uid]: score.total ?? 0 }
+        if (score.answers && Array.isArray(score.answers)) {
+          const prev = roomState.value.answersByUser[uid] || []
+          roomState.value.answersByUser = {
+            ...roomState.value.answersByUser,
+            [uid]: [...prev, ...score.answers],
+          }
+        }
+      }
+    })
     .listen('RoundStarted', (e) => {
       round.value = e.round
       roundFinished.value = false
-      // Récupérer les scores depuis Redis pour le nouveau round
-      if (e.round?.id) {
-        fetchRoundScores(e.round.id)
-      }
+      roomState.value.roundId = e.round?.id ?? null
+      roomState.value.scores = {}
+      roomState.value.answersByUser = {}
+      if (e.round?.id) fetchRoundScores(e.round.id)
     })
     .listen('RoundFinished', (e) => {
       round.value = e.round
@@ -168,20 +229,15 @@ const listenRounds = () => {
     })
     .listen('TrackPlayed', (e) => {
       round.value = e.round
-      if (e.room) {
-        Object.assign(room.value, e.room) // Update local room ref
-      }
-      // Clear initial track since we're now receiving live updates
+      if (e.room) Object.assign(room.value, e.room)
       initialTrack.value = null
       initialStartTime.value = 0
-      // Ne PAS récupérer les scores - ils se mettent à jour automatiquement via les événements NewScore
+      currentTrack.value = e.track
+      roomState.value.answersByUser = {}
     })
     .listen('UserEloUpdated', (e) => {
-      // Mettre à jour l'ELO de l'utilisateur dans la liste des utilisateurs
-      const userIndex = users.value.findIndex((u) => u.id === e.user_id)
-      if (userIndex !== -1) {
-        users.value[userIndex].elo = e.elo
-      }
+      const u = roomState.value.users.find((x) => x.id === e.user_id)
+      if (u) u.elo = e.elo
     })
 }
 </script>
@@ -205,6 +261,10 @@ const listenRounds = () => {
           <article class="mb-6 flex flex-wrap gap-4 items-center justify-between">
             <div class="flex items-center space-x-3">
               <h1 class="text-2xl font-bold text-neutral-100">{{ room.name }}</h1>
+              <span v-if="user" class="flex items-center gap-1.5 text-sm font-medium text-neutral-400" :class="{ 'text-amber-400': connectionState === 'reconnecting' }">
+                <span class="h-2 w-2 rounded-full shrink-0" :class="connectionState === 'connected' ? 'bg-emerald-500' : 'bg-amber-400 animate-pulse'"></span>
+                {{ connectionState === 'connected' ? __('Connected') : __('Reconnecting…') }}
+              </span>
             </div>
             <div class="flex items-center gap-3">
               <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
@@ -229,8 +289,8 @@ const listenRounds = () => {
           </div>
 
           <div class="grid gap-8 md:grid-cols-2">
-            <Answers class="mb-4 md:mb-0" :users="users" :channel="channel" />
-            <Ranking class="mb-4 md:mb-0" :room="room" :users="users" :channel="channel" :data="data" :initialTrack="initialTrack" />
+            <Answers class="mb-4 md:mb-0" :users="roomState.users" :channel="channel" />
+            <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
 
           <Card class="mt-8">
@@ -244,12 +304,12 @@ const listenRounds = () => {
                   <div class="flex flex-wrap gap-3">
                     <span v-for="moderator in room.moderators" 
                           class="flex items-center space-x-2 rounded-full bg-neutral-700/50 px-3 py-1.5" 
-                          :class="{ 'ring-2 ring-teal-500': users.find((x) => moderator.id === x.id) }">
+                          :class="{ 'ring-2 ring-teal-500': roomState.users.find((x) => moderator.id === x.id) }">
                       <img :src="moderator.photo" 
                            :alt="moderator.name" 
                            :title="moderator.name" 
                            class="h-6 w-6 rounded-full ring-1 ring-neutral-600" />
-                      <span class="font-medium" :class="{ 'text-teal-400': users.find((x) => moderator.id === x.id) }">
+                      <span class="font-medium" :class="{ 'text-teal-400': roomState.users.find((x) => moderator.id === x.id) }">
                         {{ moderator.name }}
                       </span>
                     </span>
@@ -258,11 +318,11 @@ const listenRounds = () => {
               </div>
               <div class="flex flex-wrap md:flex-nowrap items-center gap-2 sm:gap-3 lg:gap-4" v-if="user">
                 <button type="button" class="btn-secondary btn-sm flex-shrink-0 whitespace-nowrap">
-                  <span class="font-medium">{{ room.tracks_count_from_cache ? room.tracks_count : '-' }}</span>
+                  <span class="font-medium">{{ room.tracks_count != null ? room.tracks_count : '-' }}</span>
                   <span>{{ __('Tracks') }}</span>
                 </button>
-                <button v-if="room.rounds_count_from_cache && room.rounds_count > 0" 
-                        type="button" 
+                <button v-if="room.rounds_count != null && room.rounds_count > 0"
+                        type="button"
                         class="btn-secondary btn-sm flex-shrink-0 whitespace-nowrap">
                   <span class="font-medium">{{ room.rounds_count }}</span>
                   <span>{{ __('Rounds played') }}</span>

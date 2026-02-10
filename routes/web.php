@@ -70,7 +70,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
 
     // Check user answer
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
-        ->name('rounds.track.check');
+        ->name('rounds.track.check')
+        ->middleware('throttle:60,1');
     Route::post('rounds/{round}/tracks/{track}/listened', [RoundController::class, 'trackListened'])
         ->name('rounds.tracks.listened');
     Route::get('rounds/{round}/scores', [RoundController::class, 'scores'])

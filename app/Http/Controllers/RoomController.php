@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RoomState as RoomStateEvent;
 use App\Jobs\StartRound;
 use App\Models\Category;
 use App\Models\Playlist;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
+use App\Services\RoomPresenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -346,13 +348,16 @@ class RoomController extends Controller
     /**
      * Starting a round if no running
      */
-    public function joined(Request $request, Room $room)
+    public function joined(Request $request, Room $room): JsonResponse
     {
         if (! $room->is_playing && $room->is_autostart) {
             if (! $room->isPlaying()) { // To be sure there is no round playing
                 StartRound::dispatch($room, $request->user());
             }
         }
+
+        $roomPresence = app(RoomPresenceService::class);
+        $roomState = $roomPresence->getRoomState($room);
 
         // Return current round and track information if a round is playing
         $currentRound = $room->currentRound()->first();
@@ -375,13 +380,8 @@ class RoomController extends Controller
                     // Calculate elapsed time since track started
                     $startTime = 0;
                     if ($currentRound->current_track_started_at) {
-                        // current_track_started_at is already a Carbon instance due to the datetime cast
                         $startedAt = $currentRound->current_track_started_at;
-                        // Calculate elapsed seconds: time since track started
-                        // diffInSeconds returns the absolute difference by default
-                        // We want: elapsed = now - startedAt (positive if startedAt is in the past)
                         $elapsedSeconds = $startedAt->diffInSeconds(now());
-                        // Don't allow negative time or time beyond track duration
                         $startTime = max(0, min($elapsedSeconds, $room->track_duration));
                     }
 
@@ -408,14 +408,57 @@ class RoomController extends Controller
                             'id' => $room->id,
                             'is_playing' => $room->is_playing,
                         ],
-                        'startTime' => $startTime, // Time in seconds to start the track
-                        'scores' => app(\App\Services\RoundScoreService::class)->getAllScores($currentRound->id), // [userId => score, ...]
+                        'startTime' => $startTime,
+                        'scores' => $roomState['scores'],
+                        'users' => $roomState['users'],
+                        'roundId' => $roomState['roundId'],
                     ]);
                 }
             }
         }
 
-        return response()->json(['round' => null, 'track' => null, 'startTime' => 0]);
+        return response()->json([
+            'round' => null,
+            'track' => null,
+            'startTime' => 0,
+            'scores' => $roomState['scores'],
+            'users' => $roomState['users'],
+            'roundId' => $roomState['roundId'],
+        ]);
+    }
+
+    /**
+     * Notify server that the user joined the room presence (Echo.join).
+     * Server adds user to Redis and broadcasts RoomState to all clients.
+     * Returns the new state so the caller can update immediately (avoids race when alone).
+     */
+    public function presenceJoined(Request $request, Room $room): JsonResponse
+    {
+        $roomPresence = app(RoomPresenceService::class);
+        $roomPresence->addMember($room, $request->user());
+        $state = $roomPresence->getRoomState($room);
+        broadcast(new RoomStateEvent($room->id, $state));
+
+        return response()->json([
+            'ok' => true,
+            'users' => $state['users'],
+            'scores' => $state['scores'],
+            'roundId' => $state['roundId'],
+        ]);
+    }
+
+    /**
+     * Notify server that the user left the room presence (Echo.leave / page unload).
+     * Server removes user from Redis and broadcasts RoomState to all clients.
+     */
+    public function presenceLeft(Request $request, Room $room): JsonResponse
+    {
+        $roomPresence = app(RoomPresenceService::class);
+        $roomPresence->removeMember($room, $request->user());
+        $state = $roomPresence->getRoomState($room);
+        broadcast(new RoomStateEvent($room->id, $state));
+
+        return response()->json(['ok' => true]);
     }
 
     public function start(Request $request, Room $room)

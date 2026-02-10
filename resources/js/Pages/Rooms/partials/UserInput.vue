@@ -138,28 +138,37 @@ const check = () => {
     })
     .catch(error => {
       console.error('Error checking answer:', error)
-      
+
       // Always reset submitting flag, even on error
       isSubmitting.value = false
-      
-      // Restore text on error so user can retry (unless it's a validation error)
-      // Only restore if input is empty (user didn't type something new)
-      if (error.response?.status !== 400) {
-        const currentTextValue = text.value.trim()
-        if (currentTextValue === '' || currentTextValue === currentText) {
-          // Restore original text if user hasn't typed something new
-          text.value = submittedText
-        }
-      } else {
-        // For 400 errors (validation), clear the input but don't restore
-        // This allows user to retry with correct input
+
+      const status = error.response?.status
+      const isNetworkOrThrottle = !error.response || status === 429
+      const isConflict = status === 409
+
+      if (isNetworkOrThrottle) {
+        showMessage({ type: 'bad', body: __('Connection problem, please try again') })
+      } else if (isConflict) {
+        showMessage({ type: 'bad', body: __('The round has changed, try again on the next track') })
         const currentTextValue = text.value.trim()
         if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
           text.value = ''
         }
       }
-      
-      // Maintain focus even on error
+
+      // Restore text on error so user can retry (unless validation or conflict)
+      if (status !== 400 && !isConflict) {
+        const currentTextValue = text.value.trim()
+        if (currentTextValue === '' || currentTextValue === currentText) {
+          text.value = submittedText
+        }
+      } else if (status === 400) {
+        const currentTextValue = text.value.trim()
+        if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
+          text.value = ''
+        }
+      }
+
       nextTick(() => {
         requestAnimationFrame(() => {
           if (input.value && !inputDisabled.value) {

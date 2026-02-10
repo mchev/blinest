@@ -717,5 +717,10 @@
     "All your data, scores, and progress will be exactly the same!": "Toutes vos données, scores et progression seront exactement les mêmes !",
     "Good news:": "Bonne nouvelle :",
     "You won't lose anything! Your account, scores, level, and all your progress are safe. You just need to set a password to log in.": "Vous ne perdrez rien ! Votre compte, vos scores, votre niveau et toute votre progression sont en sécurité. Vous devez simplement définir un mot de passe pour vous connecter.",
-    "Got it, thanks!": "Compris, merci !"
+    "Got it, thanks!": "Compris, merci !",
+    "Connection problem, please try again": "Problème de connexion, réessaie",
+    "The round has changed, try again on the next track": "La partie a changé, réessaie sur la prochaine piste",
+    "Connected": "Connecté",
+    "Reconnecting…": "Reconnexion…",
+    "Waiting for other players…": "En attente d'autres joueurs…"
 }
