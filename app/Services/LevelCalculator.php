@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\UserLevelUpdated;
+use App\Models\MinigameScore;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\UserLevel;
@@ -160,7 +161,12 @@ class LevelCalculator
             return (int) round($this->user->created_at->diffInMonths(now()));
         });
 
+        $minigameScoreTotal = (int) MinigameScore::query()
+            ->where('user_id', $this->user->id)
+            ->sum('score');
+
         $totalXp = $this->userLevel->score_public_rooms
+            + min($minigameScoreTotal, 1000)
             + min($userSeniorityInMonths * 50, 600)
             + min($this->userLevel->rooms_created_count * 100, 1000)
             + ($this->user->hasTeam() ? 200 : 0)

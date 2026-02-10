@@ -12,9 +12,6 @@ const currentYear = new Date().getFullYear()
         <!-- Brand Column -->
         <div class="col-span-1">
           <div class="flex items-center mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-8 w-8 text-red-500 mr-2">
-              <path d="M8 5.25a.75.75 0 01.75.75v3.25H12a.75.75 0 010 1.5H8.75V14a.75.75 0 01-1.5 0V5.25A.75.75 0 018 5.25zm9.195-1.944a.75.75 0 01.451.331A23.296 23.296 0 0121 12c0 2.786-.987 5.292-2.554 6.913a.75.75 0 11-1.048-1.074A7.25 7.25 0 0019.75 12a7.25 7.25 0 00-2.352-5.339.75.75 0 01.451-1.355z" />
-            </svg>
             <span class="text-xl font-bold text-white">Blinest</span>
           </div>
           <p class="text-gray-400 mb-4">{{ __('Free multiplayer music quizzes for everyone. Challenge friends and discover new music.') }}</p>

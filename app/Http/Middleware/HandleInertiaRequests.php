@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\MinigameScore;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -60,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                         'total_xp' => $user->userLevel?->total_xp ?? 0,
                         'level_metrics' => $user->userLevel ? [
                             'score_public_rooms' => $user->userLevel->score_public_rooms ?? 0,
+                            'minigame_scores_total' => (int) MinigameScore::query()->where('user_id', $user->id)->sum('score'),
                             'seniority_months' => $user->userLevel->months_seniority ?? 0,
                             'consecutive_days_streak' => $user->userLevel->consecutive_days_streak ?? 0,
                             'rooms_created_count' => $user->userLevel->rooms_created_count ?? 0,

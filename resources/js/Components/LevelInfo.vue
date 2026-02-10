@@ -74,6 +74,12 @@ const metricsXp = computed(() => {
       xp: metrics.score_public_rooms,
       max: null,
     },
+    minigame_scores: {
+      label: __('Mini-games score'),
+      value: metrics.minigame_scores_total ?? 0,
+      xp: Math.min(metrics.minigame_scores_total ?? 0, 1000),
+      max: 1000,
+    },
     seniority: {
       label: __('Seniority'),
       value: Math.round(metrics.seniority_months),
@@ -181,7 +187,7 @@ const metricsXp = computed(() => {
               </span>
             </div>
             <p class="text-xs text-neutral-500 truncate">
-              {{ metric.value }} {{ key === 'seniority' ? __('months') : key === 'streak' ? __('days') : key === 'team' ? '' : key === 'score' ? __('points') : '' }}
+              {{ metric.value }} {{ key === 'seniority' ? __('months') : key === 'streak' ? __('days') : key === 'team' ? '' : key === 'score' || key === 'minigame_scores' ? __('points') : '' }}
             </p>
           </div>
           <div class="text-right ml-2 flex-shrink-0">

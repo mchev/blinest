@@ -244,6 +244,7 @@ Route::get('/local-track/{track}/audio', [LocalTrackController::class, 'audio'])
 require __DIR__.'/auth.php';
 require __DIR__.'/guests.php';
 require __DIR__.'/rooms.php';
+require __DIR__.'/minigames.php';
 require __DIR__.'/admin.php';
 
 Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')->name('moderation.')->group(function () {

@@ -184,6 +184,11 @@ class User extends Authenticatable
         return $this->hasMany(Score::class);
     }
 
+    public function minigameScores(): HasMany
+    {
+        return $this->hasMany(MinigameScore::class);
+    }
+
     public function totalScores(): MorphMany
     {
         return $this->morphMany(TotalScore::class, 'totalscorable');

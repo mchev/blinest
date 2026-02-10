@@ -385,6 +385,7 @@ class RankingController extends Controller
             'total_xp' => $userLevel->total_xp,
             'level_metrics' => [
                 'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
+                'minigame_scores_total' => (int) \App\Models\MinigameScore::query()->where('user_id', $user->id)->sum('score'),
                 'seniority_months' => $userLevel->months_seniority ?? 0,
                 'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
                 'rooms_created_count' => $userLevel->rooms_created_count ?? 0,

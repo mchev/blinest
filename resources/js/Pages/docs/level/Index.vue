@@ -70,6 +70,15 @@ const metrics = [
     bgColor: 'bg-red-500/10',
   },
   {
+    title: __('Mini-games score'),
+    description: __('Reward for playing solo mini-games (Quiz, Who sang?). Your total points from mini-games count as XP.'),
+    formula: __('1 point = 1 XP'),
+    max: __('1000 XP (maximum)'),
+    icon: 'play',
+    color: 'text-teal-500',
+    bgColor: 'bg-teal-500/10',
+  },
+  {
     title: __('Consecutive days streak'),
     description: __('Reward for daily connection. Your streak resets if you miss a day.'),
     formula: __('10 XP per day'),

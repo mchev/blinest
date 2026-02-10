@@ -91,6 +91,23 @@ const user = usePage().props.auth.user;
             </div>
           </div>
         </div>
+
+        <!-- Mini-jeux -->
+        <div v-if="user" class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-teal-900/80 via-neutral-800 to-cyan-900/50 shadow-lg border border-teal-700/50">
+          <div class="p-6">
+            <h3 class="mb-2 text-xl font-bold text-white">{{ __('Mini-games') }}</h3>
+            <p class="mb-4 text-gray-300">{{ __('Solo games to train your music knowledge.') }}</p>
+            <Link
+              :href="route('minigames.index')"
+              class="flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-6 py-3 text-center font-medium text-white transition-all duration-300 hover:bg-teal-500 hover:shadow-lg hover:shadow-teal-500/20"
+            >
+              {{ __('Play') }}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
         
         <!-- Batilo Promotion -->
         <div class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900 via-orange-800 to-amber-900 shadow-lg border border-orange-700/50">
