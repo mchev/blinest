@@ -738,5 +738,15 @@
     "1000 XP (maximum)": "1000 XP (máximo)",
     "Preparing your 5 questions...": "Preparando tus 5 preguntas…",
     "Time's up!": "¡Tiempo acabado!",
-    "Failed to load questions.": "Error al cargar las preguntas."
+    "Failed to load questions.": "Error al cargar las preguntas.",
+    "First letter": "Primera letra",
+    "Complete the title (first letter of each word)": "Completa el título (primera letra de cada palabra)",
+    "Type the title...": "Escribe el título…",
+    "Validate": "Validar",
+    "Listen and complete the title from the first letter of each word.": "Escucha y completa el título a partir de la primera letra de cada palabra.",
+    "Première lettre": "Primera letra",
+    "Anagram": "Anagrama",
+    "Unscramble the letters to find the artist name.": "Ordena las letras para encontrar el nombre del artista.",
+    "Type the artist name...": "Escribe el nombre del artista…",
+    "Unscramble the letters to find the artist name": "Ordena las letras para encontrar el nombre del artista"
 }

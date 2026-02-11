@@ -52,6 +52,82 @@ class TrackPickerService
     }
 
     /**
+     * Pick a random track with title only (for free-text games like "first letter").
+     *
+     * @return array{track: array<string, mixed>, correct_value: string}
+     */
+    public function getRandomTrackWithTitle(): array
+    {
+        $track = $this->pickRandomTrackWithAnswer(self::ANSWER_TYPE_TITLE, false);
+        if (! $track) {
+            throw new \RuntimeException(__('No track available for this minigame.'));
+        }
+
+        $correctValue = $track->answers->firstWhere('answer_type_id', self::ANSWER_TYPE_TITLE)?->value ?? '';
+
+        return [
+            'track' => $this->formatTrackForFront($track),
+            'correct_value' => $correctValue,
+        ];
+    }
+
+    /**
+     * Pick a random artist and return its name with letters scrambled (anagram game).
+     * No audio; only track_id for validation and artwork for summary.
+     *
+     * @return array{track_id: int, scrambled_artist: string, artwork_url: string|null}
+     */
+    public function getRandomArtistAnagram(): array
+    {
+        $track = $this->pickRandomTrackWithAnswer(self::ANSWER_TYPE_ARTIST, false);
+        if (! $track) {
+            throw new \RuntimeException(__('No track available for this minigame.'));
+        }
+
+        $rawArtist = $track->answers->firstWhere('answer_type_id', self::ANSWER_TYPE_ARTIST)?->value ?? '';
+        $artist = self::stripParentheses($rawArtist);
+        $scrambled = $this->scrambleString($artist);
+
+        return [
+            'track_id' => $track->id,
+            'scrambled_artist' => $scrambled,
+            'artwork_url' => $track->artwork_url,
+        ];
+    }
+
+    /**
+     * Remove parentheses and their content from a string (e.g. "Artist (feat. X)" → "Artist").
+     * Used for anagram game so display and comparison ignore extra info.
+     */
+    public static function stripParentheses(string $value): string
+    {
+        $cleaned = preg_replace('/\s*\([^)]*\)/u', '', $value);
+
+        return trim($cleaned ?? $value);
+    }
+
+    /**
+     * Shuffle characters of a string (anagram). Ensures result differs from original when possible.
+     */
+    private function scrambleString(string $value): string
+    {
+        $chars = mb_str_split(trim($value));
+        if (count($chars) < 2) {
+            return $value;
+        }
+        $original = implode('', $chars);
+        for ($i = 0; $i < 5; $i++) {
+            shuffle($chars);
+            $scrambled = implode('', $chars);
+            if ($scrambled !== $original) {
+                return $scrambled;
+            }
+        }
+
+        return implode('', $chars);
+    }
+
+    /**
      * Pick a random track using id >= random_id to avoid ORDER BY RAND().
      * Only considers tracks from public (official) playlists.
      *

@@ -46,6 +46,8 @@ class MinigameScoreService
             MinigameScore::TYPE_QUIZ => (int) ($totals->get(MinigameScore::TYPE_QUIZ, 0)),
             MinigameScore::TYPE_WHO_SANG => (int) ($totals->get(MinigameScore::TYPE_WHO_SANG, 0)),
             MinigameScore::TYPE_ALBUM_COVER => (int) ($totals->get(MinigameScore::TYPE_ALBUM_COVER, 0)),
+            MinigameScore::TYPE_FIRST_LETTER => (int) ($totals->get(MinigameScore::TYPE_FIRST_LETTER, 0)),
+            MinigameScore::TYPE_ANAGRAM => (int) ($totals->get(MinigameScore::TYPE_ANAGRAM, 0)),
         ];
     }
 

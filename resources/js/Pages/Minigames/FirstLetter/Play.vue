@@ -7,8 +7,8 @@ import { pickWrongMessageKey } from '../shared/wrongMessageKeys.js'
 
 const QUESTIONS_PER_ROUND = 5
 
-const nextUrl = route('minigames.quiz.next')
-const checkUrl = route('minigames.quiz.check')
+const nextUrl = route('minigames.first_letter.next')
+const checkUrl = route('minigames.first_letter.check')
 const backUrl = route('minigames.index')
 const homeUrl = route('home')
 
@@ -24,22 +24,38 @@ const roundResults = ref([])
 const showSummary = ref(false)
 const timeUp = ref(false)
 const wrongMessageKey = ref('')
+const userInput = ref('')
 
 const track = ref(null)
-const choices = ref([])
 const correctValue = ref(null)
 
 const showProgress = computed(() => !!track.value)
+
+/** Build hint like "S____ C____ O'____" from title "Sweet Child O'Mine" */
+function firstLetterHint(title) {
+  if (!title || typeof title !== 'string') return ''
+  return title
+    .trim()
+    .split(/\s+/)
+    .map((word) => {
+      const first = word.charAt(0)
+      const rest = word.slice(1).replace(/./g, '_')
+      return first + rest
+    })
+    .join(' ')
+}
+
+const hintText = computed(() => firstLetterHint(correctValue.value))
 
 function applyQuestion(index) {
   const q = roundTracks.value[index]
   if (!q) return
   track.value = q.track
-  choices.value = q.choices || []
   correctValue.value = q.correct_value ?? null
   result.value = null
   timeUp.value = false
   wrongMessageKey.value = ''
+  userInput.value = ''
 }
 
 async function preloadRound() {
@@ -85,13 +101,14 @@ function onTrackEnded() {
   })
 }
 
-async function submitChoice(chosenValueStr) {
-  if (!track.value || checking.value) return
+async function submitAnswer() {
+  const value = userInput.value?.trim()
+  if (!track.value || checking.value || value === '') return
   checking.value = true
   try {
     const { data } = await axios.post(checkUrl, {
       track_id: track.value.id,
-      chosen_value: chosenValueStr,
+      chosen_value: value,
     })
     result.value = data
     if (!data.correct) wrongMessageKey.value = pickWrongMessageKey()
@@ -101,7 +118,7 @@ async function submitChoice(chosenValueStr) {
     roundResults.value.push({
       track: { id: track.value.id, artwork_url: track.value.artwork_url },
       correctValue: data.correct_value,
-      chosenValue: chosenValueStr,
+      chosenValue: value,
       correct: data.correct,
       points: data.points || 0,
     })
@@ -111,7 +128,7 @@ async function submitChoice(chosenValueStr) {
     roundResults.value.push({
       track: { id: track.value.id, artwork_url: track.value.artwork_url },
       correctValue: correctValue.value,
-      chosenValue: chosenValueStr,
+      chosenValue: value,
       correct: false,
       points: 0,
     })
@@ -141,7 +158,7 @@ onMounted(() => {
 
 <template>
   <MinigamePlayLayout
-    :page-title="__('Quiz — 4 choices')"
+    :page-title="__('First letter')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"
@@ -156,7 +173,7 @@ onMounted(() => {
   >
     <div
       v-if="track"
-      class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl shadow-teal-500/5 ring-1 ring-white/5"
+      class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl ring-1 ring-white/5"
     >
       <div class="flex flex-col gap-6 p-6">
         <MinigamePlayer
@@ -168,20 +185,28 @@ onMounted(() => {
 
         <div v-if="!result" class="flex flex-col gap-3">
           <p class="text-center text-sm font-bold uppercase tracking-wider text-neutral-400">
-            {{ __('What is the title of this track?') }}
+            {{ __('Complete the title (first letter of each word)') }}
           </p>
-          <ul class="flex flex-col gap-2">
-            <li v-for="(choice, index) in choices" :key="index">
-              <button
-                type="button"
-                class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 text-left font-semibold text-neutral-100 transition hover:border-teal-500 hover:bg-teal-500/10 hover:shadow-[0_0_20px_rgba(20,184,166,0.15)] focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50"
-                :disabled="checking"
-                @click="submitChoice(choice)"
-              >
-                {{ choice }}
-              </button>
-            </li>
-          </ul>
+          <p class="font-mono text-center text-xl font-bold tracking-widest text-teal-400">
+            {{ hintText }}
+          </p>
+          <form class="flex flex-col gap-3" @submit.prevent="submitAnswer">
+            <input
+              v-model="userInput"
+              type="text"
+              class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 font-semibold text-neutral-100 placeholder-neutral-500 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+              :placeholder="__('Type the title...')"
+              :disabled="checking"
+              autocomplete="off"
+            />
+            <button
+              type="submit"
+              class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3.5 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50"
+              :disabled="checking || !userInput?.trim()"
+            >
+              {{ __('Validate') }}
+            </button>
+          </form>
         </div>
 
         <div v-else class="space-y-5">
@@ -203,7 +228,7 @@ onMounted(() => {
           </p>
           <button
             type="button"
-            class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg shadow-teal-500/30 transition hover:from-teal-500 hover:to-cyan-500 hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900"
+            class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900"
             @click="nextQuestion"
           >
             {{ currentQuestionIndex >= QUESTIONS_PER_ROUND - 1 ? __('See results') : __('Next question') }}

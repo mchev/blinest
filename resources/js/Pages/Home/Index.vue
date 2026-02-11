@@ -5,10 +5,12 @@ import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
 import TopPlayers from './partials/TopPlayers.vue'
 import FeaturedRoom from './partials/FeaturedRoom.vue'
+import MinigamesSlider from './partials/MinigamesSlider.vue'
 
 defineProps({
   filters: Object,
   categories: Object,
+  minigames: Array,
   featured_rooms: Object,
   private_rooms: Object,
   user_rooms: Object,
@@ -51,7 +53,11 @@ const user = usePage().props.auth.user;
           </div>
           <Rooms :rooms="category.rooms" :id="category.id" />
         </div>
-        
+
+        <div v-if="minigames && minigames.length" class="relative">
+          <MinigamesSlider :minigames="minigames" />
+        </div>
+
         <div class="relative">
           <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold text-white">{{ __('Private rooms') }}</h2>
