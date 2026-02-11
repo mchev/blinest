@@ -44,9 +44,11 @@ class FirstLetterController extends Controller
         ]);
 
         $track = Track::query()->with('answers')->findOrFail($request->input('track_id'));
-        $correctTitle = $track->answers->firstWhere('answer_type_id', 2)?->value;
-        $given = trim((string) $request->input('chosen_value'));
+        $rawTitle = $track->answers->firstWhere('answer_type_id', 2)?->value;
+        $correctTitle = $rawTitle !== null ? TrackPickerService::stripParentheses($rawTitle) : null;
+        $given = TrackPickerService::stripParentheses(trim((string) $request->input('chosen_value')));
         $isCorrect = $correctTitle !== null
+            && $correctTitle !== ''
             && $given !== ''
             && Str::slug($given) === Str::slug($correctTitle);
 
