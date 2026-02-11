@@ -12,24 +12,33 @@ class RoomPresenceService
     /** Key expiry so empty rooms don't linger. */
     private const KEY_TTL = 7200;
 
+    /** Members not seen in this many seconds are pruned (heartbeat-based count). */
+    private const PRUNE_SECONDS = 90;
+
     private const KEY_MEMBERS = 'room:%d:members';
 
     /**
-     * Add member to room presence (called when user joins via HTTP presence-joined).
-     * The authoritative list for the in-room UI is Laravel Echo's presence channel (.here, .joining, .leaving).
-     * This Redis set is used for: GET /joined initial state, room count on home page.
+     * Add or refresh member in room (called on join and on heartbeat).
+     * Uses a sorted set: score = last_seen timestamp. Pruning removes stale entries so home count matches reality.
+     * The in-room list is still from the presence channel (.here, .joining, .leaving).
      */
     public function addMember(Room $room, User $user): void
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        Redis::sadd($key, $user->id);
+        Redis::zadd($key, (string) time(), (string) $user->id);
         Redis::expire($key, self::KEY_TTL);
     }
 
     public function removeMember(Room $room, User $user): void
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        Redis::srem($key, $user->id);
+        Redis::zrem($key, (string) $user->id);
+    }
+
+    private function pruneStaleMembers(string $key): void
+    {
+        $cutoff = (string) (time() - self::PRUNE_SECONDS);
+        Redis::zremrangebyscore($key, '-inf', $cutoff);
     }
 
     /**
@@ -38,7 +47,8 @@ class RoomPresenceService
     public function getMemberIds(Room $room): array
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        $ids = Redis::smembers($key);
+        $this->pruneStaleMembers($key);
+        $ids = Redis::zrange($key, 0, -1);
 
         return array_map('intval', $ids);
     }
@@ -46,12 +56,14 @@ class RoomPresenceService
     public function getMemberCount(Room $room): int
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
+        $this->pruneStaleMembers($key);
 
-        return (int) Redis::scard($key);
+        return (int) Redis::zcard($key);
     }
 
     /**
      * Get member counts for multiple rooms in one Redis round-trip (pipeline).
+     * Prunes stale members before counting.
      *
      * @return array<int, int> room_id => count
      */
@@ -61,16 +73,20 @@ class RoomPresenceService
             return [];
         }
 
-        $results = Redis::pipeline(function ($pipe) use ($rooms) {
+        $cutoff = (string) (time() - self::PRUNE_SECONDS);
+        $results = Redis::pipeline(function ($pipe) use ($rooms, $cutoff) {
             foreach ($rooms as $room) {
                 $key = sprintf(self::KEY_MEMBERS, $room->id);
-                $pipe->scard($key);
+                $pipe->zremrangebyscore($key, '-inf', $cutoff);
+                $pipe->zcard($key);
             }
         });
 
         $counts = [];
-        foreach ($rooms->values() as $index => $room) {
-            $counts[$room->id] = (int) ($results[$index] ?? 0);
+        $i = 0;
+        foreach ($rooms->values() as $room) {
+            $counts[$room->id] = (int) ($results[$i + 1] ?? 0);
+            $i += 2;
         }
 
         return $counts;

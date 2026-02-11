@@ -52,6 +52,8 @@ const initialStartTime = ref(0)
 const currentTrack = ref(null)
 /** Presence + events: one subscription (Echo.join = presence channel, .here/.joining/.leaving = list). */
 let roundsChannel = null
+/** Heartbeat to refresh Redis presence so home page count stays accurate (prune removes after 90s without heartbeat). */
+let presenceHeartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
@@ -61,6 +63,21 @@ function onBeforeUnloadPresenceLeft() {
 
 function dispatchUserCount(count) {
   Echo.private(`room.count.${room.value.id}`).whisper('updatedUserCount', { count })
+}
+
+function startPresenceHeartbeat() {
+  if (presenceHeartbeatTimer) return
+  presenceHeartbeatTimer = setInterval(() => {
+    if (!joined.value) return
+    axios.post(`/rooms/${room.value.id}/presence-joined`).catch(() => {})
+  }, 25000)
+}
+
+function stopPresenceHeartbeat() {
+  if (presenceHeartbeatTimer) {
+    clearInterval(presenceHeartbeatTimer)
+    presenceHeartbeatTimer = null
+  }
 }
 
 /**
@@ -189,6 +206,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
+  stopPresenceHeartbeat()
   callPresenceLeft()
 })
 
@@ -235,6 +253,7 @@ const joining = () => {
       if (res.data?.scores != null) roomState.value.scores = res.data.scores
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
+    startPresenceHeartbeat()
   }).catch((err) => {
     console.error('Error joining room:', err)
   })
