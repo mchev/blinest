@@ -63,11 +63,11 @@ class TrackPickerService
             throw new \RuntimeException(__('No track available for this minigame.'));
         }
 
-        $correctValue = $track->answers->firstWhere('answer_type_id', self::ANSWER_TYPE_TITLE)?->value ?? '';
+        $rawTitle = $track->answers->firstWhere('answer_type_id', self::ANSWER_TYPE_TITLE)?->value ?? '';
 
         return [
             'track' => $this->formatTrackForFront($track),
-            'correct_value' => $correctValue,
+            'correct_value' => sanitizeString($rawTitle),
         ];
     }
 
@@ -110,17 +110,6 @@ class TrackPickerService
         }
 
         return array_values(array_filter($data, fn ($row) => isset($row['artist'], $row['anagram'])));
-    }
-
-    /**
-     * Remove parentheses and their content from a string (e.g. "Artist (feat. X)" → "Artist").
-     * Used for anagram game so display and comparison ignore extra info.
-     */
-    public static function stripParentheses(string $value): string
-    {
-        $cleaned = preg_replace('/\s*\([^)]*\)/u', '', $value);
-
-        return trim($cleaned ?? $value);
     }
 
     /**

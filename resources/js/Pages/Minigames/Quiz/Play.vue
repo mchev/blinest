@@ -142,6 +142,7 @@ onMounted(() => {
 <template>
   <MinigamePlayLayout
     :page-title="__('Quiz — 4 choices')"
+    :meta-description="__('Quiz 4 choices meta description')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"

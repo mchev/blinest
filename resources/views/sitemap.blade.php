@@ -74,4 +74,41 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     <priority>0.20</priority>
   </url>
 
+  <url>
+    <loc>{{ url(route('minigames.index')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>{{ url(route('minigames.quiz.play')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>{{ url(route('minigames.who_sang.play')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>{{ url(route('minigames.anagram.play')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>{{ url(route('minigames.first_letter.play')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+  <url>
+    <loc>{{ url(route('minigames.album_cover.play')) }}</loc>
+    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.45</priority>
+  </url>
+
 </urlset>

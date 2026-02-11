@@ -134,6 +134,7 @@ onMounted(() => {
 <template>
   <MinigamePlayLayout
     :page-title="__('Album cover')"
+    :meta-description="__('Album cover meta description')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"

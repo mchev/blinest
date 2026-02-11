@@ -12,7 +12,11 @@ defineProps({
 </script>
 
 <template>
-  <Head :title="__('Mini-games')" />
+  <Head>
+    <title>{{ __('Mini-games') }} | Blinest</title>
+    <meta head-key="minigames-description" name="description" :content="__('Mini-games meta description')" />
+    <meta head-key="minigames-keywords" name="keywords" :content="__('Mini-games meta keywords')" />
+  </Head>
   <AppLayout>
     <div class="mx-auto max-w-3xl px-4 py-8">
         <Link

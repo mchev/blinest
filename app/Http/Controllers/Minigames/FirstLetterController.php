@@ -45,8 +45,8 @@ class FirstLetterController extends Controller
 
         $track = Track::query()->with('answers')->findOrFail($request->input('track_id'));
         $rawTitle = $track->answers->firstWhere('answer_type_id', 2)?->value;
-        $correctTitle = $rawTitle !== null ? TrackPickerService::stripParentheses($rawTitle) : null;
-        $given = TrackPickerService::stripParentheses(trim((string) $request->input('chosen_value')));
+        $correctTitle = $rawTitle !== null ? sanitizeString($rawTitle) : null;
+        $given = sanitizeString(trim((string) $request->input('chosen_value')));
         $isCorrect = $correctTitle !== null
             && $correctTitle !== ''
             && $given !== ''

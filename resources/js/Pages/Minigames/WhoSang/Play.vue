@@ -142,6 +142,7 @@ onMounted(() => {
 <template>
   <MinigamePlayLayout
     :page-title="__('Who sang?')"
+    :meta-description="__('Who sang meta description')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"
