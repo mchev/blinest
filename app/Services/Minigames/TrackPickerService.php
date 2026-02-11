@@ -72,27 +72,44 @@ class TrackPickerService
     }
 
     /**
-     * Pick a random artist and return its name with letters scrambled (anagram game).
-     * No audio; only track_id for validation and artwork for summary.
+     * Pick a random entry from the predefined anagram list (database/data/anagram_artists.json).
+     * No database lookup: the game only needs the anagram and the correct artist name.
      *
-     * @return array{track_id: int, scrambled_artist: string, artwork_url: string|null}
+     * @return array{scrambled_artist: string, artist: string}
      */
     public function getRandomArtistAnagram(): array
     {
-        $track = $this->pickRandomTrackWithAnswer(self::ANSWER_TYPE_ARTIST, false);
-        if (! $track) {
+        $list = $this->loadAnagramList();
+        if (empty($list)) {
             throw new \RuntimeException(__('No track available for this minigame.'));
         }
 
-        $rawArtist = $track->answers->firstWhere('answer_type_id', self::ANSWER_TYPE_ARTIST)?->value ?? '';
-        $artist = self::stripParentheses($rawArtist);
-        $scrambled = $this->scrambleString($artist);
+        $entry = $list[array_rand($list)];
 
         return [
-            'track_id' => $track->id,
-            'scrambled_artist' => $scrambled,
-            'artwork_url' => $track->artwork_url,
+            'scrambled_artist' => $entry['anagram'],
+            'artist' => $entry['artist'],
         ];
+    }
+
+    /**
+     * Load anagram list from database/data/anagram_artists.json.
+     *
+     * @return array<int, array{artist: string, anagram: string}>
+     */
+    private function loadAnagramList(): array
+    {
+        $path = database_path('data/anagram_artists.json');
+        if (! is_file($path)) {
+            return [];
+        }
+        $json = file_get_contents($path);
+        $data = json_decode($json, true);
+        if (! is_array($data)) {
+            return [];
+        }
+
+        return array_values(array_filter($data, fn ($row) => isset($row['artist'], $row['anagram'])));
     }
 
     /**
@@ -104,27 +121,6 @@ class TrackPickerService
         $cleaned = preg_replace('/\s*\([^)]*\)/u', '', $value);
 
         return trim($cleaned ?? $value);
-    }
-
-    /**
-     * Shuffle characters of a string (anagram). Ensures result differs from original when possible.
-     */
-    private function scrambleString(string $value): string
-    {
-        $chars = mb_str_split(trim($value));
-        if (count($chars) < 2) {
-            return $value;
-        }
-        $original = implode('', $chars);
-        for ($i = 0; $i < 5; $i++) {
-            shuffle($chars);
-            $scrambled = implode('', $chars);
-            if ($scrambled !== $original) {
-                return $scrambled;
-            }
-        }
-
-        return implode('', $chars);
     }
 
     /**

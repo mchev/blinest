@@ -23,7 +23,7 @@ const showSummary = ref(false)
 const wrongMessageKey = ref('')
 const userInput = ref('')
 
-/** Current question: { track_id, scrambled_artist, artwork_url } */
+/** Current question: { question_id, scrambled_artist } */
 const currentQuestion = ref(null)
 
 const showProgress = computed(() => !!currentQuestion.value)
@@ -32,9 +32,8 @@ function applyQuestion(index) {
   const q = roundTracks.value[index]
   if (!q) return
   currentQuestion.value = {
-    track_id: q.track_id,
+    question_id: q.question_id,
     scrambled_artist: q.scrambled_artist,
-    artwork_url: q.artwork_url,
   }
   result.value = null
   wrongMessageKey.value = ''
@@ -72,7 +71,7 @@ async function submitAnswer() {
   checking.value = true
   try {
     const { data } = await axios.post(checkUrl, {
-      track_id: currentQuestion.value.track_id,
+      question_id: currentQuestion.value.question_id,
       chosen_value: value,
     })
     result.value = data
@@ -81,7 +80,7 @@ async function submitAnswer() {
       sessionScore.value += data.points || 0
     }
     roundResults.value.push({
-      track: { id: currentQuestion.value.track_id, artwork_url: currentQuestion.value.artwork_url },
+      track: { artwork_url: null },
       correctValue: data.correct_value,
       chosenValue: value,
       correct: data.correct,
@@ -91,7 +90,7 @@ async function submitAnswer() {
     wrongMessageKey.value = pickWrongMessageKey()
     result.value = { correct: false, correct_value: null, points: 0 }
     roundResults.value.push({
-      track: { id: currentQuestion.value.track_id, artwork_url: currentQuestion.value.artwork_url },
+      track: { artwork_url: null },
       correctValue: null,
       chosenValue: value,
       correct: false,
@@ -193,3 +192,4 @@ onMounted(() => {
     </div>
   </MinigamePlayLayout>
 </template>
+
