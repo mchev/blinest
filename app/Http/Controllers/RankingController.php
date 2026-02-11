@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MinigameScore;
 use App\Models\Room;
 use App\Models\TotalScore;
 use Illuminate\Support\Facades\Auth;
@@ -359,6 +360,70 @@ class RankingController extends Controller
         ]);
 
         return response()->json($scores);
+    }
+
+    public function byMinigames()
+    {
+        $user = Auth::user();
+
+        $paginated = MinigameScore::query()
+            ->selectRaw('user_id, sum(score) as total_score')
+            ->groupBy('user_id')
+            ->orderByDesc('total_score')
+            ->paginate(50);
+
+        $userIds = $paginated->pluck('user_id');
+        $users = \App\Models\User::with('userLevel')
+            ->whereIn('id', $userIds)
+            ->get()
+            ->keyBy('id');
+
+        $mapped = $paginated->getCollection()->map(function ($row) use ($users) {
+            $user = $users->get($row->user_id);
+            if (! $user) {
+                return null;
+            }
+
+            return [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'photo' => $user->photo,
+                    'elo' => $user->elo ?? 1500,
+                    'userLevel' => $user->userLevel,
+                ],
+                'total_score' => (int) $row->total_score,
+            ];
+        })->filter()->values();
+
+        $topByMinigames = new \Illuminate\Pagination\LengthAwarePaginator(
+            $mapped,
+            $paginated->total(),
+            $paginated->perPage(),
+            $paginated->currentPage(),
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        $userPosition = null;
+        $userScore = null;
+        if ($user) {
+            $userScore = (int) MinigameScore::query()
+                ->where('user_id', $user->id)
+                ->sum('score');
+
+            $userPosition = MinigameScore::query()
+                ->selectRaw('user_id, sum(score) as total_score')
+                ->groupBy('user_id')
+                ->havingRaw('sum(score) > ?', [$userScore])
+                ->get()
+                ->count() + 1;
+        }
+
+        return Inertia::render('Rankings/Minigames', [
+            'topByMinigames' => $topByMinigames,
+            'userPosition' => $userPosition,
+            'userScore' => $userScore ?? 0,
+        ]);
     }
 
     // Get user level metrics for modal

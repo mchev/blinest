@@ -53,13 +53,39 @@ const currentTrack = ref(null)
 let roundsChannel = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
+/** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
+function onBeforeUnloadPresenceLeft() {
+  callPresenceLeft({ useBeacon: true })
+}
 
 function dispatchUserCount(count) {
   Echo.private(`room.count.${room.value.id}`).whisper('updatedUserCount', { count })
 }
 
-function callPresenceLeft() {
-  axios.post(`/rooms/${room.value.id}/presence-left`).catch(() => {})
+/**
+ * Notify server that the user left the room (remove from presence list).
+ * Used on navigation (onBeforeUnmount) and on tab/window close (beforeunload).
+ * On beforeunload we use fetch(keepalive) + X-XSRF-TOKEN so the request is sent
+ * when the tab closes (axios would be cancelled).
+ */
+function callPresenceLeft(options = {}) {
+  const { useBeacon = false } = options
+  const url = `/rooms/${room.value.id}/presence-left`
+  if (useBeacon && typeof window !== 'undefined') {
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('XSRF-TOKEN='))
+      ?.split('=')[1]
+    const headers = new Headers()
+    headers.set('X-Requested-With', 'XMLHttpRequest')
+    headers.set('Accept', 'application/json')
+    if (token) headers.set('X-XSRF-TOKEN', decodeURIComponent(token))
+    if (typeof fetch !== 'undefined') {
+      fetch(url, { method: 'POST', headers, credentials: 'same-origin', keepalive: true }).catch(() => {})
+    }
+    return
+  }
+  axios.post(url).catch(() => {})
 }
 
 function resyncRoomAfterReconnect() {
@@ -101,11 +127,11 @@ onMounted(() => {
       })
     }
   }
-  window.addEventListener('beforeunload', callPresenceLeft)
+  window.addEventListener('beforeunload', onBeforeUnloadPresenceLeft)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('beforeunload', callPresenceLeft)
+  window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
   callPresenceLeft()
 })
 

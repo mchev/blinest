@@ -113,6 +113,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rankings.week');
     Route::get('rankings/teams', [RankingController::class, 'byTeams'])
         ->name('rankings.teams');
+    Route::get('rankings/minigames', [RankingController::class, 'byMinigames'])
+        ->name('rankings.minigames');
     Route::get('rankings/users/{user}/level-metrics', [RankingController::class, 'userLevelMetrics'])
         ->name('rankings.users.level-metrics');
 

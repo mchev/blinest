@@ -74,6 +74,7 @@ const positionBadge = computed(() => {
             <span v-else-if="type === 'score'">{{ score }} {{ __('PTS') }}</span>
             <span v-else-if="type === 'elo'">{{ score }} {{ __('ELO') }}</span>
             <span v-else-if="type === 'week'">{{ score }} {{ __('PTS') }} ({{ __('Last 7 days') }})</span>
+            <span v-else-if="type === 'minigames'">{{ score }} {{ __('PTS') }}</span>
             <span v-else-if="type === 'teams'">{{ score }} {{ __('PTS') }}</span>
           </p>
         </div>
