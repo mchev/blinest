@@ -9,6 +9,7 @@ use App\Services\Minigames\MinigameScoreService;
 use App\Services\Minigames\TrackPickerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class FirstLetterController extends Controller
@@ -44,7 +45,10 @@ class FirstLetterController extends Controller
 
         $track = Track::query()->with('answers')->findOrFail($request->input('track_id'));
         $correctTitle = $track->answers->firstWhere('answer_type_id', 2)?->value;
-        $isCorrect = $correctTitle !== null && trim((string) $request->input('chosen_value')) === trim($correctTitle);
+        $given = trim((string) $request->input('chosen_value'));
+        $isCorrect = $correctTitle !== null
+            && $given !== ''
+            && Str::slug($given) === Str::slug($correctTitle);
 
         if ($isCorrect) {
             app(MinigameScoreService::class)->record(
