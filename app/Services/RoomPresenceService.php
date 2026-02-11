@@ -15,7 +15,8 @@ class RoomPresenceService
     /** Members not seen in this many seconds are pruned (heartbeat-based count). */
     private const PRUNE_SECONDS = 90;
 
-    private const KEY_MEMBERS = 'room:%d:members';
+    /** ZSET key (distinct from legacy SET key room:%d:members to avoid WRONGTYPE in production). */
+    private const KEY_MEMBERS = 'room:%d:members_z';
 
     /**
      * Add or refresh member in room (called on join and on heartbeat).
