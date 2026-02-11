@@ -3,8 +3,8 @@
 namespace App\Events;
 
 use App\Models\Room;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -24,8 +24,8 @@ class UserHasFoundAllTheAnswers implements ShouldBroadcastNow
     /**
      * Get the channels the event should broadcast on.
      */
-    public function broadcastOn(): Channel
+    public function broadcastOn(): PresenceChannel
     {
-        return new Channel('rooms.'.$this->room->id);
+        return new PresenceChannel('rooms.'.$this->room->id);
     }
 }

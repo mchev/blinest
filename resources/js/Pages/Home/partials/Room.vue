@@ -13,7 +13,7 @@ const props = defineProps({
 const user = usePage().props.auth.user
 const cardRef = ref(null)
 
-const channel = computed(() => `rooms.${props.room.id}`)
+const publicChannelName = computed(() => `room.public.${props.room.id}`)
 const track = ref(null)
 const round = ref(null)
 const playing = ref(props.room.is_playing)
@@ -36,45 +36,25 @@ const isManualStart = computed(() => !props.room.is_autostart)
 const isPrivateRoom = computed(() => !props.room.is_public)
 
 let echoChannel = null
-let countChannel = null
 let observer = null
 
 function subscribeEcho() {
     if (echoChannel) return
-    echoChannel = Echo.channel(channel.value)
-    echoChannel
-        .listen('RoundStarted', (e) => {
-            playing.value = true
-            round.value = e.round
-            progress.value = 0
-        })
-        .listen('TrackPlayed', (e) => {
-            round.value = e.round
-            track.value = e.track
-            progress.value = round.value?.current === 1 ? 0 : ((round.value?.current - 1) / props.room.tracks_by_round) * 100
-        })
-        .listen('RoundFinished', (e) => {
-            playing.value = false
-            round.value = e.round
-            if (round.value) round.value.current = 0
-            progress.value = 100
-        })
-    if (user) {
-        countChannel = Echo.private(`room.count.${props.room.id}`)
-        countChannel.listenForWhisper('updatedUserCount', (e) => {
-            userCounter.value = e.count
-        })
-    }
+    echoChannel = Echo.channel(publicChannelName.value)
+    echoChannel.listen('RoomPublicState', (e) => {
+        userCounter.value = e.memberCount ?? userCounter.value
+        playing.value = e.isPlaying ?? playing.value
+        const idx = e.currentTrackIndex ?? 0
+        const total = e.tracksByRound || props.room.tracks_by_round || 1
+        round.value = { current: idx }
+        progress.value = total ? (idx / total) * 100 : 0
+    })
 }
 
 function leaveEcho() {
     if (echoChannel) {
-        Echo.leave(channel.value)
+        Echo.leave(publicChannelName.value)
         echoChannel = null
-    }
-    if (countChannel) {
-        Echo.leave(`room.count.${props.room.id}`)
-        countChannel = null
     }
 }
 

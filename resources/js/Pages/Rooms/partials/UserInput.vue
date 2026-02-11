@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Volume from '@/Components/Volume.vue'
 import Dropdown from '@/Components/Dropdown.vue'
@@ -196,7 +196,7 @@ onMounted(() => {
     attemptAutoFocus()
   }
 
-  Echo.channel(props.channel)
+  Echo.join(props.channel)
     .listen('TrackPlayed', (e) => {
       if (e.room) {
         Object.assign(props.room, e.room)
@@ -222,10 +222,6 @@ onMounted(() => {
         // The input will be disabled automatically via computed when track ends
       }
     })
-})
-
-onUnmounted(() => {
-  Echo.leave(props.channel)
 })
 
 const messageClass = computed(() => ({

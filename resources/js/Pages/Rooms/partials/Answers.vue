@@ -1,6 +1,6 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3'
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import axios from 'axios'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -38,7 +38,7 @@ const trackCount = computed(() => {
 onMounted(() => {
   if (!props.channel) return
 
-  Echo.channel(props.channel)
+  Echo.join(props.channel)
     .listen('RoundStarted', (e) => {
       round.value = e.round
       tracks.value = []
@@ -63,12 +63,6 @@ onMounted(() => {
         userAnswers.value.push(e.score)
       }
     })
-})
-
-onUnmounted(() => {
-  if (props.channel) {
-    Echo.leave(props.channel)
-  }
 })
 
 const voteTrackDown = (track) => {

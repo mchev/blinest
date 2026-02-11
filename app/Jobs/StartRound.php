@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\RoomPublicState;
 use App\Events\RoundFinished;
 use App\Events\RoundStarted;
 use App\Models\Room;
@@ -92,6 +93,7 @@ class StartRound implements ShouldQueue
                 ]);
 
                 broadcast(new RoundStarted($round));
+                broadcast(new RoomPublicState($this->room));
 
                 // Play the first track
                 $round->playNextTrack();
@@ -104,6 +106,7 @@ class StartRound implements ShouldQueue
                     'is_playing' => false,
                 ]);
                 broadcast(new RoundFinished($round));
+                broadcast(new RoomPublicState($this->room));
                 Log::error('No tracks available for the room. Round aborted.');
             }
         } catch (\Exception $e) {

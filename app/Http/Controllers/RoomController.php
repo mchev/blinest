@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RoomPublicState;
 use App\Events\RoomState as RoomStateEvent;
 use App\Jobs\StartRound;
 use App\Models\Category;
@@ -438,6 +439,7 @@ class RoomController extends Controller
         $roomPresence->addMember($room, $request->user());
         $state = $roomPresence->getRoomState($room);
         broadcast(new RoomStateEvent($room->id, $state));
+        broadcast(new RoomPublicState($room));
 
         return response()->json([
             'ok' => true,
@@ -457,6 +459,7 @@ class RoomController extends Controller
         $roomPresence->removeMember($room, $request->user());
         $state = $roomPresence->getRoomState($room);
         broadcast(new RoomStateEvent($room->id, $state));
+        broadcast(new RoomPublicState($room));
 
         return response()->json(['ok' => true]);
     }

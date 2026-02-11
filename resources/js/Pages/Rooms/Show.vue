@@ -50,10 +50,8 @@ const teams_podium = ref([])
 const initialTrack = ref(null)
 const initialStartTime = ref(0)
 const currentTrack = ref(null)
+/** Presence + events: one subscription (Echo.join = presence channel, .here/.joining/.leaving = list). */
 let roundsChannel = null
-/** Heartbeat every 30s; server prunes users with no heartbeat for 45s. */
-const HEARTBEAT_INTERVAL_MS = 30000
-let heartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
@@ -94,11 +92,9 @@ function callPresenceLeft(options = {}) {
 function resyncRoomAfterReconnect() {
   if (!joined.value) return
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
-    if (response.data.users) roomState.value.users = response.data.users
     if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
     if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.users) roomState.value.users = res.data.users
       if (res.data?.scores != null) roomState.value.scores = res.data.scores
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
@@ -107,13 +103,71 @@ function resyncRoomAfterReconnect() {
 
 onMounted(() => {
   if (user) {
-    Echo.join(channel)
-      .error((err) => {
-        console.error(err)
+    // Presence channel: list from Reverb (.here = everyone on channel, .joining/.leaving = live updates).
+    // When alone, .here() can be [] (Reverb sends list before adding us); ensure we appear.
+    roundsChannel = Echo.join(channel)
+      .error((err) => console.error(err))
+      .here((users) => {
+        const hasMe = users.some((u) => u.id === user.id)
+        const list = hasMe ? users : [{ ...user }, ...users]
+        roomState.value.users = list
+        if (list.length > 0 && list[0].id === user.id) dispatchUserCount(list.length)
       })
-    // Une seule fois : GET /joined + POST presence-joined (état + liste joueurs).
-    // Ne pas appeler joining() aussi dans .here() : la 2e réponse GET pouvait écraser
-    // initialTrack/currentTrack après que le Player ait démarré et coupait la lecture.
+      .joining((userJoining) => {
+        if (!roomState.value.users.some((u) => u.id === userJoining.id)) {
+          roomState.value.users = [...roomState.value.users, userJoining]
+          if (roomState.value.users[0]?.id === user.id) dispatchUserCount(roomState.value.users.length)
+        }
+      })
+      .leaving((userLeaving) => {
+        roomState.value.users = roomState.value.users.filter((u) => u.id !== userLeaving.id)
+        if (roomState.value.users[0]?.id === user.id) dispatchUserCount(roomState.value.users.length)
+      })
+      .listen('RoomState', (e) => {
+        if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
+        if (e.roundId != null) roomState.value.roundId = e.roundId
+      })
+      .listen('NewScore', (e) => {
+        const score = e.score || e
+        const uid = score.user_id
+        if (uid != null) {
+          roomState.value.scores = { ...roomState.value.scores, [uid]: score.total ?? 0 }
+          if (score.answers && Array.isArray(score.answers)) {
+            const prev = roomState.value.answersByUser[uid] || []
+            roomState.value.answersByUser = {
+              ...roomState.value.answersByUser,
+              [uid]: [...prev, ...score.answers],
+            }
+          }
+        }
+      })
+      .listen('RoundStarted', (e) => {
+        round.value = e.round
+        roundFinished.value = false
+        roomState.value.roundId = e.round?.id ?? null
+        roomState.value.scores = {}
+        roomState.value.answersByUser = {}
+        if (e.round?.id) fetchRoundScores(e.round.id)
+      })
+      .listen('RoundFinished', (e) => {
+        round.value = e.round
+        users_podium.value = e.users_podium
+        teams_podium.value = e.teams_podium
+        roundFinished.value = true
+      })
+      .listen('TrackPlayed', (e) => {
+        round.value = e.round
+        if (e.room) Object.assign(room.value, e.room)
+        initialTrack.value = null
+        initialStartTime.value = 0
+        currentTrack.value = e.track
+        roomState.value.answersByUser = {}
+      })
+      .listen('UserEloUpdated', (e) => {
+        const u = roomState.value.users.find((x) => x.id === e.user_id)
+        if (u) u.elo = e.elo
+      })
+
     joining()
 
     const conn = window.Echo?.connector?.pusher?.connection
@@ -129,26 +183,11 @@ onMounted(() => {
         }
       })
     }
-    if (user) {
-      heartbeatTimer = setInterval(() => {
-        if (joined.value) {
-          axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-            if (res.data?.users) roomState.value.users = res.data.users
-            if (res.data?.scores != null) roomState.value.scores = res.data.scores
-            if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
-          }).catch(() => {})
-        }
-      }, HEARTBEAT_INTERVAL_MS)
-    }
   }
   window.addEventListener('beforeunload', onBeforeUnloadPresenceLeft)
 })
 
 onBeforeUnmount(() => {
-  if (heartbeatTimer) {
-    clearInterval(heartbeatTimer)
-    heartbeatTimer = null
-  }
   window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
   callPresenceLeft()
 })
@@ -183,30 +222,18 @@ const joining = () => {
       initialStartTime.value = 0
       currentTrack.value = null
     }
-    // Initial room state from server (single source of truth)
-    if (response.data.users) {
-      roomState.value.users = response.data.users
-    }
+    // Scores/roundId from server. User list = only from presence channel (.here/.joining/.leaving).
     if (response.data.scores && typeof response.data.scores === 'object') {
       roomState.value.scores = response.data.scores
     }
     if (response.data.roundId != null) {
       roomState.value.roundId = response.data.roundId
     }
-    if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
-      dispatchUserCount(roomState.value.users.length)
-    }
     joined.value = true
-    listenRounds()
-    // Notify server we joined so it broadcasts RoomState to everyone (fixes invisibility).
-    // Apply response state immediately so we see ourselves when alone (avoids missing the broadcast).
+    // Notify server for Redis count (home page) and to broadcast scores/roundId. User list = from Echo .here/.joining/.leaving.
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.users) roomState.value.users = res.data.users
       if (res.data?.scores != null) roomState.value.scores = res.data.scores
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
-      if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
-        dispatchUserCount(roomState.value.users.length)
-      }
     }).catch(() => {})
   }).catch((err) => {
     console.error('Error joining room:', err)
@@ -225,66 +252,6 @@ const fetchRoundScores = async (roundId) => {
   }
 }
 
-const listenRounds = () => {
-  if (roundsChannel) {
-    roundsChannel.stopListening('RoundStarted')
-    roundsChannel.stopListening('RoundFinished')
-    roundsChannel.stopListening('TrackPlayed')
-    roundsChannel.stopListening('UserEloUpdated')
-    roundsChannel.stopListening('RoomState')
-    roundsChannel.stopListening('NewScore')
-  }
-  roundsChannel = Echo.channel(channel)
-  roundsChannel
-    .listen('RoomState', (e) => {
-      if (e.users) roomState.value.users = e.users
-      if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
-      if (e.roundId != null) roomState.value.roundId = e.roundId
-      if (roomState.value.users.length > 0 && roomState.value.users[0].id === user.id) {
-        dispatchUserCount(roomState.value.users.length)
-      }
-    })
-    .listen('NewScore', (e) => {
-      const score = e.score || e
-      const uid = score.user_id
-      if (uid != null) {
-        roomState.value.scores = { ...roomState.value.scores, [uid]: score.total ?? 0 }
-        if (score.answers && Array.isArray(score.answers)) {
-          const prev = roomState.value.answersByUser[uid] || []
-          roomState.value.answersByUser = {
-            ...roomState.value.answersByUser,
-            [uid]: [...prev, ...score.answers],
-          }
-        }
-      }
-    })
-    .listen('RoundStarted', (e) => {
-      round.value = e.round
-      roundFinished.value = false
-      roomState.value.roundId = e.round?.id ?? null
-      roomState.value.scores = {}
-      roomState.value.answersByUser = {}
-      if (e.round?.id) fetchRoundScores(e.round.id)
-    })
-    .listen('RoundFinished', (e) => {
-      round.value = e.round
-      users_podium.value = e.users_podium
-      teams_podium.value = e.teams_podium
-      roundFinished.value = true
-    })
-    .listen('TrackPlayed', (e) => {
-      round.value = e.round
-      if (e.room) Object.assign(room.value, e.room)
-      initialTrack.value = null
-      initialStartTime.value = 0
-      currentTrack.value = e.track
-      roomState.value.answersByUser = {}
-    })
-    .listen('UserEloUpdated', (e) => {
-      const u = roomState.value.users.find((x) => x.id === e.user_id)
-      if (u) u.elo = e.elo
-    })
-}
 </script>
 <template>
   <RoomLayout>

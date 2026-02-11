@@ -276,8 +276,8 @@ const setupEventListeners = () => {
     playerChannel.stopListening('UserHasFoundAllTheAnswers')
   }
 
-  // Create new listeners
-  playerChannel = Echo.channel(props.channel)
+  // Presence channel (same as Show.vue) so we receive TrackPlayed / TrackEnded
+  playerChannel = Echo.join(props.channel)
   playerChannel
     .listen('TrackPlayed', handleTrackPlayed)
     .listen('TrackEnded', handleTrackEnded)
@@ -292,7 +292,7 @@ const setupEventListeners = () => {
 const cleanup = () => {
   stop()
   
-  // Clean up Echo listeners
+  // Clean up Echo listeners only (do not Echo.leave - Show.vue owns the presence subscription)
   if (playerChannel) {
     playerChannel.stopListening('TrackPlayed')
     playerChannel.stopListening('TrackEnded')
@@ -302,7 +302,6 @@ const cleanup = () => {
     playerChannel = null
   }
   
-  Echo.leave(props.channel)
   window.removeEventListener('volume-localstorage-changed', handleVolumeChange)
   removeAudioEventListeners()
   clearInterval(countdownInterval.value)

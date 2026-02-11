@@ -4,8 +4,8 @@ namespace App\Events;
 
 use App\Models\Round;
 use App\Models\Track;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -41,9 +41,9 @@ class TrackEnded implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      */
-    public function broadcastOn(): Channel
+    public function broadcastOn(): PresenceChannel
     {
-        return new Channel('rooms.'.$this->round->room_id);
+        return new PresenceChannel('rooms.'.$this->round->room_id);
     }
 
     /**

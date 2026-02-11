@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\RoomPublicState;
 use App\Events\RoundFinished;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
@@ -71,6 +72,7 @@ class Round extends Model
         ProcessRoundFinalization::dispatch($this)->afterCommit();
 
         broadcast(new RoundFinished($this));
+        broadcast(new RoomPublicState($this->room));
     }
 
     public function playNextTrack()
@@ -114,6 +116,7 @@ class Round extends Model
                 Log::warning('Could not update current_track_started_at: '.$e->getMessage());
             }
             broadcast(new TrackPlayed($this, $track));
+            broadcast(new RoomPublicState($this->room));
             ProcessTrackPlayed::dispatch($this)
                 ->delay(now()->addSeconds($this->room->track_duration));
 
@@ -145,6 +148,7 @@ class Round extends Model
                     Log::warning('Could not update current_track_started_at: '.$e->getMessage());
                 }
                 broadcast(new TrackPlayed($this, $track));
+                broadcast(new RoomPublicState($this->room));
                 ProcessTrackPlayed::dispatch($this)
                     ->delay(now()->addSeconds($this->room->track_duration));
             } else {

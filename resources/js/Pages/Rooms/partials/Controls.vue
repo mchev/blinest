@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Modal from '@/Components/Modal.vue'
@@ -46,7 +46,7 @@ const startRound = () => {
 }
 
 onMounted(() => {
-  Echo.channel(props.channel)
+  Echo.join(props.channel)
     .listen('RoundStarted', () => {
       startingRound.value = false
       props.room.is_playing = true
@@ -55,10 +55,6 @@ onMounted(() => {
       endingRound.value = false
       props.room.is_playing = false
     })
-})
-
-onUnmounted(() => {
-  Echo.leave(props.channel)
 })
 </script>
 <template>
