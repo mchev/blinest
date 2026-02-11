@@ -9,30 +9,49 @@ use Illuminate\Support\Facades\Redis;
 
 class RoomPresenceService
 {
-    private const TTL = 7200; // 2 hours
+    /** Consider a user gone if no heartbeat for this many seconds. */
+    private const STALE_SECONDS = 45;
 
-    private const KEY_MEMBERS = 'room:%d:members';
+    /** Key expiry for the sorted set (2 hours) so empty rooms don't linger. */
+    private const KEY_TTL = 7200;
 
+    /** Sorted set (score = last_seen). New key to avoid WRONGTYPE with old SET keys in prod. */
+    private const KEY_MEMBERS = 'room:%d:presence';
+
+    /**
+     * Add or refresh member presence (heartbeat). Uses a sorted set with score = last_seen timestamp.
+     * Users who don't send a heartbeat within STALE_SECONDS are excluded from the presence list.
+     */
     public function addMember(Room $room, User $user): void
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        Redis::sadd($key, $user->id);
-        Redis::expire($key, self::TTL);
+        $now = time();
+        Redis::zadd($key, $now, (string) $user->id);
+        Redis::expire($key, self::KEY_TTL);
     }
 
     public function removeMember(Room $room, User $user): void
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        Redis::srem($key, $user->id);
+        Redis::zrem($key, (string) $user->id);
+    }
+
+    private function cutoff(): int
+    {
+        return time() - self::STALE_SECONDS;
     }
 
     /**
+     * Remove stale entries from the set and return current member ids (last_seen within STALE_SECONDS).
+     *
      * @return array<int>
      */
     public function getMemberIds(Room $room): array
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
-        $ids = Redis::smembers($key);
+        $cutoff = $this->cutoff();
+        Redis::zremrangebyscore($key, '-inf', (string) ($cutoff - 1));
+        $ids = Redis::zrangebyscore($key, (string) $cutoff, '+inf');
 
         return array_map('intval', $ids);
     }
@@ -40,8 +59,9 @@ class RoomPresenceService
     public function getMemberCount(Room $room): int
     {
         $key = sprintf(self::KEY_MEMBERS, $room->id);
+        $cutoff = $this->cutoff();
 
-        return (int) Redis::scard($key);
+        return (int) Redis::zcount($key, (string) $cutoff, '+inf');
     }
 
     /**
@@ -55,10 +75,12 @@ class RoomPresenceService
             return [];
         }
 
-        $results = Redis::pipeline(function ($pipe) use ($rooms) {
+        $cutoff = $this->cutoff();
+
+        $results = Redis::pipeline(function ($pipe) use ($rooms, $cutoff) {
             foreach ($rooms as $room) {
                 $key = sprintf(self::KEY_MEMBERS, $room->id);
-                $pipe->scard($key);
+                $pipe->zcount($key, (string) $cutoff, '+inf');
             }
         });
 

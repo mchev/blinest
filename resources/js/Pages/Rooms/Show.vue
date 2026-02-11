@@ -51,6 +51,9 @@ const initialTrack = ref(null)
 const initialStartTime = ref(0)
 const currentTrack = ref(null)
 let roundsChannel = null
+/** Heartbeat every 30s; server prunes users with no heartbeat for 45s. */
+const HEARTBEAT_INTERVAL_MS = 30000
+let heartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
@@ -126,11 +129,26 @@ onMounted(() => {
         }
       })
     }
+    if (user) {
+      heartbeatTimer = setInterval(() => {
+        if (joined.value) {
+          axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
+            if (res.data?.users) roomState.value.users = res.data.users
+            if (res.data?.scores != null) roomState.value.scores = res.data.scores
+            if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
+          }).catch(() => {})
+        }
+      }, HEARTBEAT_INTERVAL_MS)
+    }
   }
   window.addEventListener('beforeunload', onBeforeUnloadPresenceLeft)
 })
 
 onBeforeUnmount(() => {
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer)
+    heartbeatTimer = null
+  }
   window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
   callPresenceLeft()
 })
