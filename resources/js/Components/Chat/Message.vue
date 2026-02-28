@@ -16,6 +16,7 @@ const props = defineProps({
 
 const moderate = ref(false)
 const reporting = ref(false)
+const reported = ref(false)
 const { auth, publicModerators } = usePage().props
 const user = auth.user
 
@@ -24,12 +25,14 @@ const userIsPublicModerator = computed(() => publicModerators.some(x => x.id ===
 const isMessageFromPublicModerator = computed(() => publicModerators.some(x => x.id === props.message.user.id))
 const shouldShowReportButton = computed(() => !isMessageFromPublicModerator.value)
 const isFromModerator = computed(() => props.room.moderators.some(x => x.id === props.message.user.id))
+const reportsCount = computed(() => Math.abs(props.message.reports || 0))
 
 const report = async () => {
-  if (reporting.value) return
+  if (reporting.value || reported.value) return
   reporting.value = true
   try {
     await axios.post(`/rooms/${props.room.id}/message/${props.message.id}/report`)
+    reported.value = true
   } catch (error) {
     console.error('Failed to report message:', error)
   } finally {
@@ -205,14 +208,35 @@ onUnmounted(() => {
         😊
       </button>
       <button
-        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition"
+        v-if="shouldShowReportButton"
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition disabled:opacity-50"
+        :disabled="reporting"
         @click="report"
-        title="Signaler"
+        :title="reported ? __('Reported') : __('Report this message')"
         type="button"
       >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-red-400">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-      </svg>
+        <svg
+          v-if="!reported"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-5 text-red-400"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        </svg>
+        <svg
+          v-else
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-5 text-green-400"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       </button>
     </div>
     <div class="flex items-start gap-3">
@@ -267,6 +291,13 @@ onUnmounted(() => {
             </span>
           </div>
           <div class="flex items-center gap-1">
+            <span
+              v-if="reportsCount >= 1"
+              class="text-amber-500 text-xs whitespace-nowrap ml-2"
+              :title="__('Reports')"
+            >
+              {{ reportsCount }} {{ reportsCount === 1 ? __('Report') : __('Reports') }}
+            </span>
             <time 
               :datetime="message.timestamp" 
               class="text-neutral-500 text-xs whitespace-nowrap ml-2"

@@ -40,7 +40,8 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rooms.message.store');
 
     Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])
-        ->name('rooms.message.report');
+        ->name('rooms.message.report')
+        ->scopeBindings();
 
     Route::delete('messages/{message}', [RoomMessageController::class, 'destroy'])
         ->name('messages.destroy');

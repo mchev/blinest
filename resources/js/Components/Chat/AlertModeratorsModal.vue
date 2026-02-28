@@ -1,5 +1,4 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import Card from '@/Components/Card.vue'
@@ -8,11 +7,13 @@ import TextareaInput from '@/Components/TextareaInput.vue'
 
 const props = defineProps({
   room: Object,
+  show: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['close', 'reported'])
-
-const show = ref(false)
 
 const form = useForm({
   message: '',
