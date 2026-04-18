@@ -370,10 +370,40 @@ class RoomController extends Controller
             $currentRound->refresh();
         }
 
+        $roundTracksOrdered = $currentRound && $currentRound->is_playing
+            ? array_values((array) $currentRound->tracks)
+            : [];
+
+        $playedTracksPayload = [];
+        if ($currentRound && $currentRound->is_playing) {
+            $currentCounter = (int) ($currentRound->current ?? 0);
+            if ($currentCounter >= 2) {
+                $finishedIds = [];
+                for ($i = 0; $i <= $currentCounter - 2; $i++) {
+                    if (isset($roundTracksOrdered[$i])) {
+                        $finishedIds[] = $roundTracksOrdered[$i];
+                    }
+                }
+                if ($finishedIds !== []) {
+                    $finishedTracks = Track::query()
+                        ->with(['answers.type'])
+                        ->whereIn('id', $finishedIds)
+                        ->get()
+                        ->keyBy('id');
+                    foreach ($finishedIds as $finishedId) {
+                        $finishedTrack = $finishedTracks->get($finishedId);
+                        if ($finishedTrack) {
+                            $playedTracksPayload[] = $this->playlistTrackPayloadForRoom($finishedTrack);
+                        }
+                    }
+                }
+            }
+        }
+
         if ($currentRound && $currentRound->is_playing) {
             // Get the current track being played
             // Convert tracks to array since it's cast as object
-            $tracks = (array) $currentRound->tracks;
+            $tracks = $roundTracksOrdered;
             $currentTrackIndex = $currentRound->current ?? 0;
             if ($currentTrackIndex > 0 && isset($tracks[$currentTrackIndex - 1])) {
                 $trackId = $tracks[$currentTrackIndex - 1];
@@ -394,6 +424,7 @@ class RoomController extends Controller
                             'current' => $currentRound->current,
                             'is_playing' => $currentRound->is_playing,
                             'current_track_started_at' => $currentRound->current_track_started_at?->toIso8601String(),
+                            'tracks' => $roundTracksOrdered,
                         ],
                         'track' => [
                             'id' => $track->id,
@@ -415,6 +446,7 @@ class RoomController extends Controller
                         'scores' => $roomState['scores'],
                         'users' => $roomState['users'],
                         'roundId' => $roomState['roundId'],
+                        'playedTracks' => $playedTracksPayload,
                     ]);
                 }
             }
@@ -427,6 +459,7 @@ class RoomController extends Controller
             'scores' => $roomState['scores'],
             'users' => $roomState['users'],
             'roundId' => $roomState['roundId'],
+            'playedTracks' => $playedTracksPayload,
         ]);
     }
 
@@ -541,5 +574,36 @@ class RoomController extends Controller
                 ->with('answers')
                 ->get('id')
         );
+    }
+
+    /**
+     * Payload for room playlist (Answers card), aligned with TrackEnded / AnswerCard shape.
+     * Avoids resolving the `audio` accessor N times on join (no live Deezer fetch per track).
+     *
+     * @return array<string, mixed>
+     */
+    private function playlistTrackPayloadForRoom(Track $track): array
+    {
+        $track->loadMissing('answers.type');
+
+        return [
+            'id' => $track->id,
+            'provider' => $track->provider,
+            'preview_url' => $track->preview_url,
+            'artwork_url' => $track->artwork_url,
+            'album_name' => null,
+            'hint' => $track->hint,
+            'upvotes' => $track->upvotes,
+            'downvotes' => $track->downvotes,
+            'answers' => $track->answers->map(function ($answer) {
+                return [
+                    'id' => $answer->id,
+                    'value' => $answer->value,
+                    'type' => [
+                        'name' => $answer->type->name,
+                    ],
+                ];
+            })->all(),
+        ];
     }
 }

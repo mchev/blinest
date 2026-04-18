@@ -50,6 +50,8 @@ const teams_podium = ref([])
 const initialTrack = ref(null)
 const initialStartTime = ref(0)
 const currentTrack = ref(null)
+/** Extraits déjà joués dans le round courant (hydratation GET /joined, pas de requête en plus) */
+const playlistPlayedTracks = ref([])
 /** Presence + events: one subscription (Echo.join = presence channel, .here/.joining/.leaving = list). */
 let roundsChannel = null
 /** Heartbeat to refresh Redis presence so home page count stays accurate (prune removes after 90s without heartbeat). */
@@ -106,9 +108,31 @@ function callPresenceLeft(options = {}) {
   axios.post(url).catch(() => {})
 }
 
+function hydrateRoomFromJoinedPayload(data) {
+  if (data.round && data.track) {
+    round.value = data.round
+    initialTrack.value = data.track
+    currentTrack.value = data.track
+    initialStartTime.value = data.startTime || 0
+    playlistPlayedTracks.value = Array.isArray(data.playedTracks) ? data.playedTracks : []
+    if (data.room) {
+      Object.assign(room.value, data.room)
+    }
+    if (data.round.id && data.track.id) {
+      axios.post(`/rounds/${data.round.id}/tracks/${data.track.id}/listened`).catch(() => {})
+    }
+  } else {
+    initialTrack.value = null
+    initialStartTime.value = 0
+    currentTrack.value = null
+    playlistPlayedTracks.value = Array.isArray(data.playedTracks) ? data.playedTracks : []
+  }
+}
+
 function resyncRoomAfterReconnect() {
   if (!joined.value) return
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
+    hydrateRoomFromJoinedPayload(response.data)
     if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
     if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
@@ -160,6 +184,7 @@ onMounted(() => {
       })
       .listen('RoundStarted', (e) => {
         round.value = e.round
+        playlistPlayedTracks.value = []
         roundFinished.value = false
         roomState.value.roundId = e.round?.id ?? null
         roomState.value.scores = {}
@@ -224,22 +249,7 @@ onUnmounted(() => {
 
 const joining = () => {
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
-    if (response.data.round && response.data.track) {
-      round.value = response.data.round
-      initialTrack.value = response.data.track
-      currentTrack.value = response.data.track
-      initialStartTime.value = response.data.startTime || 0
-      if (response.data.room) {
-        Object.assign(room.value, response.data.room)
-      }
-      if (response.data.round.id && response.data.track.id) {
-        axios.post(`/rounds/${response.data.round.id}/tracks/${response.data.track.id}/listened`).catch(() => {})
-      }
-    } else {
-      initialTrack.value = null
-      initialStartTime.value = 0
-      currentTrack.value = null
-    }
+    hydrateRoomFromJoinedPayload(response.data)
     // Scores/roundId from server. User list = only from presence channel (.here/.joining/.leaving).
     if (response.data.scores && typeof response.data.scores === 'object') {
       roomState.value.scores = response.data.scores
@@ -320,7 +330,14 @@ const fetchRoundScores = async (roundId) => {
           </div>
 
           <div class="grid gap-8 md:grid-cols-2">
-            <Answers class="mb-4 md:mb-0" :users="roomState.users" :channel="channel" />
+            <Answers
+              class="mb-4 md:mb-0"
+              :users="roomState.users"
+              :channel="channel"
+              :round="round"
+              :room-id="room.id"
+              :initial-played-tracks="playlistPlayedTracks"
+            />
             <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
 

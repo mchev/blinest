@@ -10,46 +10,62 @@ import AnswerCardDesktop from './AnswerCardDesktop.vue'
 const props = defineProps({
   users: Array,
   channel: String,
+  /** Synced from Show.vue (join + Echo): used for playlist progress */
+  round: {
+    type: Object,
+    default: null,
+  },
+  /** Room id for vote URLs (round from join may omit nested room) */
+  roomId: {
+    type: Number,
+    required: true,
+  },
+  /** Extraits déjà terminés (réponse GET /joined), ordre chronologique — affichage comme après TrackEnded (récent en haut) */
+  initialPlayedTracks: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const user = usePage().props.auth.user
-const userAnswers = ref([])
-const round = ref(null)
 const tracks = ref([])
 
 const progressPercentage = computed(() => {
-  if (!round.value) return 0
-  return Math.round((round.value.current / round.value.tracks.length) * 100)
-})
+  if (!props.round?.tracks?.length) {
+    return 0
+  }
 
-// Format track duration in MM:SS format
-const formatDuration = (seconds) => {
-  if (!seconds) return '0:00'
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${mins}:${secs.toString().padStart(2, '0')}`
-}
+  return Math.round((props.round.current / props.round.tracks.length) * 100)
+})
 
 // Add computed property for track count
 const trackCount = computed(() => {
-  return `${round.value?.current || 0} / ${round.value?.tracks?.length || 0}`
+  return `${props.round?.current || 0} / ${props.round?.tracks?.length || 0}`
 })
+
+watch(
+  () => props.initialPlayedTracks,
+  (list) => {
+    if (!list || list.length === 0) {
+      return
+    }
+    if (tracks.value.length !== 0) {
+      return
+    }
+    tracks.value = [...list].reverse()
+  },
+  { deep: true, immediate: true },
+)
 
 onMounted(() => {
   if (!props.channel) return
 
   Echo.join(props.channel)
-    .listen('RoundStarted', (e) => {
-      round.value = e.round
+    .listen('RoundStarted', () => {
       tracks.value = []
-      userAnswers.value = []
-    })
-    .listen('TrackPlayed', (e) => {
-      round.value = e.round
     })
     .listen('TrackEnded', (e) => {
       tracks.value.unshift(e.track)
-      round.value = e.round
     })
     .listen('TrackVoted', (e) => {
       const index = tracks.value.findIndex((x) => x.id === e.track.id)
@@ -58,31 +74,22 @@ onMounted(() => {
         tracks.value[index].upvotes = e.track.upvotes
       }
     })
-    .listen('NewScore', (e) => {
-      if (e.score.user_id === user?.id) {
-        userAnswers.value.push(e.score)
-      }
-    })
 })
 
 const voteTrackDown = (track) => {
-  if (!round.value?.room?.id) return
-  axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/downvote`)
+  if (!props.roomId) return
+  axios.post(`/rooms/${props.roomId}/tracks/${track.id}/downvote`)
     .catch(error => console.error('Error downvoting track:', error))
 }
 
 const voteTrackUp = (track) => {
-  if (!round.value?.room?.id) return
-  axios.post(`/rooms/${round.value.room.id}/tracks/${track.id}/upvote`)
+  if (!props.roomId) return
+  axios.post(`/rooms/${props.roomId}/tracks/${track.id}/upvote`)
     .catch(error => console.error('Error upvoting track:', error))
 }
 
-const getUserAnswerForTrackAndAnswer = (track, answer) => {
-  return userAnswers.value
-    .filter(x => x.track_id === track.id)
-    .flatMap(x => x.answers)
-    .find(a => a.id === answer.id)
-}
+/** Playlist : historique des extraits uniquement (pas d’affichage des scores / bonnes réponses). */
+const getUserAnswerForTrackAndAnswer = () => null
 
 </script>
 <template>

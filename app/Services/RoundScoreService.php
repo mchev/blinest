@@ -141,7 +141,13 @@ class RoundScoreService
         $key = "round:{$roundId}:tracks:{$userId}";
         $history = Redis::get($key);
 
-        return $history ? json_decode($history, true) : [];
+        if ($history === null || $history === false || $history === '') {
+            return [];
+        }
+
+        $decoded = json_decode($history, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     /**
