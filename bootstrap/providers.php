@@ -1,8 +1,13 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthorizationServiceProvider;
+use App\Providers\HorizonServiceProvider;
+use App\Providers\MailServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthorizationServiceProvider::class,
-    App\Providers\HorizonServiceProvider::class,
-    App\Providers\MailServiceProvider::class,
+    AppServiceProvider::class,
+    AuthorizationServiceProvider::class,
+    HorizonServiceProvider::class,
+    MailServiceProvider::class,
 ];

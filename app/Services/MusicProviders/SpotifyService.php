@@ -137,7 +137,7 @@ class SpotifyService
                 'image' => $playlist?->images[0]?->url,
                 'tracks' => $playlist->tracks,
             ];
-        } catch (\SpotifyWebAPI\SpotifyWebAPIException $e) {
+        } catch (SpotifyWebAPIException $e) {
             return (object) [
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Jobs\UpdateUserLevel;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
@@ -90,7 +91,7 @@ class RoomController extends AdminController
         $room->moderators()->attach(Auth::user());
 
         // Update user level in queue when creating a room
-        \App\Jobs\UpdateUserLevel::dispatch(
+        UpdateUserLevel::dispatch(
             user: Auth::user(),
             type: 'rooms_count'
         );

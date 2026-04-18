@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
 class Vote extends Model
@@ -43,17 +45,17 @@ class Vote extends Model
         ];
     }
 
-    public function votable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function votable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\config('auth.providers.users.model'), \config('vote.user_foreign_key'));
     }
 
-    public function voter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function voter(): BelongsTo
     {
         return $this->user();
     }

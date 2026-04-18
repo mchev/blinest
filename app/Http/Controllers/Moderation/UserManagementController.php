@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Moderation\BanUserRequest;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -128,7 +129,7 @@ class UserManagementController extends Controller
 
     private function getMessageContext($message)
     {
-        return \App\Models\Message::where('messagable_type', 'App\Models\Room')
+        return Message::where('messagable_type', 'App\Models\Room')
             ->where('messagable_id', $message->messagable_id)
             ->where('created_at', '<', $message->created_at)
             ->orderBy('created_at', 'desc')

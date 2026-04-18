@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RoundStanding;
 use App\Models\Team;
+use App\Models\TotalScore;
 use App\Models\User;
 use App\Rules\Reserved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Number;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -14,16 +18,47 @@ class TeamController extends Controller
 {
     public function index(Request $request)
     {
-        return Inertia::render('Teams/Index', [
-            'filters' => $request->all('search'),
-            'teams' => Team::whereHas('owner', function ($query) {
+        $publicRankingScores = TotalScore::query()
+            ->selectRaw('total_scores.totalscorable_id as team_id')
+            ->selectRaw('ROUND(SUM(total_scores.score), 1) as public_rank_score')
+            ->where('total_scores.totalscorable_type', Team::class)
+            ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+            ->where('rooms.is_public', true)
+            ->groupBy('total_scores.totalscorable_id');
+
+        $teams = Team::query()
+            ->select('teams.*')
+            ->selectRaw('COALESCE(team_ranking.public_rank_score, 0) as team_points')
+            ->leftJoinSub($publicRankingScores, 'team_ranking', 'teams.id', '=', 'team_ranking.team_id')
+            ->whereHas('owner', function ($query) {
                 $query->notBanned();
             })
-                ->orderBy('created_at', 'DESC')
-                ->filter($request->only('search'))
-                ->with('owner')
-                ->withCount('members')
-                ->paginate(4),
+            ->filter($request->only('search'))
+            ->with('owner')
+            ->withCount('members')
+            ->orderByDesc(DB::raw('COALESCE(team_ranking.public_rank_score, 0)'))
+            ->orderBy('teams.name')
+            ->paginate(12)
+            ->withQueryString();
+
+        $roundCounts = RoundStanding::query()
+            ->whereIn('team_id', $teams->pluck('id'))
+            ->selectRaw('team_id, COUNT(DISTINCT round_id) as rounds_played')
+            ->groupBy('team_id')
+            ->pluck('rounds_played', 'team_id');
+
+        $teams->getCollection()->transform(function (Team $team) use ($roundCounts) {
+            $team->rounds_played = (int) ($roundCounts[$team->id] ?? 0);
+            $points = (float) ($team->team_points ?? 0);
+            $team->team_points = $points;
+            $team->team_points_abbreviated = Number::abbreviate($points, 1, 2);
+
+            return $team;
+        });
+
+        return Inertia::render('Teams/Index', [
+            'filters' => $request->all('search'),
+            'teams' => $teams,
         ]);
     }
 
@@ -83,15 +118,53 @@ class TeamController extends Controller
 
     public function show(Team $team)
     {
+        $team->load('owner');
+        $memberIds = $team->members->pluck('id');
+
+        $teamAggregate = RoundStanding::query()
+            ->where('team_id', $team->id)
+            ->selectRaw('COUNT(DISTINCT round_id) as rounds_played, MAX(created_at) as last_played_at, COALESCE(SUM(total_score), 0) as team_points')
+            ->first();
+
+        $roundsPlayed = (int) ($teamAggregate->rounds_played ?? 0);
+        $teamScore = (float) ($teamAggregate->team_points ?? 0);
+
+        $memberRows = RoundStanding::query()
+            ->where('team_id', $team->id)
+            ->whereIn('user_id', $memberIds)
+            ->selectRaw('user_id, SUM(total_score) as total_score, COUNT(DISTINCT round_id) as rounds_played')
+            ->groupBy('user_id')
+            ->get()
+            ->keyBy('user_id');
+
+        $avgPerRound = $roundsPlayed > 0
+            ? round($teamScore / $roundsPlayed, 1)
+            : 0.0;
+
         return Inertia::render('Teams/Show', [
             'team' => $team,
-            'score' => floatval($team->scores()->sum('score')),
-            'members' => $team->members->map(fn ($member) => [
-                'id' => $member->id,
-                'name' => $member->name,
-                'photo' => $member->photo,
-                'score' => $member->scores()->where('team_id', $team->id)->sum('score'),
-            ])->sortByDesc('score'),
+            'score' => $teamScore,
+            'stats' => [
+                'rounds_played' => $roundsPlayed,
+                'last_played_at' => $teamAggregate->last_played_at,
+                'avg_points_per_round' => $avgPerRound,
+            ],
+            'members' => $team->members->map(function ($member) use ($memberRows, $teamScore) {
+                $row = $memberRows->get($member->id);
+                $score = (float) ($row->total_score ?? 0);
+                $played = (int) ($row->rounds_played ?? 0);
+
+                return [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'photo' => $member->photo,
+                    'score' => $score,
+                    'rounds_played' => $played,
+                    'contribution_percent' => $teamScore > 0
+                        ? round(($score / $teamScore) * 100, 1)
+                        : 0.0,
+                ];
+            })->sortByDesc('score')->values(),
         ]);
     }
 

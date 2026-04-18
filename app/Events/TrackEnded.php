@@ -7,6 +7,7 @@ use App\Models\Track;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -59,7 +60,7 @@ class TrackEnded implements ShouldBroadcast
 
         try {
             return Track::with('answers')->findOrFail($this->round->tracks[$current]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             Log::error('Track not found', ['track_id' => $this->round->tracks[$current]]);
 
             return null;

@@ -1,10 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Head } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import axios from 'axios'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
-import Badge from '@/Components/Badge.vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
 import EloBadge from '@/Components/EloBadge.vue'
 import LevelInfo from '@/Components/LevelInfo.vue'
@@ -134,7 +133,41 @@ const chartOptions = {
               </div>
             </div>
             <h1 class="mb-2 text-2xl font-bold text-white">{{ user.name }}</h1>
-            <Badge v-if="user.team" color="primary" :text="user.team.name" class="mb-4" />
+            <Link
+              v-if="user.team"
+              :href="route('teams.show', user.team.id)"
+              class="group mb-4 block w-full max-w-[280px] rounded-xl border border-violet-500/30 bg-gradient-to-br from-violet-950/50 via-neutral-900/80 to-fuchsia-950/30 p-3 text-left shadow-[0_0_24px_-8px_rgba(139,92,246,0.35)] transition hover:border-violet-400/45 hover:shadow-[0_0_32px_-6px_rgba(139,92,246,0.45)]"
+            >
+              <div class="flex items-center gap-3">
+                <div class="relative shrink-0">
+                  <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-50 blur-md transition group-hover:opacity-70" />
+                  <img
+                    v-if="user.team.photo"
+                    :src="user.team.photo"
+                    :alt="user.team.name"
+                    class="relative h-12 w-12 rounded-full object-cover ring-2 ring-violet-400/50"
+                    loading="lazy"
+                  >
+                  <div
+                    v-else
+                    class="relative flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800 text-lg font-black text-violet-300 ring-2 ring-violet-400/40"
+                  >
+                    {{ user.team.name?.charAt(0)?.toUpperCase() }}
+                  </div>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-[10px] font-bold uppercase tracking-wider text-violet-300/90">
+                    {{ __('Squad') }}
+                  </p>
+                  <p class="truncate text-base font-bold text-white group-hover:text-violet-100">
+                    {{ user.team.name }}
+                  </p>
+                  <p class="text-xs text-neutral-500 group-hover:text-neutral-400">
+                    {{ __('View team page') }} →
+                  </p>
+                </div>
+              </div>
+            </Link>
             <div class="mb-4 text-sm text-neutral-400">
               {{ user.created_at_from_now }}
             </div>

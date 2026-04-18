@@ -1,13 +1,18 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\UserIsAdministrator;
+use App\Http\Middleware\UserIsPublicModerator;
 use App\Providers\AppServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Intervention\Image\ImageServiceProvider;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
-        \Intervention\Image\ImageServiceProvider::class,
+        ImageServiceProvider::class,
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -21,8 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(AppServiceProvider::HOME);
 
         $middleware->web([
-            \App\Http\Middleware\SetLocale::class,
-            \App\Http\Middleware\HandleInertiaRequests::class,
+            SetLocale::class,
+            HandleInertiaRequests::class,
         ]);
 
         $middleware->statefulApi();
@@ -30,8 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
 
         $middleware->alias([
-            'auth.administrator' => \App\Http\Middleware\UserIsAdministrator::class,
-            'auth.moderator' => \App\Http\Middleware\UserIsPublicModerator::class,
+            'auth.administrator' => UserIsAdministrator::class,
+            'auth.moderator' => UserIsPublicModerator::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -67,6 +67,11 @@ class Team extends Model
         return $this->hasMany(Score::class);
     }
 
+    public function roundStandings(): HasMany
+    {
+        return $this->hasMany(RoundStanding::class, 'team_id');
+    }
+
     public function totalScores(): MorphMany
     {
         return $this->morphMany(TotalScore::class, 'totalscorable');

@@ -179,6 +179,9 @@
     "Wrong!": "Wrong!",
     "Not quite!": "Not quite!",
     "Almost!": "Almost!",
+    "Alternative answers": "Alternative answers",
+    "One alternative answer per line": "One alternative answer per line",
+    "alt.": "alt.",
     "Good try!": "Good try!",
     "Next time!": "Next time!",
     "Keep going!": "Keep going!",
@@ -218,5 +221,10 @@
     "Anagram": "Anagram",
     "Unscramble the letters to find the artist name.": "Unscramble the letters to find the artist name.",
     "Type the artist name...": "Type the artist name...",
-    "Unscramble the letters to find the artist name": "Unscramble the letters to find the artist name"
+    "Unscramble the letters to find the artist name": "Unscramble the letters to find the artist name",
+    "Clear playlist": "Clear playlist",
+    "Are you sure you want to remove all tracks from this playlist? This action cannot be undone.": "Are you sure you want to remove all tracks from this playlist? This action cannot be undone.",
+    "All tracks removed from the playlist": "All tracks removed from the playlist",
+    "Playlist is already empty": "Playlist is already empty",
+    "Remove all tracks from this playlist": "Remove all tracks from this playlist"
 }

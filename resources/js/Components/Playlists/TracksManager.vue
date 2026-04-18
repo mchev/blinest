@@ -65,6 +65,8 @@ const importingPlaylist = ref(false)
 const providerErrors = ref({})
 const showDeleteTrackModal = ref(false)
 const trackToDelete = ref(null)
+const showClearPlaylistModal = ref(false)
+const clearingPlaylist = ref(false)
 
 // Loading states with TypeScript-like interface
 const loadingStates = ref({
@@ -316,6 +318,20 @@ const confirmDeleteTrack = async () => {
   }
 }
 
+const confirmClearPlaylist = () => {
+  if (clearingPlaylist.value) return
+  clearingPlaylist.value = true
+  loading.value = true
+  router.delete(route('playlists.tracks.clear', props.playlist.id), {
+    preserveScroll: true,
+    only: ['tracks', 'playlist'],
+    onFinish: () => {
+      clearingPlaylist.value = false
+      loading.value = false
+    },
+  })
+}
+
 const updateDificulty = async (e, track) => {
   if (loadingStates.value.updateDifficulty) return
   
@@ -432,6 +448,18 @@ const loading = ref(false)
               </svg>
               <span class="hidden sm:inline">{{ __('Export to Excel') }}</span>
             </a>
+
+            <button
+              v-if="(playlist.total_tracks ?? 0) > 0"
+              type="button"
+              class="group flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 hover:border-red-400/50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none"
+              :disabled="clearingPlaylist"
+              :title="__('Remove all tracks from this playlist')"
+              @click="showClearPlaylistModal = true"
+            >
+              <Icon name="delete" class="h-4 w-4" />
+              <span class="hidden sm:inline">{{ __('Clear playlist') }}</span>
+            </button>
           </div>
         </div>
     </template>
@@ -546,13 +574,15 @@ const loading = ref(false)
         </div>
       </div>
 
-      <!-- Add Tracks Section -->
+      <!-- Add Tracks Section: search + upload (two columns from lg) -->
       <div class="mb-6 rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-4 lg:p-5">
-        <div class="mb-3">
-          <h4 class="mb-1.5 text-sm font-semibold text-neutral-200">{{ __('Search for songs to add to your playlist') }}</h4>
-          <p class="text-sm text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Deezer and Blinest') }}</p>
-        </div>
-        <Dropdown placement="bottom-start" :auto-close="false" class="w-full">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start md:gap-5 lg:gap-6">
+          <div class="min-w-0">
+            <div class="mb-3">
+              <h4 class="mb-1 text-sm font-semibold text-neutral-200">{{ __('Search for songs to add to your playlist') }}</h4>
+              <p class="text-xs text-neutral-300 md:text-sm md:text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Deezer and Blinest') }}</p>
+            </div>
+            <Dropdown placement="bottom-start" :auto-close="false" class="w-full">
           <template #default>
             <TextInput 
               class="w-full" 
@@ -706,14 +736,18 @@ const loading = ref(false)
             </template>
           </template>
         </Dropdown>
-
-        <!-- Upload from Computer Section -->
-        <div v-if="isModerator" class="mt-4 pt-4 border-t border-neutral-700/50">
-          <div class="mb-3">
-            <h4 class="mb-1.5 text-sm font-semibold text-neutral-200">{{ __('Upload a song from your computer') }}</h4>
-            <p class="text-sm text-neutral-200">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
           </div>
-          <UploadTrack :playlist="playlist" />
+
+          <div
+            v-if="isModerator"
+            class="min-w-0 border-t border-neutral-700/50 pt-4 md:border-t-0 md:border-l md:pt-0 md:pl-5 lg:pl-6"
+          >
+            <div class="mb-3">
+              <h4 class="mb-1 text-sm font-semibold text-neutral-200">{{ __('Upload a song from your computer') }}</h4>
+              <p class="text-xs text-neutral-300 md:text-sm md:text-neutral-200">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
+            </div>
+            <UploadTrack :playlist="playlist" />
+          </div>
         </div>
       </div>
 
@@ -785,6 +819,13 @@ const loading = ref(false)
                     <div class="flex items-center gap-2 min-w-0 flex-1">
                       <span class="text-sm font-semibold text-neutral-200 whitespace-nowrap">{{ __(answer.type.name) }}:</span>
                       <span class="text-sm text-neutral-200 truncate">{{ answer.value }}</span>
+                      <span
+                        v-if="answer.aliases && answer.aliases.length"
+                        class="shrink-0 rounded bg-neutral-600/60 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-300"
+                        :title="answer.aliases.join('\n')"
+                      >
+                        +{{ answer.aliases.length }} {{ __('alt.') }}
+                      </span>
                     </div>
                     <span class="ml-2 text-xs text-teal-400 font-semibold whitespace-nowrap">{{ answer.score }}pts</span>
                   </div>
@@ -920,5 +961,16 @@ const loading = ref(false)
     variant="danger"
     @close="showDeleteTrackModal = false; trackToDelete = null"
     @confirm="confirmDeleteTrack"
+  />
+
+  <ConfirmModal
+    :show="showClearPlaylistModal"
+    :title="__('Clear playlist')"
+    :message="__('Are you sure you want to remove all tracks from this playlist? This action cannot be undone.')"
+    :confirm-text="__('Clear playlist')"
+    :cancel-text="__('Cancel')"
+    variant="danger"
+    @close="showClearPlaylistModal = false"
+    @confirm="confirmClearPlaylist"
   />
 </template>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\TrackVoted;
 use App\Jobs\ProcessDeletedTrack;
 use App\Jobs\SendDiscordNotification;
+use App\Jobs\UpdateUserLevel;
 use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\Track;
@@ -206,13 +207,46 @@ class TrackController extends Controller
         }
     }
 
+    public function destroyAll(Playlist $playlist)
+    {
+        $user = Request::user();
+
+        if ($user->id !== $playlist->owner->id
+            && ! $user->isPlaylistModerator($playlist)
+            && ! $user->isAdministrator()
+        ) {
+            abort(403, __('Unauthorized action'));
+        }
+
+        $tracks = $playlist->tracks()->get();
+
+        if ($tracks->isEmpty()) {
+            return Redirect::back()->with('info', __('Playlist is already empty'));
+        }
+
+        foreach ($tracks as $track) {
+            Cache::forget('track-'.$track->id.'-answers');
+            Cache::forget('track_'.$track->id.'_duration');
+            ProcessDeletedTrack::dispatch($track, $user);
+        }
+
+        Cache::forget('playlist_total_tracks_'.$playlist->id);
+        Cache::forget('playlist_difficulties_'.$playlist->id);
+
+        foreach ($playlist->rooms()->pluck('id') as $roomId) {
+            Cache::forget("room_{$roomId}_tracks_count");
+        }
+
+        return Redirect::back()->with('success', __('All tracks removed from the playlist'));
+    }
+
     public function downvote(Room $room, Track $track)
     {
         Auth::user()->downvote($track);
         broadcast(new TrackVoted($room, $track));
 
         // Update user level in queue when unliking a track
-        \App\Jobs\UpdateUserLevel::dispatch(
+        UpdateUserLevel::dispatch(
             user: Auth::user(),
             type: 'likes_count'
         );
@@ -224,7 +258,7 @@ class TrackController extends Controller
         broadcast(new TrackVoted($room, $track));
 
         // Update user level in queue when liking a track
-        \App\Jobs\UpdateUserLevel::dispatch(
+        UpdateUserLevel::dispatch(
             user: Auth::user(),
             type: 'likes_count'
         );

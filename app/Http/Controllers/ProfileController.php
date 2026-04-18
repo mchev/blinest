@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UpdateUserLevel;
+use App\Models\MinigameScore;
+use App\Models\Room;
 use App\Models\Track;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,7 +34,7 @@ class ProfileController extends Controller
         $scoresPerPage = $request->has('scores') ? 10 : 5;
 
         // Optimize: Use subquery for public rooms instead of JOIN to avoid slow count
-        $publicRoomSubquery = \App\Models\Room::where('is_public', true)
+        $publicRoomSubquery = Room::where('is_public', true)
             ->whereNull('deleted_at')
             ->select('id');
 
@@ -43,7 +46,7 @@ class ProfileController extends Controller
 
         // Eager load rooms separately to avoid N+1
         $roomIds = $scores->pluck('room_id')->unique();
-        $rooms = \App\Models\Room::whereIn('id', $roomIds)
+        $rooms = Room::whereIn('id', $roomIds)
             ->select('id', 'name', 'slug', 'photo_path')
             ->get()
             ->keyBy('id');
@@ -67,10 +70,10 @@ class ProfileController extends Controller
         $likesPerPage = $request->has('likes') ? 10 : 5;
 
         // Optimize: Use direct JOIN instead of whereHas with EXISTS subquery
-        $likes = \App\Models\Track::query()
+        $likes = Track::query()
             ->join('votes', function ($join) use ($user) {
                 $join->on('tracks.id', '=', 'votes.votable_id')
-                    ->where('votes.votable_type', \App\Models\Track::class)
+                    ->where('votes.votable_type', Track::class)
                     ->where('votes.user_id', $user->id)
                     ->where('votes.votes', 1);
             })
@@ -106,7 +109,7 @@ class ProfileController extends Controller
         $userLevel = $user->userLevel;
         $levelMetrics = $userLevel ? [
             'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
-            'minigame_scores_total' => (int) \App\Models\MinigameScore::query()->where('user_id', $user->id)->sum('score'),
+            'minigame_scores_total' => (int) MinigameScore::query()->where('user_id', $user->id)->sum('score'),
             'seniority_months' => $userLevel->months_seniority ?? 0,
             'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
             'rooms_created_count' => $userLevel->rooms_created_count ?? 0,
@@ -123,6 +126,7 @@ class ProfileController extends Controller
                 'team' => $user->team ? [
                     'id' => $user->team->id,
                     'name' => $user->team->name,
+                    'photo' => $user->team->photo,
                 ] : null,
                 'level' => $userLevel?->level ?? 1,
                 'current_xp' => $userLevel?->current_xp ?? 0,
@@ -180,7 +184,7 @@ class ProfileController extends Controller
             ->where('votable_id', $track->id)
             ->delete();
 
-        \App\Jobs\UpdateUserLevel::dispatch(
+        UpdateUserLevel::dispatch(
             user: $request->user(),
             type: 'likes_count'
         );

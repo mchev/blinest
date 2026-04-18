@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MessageReactionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('users');
 
     // Réactions sur les messages
-    Route::get('/messages/{message}/reactions', [\App\Http\Controllers\Api\MessageReactionController::class, 'index']);
-    Route::post('/messages/{message}/reactions', [\App\Http\Controllers\Api\MessageReactionController::class, 'store']);
+    Route::get('/messages/{message}/reactions', [MessageReactionController::class, 'index']);
+    Route::post('/messages/{message}/reactions', [MessageReactionController::class, 'store']);
 });

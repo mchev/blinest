@@ -14,16 +14,21 @@ class TrackAnswer extends Model
     protected $fillable = [
         'answer_type_id',
         'value',
+        'aliases',
         'score',
-    ];
-
-    protected $cast = [
-        'score' => 'float',
     ];
 
     protected $with = [
         'type',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'aliases' => 'array',
+            'score' => 'float',
+        ];
+    }
 
     public function track(): BelongsTo
     {

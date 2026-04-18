@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class StartRound implements ShouldQueue
@@ -84,7 +85,7 @@ class StartRound implements ShouldQueue
                 ]);
 
                 // Invalidate rounds count cache
-                \Illuminate\Support\Facades\Cache::forget("room_{$this->room->id}_rounds_count");
+                Cache::forget("room_{$this->room->id}_rounds_count");
             }
 
             if (! empty($round->tracks)) {

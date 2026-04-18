@@ -3,6 +3,10 @@
 namespace App\Services;
 
 use App\Models\User;
+use Brevo\Client\Api\ContactsApi;
+use Brevo\Client\Configuration;
+use Brevo\Client\Model\CreateContact;
+use GuzzleHttp\Client;
 
 class BrevoService
 {
@@ -14,13 +18,13 @@ class BrevoService
 
     public function __construct()
     {
-        $this->credentials = \Brevo\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', config('services.brevo.key'));
+        $this->credentials = Configuration::getDefaultConfiguration()->setApiKey('api-key', config('services.brevo.key'));
     }
 
     public function contacts()
     {
-        $this->apiInstance = new \Brevo\Client\Api\ContactsApi(
-            new \GuzzleHttp\Client,
+        $this->apiInstance = new ContactsApi(
+            new Client,
             $this->credentials
         );
 
@@ -29,7 +33,7 @@ class BrevoService
 
     public function create(User $user)
     {
-        $createContact = new \Brevo\Client\Model\CreateContact([
+        $createContact = new CreateContact([
             'email' => $user->email,
             'updateEnabled' => true,
             'attributes' => (object) [

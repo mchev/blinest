@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Console\ClearCommand;
+use Laravel\Horizon\Console\TerminateCommand;
+use SocialiteProviders\Discord\Provider;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 
 // use Illuminate\Support\Facades\Queue;
 // use Illuminate\Queue\Events\JobFailed;
@@ -35,8 +39,8 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         $this->commands([
-            \Laravel\Horizon\Console\ClearCommand::class,
-            \Laravel\Horizon\Console\TerminateCommand::class,
+            ClearCommand::class,
+            TerminateCommand::class,
         ]);
 
     }
@@ -54,8 +58,8 @@ class AppServiceProvider extends ServiceProvider
 
         Carbon::setLocale(config('app.locale'));
 
-        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
-            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
+        Event::listen(function (SocialiteWasCalled $event) {
+            $event->extendSocialite('discord', Provider::class);
             $event->extendSocialite('deezer', \SocialiteProviders\Deezer\Provider::class);
             $event->extendSocialite('google', \SocialiteProviders\Google\Provider::class);
             $event->extendSocialite('facebook', \SocialiteProviders\Facebook\Provider::class);

@@ -5,6 +5,7 @@ namespace App\Services\MusicProviders;
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -229,7 +230,7 @@ class YoutubeWithoutApiService
         })->filter()->count();
     }
 
-    protected function parseSearchResults(string $html): \Illuminate\Support\Collection
+    protected function parseSearchResults(string $html): Collection
     {
         try {
             // Extract initial data from YouTube's response

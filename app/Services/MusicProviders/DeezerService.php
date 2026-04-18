@@ -5,6 +5,8 @@ namespace App\Services\MusicProviders;
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -60,7 +62,7 @@ class DeezerService
         // Even though URLs expire, caching reduces load and most URLs are valid for longer
         $cacheKey = "deezer_preview_url:{$id}";
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($id) {
+        return Cache::remember($cacheKey, 300, function () use ($id) {
             try {
                 $url = 'https://api.deezer.com/track/'.$id;
                 // Retry up to 2 times with 100ms delay, timeout of 2 seconds per attempt
@@ -105,7 +107,7 @@ class DeezerService
 
                 return $previewUrl;
 
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            } catch (ConnectionException $e) {
                 // Handle timeout/connection errors specifically
                 Log::warning('Deezer getLiveTrackPreview connection error', [
                     'track_id' => $id,

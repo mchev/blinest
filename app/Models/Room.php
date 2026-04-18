@@ -173,7 +173,7 @@ class Room extends Model
 
     public function weekUsersScores(): HasMany
     {
-        return $this->hasMany(\App\Models\RoundStanding::class, 'room_id')
+        return $this->hasMany(RoundStanding::class, 'room_id')
             ->selectRaw('MAX(round_standings.created_at) as max_created_at, round_standings.user_id, SUM(round_standings.total_score) as total')
             ->where('round_standings.created_at', '>=', now()->subDays(7))
             ->with('user')

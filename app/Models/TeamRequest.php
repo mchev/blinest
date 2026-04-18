@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\UpdateUserLevel;
 use App\Notifications\TeamRequestApproved;
 use App\Notifications\TeamRequestRejected;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,7 @@ class TeamRequest extends Model
         $this->user->teamRequests()->delete();
 
         // Update user level in queue when joining a team
-        \App\Jobs\UpdateUserLevel::dispatch($this->user);
+        UpdateUserLevel::dispatch($this->user);
     }
 
     public function reject()

@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\MinigameScore;
 use App\Models\Room;
+use App\Models\RoundStanding;
+use App\Models\Team;
 use App\Models\TotalScore;
+use App\Models\User;
+use App\Models\UserLevel;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -21,7 +26,7 @@ class RankingController extends Controller
         $user = Auth::user();
 
         // Paginated by Level
-        $topByLevel = \App\Models\UserLevel::query()
+        $topByLevel = UserLevel::query()
             ->with(['user'])
             ->orderByDesc('level')
             ->orderByDesc('total_xp')
@@ -45,7 +50,7 @@ class RankingController extends Controller
         // User position
         $userPosition = null;
         if ($user && $user->userLevel) {
-            $userLevelPosition = \App\Models\User::query()
+            $userLevelPosition = User::query()
                 ->whereHas('userLevel')
                 ->join('user_levels', 'users.id', '=', 'user_levels.user_id')
                 ->where(function ($query) use ($user) {
@@ -70,13 +75,13 @@ class RankingController extends Controller
         $user = Auth::user();
 
         // Get public room IDs
-        $publicRoomIds = \App\Models\Room::where('is_public', true)->pluck('id');
+        $publicRoomIds = Room::where('is_public', true)->pluck('id');
 
         // Paginated by Score (lifetime, public rooms)
         $paginatedScores = TotalScore::query()
             ->select('totalscorable_id')
             ->selectRaw('ROUND(SUM(score), 1) as total_score')
-            ->where('totalscorable_type', \App\Models\User::class)
+            ->where('totalscorable_type', User::class)
             ->whereIn('room_id', $publicRoomIds)
             ->groupBy('totalscorable_id')
             ->orderByDesc('total_score')
@@ -86,7 +91,7 @@ class RankingController extends Controller
         $userIds = $paginatedScores->pluck('totalscorable_id');
 
         // Load users with their levels
-        $users = \App\Models\User::with('userLevel')
+        $users = User::with('userLevel')
             ->whereIn('id', $userIds)
             ->get()
             ->keyBy('id');
@@ -112,7 +117,7 @@ class RankingController extends Controller
         })->filter()->values();
 
         // Create a new paginator with the mapped data
-        $topByScore = new \Illuminate\Pagination\LengthAwarePaginator(
+        $topByScore = new LengthAwarePaginator(
             $mappedScores,
             $paginatedScores->total(),
             $paginatedScores->perPage(),
@@ -128,7 +133,7 @@ class RankingController extends Controller
         $userScore = null;
         if ($user) {
             $userScore = TotalScore::query()
-                ->where('totalscorable_type', \App\Models\User::class)
+                ->where('totalscorable_type', User::class)
                 ->where('totalscorable_id', $user->id)
                 ->whereIn('room_id', $publicRoomIds)
                 ->selectRaw('ROUND(SUM(score), 1) as total_score')
@@ -137,7 +142,7 @@ class RankingController extends Controller
 
             if ($userScore) {
                 $userScorePosition = TotalScore::query()
-                    ->where('totalscorable_type', \App\Models\User::class)
+                    ->where('totalscorable_type', User::class)
                     ->whereIn('room_id', $publicRoomIds)
                     ->groupBy('totalscorable_id')
                     ->selectRaw('ROUND(SUM(score), 1) as total_score')
@@ -161,7 +166,7 @@ class RankingController extends Controller
 
         // Paginated Week (last 7 days) - Utiliser round_standings au lieu de scores
         // First, get the total count without ORDER BY
-        $total = \App\Models\RoundStanding::query()
+        $total = RoundStanding::query()
             ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
             ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
@@ -175,7 +180,7 @@ class RankingController extends Controller
         $currentPage = request()->get('page', 1);
         $offset = ($currentPage - 1) * $perPage;
 
-        $userIdsPaginated = \App\Models\RoundStanding::query()
+        $userIdsPaginated = RoundStanding::query()
             ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
             ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
@@ -187,7 +192,7 @@ class RankingController extends Controller
             ->limit($perPage)
             ->get();
 
-        $users = \App\Models\User::with('userLevel')
+        $users = User::with('userLevel')
             ->whereIn('id', $userIdsPaginated->pluck('user_id'))
             ->get()
             ->keyBy('id');
@@ -207,7 +212,7 @@ class RankingController extends Controller
             ];
         })->filter(fn ($item) => $item['user'] !== null);
 
-        $topWeek = new \Illuminate\Pagination\LengthAwarePaginator(
+        $topWeek = new LengthAwarePaginator(
             $topWeek,
             $total,
             $perPage,
@@ -219,7 +224,7 @@ class RankingController extends Controller
         $userPosition = null;
         $userWeekScore = null;
         if ($user) {
-            $userWeekScore = \App\Models\RoundStanding::query()
+            $userWeekScore = RoundStanding::query()
                 ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
                 ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
                 ->where('rooms.is_public', true)
@@ -229,7 +234,7 @@ class RankingController extends Controller
                 ->first();
 
             if ($userWeekScore) {
-                $userWeekPosition = \App\Models\RoundStanding::query()
+                $userWeekPosition = RoundStanding::query()
                     ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
                     ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
                     ->where('rooms.is_public', true)
@@ -254,7 +259,7 @@ class RankingController extends Controller
         $user = Auth::user();
 
         // Paginated by ELO
-        $topByElo = \App\Models\User::query()
+        $topByElo = User::query()
             ->whereNotNull('elo')
             ->with('userLevel')
             ->orderByDesc('elo')
@@ -276,7 +281,7 @@ class RankingController extends Controller
         $userPosition = null;
         if ($user) {
             $userElo = $user->elo ?? 1500;
-            $userEloPosition = \App\Models\User::query()
+            $userEloPosition = User::query()
                 ->whereNotNull('elo')
                 ->where('elo', '>', $userElo)
                 ->count() + 1;
@@ -299,7 +304,7 @@ class RankingController extends Controller
             ->with('team')
             ->select('totalscorable_id')
             ->selectRaw('ROUND(SUM(score), 1) as total_score')
-            ->where('totalscorable_type', \App\Models\Team::class)
+            ->where('totalscorable_type', Team::class)
             ->join('teams', 'teams.id', '=', 'total_scores.totalscorable_id')
             ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
             ->where('rooms.is_public', true)
@@ -313,7 +318,7 @@ class RankingController extends Controller
         $userTeamScore = null;
         if ($user && $user->team) {
             $userTeamScore = TotalScore::query()
-                ->where('totalscorable_type', \App\Models\Team::class)
+                ->where('totalscorable_type', Team::class)
                 ->where('totalscorable_id', $user->team->id)
                 ->join('rooms', 'total_scores.room_id', '=', 'rooms.id')
                 ->where('rooms.is_public', true)
@@ -323,7 +328,7 @@ class RankingController extends Controller
 
             if ($userTeamScore) {
                 $userTeamPosition = TotalScore::query()
-                    ->where('totalscorable_type', \App\Models\Team::class)
+                    ->where('totalscorable_type', Team::class)
                     ->join('teams', 'teams.id', '=', 'total_scores.totalscorable_id')
                     ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
                     ->where('rooms.is_public', true)
@@ -373,7 +378,7 @@ class RankingController extends Controller
             ->paginate(50);
 
         $userIds = $paginated->pluck('user_id');
-        $users = \App\Models\User::with('userLevel')
+        $users = User::with('userLevel')
             ->whereIn('id', $userIds)
             ->get()
             ->keyBy('id');
@@ -396,7 +401,7 @@ class RankingController extends Controller
             ];
         })->filter()->values();
 
-        $topByMinigames = new \Illuminate\Pagination\LengthAwarePaginator(
+        $topByMinigames = new LengthAwarePaginator(
             $mapped,
             $paginated->total(),
             $paginated->perPage(),
@@ -427,7 +432,7 @@ class RankingController extends Controller
     }
 
     // Get user level metrics for modal
-    public function userLevelMetrics(\App\Models\User $user)
+    public function userLevelMetrics(User $user)
     {
         $user->loadMissing('userLevel');
 
@@ -450,7 +455,7 @@ class RankingController extends Controller
             'total_xp' => $userLevel->total_xp,
             'level_metrics' => [
                 'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
-                'minigame_scores_total' => (int) \App\Models\MinigameScore::query()->where('user_id', $user->id)->sum('score'),
+                'minigame_scores_total' => (int) MinigameScore::query()->where('user_id', $user->id)->sum('score'),
                 'seniority_months' => $userLevel->months_seniority ?? 0,
                 'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
                 'rooms_created_count' => $userLevel->rooms_created_count ?? 0,

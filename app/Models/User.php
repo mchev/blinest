@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Http\Traits\HasPicture;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Mchev\Banhammer\Models\Ban;
 use Mchev\Banhammer\Traits\Bannable;
 use Overtrue\LaravelVote\Traits\Voter;
 
@@ -129,11 +130,9 @@ class User extends Authenticatable
         return $this->id === $playlist->user_id;
     }
 
-    public function isPlaylistModerator(Playlist $playlist)
+    public function isPlaylistModerator(Playlist $playlist): bool
     {
-        return $this->whereHas('moderatedPlaylists', function (Builder $query) use ($playlist) {
-            $query->where('playlists.id', $playlist->id);
-        })->exists();
+        return $this->moderatedPlaylists()->where('playlists.id', $playlist->id)->exists();
     }
 
     public function canEditPlaylist(Playlist $playlist)
@@ -194,7 +193,7 @@ class User extends Authenticatable
         return $this->morphMany(TotalScore::class, 'totalscorable');
     }
 
-    public function userLevel(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function userLevel(): HasOne
     {
         return $this->hasOne(UserLevel::class);
     }
@@ -307,6 +306,6 @@ class User extends Authenticatable
     // BAN RELATIONSHIPS
     public function bans()
     {
-        return $this->morphMany(\Mchev\Banhammer\Models\Ban::class, 'bannable');
+        return $this->morphMany(Ban::class, 'bannable');
     }
 }

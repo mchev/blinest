@@ -8,8 +8,10 @@ use App\Events\UserHasFoundAllTheAnswers;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
+use App\Models\TrackAnswer;
 use App\Services\RoundScoreService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -61,6 +63,7 @@ class RoundController extends Controller
 
             $user = $request->user();
             $goodAnswers = [];
+            $answers = [];
             $almostAnswers = false;
             $duplicateAnswers = []; // Track duplicate answers to inform user
             $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
@@ -130,99 +133,30 @@ class RoundController extends Controller
                     ->toArray();
             }
 
-            $trackAnswers = Cache::rememberForever('track-'.$track->id.'-answers', function () use ($track) {
-                return $track->answers;
-            });
+            $trackAnswers = $this->getCachedTrackAnswers($track);
 
             $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
 
             foreach ($remainingAnswers as $answer) {
-                $value = sanitizeString($answer->value);
-                $answerWords = array_unique(explode(' ', $value));
-                $goodWords = [];
-                $score = 0;
+                $candidateLines = $this->candidateLinesForTrackAnswer($answer);
+                $lineComplete = false;
+                $lineAlmost = false;
 
-                // Vérification exacte rapide en premier (cas le plus courant)
-                if ($sanitized === $value) {
-                    $goodWords = $answerWords;
-                } elseif (levenshtein($sanitized, $value) < 3) {
-                    // Levenshtein global : si la phrase entière est proche, accepter tous les mots
-                    // Mais vérifier que les nombres correspondent strictement
-                    $canAcceptLevenshtein = true;
+                foreach ($candidateLines as $rawLine) {
+                    $match = $this->evaluateMatchForAnswerLine($sanitized, $userWords, $rawLine);
+                    if ($match['complete']) {
+                        $lineComplete = true;
 
-                    foreach ($answerWords as $word) {
-                        if (is_numeric($word)) {
-                            $wordFound = false;
-                            foreach ($userWords as $userWord) {
-                                if (is_numeric($userWord)) {
-                                    $userWordNormalized = (string) $userWord;
-                                    $wordNormalized = (string) $word;
-                                    if ($userWordNormalized === $wordNormalized) {
-                                        $wordFound = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (! $wordFound) {
-                                $canAcceptLevenshtein = false;
-                                break;
-                            }
-                        }
+                        break;
                     }
-
-                    if ($canAcceptLevenshtein) {
-                        $goodWords = $answerWords;
-                    } else {
-                        // Si les nombres ne correspondent pas, faire la vérification mot par mot
-                        foreach ($answerWords as $word) {
-                            foreach ($userWords as $userWord) {
-                                // Comparaison de nombres - stricte uniquement
-                                if (is_numeric($userWord) && is_numeric($word)) {
-                                    $userWordNormalized = (string) $userWord;
-                                    $wordNormalized = (string) $word;
-                                    if ($userWordNormalized === $wordNormalized) {
-                                        $goodWords[] = $word;
-                                    }
-                                } elseif (strlen($userWord) < 5) {
-                                    // Mots courts de l'utilisateur - comparaison exacte uniquement
-                                    if ($userWord === $word) {
-                                        $goodWords[] = $word;
-                                    }
-                                } elseif (levenshtein($userWord, $word) < 1.55) {
-                                    // Mots longs - Levenshtein avec tolérance
-                                    $goodWords[] = $word;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // Vérification mot par mot
-                    foreach ($answerWords as $word) {
-                        foreach ($userWords as $userWord) {
-                            // Comparaison de nombres - stricte uniquement
-                            if (is_numeric($userWord) && is_numeric($word)) {
-                                $userWordNormalized = (string) $userWord;
-                                $wordNormalized = (string) $word;
-                                if ($userWordNormalized === $wordNormalized) {
-                                    $goodWords[] = $word;
-                                }
-                            } elseif (strlen($userWord) < 5) {
-                                // Mots courts de l'utilisateur - comparaison exacte uniquement
-                                if ($userWord === $word) {
-                                    $goodWords[] = $word;
-                                }
-                            } elseif (levenshtein($userWord, $word) < 1.55) {
-                                // Mots longs - Levenshtein avec tolérance
-                                $goodWords[] = $word;
-                            }
-                        }
+                    if ($match['almost']) {
+                        $lineAlmost = true;
                     }
                 }
 
-                $goodWords = array_unique($goodWords);
+                $score = 0;
 
-                // All good
-                if (count($answerWords) === count($goodWords)) {
+                if ($lineComplete) {
                     $score = $answer->score;
                     $goodAnswers[] = $answer;
 
@@ -286,7 +220,7 @@ class RoundController extends Controller
                     // Pour l'instant, on stocke juste le total dans Redis
                     // Les métriques détaillées seront calculées depuis Redis si nécessaire
 
-                } elseif (count($goodWords) >= (count($answerWords) / 2)) {
+                } elseif ($lineAlmost) {
                     $almostAnswers = true;
                 }
             }
@@ -384,5 +318,138 @@ class RoundController extends Controller
         $scores = $roundScoreService->getAllScores($round->id);
 
         return response()->json(['scores' => $scores], 200);
+    }
+
+    private function getCachedTrackAnswers(Track $track): Collection
+    {
+        $key = 'track-'.$track->id.'-answers';
+
+        return Cache::rememberForever($key, fn () => $track->answers);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function candidateLinesForTrackAnswer(TrackAnswer $answer): array
+    {
+        $lines = [trim((string) $answer->value)];
+        $aliases = is_array($answer->aliases) ? $answer->aliases : [];
+
+        foreach ($aliases as $alias) {
+            if (! is_string($alias)) {
+                continue;
+            }
+            $trimmed = trim($alias);
+            if ($trimmed !== '') {
+                $lines[] = $trimmed;
+            }
+        }
+
+        $seen = [];
+        $unique = [];
+
+        foreach ($lines as $line) {
+            $key = mb_strtolower($line);
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $unique[] = $line;
+        }
+
+        return $unique;
+    }
+
+    /**
+     * @return array{complete: bool, almost: bool}
+     */
+    private function evaluateMatchForAnswerLine(string $sanitized, array $userWords, string $rawLine): array
+    {
+        $value = sanitizeString(trim($rawLine));
+        if ($value === '') {
+            return ['complete' => false, 'almost' => false];
+        }
+
+        $answerWords = array_values(array_unique(array_filter(explode(' ', $value), fn ($w) => $w !== '')));
+
+        if ($answerWords === []) {
+            return ['complete' => false, 'almost' => false];
+        }
+
+        $goodWords = [];
+
+        if ($sanitized === $value) {
+            $goodWords = $answerWords;
+        } elseif (levenshtein($sanitized, $value) < 3) {
+            $canAcceptLevenshtein = true;
+
+            foreach ($answerWords as $word) {
+                if (is_numeric($word)) {
+                    $wordFound = false;
+                    foreach ($userWords as $userWord) {
+                        if (is_numeric($userWord)) {
+                            $userWordNormalized = (string) $userWord;
+                            $wordNormalized = (string) $word;
+                            if ($userWordNormalized === $wordNormalized) {
+                                $wordFound = true;
+
+                                break;
+                            }
+                        }
+                    }
+                    if (! $wordFound) {
+                        $canAcceptLevenshtein = false;
+
+                        break;
+                    }
+                }
+            }
+
+            if ($canAcceptLevenshtein) {
+                $goodWords = $answerWords;
+            } else {
+                foreach ($answerWords as $word) {
+                    foreach ($userWords as $userWord) {
+                        if (is_numeric($userWord) && is_numeric($word)) {
+                            $userWordNormalized = (string) $userWord;
+                            $wordNormalized = (string) $word;
+                            if ($userWordNormalized === $wordNormalized) {
+                                $goodWords[] = $word;
+                            }
+                        } elseif (strlen($userWord) < 5) {
+                            if ($userWord === $word) {
+                                $goodWords[] = $word;
+                            }
+                        } elseif (levenshtein($userWord, $word) < 1.55) {
+                            $goodWords[] = $word;
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($answerWords as $word) {
+                foreach ($userWords as $userWord) {
+                    if (is_numeric($userWord) && is_numeric($word)) {
+                        $userWordNormalized = (string) $userWord;
+                        $wordNormalized = (string) $word;
+                        if ($userWordNormalized === $wordNormalized) {
+                            $goodWords[] = $word;
+                        }
+                    } elseif (strlen($userWord) < 5) {
+                        if ($userWord === $word) {
+                            $goodWords[] = $word;
+                        }
+                    } elseif (levenshtein($userWord, $word) < 1.55) {
+                        $goodWords[] = $word;
+                    }
+                }
+            }
+        }
+
+        $goodWords = array_unique($goodWords);
+        $complete = count($answerWords) === count($goodWords);
+        $almost = ! $complete && count($goodWords) >= (count($answerWords) / 2);
+
+        return ['complete' => $complete, 'almost' => $almost];
     }
 }

@@ -1,7 +1,9 @@
 <script setup>
+import { watch, ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import TextInput from '@/Components/TextInput.vue'
+import TextareaInput from '@/Components/TextareaInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
 
 const props = defineProps({
@@ -33,13 +35,36 @@ const form = useForm({
   answer_type_id: props.answer ? props.answer.answer_type_id : 1,
   value: props.answer ? props.answer.value : '',
   score: props.answer ? props.answer.score : 0.5,
+  aliases: [],
 })
+
+const aliasesText = ref('')
+
+watch(
+  () => props.answer,
+  (answer) => {
+    if (answer && Array.isArray(answer.aliases) && answer.aliases.length) {
+      aliasesText.value = answer.aliases.join('\n')
+    } else {
+      aliasesText.value = ''
+    }
+  },
+  { immediate: true },
+)
 
 const close = () => {
   emit('close')
 }
 
+const applyAliasesToForm = () => {
+  form.aliases = aliasesText.value
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
 const submitForm = () => {
+  applyAliasesToForm()
   props.answer ? updateAnswer() : storeAnswer()
 }
 
@@ -78,18 +103,27 @@ const deleteAnswer = () => {
         <div v-if="answer" class="text-lg">
           {{ __('Edit Answer') }}
         </div>
-        <div v-else="answer" class="text-lg">
+        <div v-else class="text-lg">
           {{ __('Add Answer') }}
         </div>
 
         <div class="mt-4 flex flex-wrap">
           <select-input v-model="form.answer_type_id" :error="form.errors.answer_type_id" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Type')">
-            <option v-for="type in answer_types" :value="type.id">{{ __(type.name) }}</option>
+            <option v-for="type in answer_types" :key="type.id" :value="type.id">{{ __(type.name) }}</option>
           </select-input>
 
           <text-input v-model="form.score" type="number" step="0.5" min="0" max="99" :error="form.errors.score" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Score')" />
 
           <text-input v-model="form.value" :error="form.errors.value" class="w-full pb-8 pr-6" :label="__('Answer')" />
+
+          <textarea-input
+            v-model="aliasesText"
+            rows="4"
+            class="w-full pb-8 pr-6"
+            :label="__('Alternative answers')"
+            :error="form.errors.aliases"
+            :placeholder="__('One alternative answer per line')"
+          />
         </div>
       </div>
 
@@ -99,7 +133,7 @@ const deleteAnswer = () => {
         </button>
 
         <div class="flex items-center">
-          <button class="btn-secondary mx-2 bg-gray-400" @click="close">
+          <button type="button" class="btn-secondary mx-2 bg-gray-400" @click="close">
             {{ __('Close') }}
           </button>
 

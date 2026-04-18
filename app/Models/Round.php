@@ -11,10 +11,12 @@ use App\Jobs\ProcessDeletedTrack;
 use App\Jobs\ProcessRoundFinalization;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
+use App\Services\RoundScoreService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -157,7 +159,7 @@ class Round extends Model
                 $this->playNextTrack();
             }
 
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+        } catch (ConnectionException $e) {
             // Handle connection errors (timeout, DNS failure, etc.)
             ProcessDeletedTrack::dispatch($track);
             $this->playNextTrack();
@@ -177,7 +179,7 @@ class Round extends Model
     {
         // Si le round est en cours, utiliser Redis (plus performant)
         if ($this->is_playing && ! $this->finished_at) {
-            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $roundScoreService = app(RoundScoreService::class);
 
             return $roundScoreService->getUserScore($this->id, $user->id);
         }
@@ -207,13 +209,13 @@ class Round extends Model
     {
         // Si le round est en cours, utiliser Redis (plus performant)
         if ($this->is_playing && ! $this->finished_at) {
-            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
             // Convertir en format compatible avec l'ancien système
             // On charge les users et teams pour avoir les relations
             $userIds = array_keys($podium);
-            $users = \App\Models\User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+            $users = User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
 
             return collect($podium)->map(function ($total, $userId) use ($users) {
                 $user = $users->get($userId);
@@ -230,12 +232,12 @@ class Round extends Model
         // Si le round est terminé mais que les standings n'existent pas encore,
         // utiliser Redis (le job ProcessRoundFinalization n'a peut-être pas encore terminé)
         if ($this->finished_at && ! $this->standings()->exists()) {
-            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
             // Convertir en format compatible avec l'ancien système
             $userIds = array_keys($podium);
-            $users = \App\Models\User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+            $users = User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
 
             return collect($podium)->map(function ($total, $userId) use ($users) {
                 $user = $users->get($userId);
@@ -264,12 +266,12 @@ class Round extends Model
     {
         // Si le round est en cours, utiliser Redis (plus performant)
         if ($this->is_playing && ! $this->finished_at) {
-            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
             // Convertir en format compatible avec l'ancien système
             $userIds = array_keys($podium);
-            $users = \App\Models\User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
+            $users = User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
 
             // Grouper par équipe
             $teamsScores = [];
@@ -294,12 +296,12 @@ class Round extends Model
         // Si le round est terminé mais que les standings n'existent pas encore,
         // utiliser Redis (le job ProcessRoundFinalization n'a peut-être pas encore terminé)
         if ($this->finished_at && ! $this->standings()->exists()) {
-            $roundScoreService = app(\App\Services\RoundScoreService::class);
+            $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
             // Convertir en format compatible avec l'ancien système
             $userIds = array_keys($podium);
-            $users = \App\Models\User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
+            $users = User::whereIn('id', $userIds)->with('team')->get()->keyBy('id');
 
             // Grouper par équipe
             $teamsScores = [];

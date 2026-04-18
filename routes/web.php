@@ -2,22 +2,27 @@
 
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\LocalTrackController;
-use App\Http\Controllers\ModerationController;
-use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\Moderation\BannedUserController;
+use App\Http\Controllers\Moderation\DashboardController;
 // Moderation
+use App\Http\Controllers\Moderation\ModeratorController;
+use App\Http\Controllers\Moderation\TrashedMessageController;
+// Teams
+use App\Http\Controllers\Moderation\UserManagementController;
+use App\Http\Controllers\ModerationController;
+// Tracks
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\ProfileController;
-// Teams
+// Users
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\RoundController;
-// Tracks
+// Music Providers Services
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamRequestController;
 use App\Http\Controllers\TrackAnswerController;
-// Users
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\UserBanController;
-// Music Providers Services
 use App\Http\Controllers\UserController;
 use App\Services\MusicProviders\AppleMusicService;
 use App\Services\MusicProviders\AudiusService;
@@ -190,6 +195,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::put('playlists/{playlist}/tracks/{track}', [TrackController::class, 'update'])
         ->name('playlists.tracks.update');
 
+    Route::delete('playlists/{playlist}/tracks/clear', [TrackController::class, 'destroyAll'])
+        ->name('playlists.tracks.clear');
+
     Route::delete('playlists/{playlist}/tracks/{track}', [TrackController::class, 'destroy'])
         ->name('playlists.tracks.delete');
 
@@ -251,34 +259,34 @@ require __DIR__.'/admin.php';
 
 Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')->name('moderation.')->group(function () {
     // Dashboard
-    Route::get('/', [App\Http\Controllers\Moderation\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Trashed Messages
-    Route::get('/trashed-messages', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'index'])->name('trashed-messages.index');
-    Route::post('/trashed-messages/{message}/restore', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'restore'])->name('trashed-messages.restore');
-    Route::delete('/trashed-messages/{message}', [App\Http\Controllers\Moderation\TrashedMessageController::class, 'destroy'])->name('trashed-messages.destroy');
+    Route::get('/trashed-messages', [TrashedMessageController::class, 'index'])->name('trashed-messages.index');
+    Route::post('/trashed-messages/{message}/restore', [TrashedMessageController::class, 'restore'])->name('trashed-messages.restore');
+    Route::delete('/trashed-messages/{message}', [TrashedMessageController::class, 'destroy'])->name('trashed-messages.destroy');
 
     // Banned Users
-    Route::get('/banned-users', [App\Http\Controllers\Moderation\BannedUserController::class, 'index'])->name('banned-users.index');
-    Route::post('/banned-users/{user}/unban', [App\Http\Controllers\Moderation\BannedUserController::class, 'unban'])->name('banned-users.unban');
-    Route::post('/banned-users/{user}/ban', [App\Http\Controllers\Moderation\BannedUserController::class, 'ban'])->name('banned-users.ban');
+    Route::get('/banned-users', [BannedUserController::class, 'index'])->name('banned-users.index');
+    Route::post('/banned-users/{user}/unban', [BannedUserController::class, 'unban'])->name('banned-users.unban');
+    Route::post('/banned-users/{user}/ban', [BannedUserController::class, 'ban'])->name('banned-users.ban');
 
     // User Management
-    Route::get('/users', [App\Http\Controllers\Moderation\UserManagementController::class, 'index'])->name('users.index');
-    Route::get('/users/{user}', [App\Http\Controllers\Moderation\UserManagementController::class, 'show'])->name('users.show');
-    Route::post('/users/{user}/warn', [App\Http\Controllers\Moderation\UserManagementController::class, 'warn'])->name('users.warn');
-    Route::post('/users/{user}/mute', [App\Http\Controllers\Moderation\UserManagementController::class, 'mute'])->name('users.mute');
-    Route::post('/users/{user}/unmute', [App\Http\Controllers\Moderation\UserManagementController::class, 'unmute'])->name('users.unmute');
-    Route::post('/users/{user}/ban', [App\Http\Controllers\Moderation\UserManagementController::class, 'ban'])->name('users.ban');
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show');
+    Route::post('/users/{user}/warn', [UserManagementController::class, 'warn'])->name('users.warn');
+    Route::post('/users/{user}/mute', [UserManagementController::class, 'mute'])->name('users.mute');
+    Route::post('/users/{user}/unmute', [UserManagementController::class, 'unmute'])->name('users.unmute');
+    Route::post('/users/{user}/ban', [UserManagementController::class, 'ban'])->name('users.ban');
 
     // Moderators
-    Route::get('/moderators', [App\Http\Controllers\Moderation\ModeratorController::class, 'index'])->name('moderators.index');
-    Route::post('/moderators/{user}', [App\Http\Controllers\Moderation\ModeratorController::class, 'store'])->name('moderators.store');
-    Route::delete('/moderators/{user}', [App\Http\Controllers\Moderation\ModeratorController::class, 'destroy'])->name('moderators.destroy');
+    Route::get('/moderators', [ModeratorController::class, 'index'])->name('moderators.index');
+    Route::post('/moderators/{user}', [ModeratorController::class, 'store'])->name('moderators.store');
+    Route::delete('/moderators/{user}', [ModeratorController::class, 'destroy'])->name('moderators.destroy');
 
     // Tracks Manager
-    Route::get('/tracks', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index');
-    Route::delete('/tracks/{localTrack}', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
-    Route::put('/tracks/{localTrack}', [\App\Http\Controllers\Moderation\LocalTrackController::class, 'update'])->name('tracks.update');
+    Route::get('/tracks', [App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index');
+    Route::delete('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
+    Route::put('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'update'])->name('tracks.update');
 
 });

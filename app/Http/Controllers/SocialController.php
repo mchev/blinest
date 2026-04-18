@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessUserCreated;
 use App\Models\User;
 use App\Providers\AppServiceProvider;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -49,7 +50,7 @@ class SocialController extends Controller
             auth()->login($user);
 
             return redirect()->intended(AppServiceProvider::HOME);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             $response = $e->getResponse();
             $body = $response ? json_decode($response->getBody()->getContents(), true) : null;
 

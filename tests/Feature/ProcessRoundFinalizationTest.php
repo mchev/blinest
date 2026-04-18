@@ -13,6 +13,7 @@ use App\Models\RoundStanding;
 use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Models\User;
+use App\Services\EloService;
 use App\Services\RoundScoreService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -123,7 +124,7 @@ class ProcessRoundFinalizationTest extends TestCase
 
         // Exécuter le job
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(\App\Services\EloService::class));
+        $job->handle($roundScoreService, app(EloService::class));
 
         // Vérifier que les standings ont été créés
         $standings = RoundStanding::where('round_id', $round->id)->get();
@@ -200,7 +201,7 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(\App\Services\EloService::class));
+        $job->handle($roundScoreService, app(EloService::class));
 
         $standings = RoundStanding::where('round_id', $round->id)->get();
         $this->assertCount(3, $standings);
@@ -284,7 +285,7 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(\App\Services\EloService::class));
+        $job->handle($roundScoreService, app(EloService::class));
 
         $standings = RoundStanding::where('round_id', $round->id)->get();
         $this->assertCount(4, $standings);
@@ -363,7 +364,7 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(\App\Services\EloService::class));
+        $job->handle($roundScoreService, app(EloService::class));
 
         Event::assertDispatched(UserEloUpdated::class, 3);
     }

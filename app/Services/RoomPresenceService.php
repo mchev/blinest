@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Room;
+use App\Models\RoundStanding;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
@@ -137,7 +138,7 @@ class RoomPresenceService
     {
         $user->loadMissing('userLevel');
 
-        $publicRoundsPlayed = \App\Models\RoundStanding::where('user_id', $user->id)
+        $publicRoundsPlayed = RoundStanding::where('user_id', $user->id)
             ->where('is_elo_counted', true)
             ->count();
 

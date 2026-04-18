@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Score;
 use Illuminate\Support\Facades\Redis;
 
 class RoundScoreService
@@ -195,7 +196,7 @@ class RoundScoreService
 
         // Fallback vers Score DB si Redis est vide (compatibilité avec anciens rounds)
         if ($count === 0) {
-            $query = \App\Models\Score::where('round_id', $roundId)
+            $query = Score::where('round_id', $roundId)
                 ->where('track_id', $trackId)
                 ->where('answer_id', $answerId);
 

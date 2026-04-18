@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\UserEloUpdated;
 use App\Models\Round;
+use App\Models\Team;
 use App\Models\TotalScore;
 use App\Models\User;
 use App\Services\EloService;
@@ -85,7 +86,7 @@ class ProcessRoundFinalization implements ShouldQueue
                     ]);
 
                     // Utiliser l'ancien job pour les rounds qui n'ont pas utilisé Redis
-                    \App\Jobs\ProcessRoundElo::dispatch($this->round)->afterCommit();
+                    ProcessRoundElo::dispatch($this->round)->afterCommit();
 
                     return;
                 }
@@ -229,7 +230,7 @@ class ProcessRoundFinalization implements ShouldQueue
             if ($user->team) {
                 TotalScore::updateOrCreate(
                     [
-                        'totalscorable_type' => \App\Models\Team::class,
+                        'totalscorable_type' => Team::class,
                         'totalscorable_id' => $user->team->id,
                         'room_id' => $room->id,
                     ],
@@ -241,7 +242,7 @@ class ProcessRoundFinalization implements ShouldQueue
             if ($room->is_public) {
                 // On peut dispatcher un job pour mettre à jour le niveau, mais en batch
                 // Pour l'instant, on le fait individuellement mais on pourrait optimiser
-                \App\Jobs\UpdateUserLevel::dispatch(
+                UpdateUserLevel::dispatch(
                     user: $user,
                     type: 'score'
                 );

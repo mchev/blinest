@@ -7,6 +7,10 @@
     "mcp": true,
     "sail": false,
     "skills": [
+        "laravel-best-practices",
+        "configuring-horizon",
+        "configure-nightwatch",
+        "socialite-development",
         "inertia-vue-development",
         "tailwindcss-development"
     ]

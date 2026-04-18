@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Events\RoomPublicState;
 use App\Events\RoomState as RoomStateEvent;
 use App\Jobs\StartRound;
+use App\Jobs\UpdateUserLevel;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
+use App\Models\Track;
 use App\Models\User;
 use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
@@ -158,7 +160,7 @@ class RoomController extends Controller
         $room->moderators()->attach($request->user());
 
         // Update user level in queue when creating a room
-        \App\Jobs\UpdateUserLevel::dispatch(
+        UpdateUserLevel::dispatch(
             user: $request->user(),
             type: 'rooms_count'
         );
@@ -375,7 +377,7 @@ class RoomController extends Controller
             $currentTrackIndex = $currentRound->current ?? 0;
             if ($currentTrackIndex > 0 && isset($tracks[$currentTrackIndex - 1])) {
                 $trackId = $tracks[$currentTrackIndex - 1];
-                $track = \App\Models\Track::with('answers')->find($trackId);
+                $track = Track::with('answers')->find($trackId);
 
                 if ($track) {
                     // Calculate elapsed time since track started

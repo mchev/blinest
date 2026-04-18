@@ -16,15 +16,20 @@ class TrackAnswerController extends Controller
             'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
             'score' => ['required', 'numeric', 'min:0', 'max:99'],
+            'aliases' => ['nullable', 'array', 'max:20'],
+            'aliases.*' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $aliases = $this->normalizeAliasesInput(Request::input('aliases'));
 
         $track->answers()->create([
             'answer_type_id' => Request::get('answer_type_id'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
+            'aliases' => $aliases === [] ? null : $aliases,
         ]);
 
-        Cache::put('track-'.$track->id.'-answers', $track->answers);
+        Cache::forget('track-'.$track->id.'-answers');
 
         return Redirect::back();
     }
@@ -35,15 +40,20 @@ class TrackAnswerController extends Controller
             'answer_type_id' => ['required', 'integer', 'exists:answer_types,id'],
             'value' => ['required', 'max:255'],
             'score' => ['required', 'numeric', 'min:0', 'max:99'],
+            'aliases' => ['nullable', 'array', 'max:20'],
+            'aliases.*' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $aliases = $this->normalizeAliasesInput(Request::input('aliases'));
 
         $answer->update([
             'answer_type_id' => Request::get('answer_type_id'),
             'value' => Request::get('value'),
             'score' => Request::get('score'),
+            'aliases' => $aliases === [] ? null : $aliases,
         ]);
 
-        Cache::put('track-'.$track->id.'-answers', $track->answers);
+        Cache::forget('track-'.$track->id.'-answers');
 
         return Redirect::back();
     }
@@ -52,8 +62,26 @@ class TrackAnswerController extends Controller
     {
         $answer->delete();
 
-        Cache::put('track-'.$track->id.'-answers', $track->answers);
+        Cache::forget('track-'.$track->id.'-answers');
 
         return Redirect::back();
+    }
+
+    /**
+     * @param  array<int, mixed>|null  $aliases
+     * @return list<string>
+     */
+    private function normalizeAliasesInput(?array $aliases): array
+    {
+        if ($aliases === null) {
+            return [];
+        }
+
+        return collect($aliases)
+            ->filter(fn ($line) => is_string($line) && trim($line) !== '')
+            ->map(fn (string $line) => trim($line))
+            ->unique()
+            ->values()
+            ->all();
     }
 }

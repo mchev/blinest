@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class DashboardController extends AdminController
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -32,7 +34,7 @@ class DashboardController extends AdminController
 
     public function forceClearRounds()
     {
-        $output = new \Symfony\Component\Console\Output\BufferedOutput;
+        $output = new BufferedOutput;
         Artisan::call('rounds:force-clear', [], $output);
 
         return back()->withMessage($output->fetch());
@@ -40,7 +42,7 @@ class DashboardController extends AdminController
 
     public function clearCache()
     {
-        $output = new \Symfony\Component\Console\Output\BufferedOutput;
+        $output = new BufferedOutput;
         Artisan::call('cache:clear', [], $output);
 
         return back()->withMessage($output->fetch());
@@ -48,7 +50,7 @@ class DashboardController extends AdminController
 
     public function regenerateTop10()
     {
-        $output = new \Symfony\Component\Console\Output\BufferedOutput;
+        $output = new BufferedOutput;
         Artisan::call('topusers:weekly', [], $output);
 
         return back()->withMessage($output->fetch());

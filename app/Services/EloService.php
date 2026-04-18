@@ -132,11 +132,11 @@ class EloService
      * Met à jour l'ELO uniquement si les conditions sont remplies (room publique, 3+ joueurs)
      *
      * @param  Round  $round  Le round à traiter
-     * @param  \Illuminate\Support\Collection|null  $podium  Podium depuis Redis (optionnel, sera calculé si null)
+     * @param  Collection|null  $podium  Podium depuis Redis (optionnel, sera calculé si null)
      * @param  array  $tracksHistory  Historique des tracks par user_id depuis Redis [userId => [['track_id' => int, 'response_time' => float, 'position' => int, 'score' => float], ...], ...]
      * @return array Tableau avec 'standings' et 'elo_updates' pour broadcaster après la transaction
      */
-    public function updateElosForRound(Round $round, ?\Illuminate\Support\Collection $podium = null, array $tracksHistory = []): array
+    public function updateElosForRound(Round $round, ?Collection $podium = null, array $tracksHistory = []): array
     {
         // S'assurer que la relation room est chargée
         if (! $round->relationLoaded('room')) {

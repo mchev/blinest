@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Room;
+use App\Models\RoundStanding;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -23,7 +24,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
 
     // Count rounds played in public rooms (where ELO was counted)
     // This helps detect if user has played even if their ELO returned to 1500
-    $publicRoundsPlayed = \App\Models\RoundStanding::where('user_id', $user->id)
+    $publicRoundsPlayed = RoundStanding::where('user_id', $user->id)
         ->where('is_elo_counted', true)
         ->count();
 
