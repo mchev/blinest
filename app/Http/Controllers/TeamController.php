@@ -121,21 +121,35 @@ class TeamController extends Controller
         $team->load('owner');
         $memberIds = $team->members->pluck('id');
 
+        // Même agrégat que rankings/teams et teams.index (total_scores, salles publiques)
+        $teamScore = (float) (TotalScore::query()
+            ->where('total_scores.totalscorable_type', Team::class)
+            ->where('total_scores.totalscorable_id', $team->id)
+            ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+            ->where('rooms.is_public', true)
+            ->selectRaw('ROUND(SUM(total_scores.score), 1) as total_score')
+            ->value('total_score') ?? 0);
+
         $teamAggregate = RoundStanding::query()
-            ->where('team_id', $team->id)
-            ->selectRaw('COUNT(DISTINCT round_id) as rounds_played, MAX(created_at) as last_played_at, COALESCE(SUM(total_score), 0) as team_points')
+            ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
+            ->where('rooms.is_public', true)
+            ->where('round_standings.team_id', $team->id)
+            ->selectRaw('COUNT(DISTINCT round_standings.round_id) as rounds_played, MAX(round_standings.created_at) as last_played_at')
             ->first();
 
         $roundsPlayed = (int) ($teamAggregate->rounds_played ?? 0);
-        $teamScore = (float) ($teamAggregate->team_points ?? 0);
 
         $memberRows = RoundStanding::query()
-            ->where('team_id', $team->id)
-            ->whereIn('user_id', $memberIds)
-            ->selectRaw('user_id, SUM(total_score) as total_score, COUNT(DISTINCT round_id) as rounds_played')
-            ->groupBy('user_id')
+            ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
+            ->where('rooms.is_public', true)
+            ->where('round_standings.team_id', $team->id)
+            ->whereIn('round_standings.user_id', $memberIds)
+            ->selectRaw('round_standings.user_id, SUM(round_standings.total_score) as total_score, COUNT(DISTINCT round_standings.round_id) as rounds_played')
+            ->groupBy('round_standings.user_id')
             ->get()
             ->keyBy('user_id');
+
+        $membersSumForPercent = (float) $memberRows->sum(fn ($row) => (float) $row->total_score);
 
         $avgPerRound = $roundsPlayed > 0
             ? round($teamScore / $roundsPlayed, 1)
@@ -149,7 +163,7 @@ class TeamController extends Controller
                 'last_played_at' => $teamAggregate->last_played_at,
                 'avg_points_per_round' => $avgPerRound,
             ],
-            'members' => $team->members->map(function ($member) use ($memberRows, $teamScore) {
+            'members' => $team->members->map(function ($member) use ($memberRows, $membersSumForPercent) {
                 $row = $memberRows->get($member->id);
                 $score = (float) ($row->total_score ?? 0);
                 $played = (int) ($row->rounds_played ?? 0);
@@ -160,8 +174,8 @@ class TeamController extends Controller
                     'photo' => $member->photo,
                     'score' => $score,
                     'rounds_played' => $played,
-                    'contribution_percent' => $teamScore > 0
-                        ? round(($score / $teamScore) * 100, 1)
+                    'contribution_percent' => $membersSumForPercent > 0
+                        ? round(($score / $membersSumForPercent) * 100, 1)
                         : 0.0,
                 ];
             })->sortByDesc('score')->values(),

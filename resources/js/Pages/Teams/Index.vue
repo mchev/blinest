@@ -124,96 +124,94 @@ const isTeamFull = (team) => Number(team.members_count) >= Number(team.seats)
           :class="isTeamsListLoading ? 'pointer-events-none opacity-50' : ''"
         >
           <article
-              v-for="team in teams.data"
-              :key="team.id"
-              class="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-700/60 bg-neutral-900/50 shadow-lg backdrop-blur-sm transition duration-300 hover:border-violet-500/35 hover:shadow-[0_0_40px_-8px_rgba(139,92,246,0.25)]"
+            v-for="team in teams.data"
+            :key="team.id"
+            class="group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-700/60 bg-neutral-900/50 shadow-lg backdrop-blur-sm transition duration-300 hover:border-violet-500/35 hover:shadow-[0_0_40px_-8px_rgba(139,92,246,0.25)]"
+          >
+            <div class="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-200">
+              <span class="opacity-80">{{ team.members_count }}</span>
+              <span class="text-neutral-500">/</span>
+              <span>{{ team.seats }}</span>
+            </div>
+            <Link
+              :href="route('teams.show', team.id)"
+              class="flex flex-1 flex-col items-center px-5 pb-4 pt-8 text-left outline-none ring-inset transition hover:brightness-105 focus-visible:ring-2 focus-visible:ring-violet-500"
             >
-              <div class="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-200">
-                <span class="opacity-80">{{ team.members_count }}</span>
-                <span class="text-neutral-500">/</span>
-                <span>{{ team.seats }}</span>
+              <div class="relative mb-4">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/40 to-fuchsia-500/30 opacity-0 blur-xl transition group-hover:opacity-100" />
+                <img
+                  class="relative h-28 w-28 rounded-full object-cover ring-2 ring-violet-500/40 ring-offset-2 ring-offset-neutral-900 transition group-hover:ring-fuchsia-400/50 sm:h-32 sm:w-32"
+                  :src="team.photo"
+                  :alt="team.name"
+                >
               </div>
-              <div class="flex flex-col items-center px-5 pb-5 pt-8">
-                <div class="relative mb-4">
-                  <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/40 to-fuchsia-500/30 opacity-0 blur-xl transition group-hover:opacity-100" />
-                  <img
-                    class="relative h-28 w-28 rounded-full object-cover ring-2 ring-violet-500/40 ring-offset-2 ring-offset-neutral-900 transition group-hover:ring-fuchsia-400/50 sm:h-32 sm:w-32"
-                    :src="team.photo"
-                    :alt="team.name"
-                  >
-                </div>
-                <h3 class="mb-1 text-center text-xl font-bold text-white">
-                  <Link
-                    :href="route('teams.show', team.id)"
-                    class="transition hover:text-violet-300"
-                  >
-                    {{ team.name }}
-                  </Link>
-                </h3>
-                <p class="mb-4 text-center text-sm text-neutral-400">
-                  @{{ team.owner.name }}
-                </p>
-                <div class="mb-5 grid w-full grid-cols-2 gap-2 text-center">
-                  <div class="relative overflow-hidden rounded-xl border border-violet-500/25 bg-gradient-to-b from-violet-500/15 via-neutral-900/40 to-neutral-900/70 px-2 py-3 shadow-inner shadow-violet-900/20">
-                    <div class="text-[10px] font-bold uppercase tracking-wider text-violet-300/90">
-                      {{ __('Squad score') }}
-                    </div>
-                    <div
-                      class="mt-1 flex flex-wrap items-baseline justify-center gap-0.5"
-                      :title="`${formatNumber(team.team_points ?? 0)} ${__('PTS')}`"
-                    >
-                      <span class="bg-gradient-to-r from-violet-200 via-fuchsia-200 to-violet-200 bg-clip-text text-2xl font-black tabular-nums tracking-tight text-transparent">
-                        {{ team.team_points_abbreviated ?? formatNumber(team.team_points ?? 0) }}
-                      </span>
-                      <span class="text-xs font-bold uppercase text-violet-400/90">{{ __('PTS') }}</span>
-                    </div>
+              <h3 class="mb-1 text-center text-xl font-bold text-white transition group-hover:text-violet-200">
+                {{ team.name }}
+              </h3>
+              <p class="mb-4 text-center text-sm text-neutral-400">
+                @{{ team.owner.name }}
+              </p>
+              <div class="grid w-full grid-cols-2 gap-2 text-center">
+                <div class="relative overflow-hidden rounded-xl border border-violet-500/25 bg-gradient-to-b from-violet-500/15 via-neutral-900/40 to-neutral-900/70 px-2 py-3 shadow-inner shadow-violet-900/20">
+                  <div class="text-[10px] font-bold uppercase tracking-wider text-violet-300/90">
+                    {{ __('Squad score') }}
                   </div>
-                  <div class="rounded-xl border border-neutral-700/80 bg-neutral-800/50 px-2 py-2">
-                    <div class="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
-                      {{ __('Rounds together') }}
-                    </div>
-                    <div class="text-lg font-bold tabular-nums text-fuchsia-200">
-                      {{ team.rounds_played ?? 0 }}
-                    </div>
+                  <div
+                    class="mt-1 flex flex-wrap items-baseline justify-center gap-0.5"
+                    :title="`${formatNumber(team.team_points ?? 0)} ${__('PTS')}`"
+                  >
+                    <span class="bg-gradient-to-r from-violet-200 via-fuchsia-200 to-violet-200 bg-clip-text text-2xl font-black tabular-nums tracking-tight text-transparent">
+                      {{ team.team_points_abbreviated ?? formatNumber(team.team_points ?? 0) }}
+                    </span>
+                    <span class="text-xs font-bold uppercase text-violet-400/90">{{ __('PTS') }}</span>
                   </div>
                 </div>
-                <div class="mt-auto w-full">
-                  <button
-                    v-if="user.declined_requests.includes(team.id)"
-                    type="button"
-                    class="w-full rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
-                    @click="cancelRequest(team)"
-                  >
-                    {{ __('Declined request') }}
-                  </button>
-                  <button
-                    v-else-if="user.pending_requests.includes(team.id)"
-                    type="button"
-                    class="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20"
-                    @click="cancelRequest(team)"
-                  >
-                    {{ __('Cancel join request') }}
-                  </button>
-                  <button
-                    v-else-if="isTeamFull(team)"
-                    type="button"
-                    disabled
-                    class="w-full cursor-not-allowed rounded-xl border border-neutral-600 bg-neutral-800/80 px-4 py-2.5 text-sm font-semibold text-neutral-500"
-                    :title="__('It is not possible to join this team. The maximum number of members has been reached')"
-                  >
-                    {{ __('Team is full') }}
-                  </button>
-                  <button
-                    v-else
-                    type="button"
-                    class="w-full rounded-xl bg-gradient-to-r from-violet-600/90 to-fuchsia-600/90 px-4 py-2.5 text-sm font-bold text-white shadow-md transition hover:from-violet-500 hover:to-fuchsia-500"
-                    @click="sendRequest(team)"
-                  >
-                    {{ __('Send a join request') }}
-                  </button>
+                <div class="rounded-xl border border-neutral-700/80 bg-neutral-800/50 px-2 py-2">
+                  <div class="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+                    {{ __('Rounds together') }}
+                  </div>
+                  <div class="text-lg font-bold tabular-nums text-fuchsia-200">
+                    {{ team.rounds_played ?? 0 }}
+                  </div>
                 </div>
               </div>
-            </article>
+            </Link>
+            <div class="mt-auto w-full px-5 pb-5">
+              <button
+                v-if="user.declined_requests.includes(team.id)"
+                type="button"
+                class="w-full rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+                @click="cancelRequest(team)"
+              >
+                {{ __('Declined request') }}
+              </button>
+              <button
+                v-else-if="user.pending_requests.includes(team.id)"
+                type="button"
+                class="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20"
+                @click="cancelRequest(team)"
+              >
+                {{ __('Cancel join request') }}
+              </button>
+              <button
+                v-else-if="isTeamFull(team)"
+                type="button"
+                disabled
+                class="w-full cursor-not-allowed rounded-xl border border-neutral-600 bg-neutral-800/80 px-4 py-2.5 text-sm font-semibold text-neutral-500"
+                :title="__('It is not possible to join this team. The maximum number of members has been reached')"
+              >
+                {{ __('Team is full') }}
+              </button>
+              <button
+                v-else
+                type="button"
+                class="w-full rounded-xl bg-gradient-to-r from-violet-600/90 to-fuchsia-600/90 px-4 py-2.5 text-sm font-bold text-white shadow-md transition hover:from-violet-500 hover:to-fuchsia-500"
+                @click="sendRequest(team)"
+              >
+                {{ __('Send a join request') }}
+              </button>
+            </div>
+          </article>
         </div>
 
         <Pagination v-if="teams.links && teams.links.length > 3" :links="teams.links" />

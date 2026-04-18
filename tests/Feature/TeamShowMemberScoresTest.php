@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Round;
 use App\Models\RoundStanding;
 use App\Models\Team;
+use App\Models\TotalScore;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
@@ -71,6 +72,13 @@ class TeamShowMemberScoresTest extends TestCase
             'elo_after' => 1500,
             'elo_change' => 0,
             'is_elo_counted' => false,
+        ]);
+
+        TotalScore::create([
+            'totalscorable_type' => Team::class,
+            'totalscorable_id' => $team->id,
+            'room_id' => $room->id,
+            'score' => 31.5,
         ]);
 
         $response = $this->actingAs($owner)->get(route('teams.show', $team));
