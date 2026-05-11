@@ -365,7 +365,18 @@ class RoundController extends Controller
      */
     private function evaluateMatchForAnswerLine(string $sanitized, array $userWords, string $rawLine): array
     {
-        $value = sanitizeString(trim($rawLine));
+        $trimmedRaw = trim($rawLine);
+        $value = sanitizeString($trimmedRaw);
+
+        // Value is only inside parentheses (stripped by sanitizeString) — e.g. 0pt "Featuring"
+        // hints. Historically any single letter matched via levenshtein(sanitized, '') < 3.
+        if ($value === '' && $trimmedRaw !== '') {
+            return [
+                'complete' => $sanitized !== '' || $userWords !== [],
+                'almost' => false,
+            ];
+        }
+
         if ($value === '') {
             return ['complete' => false, 'almost' => false];
         }
