@@ -151,7 +151,7 @@ const buildRibbonPoints = (levels, w, h, dpr, phase = 0) => {
     const t = count <= 1 ? 0 : i / (count - 1)
     const x = Math.floor(padX + t * (w - padX * 2))
     const breathe = isInterTrack.value
-      ? 0.35 + (Math.sin(phase + t * Math.PI * 2) * 0.12)
+      ? 0.35 + (Math.sin(phase + t * Math.PI * 2) * (props.countdown <= 0 ? 0.18 : 0.12))
       : 1
     const amp = Math.floor(smoothed[i] * maxAmp * breathe)
     pointsTop.push({ x, y: midY - amp })
@@ -231,10 +231,32 @@ const draw = () => {
   drawRibbon(w, h, dpr, grad, pointsTop, pointsBottom, isInterTrack.value ? 0.42 : 0.55)
 }
 
-const startCountdownAnim = () => {
-  if (countdownAnimRaf != null) {
+const attachCanvas = (el) => {
+  if (resizeObserver && canvasEl.value && canvasEl.value !== el) {
+    resizeObserver.unobserve(canvasEl.value)
+  }
+
+  canvasCtx = null
+
+  if (!el) {
     return
   }
+
+  syncCanvasSize()
+  scheduleDraw()
+
+  if (!resizeObserver) {
+    resizeObserver = new ResizeObserver(() => {
+      syncCanvasSize()
+      scheduleDraw()
+    })
+  }
+
+  resizeObserver.observe(el)
+}
+
+const startCountdownAnim = () => {
+  stopCountdownAnim()
 
   const tick = () => {
     if (!isInterTrack.value) {
@@ -258,9 +280,7 @@ const stopCountdownAnim = () => {
 }
 
 const startPlayingAnim = () => {
-  if (playingAnimRaf != null) {
-    return
-  }
+  stopPlayingAnim()
 
   const tick = () => {
     if (props.variant !== 'playing') {
@@ -307,19 +327,14 @@ watch(() => props.variant, (variant) => {
 })
 watch(() => props.remainingSeconds, () => scheduleDraw())
 watch(() => props.countdown, () => scheduleDraw())
+watch(canvasEl, (el) => {
+  attachCanvas(el)
+  syncVariantAnim(props.variant)
+})
 
 onMounted(() => {
-  syncCanvasSize()
-  scheduleDraw()
+  attachCanvas(canvasEl.value)
   syncVariantAnim(props.variant)
-
-  if (canvasEl.value) {
-    resizeObserver = new ResizeObserver(() => {
-      syncCanvasSize()
-      scheduleDraw()
-    })
-    resizeObserver.observe(canvasEl.value)
-  }
 })
 
 onBeforeUnmount(() => {

@@ -64,10 +64,14 @@ const playbackBootstrapped = ref(false)
 const userGestureModal = ref(null) // Reference to UserGestureModal
 const trackTiming = ref(props.initialTrackTiming)
 const activeInterTrackPause = ref(null)
+const interTrackHolding = ref(false)
+const pendingNextTrack = ref(null)
 let playerChannel = null // Store channel reference to prevent multiple listeners
 let trackEndTimer = null
 let visualLoopId = null
 let fallbackCountdownEndAt = null
+let nextTrackPreloader = null
+let lastServerSyncAt = 0
 
 // Audio analysis (real-time waveform levels)
 let audioContext = null
@@ -78,6 +82,7 @@ let bucketRanges = null
 let audioPlaybackStarting = false
 let activePlaybackTrackId = null
 let lastAppliedTrackKey = null
+let playbackGeneration = 0
 
 // YouTube specific state
 const youtubePlayer = ref(null)
@@ -108,11 +113,11 @@ const isInSpeedZone = computed(() => (
 ))
 
 const timelineVariant = computed(() => {
-  if (countdowning.value && countdown.value !== -1) {
+  if ((countdowning.value || interTrackHolding.value) && countdown.value !== -1) {
     return 'countdown'
   }
 
-  if (loading.value && !countdowning.value && !isPlaying.value) {
+  if (loading.value && !countdowning.value && !isPlaying.value && !track.value) {
     return 'loading'
   }
 
@@ -127,11 +132,35 @@ const clearTrackEndTimer = () => {
 }
 
 const shouldRunVisualLoop = () => {
-  if (countdowning.value) {
+  if (countdowning.value || interTrackHolding.value) {
     return true
   }
 
   return isPlaying.value && !waitingForNextTrack.value
+}
+
+const holdInterTrackAtEnd = () => {
+  interTrackHolding.value = true
+  countdowning.value = true
+  countdown.value = 0
+  countdownProgress.value = 100
+}
+
+const warmNextTrackAudio = (nextTrack) => {
+  if (!nextTrack?.audio || nextTrack.provider === 'youtube') {
+    return
+  }
+
+  if (!nextTrackPreloader) {
+    nextTrackPreloader = new Audio()
+    nextTrackPreloader.preload = 'auto'
+    nextTrackPreloader.crossOrigin = 'anonymous'
+  }
+
+  if (nextTrackPreloader.src !== nextTrack.audio) {
+    nextTrackPreloader.src = nextTrack.audio
+    nextTrackPreloader.load()
+  }
 }
 
 const updateProgress = (elapsedSeconds) => {
@@ -142,7 +171,7 @@ const updateProgress = (elapsedSeconds) => {
   }
 
   currentTime.value = elapsedSeconds
-  barProgress.value = Math.min(100, (100 / duration) * (elapsedSeconds + 0.25))
+  barProgress.value = Math.min(100, (100 / duration) * elapsedSeconds)
   percent.value = Math.round(barProgress.value)
   emit('track:currentTime', elapsedSeconds)
 }
@@ -158,10 +187,18 @@ const tickVisuals = () => {
       countdown.value = state.remainingSeconds
       countdownProgress.value = state.progressPercent
 
+      if (state.remainingMs <= 2000 && pendingNextTrack.value) {
+        warmNextTrackAudio(pendingNextTrack.value)
+      }
+
       if (state.isComplete) {
-        countdowning.value = false
-        countdown.value = 0
-        activeInterTrackPause.value = null
+        if (waitingForNextTrack.value) {
+          holdInterTrackAtEnd()
+        } else {
+          countdowning.value = false
+          countdown.value = 0
+          activeInterTrackPause.value = null
+        }
       }
 
       return
@@ -178,9 +215,14 @@ const tickVisuals = () => {
       )
 
       if (remainingMs <= 0) {
-        countdowning.value = false
-        countdown.value = 0
-        fallbackCountdownEndAt = null
+        if (waitingForNextTrack.value) {
+          holdInterTrackAtEnd()
+          fallbackCountdownEndAt = null
+        } else {
+          countdowning.value = false
+          countdown.value = 0
+          fallbackCountdownEndAt = null
+        }
       }
     }
 
@@ -383,18 +425,27 @@ const resolvePlaybackStartTime = (requestedStartTime = 0) => {
   return Math.min(duration, Math.max(0, requestedStartTime))
 }
 
-const ensureServerTimeSynced = async () => {
+const ensureServerTimeSynced = async (force = false) => {
   if (!props.room?.id) {
     return
   }
 
+  if (!force && Date.now() - lastServerSyncAt < 3000) {
+    return
+  }
+
   await measureServerTimeOffset(props.room.id).catch(() => {})
+  lastServerSyncAt = Date.now()
 }
 
-const detachPlayback = () => {
+const detachPlayback = ({ resetLevels = true } = {}) => {
   isPlaying.value = false
   stopVisualLoop()
-  audioLevels.value = null
+
+  if (resetLevels) {
+    audioLevels.value = null
+  }
+
   activePlaybackTrackId = null
 
   if (isYoutubeTrack.value) {
@@ -408,7 +459,7 @@ const detachPlayback = () => {
 const finishTrackPlayback = (interTrackPause = null) => {
   clearTrackEndTimer()
   usersWithAllAnswers.value = []
-  detachPlayback()
+  detachPlayback({ resetLevels: false })
   waitingForNextTrack.value = true
   loading.value = false
   error.value = null
@@ -471,6 +522,15 @@ const startInterTrackCountdown = (interTrackPause = null) => {
 
   countdown.value = state.remainingSeconds
   countdownProgress.value = state.progressPercent
+
+  if (state.remainingMs <= 2000 && pendingNextTrack.value) {
+    warmNextTrackAudio(pendingNextTrack.value)
+  }
+
+  if (state.isComplete && waitingForNextTrack.value) {
+    holdInterTrackAtEnd()
+  }
+
   startVisualLoop()
 }
 
@@ -568,6 +628,10 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
           updateProgress(startTime)
         }
         loading.value = false
+        countdowning.value = false
+        interTrackHolding.value = false
+        countdown.value = 0
+        countdownProgress.value = 0
         startVisualLoop()
       },
       onStateChange: (event) => {
@@ -622,30 +686,31 @@ const play = async (startTime = 0) => {
   // Clear waitingForNextTrack when we start playing
   waitingForNextTrack.value = false
 
-  if (trackTiming.value?.current_track_started_at) {
-    await ensureServerTimeSynced()
-  }
-
   loading.value = true
   error.value = null
   isPlaying.value = true
-  const playbackStartTime = resolvePlaybackStartTime(startTime)
-  pendingStartTime.value = playbackStartTime
-  currentTime.value = playbackStartTime
   startVisualLoop()
-  remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
 
-  // Initialize percent based on startTime if joining mid-track
-  if (usesServerClock.value) {
-    syncProgressFromServerClock()
-  } else if (playbackStartTime > 0) {
-    updateProgress(playbackStartTime)
-  } else {
-    barProgress.value = 0
-    percent.value = 0
-  }
+  const syncPromise = trackTiming.value?.current_track_started_at
+    ? ensureServerTimeSynced()
+    : Promise.resolve()
 
   if (isYoutubeTrack.value) {
+    await syncPromise
+    const playbackStartTime = resolvePlaybackStartTime(startTime)
+    pendingStartTime.value = playbackStartTime
+    currentTime.value = playbackStartTime
+    remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+
+    if (usesServerClock.value) {
+      syncProgressFromServerClock()
+    } else if (playbackStartTime > 0) {
+      updateProgress(playbackStartTime)
+    } else {
+      barProgress.value = 0
+      percent.value = 0
+    }
+
     const videoId = getYoutubeVideoId(track.value?.preview_url)
     if (!videoId) {
       error.value = 'Invalid YouTube URL'
@@ -663,21 +728,34 @@ const play = async (startTime = 0) => {
   }
 
   try {
-    // Set up audio source
+    playbackGeneration += 1
+    activePlaybackTrackId = null
+    audioPlaybackStarting = false
+
+    audio.value.pause()
     audio.value.src = track.value.audio
     audio.value.crossOrigin = 'anonymous'
     audio.value.muted = false
-    
-    // Add event listeners before loading
+
     addAudioEventListeners()
-    
-    // Load the audio - handleCanPlayThrough will apply the startTime
     audio.value.load()
 
-    if (audio.value.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-      await beginAudioPlayback()
+    await syncPromise
+
+    const playbackStartTime = resolvePlaybackStartTime(startTime)
+    pendingStartTime.value = playbackStartTime
+    currentTime.value = playbackStartTime
+    remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+
+    if (usesServerClock.value) {
+      syncProgressFromServerClock()
+    } else if (playbackStartTime > 0) {
+      updateProgress(playbackStartTime)
+    } else {
+      barProgress.value = 0
+      percent.value = 0
     }
-    
+
     // If we have a startTime, also try to set it early (but handleCanPlayThrough is the main handler)
     if (playbackStartTime > 0) {
       // Try to set it as soon as metadata is available
@@ -742,6 +820,7 @@ const cleanup = () => {
 }
 
 const beginInitialInterTrackPause = (interTrackPause) => {
+  interTrackHolding.value = false
   waitingForNextTrack.value = true
   loading.value = false
   startInterTrackCountdown(interTrackPause)
@@ -792,20 +871,28 @@ const applyIncomingTrack = async (trackData, roundData, startTime = 0) => {
 
   lastAppliedTrackKey = trackKey
   clearTrackEndTimer()
-  stopVisualLoop()
-  activeInterTrackPause.value = null
-  fallbackCountdownEndAt = null
-  countdowning.value = false
-  countdown.value = 0
-  countdownProgress.value = 0
-  audioLevels.value = null
-  bassLevel.value = 0
+
+  const fromInterTrack = waitingForNextTrack.value || interTrackHolding.value || countdowning.value
+
+  if (!fromInterTrack) {
+    stopVisualLoop()
+    activeInterTrackPause.value = null
+    fallbackCountdownEndAt = null
+    countdowning.value = false
+    interTrackHolding.value = false
+    countdown.value = 0
+    countdownProgress.value = 0
+    audioLevels.value = null
+    bassLevel.value = 0
+  }
+
   audioPlaybackStarting = false
   activePlaybackTrackId = null
 
   track.value = trackData
   trackTiming.value = roundData ?? null
   waitingForNextTrack.value = false
+  pendingNextTrack.value = null
 
   if (roundData?.id && trackData.id) {
     axios.post(`/rounds/${roundData.id}/tracks/${trackData.id}/listened`).catch(() => {})
@@ -820,6 +907,12 @@ const handleTrackEnded = (e) => {
   }
 
   clearTrackEndTimer()
+  ensureServerTimeSynced(true)
+
+  if (e?.next_track) {
+    pendingNextTrack.value = e.next_track
+    warmNextTrackAudio(e.next_track)
+  }
 
   const deadline = trackTiming.value?.answer_deadline_at
   const wait = deadline ? msUntilDeadline(deadline, 300) : 0
@@ -935,6 +1028,7 @@ const applyStartTime = () => {
 
 const beginAudioPlayback = async () => {
   const trackId = track.value?.id
+  const generation = playbackGeneration
 
   if (
     waitingForNextTrack.value
@@ -948,6 +1042,10 @@ const beginAudioPlayback = async () => {
   audioPlaybackStarting = true
 
   try {
+    if (generation !== playbackGeneration) {
+      return
+    }
+
     const targetStartTime = pendingStartTime.value
 
     // Apply the start time BEFORE playing - this is critical
@@ -962,9 +1060,18 @@ const beginAudioPlayback = async () => {
     }
 
     loading.value = false
+    countdowning.value = false
+    interTrackHolding.value = false
+    activeInterTrackPause.value = null
+    countdown.value = 0
+    countdownProgress.value = 0
     startVisualLoop()
 
     await setupAudioAnalyser()
+
+    if (generation !== playbackGeneration) {
+      return
+    }
 
     // For iOS, we need to pause and set time before playing
     if (isIOS.value && targetStartTime > 0) {
@@ -979,6 +1086,12 @@ const beginAudioPlayback = async () => {
 
     try {
       await audio.value.play()
+
+      if (generation !== playbackGeneration) {
+        audio.value.pause()
+        return
+      }
+
       activePlaybackTrackId = trackId ?? null
 
       // CRITICAL: Verify and re-apply startTime AFTER play() - browsers often reset it
@@ -1054,7 +1167,6 @@ const handleAudioEnded = () => {
   }
 
   isPlaying.value = false
-  loading.value = true
   emit('track:ended', track.value)
 }
 
@@ -1193,6 +1305,7 @@ onBeforeUnmount(() => {
 
     <PlayerTimeline
       v-else
+      :key="`${track?.id ?? 'idle'}:${trackTiming?.track_sequence ?? 0}`"
       :variant="timelineVariant"
       :progress="timelineVariant === 'countdown' ? countdownProgress : barProgress"
       :remaining-seconds="remainingSecondsLive"

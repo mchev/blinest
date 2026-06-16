@@ -66,9 +66,66 @@ class TrackEndedPlaylistPayloadTest extends TestCase
         $payload = (new TrackEnded($round->fresh()))->broadcastWith();
 
         $this->assertSame($track->id, $payload['track']['id']);
+        $this->assertNull($payload['next_track']);
         $this->assertSame('https://example.com/art', $payload['track']['artwork_url']);
         $this->assertArrayNotHasKey('audio', $payload['track']);
         $this->assertSame('Daft Punk', $payload['track']['answers'][0]['value']);
         $this->assertSame('Artist', $payload['track']['answers'][0]['type']['name']);
+    }
+
+    public function test_track_ended_broadcast_includes_next_track_preview_for_preload(): void
+    {
+        $category = Category::create(['name' => 'Cat']);
+        $owner = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'Track Ended Next Track Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'is_playing' => true,
+            'is_autostart' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+            'pause_between_tracks' => 5,
+        ]);
+
+        $playlist = Playlist::create([
+            'name' => 'P',
+            'user_id' => $owner->id,
+        ]);
+
+        $endedTrack = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'ended-track',
+            'preview_url' => 'https://example.com/preview-ended',
+            'artwork_url' => 'https://example.com/art-ended',
+        ]);
+
+        $nextTrack = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'local',
+            'provider_id' => 'next-track',
+            'preview_url' => 'https://example.com/preview-next',
+            'artwork_url' => 'https://example.com/art-next',
+        ]);
+
+        $round = $room->rounds()->create([
+            'current' => 1,
+            'is_playing' => true,
+            'current_track_started_at' => now()->subSeconds(30),
+        ]);
+        $round->forceFill(['tracks' => [$endedTrack->id, $nextTrack->id]])->save();
+
+        $payload = (new TrackEnded($round->fresh()))->broadcastWith();
+
+        $this->assertSame($endedTrack->id, $payload['track']['id']);
+        $this->assertSame($nextTrack->id, $payload['next_track']['id']);
+        $this->assertSame('local', $payload['next_track']['provider']);
+        $this->assertSame('https://example.com/preview-next', $payload['next_track']['preview_url']);
     }
 }

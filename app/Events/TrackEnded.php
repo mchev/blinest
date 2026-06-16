@@ -62,7 +62,39 @@ class TrackEnded implements ShouldBroadcast
                 'current' => $this->round->current,
             ],
             'track' => $this->track?->toPlaylistPayload(),
+            'next_track' => $this->nextTrackPreview(),
             ...$timing->interTrackPausePayload($this->round, now()),
+        ];
+    }
+
+    /**
+     * @return array{id: int, provider: string, audio: string|null, preview_url: string|null}|null
+     */
+    private function nextTrackPreview(): ?array
+    {
+        $tracks = $this->round->tracks ?? [];
+
+        if ($this->round->current >= count($tracks)) {
+            return null;
+        }
+
+        $trackId = $tracks[$this->round->current] ?? null;
+
+        if ($trackId === null) {
+            return null;
+        }
+
+        $track = Track::query()->find($trackId);
+
+        if ($track === null) {
+            return null;
+        }
+
+        return [
+            'id' => $track->id,
+            'provider' => $track->provider,
+            'audio' => $track->audio,
+            'preview_url' => $track->preview_url,
         ];
     }
 

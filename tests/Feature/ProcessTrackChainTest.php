@@ -10,6 +10,7 @@ use App\Models\AnswerType;
 use App\Models\Category;
 use App\Models\Playlist;
 use App\Models\Room;
+use App\Models\Round;
 use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Models\User;
@@ -56,7 +57,7 @@ class ProcessTrackChainTest extends TestCase
     }
 
     /**
-     * @return array{0: \App\Models\Round, 1: array<int, Track>}
+     * @return array{0: Round, 1: array<int, Track>}
      */
     private function makeRoundWithTracks(int $count): array
     {

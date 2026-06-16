@@ -19,17 +19,35 @@ export function parseIsoTimestamp(iso) {
 }
 
 export async function measureServerTimeOffset(roomId) {
-  const t0 = Date.now()
-  const { data } = await axios.get(`/rooms/${roomId}/time`)
-  const t1 = Date.now()
-  const rtt = t1 - t0
-  const serverTime = parseIsoTimestamp(data.server_time)
+  // Take a few samples and keep the one with the lowest RTT.
+  // This reduces bias where a single slow request makes the client "lead" the server clock.
+  let bestOffset = null
+  let bestRtt = Number.POSITIVE_INFINITY
 
-  if (serverTime === null) {
+  for (let i = 0; i < 5; i += 1) {
+    const t0 = Date.now()
+    // eslint-disable-next-line no-await-in-loop
+    const { data } = await axios.get(`/rooms/${roomId}/time`)
+    const t1 = Date.now()
+    const rtt = t1 - t0
+    const serverTime = parseIsoTimestamp(data.server_time)
+
+    if (serverTime === null) {
+      continue
+    }
+
+    const offset = serverTime - (t0 + rtt / 2)
+    if (rtt < bestRtt) {
+      bestRtt = rtt
+      bestOffset = offset
+    }
+  }
+
+  if (bestOffset === null) {
     return serverTimeOffsetMs.value
   }
 
-  serverTimeOffsetMs.value = serverTime - (t0 + rtt / 2)
+  serverTimeOffsetMs.value = bestOffset
 
   return serverTimeOffsetMs.value
 }
@@ -51,7 +69,7 @@ export function getProgressPercent(startedAtIso, trackDuration, nowMs = getServe
 
   const elapsed = getElapsedSeconds(startedAtIso, nowMs)
 
-  return Math.min(100, Math.round((100 / trackDuration) * (elapsed + 0.25)))
+  return Math.min(100, Math.round((100 / trackDuration) * elapsed))
 }
 
 export function isAnswerWindowOpen(deadlineAtIso, graceMs = 300, nowMs = getServerNowMs()) {
@@ -77,13 +95,16 @@ export function msUntilDeadline(deadlineAtIso, graceMs = 0, nowMs = getServerNow
 export function getInterTrackCountdown(nextTrackAtIso, pauseSeconds, nowMs = getServerNowMs()) {
   const remainingMs = msUntilDeadline(nextTrackAtIso, 0, nowMs)
   const pauseMs = Math.max(pauseSeconds, 0) * 1000
-  const remainingSeconds = Math.max(0, Math.ceil(remainingMs / 1000))
+  const remainingSeconds = remainingMs <= 0
+    ? 0
+    : Math.max(1, Math.ceil(remainingMs / 1000))
   const elapsedMs = Math.max(0, pauseMs - remainingMs)
   const progressPercent = pauseMs > 0
-    ? Math.min(100, Math.round((elapsedMs / pauseMs) * 100))
+    ? Math.min(100, (elapsedMs / pauseMs) * 100)
     : 100
 
   return {
+    remainingMs,
     remainingSeconds,
     progressPercent,
     isComplete: remainingMs <= 0,
