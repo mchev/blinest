@@ -42,6 +42,10 @@ const roomState = ref({
   roundId: null,
   answersByUser: {},
 })
+
+function normalizeScores(scores) {
+  return scores && typeof scores === 'object' && !Array.isArray(scores) ? scores : {}
+}
 const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
@@ -118,7 +122,7 @@ async function hydrateRoomFromJoinedPayload(data) {
       Object.assign(room.value, data.room)
     }
 
-    await measureServerTimeOffset(room.value.id).catch(() => {})
+    await measureServerTimeOffset(room.value.id, { samples: 1, maxAgeMs: 3000 }).catch(() => {})
 
     round.value = data.round
     initialTrack.value = data.interTrackPause ? null : data.track
@@ -142,10 +146,10 @@ function resyncRoomAfterReconnect() {
   if (!joined.value) return
   axios.get(`/rooms/${room.value.id}/joined`).then(async (response) => {
     await hydrateRoomFromJoinedPayload(response.data)
-    if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
+    if (response.data.scores) roomState.value.scores = normalizeScores(response.data.scores)
     if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
   }).catch(() => {})
@@ -174,7 +178,7 @@ onMounted(() => {
         if (roomState.value.users[0]?.id === user.id) dispatchUserCount(roomState.value.users.length)
       })
       .listen('RoomState', (e) => {
-        if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
+        if (e.scores != null) roomState.value.scores = normalizeScores(e.scores)
         if (e.roundId != null) roomState.value.roundId = e.roundId
       })
       .listen('NewScore', (e) => {
@@ -214,7 +218,7 @@ onMounted(() => {
         initialInterTrackPause.value = null
         currentTrack.value = e.track
         roomState.value.answersByUser = {}
-        measureServerTimeOffset(room.value.id).catch(() => {})
+        measureServerTimeOffset(room.value.id, { samples: 1, maxAgeMs: 3000 }).catch(() => {})
       })
       .listen('UserEloUpdated', (e) => {
         const u = roomState.value.users.find((x) => x.id === e.user_id)
@@ -262,16 +266,14 @@ const joining = () => {
   axios.get(`/rooms/${room.value.id}/joined`).then(async (response) => {
     await hydrateRoomFromJoinedPayload(response.data)
     // Scores/roundId from server. User list = only from presence channel (.here/.joining/.leaving).
-    if (response.data.scores && typeof response.data.scores === 'object') {
-      roomState.value.scores = response.data.scores
-    }
+    if (response.data.scores != null) roomState.value.scores = normalizeScores(response.data.scores)
     if (response.data.roundId != null) {
       roomState.value.roundId = response.data.roundId
     }
     joined.value = true
     // Notify server for Redis count (home page) and to broadcast scores/roundId. User list = from Echo .here/.joining/.leaving.
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
     startPresenceHeartbeat()

@@ -3,6 +3,8 @@ import axios from 'axios'
 
 /** Estimated offset: serverNow ≈ Date.now() + serverTimeOffsetMs */
 const serverTimeOffsetMs = ref(0)
+let lastOffsetMeasuredAtMs = 0
+let inFlightMeasure = null
 
 export function getServerNowMs() {
   return Date.now() + serverTimeOffsetMs.value
@@ -18,38 +20,60 @@ export function parseIsoTimestamp(iso) {
   return Number.isFinite(ms) ? ms : null
 }
 
-export async function measureServerTimeOffset(roomId) {
-  // Take a few samples and keep the one with the lowest RTT.
-  // This reduces bias where a single slow request makes the client "lead" the server clock.
-  let bestOffset = null
-  let bestRtt = Number.POSITIVE_INFINITY
+/**
+ * Measure server clock offset using `/rooms/:id/time`.
+ * By default we do a single request. Use `samples > 1` only for rare "forced resync" moments.
+ */
+export async function measureServerTimeOffset(roomId, options = {}) {
+  const {
+    samples = 1,
+    maxAgeMs = 3000,
+  } = options || {}
 
-  for (let i = 0; i < 5; i += 1) {
-    const t0 = Date.now()
-    // eslint-disable-next-line no-await-in-loop
-    const { data } = await axios.get(`/rooms/${roomId}/time`)
-    const t1 = Date.now()
-    const rtt = t1 - t0
-    const serverTime = parseIsoTimestamp(data.server_time)
-
-    if (serverTime === null) {
-      continue
-    }
-
-    const offset = serverTime - (t0 + rtt / 2)
-    if (rtt < bestRtt) {
-      bestRtt = rtt
-      bestOffset = offset
-    }
-  }
-
-  if (bestOffset === null) {
+  const now = Date.now()
+  if (maxAgeMs > 0 && now - lastOffsetMeasuredAtMs < maxAgeMs) {
     return serverTimeOffsetMs.value
   }
 
-  serverTimeOffsetMs.value = bestOffset
+  if (inFlightMeasure) {
+    return inFlightMeasure
+  }
 
-  return serverTimeOffsetMs.value
+  inFlightMeasure = (async () => {
+    let bestOffset = null
+    let bestRtt = Number.POSITIVE_INFINITY
+    const sampleCount = Math.max(1, Math.min(5, parseInt(samples, 10) || 1))
+
+    for (let i = 0; i < sampleCount; i += 1) {
+      const t0 = Date.now()
+      // eslint-disable-next-line no-await-in-loop
+      const { data } = await axios.get(`/rooms/${roomId}/time`)
+      const t1 = Date.now()
+      const rtt = t1 - t0
+      const serverTime = parseIsoTimestamp(data.server_time)
+
+      if (serverTime === null) {
+        continue
+      }
+
+      const offset = serverTime - (t0 + rtt / 2)
+      if (rtt < bestRtt) {
+        bestRtt = rtt
+        bestOffset = offset
+      }
+    }
+
+    if (bestOffset !== null) {
+      serverTimeOffsetMs.value = bestOffset
+      lastOffsetMeasuredAtMs = Date.now()
+    }
+
+    return serverTimeOffsetMs.value
+  })().finally(() => {
+    inFlightMeasure = null
+  })
+
+  return inFlightMeasure
 }
 
 export function getElapsedSeconds(startedAtIso, nowMs = getServerNowMs()) {

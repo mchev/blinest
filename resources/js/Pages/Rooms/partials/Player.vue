@@ -146,20 +146,37 @@ const holdInterTrackAtEnd = () => {
   countdownProgress.value = 100
 }
 
-const warmNextTrackAudio = (nextTrack) => {
+const warmNextTrackAudio = (nextTrack, { aggressive = false } = {}) => {
   if (!nextTrack?.audio || nextTrack.provider === 'youtube') {
     return
   }
 
   if (!nextTrackPreloader) {
     nextTrackPreloader = new Audio()
-    nextTrackPreloader.preload = 'auto'
+    // Keep it silent no matter what the browser decides to do.
+    nextTrackPreloader.muted = true
+    nextTrackPreloader.volume = 0
+    // Start cheap: metadata only, we can ramp up near the end of the countdown.
+    nextTrackPreloader.preload = 'metadata'
     nextTrackPreloader.crossOrigin = 'anonymous'
   }
 
   if (nextTrackPreloader.src !== nextTrack.audio) {
+    try {
+      nextTrackPreloader.pause()
+    } catch {}
     nextTrackPreloader.src = nextTrack.audio
+    // Cheap warm-up.
+    nextTrackPreloader.preload = 'metadata'
     nextTrackPreloader.load()
+  }
+
+  if (aggressive) {
+    // Near the transition, ask the browser to buffer more.
+    nextTrackPreloader.preload = 'auto'
+    try {
+      nextTrackPreloader.load()
+    } catch {}
   }
 }
 
@@ -188,7 +205,7 @@ const tickVisuals = () => {
       countdownProgress.value = state.progressPercent
 
       if (state.remainingMs <= 2000 && pendingNextTrack.value) {
-        warmNextTrackAudio(pendingNextTrack.value)
+        warmNextTrackAudio(pendingNextTrack.value, { aggressive: true })
       }
 
       if (state.isComplete) {
@@ -434,7 +451,10 @@ const ensureServerTimeSynced = async (force = false) => {
     return
   }
 
-  await measureServerTimeOffset(props.room.id).catch(() => {})
+  await measureServerTimeOffset(props.room.id, {
+    samples: force ? 3 : 1,
+    maxAgeMs: force ? 0 : 3000,
+  }).catch(() => {})
   lastServerSyncAt = Date.now()
 }
 
@@ -524,7 +544,7 @@ const startInterTrackCountdown = (interTrackPause = null) => {
   countdownProgress.value = state.progressPercent
 
   if (state.remainingMs <= 2000 && pendingNextTrack.value) {
-    warmNextTrackAudio(pendingNextTrack.value)
+    warmNextTrackAudio(pendingNextTrack.value, { aggressive: true })
   }
 
   if (state.isComplete && waitingForNextTrack.value) {
@@ -911,7 +931,7 @@ const handleTrackEnded = (e) => {
 
   if (e?.next_track) {
     pendingNextTrack.value = e.next_track
-    warmNextTrackAudio(e.next_track)
+    warmNextTrackAudio(e.next_track, { aggressive: false })
   }
 
   const deadline = trackTiming.value?.answer_deadline_at
