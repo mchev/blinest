@@ -84,6 +84,37 @@ class Track extends Model
         return formatVoteNumbers(abs($this->totalDownvotes()));
     }
 
+    /**
+     * Payload for the in-room playlist (Answers card).
+     * Omits live `audio` URLs to avoid Deezer fetches on join/history updates.
+     *
+     * @return array<string, mixed>
+     */
+    public function toPlaylistPayload(): array
+    {
+        $this->loadMissing('answers.type');
+
+        return [
+            'id' => $this->id,
+            'provider' => $this->provider,
+            'preview_url' => $this->preview_url,
+            'artwork_url' => $this->artwork_url,
+            'album_name' => null,
+            'hint' => $this->hint,
+            'upvotes' => $this->upvotes,
+            'downvotes' => $this->downvotes,
+            'answers' => $this->answers->map(function ($answer) {
+                return [
+                    'id' => $answer->id,
+                    'value' => $answer->value,
+                    'type' => [
+                        'name' => $answer->type->name,
+                    ],
+                ];
+            })->all(),
+        ];
+    }
+
     public function scopeFilter($query, array $filters)
     {
         // Check if we need vote counts for filtering or sorting

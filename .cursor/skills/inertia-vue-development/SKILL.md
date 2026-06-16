@@ -8,6 +8,16 @@ metadata:
 
 # Inertia Vue Development
 
+## When to Apply
+
+Activate this skill when:
+
+- Creating or modifying Vue page components for Inertia
+- Working with forms in Vue (using `<Form>` or `useForm`)
+- Implementing client-side navigation with `<Link>` or `router`
+- Using v2 features: deferred props, prefetching, WhenVisible, InfiniteScroll, once props, flash data, or polling
+- Building Vue-specific features with the Inertia protocol
+
 ## Documentation
 
 Use `search-docs` for detailed Inertia v2 Vue patterns and documentation.
@@ -361,14 +371,49 @@ const { start, stop } = usePoll(5000, {
 - `autoStart` (default `true`) — set to `false` to start polling manually via the returned `start()` function
 - `keepAlive` (default `false`) — set to `true` to prevent throttling when the browser tab is inactive
 
-### WhenVisible (Infinite Scroll)
+### WhenVisible
 
-Load more data when user scrolls to a specific element:
+Lazy-load a prop when an element scrolls into view. Useful for deferring expensive data that sits below the fold:
 
-<!-- Infinite Scroll with WhenVisible -->
+<!-- WhenVisible Example -->
 ```vue
 <script setup>
 import { WhenVisible } from '@inertiajs/vue3'
+
+defineProps({
+    stats: Object
+})
+</script>
+
+<template>
+    <div>
+        <h1>Dashboard</h1>
+
+        <WhenVisible data="stats" :buffer="200">
+            <template #fallback>
+                <div class="animate-pulse">Loading stats...</div>
+            </template>
+
+            <template #default="{ fetching }">
+                <div>
+                    <p>Total Users: {{ stats.total_users }}</p>
+                    <p>Revenue: {{ stats.revenue }}</p>
+                    <span v-if="fetching">Refreshing...</span>
+                </div>
+            </template>
+        </WhenVisible>
+    </div>
+</template>
+```
+
+### InfiniteScroll
+
+Automatically load additional pages of paginated data as users scroll:
+
+<!-- InfiniteScroll Example -->
+```vue
+<script setup>
+import { InfiniteScroll } from '@inertiajs/vue3'
 
 defineProps({
     users: Object
@@ -376,23 +421,15 @@ defineProps({
 </script>
 
 <template>
-    <div>
+    <InfiniteScroll data="users">
         <div v-for="user in users.data" :key="user.id">
             {{ user.name }}
         </div>
-
-        <WhenVisible
-            v-if="users.next_page_url"
-            data="users"
-            :params="{ page: users.current_page + 1 }"
-        >
-            <template #fallback>
-                <div>Loading more...</div>
-            </template>
-        </WhenVisible>
-    </div>
+    </InfiniteScroll>
 </template>
 ```
+
+The server must use `Inertia::scroll()` to configure the paginated data. Use the `search-docs` tool with a query of `infinite scroll` for detailed guidance on buffers, manual loading, reverse mode, and custom trigger elements.
 
 ## Server-Side Patterns
 

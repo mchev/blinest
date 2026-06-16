@@ -2,6 +2,14 @@
 import { ref, onMounted, computed, onBeforeUnmount, watch } from 'vue'
 import axios from 'axios'
 import UserGestureModal from '@/Components/UserGestureModal.vue'
+import PlayerTimeline from '@/Pages/Rooms/partials/PlayerTimeline.vue'
+import {
+  getElapsedSeconds,
+  getInterTrackCountdown,
+  getServerNowMs,
+  measureServerTimeOffset,
+  msUntilDeadline,
+} from '@/composables/useTrackTiming'
 
 const props = defineProps({
   room: {
@@ -20,6 +28,14 @@ const props = defineProps({
   initialStartTime: {
     type: Number,
     default: 0
+  },
+  initialTrackTiming: {
+    type: Object,
+    default: null
+  },
+  initialInterTrackPause: {
+    type: Object,
+    default: null
   }
 })
 
@@ -32,15 +48,36 @@ const loading = ref(true)
 const isPlaying = ref(false)
 const error = ref(null)
 const percent = ref(0)
+const barProgress = ref(0)
+const audioLevels = ref(null)
+const bassLevel = ref(0)
+const remainingSecondsLive = ref(0)
 const usersWithAllAnswers = ref([])
 const countdown = ref(0)
+const countdownProgress = ref(0)
 const countdowning = ref(false)
+const interTrackPauseSeconds = ref(parseInt(props.room.pause_between_tracks, 10) || 0)
 const waitingForNextTrack = ref(false)
 const currentTime = ref(0)
 const pendingStartTime = ref(0) // Store startTime to apply after audio loads
-const hasHandledInitialTrack = ref(false) // Flag to prevent double playback
+const playbackBootstrapped = ref(false)
 const userGestureModal = ref(null) // Reference to UserGestureModal
+const trackTiming = ref(props.initialTrackTiming)
+const activeInterTrackPause = ref(null)
 let playerChannel = null // Store channel reference to prevent multiple listeners
+let trackEndTimer = null
+let visualLoopId = null
+let fallbackCountdownEndAt = null
+
+// Audio analysis (real-time waveform levels)
+let audioContext = null
+let analyser = null
+let analyserSource = null
+let analyserData = null
+let bucketRanges = null
+let audioPlaybackStarting = false
+let activePlaybackTrackId = null
+let lastAppliedTrackKey = null
 
 // YouTube specific state
 const youtubePlayer = ref(null)
@@ -50,9 +87,392 @@ const windowYTScriptLoaded = ref(false)
 // Device detection
 const isIOS = computed(() => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)
 
-// Intervals/timers refs for cleanup
-const countdownInterval = ref(null)
-const progressInterval = ref(null)
+const trackDurationSeconds = computed(() => (
+  trackTiming.value?.track_duration ?? props.room.track_duration
+))
+
+const usesServerClock = computed(() => Boolean(trackTiming.value?.current_track_started_at))
+
+const speedBonusZonePercent = computed(() => 18)
+
+const remainingSeconds = computed(() => {
+  if (usesServerClock.value && trackTiming.value?.answer_deadline_at) {
+    return Math.max(0, Math.ceil(msUntilDeadline(trackTiming.value.answer_deadline_at, 0) / 1000))
+  }
+
+  return Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+})
+
+const isInSpeedZone = computed(() => (
+  percent.value > 0 && percent.value < speedBonusZonePercent.value
+))
+
+const timelineVariant = computed(() => {
+  if (countdowning.value && countdown.value !== -1) {
+    return 'countdown'
+  }
+
+  if (loading.value && !countdowning.value && !isPlaying.value) {
+    return 'loading'
+  }
+
+  return 'playing'
+})
+
+const clearTrackEndTimer = () => {
+  if (trackEndTimer) {
+    clearTimeout(trackEndTimer)
+    trackEndTimer = null
+  }
+}
+
+const shouldRunVisualLoop = () => {
+  if (countdowning.value) {
+    return true
+  }
+
+  return isPlaying.value && !waitingForNextTrack.value
+}
+
+const updateProgress = (elapsedSeconds) => {
+  const duration = trackDurationSeconds.value
+
+  if (!duration || duration <= 0) {
+    return
+  }
+
+  currentTime.value = elapsedSeconds
+  barProgress.value = Math.min(100, (100 / duration) * (elapsedSeconds + 0.25))
+  percent.value = Math.round(barProgress.value)
+  emit('track:currentTime', elapsedSeconds)
+}
+
+const tickVisuals = () => {
+  if (countdowning.value) {
+    if (activeInterTrackPause.value?.next_track_at) {
+      const state = getInterTrackCountdown(
+        activeInterTrackPause.value.next_track_at,
+        interTrackPauseSeconds.value
+      )
+
+      countdown.value = state.remainingSeconds
+      countdownProgress.value = state.progressPercent
+
+      if (state.isComplete) {
+        countdowning.value = false
+        countdown.value = 0
+        activeInterTrackPause.value = null
+      }
+
+      return
+    }
+
+    if (fallbackCountdownEndAt) {
+      const remainingMs = Math.max(0, fallbackCountdownEndAt - getServerNowMs())
+      const totalMs = (interTrackPauseSeconds.value || 1) * 1000
+
+      countdown.value = Math.ceil(remainingMs / 1000)
+      countdownProgress.value = Math.min(
+        100,
+        ((totalMs - remainingMs) / totalMs) * 100
+      )
+
+      if (remainingMs <= 0) {
+        countdowning.value = false
+        countdown.value = 0
+        fallbackCountdownEndAt = null
+      }
+    }
+
+    return
+  }
+
+  if (!isPlaying.value || waitingForNextTrack.value) {
+    return
+  }
+
+  if (!isYoutubeTrack.value && analyser && analyserData) {
+    analyser.getByteFrequencyData(analyserData)
+    const bucketCount = 32
+    const buckets = new Array(bucketCount).fill(0)
+    const ranges = bucketRanges && bucketRanges.length === bucketCount
+      ? bucketRanges
+      : null
+
+    for (let i = 0; i < bucketCount; i += 1) {
+      let start = 0
+      let end = analyserData.length
+
+      if (ranges) {
+        start = ranges[i][0]
+        end = ranges[i][1]
+      }
+
+      let sum = 0
+      let samples = 0
+      for (let j = start; j < end; j += 1) {
+        sum += analyserData[j]
+        samples += 1
+      }
+
+      const avg = samples > 0 ? sum / samples : 0
+      buckets[i] = Math.min(1, Math.max(0, avg / 255))
+    }
+
+    // Light smoothing to avoid flicker, without lag.
+    const prev = Array.isArray(audioLevels.value) ? audioLevels.value : null
+    audioLevels.value = prev
+      ? buckets.map((v, idx) => (prev[idx] * 0.65) + (v * 0.35))
+      : buckets
+
+    const bass = (audioLevels.value[0] + audioLevels.value[1] + audioLevels.value[2] + audioLevels.value[3]) / 4
+    bassLevel.value = (bassLevel.value * 0.7) + (bass * 0.3)
+  }
+
+  if (usesServerClock.value) {
+    const elapsed = getElapsedSeconds(trackTiming.value.current_track_started_at)
+    updateProgress(elapsed)
+
+    if (trackTiming.value?.answer_deadline_at) {
+      remainingSecondsLive.value = Math.max(0, Math.ceil(msUntilDeadline(trackTiming.value.answer_deadline_at, 0) / 1000))
+    } else {
+      remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+    }
+
+    return
+  }
+
+  const time = isYoutubeTrack.value && youtubePlayer.value
+    ? youtubePlayer.value.getCurrentTime()
+    : audio.value.currentTime
+
+  updateProgress(time)
+  remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+}
+
+const startVisualLoop = () => {
+  stopVisualLoop()
+
+  const tick = () => {
+    tickVisuals()
+
+    if (shouldRunVisualLoop()) {
+      visualLoopId = requestAnimationFrame(tick)
+    } else {
+      visualLoopId = null
+    }
+  }
+
+  tickVisuals()
+  visualLoopId = requestAnimationFrame(tick)
+}
+
+const stopVisualLoop = () => {
+  if (visualLoopId !== null) {
+    cancelAnimationFrame(visualLoopId)
+    visualLoopId = null
+  }
+}
+
+const ensureAudioContext = async () => {
+  if (isYoutubeTrack.value) {
+    return
+  }
+
+  if (!audioContext) {
+    const Ctx = window.AudioContext || window.webkitAudioContext
+    if (!Ctx) {
+      return
+    }
+
+    audioContext = new Ctx()
+  }
+
+  if (audioContext.state === 'suspended') {
+    await audioContext.resume().catch(() => {})
+  }
+}
+
+const setupAudioAnalyser = async () => {
+  if (isYoutubeTrack.value) {
+    audioLevels.value = null
+    return
+  }
+
+  await ensureAudioContext()
+  if (!audioContext) {
+    return
+  }
+
+  // MediaElementSource can only be created once per HTMLMediaElement per AudioContext.
+  // We create it lazily and keep it around.
+  if (!analyserSource) {
+    try {
+      analyserSource = audioContext.createMediaElementSource(audio.value)
+    } catch {
+      return
+    }
+  }
+
+  if (!analyser) {
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    analyser.smoothingTimeConstant = 0.75
+    analyserData = new Uint8Array(analyser.frequencyBinCount)
+  }
+
+  try {
+    analyserSource.disconnect()
+  } catch {
+    // Ignore if not connected yet.
+  }
+
+  try {
+    analyser.disconnect()
+  } catch {
+    // Ignore if not connected yet.
+  }
+
+  analyserSource.connect(analyser)
+  analyser.connect(audioContext.destination)
+
+  // Precompute log-spaced frequency buckets: 60 Hz -> 10 kHz.
+  // This makes the visualizer feel more “musical” (less packed in the highs).
+  const bucketCount = 32
+  const fMin = 60
+  const fMax = 10000
+  const nyquist = audioContext.sampleRate / 2
+  const binCount = analyser.frequencyBinCount
+  const hzToBin = (hz) => Math.max(0, Math.min(binCount - 1, Math.floor((hz / nyquist) * binCount)))
+
+  const edges = new Array(bucketCount + 1).fill(0).map((_, i) => {
+    const t = i / bucketCount
+    const hz = fMin * Math.pow(fMax / fMin, t)
+
+    return hzToBin(hz)
+  })
+
+  bucketRanges = []
+  for (let i = 0; i < bucketCount; i += 1) {
+    const start = edges[i]
+    const end = Math.max(start + 1, edges[i + 1])
+    bucketRanges.push([start, Math.min(binCount, end)])
+  }
+}
+
+const syncProgressFromServerClock = () => {
+  if (!usesServerClock.value) {
+    return
+  }
+
+  updateProgress(getElapsedSeconds(trackTiming.value.current_track_started_at))
+}
+
+const resolvePlaybackStartTime = (requestedStartTime = 0) => {
+  const duration = trackDurationSeconds.value
+
+  if (usesServerClock.value && trackTiming.value?.current_track_started_at) {
+    const fromClock = getElapsedSeconds(trackTiming.value.current_track_started_at)
+    const elapsed = requestedStartTime > 0
+      ? Math.max(requestedStartTime, fromClock)
+      : fromClock
+
+    return Math.min(duration, Math.max(0, elapsed))
+  }
+
+  return Math.min(duration, Math.max(0, requestedStartTime))
+}
+
+const ensureServerTimeSynced = async () => {
+  if (!props.room?.id) {
+    return
+  }
+
+  await measureServerTimeOffset(props.room.id).catch(() => {})
+}
+
+const detachPlayback = () => {
+  isPlaying.value = false
+  stopVisualLoop()
+  audioLevels.value = null
+  activePlaybackTrackId = null
+
+  if (isYoutubeTrack.value) {
+    cleanupYoutubePlayer()
+  } else {
+    audio.value.pause()
+    removeAudioEventListeners()
+  }
+}
+
+const finishTrackPlayback = (interTrackPause = null) => {
+  clearTrackEndTimer()
+  usersWithAllAnswers.value = []
+  detachPlayback()
+  waitingForNextTrack.value = true
+  loading.value = false
+  error.value = null
+  startInterTrackCountdown(interTrackPause)
+}
+
+const resolveInterTrackPause = (interTrackPause = null) => {
+  if (interTrackPause?.next_track_at) {
+    return interTrackPause
+  }
+
+  const deadline = trackTiming.value?.answer_deadline_at
+  if (!deadline) {
+    return null
+  }
+
+  const pauseSeconds = parseInt(props.room.pause_between_tracks, 10) || 0
+  const deadlineMs = new Date(deadline).getTime()
+
+  if (!Number.isFinite(deadlineMs)) {
+    return null
+  }
+
+  return {
+    next_track_at: new Date(deadlineMs + pauseSeconds * 1000).toISOString(),
+    pause_between_tracks: pauseSeconds,
+  }
+}
+
+const startInterTrackCountdown = (interTrackPause = null) => {
+  stopVisualLoop()
+
+  const pause = resolveInterTrackPause(interTrackPause)
+  countdowning.value = true
+  loading.value = false
+
+  if (!pause?.next_track_at) {
+    const seconds = parseInt(props.room.pause_between_tracks, 10) || 0
+
+    interTrackPauseSeconds.value = seconds
+    activeInterTrackPause.value = null
+    fallbackCountdownEndAt = getServerNowMs() + seconds * 1000
+    countdown.value = seconds
+    countdownProgress.value = 0
+    startVisualLoop()
+
+    return
+  }
+
+  interTrackPauseSeconds.value = pause.pause_between_tracks
+    ?? parseInt(props.room.pause_between_tracks, 10)
+    ?? 0
+  activeInterTrackPause.value = pause
+  fallbackCountdownEndAt = null
+
+  const state = getInterTrackCountdown(
+    pause.next_track_at,
+    interTrackPauseSeconds.value
+  )
+
+  countdown.value = state.remainingSeconds
+  countdownProgress.value = state.progressPercent
+  startVisualLoop()
+}
 
 // Volume handling
 const volume = ref(parseFloat(localStorage.getItem('volume') || '1'))
@@ -66,6 +486,7 @@ watch(volume, (newVolume) => {
 
 const triggerUserGesture = async () => {
   try {
+    await ensureAudioContext()
     // Preserve the startTime if we're joining mid-track
     const preservedTime = pendingStartTime.value > 0 ? pendingStartTime.value : 0
     await audio.value.play()
@@ -74,8 +495,7 @@ const triggerUserGesture = async () => {
     audio.value.currentTime = preservedTime
     if (preservedTime > 0) {
       currentTime.value = preservedTime
-      const calculatedPercent = (100 / props.room.track_duration) * (preservedTime + 0.25)
-      percent.value = Math.min(100, Math.round(calculatedPercent))
+      updateProgress(preservedTime)
     }
     // Now that we have user interaction, try to play again
     if (isPlaying.value && track.value) {
@@ -145,13 +565,10 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
         // Set start time if provided
         if (startTime > 0) {
           youtubePlayer.value.seekTo(startTime, true)
-          currentTime.value = startTime
-          // Update percent based on startTime
-          const calculatedPercent = (100 / props.room.track_duration) * (startTime + 0.25)
-          percent.value = Math.min(100, Math.round(calculatedPercent))
+          updateProgress(startTime)
         }
         loading.value = false
-        startYoutubeProgress()
+        startVisualLoop()
       },
       onStateChange: (event) => {
         if (event.data === YT.PlayerState.ENDED) {
@@ -194,22 +611,37 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
 }
 
 const play = async (startTime = 0) => {
-  if (isPlaying.value) await stop()
+  if (!track.value) {
+    return
+  }
+
+  if (isPlaying.value) {
+    detachPlayback()
+  }
 
   // Clear waitingForNextTrack when we start playing
   waitingForNextTrack.value = false
-  
+
+  if (trackTiming.value?.current_track_started_at) {
+    await ensureServerTimeSynced()
+  }
+
   loading.value = true
   error.value = null
   isPlaying.value = true
-  pendingStartTime.value = startTime
-  currentTime.value = startTime
-  
+  const playbackStartTime = resolvePlaybackStartTime(startTime)
+  pendingStartTime.value = playbackStartTime
+  currentTime.value = playbackStartTime
+  startVisualLoop()
+  remainingSecondsLive.value = Math.max(0, Math.ceil(trackDurationSeconds.value - currentTime.value))
+
   // Initialize percent based on startTime if joining mid-track
-  if (startTime > 0) {
-    const calculatedPercent = (100 / props.room.track_duration) * (startTime + 0.25)
-    percent.value = Math.min(100, Math.round(calculatedPercent))
+  if (usesServerClock.value) {
+    syncProgressFromServerClock()
+  } else if (playbackStartTime > 0) {
+    updateProgress(playbackStartTime)
   } else {
+    barProgress.value = 0
     percent.value = 0
   }
 
@@ -223,9 +655,9 @@ const play = async (startTime = 0) => {
     }
 
     if (window.YT?.Player) {
-      initYoutubePlayer(videoId, startTime)
+      initYoutubePlayer(videoId, playbackStartTime)
     } else {
-      window.onYouTubeIframeAPIReady = () => initYoutubePlayer(videoId, startTime)
+      window.onYouTubeIframeAPIReady = () => initYoutubePlayer(videoId, playbackStartTime)
     }
     return
   }
@@ -241,15 +673,19 @@ const play = async (startTime = 0) => {
     
     // Load the audio - handleCanPlayThrough will apply the startTime
     audio.value.load()
+
+    if (audio.value.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+      await beginAudioPlayback()
+    }
     
     // If we have a startTime, also try to set it early (but handleCanPlayThrough is the main handler)
-    if (startTime > 0) {
+    if (playbackStartTime > 0) {
       // Try to set it as soon as metadata is available
       const trySetStartTime = () => {
         if (audio.value.readyState >= 1) { // HAVE_METADATA
           try {
-            audio.value.currentTime = startTime
-            currentTime.value = startTime
+            audio.value.currentTime = playbackStartTime
+            currentTime.value = playbackStartTime
           } catch (e) {
             // Ignore - handleCanPlayThrough will handle it
           }
@@ -269,17 +705,15 @@ const setupEventListeners = () => {
 
   // Clean up existing listeners to prevent duplicates
   if (playerChannel) {
-    playerChannel.stopListening('TrackPlayed')
     playerChannel.stopListening('TrackEnded')
     playerChannel.stopListening('TrackPaused')
     playerChannel.stopListening('TrackResumed')
     playerChannel.stopListening('UserHasFoundAllTheAnswers')
   }
 
-  // Presence channel (same as Show.vue) so we receive TrackPlayed / TrackEnded
+  // TrackPlayed is handled via props from Show.vue (single Echo subscription).
   playerChannel = Echo.join(props.channel)
   playerChannel
-    .listen('TrackPlayed', handleTrackPlayed)
     .listen('TrackEnded', handleTrackEnded)
     .listen('TrackPaused', pause)
     .listen('TrackResumed', resume)
@@ -290,11 +724,12 @@ const setupEventListeners = () => {
 }
 
 const cleanup = () => {
+  clearTrackEndTimer()
+  stopVisualLoop()
   stop()
   
   // Clean up Echo listeners only (do not Echo.leave - Show.vue owns the presence subscription)
   if (playerChannel) {
-    playerChannel.stopListening('TrackPlayed')
     playerChannel.stopListening('TrackEnded')
     playerChannel.stopListening('TrackPaused')
     playerChannel.stopListening('TrackResumed')
@@ -304,37 +739,106 @@ const cleanup = () => {
   
   window.removeEventListener('volume-localstorage-changed', handleVolumeChange)
   removeAudioEventListeners()
-  clearInterval(countdownInterval.value)
-  clearInterval(progressInterval.value)
+}
+
+const beginInitialInterTrackPause = (interTrackPause) => {
+  waitingForNextTrack.value = true
+  loading.value = false
+  startInterTrackCountdown(interTrackPause)
 }
 
 const handleVolumeChange = (event) => {
   volume.value = event.detail.volume
 }
 
-const handleTrackPlayed = (e) => {
-  // Prevent playing the same track multiple times
-  if (track.value && track.value.id === e.track.id && isPlaying.value) {
-    return // Already playing this track
+const isStaleTrackEndedEvent = (event) => {
+  if (waitingForNextTrack.value && countdowning.value) {
+    return true
   }
-  track.value = e.track
-  waitingForNextTrack.value = false
-  
-  // Enregistrer que le joueur a écouté cette track (même sans trouver de réponse)
-  if (e.round && e.round.id && e.track && e.track.id) {
-    axios.post(`/rounds/${e.round.id}/tracks/${e.track.id}/listened`).catch(() => {
-      // Ignorer les erreurs silencieusement (peut arriver si le round est terminé)
-    })
+
+  const endedTrackId = event?.track?.id
+  const activeTrackId = track.value?.id
+
+  if (!endedTrackId || !activeTrackId || endedTrackId === activeTrackId) {
+    return false
   }
-  
-  play()
+
+  const eventSequence = event?.round?.current
+  const activeSequence = trackTiming.value?.track_sequence
+
+  if (eventSequence != null && activeSequence != null && eventSequence < activeSequence) {
+    return true
+  }
+
+  return !waitingForNextTrack.value && isPlaying.value
 }
 
-const handleTrackEnded = () => {
-  usersWithAllAnswers.value = []
-  stop()
-  waitingForNextTrack.value = true
-  startCountdown()
+const applyIncomingTrack = async (trackData, roundData, startTime = 0) => {
+  if (!trackData) {
+    return
+  }
+
+  const sequence = roundData?.track_sequence ?? roundData?.current ?? 0
+  const trackKey = `${trackData.id}:${sequence}:${startTime}`
+
+  if (
+    trackKey === lastAppliedTrackKey
+    && isPlaying.value
+    && !waitingForNextTrack.value
+    && track.value?.id === trackData.id
+  ) {
+    return
+  }
+
+  lastAppliedTrackKey = trackKey
+  clearTrackEndTimer()
+  stopVisualLoop()
+  activeInterTrackPause.value = null
+  fallbackCountdownEndAt = null
+  countdowning.value = false
+  countdown.value = 0
+  countdownProgress.value = 0
+  audioLevels.value = null
+  bassLevel.value = 0
+  audioPlaybackStarting = false
+  activePlaybackTrackId = null
+
+  track.value = trackData
+  trackTiming.value = roundData ?? null
+  waitingForNextTrack.value = false
+
+  if (roundData?.id && trackData.id) {
+    axios.post(`/rounds/${roundData.id}/tracks/${trackData.id}/listened`).catch(() => {})
+  }
+
+  await play(startTime)
+}
+
+const handleTrackEnded = (e) => {
+  if (isStaleTrackEndedEvent(e)) {
+    return
+  }
+
+  clearTrackEndTimer()
+
+  const deadline = trackTiming.value?.answer_deadline_at
+  const wait = deadline ? msUntilDeadline(deadline, 300) : 0
+  const interTrackPause = e?.next_track_at
+    ? {
+        next_track_at: e.next_track_at,
+        pause_between_tracks: e.pause_between_tracks,
+      }
+    : null
+
+  const beginPause = () => finishTrackPlayback(interTrackPause)
+
+  if (wait > 50) {
+    trackEndTimer = setTimeout(beginPause, wait)
+
+    return
+  }
+
+  beginPause()
 }
 
 const handleUserFoundAllAnswers = (e) => {
@@ -344,7 +848,11 @@ const handleUserFoundAllAnswers = (e) => {
 }
 
 const addAudioEventListeners = () => {
-  if (isYoutubeTrack.value) return
+  if (isYoutubeTrack.value) {
+    return
+  }
+
+  removeAudioEventListeners()
 
   const events = {
     error: handleAudioError,
@@ -415,9 +923,7 @@ const applyStartTime = () => {
       if (timeDiff > 0.5) {
         audio.value.currentTime = pendingStartTime.value
         currentTime.value = pendingStartTime.value
-        // Update percent based on current time
-        const calculatedPercent = (100 / props.room.track_duration) * (pendingStartTime.value + 0.25)
-        percent.value = Math.min(100, Math.round(calculatedPercent))
+        updateProgress(pendingStartTime.value)
         return true
       }
     } catch (e) {
@@ -427,99 +933,129 @@ const applyStartTime = () => {
   return false
 }
 
-const handleCanPlayThrough = async () => {
-  if (waitingForNextTrack.value) return
+const beginAudioPlayback = async () => {
+  const trackId = track.value?.id
 
-  const targetStartTime = pendingStartTime.value
-
-  // Apply the start time BEFORE playing - this is critical
-  if (targetStartTime > 0 && audio.value.readyState >= 2) {
-    try {
-      audio.value.currentTime = targetStartTime
-      currentTime.value = targetStartTime
-      const calculatedPercent = (100 / props.room.track_duration) * (targetStartTime + 0.25)
-      percent.value = Math.min(100, Math.round(calculatedPercent))
-    } catch (e) {
-      console.warn('Could not set currentTime before play:', e)
-    }
+  if (
+    waitingForNextTrack.value
+    || isYoutubeTrack.value
+    || audioPlaybackStarting
+    || (trackId && activePlaybackTrackId === trackId)
+  ) {
+    return
   }
 
-  loading.value = false
-  
-  // For iOS, we need to pause and set time before playing
-  if (isIOS.value && targetStartTime > 0) {
-    audio.value.pause()
-    try {
-      audio.value.currentTime = targetStartTime
-      currentTime.value = targetStartTime
-    } catch (e) {
-      console.warn('Player::handleCanPlayThrough - Could not set currentTime on iOS:', e)
-    }
-  }
-  
+  audioPlaybackStarting = true
+
   try {
-    await audio.value.play()
-    
-    // CRITICAL: Verify and re-apply startTime AFTER play() - browsers often reset it
-    if (targetStartTime > 0) {
-      // Wait a tiny bit for the browser to settle, then check and fix
-      setTimeout(() => {
-        const actualTime = audio.value.currentTime
-        const timeDiff = Math.abs(actualTime - targetStartTime)
-        
-        if (timeDiff > 0.2) { // If more than 200ms off, fix it
+    const targetStartTime = pendingStartTime.value
+
+    // Apply the start time BEFORE playing - this is critical
+    if (targetStartTime > 0 && audio.value.readyState >= 2) {
+      try {
+        audio.value.currentTime = targetStartTime
+        currentTime.value = targetStartTime
+        updateProgress(targetStartTime)
+      } catch (e) {
+        console.warn('Could not set currentTime before play:', e)
+      }
+    }
+
+    loading.value = false
+    startVisualLoop()
+
+    await setupAudioAnalyser()
+
+    // For iOS, we need to pause and set time before playing
+    if (isIOS.value && targetStartTime > 0) {
+      audio.value.pause()
+      try {
+        audio.value.currentTime = targetStartTime
+        currentTime.value = targetStartTime
+      } catch (e) {
+        console.warn('Player::beginAudioPlayback - Could not set currentTime on iOS:', e)
+      }
+    }
+
+    try {
+      await audio.value.play()
+      activePlaybackTrackId = trackId ?? null
+
+      // CRITICAL: Verify and re-apply startTime AFTER play() - browsers often reset it
+      if (targetStartTime > 0) {
+        // Wait a tiny bit for the browser to settle, then check and fix
+        setTimeout(() => {
+          const actualTime = audio.value.currentTime
+          const timeDiff = Math.abs(actualTime - targetStartTime)
+
+          if (timeDiff > 0.2) { // If more than 200ms off, fix it
+            try {
+              audio.value.currentTime = targetStartTime
+              currentTime.value = targetStartTime
+              updateProgress(targetStartTime)
+            } catch (e) {
+              console.warn('Could not fix startTime:', e)
+            }
+          }
+
+          // Clear pendingStartTime after we've applied it
+          pendingStartTime.value = 0
+        }, 50) // Small delay to let browser settle
+      }
+    } catch (error) {
+      // If NotAllowedError, show user gesture modal
+      if (error.name === 'NotAllowedError' && userGestureModal.value) {
+        userGestureModal.value.showModal()
+      }
+      // If play failed, try to apply startTime when it succeeds
+      if (targetStartTime > 0) {
+        audio.value.addEventListener('play', () => {
           try {
             audio.value.currentTime = targetStartTime
             currentTime.value = targetStartTime
-            const calculatedPercent = (100 / props.room.track_duration) * (targetStartTime + 0.25)
-            percent.value = Math.min(100, Math.round(calculatedPercent))
+            pendingStartTime.value = 0
           } catch (e) {
-            console.warn('Could not fix startTime:', e)
+            console.warn('Could not apply startTime on play event:', e)
           }
-        }
-        
-        // Clear pendingStartTime after we've applied it
-        pendingStartTime.value = 0
-      }, 50) // Small delay to let browser settle
+        }, { once: true })
+      }
     }
-  } catch (error) {
-    // If NotAllowedError, show user gesture modal
-    if (error.name === 'NotAllowedError' && userGestureModal.value) {
-      userGestureModal.value.showModal()
-    }
-    // If play failed, try to apply startTime when it succeeds
-    if (targetStartTime > 0) {
-      audio.value.addEventListener('play', () => {
-        try {
-          audio.value.currentTime = targetStartTime
-          currentTime.value = targetStartTime
-          pendingStartTime.value = 0
-        } catch (e) {
-          console.warn('Could not apply startTime on play event:', e)
-        }
-      }, { once: true })
-    }
+  } finally {
+    audioPlaybackStarting = false
   }
 }
 
+const handleCanPlayThrough = async () => {
+  await beginAudioPlayback()
+}
+
 const handleTimeUpdate = () => {
+  if (usesServerClock.value) {
+    return
+  }
+
   const time = isYoutubeTrack.value && youtubePlayer.value
     ? youtubePlayer.value.getCurrentTime()
     : audio.value.currentTime
 
-  currentTime.value = time
-  emit('track:currentTime', time)
-  
-  const calculatedPercent = (100 / props.room.track_duration) * (time + 0.25)
-  percent.value = Math.min(100, Math.round(calculatedPercent))
+  updateProgress(time)
 }
 
 const handleAudioEnded = () => {
-  if (!waitingForNextTrack.value) {
-    isPlaying.value = false
-    loading.value = true
-    emit('track:ended', track.value)
+  if (waitingForNextTrack.value) {
+    return
   }
+
+  if (usesServerClock.value && trackTiming.value?.answer_deadline_at) {
+    const wait = msUntilDeadline(trackTiming.value.answer_deadline_at, 300)
+    if (wait > 50) {
+      return
+    }
+  }
+
+  isPlaying.value = false
+  loading.value = true
+  emit('track:ended', track.value)
 }
 
 const pause = () => {
@@ -539,6 +1075,7 @@ const resume = async () => {
     try {
       await audio.value.play()
       isPlaying.value = true
+      startVisualLoop()
     } catch (error) {
       console.error('Error resuming audio:', error)
     }
@@ -546,104 +1083,68 @@ const resume = async () => {
 }
 
 const stop = async () => {
-  isPlaying.value = false
-  
-  if (isYoutubeTrack.value) {
-    cleanupYoutubePlayer()
-  } else {
-    audio.value.pause()
-    audio.value.currentTime = 0
-    removeAudioEventListeners()
-  }
-  
+  detachPlayback()
   waitingForNextTrack.value = true
   emit('track:stopped', track.value)
 }
 
-const startCountdown = () => {
-  countdown.value = parseInt(props.room.pause_between_tracks)
-  countdowning.value = true
-  
-  clearInterval(countdownInterval.value)
-  
-  countdownInterval.value = setInterval(() => {
-    if (countdown.value <= 0) {
-      clearInterval(countdownInterval.value)
-      countdowning.value = false
-    } else {
-      countdown.value--
-    }
-  }, 1000)
-}
+const bootstrapPlaybackFromProps = async () => {
+  if (props.initialInterTrackPause?.next_track_at) {
+    beginInitialInterTrackPause(props.initialInterTrackPause)
 
-const startYoutubeProgress = () => {
-  clearInterval(progressInterval.value)
-  
-  progressInterval.value = setInterval(() => {
-    if (isYoutubeTrack.value && youtubePlayer.value && isPlaying.value) {
-      handleTimeUpdate()
-    } else {
-      clearInterval(progressInterval.value)
-    }
-  }, 100)
-}
-
-// Watch for initialTrack to be set (in case it's set after mount)
-watch(() => [props.initialTrack, props.initialStartTime], (newValue, oldValue) => {
-  // Safely destructure newValue and oldValue
-  const [newTrack, newStartTime] = newValue || [null, null]
-  const [oldTrack, oldStartTime] = oldValue || [null, null]
-  
-  // If initialTrack was null and is now set (joining mid-track after mount)
-  // This is the key case: we mounted without a track, now we have one
-  if (!oldTrack && newTrack && hasHandledInitialTrack.value) {
-    track.value = newTrack
-    const startTime = newStartTime || 0
-    waitingForNextTrack.value = false
-    loading.value = false
-    play(startTime)
     return
   }
-  
-  // Play if we have a new track and:
-  // 1. We don't have a track yet, OR
-  // 2. The track ID has changed (new track)
-  const shouldPlay = newTrack && (
-    !track.value || 
-    (track.value && track.value.id !== newTrack.id)
-  )
-  
-  if (shouldPlay) {
-    track.value = newTrack
-    const startTime = newStartTime || 0
-    waitingForNextTrack.value = false
-    loading.value = false
-    play(startTime)
-  } else if (newTrack && track.value && track.value.id === newTrack.id && newStartTime !== oldStartTime && newStartTime !== currentTime.value) {
-    // If it's the same track but the start time changed (e.g., a re-sync)
-    play(newStartTime) // Re-play from the new start time
-  }
-}, { immediate: true, deep: true }) // immediate: true to catch initial values
 
-onMounted(() => {
+  if (!props.initialTrack) {
+    waitingForNextTrack.value = true
+    loading.value = true
+
+    return
+  }
+
+  await applyIncomingTrack(
+    props.initialTrack,
+    props.initialTrackTiming ?? null,
+    props.initialStartTime || 0
+  )
+}
+
+// Watch for prop updates after initial bootstrap (reconnect resync)
+watch(() => [props.initialTrack, props.initialStartTime, props.initialTrackTiming, props.initialInterTrackPause], async (newValue, oldValue) => {
+  if (!playbackBootstrapped.value) {
+    return
+  }
+
+  const [newTrack, newStartTime, newTiming, newInterTrackPause] = newValue || [null, null, null, null]
+  const [oldTrack, oldStartTime] = oldValue || [null, null, null, null]
+
+  if (newTiming) {
+    trackTiming.value = newTiming
+  }
+
+  if (newInterTrackPause?.next_track_at) {
+    beginInitialInterTrackPause(newInterTrackPause)
+
+    return
+  }
+
+  const trackChanged = newTrack && (!oldTrack || oldTrack.id !== newTrack.id)
+  const resyncSameTrack = newTrack
+    && oldTrack
+    && oldTrack.id === newTrack.id
+    && newStartTime !== oldStartTime
+    && Math.abs(newStartTime - currentTime.value) > 1
+
+  if (trackChanged || resyncSameTrack) {
+    await applyIncomingTrack(newTrack, trackTiming.value, newStartTime || 0)
+  }
+})
+
+onMounted(async () => {
   initializeAudio()
   setupEventListeners()
-  
-  // If we have an initial track at mount time, play it immediately
-  if (props.initialTrack) {
-    track.value = props.initialTrack
-    const startTime = props.initialStartTime || 0
-    hasHandledInitialTrack.value = true
-    waitingForNextTrack.value = false
-    loading.value = false
-    play(startTime)
-  } else {
-    // If no initial track at mount, mark as handled and wait for watcher to catch it
-    hasHandledInitialTrack.value = true
-    waitingForNextTrack.value = true
-    // The watcher with immediate: true will catch it if it's set synchronously
-    // Otherwise it will catch it when joining() sets it
-  }
+  await bootstrapPlaybackFromProps()
+  playbackBootstrapped.value = true
 })
 
 onBeforeUnmount(() => {
@@ -655,90 +1156,52 @@ onBeforeUnmount(() => {
 <template>
   <div id="youtube-player" class="hidden"></div>
   
-  <div id="player" class="relative mb-1 rounded-lg bg-neutral-800 shadow-lg border border-neutral-700">
-    <!-- User answers markers - moved outside the player container to be visible -->
-    <TransitionGroup 
-      name="user-answer"
-      tag="ul"
-      class="absolute w-full"
-      style="top: -2rem;"
-    >
-      <li 
-        v-for="user in usersWithAllAnswers" 
-        :key="user.id" 
-        class="absolute z-20 rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white shadow-lg hover:z-30 transform transition-transform duration-200 hover:scale-110"
-        :style="`left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);`"
+  <div id="player" class="relative mb-1">
+    <div class="relative">
+      <TransitionGroup
+        name="user-answer"
+        tag="ul"
+        class="pointer-events-none absolute inset-x-0 bottom-full z-40 mb-1.5 h-8"
       >
-        <div class="flex items-center space-x-1">
-          <img :src="user.photo" class="h-4 w-4 rounded-full" v-if="user.photo" />
-          <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
-        </div>
-        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[6px] border-l-[6px] border-r-[6px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
-      </li>
-    </TransitionGroup>
+        <li
+          v-for="user in usersWithAllAnswers"
+          :key="user.id"
+          class="absolute bottom-0 z-20 rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white shadow-lg"
+          :style="`left: calc(${(100 / trackDurationSeconds) * user.time}% - 1rem);`"
+        >
+          <div class="flex items-center gap-1">
+            <img v-if="user.photo" :src="user.photo" class="h-4 w-4 rounded-full" />
+            <span class="max-w-16 select-none truncate whitespace-nowrap">{{ user.name }}</span>
+          </div>
+          <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-teal-600" />
+        </li>
+      </TransitionGroup>
 
-    <div class="overflow-hidden rounded-lg">
-      <!-- Error state -->
-      <template v-if="error">
-        <div class="flex flex-col h-auto w-full p-3 rounded-lg bg-red-900/20 text-red-300">
-          <div class="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">{{ error.split('\n')[0] }}</span>
-          </div>
-          <div class="text-sm whitespace-pre-line pl-7">
-            {{ error.split('\n').slice(1).join('\n') }}
-          </div>
+    <template v-if="error">
+      <div class="flex h-auto w-full flex-col p-3 text-red-300">
+        <div class="mb-2 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <span class="font-medium">{{ error.split('\n')[0] }}</span>
         </div>
-      </template>
+        <div class="whitespace-pre-line pl-7 text-sm">
+          {{ error.split('\n').slice(1).join('\n') }}
+        </div>
+      </div>
+    </template>
 
-      <!-- Loading state -->
-      <template v-else-if="loading && !countdowning">
-        <div class="flex h-6 w-full items-center justify-center rounded-lg bg-purple-900/20">
-          <div class="flex items-center space-x-2">
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-purple-400 border-t-transparent"></div>
-            <span class="text-sm font-medium text-purple-300">{{ __('Loading') }}</span>
-          </div>
-        </div>
-      </template>
-
-      <!-- Countdown state -->
-      <template v-else-if="countdowning && countdown !== -1">
-        <div class="flex max-w-full flex-grow flex-col">
-          <div class="relative h-6 w-full overflow-hidden rounded-lg bg-neutral-800">
-            <div 
-              class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-r from-purple-700/80 to-purple-600/80 text-white transition-all duration-1000 ease-linear"
-              :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
-            >
-            </div>
-            <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
-              {{ __('Next track in') }} {{ countdown }}s
-            </span>
-          </div>
-        </div>
-      </template>
-
-      <!-- Playing state -->
-      <template v-else>
-        <div class="relative h-6 w-full">
-          <!-- Red zone indicator (first 18%) -->
-          <div 
-            class="absolute top-0 left-0 z-10 h-6 rounded-r-lg bg-gradient-to-r from-red-600/80 to-red-500/30 transition-all duration-500 ease-linear" 
-            :style="`width: ${Math.min(percent, 18)}%`" 
-          />
-          
-          <!-- Progress bar -->
-          <div 
-            class="absolute top-0 left-0 h-6 bg-gradient-to-r from-purple-600/90 to-purple-500/90 transition-all duration-500 ease-linear" 
-            :style="`width: ${percent}%`" 
-          >
-            <div class="absolute inset-0 opacity-10">
-              <div class="shine-wave"></div>
-            </div>
-          </div>
-        </div>
-      </template>
+    <PlayerTimeline
+      v-else
+      :variant="timelineVariant"
+      :progress="timelineVariant === 'countdown' ? countdownProgress : barProgress"
+      :remaining-seconds="remainingSecondsLive"
+      :countdown="countdown"
+      :in-speed-zone="isInSpeedZone"
+      :speed-zone-percent="speedBonusZonePercent"
+      :levels="audioLevels"
+      :bass="bassLevel"
+    />
     </div>
   </div>
 
@@ -746,43 +1209,22 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.user-answer-move,
+.user-answer-move {
+  transition: transform 0.35s ease;
+}
+
 .user-answer-enter-active,
 .user-answer-leave-active {
-  transition: all 0.5s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
 .user-answer-enter-from,
 .user-answer-leave-to {
   opacity: 0;
-  transform: translateY(30px);
+  transform: scale(0.9);
 }
 
 .user-answer-leave-active {
   position: absolute;
-}
-
-.shine-wave {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  animation: shine 2s infinite;
-}
-
-@keyframes shine {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 200%;
-  }
 }
 </style>

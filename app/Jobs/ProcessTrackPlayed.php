@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\TrackEnded;
 use App\Models\Round;
+use App\Services\TrackTimingService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,7 +32,20 @@ class ProcessTrackPlayed implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->round->load('room');
+        $this->round->refresh()->load('room');
+
+        if (! $this->round->isPlaying()) {
+            return;
+        }
+
+        $timing = app(TrackTimingService::class);
+        $deadline = $timing->answerDeadlineAt($this->round);
+
+        if ($deadline !== null && now()->lt($deadline)) {
+            self::dispatch($this->round)->delay($deadline);
+
+            return;
+        }
 
         if ($this->round->isPlaying()) {
             // Broadcast the TrackEnded event

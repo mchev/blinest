@@ -12,6 +12,7 @@ use App\Jobs\ProcessRoundFinalization;
 use App\Jobs\ProcessRoundFinished;
 use App\Jobs\ProcessTrackPlayed;
 use App\Services\RoundScoreService;
+use App\Services\TrackTimingService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -119,8 +120,7 @@ class Round extends Model
             }
             broadcast(new TrackPlayed($this, $track));
             broadcast(new RoomPublicState($this->room));
-            ProcessTrackPlayed::dispatch($this)
-                ->delay(now()->addSeconds($this->room->track_duration));
+            $this->scheduleTrackEndJob();
 
             return;
         }
@@ -151,8 +151,7 @@ class Round extends Model
                 }
                 broadcast(new TrackPlayed($this, $track));
                 broadcast(new RoomPublicState($this->room));
-                ProcessTrackPlayed::dispatch($this)
-                    ->delay(now()->addSeconds($this->room->track_duration));
+                $this->scheduleTrackEndJob();
             } else {
                 // Handle HTTP error responses (404, 403, 500, etc.)
                 ProcessDeletedTrack::dispatch($track);
@@ -173,6 +172,16 @@ class Round extends Model
     public function isPlaying()
     {
         return $this->is_playing;
+    }
+
+    public function scheduleTrackEndJob(): void
+    {
+        $timing = app(TrackTimingService::class);
+        $deadline = $timing->answerDeadlineAt($this);
+
+        ProcessTrackPlayed::dispatch($this)->delay(
+            $deadline ?? now()->addSeconds($this->room->track_duration)
+        );
     }
 
     public function userScore(User $user): float

@@ -115,33 +115,35 @@ const user = usePage().props.auth.user;
           </div>
         </div>
         
-        <!-- Batilo Promotion -->
-        <div class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-900 via-orange-800 to-amber-900 shadow-lg border border-orange-700/50">
-          <div class="p-6">
-            <div class="mb-3 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-orange-300">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-              </svg>
-              <h3 class="text-xl font-bold text-white">Batilo</h3>
+        <!-- Ouvrage Promotion -->
+        <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#0d1217] via-[#3e5266] to-[#3c5267] shadow-md border border-[#5d7b93]/40">
+          <div class="p-4">
+            <div class="mb-2 flex items-center gap-2.5">
+              <img
+                src="/images/ouvrage-mark.png"
+                alt="Ouvrage"
+                class="h-8 w-8 shrink-0 rounded-md object-contain"
+                width="32"
+                height="32"
+                loading="lazy"
+              />
+              <h3 class="text-base font-bold text-[#f5f7f9]">Ouvrage</h3>
             </div>
-            <p class="mb-3 text-orange-100 leading-relaxed">
-              Vous êtes en <strong class="text-white">auto-construction</strong> ou <strong class="text-white">particulier en rénovation</strong> ?
+            <p class="mb-2 text-sm leading-snug text-[#e3f2eb]">
+              Artisan, auto-entrepreneur ou petite équipe : devis, factures, chantier et compta <strong class="text-[#f5f7f9]">au même endroit</strong>.
             </p>
-            <p class="mb-3 text-sm text-orange-200 leading-relaxed">
-              Découvrez <strong class="text-white">Batilo</strong>, une application en ligne <strong class="text-white">gratuite</strong> pour simplifier la gestion de votre chantier.
+            <p class="mb-3 text-xs leading-relaxed text-[#9caab4]">
+              Bonus : facturation électronique intégrée (e-factures B2B + réception fournisseurs) — <strong class="text-[#f5f7f9]">prêt pour 2026</strong>.
             </p>
-            <p class="mb-4 text-sm text-orange-200">
-              Missions, intervenants, budget, etc. <strong class="text-white">Tout au même endroit</strong>.
-            </p>
-            <a 
-              href="https://batilo.fr" 
-              target="_blank" 
-              rel="external nofollow" 
-              class="flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-center font-semibold text-orange-700 transition-all duration-300 hover:bg-orange-50 hover:shadow-lg hover:shadow-orange-500/20"
-              data-umami-event="Batilo banner click"
+            <a
+              href="https://ouvrage.art/"
+              target="_blank"
+              rel="external nofollow"
+              class="flex items-center justify-center gap-1.5 rounded-lg bg-[#67c197] px-4 py-2 text-center text-sm font-semibold text-[#121a21] transition-all duration-300 hover:bg-[#76c7a2] hover:shadow-md hover:shadow-[#498d6d]/25"
+              data-umami-event="Ouvrage banner click"
             >
-              <span>Découvrir Batilo</span>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
+              <span>Découvrir Ouvrage</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-3.5 w-3.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </a>

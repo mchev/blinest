@@ -15,6 +15,7 @@ use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
 use App\Services\RoomPresenceService;
+use App\Services\TrackTimingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -393,7 +394,7 @@ class RoomController extends Controller
                     foreach ($finishedIds as $finishedId) {
                         $finishedTrack = $finishedTracks->get($finishedId);
                         if ($finishedTrack) {
-                            $playedTracksPayload[] = $this->playlistTrackPayloadForRoom($finishedTrack);
+                            $playedTracksPayload[] = $finishedTrack->toPlaylistPayload();
                         }
                     }
                 }
@@ -410,22 +411,29 @@ class RoomController extends Controller
                 $track = Track::with('answers')->find($trackId);
 
                 if ($track) {
+                    $timing = app(TrackTimingService::class);
+                    $interTrackPause = null;
+
                     // Calculate elapsed time since track started
                     $startTime = 0;
                     if ($currentRound->current_track_started_at) {
                         $startedAt = $currentRound->current_track_started_at;
                         $elapsedSeconds = $startedAt->diffInSeconds(now());
                         $startTime = max(0, min($elapsedSeconds, $room->track_duration));
+
+                        if ($timing->isInterTrackPause($currentRound)) {
+                            $interTrackPause = $timing->interTrackPausePayload($currentRound);
+                        }
                     }
 
                     return response()->json([
-                        'round' => [
+                        'round' => array_merge([
                             'id' => $currentRound->id,
                             'current' => $currentRound->current,
                             'is_playing' => $currentRound->is_playing,
-                            'current_track_started_at' => $currentRound->current_track_started_at?->toIso8601String(),
                             'tracks' => $roundTracksOrdered,
-                        ],
+                        ], $timing->timingPayload($currentRound)),
+                        'interTrackPause' => $interTrackPause,
                         'track' => [
                             'id' => $track->id,
                             'provider' => $track->provider,
@@ -460,6 +468,16 @@ class RoomController extends Controller
             'users' => $roomState['users'],
             'roundId' => $roomState['roundId'],
             'playedTracks' => $playedTracksPayload,
+        ]);
+    }
+
+    /**
+     * Lightweight clock sync for client-side answer window alignment.
+     */
+    public function time(): JsonResponse
+    {
+        return response()->json([
+            'server_time' => now()->toIso8601String(),
         ]);
     }
 
@@ -584,26 +602,6 @@ class RoomController extends Controller
      */
     private function playlistTrackPayloadForRoom(Track $track): array
     {
-        $track->loadMissing('answers.type');
-
-        return [
-            'id' => $track->id,
-            'provider' => $track->provider,
-            'preview_url' => $track->preview_url,
-            'artwork_url' => $track->artwork_url,
-            'album_name' => null,
-            'hint' => $track->hint,
-            'upvotes' => $track->upvotes,
-            'downvotes' => $track->downvotes,
-            'answers' => $track->answers->map(function ($answer) {
-                return [
-                    'id' => $answer->id,
-                    'value' => $answer->value,
-                    'type' => [
-                        'name' => $answer->type->name,
-                    ],
-                ];
-            })->all(),
-        ];
+        return $track->toPlaylistPayload();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\Round;
 use App\Models\Track;
+use App\Services\TrackTimingService;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -48,6 +49,24 @@ class TrackEnded implements ShouldBroadcast
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        $this->round->loadMissing('room');
+        $timing = app(TrackTimingService::class);
+
+        return [
+            'round' => [
+                'id' => $this->round->id,
+                'current' => $this->round->current,
+            ],
+            'track' => $this->track?->toPlaylistPayload(),
+            ...$timing->interTrackPausePayload($this->round, now()),
+        ];
+    }
+
+    /**
      * Get the current track that just ended.
      */
     private function getCurrentTrack(): ?Track
@@ -59,7 +78,7 @@ class TrackEnded implements ShouldBroadcast
         }
 
         try {
-            return Track::with('answers')->findOrFail($this->round->tracks[$current]);
+            return Track::with(['answers.type'])->findOrFail($this->round->tracks[$current]);
         } catch (ModelNotFoundException $e) {
             Log::error('Track not found', ['track_id' => $this->round->tracks[$current]]);
 

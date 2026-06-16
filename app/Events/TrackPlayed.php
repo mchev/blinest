@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\Round;
 use App\Models\Track;
+use App\Services\TrackTimingService;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -49,14 +50,10 @@ class TrackPlayed implements ShouldBroadcast
     public function broadcastWith(): array
     {
         $roundData = $this->round->toArray();
-
-        // Include the track start timestamp
-        if ($this->round->current_track_started_at) {
-            $roundData['current_track_started_at'] = $this->round->current_track_started_at->toIso8601String();
-        }
+        $timing = app(TrackTimingService::class)->timingPayload($this->round);
 
         return [
-            'round' => $roundData,
+            'round' => array_merge($roundData, $timing),
             'room' => $this->room->toArray(),
             'track' => $this->track,
         ];
