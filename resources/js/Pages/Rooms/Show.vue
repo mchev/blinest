@@ -16,7 +16,6 @@ import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
-import { measureServerTimeOffset } from '@/composables/useTrackTiming'
 
 const props = defineProps({
   room: {
@@ -42,10 +41,6 @@ const roomState = ref({
   roundId: null,
   answersByUser: {},
 })
-
-function normalizeScores(scores) {
-  return scores && typeof scores === 'object' && !Array.isArray(scores) ? scores : {}
-}
 const roundFinished = ref(false)
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
@@ -54,7 +49,6 @@ const users_podium = ref([])
 const teams_podium = ref([])
 const initialTrack = ref(null)
 const initialStartTime = ref(0)
-const initialInterTrackPause = ref(null)
 const currentTrack = ref(null)
 /** Extraits déjà joués dans le round courant (hydratation GET /joined, pas de requête en plus) */
 const playlistPlayedTracks = ref([])
@@ -114,29 +108,22 @@ function callPresenceLeft(options = {}) {
   axios.post(url).catch(() => {})
 }
 
-async function hydrateRoomFromJoinedPayload(data) {
-  initialInterTrackPause.value = data.interTrackPause ?? null
-
+function hydrateRoomFromJoinedPayload(data) {
   if (data.round && data.track) {
+    round.value = data.round
+    initialTrack.value = data.track
+    currentTrack.value = data.track
+    initialStartTime.value = data.startTime || 0
+    playlistPlayedTracks.value = Array.isArray(data.playedTracks) ? data.playedTracks : []
     if (data.room) {
       Object.assign(room.value, data.room)
     }
-
-    await measureServerTimeOffset(room.value.id, { samples: 1, maxAgeMs: 3000 }).catch(() => {})
-
-    round.value = data.round
-    initialTrack.value = data.interTrackPause ? null : data.track
-    currentTrack.value = data.track
-    initialStartTime.value = data.interTrackPause ? 0 : (data.startTime || 0)
-    playlistPlayedTracks.value = Array.isArray(data.playedTracks) ? data.playedTracks : []
-
-    if (!data.interTrackPause && data.round.id && data.track.id) {
+    if (data.round.id && data.track.id) {
       axios.post(`/rounds/${data.round.id}/tracks/${data.track.id}/listened`).catch(() => {})
     }
   } else {
     initialTrack.value = null
     initialStartTime.value = 0
-    initialInterTrackPause.value = null
     currentTrack.value = null
     playlistPlayedTracks.value = Array.isArray(data.playedTracks) ? data.playedTracks : []
   }
@@ -144,12 +131,12 @@ async function hydrateRoomFromJoinedPayload(data) {
 
 function resyncRoomAfterReconnect() {
   if (!joined.value) return
-  axios.get(`/rooms/${room.value.id}/joined`).then(async (response) => {
-    await hydrateRoomFromJoinedPayload(response.data)
-    if (response.data.scores) roomState.value.scores = normalizeScores(response.data.scores)
+  axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
+    hydrateRoomFromJoinedPayload(response.data)
+    if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
     if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
+      if (res.data?.scores != null) roomState.value.scores = res.data.scores
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
   }).catch(() => {})
@@ -178,7 +165,7 @@ onMounted(() => {
         if (roomState.value.users[0]?.id === user.id) dispatchUserCount(roomState.value.users.length)
       })
       .listen('RoomState', (e) => {
-        if (e.scores != null) roomState.value.scores = normalizeScores(e.scores)
+        if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
         if (e.roundId != null) roomState.value.roundId = e.roundId
       })
       .listen('NewScore', (e) => {
@@ -215,10 +202,8 @@ onMounted(() => {
         if (e.room) Object.assign(room.value, e.room)
         initialTrack.value = null
         initialStartTime.value = 0
-        initialInterTrackPause.value = null
         currentTrack.value = e.track
         roomState.value.answersByUser = {}
-        measureServerTimeOffset(room.value.id, { samples: 1, maxAgeMs: 3000 }).catch(() => {})
       })
       .listen('UserEloUpdated', (e) => {
         const u = roomState.value.users.find((x) => x.id === e.user_id)
@@ -263,17 +248,19 @@ onUnmounted(() => {
 })
 
 const joining = () => {
-  axios.get(`/rooms/${room.value.id}/joined`).then(async (response) => {
-    await hydrateRoomFromJoinedPayload(response.data)
+  axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
+    hydrateRoomFromJoinedPayload(response.data)
     // Scores/roundId from server. User list = only from presence channel (.here/.joining/.leaving).
-    if (response.data.scores != null) roomState.value.scores = normalizeScores(response.data.scores)
+    if (response.data.scores && typeof response.data.scores === 'object') {
+      roomState.value.scores = response.data.scores
+    }
     if (response.data.roundId != null) {
       roomState.value.roundId = response.data.roundId
     }
     joined.value = true
     // Notify server for Redis count (home page) and to broadcast scores/roundId. User list = from Echo .here/.joining/.leaving.
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
+      if (res.data?.scores != null) roomState.value.scores = res.data.scores
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
     startPresenceHeartbeat()
@@ -338,16 +325,8 @@ const fetchRoundScores = async (roundId) => {
           </Tip>
 
           <div class="mb-8 space-y-2" v-if="user">
-            <Player
-              :room="room"
-              :channel="channel"
-              :initialTrack="currentTrack || initialTrack"
-              :initialStartTime="initialStartTime"
-              :initialTrackTiming="round"
-              :initialInterTrackPause="initialInterTrackPause"
-              @track:currentTime="currentTime = $event"
-            />
-            <UserInput :channel="channel" :currentTime="currentTime" :room="room" :initialTrack="currentTrack || initialTrack" :initialRound="round" />
+            <Player :room="room" :channel="channel" :initialTrack="initialTrack" :initialStartTime="initialStartTime" @track:currentTime="currentTime = $event" />
+            <UserInput :channel="channel" :currentTime="currentTime" :room="room" :initialTrack="initialTrack" :initialRound="round" />
           </div>
 
           <div class="grid gap-8 md:grid-cols-2">

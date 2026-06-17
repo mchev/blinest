@@ -1,13 +1,9 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Volume from '@/Components/Volume.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Icon from '@/Components/Icon.vue'
-import {
-  isAnswerWindowOpen,
-  msUntilDeadline,
-} from '@/composables/useTrackTiming'
 
 const props = defineProps({
   room: Object,
@@ -26,72 +22,8 @@ const message = ref(null)
 const answers = ref([])
 const { auth } = usePage().props
 const user = auth.user
-const answerWindowClosed = ref(false)
-let answerWindowTimer = null
-let trackEndedTimer = null
-let trackResetGeneration = 0
-
-const clearAnswerWindowTimer = () => {
-  if (answerWindowTimer) {
-    clearTimeout(answerWindowTimer)
-    answerWindowTimer = null
-  }
-}
-
-const clearTrackEndedTimer = () => {
-  if (trackEndedTimer) {
-    clearTimeout(trackEndedTimer)
-    trackEndedTimer = null
-  }
-}
-
-const resetTrackState = () => {
-  track.value = null
-  round.value = null
-  text.value = ''
-  words.value = []
-  answers.value = []
-}
-
-const scheduleAnswerWindowClose = (roundData) => {
-  clearAnswerWindowTimer()
-  answerWindowClosed.value = false
-
-  const deadline = roundData?.answer_deadline_at
-  if (!deadline) {
-    return
-  }
-
-  if (!isAnswerWindowOpen(deadline)) {
-    answerWindowClosed.value = true
-
-    return
-  }
-
-  const wait = msUntilDeadline(deadline, 300)
-  answerWindowTimer = setTimeout(() => {
-    answerWindowClosed.value = true
-  }, wait)
-}
-
-const scheduleTrackStateReset = (roundData) => {
-  clearTrackEndedTimer()
-
-  const generation = ++trackResetGeneration
-  const deadline = roundData?.answer_deadline_at
-  const wait = deadline ? msUntilDeadline(deadline, 300) : 0
-
-  trackEndedTimer = setTimeout(() => {
-    if (generation !== trackResetGeneration) {
-      return
-    }
-
-    resetTrackState()
-  }, Math.max(wait, 0))
-}
-
-// Input is disabled when there is no active track or the server answer window is closed
-const inputDisabled = computed(() => !track.value || !round.value || answerWindowClosed.value)
+// Input is disabled only if there's no active track
+const inputDisabled = computed(() => !track.value || !round.value)
 const autoFocus = ref(localStorage.getItem('autoFocus') !== 'false')
 const userHasInteracted = ref(false) // Track if user has manually interacted with input
 
@@ -127,20 +59,13 @@ const attemptAutoFocus = () => {
 // Watch for initial props changes (when joining a room in progress)
 // Use flush: 'post' to avoid blocking input during rapid typing
 watch(() => [props.initialTrack, props.initialRound], ([newTrack, newRound]) => {
-  if (newTrack && newRound) {
-    const trackChanged = !track.value || track.value.id !== newTrack.id
-    const roundChanged = !round.value || round.value.id !== newRound.id
-
-    if (trackChanged) {
-      track.value = newTrack
-      round.value = newRound
-      scheduleAnswerWindowClose(newRound)
-      userHasInteracted.value = false
-      attemptAutoFocus()
-    } else if (roundChanged) {
-      round.value = newRound
-      scheduleAnswerWindowClose(newRound)
-    }
+  if (newTrack && newRound && (!track.value || track.value.id !== newTrack.id)) {
+    track.value = newTrack
+    round.value = newRound
+    // Reset interaction flag when receiving initial track
+    userHasInteracted.value = false
+    // Attempt autofocus if enabled (non-blocking)
+    attemptAutoFocus()
   }
 }, { immediate: true, flush: 'post' })
 
@@ -163,13 +88,7 @@ const isSubmitting = ref(false)
 
 const check = () => {
   // Fast validation - return immediately if conditions not met
-  if (isSubmitting.value || inputDisabled.value || text.value.length < 1 || !track.value || !round.value) {
-    if (!isSubmitting.value && answerWindowClosed.value && track.value) {
-      showMessage({ type: 'bad', body: __('The answer window is closed for this track') })
-    }
-
-    return
-  }
+  if (isSubmitting.value || inputDisabled.value || text.value.length < 1 || !track.value || !round.value) return
 
   const currentText = text.value.trim()
   if (currentText.length < 1) return
@@ -230,13 +149,7 @@ const check = () => {
       if (isNetworkOrThrottle) {
         showMessage({ type: 'bad', body: __('Connection problem, please try again') })
       } else if (isConflict) {
-        const errorCode = error.response?.data?.error
-        if (errorCode === 'answer_window_closed') {
-          showMessage({ type: 'bad', body: __('The answer window is closed for this track') })
-          answerWindowClosed.value = true
-        } else {
-          showMessage({ type: 'bad', body: __('The round has changed, try again on the next track') })
-        }
+        showMessage({ type: 'bad', body: __('The round has changed, try again on the next track') })
         const currentTextValue = text.value.trim()
         if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
           text.value = ''
@@ -250,7 +163,6 @@ const check = () => {
           text.value = submittedText
         }
       } else if (status === 400) {
-        showMessage({ type: 'bad', body: __('The answer window is closed for this track') })
         const currentTextValue = text.value.trim()
         if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
           text.value = ''
@@ -281,7 +193,6 @@ const pastedAnswer = (event) => {
 onMounted(() => {
   // If we have initial track/round, attempt autofocus
   if (track.value && round.value) {
-    scheduleAnswerWindowClose(round.value)
     attemptAutoFocus()
   }
 
@@ -290,21 +201,20 @@ onMounted(() => {
       if (e.room) {
         Object.assign(props.room, e.room)
       }
-      trackResetGeneration += 1
       round.value = e.round
       track.value = e.track
       answers.value = []
       text.value = ''
-      answerWindowClosed.value = false
-      clearTrackEndedTimer()
-      scheduleAnswerWindowClose(e.round)
       // Reset interaction flag on new track - allow autofocus again
       userHasInteracted.value = false
       // Attempt autofocus on new track (non-blocking)
       attemptAutoFocus()
     })
     .listen('TrackEnded', () => {
-      scheduleTrackStateReset(round.value)
+      track.value = null
+      round.value = null
+      text.value = ''
+      words.value = []
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
       if (e.user === user) {
@@ -312,11 +222,6 @@ onMounted(() => {
         // The input will be disabled automatically via computed when track ends
       }
     })
-})
-
-onBeforeUnmount(() => {
-  clearAnswerWindowTimer()
-  clearTrackEndedTimer()
 })
 
 const messageClass = computed(() => ({

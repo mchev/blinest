@@ -60,9 +60,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
     Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
         ->name('rooms.joined');
 
-    Route::get('rooms/{room}/time', [RoomController::class, 'time'])
-        ->name('rooms.time');
-
     // Presence (RoomState source of truth): called after Echo.join / before Echo.leave
     Route::post('rooms/{room}/presence-joined', [RoomController::class, 'presenceJoined'])
         ->name('rooms.presence.joined')

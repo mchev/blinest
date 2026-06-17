@@ -10,7 +10,6 @@ use App\Models\Score;
 use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Services\RoundScoreService;
-use App\Services\TrackTimingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -62,34 +61,28 @@ class RoundController extends Controller
                 'currentTime' => 'required|numeric|min:0',
             ]);
 
-            $round->loadMissing('room');
-            $trackTiming = app(TrackTimingService::class);
-            $trackDuration = $trackTiming->trackDuration($round);
-            $currentTime = (float) $request->input('currentTime');
-
-            if ($currentTime < 0 || $currentTime > ($trackDuration + 60)) {
-                return response()->json([
-                    'error' => 'invalid_time',
-                ], 400);
-            }
-
-            if ($round->current_track_started_at !== null && ! $trackTiming->isAnswerWindowOpen($round)) {
-                return response()->json([
-                    'error' => 'answer_window_closed',
-                ], 409);
-            }
-
             $user = $request->user();
             $goodAnswers = [];
             $answers = [];
             $almostAnswers = false;
             $duplicateAnswers = []; // Track duplicate answers to inform user
+            $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
+                return $round->room->track_duration;
+            });
 
-            $elapsedSeconds = $trackTiming->elapsedSeconds($round);
-            $answerTime = $elapsedSeconds ?? $currentTime;
-            $speedBonus = $round->current_track_started_at !== null
-                ? $trackTiming->hasSpeedBonus($round)
-                : ($currentTime < ($trackDuration * 0.18));
+            // Security: Validate currentTime is within reasonable bounds
+            // Allow some tolerance for network/processing delays (max 5 seconds over track duration)
+            $currentTime = (float) $request->input('currentTime');
+            $maxAllowedTime = $trackDuration + 5;
+
+            if ($currentTime < 0 || $currentTime > $maxAllowedTime) {
+                // Invalid time, reject the request
+                return response()->json([
+                    'error' => 'Invalid time',
+                ], 400);
+            }
+
+            $speedBonus = ($currentTime < ($trackDuration * 0.18));
 
             // Updates the words array
             $sanitized = sanitizeString($request->input('text'));
@@ -197,7 +190,7 @@ class RoundController extends Controller
                         $round->id,
                         $user->id,
                         $track->id,
-                        $answerTime,
+                        $request->input('currentTime'),
                         null, // position sera calculée à la fin du round
                         $score,
                         $answer->id // answer_id pour recoupements
@@ -250,7 +243,7 @@ class RoundController extends Controller
                         'track_id' => $track->id,
                         'answers' => $answers,
                         'total' => $totalScore,
-                        'time' => $answerTime,
+                        'time' => $request->input('currentTime'),
                     ]));
                 }
 
@@ -260,7 +253,7 @@ class RoundController extends Controller
                         'name' => $user->name,
                         'id' => $user->id,
                         'photo' => $user->photo,
-                        'time' => $answerTime,
+                        'time' => $request->input('currentTime'),
                     ]));
                 }
             } elseif (! empty($duplicateAnswers)) {
