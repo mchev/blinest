@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        @production
+            {{-- Ezoic: privacy scripts must load before the header script --}}
+            <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+            <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+            <script async src="https://www.ezojs.com/ezoic/sa.min.js"></script>
+            <script>
+                window.ezstandalone = window.ezstandalone || {};
+                ezstandalone.cmd = ezstandalone.cmd || [];
+            </script>
+            <script src="https://ezoicanalytics.com/analytics.js"></script>
+        @endproduction
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">        
         <link rel="canonical" href="{{ url()->current() }}" />
