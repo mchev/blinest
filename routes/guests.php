@@ -20,16 +20,6 @@ Route::get('/user/banned', [PageController::class, 'bannedUser']);
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
-Route::get('/ads.txt', function () {
-    $lines = [
-        'google.com, pub-6495635642797272, DIRECT, f08c47fec0942fa0',
-    ];
-
-    return response(implode("\n", $lines)."\n", 200, [
-        'Content-Type' => 'text/plain; charset=UTF-8',
-    ]);
-});
-
 // FAQ
 Route::get('/faq', [FAQController::class, 'index'])
     ->name('faq');
