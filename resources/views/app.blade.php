@@ -60,7 +60,7 @@
         <!-- Prevent address bar from showing on mobile -->
         <meta name="format-detection" content="telephone=no">
 
-        @production
+        {{-- @production
             <!-- Google tag (gtag.js) -->
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YLB1LND9B"></script>
             <script>
@@ -72,7 +72,7 @@
             </script>
 
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
-        @endproduction
+        @endproduction --}}
         
         <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.all.js"></script>
         
