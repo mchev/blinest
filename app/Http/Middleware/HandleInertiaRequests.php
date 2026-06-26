@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                         'id' => $user->id,
                         'name' => $user->name,
                         'photo' => $user->photo,
+                        'is_guest' => $user->isGuest(),
                         'admin' => $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,

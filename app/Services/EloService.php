@@ -221,9 +221,11 @@ class EloService
             $tracksPlayedPercentage = $totalTracksInRound > 0
                 ? $tracksPlayed / $totalTracksInRound
                 : 0;
+            $user = $users->get($userId);
+            $isGuest = $user && $user->isGuest();
             $hasPlayedEnoughTracks = $tracksPlayedPercentage >= self::MIN_TRACKS_PLAYED_PERCENTAGE;
 
-            if ($hasPlayedEnoughTracks) {
+            if ($hasPlayedEnoughTracks && ! $isGuest) {
                 $validPlayersForElo->push($podiumEntry);
             }
         }

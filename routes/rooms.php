@@ -6,7 +6,20 @@ use App\Http\Controllers\RoomMessageController;
 use App\Http\Controllers\RoomModeratorController;
 use App\Http\Controllers\RoomPlaylistController;
 
-Route::middleware(['auth', 'logout.banned'])->group(function () {
+// Join & presence — accessible aux guests (authentifiés)
+Route::middleware(['auth'])->group(function () {
+    Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
+        ->name('rooms.joined');
+
+    Route::post('rooms/{room}/presence-joined', [RoomController::class, 'presenceJoined'])
+        ->name('rooms.presence.joined')
+        ->middleware('throttle:10,1');
+    Route::post('rooms/{room}/presence-left', [RoomController::class, 'presenceLeft'])
+        ->name('rooms.presence.left')
+        ->middleware('throttle:10,1');
+});
+
+Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
 
     // Bookmarks
     Route::post('rooms/{room}/bookmark', [RoomBookmarkController::class, 'store'])
@@ -55,18 +68,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
 
     Route::post('rooms/{room}/suggestion', [RoomController::class, 'sendSuggestion'])
         ->name('rooms.suggestions');
-
-    // Join
-    Route::get('rooms/{room}/joined', [RoomController::class, 'joined'])
-        ->name('rooms.joined');
-
-    // Presence (RoomState source of truth): called after Echo.join / before Echo.leave
-    Route::post('rooms/{room}/presence-joined', [RoomController::class, 'presenceJoined'])
-        ->name('rooms.presence.joined')
-        ->middleware('throttle:10,1');
-    Route::post('rooms/{room}/presence-left', [RoomController::class, 'presenceLeft'])
-        ->name('rooms.presence.left')
-        ->middleware('throttle:10,1');
 
     // Changing route order because of room/slug
     Route::get('create/room', [RoomController::class, 'create'])

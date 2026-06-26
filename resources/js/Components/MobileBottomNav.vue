@@ -22,9 +22,9 @@ const user = usePage().props.auth?.user
         </div>
       </Link>
 
-      <!-- Rankings (si connecté) -->
+      <!-- Rankings (si connecté non-guest) -->
       <Link 
-        v-if="user"
+        v-if="user && !user.is_guest"
         :href="route('rankings.index')" 
         :title="__('Rankings')"
         class="flex items-center justify-center min-w-0 flex-1 px-2 py-2 rounded-lg transition-colors duration-200 hover:bg-neutral-800/30"
@@ -35,7 +35,7 @@ const user = usePage().props.auth?.user
       </Link>
 
       <!-- LevelDisplay (milieu - le plus important) -->
-      <div v-if="user" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
+      <div v-if="user && !user.is_guest" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
         <LevelDisplay
           :level="user.level || 1"
           :current-xp="user.current_xp || 0"
@@ -43,18 +43,18 @@ const user = usePage().props.auth?.user
         />
       </div>
 
-      <!-- Notifications (si connecté) -->
-      <div v-if="user" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
+      <!-- Notifications (si connecté non-guest) -->
+      <div v-if="user && !user.is_guest" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
         <Notifications />
       </div>
 
-      <!-- User (si connecté) -->
-      <div v-if="user" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
+      <!-- User (si connecté non-guest) -->
+      <div v-if="user && !user.is_guest" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
         <UserDropdown />
       </div>
 
-      <!-- Login/Register si non connecté -->
-      <div v-if="!user" class="flex items-center justify-center gap-2 flex-1 px-2">
+      <!-- Login/Register si non connecté OU guest -->
+      <div v-if="!user || user.is_guest" class="flex items-center justify-center gap-2 flex-1 px-2">
         <Link 
           :href="route('login')" 
           :title="__('Login')"

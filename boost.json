@@ -1,11 +1,12 @@
 {
     "agents": [
-        "cursor"
+        "cursor",
+        "opencode"
     ],
     "cloud": false,
     "guidelines": true,
-    "herd_mcp": true,
     "mcp": true,
+    "nightwatch": false,
     "sail": false,
     "skills": [
         "laravel-best-practices",

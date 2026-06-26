@@ -7,6 +7,7 @@ use App\Http\Controllers\Docs\GlossaryController;
 use App\Http\Controllers\Docs\HowToController;
 use App\Http\Controllers\Docs\OverviewController;
 use App\Http\Controllers\FAQController;
+use App\Http\Controllers\GuestJoinController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PageController;
@@ -78,6 +79,11 @@ Route::get('language/{language}', function ($language) {
 
     return redirect()->back();
 })->name('language');
+
+// Guest join (no auth, no banned check)
+Route::post('rooms/{room:slug}/guest-join', GuestJoinController::class)
+    ->name('rooms.guest-join')
+    ->middleware('throttle:5,1');
 
 Route::middleware(['auth.banned', 'ip.banned'])->group(function () {
 

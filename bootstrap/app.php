@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsNotGuest;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\UserIsAdministrator;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.administrator' => UserIsAdministrator::class,
             'auth.moderator' => UserIsPublicModerator::class,
+            'not.guest' => EnsureUserIsNotGuest::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

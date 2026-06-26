@@ -31,6 +31,10 @@ class UpdateUserLevel implements ShouldQueue
      */
     public function handle(): void
     {
+        if ($this->user->isGuest()) {
+            return;
+        }
+
         $type = $this->type ?? 'score';
         $calculator = new LevelCalculator($this->user, $type);
         $calculator->update();

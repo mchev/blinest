@@ -8,7 +8,7 @@ use App\Http\Controllers\Minigames\QuizController;
 use App\Http\Controllers\Minigames\WhoSangController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'logout.banned'])
+Route::middleware(['auth', 'logout.banned', 'not.guest'])
     ->prefix('minigames')
     ->name('minigames.')
     ->group(function () {

@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'not.guest'])->group(function () {
 
     // Me
     Route::get('me', [UserController::class, 'show'])
@@ -71,9 +71,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.destroy');
 });
 
-Route::middleware(['auth', 'logout.banned'])->group(function () {
-
-    // Check user answer
+// Game routes — accessible aux guests (authentifiés)
+Route::middleware(['auth'])->group(function () {
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
         ->name('rounds.track.check')
         ->middleware('throttle:60,1');
@@ -81,6 +80,9 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rounds.tracks.listened');
     Route::get('rounds/{round}/scores', [RoundController::class, 'scores'])
         ->name('rounds.scores');
+});
+
+Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
 
     // Public moderation group
     Route::middleware('auth.moderator')->group(function () {
@@ -122,9 +124,6 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('rankings.minigames');
     Route::get('rankings/users/{user}/level-metrics', [RankingController::class, 'userLevelMetrics'])
         ->name('rankings.users.level-metrics');
-
-    Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
-        ->name('rooms.scores.index');
 
     // Controls
     Route::post('rounds/{round}/stop', [RoundController::class, 'stop'])
@@ -224,6 +223,10 @@ Route::middleware(['auth', 'logout.banned'])->group(function () {
         ->name('tracks.upvote');
 
 }); // End Auth/Banned middleware
+
+// Room scores — accessible to guests too
+Route::get('rooms/{room}/scores', [RankingController::class, 'roomScores'])
+    ->name('rooms.scores.index');
 
 // Music providers
 Route::get('providers/deezer/search/track', [DeezerService::class, 'searchTrack'])

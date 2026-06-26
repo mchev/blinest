@@ -16,6 +16,9 @@ class ProfileController extends Controller
 {
     public function show(Request $request, User $user): InertiaResponse
     {
+        if ($user->isGuest()) {
+            abort(404);
+        }
         $user->loadMissing(['userLevel', 'team']);
 
         $scoresPage = $request->query('scores', 1);

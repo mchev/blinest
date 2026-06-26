@@ -1,13 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
-import { usePage, Link } from '@inertiajs/vue3'
+import { usePage, Link, router } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import Tip from '@/Components/Tip.vue'
 import Modal from '@/Components/Modal.vue'
-import LoginForm from '@/Pages/Auth/LoginForm.vue'
 
 import RoomActions from './partials/RoomActions.vue'
 import Player from './partials/Player.vue'
@@ -285,7 +284,42 @@ const fetchRoundScores = async (roundId) => {
 <template>
   <RoomLayout>
     <Modal v-if="!user" :show="true" :maxWidth="'3xl'">
-      <LoginForm :isFromModal="true" />
+      <div class="p-6 text-center">
+        <h2 class="text-xl font-bold text-neutral-100 mb-2">{{ room.name }}</h2>
+        <p class="text-neutral-400 mb-8">{{ __('Join the game and test your music knowledge!') }}</p>
+
+        <div class="space-y-4">
+          <button
+            @click="router.post(route('rooms.guest-join', room.id))"
+            class="w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500 transition-colors"
+          >
+            {{ __('Play as guest') }}
+          </button>
+
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-neutral-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="bg-[#0F172A] px-3 text-neutral-400">{{ __('or') }}</span>
+            </div>
+          </div>
+
+          <Link
+            :href="route('login')"
+            class="block w-full rounded-lg bg-red-500 px-6 py-3 font-semibold text-white hover:bg-red-400 transition-colors text-center"
+          >
+            {{ __('Login with my account') }}
+          </Link>
+
+          <Link
+            :href="route('register')"
+            class="block w-full rounded-lg border border-neutral-600 px-6 py-3 font-semibold text-neutral-200 hover:bg-neutral-700 transition-colors text-center"
+          >
+            {{ __('Create an account') }}
+          </Link>
+        </div>
+      </div>
     </Modal>
 
     <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">

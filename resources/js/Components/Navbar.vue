@@ -136,18 +136,18 @@ const user = usePage().props.auth?.user
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <Link v-if="user" :href="route('rankings.index')" :title="__('Rankings')" class="group flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800/50 border border-neutral-700/50 text-yellow-500 hover:text-yellow-400 hover:bg-neutral-700/50 hover:border-yellow-500/50 transition-all duration-200 hover:scale-110">
+        <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="group flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800/50 border border-neutral-700/50 text-yellow-500 hover:text-yellow-400 hover:bg-neutral-700/50 hover:border-yellow-500/50 transition-all duration-200 hover:scale-110">
           <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" />
         </Link>
-        <Notifications v-if="user" />
+        <Notifications v-if="user && !user.is_guest" />
         <LevelDisplay
-          v-if="user"
+          v-if="user && !user.is_guest"
           :level="user.level || 1"
           :current-xp="user.current_xp || 0"
           :xp-for-next-level="user.xp_for_next_level || 100"
         />
-        <UserDropdown v-if="user" />
-        <div v-if="!user" class="flex gap-4">
+        <UserDropdown v-if="user && !user.is_guest" />
+        <div v-if="!user || user.is_guest" class="flex gap-4">
           <Link :href="route('login')" :title="__('Login')" class="rounded-lg px-3 py-1.5 font-medium text-white hover:bg-slate-700 transition-colors duration-200">
             {{ __('Login') }}
           </Link>

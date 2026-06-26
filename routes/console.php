@@ -28,3 +28,6 @@ Schedule::job(new CleanRooms)->dailyAt('07:00')->emailOutputOnFailure(config('ap
 
 // // Update user levels daily to ensure seniority and other metrics are up to date
 // Schedule::command('users:calculate-levels')->dailyAt('08:00')->emailOutputOnFailure(config('app.admin_email'));
+
+// Clean guest users older than 24 hours
+Schedule::command('guests:clean')->dailyAt('03:00')->emailOutputOnFailure(config('app.admin_email'));

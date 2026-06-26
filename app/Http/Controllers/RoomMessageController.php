@@ -14,6 +14,10 @@ class RoomMessageController extends Controller
 {
     public function store(Room $room)
     {
+        if (Auth::user()->isGuest()) {
+            abort(403);
+        }
+
         if (Auth::user()->isNotBanned()) {
 
             // Validation
@@ -43,6 +47,10 @@ class RoomMessageController extends Controller
 
     public function report(Room $room, Message $message)
     {
+        if (Auth::user()->isGuest()) {
+            abort(403);
+        }
+
         Auth::user()->downVote($message);
         broadcast(new MessageReported($message));
 

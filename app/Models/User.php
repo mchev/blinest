@@ -38,6 +38,8 @@ class User extends Authenticatable
         'email',
         'password',
         'ip',
+        'is_guest',
+        'guest_token',
     ];
 
     /**
@@ -60,6 +62,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_guest' => 'boolean',
         ];
     }
 
@@ -259,6 +262,16 @@ class User extends Authenticatable
     public function isAdministrator()
     {
         return $this->is_administrator;
+    }
+
+    public function isGuest(): bool
+    {
+        return (bool) $this->is_guest;
+    }
+
+    public function scopeRealUsers($query)
+    {
+        return $query->where('is_guest', false);
     }
 
     public function scopeOrderByName($query)

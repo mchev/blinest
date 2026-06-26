@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import Message from './Message.vue'
 import AlertModeratorsModal from './AlertModeratorsModal.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -146,7 +146,15 @@ const focusInput = () => {
     <div ref="messagesContainer" class="flex flex-1 flex-col-reverse overflow-y-auto gap-4 px-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
-    <div class="flex w-full p-2 relative">
+    <div v-if="user?.is_guest" class="flex w-full p-4 text-center">
+      <div class="w-full rounded-lg bg-neutral-800/50 px-4 py-6 text-sm text-neutral-400">
+        <Link :href="route('register')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Register') }}</Link>
+        {{ __(' or ') }}
+        <Link :href="route('login')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Login') }}</Link>
+        {{ __('to chat with other players') }}
+      </div>
+    </div>
+    <div v-else class="flex w-full p-2 relative">
       <form 
         @submit.prevent="sendMessage" 
         class="flex w-full text-sm relative"
