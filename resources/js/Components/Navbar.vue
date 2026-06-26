@@ -148,10 +148,10 @@ const user = usePage().props.auth?.user
         />
         <UserDropdown v-if="user && !user.is_guest" />
         <div v-if="!user || user.is_guest" class="flex gap-4">
-          <Link :href="route('login')" :title="__('Login')" class="rounded-lg px-3 py-1.5 font-medium text-white hover:bg-slate-700 transition-colors duration-200">
+          <Link :href="user?.is_guest ? route('guest.to-login') : route('login')" :title="__('Login')" class="rounded-lg px-3 py-1.5 font-medium text-white hover:bg-slate-700 transition-colors duration-200">
             {{ __('Login') }}
           </Link>
-          <Link :href="route('register')" class="hidden lg:block rounded-lg bg-red-500 px-3 py-1.5 font-medium text-white hover:bg-red-600 transition-colors duration-200 shadow-sm hover:shadow-md" :title="__('Register')">
+          <Link :href="user?.is_guest ? route('guest.to-register') : route('register')" class="hidden lg:block rounded-lg bg-red-500 px-3 py-1.5 font-medium text-white hover:bg-red-600 transition-colors duration-200 shadow-sm hover:shadow-md" :title="__('Register')">
             {{ __('Register') }}
           </Link>
         </div>

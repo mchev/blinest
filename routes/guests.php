@@ -85,6 +85,25 @@ Route::post('rooms/{room:slug}/guest-join', GuestJoinController::class)
     ->name('rooms.guest-join')
     ->middleware('throttle:5,1');
 
+// Guest conversion to login/register — logout the guest then redirect
+Route::middleware('auth')->group(function () {
+    Route::get('guest/to-login', function () {
+        if (Auth::user()?->isGuest()) {
+            Auth::logout();
+        }
+
+        return redirect()->route('login');
+    })->name('guest.to-login');
+
+    Route::get('guest/to-register', function () {
+        if (Auth::user()?->isGuest()) {
+            Auth::logout();
+        }
+
+        return redirect()->route('register');
+    })->name('guest.to-register');
+});
+
 Route::middleware(['auth.banned', 'ip.banned'])->group(function () {
 
     // Home

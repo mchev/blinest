@@ -148,9 +148,9 @@ const focusInput = () => {
     </div>
     <div v-if="user?.is_guest" class="flex w-full p-4 text-center">
       <div class="w-full rounded-lg bg-neutral-800/50 px-4 py-6 text-sm text-neutral-400">
-        <Link :href="route('register')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Register') }}</Link>
+        <Link :href="route('guest.to-register')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Register') }}</Link>
         {{ __(' or ') }}
-        <Link :href="route('login')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Login') }}</Link>
+        <Link :href="route('guest.to-login')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Login') }}</Link>
         {{ __('to chat with other players') }}
       </div>
     </div>

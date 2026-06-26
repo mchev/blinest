@@ -56,14 +56,14 @@ const user = usePage().props.auth?.user
       <!-- Login/Register si non connecté OU guest -->
       <div v-if="!user || user.is_guest" class="flex items-center justify-center gap-2 flex-1 px-2">
         <Link 
-          :href="route('login')" 
+          :href="user?.is_guest ? route('guest.to-login') : route('login')" 
           :title="__('Login')"
           class="rounded-lg px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 transition-colors duration-200"
         >
           {{ __('Login') }}
         </Link>
         <Link 
-          :href="route('register')" 
+          :href="user?.is_guest ? route('guest.to-register') : route('register')" 
           :title="__('Register')"
           class="rounded-lg bg-red-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600 transition-colors duration-200"
         >
