@@ -69,7 +69,7 @@ class GuestPlayerTest extends TestCase
     {
         $room = $this->createRoom();
 
-        $response = $this->post('/rooms/'.$room->slug.'/guest-join');
+        $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response->assertRedirect();
         $this->assertEquals(1, User::where('is_guest', true)->count());
@@ -79,7 +79,7 @@ class GuestPlayerTest extends TestCase
     {
         $room = $this->createRoom();
 
-        $response = $this->post('/rooms/'.$room->slug.'/guest-join');
+        $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response->assertRedirect();
 
@@ -91,7 +91,7 @@ class GuestPlayerTest extends TestCase
     {
         $room = $this->createRoom();
 
-        $response = $this->post('/rooms/'.$room->slug.'/guest-join');
+        $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response->assertRedirect();
         $cookies = $response->headers->getCookies();
@@ -104,8 +104,8 @@ class GuestPlayerTest extends TestCase
     {
         $room = $this->createRoom();
 
-        $this->post('/rooms/'.$room->slug.'/guest-join');
-        $this->post('/rooms/'.$room->slug.'/guest-join');
+        $this->get('/rooms/'.$room->slug.'/guest-join');
+        $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $this->assertEquals(1, User::where('is_guest', true)->count());
     }
@@ -113,7 +113,7 @@ class GuestPlayerTest extends TestCase
     public function test_guest_cannot_access_me_page(): void
     {
         $room = $this->createRoom();
-        $this->post('/rooms/'.$room->slug.'/guest-join');
+        $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response = $this->get(route('me'));
 
@@ -123,7 +123,7 @@ class GuestPlayerTest extends TestCase
     public function test_guest_cannot_send_chat_message(): void
     {
         $room = $this->createRoom();
-        $this->post('/rooms/'.$room->slug.'/guest-join');
+        $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response = $this->post(route('rooms.message.store', $room), [
             'body' => 'Hello from guest',

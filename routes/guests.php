@@ -81,7 +81,8 @@ Route::get('language/{language}', function ($language) {
 })->name('language');
 
 // Guest join (no auth, no banned check)
-Route::post('rooms/{room:slug}/guest-join', GuestJoinController::class)
+// GET volontairement : navigation classique + redirect naturelle, pas de complexité Inertia/axios
+Route::get('rooms/{room:slug}/guest-join', GuestJoinController::class)
     ->name('rooms.guest-join')
     ->middleware('throttle:5,1');
 

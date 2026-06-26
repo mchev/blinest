@@ -289,12 +289,12 @@ const fetchRoundScores = async (roundId) => {
         <p class="text-neutral-400 mb-8">{{ __('Join the game and test your music knowledge!') }}</p>
 
         <div class="space-y-4">
-          <button
-            @click="router.post(route('rooms.guest-join', room.id))"
-            class="w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500 transition-colors"
+          <a
+            :href="route('rooms.guest-join', room.slug)"
+            class="block w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500 transition-colors text-center"
           >
             {{ __('Play as guest') }}
-          </button>
+          </a>
 
           <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
