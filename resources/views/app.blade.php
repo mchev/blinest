@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @production
-            {{-- Ezoic: privacy scripts must load before the header script --}}
+        {{-- @production
             <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
             <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
             <script async src="https://www.ezojs.com/ezoic/sa.min.js"></script>
@@ -11,7 +10,7 @@
                 ezstandalone.cmd = ezstandalone.cmd || [];
             </script>
             <script src="https://ezoicanalytics.com/analytics.js"></script>
-        @endproduction
+        @endproduction --}}
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">        
@@ -60,7 +59,7 @@
         <!-- Prevent address bar from showing on mobile -->
         <meta name="format-detection" content="telephone=no">
 
-        {{-- @production
+        @production
             <!-- Google tag (gtag.js) -->
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-4YLB1LND9B"></script>
             <script>
@@ -72,7 +71,7 @@
             </script>
 
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6495635642797272" crossorigin="anonymous"></script>
-        @endproduction --}}
+        @endproduction
         
         <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.all.js"></script>
         
