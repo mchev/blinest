@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
 import TopPlayers from './partials/TopPlayers.vue'
@@ -19,6 +20,10 @@ defineProps({
 })
 
 const user = usePage().props.auth.user;
+
+const ezoicSidebarPlacementId = import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMENT_ID
+  ? Number(import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMENT_ID)
+  : null;
 
 </script>
 <template>
@@ -75,6 +80,10 @@ const user = usePage().props.auth.user;
 
       <!-- Sidebar -->
       <aside class="mt-16 w-full lg:mt-0 lg:w-1/4">
+        <div v-if="ezoicSidebarPlacementId" class="mb-10">
+          <EzoicAd :placement-id="ezoicSidebarPlacementId" />
+        </div>
+
         <!-- Soutenez Blinest -->
         <div id="featured" class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
           <div class="p-6">
