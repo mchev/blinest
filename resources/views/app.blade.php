@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        {{-- @production
+        @production
             <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
             <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
             <script async src="https://www.ezojs.com/ezoic/sa.min.js"></script>
@@ -10,7 +10,7 @@
                 ezstandalone.cmd = ezstandalone.cmd || [];
             </script>
             <script src="https://ezoicanalytics.com/analytics.js"></script>
-        @endproduction --}}
+        @endproduction
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">        

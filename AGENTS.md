@@ -232,4 +232,25 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 Vue components must have a single root element.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
+=== player-gameplay rules ===
+
+# Player & Gameplay Changes
+
+**Before any edit:** activate the `player-gameplay` skill, then read and follow `.agents/skills/player-gameplay/SKILL.md`.
+
+## Hard rules
+
+- Server jobs (`ProcessTrackPlayed` / `ProcessTrackEnded`) own the track chain — never chain tracks from the client alone.
+- `Show.vue` owns `Echo.leave`; other components only `stopListening`.
+- Do not add high-frequency HTTP (polling `/time`, repeated `/joined`) — scale is ~400k users.
+- Changing `TrackPlayed` / `TrackEnded` payload requires updating every Echo listener (Show, Player, UserInput, Answers).
+- Touching jobs requires a PHPUnit test with `Queue::fake()`.
+- Manual QA: track 2+, mid-join, reconnect — first-track-only testing is not enough.
+
+## Prefer
+
+- Small, focused changes (UI vs timing vs scoring separated).
+- Client-only visual improvements without new server endpoints.
+- Explicit stale-event guards on `TrackEnded`.
+
 </laravel-boost-guidelines>
