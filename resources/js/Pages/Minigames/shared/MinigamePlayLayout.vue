@@ -70,8 +70,6 @@ const emit = defineEmits(['retry'])
         </div>
       </header>
 
-      <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mb-6" />
-
       <div v-if="showSummary" class="space-y-6">
         <div class="overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-neutral-900/90">
           <div class="bg-gradient-to-br from-amber-600/30 via-neutral-800 to-teal-600/20 px-6 py-8 text-center">

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
+import { computed, ref, onMounted, onUnmounted, onBeforeUnmount, watch } from 'vue'
 import { usePage, Link, router } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Card from '@/Components/Card.vue'
@@ -16,7 +16,7 @@ import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
+import { EZOIC, clearEzoicAds, scheduleEzoicSync } from '@/ezoic'
 
 const props = defineProps({
   room: {
@@ -59,6 +59,7 @@ let roundsChannel = null
 let presenceHeartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
+const roomAdsEnabled = computed(() => joined.value && !round.value?.is_playing && !room.value.is_playing)
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
 function onBeforeUnloadPresenceLeft() {
   callPresenceLeft({ useBeacon: true })
@@ -282,6 +283,14 @@ const fetchRoundScores = async (roundId) => {
   }
 }
 
+watch(roomAdsEnabled, (enabled) => {
+  if (enabled) {
+    scheduleEzoicSync(window.location.pathname)
+  } else {
+    clearEzoicAds()
+  }
+})
+
 </script>
 <template>
   <RoomLayout>
@@ -348,8 +357,6 @@ const fetchRoundScores = async (roundId) => {
             </div>
           </article>
 
-          <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mb-6 max-w-3xl" />
-
           <Tip class="mb-6 bg-orange-400/10 border border-orange-400/20 text-orange-200" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
             <div class="flex items-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -379,7 +386,7 @@ const fetchRoundScores = async (roundId) => {
             <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
 
-          <EzoicAd :placement-id="EZOIC.midContent" wrapper-class="my-6" />
+          <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.midContent" wrapper-class="my-6" />
 
           <Card class="mt-8">
             <template #header v-if="room.description">
@@ -427,7 +434,7 @@ const fetchRoundScores = async (roundId) => {
             </div>
           </Card>
 
-          <EzoicAd :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
+          <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
 
           <Card class="mt-8 hidden md:block">
             <div class="flex flex-wrap items-center gap-3">
@@ -447,7 +454,7 @@ const fetchRoundScores = async (roundId) => {
           </Card>
         </div>
 
-        <aside class="hidden xl:flex w-52 shrink-0 flex-col gap-4 border-l border-neutral-800/80 bg-neutral-900/20 p-4 pt-8">
+        <aside v-if="roomAdsEnabled" class="hidden xl:flex w-52 shrink-0 flex-col gap-4 border-l border-neutral-800/80 bg-neutral-900/20 p-4 pt-8">
           <EzoicAd :placement-id="EZOIC.sidebarFloating1" />
           <EzoicAd :placement-id="EZOIC.sidebarFloating2" compact />
         </aside>

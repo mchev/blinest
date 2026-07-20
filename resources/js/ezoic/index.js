@@ -24,13 +24,17 @@ function runEzoicCommand(callback) {
     window.ezstandalone.cmd.push(callback);
 }
 
+export function clearEzoicAds() {
+    runEzoicCommand(function () {
+        if (typeof window.ezstandalone.destroyAll === 'function') {
+            window.ezstandalone.destroyAll();
+        }
+    });
+}
+
 export function syncEzoicAds(path) {
     if (! shouldServeEzoicAds(path)) {
-        runEzoicCommand(function () {
-            if (typeof window.ezstandalone.destroyAll === 'function') {
-                window.ezstandalone.destroyAll();
-            }
-        });
+        clearEzoicAds();
 
         return;
     }

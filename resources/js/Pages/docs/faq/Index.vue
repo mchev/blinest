@@ -79,7 +79,6 @@ watch(
           <p class="text-lg text-neutral-400 max-w-2xl mx-auto">
             {{ __('Find answers to common questions about Blinest') }}
           </p>
-          <EzoicAd :placement-id="EZOIC.underFirstParagraph" wrapper-class="mt-6 max-w-2xl mx-auto" compact />
         </div>
 
         <div class="max-w-2xl mx-auto mb-6">

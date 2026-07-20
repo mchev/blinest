@@ -26,7 +26,6 @@ const __ = (key, replace = {}) => {
             {{ __('Rankings') }}
           </h1>
           <p class="text-lg text-neutral-400">{{ __('Compete with the best players') }}</p>
-          <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mt-6 max-w-xl mx-auto" />
         </div>
 
         <!-- Tabs Navigation -->

@@ -79,10 +79,6 @@ const user = usePage().props.auth.user;
 
       <!-- Sidebar -->
       <aside class="mt-16 w-full lg:mt-0 lg:w-1/4 space-y-6">
-        <EzoicAd :placement-id="EZOIC.sidebar" />
-        <EzoicAd :placement-id="EZOIC.sidebarMiddle1" compact />
-        <EzoicAd :placement-id="EZOIC.sidebarBottom" compact wrapper-class="hidden lg:block" />
-
         <!-- Soutenez Blinest -->
         <div id="featured" class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
           <div class="p-6">
@@ -122,6 +118,10 @@ const user = usePage().props.auth.user;
             </Link>
           </div>
         </div>
+
+        <EzoicAd :placement-id="EZOIC.sidebar" />
+        <EzoicAd :placement-id="EZOIC.sidebarMiddle1" compact />
+        <EzoicAd :placement-id="EZOIC.sidebarBottom" compact wrapper-class="hidden lg:block" />
         
         <!-- Ouvrage Promotion -->
         <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#0d1217] via-[#3e5266] to-[#3c5267] shadow-md border border-[#5d7b93]/40">
