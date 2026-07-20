@@ -36,6 +36,16 @@ function shouldEnableAnchorAd(path) {
     return anchorAdPathPatterns.some((pattern) => pattern.test(path));
 }
 
+function collectVisiblePlacementIds() {
+    return Array.from(document.querySelectorAll('[id^="ezoic-pub-ad-placeholder-"]'))
+        .map((element) => {
+            const match = element.id.match(/ezoic-pub-ad-placeholder-(\d+)/);
+
+            return match ? Number(match[1]) : null;
+        })
+        .filter((id) => id !== null);
+}
+
 function runEzoicCommand(callback) {
     if (typeof window.ezstandalone === 'undefined') {
         return;
@@ -72,7 +82,13 @@ export function syncEzoicAds(path, { force = false } = {}) {
             window.ezstandalone.setEzoicAnchorAd(! force && shouldEnableAnchorAd(path));
         }
 
-        window.ezstandalone.showAds();
+        const placementIds = collectVisiblePlacementIds();
+
+        if (placementIds.length > 0) {
+            window.ezstandalone.showAds(...placementIds);
+        } else {
+            window.ezstandalone.showAds();
+        }
     });
 }
 

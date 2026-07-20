@@ -1,6 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import Room from './Room.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC, scheduleEzoicSync } from '@/ezoic'
 
 const props = defineProps({
   id: {
@@ -10,6 +12,10 @@ const props = defineProps({
   rooms: {
     type: Array,
     default: () => [],
+  },
+  showSponsoredSlide: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -28,8 +34,22 @@ const sortedRooms = computed(() =>
 
 const hasRooms = computed(() => sortedRooms.value.length > 0)
 
+const hasSponsoredSlide = computed(() => props.showSponsoredSlide && hasRooms.value)
+
+const carouselItemCount = computed(() =>
+  sortedRooms.value.length + (hasSponsoredSlide.value ? 1 : 0)
+)
+
+const sponsoredInsertAfterIndex = computed(() => {
+  if (! hasSponsoredSlide.value) {
+    return -1
+  }
+
+  return Math.min(2, sortedRooms.value.length - 1)
+})
+
 const maxSlide = computed(() =>
-  Math.max(0, sortedRooms.value.length - itemsToShow.value)
+  Math.max(0, carouselItemCount.value - itemsToShow.value)
 )
 
 const slidesArray = computed(() =>
@@ -45,6 +65,11 @@ const slideWidthPx = computed(() => {
 
 /** Pas de scroll pour une slide (largeur + gap) */
 const scrollStepPx = computed(() => slideWidthPx.value + GAP_PX)
+
+const slideStyle = computed(() => ({
+  width: slideWidthPx.value > 0 ? `${slideWidthPx.value}px` : '100%',
+  scrollSnapAlign: itemsToShow.value === 1 ? 'start' : 'center',
+}))
 
 function updateItemsToShow() {
   if (typeof window === 'undefined') return
@@ -99,7 +124,17 @@ onMounted(() => {
     if (track) {
       track.addEventListener('scroll', handleScroll)
     }
+
+    if (hasSponsoredSlide.value) {
+      scheduleEzoicSync(window.location.pathname)
+    }
   })
+})
+
+watch(hasSponsoredSlide, (enabled) => {
+  if (enabled) {
+    nextTick(() => scheduleEzoicSync(window.location.pathname))
+  }
 })
 
 onUnmounted(() => {
@@ -122,17 +157,34 @@ onUnmounted(() => {
       role="region"
       :aria-label="__('Rooms carousel')"
     >
-      <div
-        v-for="room in sortedRooms"
-        :key="room.id"
-        class="flex-shrink-0 p-3"
-        :style="{
-          width: slideWidthPx > 0 ? `${slideWidthPx}px` : '100%',
-          scrollSnapAlign: itemsToShow === 1 ? 'start' : 'center',
-        }"
-      >
-        <Room :room="room" />
-      </div>
+      <template v-for="(room, index) in sortedRooms" :key="room.id">
+        <div class="flex-shrink-0 p-3" :style="slideStyle">
+          <Room :room="room" />
+        </div>
+
+        <div
+          v-if="showSponsoredSlide && index === sponsoredInsertAfterIndex"
+          :key="`${id}-sponsored`"
+          class="flex-shrink-0 p-3"
+          :style="slideStyle"
+          role="complementary"
+          :aria-label="__('Sponsored link')"
+        >
+          <div class="flex h-full min-h-[280px] flex-col overflow-hidden rounded-xl border border-slate-700/60 bg-gradient-to-br from-slate-800/90 to-slate-900 shadow-lg">
+            <div class="border-b border-slate-700/50 px-3 py-2">
+              <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                {{ __('Sponsored link') }}
+              </span>
+            </div>
+            <div class="flex flex-1 items-center justify-center p-3">
+              <EzoicAd
+                :placement-id="EZOIC.midContent"
+                wrapper-class="!border-0 !bg-transparent w-full min-h-[250px]"
+              />
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
     <aside class="flex w-full items-center justify-between px-2 py-2">
       <div class="hidden items-center gap-3 lg:flex">

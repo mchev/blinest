@@ -1,8 +1,6 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
 import TopPlayers from './partials/TopPlayers.vue'
@@ -49,11 +47,15 @@ const user = usePage().props.auth.user;
     <div v-else class="flex flex-col lg:flex-row lg:gap-12">
       <!-- Main Content -->
       <section v-if="categories.length" id="categories" class="w-full lg:w-3/4 space-y-8">
-        <div v-for="category in categories" :key="category.id" class="relative">
+        <div v-for="(category, categoryIndex) in categories" :key="category.id" class="relative">
           <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold text-white">{{ __(category.name) }}</h2>
           </div>
-          <Rooms :rooms="category.rooms" :id="category.id" />
+          <Rooms
+            :rooms="category.rooms"
+            :id="category.id"
+            :show-sponsored-slide="categoryIndex === 0"
+          />
         </div>
 
         <div v-if="minigames && minigames.length" class="relative">
@@ -117,8 +119,6 @@ const user = usePage().props.auth.user;
           </div>
         </div>
 
-        <EzoicAd :placement-id="EZOIC.sidebar" />
-        
         <!-- Ouvrage Promotion -->
         <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#0d1217] via-[#3e5266] to-[#3c5267] shadow-md border border-[#5d7b93]/40">
           <div class="p-4">
