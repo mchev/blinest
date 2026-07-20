@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 const page = usePage()
 const __ = (key, replace = {}) => {
@@ -24,6 +26,7 @@ const __ = (key, replace = {}) => {
             {{ __('Rankings') }}
           </h1>
           <p class="text-lg text-neutral-400">{{ __('Compete with the best players') }}</p>
+          <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mt-6 max-w-xl mx-auto" />
         </div>
 
         <!-- Tabs Navigation -->

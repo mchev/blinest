@@ -5,14 +5,14 @@ import { createInertiaApp, router } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import Translation from './translation';
-import { syncEzoicAds } from './ezoic';
+import { scheduleEzoicSync } from './ezoic';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Blinest Music Quiz';
 
 router.on('finish', (event) => {
     const path = new URL(event.detail.visit.url, window.location.origin).pathname;
 
-    syncEzoicAds(path);
+    scheduleEzoicSync(path);
 });
 
 createInertiaApp({
@@ -28,7 +28,7 @@ createInertiaApp({
             .mixin(Translation)
             .mount(el);
 
-        syncEzoicAds(window.location.pathname);
+        scheduleEzoicSync(window.location.pathname);
 
         return app;
     },

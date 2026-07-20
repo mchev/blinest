@@ -1,42 +1,49 @@
 const excludedPathPatterns = [
-    /^\/rooms(?:\/|$)/,
     /^\/login$/,
     /^\/register$/,
     /^\/auth\//,
     /^\/callback\//,
     /^\/guest\//,
-    /^\/minigames(?:\/|$)/,
     /^\/admin(?:\/|$)/,
     /^\/moderation(?:\/|$)/,
     /^\/user\/banned$/,
     /^\/create\/room$/,
     /^\/playlists\/[^/]+\/edit$/,
+    /^\/rooms\/[^/]+\/edit$/,
 ];
 
 export function shouldServeEzoicAds(path) {
     return ! excludedPathPatterns.some((pattern) => pattern.test(path));
 }
 
-export function syncEzoicAds(path) {
+function runEzoicCommand(callback) {
     if (typeof window.ezstandalone === 'undefined') {
         return;
     }
 
-    window.ezstandalone.cmd.push(function () {
-        if (! shouldServeEzoicAds(path)) {
-            if (typeof window.ezstandalone.setEzoicAnchorAd === 'function') {
-                window.ezstandalone.setEzoicAnchorAd(false);
-            }
+    window.ezstandalone.cmd.push(callback);
+}
 
+export function syncEzoicAds(path) {
+    if (! shouldServeEzoicAds(path)) {
+        runEzoicCommand(function () {
             if (typeof window.ezstandalone.destroyAll === 'function') {
                 window.ezstandalone.destroyAll();
             }
+        });
 
-            return;
-        }
+        return;
+    }
 
-        if (typeof window.ezstandalone.setEzoicAnchorAd === 'function') {
-            window.ezstandalone.setEzoicAnchorAd(false);
-        }
+    runEzoicCommand(function () {
+        window.ezstandalone.showAds();
     });
 }
+
+export function scheduleEzoicSync(path) {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => syncEzoicAds(path));
+    });
+}
+
+export { EZOIC } from './placements';

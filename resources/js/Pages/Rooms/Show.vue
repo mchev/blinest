@@ -15,6 +15,8 @@ import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 const props = defineProps({
   room: {
@@ -346,6 +348,8 @@ const fetchRoundScores = async (roundId) => {
             </div>
           </article>
 
+          <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mb-6 max-w-3xl" />
+
           <Tip class="mb-6 bg-orange-400/10 border border-orange-400/20 text-orange-200" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
             <div class="flex items-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -374,6 +378,8 @@ const fetchRoundScores = async (roundId) => {
             />
             <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
+
+          <EzoicAd :placement-id="EZOIC.midContent" wrapper-class="my-6" />
 
           <Card class="mt-8">
             <template #header v-if="room.description">
@@ -421,6 +427,8 @@ const fetchRoundScores = async (roundId) => {
             </div>
           </Card>
 
+          <EzoicAd :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
+
           <Card class="mt-8 hidden md:block">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Public Rooms') }}</span>
@@ -438,6 +446,11 @@ const fetchRoundScores = async (roundId) => {
             </div>
           </Card>
         </div>
+
+        <aside class="hidden xl:flex w-52 shrink-0 flex-col gap-4 border-l border-neutral-800/80 bg-neutral-900/20 p-4 pt-8">
+          <EzoicAd :placement-id="EZOIC.sidebarFloating1" />
+          <EzoicAd :placement-id="EZOIC.sidebarFloating2" compact />
+        </aside>
 
         <div v-if="user && displayChat && room.is_chat_active" 
              class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-black/20 backdrop-blur-sm transition-all duration-300 md:h-full md:w-1/5">

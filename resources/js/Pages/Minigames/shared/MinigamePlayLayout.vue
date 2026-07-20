@@ -2,6 +2,8 @@
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 defineProps({
   pageTitle: { type: String, required: true },
@@ -67,6 +69,8 @@ const emit = defineEmits(['retry'])
           </div>
         </div>
       </header>
+
+      <EzoicAd :placement-id="EZOIC.underPageTitle" compact wrapper-class="mb-6" />
 
       <div v-if="showSummary" class="space-y-6">
         <div class="overflow-hidden rounded-2xl border-2 border-amber-500/30 bg-neutral-900/90">

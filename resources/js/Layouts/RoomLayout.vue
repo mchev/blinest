@@ -5,6 +5,8 @@ import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import MobileBottomNav from '@/Components/MobileBottomNav.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 const page = usePage()
 const room = computed(() => page.props.room)
@@ -74,6 +76,9 @@ const metaDescription = computed(() => {
           <Transition name="slide-right" appear>
             <div v-if="$slots.default" class="pb-20 md:pb-0 md:flex-1">
               <FlashMessages />
+              <div class="px-4 pt-4 md:px-8 md:pt-6">
+                <EzoicAd :placement-id="EZOIC.topOfPage" wrapper-class="mb-4 max-w-5xl" compact />
+              </div>
               <slot />
             </div>
           </Transition>

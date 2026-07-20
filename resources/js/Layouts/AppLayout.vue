@@ -6,6 +6,8 @@ import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 import Footer from '@/Components/Footer.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 const page = usePage()
 const url = computed(() => 'https://blinest.com' + page.url)
@@ -71,7 +73,9 @@ const appUrl = 'https://blinest.com'
           <Transition name="slide-right" appear>
             <div v-if="$slots.default" class="flex flex-col justify-between px-4 py-4 pb-20 md:pb-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:min-h-0" scroll-region>
               <flash-messages />
+              <EzoicAd :placement-id="EZOIC.topOfPage" wrapper-class="mb-6" />
               <slot />
+              <EzoicAd :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8 mb-4" />
               <Footer />
             </div>
           </Transition>

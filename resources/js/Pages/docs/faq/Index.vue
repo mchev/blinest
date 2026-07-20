@@ -7,6 +7,8 @@ import TextInput from '@/Components/TextInput.vue'
 import FAQ from './partials/FAQ.vue'
 import FAQStructuredData from '@/Components/FAQStructuredData.vue'
 import Icon from '@/Components/Icon.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 
@@ -77,6 +79,7 @@ watch(
           <p class="text-lg text-neutral-400 max-w-2xl mx-auto">
             {{ __('Find answers to common questions about Blinest') }}
           </p>
+          <EzoicAd :placement-id="EZOIC.underFirstParagraph" wrapper-class="mt-6 max-w-2xl mx-auto" compact />
         </div>
 
         <div class="max-w-2xl mx-auto mb-6">

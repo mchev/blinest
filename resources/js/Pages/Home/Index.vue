@@ -2,6 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 import Room from './partials/Room.vue'
 import Rooms from './partials/Rooms.vue'
 import TopPlayers from './partials/TopPlayers.vue'
@@ -20,10 +21,6 @@ defineProps({
 })
 
 const user = usePage().props.auth.user;
-
-const ezoicSidebarPlacementId = import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMENT_ID
-  ? Number(import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMENT_ID)
-  : null;
 
 </script>
 <template>
@@ -63,6 +60,8 @@ const ezoicSidebarPlacementId = import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMEN
           <MinigamesSlider :minigames="minigames" />
         </div>
 
+        <EzoicAd :placement-id="EZOIC.midContent" wrapper-class="my-4" />
+
         <div class="relative">
           <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold text-white">{{ __('Private rooms') }}</h2>
@@ -79,10 +78,10 @@ const ezoicSidebarPlacementId = import.meta.env.VITE_EZOIC_HOME_SIDEBAR_PLACEMEN
       </section>
 
       <!-- Sidebar -->
-      <aside class="mt-16 w-full lg:mt-0 lg:w-1/4">
-        <div v-if="ezoicSidebarPlacementId" class="mb-10">
-          <EzoicAd :placement-id="ezoicSidebarPlacementId" />
-        </div>
+      <aside class="mt-16 w-full lg:mt-0 lg:w-1/4 space-y-6">
+        <EzoicAd :placement-id="EZOIC.sidebar" />
+        <EzoicAd :placement-id="EZOIC.sidebarMiddle1" compact />
+        <EzoicAd :placement-id="EZOIC.sidebarBottom" compact wrapper-class="hidden lg:block" />
 
         <!-- Soutenez Blinest -->
         <div id="featured" class="mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
