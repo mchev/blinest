@@ -6,6 +6,8 @@ import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
 import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 import Footer from '@/Components/Footer.vue'
+import EzoicAd from '@/Components/EzoicAd.vue'
+import { EZOIC } from '@/ezoic'
 
 const page = usePage()
 const url = computed(() => 'https://blinest.com' + page.url)
