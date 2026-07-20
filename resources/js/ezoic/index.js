@@ -10,10 +10,30 @@ const excludedPathPatterns = [
     /^\/create\/room$/,
     /^\/playlists\/[^/]+\/edit$/,
     /^\/rooms\/[^/]+\/edit$/,
+    /^\/minigames\/(quiz|who-sang|anagram|first-letter|album-cover)$/,
+];
+
+/** Room lobby toggles ads locally based on gameplay state. */
+const roomManagedPathPattern = /^\/rooms\/[^/]+$/;
+
+/** Anchor ads are allowed only on low-interaction, content-first pages. */
+const anchorAdPathPatterns = [
+    /^\/$/,
+    /^\/docs\/faq$/,
+    /^\/rankings(?:\/|$)/,
+    /^\/pages\//,
 ];
 
 export function shouldServeEzoicAds(path) {
     return ! excludedPathPatterns.some((pattern) => pattern.test(path));
+}
+
+export function isRoomManagedAdPath(path) {
+    return roomManagedPathPattern.test(path);
+}
+
+function shouldEnableAnchorAd(path) {
+    return anchorAdPathPatterns.some((pattern) => pattern.test(path));
 }
 
 function runEzoicCommand(callback) {
@@ -26,27 +46,39 @@ function runEzoicCommand(callback) {
 
 export function clearEzoicAds() {
     runEzoicCommand(function () {
+        if (typeof window.ezstandalone.setEzoicAnchorAd === 'function') {
+            window.ezstandalone.setEzoicAnchorAd(false);
+        }
+
         if (typeof window.ezstandalone.destroyAll === 'function') {
             window.ezstandalone.destroyAll();
         }
     });
 }
 
-export function syncEzoicAds(path) {
+export function syncEzoicAds(path, { force = false } = {}) {
     if (! shouldServeEzoicAds(path)) {
         clearEzoicAds();
 
         return;
     }
 
+    if (isRoomManagedAdPath(path) && ! force) {
+        return;
+    }
+
     runEzoicCommand(function () {
+        if (typeof window.ezstandalone.setEzoicAnchorAd === 'function') {
+            window.ezstandalone.setEzoicAnchorAd(! force && shouldEnableAnchorAd(path));
+        }
+
         window.ezstandalone.showAds();
     });
 }
 
-export function scheduleEzoicSync(path) {
+export function scheduleEzoicSync(path, options = {}) {
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => syncEzoicAds(path));
+        requestAnimationFrame(() => syncEzoicAds(path, options));
     });
 }
 

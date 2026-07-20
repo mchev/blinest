@@ -2,8 +2,6 @@
 import { Head, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
 
 defineProps({
   pageTitle: { type: String, required: true },

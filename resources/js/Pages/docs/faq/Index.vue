@@ -7,8 +7,6 @@ import TextInput from '@/Components/TextInput.vue'
 import FAQ from './partials/FAQ.vue'
 import FAQStructuredData from '@/Components/FAQStructuredData.vue'
 import Icon from '@/Components/Icon.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
 

@@ -60,8 +60,6 @@ const user = usePage().props.auth.user;
           <MinigamesSlider :minigames="minigames" />
         </div>
 
-        <EzoicAd :placement-id="EZOIC.midContent" wrapper-class="my-4" />
-
         <div class="relative">
           <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold text-white">{{ __('Private rooms') }}</h2>
@@ -120,8 +118,6 @@ const user = usePage().props.auth.user;
         </div>
 
         <EzoicAd :placement-id="EZOIC.sidebar" />
-        <EzoicAd :placement-id="EZOIC.sidebarMiddle1" compact />
-        <EzoicAd :placement-id="EZOIC.sidebarBottom" compact wrapper-class="hidden lg:block" />
         
         <!-- Ouvrage Promotion -->
         <div class="mb-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#0d1217] via-[#3e5266] to-[#3c5267] shadow-md border border-[#5d7b93]/40">

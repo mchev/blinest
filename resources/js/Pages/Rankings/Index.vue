@@ -3,8 +3,6 @@ import { Head } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
 
 const page = usePage()
 const __ = (key, replace = {}) => {

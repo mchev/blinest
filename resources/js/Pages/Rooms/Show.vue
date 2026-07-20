@@ -285,11 +285,11 @@ const fetchRoundScores = async (roundId) => {
 
 watch(roomAdsEnabled, (enabled) => {
   if (enabled) {
-    scheduleEzoicSync(window.location.pathname)
+    scheduleEzoicSync(window.location.pathname, { force: true })
   } else {
     clearEzoicAds()
   }
-})
+}, { immediate: true })
 
 </script>
 <template>
@@ -386,8 +386,6 @@ watch(roomAdsEnabled, (enabled) => {
             <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
 
-          <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.midContent" wrapper-class="my-6" />
-
           <Card class="mt-8">
             <template #header v-if="room.description">
               <h3 class="text-sm">{{ room.description }}</h3>
@@ -434,8 +432,6 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </Card>
 
-          <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
-
           <Card class="mt-8 hidden md:block">
             <div class="flex flex-wrap items-center gap-3">
               <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Public Rooms') }}</span>
@@ -452,12 +448,9 @@ watch(roomAdsEnabled, (enabled) => {
               </div>
             </div>
           </Card>
-        </div>
 
-        <aside v-if="roomAdsEnabled" class="hidden xl:flex w-52 shrink-0 flex-col gap-4 border-l border-neutral-800/80 bg-neutral-900/20 p-4 pt-8">
-          <EzoicAd :placement-id="EZOIC.sidebarFloating1" />
-          <EzoicAd :placement-id="EZOIC.sidebarFloating2" compact />
-        </aside>
+          <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
+        </div>
 
         <div v-if="user && displayChat && room.is_chat_active" 
              class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-black/20 backdrop-blur-sm transition-all duration-300 md:h-full md:w-1/5">

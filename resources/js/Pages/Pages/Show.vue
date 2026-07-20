@@ -23,7 +23,6 @@ defineProps({
       </template>
       <EzoicAd :placement-id="EZOIC.underFirstParagraph" wrapper-class="mb-6" />
       <section class="prose prose-invert" v-html="page.content" />
-      <EzoicAd :placement-id="EZOIC.longContent" wrapper-class="mt-8" />
     </Card>
   </AppLayout>
 </template>
