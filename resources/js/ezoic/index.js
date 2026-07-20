@@ -28,7 +28,7 @@ export function shouldServeEzoicAds(path) {
     return ! excludedPathPatterns.some((pattern) => pattern.test(path));
 }
 
-export function isRoomManagedAdPath(path) {
+function isRoomManagedAdPath(path) {
     return roomManagedPathPattern.test(path);
 }
 
