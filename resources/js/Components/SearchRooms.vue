@@ -73,42 +73,42 @@ watch(() => form.search, () => debouncedSearch())
 <template>
   <div :class="$attrs.class">
     <form @submit.prevent class="relative">
-      <div 
-        class="group flex items-center overflow-hidden rounded-full bg-neutral-700/50 px-4 py-2 transition-all duration-200 hover:bg-neutral-700 focus-within:bg-neutral-700 focus-within:ring-2 focus-within:ring-red-500/50"
-        :class="{ 'bg-neutral-700 shadow-lg': isSearchFocused }"
+      <div
+        class="retro-search group"
+        :class="{ 'border-white/25 shadow-lg': isSearchFocused }"
       >
-        <Icon 
-          name="search" 
-          class="h-5 w-5 text-neutral-400 transition-colors group-hover:text-white"
+        <Icon
+          name="search"
+          class="h-5 w-5 text-white/50 transition-colors group-hover:text-white"
           :class="{ 'text-white': isSearchFocused }"
         />
-        
+
         <input
           ref="searchInput"
           v-model="form.search"
-          class="w-full bg-transparent px-3 py-1 text-sm text-white placeholder-neutral-400 focus:outline-none"
+          class="w-full bg-transparent px-3 py-1 text-sm text-white placeholder-white/40 focus:outline-none"
           :placeholder="__(`${props.placeholder}`) + '...'"
           spellcheck="false"
           @focus="isSearchFocused = true"
           @blur="isSearchFocused = false"
           @keydown.esc="clearSearch"
         />
-        
-        <button 
-          v-if="form.search" 
-          type="button" 
+
+        <button
+          v-if="form.search"
+          type="button"
           @click="clearSearch"
-          class="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-600 text-neutral-300 transition-colors hover:bg-neutral-500 hover:text-white"
+          class="flex h-6 w-6 items-center justify-center bg-brand-midnight text-white/70 transition-colors hover:text-white"
           title="Clear search"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
             <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
           </svg>
         </button>
-        
-        <kbd 
+
+        <kbd
           v-else
-          class="hidden md:flex items-center justify-center h-5 w-5 rounded border border-neutral-600 bg-neutral-800 text-xs text-neutral-400"
+          class="hidden md:flex items-center justify-center h-5 w-5 border border-white/20 bg-brand-midnight text-xs text-white/50"
           title="Press / to search"
         >
           /

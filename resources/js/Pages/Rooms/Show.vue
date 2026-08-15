@@ -296,36 +296,36 @@ watch(roomAdsEnabled, (enabled) => {
   <RoomLayout>
     <Modal v-if="!user" :show="true" :maxWidth="'3xl'">
       <div class="p-6 text-center">
-        <h2 class="text-xl font-bold text-neutral-100 mb-2">{{ room.name }}</h2>
-        <p class="text-neutral-400 mb-8">{{ __('Join the game and test your music knowledge!') }}</p>
+        <h2 class="retro-title retro-title--white text-xl mb-2">{{ room.name }}</h2>
+        <p class="text-white/70 mb-8">{{ __('Join the game and test your music knowledge!') }}</p>
 
         <div class="space-y-4">
           <a
             :href="route('rooms.guest-join', room.slug)"
-            class="block w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-500 transition-colors text-center"
+            class="game-btn-play-join block w-full text-center !min-h-[3rem]"
           >
             {{ __('Play as guest') }}
           </a>
 
           <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-neutral-600"></div>
+              <div class="w-full border-t border-white/10"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="bg-[#0F172A] px-3 text-neutral-400">{{ __('or') }}</span>
+              <span class="bg-brand-deep px-3 text-white/60">{{ __('or') }}</span>
             </div>
           </div>
 
           <Link
             :href="route('login')"
-            class="block w-full rounded-lg bg-red-500 px-6 py-3 font-semibold text-white hover:bg-red-400 transition-colors text-center"
+            class="game-btn-play-live block w-full text-center !min-h-[3rem]"
           >
             {{ __('Login with my account') }}
           </Link>
 
           <Link
             :href="route('register')"
-            class="block w-full rounded-lg border border-neutral-600 px-6 py-3 font-semibold text-neutral-200 hover:bg-neutral-700 transition-colors text-center"
+            class="game-btn-play-neutral block w-full text-center !min-h-[3rem]"
           >
             {{ __('Create an account') }}
           </Link>
@@ -336,8 +336,8 @@ watch(roomAdsEnabled, (enabled) => {
     <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">
       <Spinner class="h-8 w-8" />
       <div class="flex flex-col">
-        <h2 class="text-xl font-medium text-neutral-200">{{ __('Loading') }}...</h2>
-        <p class="text-sm text-neutral-400 mt-1">{{ __('Connecting to the room') }}</p>
+        <h2 class="text-xl font-medium text-white">{{ __('Loading') }}...</h2>
+        <p class="text-sm text-white/60 mt-1">{{ __('Connecting to the room') }}</p>
       </div>
     </div>
 
@@ -346,9 +346,9 @@ watch(roomAdsEnabled, (enabled) => {
         <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
           <article class="mb-6 flex flex-wrap gap-4 items-center justify-between">
             <div class="flex items-center space-x-3">
-              <h1 class="text-2xl font-bold text-neutral-100">{{ room.name }}</h1>
-              <span v-if="user" class="flex items-center gap-1.5 text-sm font-medium text-neutral-400" :class="{ 'text-amber-400': connectionState === 'reconnecting' }">
-                <span class="h-2 w-2 rounded-full shrink-0" :class="connectionState === 'connected' ? 'bg-emerald-500' : 'bg-amber-400 animate-pulse'"></span>
+              <h1 class="retro-title retro-title--white text-2xl">{{ room.name }}</h1>
+              <span v-if="user" class="flex items-center gap-1.5 text-sm font-medium text-white/60" :class="{ 'text-brand-secondary': connectionState === 'reconnecting' }">
+                <span class="h-2 w-2 rounded-full shrink-0" :class="connectionState === 'connected' ? 'bg-brand-accent' : 'bg-brand-secondary animate-pulse'"></span>
                 {{ connectionState === 'connected' ? __('Connected') : __('Reconnecting…') }}
               </span>
             </div>
@@ -357,7 +357,7 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </article>
 
-          <Tip class="mb-6 bg-orange-400/10 border border-orange-400/20 text-orange-200" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
+          <Tip class="mb-6 border border-brand-secondary/30 bg-brand-secondary/10 text-white/80" v-if="!room.is_autostart && (!round || !round.is_playing) && !room.is_playing">
             <div class="flex items-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
@@ -393,16 +393,16 @@ watch(roomAdsEnabled, (enabled) => {
             <div class="flex flex-col gap-6 text-sm lg:flex-row lg:justify-between">
               <div class="w-full">
                 <div class="flex flex-wrap items-center gap-4">
-                  <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Moderators') }}</span>
+                <span class="text-sm font-medium uppercase tracking-wider text-brand-secondary">{{ __('Moderators') }}</span>
                   <div class="flex flex-wrap gap-3">
-                    <span v-for="moderator in room.moderators" 
-                          class="flex items-center space-x-2 rounded-full bg-neutral-700/50 px-3 py-1.5" 
-                          :class="{ 'ring-2 ring-teal-500': roomState.users.find((x) => moderator.id === x.id) }">
-                      <img :src="moderator.photo" 
-                           :alt="moderator.name" 
-                           :title="moderator.name" 
-                           class="h-6 w-6 rounded-full ring-1 ring-neutral-600" />
-                      <span class="font-medium" :class="{ 'text-teal-400': roomState.users.find((x) => moderator.id === x.id) }">
+                    <span v-for="moderator in room.moderators"
+                          class="flex items-center space-x-2 border border-white/10 bg-brand-midnight px-3 py-1.5"
+                          :class="{ 'ring-2 ring-brand-accent': roomState.users.find((x) => moderator.id === x.id) }">
+                      <img :src="moderator.photo"
+                           :alt="moderator.name"
+                           :title="moderator.name"
+                           class="h-6 w-6 rounded-full ring-1 ring-white/20" />
+                      <span class="font-medium text-white/80" :class="{ 'text-brand-accent': roomState.users.find((x) => moderator.id === x.id) }">
                         {{ moderator.name }}
                       </span>
                     </span>
@@ -434,16 +434,16 @@ watch(roomAdsEnabled, (enabled) => {
 
           <Card class="mt-8 hidden md:block">
             <div class="flex flex-wrap items-center gap-3">
-              <span class="text-sm font-medium uppercase text-neutral-400">{{ __('Public Rooms') }}</span>
+              <span class="text-sm font-medium uppercase tracking-wider text-brand-secondary">{{ __('Public Rooms') }}</span>
               <div class="flex flex-wrap gap-2">
-                <Link v-for="proom in public_rooms" 
+                <Link v-for="proom in public_rooms"
                       :key="'room-' + proom.id"
-                      :href="route('rooms.show', proom.slug)" 
-                      class="flex items-center space-x-2 rounded-full bg-neutral-700/50 px-3 py-1.5 hover:bg-neutral-600/50 transition-colors">
-                  <img :src="proom.photo" 
-                       :alt="proom.name" 
-                       class="h-5 w-5 rounded-full ring-1 ring-neutral-600"/>
-                  <span class="font-medium">{{ proom.name }}</span>
+                      :href="route('rooms.show', proom.slug)"
+                      class="flex items-center space-x-2 border border-white/10 bg-brand-midnight px-3 py-1.5 transition-colors hover:border-white/20 hover:bg-brand-deep-hover">
+                  <img :src="proom.photo"
+                       :alt="proom.name"
+                       class="h-5 w-5 rounded-full ring-1 ring-white/20"/>
+                  <span class="font-medium text-white/80">{{ proom.name }}</span>
                 </Link>
               </div>
             </div>
@@ -452,8 +452,8 @@ watch(roomAdsEnabled, (enabled) => {
           <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
         </div>
 
-        <div v-if="user && displayChat && room.is_chat_active" 
-             class="flex h-96 w-full flex-shrink-0 flex-col rounded-tl border-neutral-700 bg-black/20 backdrop-blur-sm transition-all duration-300 md:h-full md:w-1/5">
+        <div v-if="user && displayChat && room.is_chat_active"
+             class="chat-panel flex h-96 w-full flex-shrink-0 md:h-full md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>

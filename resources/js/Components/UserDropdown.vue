@@ -1,6 +1,5 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
-import Icon from '@/Components/Icon.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 
@@ -19,50 +18,50 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-neutral-700/50 group-hover:border-neutral-600 transition-colors" :alt="user.name" />
+          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-white/20 group-hover:border-brand-accent transition-colors" :alt="user.name" />
         </div>
       </div>
     </template>
     <template #dropdown>
-      <ul>
+      <ul class="py-1">
         <li>
-          <Link :href="route('me')" class="m-4 flex pl-2" :class="isUrl('me') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('me')" class="retro-menu-link" :class="isUrl('me') ? 'font-bold text-brand-secondary' : ''">
             {{ __('My account') }}
           </Link>
         </li>
         <li>
-          <Link :href="route('teams.index')" class="m-4 flex pl-2" :class="isUrl('teams') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('teams.index')" class="retro-menu-link" :class="isUrl('teams') ? 'font-bold text-brand-secondary' : ''">
             {{ __('Teams') }}
           </Link>
         </li>
         <li>
-          <Link :href="route('rooms.index')" class="m-4 flex pl-2" :class="isUrl('rooms') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('rooms.index')" class="retro-menu-link" :class="isUrl('rooms') ? 'font-bold text-brand-secondary' : ''">
             {{ __('Rooms') }}
           </Link>
         </li>
         <li>
-          <Link :href="route('playlists')" class="m-4 flex pl-2" :class="isUrl('playlists') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('playlists')" class="retro-menu-link" :class="isUrl('playlists') ? 'font-bold text-brand-secondary' : ''">
             {{ __('Playlists') }}
           </Link>
         </li>
         <li v-if="user.admin">
-          <Link :href="route('admin.dashboard')" class="m-4 flex pl-2" :class="isUrl('admin') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('admin.dashboard')" class="retro-menu-link" :class="isUrl('admin') ? 'font-bold text-brand-secondary' : ''">
             {{ __('Administration') }}
           </Link>
         </li>
         <li v-if="user.is_public_moderator">
-          <Link :href="route('moderation.dashboard')" class="m-4 flex pl-2" :class="isUrl('moderation') ? 'font-bold' : 'font-normal'">
+          <Link :href="route('moderation.dashboard')" class="retro-menu-link" :class="isUrl('moderation') ? 'font-bold text-brand-secondary' : ''">
             {{ __('Modération') }}
           </Link>
         </li>
-        <li class="border-t border-neutral-700/50 my-2">
-          <div class="m-4 flex items-center justify-between pl-2">
-            <span class="text-sm text-neutral-400">{{ __('Language') }}</span>
+        <li class="border-t border-white/10 my-1">
+          <div class="flex items-center justify-between px-4 py-3">
+            <span class="text-sm text-white/70">{{ __('Language') }}</span>
             <LanguageSwitcher :standalone="false" />
           </div>
         </li>
         <li>
-          <Link href="/logout" method="post" as="button" class="m-4 flex pl-2 text-red-500">
+          <Link href="/logout" method="post" as="button" class="retro-menu-link text-brand-primary">
             {{ __('Logout') }}
           </Link>
         </li>

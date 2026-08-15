@@ -196,11 +196,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="messageRef" class="group relative p-2 rounded-lg transition-all duration-200 hover:bg-neutral-800/60 mb-1">
-    <!-- Menu d'action discret, horizontal, au survol -->
-    <div class="absolute top-2 right-2 flex-row gap-2 hidden group-hover:flex z-20">
+  <div ref="messageRef" class="chat-message group">
+    <div class="absolute top-2 right-2 flex-row gap-1 hidden group-hover:flex z-20">
       <button
-        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition"
+        class="chat-icon-btn text-base"
         @click="toggleEmojiPicker"
         title="Réagir"
         type="button"
@@ -209,7 +208,7 @@ onUnmounted(() => {
       </button>
       <button
         v-if="shouldShowReportButton"
-        class="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-xl shadow border border-neutral-700 transition disabled:opacity-50"
+        class="chat-icon-btn disabled:opacity-50"
         :disabled="reporting"
         @click="report"
         :title="reported ? __('Reported') : __('Report this message')"
@@ -222,7 +221,7 @@ onUnmounted(() => {
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="size-5 text-red-400"
+          class="size-4 text-brand-primary"
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
         </svg>
@@ -233,7 +232,7 @@ onUnmounted(() => {
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="size-5 text-green-400"
+          class="size-4 text-brand-accent"
         >
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -245,12 +244,12 @@ onUnmounted(() => {
           :src="message.user.photo" 
           :alt="message.user.name" 
           class="h-10 w-10 rounded-full object-cover border-2" 
-          :class="isFromModerator ? 'border-purple-500' : 'border-neutral-700'"
+          :class="isFromModerator ? 'border-brand-accent' : 'border-white/20'"
           loading="lazy" 
         />
         <div 
           v-if="isFromModerator" 
-          class="absolute -bottom-1 -right-1 bg-purple-500 rounded-full p-0.5"
+          class="absolute -bottom-1 -right-1 bg-brand-accent p-0.5"
           title="Room Moderator"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -267,25 +266,25 @@ onUnmounted(() => {
               @click="moderate = true" 
               class="font-bold text-sm hover:underline truncate"
               :class="{
-                'text-purple-400': isFromModerator,
-                'text-neutral-200': !isFromModerator
+                'text-brand-accent': isFromModerator,
+                'text-white': !isFromModerator
               }"
             >
               {{ message.user.name }}
             </button>
-            <span 
-              v-else 
+            <span
+              v-else
               class="font-bold text-sm truncate"
               :class="{
-                'text-purple-400': isFromModerator,
-                'text-neutral-200': !isFromModerator
+                'text-brand-accent': isFromModerator,
+                'text-white': !isFromModerator
               }"
             >
               {{ message.user.name }}
             </span>
-            <span 
-              v-if="message.user.team_id" 
-              class="px-1.5 py-0.5 bg-neutral-700/50 text-xs rounded-md text-neutral-300 truncate"
+            <span
+              v-if="message.user.team_id"
+              class="border border-white/10 bg-brand-midnight px-1.5 py-0.5 text-xs text-white/60 truncate"
             >
               {{ message.user.team.name }}
             </span>
@@ -293,29 +292,29 @@ onUnmounted(() => {
           <div class="flex items-center gap-1">
             <span
               v-if="reportsCount >= 1"
-              class="text-amber-500 text-xs whitespace-nowrap ml-2"
+              class="text-brand-secondary text-xs whitespace-nowrap ml-2"
               :title="__('Reports')"
             >
               {{ reportsCount }} {{ reportsCount === 1 ? __('Report') : __('Reports') }}
             </span>
             <time 
               :datetime="message.timestamp" 
-              class="text-neutral-500 text-xs whitespace-nowrap ml-2"
+              class="text-white/40 text-xs whitespace-nowrap ml-2"
             >
               {{ message.time }}
             </time>
           </div>
         </div>
         
-        <p class="text-neutral-100 whitespace-pre-wrap break-words text-sm leading-relaxed">
+        <p class="text-white/90 whitespace-pre-wrap break-words text-sm leading-relaxed">
           {{ message.body }}
         </p>
         <!-- Réactions -->
         <div class="flex gap-1 mt-2 flex-wrap items-center relative">
           <div v-for="reaction in reactions" :key="reaction.emoji" class="relative group/emoji">
             <button
-              class="flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-700/70 hover:bg-neutral-600 text-sm transition"
-              :class="{'ring-2 ring-yellow-400': userReaction === reaction.emoji}"
+              class="chat-reaction"
+              :class="{'chat-reaction--mine': userReaction === reaction.emoji}"
               @click="toggleReaction(reaction.emoji)"
               type="button"
             >
@@ -324,7 +323,7 @@ onUnmounted(() => {
             </button>
             <span
               v-if="reaction.users && reaction.users.length"
-              class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-20 px-2 py-1 rounded bg-neutral-900 text-xs text-neutral-200 shadow-lg opacity-0 group-hover/emoji:opacity-100 transition-opacity whitespace-nowrap"
+              class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-20 border border-white/10 bg-brand-deep px-2 py-1 text-xs text-white/80 shadow-lg opacity-0 group-hover/emoji:opacity-100 transition-opacity whitespace-nowrap"
             >
               {{ reaction.users.map(u => u.name).join(', ') }}
             </span>
@@ -337,7 +336,7 @@ onUnmounted(() => {
     <div
       v-if="showEmojiPicker"
       ref="emojiPickerRef"
-      class="absolute z-40 right-2 bg-neutral-900 border border-neutral-700 rounded-lg p-2 flex flex-wrap gap-1 shadow-lg"
+      class="absolute z-40 right-2 border border-white/10 bg-brand-deep p-2 flex flex-wrap gap-1 shadow-lg retro-dropdown-panel"
       :style="{
         top: emojiPickerPosition.top,
         bottom: emojiPickerPosition.bottom,

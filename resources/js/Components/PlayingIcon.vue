@@ -26,7 +26,7 @@
 #wave {
     height: 50px;
     width: 50px;
-    fill: #DD5E5E;
+    fill: #E94560;
 }
 
 #Line_1 {

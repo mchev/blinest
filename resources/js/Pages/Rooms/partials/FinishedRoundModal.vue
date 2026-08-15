@@ -83,14 +83,14 @@ const close = () => {
   <Modal :show="show" @close="close">
     <Card>
       <template #header>
-        <h2>{{ __('Round finished') }}</h2>
+        <h2 class="retro-title retro-title--primary">{{ __('Round finished') }}</h2>
       </template>
       <div class="flex justify-between">
         <div class="w-full" v-if="users_results && users_results.length">
-          <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Ranking') }}</h3>
+          <h3 class="retro-title retro-title--secondary mb-2 py-2 text-center text-xl">{{ __('Ranking') }}</h3>
           <Podium :list="users_results" />
           <ul class="max-h-48 overflow-auto">
-            <li v-for="(result, index) in users_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
+            <li v-for="(result, index) in users_results" class="room-rank-row m-1">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow flex items-center gap-2">
                 {{ result.user.name }}
@@ -101,10 +101,10 @@ const close = () => {
           </ul>
         </div>
         <div class="w-full" v-if="teams_results && teams_results.length">
-          <h3 class="mb-2 py-2 text-center text-xl font-bold">{{ __('Teams') }}</h3>
+          <h3 class="retro-title retro-title--secondary mb-2 py-2 text-center text-xl">{{ __('Teams') }}</h3>
           <Podium :list="teams_results" />
           <ul class="max-h-48 overflow-auto">
-            <li v-for="(result, index) in teams_results" class="broder-neutral-500 m-1 flex items-center gap-2 rounded border p-2">
+            <li v-for="(result, index) in teams_results" class="room-rank-row m-1">
               <span class="text-xl font-bold">{{ index + 1 }}</span>
               <span class="flex-grow">{{ result.team.name }}</span>
               <span>{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
@@ -118,9 +118,9 @@ const close = () => {
       <template #footer>
           <div class="flex w-full items-center gap-6">
             <div class="flex flex-grow flex-col">
-              <div v-if="room && room.is_autostart" class="relative flex h-6 w-full items-center overflow-hidden rounded-lg bg-purple-200">
-                <div class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-br from-purple-300 to-purple-400 text-neutral-700 transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(room.pause_between_rounds || 1)) * 100 + '%'">
-                  <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-neutral-600">{{ __('Next game in') }} {{ countdown }}</span>
+              <div v-if="room && room.is_autostart" class="relative flex h-6 w-full items-center overflow-hidden bg-brand-midnight">
+                <div class="flex h-6 items-center justify-center bg-brand-accent/80 text-white transition-all duration-1000 ease-linear" :style="'width:' + (countdown / parseInt(room.pause_between_rounds || 1)) * 100 + '%'">
+                  <span class="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center text-sm text-white">{{ __('Next game in') }} {{ countdown }}</span>
                 </div>
               </div>
             </div>

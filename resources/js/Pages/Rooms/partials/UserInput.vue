@@ -225,10 +225,10 @@ onMounted(() => {
 })
 
 const messageClass = computed(() => ({
-  'bg-teal-600': message.value?.type === 'good',
-  'bg-orange-600': message.value?.type === 'almost',
-  'bg-red-700': message.value?.type === 'bad',
-  'bg-blue-600': message.value?.type === 'hint'
+  'bg-brand-accent': message.value?.type === 'good',
+  'bg-brand-secondary text-brand-midnight': message.value?.type === 'almost',
+  'bg-brand-primary': message.value?.type === 'bad',
+  'bg-brand-deep border border-brand-accent/40': message.value?.type === 'hint',
 }))
 
 const isAnswerFound = (answerId) => answers.value.some(a => a.id === answerId)
@@ -239,12 +239,12 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
 <template>
   <form class="flex w-full items-center justify-center p-0 m-0" @submit.prevent="check">
     <div class="relative flex w-full flex-col">
-      <div class="flex items-center shadow-lg rounded-lg overflow-hidden border border-neutral-600">
+      <div class="room-input-wrap">
         <input
           ref="input"
           v-model="text"
           type="text"
-          class="h-14 w-full flex-grow border-none bg-neutral-800/80 px-4 text-xl font-medium text-white placeholder-neutral-400 focus:shadow-none focus:outline-none focus:ring-0 transition-all duration-200 backdrop-blur-sm"
+          class="room-input"
           :placeholder="__('Any idea?')"
           tabindex="0"
           @paste.prevent="pastedAnswer"
@@ -258,12 +258,12 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
         />
 
         <Dropdown placement="bottom-end">
-          <button 
+          <button
             type="button"
-            class="h-14 px-3 bg-neutral-800/80 hover:bg-neutral-700/80 transition-colors duration-200 border-l border-neutral-600"
+            class="h-14 border-l border-white/10 bg-brand-deep px-3 transition-colors duration-200 hover:bg-brand-deep-hover"
             :title="__('Settings')"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-neutral-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-white/60">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -273,11 +273,11 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
             <div class="w-64 py-2">        
               <div class="px-4 py-2">
                 <div class="flex items-center justify-between mb-3">
-                  <label class="text-sm text-neutral-300">{{ __('Auto-focus') }}</label>
-                  <button 
+                  <label class="text-sm text-white/70">{{ __('Auto-focus') }}</label>
+                  <button
                     type="button"
                     class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200"
-                    :class="autoFocus ? 'bg-purple-600' : 'bg-neutral-600'"
+                    :class="autoFocus ? 'bg-brand-accent' : 'bg-brand-midnight'"
                     @click="toggleAutoFocus"
                   >
                     <span 
@@ -295,9 +295,9 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
           </template>
         </Dropdown>
 
-        <button 
-          type="submit" 
-          class="h-14 px-5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-medium transition-all duration-200 flex items-center justify-center"
+        <button
+          type="submit"
+          class="game-btn-play-join !min-h-[3.5rem] !w-auto !rounded-none px-5"
           :disabled="inputDisabled || !text.trim()"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-6 w-6">
@@ -319,29 +319,26 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
       <li
         v-for="answer in track.answers"
         :key="answer.id"
-        class="flex items-center rounded-lg py-1.5 px-3 text-neutral-100 shadow-md transition-all duration-300"
-        :class="{
-          'bg-gradient-to-r from-neutral-700 to-neutral-800 border border-neutral-600': !isAnswerFound(answer.id),
-          'bg-gradient-to-r from-teal-600 to-teal-700 border border-teal-500 transform scale-105': isAnswerFound(answer.id)
-        }"
+        class="room-answer-chip"
+        :class="{ 'room-answer-chip--found': isAnswerFound(answer.id) }"
       >
         <template v-if="isAnswerFound(answer.id)">
-          <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-teal-200" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
-          <span class="font-medium">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
+          <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-brand-accent" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+          <span class="font-medium text-white">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
         </template>
         <template v-else>
-          <span class="font-medium opacity-80">{{ __(answer.name) }} ?</span>
+          <span class="font-medium">{{ __(answer.name) }} ?</span>
         </template>
       </li>
     </transition-group>
 
     <transition name="fade">
-      <blockquote 
-        v-if="message" 
-        class="mt-2 absolute top-0 right-0 rounded-lg py-2 px-4 text-neutral-100 shadow-lg backdrop-blur-sm flex items-center gap-2"
+      <blockquote
+        v-if="message"
+        class="mt-2 absolute top-0 right-0 py-2 px-4 text-white shadow-lg backdrop-blur-sm flex items-center gap-2"
         :class="messageClass"
       >
-        <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-yellow-300 flex-shrink-0" />
+        <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-brand-secondary flex-shrink-0" />
         <span>{{ message.body }}</span>
       </blockquote>
     </transition>

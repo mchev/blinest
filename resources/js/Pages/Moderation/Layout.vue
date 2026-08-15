@@ -78,14 +78,12 @@ const toggleSidebar = () => {
 
 <template>
   <Head :title="title" />
-  <div class="min-h-screen flex flex-col bg-neutral-900">
+  <div class="min-h-screen flex flex-col">
     <div class="flex-1 flex flex-col">
-      <!-- Sidebar and header here -->
       <div class="flex h-full">
-        <!-- Mobile menu button -->
         <button
           @click="toggleSidebar"
-          class="fixed bottom-4 right-4 z-50 rounded-full bg-gradient-to-r from-teal-500 to-teal-600 p-3 text-white shadow-lg lg:hidden hover:shadow-teal-500/25 transition-all duration-200"
+          class="retro-nav-btn--primary fixed bottom-4 right-4 z-50 p-3 lg:hidden"
         >
           <svg v-if="!isSidebarOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -98,21 +96,20 @@ const toggleSidebar = () => {
         <!-- Sidebar -->
         <div
           :class="[
-            'fixed inset-y-0 left-0 z-40 w-72 transform bg-black/20 backdrop-blur-sm transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0',
+            'fixed inset-y-0 left-0 z-40 w-72 transform border-r border-white/10 bg-brand-deep backdrop-blur-sm transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0',
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           ]"
         >
           <div class="flex h-full flex-col">
-            <!-- Sidebar header -->
-            <div class="border-b border-neutral-800 p-4">
+            <div class="border-b border-white/10 p-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-xl font-bold text-white">Modération</h2>
-                  <p class="text-sm text-neutral-400">Espace de gestion</p>
+                  <h2 class="text-xl font-bold uppercase tracking-[0.08em] text-brand-primary">Modération</h2>
+                  <p class="text-sm text-white/60">Espace de gestion</p>
                 </div>
                 <Link
                   :href="route('home')"
-                  class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-neutral-400 hover:bg-black/20 hover:text-white transition-all duration-200"
+                  class="retro-nav-btn text-xs"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
@@ -131,64 +128,57 @@ const toggleSidebar = () => {
                 class="group relative flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ease-in-out"
                 :class="[
                   route().current(item.routeName)
-                    ? 'bg-gradient-to-r from-teal-500/20 to-teal-500/10 text-teal-500 font-bold shadow-lg shadow-teal-500/5'
-                    : 'text-neutral-400 hover:bg-black/20 hover:text-white'
+                    ? 'border border-brand-accent/30 bg-brand-accent/10 font-bold text-brand-accent'
+                    : 'text-white/60 hover:bg-brand-midnight hover:text-white'
                 ]"
               >
                 <div class="relative z-10 flex items-center w-full">
                   <span v-html="item.icon" class="mr-3 transition-transform duration-200 group-hover:scale-110" />
                   <span class="flex-1">{{ item.name }}</span>
-                  <span 
+                  <span
                     v-if="route().current(item.routeName)"
-                    class="ml-2 h-2 w-2 rounded-full bg-teal-500"
+                    class="ml-2 h-2 w-2 bg-brand-accent"
                   ></span>
                 </div>
-                <div 
-                  class="absolute inset-0 rounded-xl transition-all duration-200 opacity-0 group-hover:opacity-100"
-                  :class="route().current(item.routeName) ? 'bg-teal-500/5' : 'bg-black/10'"
-                ></div>
               </Link>
             </nav>
           </div>
         </div>
 
-        <!-- Main content -->
         <div class="flex-1 space-y-6 p-6">
-          <!-- Header -->
-          <div class="bg-gradient-to-r from-black/20 to-black/10 backdrop-blur-sm rounded-xl p-6 border border-neutral-800/50 shadow-xl">
+          <div class="retro-panel p-6">
             <div class="flex items-center justify-between">
               <div>
-                <h1 class="text-2xl font-bold text-white">{{ title }}</h1>
+                <h1 class="retro-page-title">{{ title }}</h1>
               </div>
               <div class="flex items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-teal-500/20 to-teal-500/10 text-teal-500 border border-teal-500/20">
+                <span class="border border-brand-accent/30 bg-brand-accent/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-brand-accent">
                   Modération
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- Content -->
-          <Card class="overflow-hidden border border-neutral-800/50 shadow-xl">
-            <div class="bg-gradient-to-r from-black/20 to-black/10 backdrop-blur-sm p-6">
+          <Card class="overflow-hidden">
+            <div class="p-6">
               <slot />
             </div>
           </Card>
         </div>
       </div>
-      <footer class="bg-neutral-900 text-neutral-400 text-sm py-6 px-8 border-t border-black/20">
+      <footer class="surface-footer py-6 px-8 text-sm">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <span class="font-bold text-lg text-white">↳ Blinest</span>
-            <span class="hidden sm:inline">Quiz musicaux multijoueurs gratuits. Défiez vos amis et découvrez de nouvelles musiques.</span>
+            <span class="font-bold text-lg text-brand-primary">↳ Blinest</span>
+            <span class="hidden sm:inline text-white/70">Quiz musicaux multijoueurs gratuits. Défiez vos amis et découvrez de nouvelles musiques.</span>
           </div>
           <div class="flex items-center gap-4">
-            <a href="https://github.com/blinest" target="_blank" rel="noopener" class="hover:text-white transition-colors duration-200">
+            <a href="https://github.com/blinest" target="_blank" rel="noopener" class="text-white/60 hover:text-brand-accent transition-colors duration-200">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.157-1.11-1.465-1.11-1.465-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.944.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.749 0 .267.18.577.688.479C19.138 20.2 22 16.447 22 12.021 22 6.484 17.523 2 12 2z"/></svg>
             </a>
           </div>
         </div>
-        <div class="mt-4 text-xs text-neutral-500 text-center sm:text-left">© 2025 Blinest. Tous droits réservés.</div>
+        <div class="mt-4 text-xs text-white/40 text-center sm:text-left">© 2025 Blinest. Tous droits réservés.</div>
       </footer>
     </div>
   </div>

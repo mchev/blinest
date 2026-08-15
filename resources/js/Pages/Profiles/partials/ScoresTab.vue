@@ -94,29 +94,29 @@ const expandSection = () => {
 <template>
   <div class="space-y-3">
     <div class="mb-4 flex flex-wrap gap-2">
-      <button @click="setSort('room')" :class="['squircle-nested-xs border px-3 py-1.5 text-xs font-medium transition-colors', sortKey === 'room' ? 'border-slate-400 bg-slate-700 text-white' : 'border-neutral-600 bg-neutral-800 text-neutral-300 hover:bg-neutral-700']">
+      <button @click="setSort('room')" :class="['retro-sort-btn', sortKey === 'room' ? 'retro-sort-btn--active' : '']">
         {{ __('Room') }} <span v-if="sortKey === 'room'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
       </button>
-      <button @click="setSort('updated_at')" :class="['squircle-nested-xs border px-3 py-1.5 text-xs font-medium transition-colors', sortKey === 'updated_at' ? 'border-slate-400 bg-slate-700 text-white' : 'border-neutral-600 bg-neutral-800 text-neutral-300 hover:bg-neutral-700']">
+      <button @click="setSort('updated_at')" :class="['retro-sort-btn', sortKey === 'updated_at' ? 'retro-sort-btn--active' : '']">
         {{ __('Last played') }} <span v-if="sortKey === 'updated_at'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
       </button>
-      <button @click="setSort('score')" :class="['squircle-nested-xs border px-3 py-1.5 text-xs font-medium transition-colors', sortKey === 'score' ? 'border-slate-400 bg-slate-700 text-white' : 'border-neutral-600 bg-neutral-800 text-neutral-300 hover:bg-neutral-700']">
+      <button @click="setSort('score')" :class="['retro-sort-btn', sortKey === 'score' ? 'retro-sort-btn--active' : '']">
         {{ __('Score') }} <span v-if="sortKey === 'score'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
       </button>
     </div>
-    <div v-for="score in sortedScores" :key="score.id" class="flex items-center gap-4 squircle-nested-sm border border-neutral-700/50 bg-neutral-800/50 px-4 py-3 transition-colors hover:bg-neutral-800/70">
+    <div v-for="score in sortedScores" :key="score.id" class="retro-list-row">
       <Link class="flex items-center" :href="route('rooms.show', score.room.slug)">
         <img v-if="score.room.photo" class="h-12 w-12 squircle-nested-xs object-cover" :src="score.room.photo" loading="lazy" />
         <div class="ml-3 flex flex-col">
           <span class="font-medium text-white">{{ score.room.name }}</span>
-          <span class="text-xs text-neutral-400">{{ score.updated_at }}</span>
+          <span class="text-xs text-white/60">{{ score.updated_at }}</span>
         </div>
       </Link>
-      <div class="ml-auto text-xl font-bold text-white">
-        {{ score.score }} <span class="text-sm text-neutral-400">{{ __('PTS') }}</span>
+      <div class="ml-auto text-xl font-bold text-brand-secondary">
+        {{ score.score }} <span class="text-sm text-white/60">{{ __('PTS') }}</span>
       </div>
     </div>
-    <div v-if="scores.length === 0" class="py-12 text-center text-neutral-400">{{ __('No scores found') }}</div>
+    <div v-if="scores.length === 0" class="py-12 text-center text-white/60">{{ __('No scores found') }}</div>
     <div v-if="loading" class="flex justify-center py-8">
       <svg class="h-6 w-6 animate-spin text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -35,12 +35,12 @@ const close = () => {
     <Card>
       <template #header>
         <div class="flex w-full items-center justify-between">
-          <h2>{{ __('Moderation') }}</h2>
-          <span class="pr-2 text-sm italic">{{ message.user.name }}</span>
+          <h2 class="retro-title retro-title--primary">{{ __('Moderation') }}</h2>
+          <span class="pr-2 text-sm text-white/60 italic">{{ message.user.name }}</span>
         </div>
       </template>
 
-      <blockquote class="my-2 border-l px-4 py-2 font-mono text-neutral-400">
+      <blockquote class="my-2 border-l border-brand-accent/40 px-4 py-2 font-mono text-white/70">
         <time class="mr-1 text-xs">{{ message.time }}</time>
         <br />
         {{ message.body }}

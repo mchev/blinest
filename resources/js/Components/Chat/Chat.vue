@@ -31,7 +31,7 @@ const showEmojiPicker = ref(false)
 const inputRef = ref(null)
 
 const filteredUsers = computed(() => {
-  return users.value.filter(user => 
+  return users.value.filter(user =>
     user.name.toLowerCase().includes(mentionFilter.value.toLowerCase())
   )
 })
@@ -118,68 +118,72 @@ const focusInput = () => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col">
-    <div class="flex items-center justify-center gap-2 px-2 py-4">
-      <button 
-        v-if="!reported" 
-        class="btn-secondary btn-sm bg-neutral-700" 
-        @click="alertingModerators = true" 
+  <div class="chat-panel">
+    <div class="chat-header">
+      <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-accent">{{ __('Chat') }}</span>
+      <button
+        v-if="!reported"
+        type="button"
+        class="room-action-btn !py-1.5 !text-[10px]"
+        @click="alertingModerators = true"
         :title="__('Report a problem on the chat')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
-        {{ __('Alerting moderators') }}
+        <span class="hidden lg:inline">{{ __('Alert moderators') }}</span>
       </button>
-      <div v-else class="flex items-center text-green-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <div v-else class="flex items-center text-brand-accent text-xs">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
         {{ __('Alert sent') }}
       </div>
-      <a :href="route('docs.faq')" title="FAQ" target="_blank" rel="noopener noreferrer">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+      <a :href="route('docs.faq')" title="FAQ" target="_blank" rel="noopener noreferrer" class="chat-icon-btn !h-7 !w-7">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
         </svg>
       </a>
     </div>
-    <div ref="messagesContainer" class="flex flex-1 flex-col-reverse overflow-y-auto gap-4 px-2">
+
+    <div ref="messagesContainer" class="chat-messages flex flex-1 flex-col-reverse overflow-y-auto gap-1 px-2 py-2">
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
-    <div v-if="user?.is_guest" class="flex w-full p-4 text-center">
-      <div class="w-full rounded-lg bg-neutral-800/50 px-4 py-6 text-sm text-neutral-400">
-        <Link :href="route('guest.to-register')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Register') }}</Link>
+
+    <div v-if="user?.is_guest" class="flex w-full p-3">
+      <div class="chat-guest-banner text-center">
+        <Link :href="route('guest.to-register')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Register') }}</Link>
         {{ __(' or ') }}
-        <Link :href="route('guest.to-login')" class="font-medium text-indigo-400 hover:text-indigo-300 underline">{{ __('Login') }}</Link>
+        <Link :href="route('guest.to-login')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Login') }}</Link>
         {{ __('to chat with other players') }}
       </div>
     </div>
-    <div v-else class="flex w-full p-2 relative">
-      <form 
-        @submit.prevent="sendMessage" 
+
+    <div v-else class="relative flex w-full p-2">
+      <form
+        @submit.prevent="sendMessage"
         class="flex w-full text-sm relative"
         role="form"
         aria-label="Message form"
       >
-        <div class="relative flex-grow flex items-center bg-neutral-800/80 hover:bg-neutral-800 rounded-l-lg transition-colors duration-200 focus-within:bg-neutral-800 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:ring-offset-2 focus-within:ring-offset-neutral-900">
-          <TextInput 
+        <div class="chat-input-wrap">
+          <TextInput
             ref="inputRef"
-            v-model="body" 
-            autocomplete="off" 
+            v-model="body"
+            autocomplete="off"
             :inputClass="[
-              'rounded-l-lg',
-              'border-0', 
+              'border-0',
               'focus:ring-0',
               'focus:ring-offset-0',
-              'focus:border-transparent', 
+              'focus:border-transparent',
               'focus:outline-none',
               'bg-transparent',
               'text-base',
               'py-3',
               'pl-4',
-              'pr-12'
-            ]" 
-            class="flex-grow" 
+              'pr-12',
+            ]"
+            class="flex-grow"
             @click="showEmojiPicker = false"
             @input="handleInput"
             :placeholder="__('Type your message...')"
@@ -187,9 +191,9 @@ const focusInput = () => {
             aria-describedby="message-char-count"
             maxlength="500"
           />
-          <button 
-            type="button" 
-            class="absolute right-2 p-1.5 text-neutral-400 hover:text-neutral-200 transition-colors duration-200 focus:outline-none focus:text-neutral-200" 
+          <button
+            type="button"
+            class="absolute right-2 p-1.5 text-white/50 transition-colors duration-200 hover:text-brand-accent focus:outline-none"
             @click="showEmojiPicker = !showEmojiPicker"
             aria-label="Open emoji picker"
             aria-expanded="showEmojiPicker"
@@ -203,20 +207,20 @@ const focusInput = () => {
         <div id="message-char-count" class="sr-only" aria-live="polite">
           {{ body.length }} characters remaining out of 500
         </div>
-        <button 
-          type="submit" 
-          class="flex items-center justify-center min-w-[3rem] bg-indigo-600 hover:bg-indigo-700 rounded-r-lg text-neutral-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600"
+        <button
+          type="submit"
+          class="chat-send-btn"
           :disabled="!body.trim()"
           aria-label="Send message"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg>
         </button>
       </form>
-      <EmojiPicker 
-        v-if="showEmojiPicker" 
-        :native="true" 
-        @select="onSelectEmoji" 
-        class="absolute bottom-full right-0 z-50 shadow-xl rounded-lg border border-neutral-700 bg-neutral-800" 
+      <EmojiPicker
+        v-if="showEmojiPicker"
+        :native="true"
+        @select="onSelectEmoji"
+        class="absolute bottom-full right-2 z-50 shadow-xl border border-white/10 bg-brand-deep retro-dropdown-panel"
         id="emoji-picker"
         role="dialog"
         aria-label="Emoji picker"

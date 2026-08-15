@@ -62,37 +62,16 @@ const hiddenRoomCount = computed(() => {
 
   return Math.max(0, filteredRooms.value.length - initialLimit)
 })
-
-const selectedCategory = computed(() =>
-  props.categories.find((category) => String(category.id) === selectedCategoryId.value) ?? null,
-)
-
-const liveRoomCount = computed(() =>
-  filteredRooms.value.filter((room) => room.is_playing).length,
-)
 </script>
 
 <template>
-  <section id="public-rooms" class="space-y-5">
-    <HomeSectionHeader kicker="Blinest" :title="__('Official rooms')">
-      <template #subtitle>
-        <span class="text-zinc-400">
-          <template v-if="selectedCategory">
-            {{ __('Official rooms SEO intro category', { category: __(selectedCategory.name) }) }}
-          </template>
-          <template v-else>
-            {{ __('Official rooms SEO intro') }}
-          </template>
-          <span v-if="liveRoomCount > 0" class="font-medium text-red-400/90">
-            · {{ liveRoomCount }} {{ __('live now') }}
-          </span>
-        </span>
-      </template>
+  <section id="public-rooms" class="space-y-6">
+    <HomeSectionHeader :title="__('Official rooms')" compact>
       <template #action>
         <select
           id="public-room-category-filter"
           v-model="selectedCategoryId"
-          class="form-select w-full py-2 text-sm sm:w-52"
+          class="retro-select w-full sm:w-56"
           :aria-label="__('Filter by category')"
           @change="showAll = false"
         >
@@ -112,7 +91,7 @@ const liveRoomCount = computed(() =>
 
     <div
       v-if="visibleRooms.length"
-      class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"
+      class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
     >
       <Room
         v-for="room in visibleRooms"
@@ -129,15 +108,15 @@ const liveRoomCount = computed(() =>
         @click="showAll = true"
       >
         {{ __('Show more rooms') }}
-        <span class="text-zinc-400">(+{{ hiddenRoomCount }})</span>
+        <span class="text-white/50">(+{{ hiddenRoomCount }})</span>
       </button>
     </div>
 
     <div
       v-else-if="!visibleRooms.length"
-      class="rounded-xl border border-dashed border-zinc-700 bg-arena-panel/40 px-6 py-10 text-center"
+      class="rounded-xl border border-dashed border-white/15 bg-arena-panel/40 px-6 py-10 text-center"
     >
-      <p class="text-sm font-semibold text-zinc-200">
+      <p class="text-sm font-semibold text-white">
         {{ __('No rooms in this category right now.') }}
       </p>
       <button

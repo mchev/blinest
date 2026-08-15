@@ -4,8 +4,8 @@
   "description": "Quiz musicaux multijoueurs gratuits pour toutes et tous",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0F172A",
-  "theme_color": "#0F172A",
+  "background_color": "#1A1A2E",
+  "theme_color": "#1A1A2E",
   "orientation": "portrait-primary",
   "icons": [
     {

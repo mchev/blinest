@@ -76,9 +76,9 @@ const formatNumber = (num) => {
 }
 
 const getMedalClass = (index) => {
-  if (index === 0) return 'from-yellow-400 to-yellow-600 text-yellow-100 shadow-lg shadow-yellow-500/50'
-  if (index === 1) return 'from-gray-300 to-gray-500 text-gray-100 shadow-lg shadow-gray-400/50'
-  if (index === 2) return 'from-amber-600 to-amber-800 text-amber-100 shadow-lg shadow-amber-600/50'
+  if (index === 0) return 'bg-brand-secondary text-brand-midnight shadow-lg'
+  if (index === 1) return 'bg-brand-accent text-brand-midnight shadow-lg'
+  if (index === 2) return 'bg-brand-primary text-white shadow-lg'
   return ''
 }
 
@@ -132,16 +132,16 @@ const switchTab = (tabId) => {
 
 <template>
   <Modal :show="show" maxWidth="5xl" @close="emit('close')">
-    <div class="bg-gradient-to-b from-neutral-800 to-neutral-900 text-neutral-200 rounded-lg overflow-hidden shadow-2xl border border-neutral-700">
+    <div class="text-white overflow-hidden">
       <!-- Header -->
-      <div class="bg-gradient-to-r from-purple-900/50 to-purple-700/30 backdrop-blur-sm p-4 border-b border-neutral-700 flex items-center justify-between">
-        <h2 class="font-bold text-xl text-white flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="border-b border-white/10 bg-brand-midnight/60 backdrop-blur-sm p-4 flex items-center justify-between">
+        <h2 class="retro-title retro-title--secondary text-xl flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-brand-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
-          {{ room.name }} <span class="ml-2 text-sm font-normal text-purple-300">{{ __('Leaderboard') }}</span>
+          {{ room.name }} <span class="ml-2 text-sm font-normal text-brand-accent">{{ __('Leaderboard') }}</span>
         </h2>
-        <button @click="emit('close')" :title="__('Close')" class="p-2 rounded-full hover:bg-neutral-700/50 transition-all duration-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <button @click="emit('close')" :title="__('Close')" class="retro-icon-btn !h-9 !w-9">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -150,17 +150,17 @@ const switchTab = (tabId) => {
 
       <!-- Loading state -->
       <div v-if="loading" class="flex flex-col w-full items-center justify-center p-16">
-        <Spinner class="h-12 w-12 text-purple-500 mb-4" />
-        <p class="text-neutral-400">{{ __('Loading scores...') }}</p>
+        <Spinner class="h-12 w-12 text-brand-accent mb-4" />
+        <p class="text-white/60">{{ __('Loading scores...') }}</p>
       </div>
 
       <!-- Error state -->
       <div v-else-if="error" class="flex flex-col items-center justify-center p-16">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-brand-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p class="text-red-400 mb-4">{{ error }}</p>
-        <button @click="fetchScores" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors">
+        <p class="text-brand-primary mb-4">{{ error }}</p>
+        <button @click="fetchScores" class="game-btn-play-join !min-h-[2.5rem] !w-auto px-4">
           {{ __('Retry') }}
         </button>
       </div>
@@ -168,13 +168,13 @@ const switchTab = (tabId) => {
       <!-- Content -->
       <div v-else class="p-4">
         <!-- Tabs -->
-        <div class="flex border-b border-neutral-700 mb-6 gap-1">
-          <button 
-            v-for="tab in tabs" 
+        <div class="flex border-b border-white/10 mb-6 gap-1">
+          <button
+            v-for="tab in tabs"
             :key="tab.id"
             @click="switchTab(tab.id)"
             class="px-4 py-2 font-medium transition-all duration-200 border-b-2 -mb-px relative group"
-            :class="activeTab === tab.id ? 'border-purple-500 text-white' : 'border-transparent text-neutral-400 hover:border-neutral-600 hover:text-white'"
+            :class="activeTab === tab.id ? 'border-brand-accent text-white' : 'border-transparent text-white/60 hover:border-white/20 hover:text-white'"
           >
             <span class="flex items-center gap-2">
               <svg v-if="tab.icon === 'trophy'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -188,24 +188,24 @@ const switchTab = (tabId) => {
               </svg>
               {{ __(tab.label) }}
             </span>
-            <span v-if="activeTab === tab.id" class="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500 rounded-t-full"></span>
+            <span v-if="activeTab === tab.id" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-accent"></span>
           </button>
         </div>
 
         <!-- User's score highlight -->
-        <div v-if="userScore" class="mb-6 bg-gradient-to-r from-purple-900/30 to-purple-700/20 rounded-lg p-4 border border-purple-800/50 flex items-center justify-between animate-fade-in">
+        <div v-if="userScore" class="mb-6 border border-brand-accent/30 bg-brand-accent/10 p-4 flex items-center justify-between animate-fade-in">
           <div class="flex items-center">
-            <div class="bg-purple-700 rounded-full p-2 mr-3 shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="bg-brand-accent p-2 mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-midnight" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
             <div>
-              <div class="text-sm text-purple-300">{{ __('Your Score') }}</div>
+              <div class="text-sm text-brand-accent">{{ __('Your Score') }}</div>
               <div class="font-bold text-white text-lg">
                 {{ formatNumber(userScore.total || userScore.score || 0) }}
-                <span class="text-xs font-normal text-purple-300 ml-1">{{ __('POINTS') }}</span>
-                <span v-if="userPosition" class="ml-3 text-sm font-normal text-purple-400">
+                <span class="text-xs font-normal text-white/60 ml-1">{{ __('POINTS') }}</span>
+                <span v-if="userPosition" class="ml-3 text-sm font-normal text-brand-secondary">
                   #{{ userPosition }}
                 </span>
               </div>
@@ -237,7 +237,7 @@ const switchTab = (tabId) => {
                       <div class="absolute -inset-1.5 bg-gradient-to-r from-gray-300 to-gray-500 rounded-full blur-md opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
                       <!-- Avatar frame -->
                       <div class="relative bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 p-0.5 rounded-full shadow-lg">
-                        <div class="bg-neutral-900 rounded-full p-0.5">
+                        <div class="bg-brand-midnight rounded-full p-0.5">
                           <img 
                             :src="activeTab === 'teams' ? currentScores[1].team?.photo : currentScores[1].user?.photo" 
                             :alt="activeTab === 'teams' ? currentScores[1].team?.name : currentScores[1].user?.name"
@@ -298,7 +298,7 @@ const switchTab = (tabId) => {
                       <div class="absolute -inset-1.5 bg-gradient-to-r from-yellow-300 to-yellow-500 rounded-full blur-lg opacity-30"></div>
                       <!-- Avatar frame with gold border -->
                       <div class="relative bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 p-1 rounded-full shadow-xl animate-glow-gold">
-                        <div class="bg-neutral-900 rounded-full p-0.5">
+                        <div class="bg-brand-midnight rounded-full p-0.5">
                           <img 
                             :src="activeTab === 'teams' ? currentScores[0].team?.photo : currentScores[0].user?.photo" 
                             :alt="activeTab === 'teams' ? currentScores[0].team?.name : currentScores[0].user?.name"
@@ -361,7 +361,7 @@ const switchTab = (tabId) => {
                       <div class="absolute -inset-1.5 bg-gradient-to-r from-amber-600 to-amber-800 rounded-full blur-md opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
                       <!-- Avatar frame -->
                       <div class="relative bg-gradient-to-br from-amber-600 via-amber-700 to-amber-800 p-0.5 rounded-full shadow-lg">
-                        <div class="bg-neutral-900 rounded-full p-0.5">
+                        <div class="bg-brand-midnight rounded-full p-0.5">
                           <img 
                             :src="activeTab === 'teams' ? currentScores[2].team?.photo : currentScores[2].user?.photo" 
                             :alt="activeTab === 'teams' ? currentScores[2].team?.name : currentScores[2].user?.name"
@@ -403,24 +403,24 @@ const switchTab = (tabId) => {
         </div>
 
         <!-- Full leaderboard -->
-        <div class="overflow-hidden rounded-lg border border-neutral-700 bg-neutral-800/50 backdrop-blur-sm relative z-20">
+        <div class="overflow-hidden rounded-lg border border-white/10 bg-brand-deep/80 backdrop-blur-sm relative z-20">
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="bg-neutral-700/50">
-                  <th class="p-3 text-left font-medium text-neutral-300 sticky left-0 bg-neutral-700/50 z-10">{{ __('Rank') }}</th>
-                  <th class="p-3 text-left font-medium text-neutral-300">{{ __('Name') }}</th>
-                  <th class="p-3 text-right font-medium text-neutral-300">{{ __('Score') }}</th>
+                <tr class="bg-brand-midnight/50">
+                  <th class="p-3 text-left font-medium text-white/70 sticky left-0 bg-brand-midnight/50 z-10">{{ __('Rank') }}</th>
+                  <th class="p-3 text-left font-medium text-white/70">{{ __('Name') }}</th>
+                  <th class="p-3 text-right font-medium text-white/70">{{ __('Score') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr 
                   v-for="(score, index) in currentScores" 
                   :key="activeTab === 'teams' ? score.team?.id || score.totalscorable_id || index : score.user?.id || score.totalscorable_id || index"
-                  class="border-t border-neutral-700 hover:bg-neutral-700/30 transition-colors duration-150"
-                  :class="{ 'bg-purple-900/20': userPosition && index + 1 === userPosition }"
+                  class="border-t border-white/10 hover:bg-brand-midnight/40 transition-colors duration-150"
+                  :class="{ 'bg-brand-accent/20': userPosition && index + 1 === userPosition }"
                 >
-                    <td class="p-3 w-16 sticky left-0 bg-neutral-800/95 z-10">
+                    <td class="p-3 w-16 sticky left-0 bg-brand-deep/95 z-10">
                       <div 
                         v-if="index < 3" 
                         class="w-8 h-8 rounded-full bg-gradient-to-br flex items-center justify-center font-bold shadow-md"
@@ -431,27 +431,27 @@ const switchTab = (tabId) => {
                         </svg>
                         <span v-else>{{ index + 1 }}</span>
                       </div>
-                      <div v-else class="text-neutral-400 font-medium">{{ index + 1 }}</div>
+                      <div v-else class="text-white/60 font-medium">{{ index + 1 }}</div>
                     </td>
                     <td class="p-3">
                       <div class="flex items-center">
                         <img 
                           :src="activeTab === 'teams' ? score.team?.photo : score.user?.photo" 
                           :alt="activeTab === 'teams' ? score.team?.name : score.user?.name"
-                          class="h-8 w-8 rounded-full object-cover mr-3 ring-1 ring-neutral-600"
+                          class="h-8 w-8 rounded-full object-cover mr-3 ring-1 ring-white/20"
                           loading="lazy"
                           @error="$event.target.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(activeTab === 'teams' ? score.team?.name || 'Team' : score.user?.name || 'User') + '&color=7F9CF5&background=EBF4FF'"
                         />
                         <Link 
                           v-if="activeTab === 'teams' ? score.team?.id : score.user?.id"
                           :href="activeTab === 'teams' ? route('teams.show', { team: score.team.id }) : route('user.profile', { user: score.user.id })"
-                          class="font-medium text-white hover:text-purple-300 transition-colors duration-150"
+                          class="font-medium text-white hover:text-brand-accent transition-colors duration-150"
                         >
                           {{ activeTab === 'teams' ? score.team?.name : score.user?.name }}
                         </Link>
                         <span 
                           v-else
-                          class="font-medium text-neutral-400"
+                          class="font-medium text-white/60"
                         >
                           {{ activeTab === 'teams' ? score.team?.name : (score.user?.name || __('Deleted user')) }}
                         </span>
@@ -459,11 +459,11 @@ const switchTab = (tabId) => {
                     </td>
                     <td class="p-3 text-right">
                       <span class="font-bold text-white">{{ formatNumber(score.total) }}</span>
-                      <span class="text-xs text-neutral-400 ml-1">{{ __('PTS') }}</span>
+                      <span class="text-xs text-white/60 ml-1">{{ __('PTS') }}</span>
                     </td>
                   </tr>
-                <tr v-if="currentScores.length === 0" class="border-t border-neutral-700">
-                  <td colspan="3" class="p-6 text-center text-neutral-400">
+                <tr v-if="currentScores.length === 0" class="border-t border-white/10">
+                  <td colspan="3" class="p-6 text-center text-white/60">
                     <div class="flex flex-col items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

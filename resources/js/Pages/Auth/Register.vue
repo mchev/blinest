@@ -27,7 +27,7 @@ const register = () => {
     <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
       <Card class="flex flex-grow">
         <template #header>
-          <h1 class="text-center text-xl font-bold">{{ __('Register') }}</h1>
+          <h1 class="retro-title retro-title--primary text-center text-xl">{{ __('Register') }}</h1>
         </template>
         <form @submit.prevent="register">
           <div class="p-4">

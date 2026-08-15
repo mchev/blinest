@@ -1,5 +1,5 @@
 <template>
-  <button :disabled="loading" class="flex items-center">
+  <button v-bind="$attrs" :disabled="loading" class="flex items-center">
     <div v-if="loading" class="btn-spinner mr-2" />
     <slot />
   </button>
@@ -7,6 +7,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     loading: Boolean,
   },

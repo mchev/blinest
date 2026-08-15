@@ -51,10 +51,10 @@ const dispatch = () => {
 }
 </script>
 <template>
-  <div class="flex items-center space-x-2 bg-neutral-800 rounded-lg p-2 border border-neutral-700">
-    <button 
-      @click="toggleMute" 
-      class="text-neutral-300 hover:text-white transition-colors focus:outline-none"
+  <div class="retro-panel flex items-center gap-2 p-2">
+    <button
+      @click="toggleMute"
+      class="text-white/70 hover:text-white transition-colors focus:outline-none"
       :title="isMuted ? 'Unmute' : 'Mute'"
     >
       <svg v-if="volumeIcon === 'volume-off'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -75,11 +75,11 @@ const dispatch = () => {
       max="1"
       step="0.01"
       v-model="volume"
-      class="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:accent-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-500"
+      class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-brand-midnight accent-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent"
       :title="`Volume: ${volumePercentage}%`"
     />
-    
-    <span class="text-xs font-medium text-neutral-300 min-w-[2.5rem] text-center">
+
+    <span class="min-w-[2.5rem] text-center text-xs font-medium text-white/70">
       {{ volumePercentage }}%
     </span>
   </div>

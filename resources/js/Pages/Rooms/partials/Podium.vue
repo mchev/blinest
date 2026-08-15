@@ -29,8 +29,8 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   <div v-if="hasEntries" class="relative w-full py-6 overflow-hidden">
     <!-- Background decoration -->
     <div class="absolute inset-0 opacity-10">
-      <div class="absolute top-0 left-1/4 w-32 h-32 rounded-full bg-yellow-500 blur-3xl"></div>
-      <div class="absolute bottom-0 right-1/4 w-32 h-32 rounded-full bg-purple-500 blur-3xl"></div>
+      <div class="absolute top-0 left-1/4 w-32 h-32 rounded-full bg-brand-secondary blur-3xl opacity-20"></div>
+      <div class="absolute bottom-0 right-1/4 w-32 h-32 rounded-full bg-brand-accent blur-3xl opacity-20"></div>
     </div>
     
     <!-- Podium stands -->
@@ -40,7 +40,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-12 w-12 rounded-full object-cover border-2 border-amber-600 shadow-lg" 
+              class="h-12 w-12 rounded-full object-cover border-2 border-brand-primary shadow-lg" 
               :src="list[2].user ? list[2].user.photo : (list[2].team ? list[2].team.photo : '')" 
               :alt="list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : 'Third place')"
             />
@@ -52,8 +52,8 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
           <div class="flex items-center justify-center gap-1 mt-0.5">
             <EloBadge v-if="list[2].user?.elo" :elo="list[2].user.elo" size="sm" variant="compact" />
           </div>
-          <div class="text-amber-400 font-bold text-sm">{{ list[2].score || list[2].total || 0 }} pts</div>
-          <div class="podium-stand bg-gradient-to-b from-amber-600 to-amber-800">
+          <div class="text-brand-primary font-bold text-sm">{{ list[2].score || list[2].total || 0 }} pts</div>
+          <div class="podium-stand bg-brand-primary">
             <span class="text-lg font-bold">3</span>
           </div>
         </div>
@@ -64,7 +64,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-14 w-14 rounded-full object-cover border-2 border-yellow-400 shadow-lg" 
+              class="h-14 w-14 rounded-full object-cover border-2 border-brand-secondary shadow-lg" 
               :src="list[0].user ? list[0].user.photo : (list[0].team ? list[0].team.photo : '')" 
               :alt="list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : 'First place')"
             />
@@ -76,8 +76,8 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
           <div class="flex items-center justify-center gap-1 mt-0.5">
             <EloBadge v-if="list[0].user?.elo" :elo="list[0].user.elo" size="sm" variant="compact" />
           </div>
-          <div class="text-yellow-400 font-bold text-sm">{{ list[0].score || list[0].total || 0 }} pts</div>
-          <div class="podium-stand bg-gradient-to-b from-yellow-400 to-yellow-600">
+          <div class="text-brand-secondary font-bold text-sm">{{ list[0].score || list[0].total || 0 }} pts</div>
+          <div class="podium-stand bg-brand-secondary text-brand-midnight">
             <span class="text-xl font-bold">1</span>
           </div>
         </div>
@@ -88,7 +88,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
-              class="h-12 w-12 rounded-full object-cover border-2 border-gray-300 shadow-lg" 
+              class="h-12 w-12 rounded-full object-cover border-2 border-brand-accent shadow-lg" 
               :src="list[1].user ? list[1].user.photo : (list[1].team ? list[1].team.photo : '')" 
               :alt="list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : 'Second place')"
             />
@@ -100,8 +100,8 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
           <div class="flex items-center justify-center gap-1 mt-0.5">
             <EloBadge v-if="list[1].user?.elo" :elo="list[1].user.elo" size="sm" variant="compact" />
           </div>
-          <div class="text-gray-300 font-bold text-sm">{{ list[1].score || list[1].total || 0 }} pts</div>
-          <div class="podium-stand bg-gradient-to-b from-gray-300 to-gray-400">
+          <div class="text-brand-accent font-bold text-sm">{{ list[1].score || list[1].total || 0 }} pts</div>
+          <div class="podium-stand bg-brand-accent text-brand-midnight">
             <span class="text-lg font-bold">2</span>
           </div>
         </div>
@@ -110,13 +110,13 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
     
     <!-- 4th and 5th places -->
     <div class="flex justify-center gap-4 mt-4">
-      <div v-if="list[3]" class="flex items-center gap-2 bg-neutral-800/50 rounded-full px-3 py-1 border border-neutral-700">
+      <div v-if="list[3]" class="flex items-center gap-2 border border-white/10 bg-brand-midnight px-3 py-1">
         <div class="flex-shrink-0 relative">
-          <img 
-            class="h-8 w-8 rounded-full object-cover border border-purple-500" 
+          <img
+            class="h-8 w-8 rounded-full object-cover border border-brand-accent" 
             :src="list[3].user ? list[3].user.photo : (list[3].team ? list[3].team.photo : '')" 
           />
-          <div class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-purple-500 flex items-center justify-center text-[10px] font-bold">4</div>
+          <div class="absolute -top-1 -right-1 h-4 w-4 bg-brand-accent flex items-center justify-center text-[10px] font-bold text-brand-midnight">4</div>
         </div>
         <div class="text-xs">
           <div class="font-medium text-white/80 truncate max-w-24">
@@ -125,17 +125,17 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
           <div class="flex items-center gap-1 mt-0.5">
             <EloBadge v-if="list[3].user?.elo" :elo="list[3].user.elo" size="sm" variant="compact" />
           </div>
-          <div class="text-purple-400 text-[10px] font-bold">{{ list[3].score || list[3].total || 0 }} pts</div>
+          <div class="text-brand-accent text-[10px] font-bold">{{ list[3].score || list[3].total || 0 }} pts</div>
         </div>
       </div>
-      
-      <div v-if="list[4]" class="flex items-center gap-2 bg-neutral-800/50 rounded-full px-3 py-1 border border-neutral-700">
+
+      <div v-if="list[4]" class="flex items-center gap-2 border border-white/10 bg-brand-midnight px-3 py-1">
         <div class="flex-shrink-0 relative">
-          <img 
-            class="h-8 w-8 rounded-full object-cover border border-blue-500" 
+          <img
+            class="h-8 w-8 rounded-full object-cover border border-brand-primary" 
             :src="list[4].user ? list[4].user.photo : (list[4].team ? list[4].team.photo : '')" 
           />
-          <div class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] font-bold">5</div>
+          <div class="absolute -top-1 -right-1 h-4 w-4 bg-brand-primary flex items-center justify-center text-[10px] font-bold text-white">5</div>
         </div>
         <div class="text-xs">
           <div class="font-medium text-white/80 truncate max-w-24">
@@ -144,7 +144,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
           <div class="flex items-center gap-1 mt-0.5">
             <EloBadge v-if="list[4].user?.elo" :elo="list[4].user.elo" size="sm" variant="compact" />
           </div>
-          <div class="text-blue-400 text-[10px] font-bold">{{ list[4].score || list[4].total || 0 }} pts</div>
+          <div class="text-brand-primary text-[10px] font-bold">{{ list[4].score || list[4].total || 0 }} pts</div>
         </div>
       </div>
     </div>
@@ -196,18 +196,20 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 }
 
 .gold {
-  background: linear-gradient(135deg, #ffd700, #ffb347);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  background: #F9ED69;
+  color: #1A1A2E;
+  box-shadow: var(--glow-secondary);
 }
 
 .silver {
-  background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
-  box-shadow: 0 0 10px rgba(192, 192, 192, 0.6);
+  background: #00ADB5;
+  color: #1A1A2E;
+  box-shadow: var(--glow-accent);
 }
 
 .bronze {
-  background: linear-gradient(135deg, #cd7f32, #a0522d);
-  box-shadow: 0 0 10px rgba(205, 127, 50, 0.6);
+  background: #E94560;
+  box-shadow: var(--glow-primary);
 }
 
 @keyframes grow-up {

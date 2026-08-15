@@ -26,11 +26,11 @@ const login = () => {
   <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
     <Card class="flex flex-grow">
       <template #header>
-        <h1 class="text-center text-xl font-bold">{{ __('Login') }}</h1>
+        <h1 class="retro-title retro-title--primary text-center text-xl">{{ __('Login') }}</h1>
       </template>
       <form @submit.prevent="login">
         <div class="p-4">
-          <div v-if="$page.props.errors.email" class="my-2 max-w-xs text-sm text-red-600">
+          <div v-if="$page.props.errors.email" class="my-2 max-w-xs text-sm text-brand-primary">
             {{ $page.props.errors.email }}
           </div>
 

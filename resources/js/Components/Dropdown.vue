@@ -56,8 +56,8 @@ onMounted(() => {
       <slot />
       <teleport v-if="show" to="#dropdown">
         <div>
-          <div class="fixed top-0 right-0 left-0 bottom-0 z-[99998] bg-black opacity-10" @click="show = false" />
-          <div ref="dropdown" class="absolute z-[99999] overflow-hidden rounded-lg border border-white/10 bg-surface-overlay text-sm text-slate-100 shadow-lg" @click.stop="show = !autoClose">
+          <div class="retro-modal-overlay fixed top-0 right-0 left-0 bottom-0 z-[99998]" @click="show = false" />
+          <div ref="dropdown" class="retro-dropdown-panel absolute z-[99999]" @click.stop="show = !autoClose">
             <slot name="dropdown" />
           </div>
         </div>

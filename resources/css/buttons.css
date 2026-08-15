@@ -1,21 +1,20 @@
 @layer components {
   .btn-primary {
-    @apply flex items-center justify-center rounded-md bg-indigo-600 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-indigo-700 hover:shadow-lg focus:bg-indigo-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-indigo-800 active:shadow-lg;
+    @apply flex items-center justify-center rounded-md bg-brand-primary px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-primary-hover hover:shadow-lg focus:bg-brand-primary-hover focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-primary-dark active:shadow-lg;
   }
   .btn-danger {
-    @apply flex items-center justify-center rounded-md bg-red-600 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg;
+    @apply flex items-center justify-center rounded-md bg-brand-primary-dark px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-primary hover:shadow-lg focus:bg-brand-primary focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-primary-dark active:shadow-lg;
   }
   .btn-warning {
-    @apply flex items-center justify-center rounded-md bg-yellow-500 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg;
+    @apply flex items-center justify-center rounded-md bg-brand-secondary px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-secondary/90 hover:shadow-lg focus:bg-brand-secondary focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-secondary-dark active:shadow-lg;
   }
   .btn-secondary {
-    @apply relative flex min-h-[2.5rem] touch-manipulation items-center justify-center gap-2 rounded-lg border border-white/10 bg-surface-raised/60 px-4 py-2.5 text-sm font-medium text-slate-200 backdrop-blur-sm transition-all duration-200 ease-out;
-    @apply hover:border-red-500/25 hover:bg-surface-hover/70 hover:text-white hover:shadow-md hover:shadow-black/15;
-    @apply focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2 focus:ring-offset-surface-base;
+    @apply relative flex min-h-[2.5rem] touch-manipulation items-center justify-center gap-2 rounded-lg border border-white/10 bg-surface-raised/60 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 ease-out;
+    @apply hover:border-white/20 hover:bg-surface-hover/70 hover:shadow-md hover:shadow-black/15;
+    @apply focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-surface-base;
     @apply active:scale-[0.98] active:bg-surface-hover/80;
     @apply disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-white/10 disabled:hover:bg-surface-raised/60 disabled:active:scale-100;
-    
-    /* Amélioration pour mobile */
+
     @media (max-width: 768px) {
       @apply min-h-[2.75rem] px-3 py-2.5;
     }
@@ -23,7 +22,6 @@
 
   .btn-sm {
     @apply text-xs px-3 py-1.5 min-h-[2rem];
-    
     @media (max-width: 768px) {
       @apply min-h-[2.25rem] px-2.5 py-1.5;
     }
@@ -33,18 +31,9 @@
   }
 
   .btn-send {
-    @apply flex items-center rounded-br-md bg-teal-600 px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-teal-700 hover:shadow-lg focus:bg-teal-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-teal-800 active:shadow-lg;
+    @apply flex items-center rounded-br-md bg-brand-accent px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-accent-hover hover:shadow-lg focus:bg-brand-accent-hover focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-accent-dark active:shadow-lg;
   }
 
-  /*
-    <button type="button" class="inline-block px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out">Secondary</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">Success</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Danger</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-yellow-500 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-700 active:shadow-lg transition duration-150 ease-in-out">Warning</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-teal-400 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-teal-500 hover:shadow-lg focus:bg-teal-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-teal-600 active:shadow-lg transition duration-150 ease-in-out">Info</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-gray-300 hover:shadow-lg focus:bg-gray-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-400 active:shadow-lg transition duration-150 ease-in-out">Light</button>
-    <button type="button" class="inline-block px-6 py-2.5 bg-gray-800 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-gray-900 hover:shadow-lg focus:bg-gray-900 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-900 active:shadow-lg transition duration-150 ease-in-out">Dark</button>
-*/
   .btn-spinner,
   .btn-spinner:after {
     border-radius: 50%;
@@ -65,11 +54,7 @@
   }
 
   @keyframes spinning {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 }

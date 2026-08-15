@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const show = ref(true)
 </script>
 <template>
-  <div class="my-4 flex items-center rounded bg-neutral-700 p-2 text-sm">
+  <div class="retro-panel my-4 flex items-center p-4 text-sm text-white/80">
     <div class="flex gap-4 items-center">
       <a target="_blank" class="btn-primary btn-sm gap-2" rel="external nofollow" href="https://donate.stripe.com/00g2bvf8i08X8De6oo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">

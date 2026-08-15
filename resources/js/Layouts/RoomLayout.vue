@@ -64,7 +64,7 @@ const metaDescription = computed(() => {
     <meta name="twitter:image" :content="room.photo || `${appUrl}/images/statics/screenshot.png`" />
     <meta name="twitter:image:alt" :content="`Illustration de la room ${room.name}`" />
   </Head>
-  <div class="text-neutral-200">
+  <div class="text-white">
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">

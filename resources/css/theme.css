@@ -1,0 +1,35 @@
+/**
+ * Blinest — palette rétro-futuriste
+ * Backgrounds : #1A1A2E · #16213E
+ * Titres & boutons : #E94560 · #F9ED69 · #00ADB5
+ * Texte : blanc
+ */
+:root {
+  color-scheme: dark;
+
+  --color-midnight: 26 26 46;
+  --color-deep: 22 33 62;
+  --color-deep-hover: 30 42 74;
+  --color-deep-card: 22 33 62;
+
+  --color-primary: 233 69 96;
+  --color-primary-hover: 255 95 120;
+  --color-primary-dark: 196 50 72;
+  --color-primary-light: 255 120 140;
+
+  --color-secondary: 249 237 105;
+  --color-secondary-dark: 212 196 45;
+
+  --color-accent: 0 173 181;
+  --color-accent-hover: 51 196 203;
+  --color-accent-dark: 0 138 145;
+
+  --glow-primary: 0 0 28px rgb(var(--color-primary) / 0.45);
+  --glow-accent: 0 0 28px rgb(var(--color-accent) / 0.45);
+  --glow-secondary: 0 0 24px rgb(var(--color-secondary) / 0.35);
+
+  --surface-base: rgb(var(--color-midnight));
+  --surface-raised: rgb(var(--color-deep));
+  --surface-overlay: rgb(var(--color-deep-card));
+  --surface-hover: rgb(var(--color-deep-hover));
+}

@@ -193,7 +193,7 @@ onUnmounted(() => {
         @click="showAll = true"
       >
         {{ __('Show more rooms') }}
-        <span class="text-zinc-400">(+{{ hiddenRoomCount }})</span>
+        <span class="text-white/50">(+{{ hiddenRoomCount }})</span>
       </button>
     </div>
 

@@ -6,13 +6,19 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import Translation from './translation';
 import { scheduleEzoicSync } from './ezoic';
+import { initChamferBorders, watchChamferBorders } from './chamfer-borders';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Blinest Music Quiz';
+
+function syncChamferBorders() {
+    requestAnimationFrame(() => initChamferBorders());
+}
 
 router.on('finish', (event) => {
     const path = new URL(event.detail.visit.url, window.location.origin).pathname;
 
     scheduleEzoicSync(path);
+    syncChamferBorders();
 });
 
 createInertiaApp({
@@ -29,6 +35,7 @@ createInertiaApp({
             .mount(el);
 
         scheduleEzoicSync(window.location.pathname);
+        watchChamferBorders();
 
         return app;
     },

@@ -655,39 +655,39 @@ onBeforeUnmount(() => {
 <template>
   <div id="youtube-player" class="hidden"></div>
   
-  <div id="player" class="relative mb-1 rounded-lg bg-neutral-800 shadow-lg border border-neutral-700">
+  <div id="player" class="room-player">
     <!-- User answers markers - moved outside the player container to be visible -->
-    <TransitionGroup 
+    <TransitionGroup
       name="user-answer"
       tag="ul"
       class="absolute w-full"
       style="top: -2rem;"
     >
-      <li 
-        v-for="user in usersWithAllAnswers" 
-        :key="user.id" 
-        class="absolute z-20 rounded-md bg-teal-600 px-2 py-1 text-xs font-medium text-white shadow-lg hover:z-30 transform transition-transform duration-200 hover:scale-110"
+      <li
+        v-for="user in usersWithAllAnswers"
+        :key="user.id"
+        class="room-player__marker hover:z-30 transform transition-transform duration-200 hover:scale-110"
         :style="`left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);`"
       >
         <div class="flex items-center space-x-1">
           <img :src="user.photo" class="h-4 w-4 rounded-full" v-if="user.photo" />
           <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
         </div>
-        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[6px] border-l-[6px] border-r-[6px] border-t-teal-600 border-l-transparent border-r-transparent"></div>
+        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[6px] border-l-[6px] border-r-[6px] border-t-brand-accent border-l-transparent border-r-transparent"></div>
       </li>
     </TransitionGroup>
 
-    <div class="overflow-hidden rounded-lg">
+    <div class="overflow-hidden">
       <!-- Error state -->
       <template v-if="error">
-        <div class="flex flex-col h-auto w-full p-3 rounded-lg bg-red-900/20 text-red-300">
+        <div class="flex flex-col h-auto w-full p-3 bg-brand-primary/10 text-white/90">
           <div class="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-brand-primary" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
-            <span class="font-medium">{{ error.split('\n')[0] }}</span>
+            <span class="font-medium text-brand-primary">{{ error.split('\n')[0] }}</span>
           </div>
-          <div class="text-sm whitespace-pre-line pl-7">
+          <div class="text-sm whitespace-pre-line pl-7 text-white/70">
             {{ error.split('\n').slice(1).join('\n') }}
           </div>
         </div>
@@ -695,10 +695,10 @@ onBeforeUnmount(() => {
 
       <!-- Loading state -->
       <template v-else-if="loading && !countdowning">
-        <div class="flex h-6 w-full items-center justify-center rounded-lg bg-purple-900/20">
+        <div class="flex h-6 w-full items-center justify-center bg-brand-midnight/60">
           <div class="flex items-center space-x-2">
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-purple-400 border-t-transparent"></div>
-            <span class="text-sm font-medium text-purple-300">{{ __('Loading') }}</span>
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-brand-accent border-t-transparent"></div>
+            <span class="text-sm font-medium text-white/80">{{ __('Loading') }}</span>
           </div>
         </div>
       </template>
@@ -706,9 +706,9 @@ onBeforeUnmount(() => {
       <!-- Countdown state -->
       <template v-else-if="countdowning && countdown !== -1">
         <div class="flex max-w-full flex-grow flex-col">
-          <div class="relative h-6 w-full overflow-hidden rounded-lg bg-neutral-800">
-            <div 
-              class="flex h-6 items-center justify-center rounded-lg bg-gradient-to-r from-purple-700/80 to-purple-600/80 text-white transition-all duration-1000 ease-linear"
+          <div class="relative h-6 w-full overflow-hidden bg-brand-midnight">
+            <div
+              class="flex h-6 items-center justify-center bg-brand-accent/80 text-white transition-all duration-1000 ease-linear"
               :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
             >
             </div>
@@ -723,15 +723,15 @@ onBeforeUnmount(() => {
       <template v-else>
         <div class="relative h-6 w-full">
           <!-- Red zone indicator (first 18%) -->
-          <div 
-            class="absolute top-0 left-0 z-10 h-6 rounded-r-lg bg-gradient-to-r from-red-600/80 to-red-500/30 transition-all duration-500 ease-linear" 
-            :style="`width: ${Math.min(percent, 18)}%`" 
+          <div
+            class="absolute top-0 left-0 z-10 h-6 bg-brand-primary/80 transition-all duration-500 ease-linear"
+            :style="`width: ${Math.min(percent, 18)}%`"
           />
-          
+
           <!-- Progress bar -->
-          <div 
-            class="absolute top-0 left-0 h-6 bg-gradient-to-r from-purple-600/90 to-purple-500/90 transition-all duration-500 ease-linear" 
-            :style="`width: ${percent}%`" 
+          <div
+            class="absolute top-0 left-0 h-6 bg-brand-accent/90 transition-all duration-500 ease-linear"
+            :style="`width: ${percent}%`"
           >
             <div class="absolute inset-0 opacity-10">
               <div class="shine-wave"></div>

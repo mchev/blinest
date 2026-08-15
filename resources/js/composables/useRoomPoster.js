@@ -1,14 +1,14 @@
 import { computed, unref } from 'vue'
 
 const POSTER_GRADIENTS = [
-    'from-red-950 via-red-900/70 to-zinc-950',
-    'from-violet-950 via-violet-900/70 to-zinc-950',
-    'from-sky-950 via-sky-900/70 to-zinc-950',
-    'from-emerald-950 via-emerald-900/70 to-zinc-950',
-    'from-amber-950 via-amber-900/70 to-zinc-950',
-    'from-rose-950 via-rose-900/70 to-zinc-950',
-    'from-indigo-950 via-indigo-900/70 to-zinc-950',
-    'from-teal-950 via-teal-900/70 to-zinc-950',
+    'from-brand-deep to-brand-midnight',
+    'from-brand-midnight to-brand-deep',
+    'from-brand-deep via-brand-midnight to-brand-deep',
+    'from-brand-midnight via-brand-deep to-brand-midnight',
+    'from-brand-deep-hover to-brand-midnight',
+    'from-brand-midnight to-brand-deep-hover',
+    'from-brand-deep to-brand-deep-hover',
+    'from-brand-deep-hover to-brand-deep',
 ]
 
 export function useRoomPoster(roomSource) {

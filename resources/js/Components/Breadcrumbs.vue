@@ -31,17 +31,17 @@ const structuredDataJson = computed(() => {
 
 <template>
   <nav aria-label="Breadcrumb" class="mb-4">
-    <ol class="flex flex-wrap items-center gap-2 text-sm text-neutral-400">
+    <ol class="flex flex-wrap items-center gap-2 text-sm text-white/60">
       <li v-for="(item, index) in items" :key="index" class="flex items-center">
-        <Link 
+        <Link
           v-if="index < items.length - 1"
-          :href="item.url" 
-          class="hover:text-white transition-colors"
+          :href="item.url"
+          class="hover:text-brand-accent transition-colors"
         >
           {{ item.label }}
         </Link>
-        <span v-else class="text-white font-medium">{{ item.label }}</span>
-        <span v-if="index < items.length - 1" class="mx-2 text-neutral-500">/</span>
+        <span v-else class="text-brand-secondary font-medium">{{ item.label }}</span>
+        <span v-if="index < items.length - 1" class="mx-2 text-white/30">/</span>
       </li>
     </ol>
   </nav>

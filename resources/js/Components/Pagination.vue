@@ -21,21 +21,16 @@ const visit = (url) => {
     <template v-for="(link, key) in links" :key="key">
       <span
         v-if="!link.url"
-        class="rounded-lg bg-neutral-800 px-3 py-2 text-sm font-medium text-neutral-400 sm:px-4 sm:py-2.5"
+        class="retro-pagination-link cursor-default text-white/40"
         v-html="link.label"
       />
       <Link
         v-else
         :href="link.url"
-        class="rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 sm:px-4 sm:py-2.5"
-        :class="
-          link.active
-            ? 'bg-yellow-500 text-white shadow-md'
-            : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700 hover:text-white'
-        "
+        class="retro-pagination-link"
+        :class="link.active ? 'retro-pagination-link--active' : ''"
         v-html="link.label"
       />
     </template>
   </div>
 </template>
-

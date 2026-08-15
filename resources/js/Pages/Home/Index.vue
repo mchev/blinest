@@ -54,13 +54,13 @@ const user = usePage().props.auth.user
 
     <div v-else class="flex flex-col gap-8">
       <div class="lg:hidden">
-        <div class="flex items-center gap-4 rounded-xl border border-zinc-700/60 bg-arena-panel p-4 ring-1 ring-zinc-800">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500/20 ring-1 ring-red-500/30">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-red-400" aria-hidden="true">
+        <div class="retro-hero flex items-center gap-4">
+          <div class="retro-hero__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
               <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
             </svg>
           </div>
-          <p class="text-sm font-bold leading-snug text-zinc-100">
+          <p class="text-sm font-bold uppercase tracking-wide leading-snug text-white">
             {{ __('Pick a room, listen to the excerpt, be the fastest to answer.') }}
           </p>
         </div>

@@ -1,3 +1,4 @@
+@import 'theme';
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
@@ -8,32 +9,27 @@
 @import 'transitions';
 @import 'fonts';
 
-:root {
-  color-scheme: dark;
-  --surface-base: #0e0e10;
-  --surface-raised: #18181b;
-  --surface-overlay: #1f1f23;
-  --text-primary: #efeff1;
-  --text-secondary: #d4d4d8;
-  --text-muted: #a1a1aa;
-}
-
 @layer base {
   body {
-    @apply font-sans antialiased text-zinc-100;
+    @apply font-sans antialiased text-white;
     background-color: var(--surface-base);
     background-image:
-      radial-gradient(ellipse 80% 50% at 0% 0%, rgb(145 70 255 / 0.08), transparent 50%),
-      radial-gradient(ellipse 60% 45% at 100% 0%, rgb(221 94 94 / 0.1), transparent 45%),
-      linear-gradient(180deg, #0e0e10 0%, #0e0e10 100%);
+      linear-gradient(rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--color-deep) / 0.85), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 50%, rgb(var(--color-deep) / 0.4), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 0% 80%, rgb(var(--color-deep) / 0.35), transparent 50%),
+      linear-gradient(180deg, rgb(var(--color-midnight)) 0%, rgb(var(--color-midnight)) 100%);
+    background-size: 48px 48px, 48px 48px, auto, auto, auto, auto;
+    background-attachment: fixed;
   }
 
   ::selection {
-    @apply bg-red-500/35 text-white;
+    @apply bg-brand-primary/40 text-white;
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-twitch/70 ring-offset-2 ring-offset-arena-base;
+    @apply outline-none ring-2 ring-white/30 ring-offset-2 ring-offset-brand-midnight;
   }
 }
 

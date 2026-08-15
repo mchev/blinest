@@ -132,30 +132,32 @@ onUnmounted(() => {
         >
           <Link
             :href="game.play_url"
-            class="game-card group flex h-full flex-col overflow-hidden ring-teal-500/20 hover:ring-teal-500/40"
+            class="game-card group flex h-full min-h-[220px] flex-col"
           >
-            <div class="flex flex-1 flex-col gap-3 bg-gradient-to-b from-teal-950/40 to-arena-card p-5">
+            <div class="relative flex flex-1 flex-col gap-4 bg-gradient-to-b from-brand-deep to-brand-midnight p-5">
+              <span class="game-card__poster-grid absolute inset-0 opacity-25" aria-hidden="true" />
               <div
-                class="flex h-14 w-14 flex-shrink-0 items-center justify-center self-center rounded-xl border-2 border-teal-400/40 bg-teal-500/25 text-2xl text-teal-200 shadow-lg shadow-teal-900/30 transition group-hover:scale-105"
+                class="relative z-10 mx-auto flex h-16 w-16 items-center justify-center bg-brand-midnight text-white ring-1 ring-white/15 transition group-hover:scale-110"
+                style="clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
                 aria-hidden="true"
               >
                 <Icon name="play" class="h-7 w-7" />
               </div>
-              <div class="min-w-0 flex-1 text-center">
-                <h3 class="font-bold tracking-tight text-white transition-colors group-hover:text-teal-300">
+              <div class="relative z-10 min-w-0 flex-1 text-center">
+                <h3 class="retro-title retro-title--accent text-sm">
                   {{ game.name }}
                 </h3>
-                <p class="mt-1 line-clamp-2 text-xs text-zinc-300">
+                <p class="mt-1 line-clamp-2 text-xs text-white/70">
                   {{ game.description }}
                 </p>
                 <p
                   v-if="game.score !== undefined && game.score > 0"
-                  class="mt-2 inline-flex items-center rounded-md bg-teal-500/25 px-2 py-0.5 text-xs font-black text-teal-300"
+                  class="retro-badge mt-2"
                 >
                   {{ game.score }} {{ __('points') }}
                 </p>
               </div>
-              <span class="game-btn-play-join mt-auto text-xs">
+              <span class="relative z-10 game-btn-play-join mt-auto text-xs">
                 {{ __('Play') }}
               </span>
             </div>
@@ -170,7 +172,7 @@ onUnmounted(() => {
           :key="`minigames-pagination-${idx}`"
           type="button"
           class="h-4 rounded-full transition-all"
-          :class="currentSlide === idx ? 'w-12 bg-teal-500' : 'w-4 bg-shark-100'"
+          :class="currentSlide === idx ? 'w-12 bg-brand-accent' : 'w-4 bg-white/20'"
           :aria-label="`${__('Go to slide')} ${idx + 1}`"
           @click="scrollToSlide(idx)"
         />
@@ -185,7 +187,7 @@ onUnmounted(() => {
           @click="goPrev"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="h-10 w-10">
-            <circle class="transition group-hover:fill-teal-500 group-hover:stroke-teal-500" cx="12" cy="12" r="10" />
+            <circle class="transition group-hover:fill-brand-accent group-hover:stroke-brand-accent" cx="12" cy="12" r="10" />
             <path d="M16 12H8" />
             <path d="m12 8-4 4 4 4" />
           </svg>
@@ -199,7 +201,7 @@ onUnmounted(() => {
           @click="goNext"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="h-10 w-10">
-            <circle class="transition group-hover:fill-teal-500 group-hover:stroke-teal-500" cx="12" cy="12" r="10" />
+            <circle class="transition group-hover:fill-brand-accent group-hover:stroke-brand-accent" cx="12" cy="12" r="10" />
             <path d="M8 12h8" />
             <path d="m12 16 4-4-4-4" />
           </svg>

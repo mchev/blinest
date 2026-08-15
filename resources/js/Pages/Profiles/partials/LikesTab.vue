@@ -75,7 +75,7 @@ const expandSection = () => {
 </script>
 <template>
   <div class="space-y-3">
-    <div v-for="track in likes" :key="track.id" class="flex items-center gap-4 squircle-nested-sm border border-neutral-700/50 bg-neutral-800/50 px-4 py-3 transition-colors hover:bg-neutral-800/70">
+    <div v-for="track in likes" :key="track.id" class="retro-list-row">
       <img v-if="track.cover || track.artwork_url" :src="track.cover || track.artwork_url" class="h-12 w-12 squircle-nested-xs object-cover" loading="lazy" />
       <div class="flex min-w-0 flex-1 flex-col">
         <span class="truncate font-medium text-white">
@@ -85,7 +85,7 @@ const expandSection = () => {
             || 'No title'
           }}
         </span>
-        <span class="truncate text-sm text-neutral-400">
+        <span class="truncate text-sm text-white/60">
           {{
             track.artist
             || (track.answers && track.answers.find(a => a.type && a.type.name === 'Artist')?.value)
@@ -93,24 +93,24 @@ const expandSection = () => {
           }}
         </span>
       </div>
-      <button v-if="currentUser && currentUser.id === props.user.id" @click="unlike(track)" class="ml-auto rounded p-1 text-neutral-400 transition-colors hover:text-red-400">
+      <button v-if="currentUser && currentUser.id === props.user.id" @click="unlike(track)" class="ml-auto p-1 text-white/50 transition-colors hover:text-brand-primary">
         <Icon name="delete" class="h-5 w-5" />
       </button>
     </div>
-    <div v-if="likes.length === 0" class="py-12 text-center text-neutral-400">{{ __('No likes found') }}</div>
+    <div v-if="likes.length === 0" class="py-12 text-center text-white/60">{{ __('No likes found') }}</div>
     <div v-if="loading" class="flex justify-center py-8">
-      <svg class="h-6 w-6 animate-spin text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <svg class="h-6 w-6 animate-spin text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
       </svg>
     </div>
     <div v-if="!isExpanded && likes.length > 0 && likes.length < (user.likes?.total || 0)" class="flex justify-center pt-4">
-      <button @click="expandSection" class="squircle-nested-xs border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-600">
+      <button @click="expandSection" class="retro-nav-btn--primary text-sm">
         {{ __('View all') }} ({{ user.likes?.total || 0 }})
       </button>
     </div>
     <div v-else-if="isExpanded && nextPage <= lastPage && !loading && likes.length > 0" class="flex justify-center pt-4">
-      <button @click="loadMore" class="squircle-nested-xs border border-neutral-600 bg-neutral-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-600">
+      <button @click="loadMore" class="retro-nav-btn--primary text-sm">
         <span class="inline-flex items-center gap-2">
           <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
