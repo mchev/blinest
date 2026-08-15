@@ -33,10 +33,6 @@ defineProps({
           <FeaturedRoom :room="featuredRoom" />
         </HomeSidebarSection>
 
-        <HomeSidebarSection :kicker="__('Partner')" :title="__('For artisans and self-employed')" :border="featuredRooms.length > 0 || (weeklyTopUsers && weeklyTopUsers.length)">
-          <OuvragePromo />
-        </HomeSidebarSection>
-
         <HomeSidebarSection
           v-if="weeklyTopUsers && weeklyTopUsers.length"
           :kicker="__('Ranking')"
@@ -110,6 +106,10 @@ defineProps({
           >
             {{ __('Donate') }}
           </a>
+        </HomeSidebarSection>
+
+        <HomeSidebarSection :kicker="__('Partner')" :title="__('For artisans and self-employed')">
+          <OuvragePromo />
         </HomeSidebarSection>
     </div>
   </aside>
