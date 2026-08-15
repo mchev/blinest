@@ -14,6 +14,17 @@ class TeamRequest extends Model
         'declined_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (TeamRequest $teamRequest): void {
+            User::forgetTeamRequestCache($teamRequest->user_id);
+        });
+
+        static::deleted(function (TeamRequest $teamRequest): void {
+            User::forgetTeamRequestCache($teamRequest->user_id);
+        });
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

@@ -112,9 +112,7 @@ class LevelCalculator
 
     public function updateScore(): void
     {
-        $publicRoomIds = Cache::flexible('public_room_ids', [518400, 604800], function () {
-            return Room::isPublic()->pluck('id')->all();
-        });
+        $publicRoomIds = Room::cachedPublicIds();
 
         $totalScore = $this->user->totalScores()
             ->whereIn('room_id', $publicRoomIds)
@@ -164,6 +162,8 @@ class LevelCalculator
         $minigameScoreTotal = (int) MinigameScore::query()
             ->where('user_id', $this->user->id)
             ->sum('score');
+
+        $this->userLevel->minigame_scores_total = $minigameScoreTotal;
 
         $totalXp = $this->userLevel->score_public_rooms
             + min($minigameScoreTotal, 1000)

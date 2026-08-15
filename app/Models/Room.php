@@ -215,6 +215,24 @@ class Room extends Model
             ->limit($limit);
     }
 
+    /**
+     * @return list<int>
+     */
+    public static function cachedPublicIds(): array
+    {
+        return Cache::flexible('public_room_ids', [518400, 604800], function () {
+            return static::query()->isPublic()->pluck('id')->all();
+        });
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toHomepageArray(): array
+    {
+        return $this->withoutAppends(['subscriptions', 'current_track_index'])->toArray();
+    }
+
     public function scopeIsPublic($query)
     {
         $query->where('is_public', true);

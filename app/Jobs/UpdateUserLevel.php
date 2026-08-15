@@ -5,12 +5,15 @@ namespace App\Jobs;
 use App\Models\User;
 use App\Services\LevelCalculator;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\Attributes\UniqueFor;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateUserLevel implements ShouldQueue
+#[UniqueFor(120)]
+class UpdateUserLevel implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,6 +27,11 @@ class UpdateUserLevel implements ShouldQueue
         $this->onQueue('level-calculations');
         $this->tries = 3;
         $this->afterCommit();
+    }
+
+    public function uniqueId(): string
+    {
+        return (string) $this->user->id;
     }
 
     /**

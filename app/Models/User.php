@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Mchev\Banhammer\Models\Ban;
@@ -114,6 +115,24 @@ class User extends Authenticatable
     public function teamRequests(): HasMany
     {
         return $this->hasMany(TeamRequest::class);
+    }
+
+    /**
+     * @return array{pending: list<int>, declined: list<int>}
+     */
+    public function cachedTeamRequestIds(): array
+    {
+        return Cache::remember("user_{$this->id}_team_requests", 3600, function () {
+            return [
+                'pending' => $this->teamRequests()->whereNull('declined_at')->pluck('team_id')->all(),
+                'declined' => $this->teamRequests()->whereNotNull('declined_at')->pluck('team_id')->all(),
+            ];
+        });
+    }
+
+    public static function forgetTeamRequestCache(int $userId): void
+    {
+        Cache::forget("user_{$userId}_team_requests");
     }
 
     // PLAYLIST

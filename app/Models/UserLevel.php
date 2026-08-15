@@ -17,6 +17,7 @@ class UserLevel extends Model
         'current_xp',
         'xp_for_next_level',
         'score_public_rooms',
+        'minigame_scores_total',
         'rooms_created_count',
         'months_seniority',
         'rounds_played_count',

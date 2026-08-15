@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\UpdateUserLevel;
-use App\Models\MinigameScore;
 use App\Models\Room;
 use App\Models\Track;
 use App\Models\User;
@@ -112,7 +111,7 @@ class ProfileController extends Controller
         $userLevel = $user->userLevel;
         $levelMetrics = $userLevel ? [
             'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
-            'minigame_scores_total' => (int) MinigameScore::query()->where('user_id', $user->id)->sum('score'),
+            'minigame_scores_total' => $userLevel->minigame_scores_total ?? 0,
             'seniority_months' => $userLevel->months_seniority ?? 0,
             'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
             'rooms_created_count' => $userLevel->rooms_created_count ?? 0,

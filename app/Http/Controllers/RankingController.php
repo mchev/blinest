@@ -74,16 +74,10 @@ class RankingController extends Controller
     {
         $user = Auth::user();
 
-        // Get public room IDs
-        $publicRoomIds = Room::where('is_public', true)->pluck('id');
-
-        // Paginated by Score (lifetime, public rooms)
-        $paginatedScores = TotalScore::query()
-            ->select('totalscorable_id')
-            ->selectRaw('ROUND(SUM(score), 1) as total_score')
-            ->where('totalscorable_type', User::class)
-            ->whereIn('room_id', $publicRoomIds)
-            ->groupBy('totalscorable_id')
+        $paginatedScores = $this->publicUserScoresQuery()
+            ->select('total_scores.totalscorable_id')
+            ->selectRaw('ROUND(SUM(total_scores.score), 1) as total_score')
+            ->groupBy('total_scores.totalscorable_id')
             ->orderByDesc('total_score')
             ->paginate(50);
 
@@ -132,24 +126,14 @@ class RankingController extends Controller
         $userPosition = null;
         $userScore = null;
         if ($user) {
-            $userScore = TotalScore::query()
-                ->where('totalscorable_type', User::class)
-                ->where('totalscorable_id', $user->id)
-                ->whereIn('room_id', $publicRoomIds)
-                ->selectRaw('ROUND(SUM(score), 1) as total_score')
-                ->groupBy('totalscorable_id')
+            $userScore = $this->publicUserScoresQuery()
+                ->where('total_scores.totalscorable_id', $user->id)
+                ->selectRaw('ROUND(SUM(total_scores.score), 1) as total_score')
+                ->groupBy('total_scores.totalscorable_id')
                 ->first();
 
             if ($userScore) {
-                $userScorePosition = TotalScore::query()
-                    ->where('totalscorable_type', User::class)
-                    ->whereIn('room_id', $publicRoomIds)
-                    ->groupBy('totalscorable_id')
-                    ->selectRaw('ROUND(SUM(score), 1) as total_score')
-                    ->havingRaw('ROUND(SUM(score), 1) > ?', [$userScore->total_score])
-                    ->get()
-                    ->count() + 1;
-                $userPosition = $userScorePosition;
+                $userPosition = $this->countUsersWithHigherPublicScore((float) $userScore->total_score) + 1;
             }
         }
 
@@ -417,10 +401,13 @@ class RankingController extends Controller
                 ->sum('score');
 
             $userPosition = MinigameScore::query()
-                ->selectRaw('user_id, sum(score) as total_score')
-                ->groupBy('user_id')
-                ->havingRaw('sum(score) > ?', [$userScore])
-                ->get()
+                ->fromSub(
+                    MinigameScore::query()
+                        ->selectRaw('user_id, sum(score) as total_score')
+                        ->groupBy('user_id'),
+                    'minigame_totals'
+                )
+                ->where('total_score', '>', $userScore)
                 ->count() + 1;
         }
 
@@ -455,7 +442,7 @@ class RankingController extends Controller
             'total_xp' => $userLevel->total_xp,
             'level_metrics' => [
                 'score_public_rooms' => $userLevel->score_public_rooms ?? 0,
-                'minigame_scores_total' => (int) MinigameScore::query()->where('user_id', $user->id)->sum('score'),
+                'minigame_scores_total' => $userLevel->minigame_scores_total ?? 0,
                 'seniority_months' => $userLevel->months_seniority ?? 0,
                 'consecutive_days_streak' => $userLevel->consecutive_days_streak ?? 0,
                 'rooms_created_count' => $userLevel->rooms_created_count ?? 0,
@@ -464,5 +451,26 @@ class RankingController extends Controller
                 'has_team' => $user->hasTeam(),
             ],
         ]);
+    }
+
+    private function publicUserScoresQuery()
+    {
+        return TotalScore::query()
+            ->join('rooms', 'rooms.id', '=', 'total_scores.room_id')
+            ->where('rooms.is_public', true)
+            ->where('total_scores.totalscorable_type', User::class);
+    }
+
+    private function countUsersWithHigherPublicScore(float $totalScore): int
+    {
+        return TotalScore::query()
+            ->fromSub(
+                $this->publicUserScoresQuery()
+                    ->groupBy('total_scores.totalscorable_id')
+                    ->selectRaw('total_scores.totalscorable_id, ROUND(SUM(total_scores.score), 1) as total_score'),
+                'public_user_scores'
+            )
+            ->where('total_score', '>', $totalScore)
+            ->count();
     }
 }
