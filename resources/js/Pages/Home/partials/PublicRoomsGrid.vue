@@ -12,6 +12,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  hiddenCategoryIds: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const selectedCategoryId = ref('')
@@ -20,19 +24,28 @@ const initialLimit = 16
 
 const sortedRooms = computed(() =>
   [...(props.rooms || [])].sort(
-    (a, b) => b.subscriptions - a.subscriptions || Number(b.is_playing) - Number(a.is_playing),
+    (a, b) =>
+      (b.subscriptions ?? 0) - (a.subscriptions ?? 0)
+      || (b.rounds_count ?? 0) - (a.rounds_count ?? 0),
   ),
 )
 
+const isHiddenByDefault = (room) =>
+  props.hiddenCategoryIds.includes(room.category?.id)
+
 const filteredRooms = computed(() => {
   if (!selectedCategoryId.value) {
-    return sortedRooms.value
+    return sortedRooms.value.filter((room) => !isHiddenByDefault(room))
   }
 
   const categoryId = Number(selectedCategoryId.value)
 
   return sortedRooms.value.filter((room) => room.category?.id === categoryId)
 })
+
+const defaultVisibleCount = computed(() =>
+  sortedRooms.value.filter((room) => !isHiddenByDefault(room)).length,
+)
 
 const visibleRooms = computed(() => {
   if (showAll.value) {
@@ -84,7 +97,7 @@ const liveRoomCount = computed(() =>
           @change="showAll = false"
         >
           <option value="">
-            {{ __('All categories') }} ({{ rooms.length }})
+            {{ __('All categories') }} ({{ defaultVisibleCount }})
           </option>
           <option
             v-for="category in categories"

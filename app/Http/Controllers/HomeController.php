@@ -22,6 +22,14 @@ class HomeController extends Controller
     private const HOMEPAGE_CACHE_SECONDS = 60;
 
     /**
+     * @return list<int>
+     */
+    private function homepageHiddenCategoryIds(): array
+    {
+        return config('blinest.homepage_hidden_category_ids', []);
+    }
+
+    /**
      * @param  list<array<string, mixed>>  $rooms
      * @return list<array<string, mixed>>
      */
@@ -159,17 +167,19 @@ class HomeController extends Controller
      */
     private function cachedPublicRooms(): array
     {
-        return Cache::remember('homepage-public-rooms-v3', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+        return Cache::remember('homepage-public-rooms-v4', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
             return Room::query()
                 ->isPublic()
                 ->whereNull('password')
                 ->with(['owner', 'category:id,name'])
+                ->withCount('rounds')
                 ->orderByDesc('is_playing')
                 ->get()
                 ->map(fn (Room $room) => array_merge(
                     $room->toHomepageArray(),
                     [
                         'owner' => $room->owner?->toArray(),
+                        'rounds_count' => (int) $room->rounds_count,
                         'category' => $room->category ? [
                             'id' => $room->category->id,
                             'name' => $room->category->name,
@@ -185,12 +195,12 @@ class HomeController extends Controller
      * @param  list<array<string, mixed>>  $rooms
      * @return list<array<string, mixed>>
      */
-    private function sortRoomsByPresence(array $rooms): array
+    private function sortRoomsByPopularity(array $rooms): array
     {
         return collect($rooms)
             ->sortByDesc(fn (array $room) => [
                 (int) ($room['subscriptions'] ?? 0),
-                (int) ($room['is_playing'] ?? false),
+                (int) ($room['rounds_count'] ?? 0),
             ])
             ->values()
             ->all();
@@ -251,7 +261,8 @@ class HomeController extends Controller
             'weekly_top_users' => Cache::get('weekly-top-10-users'),
             'featured_rooms' => $this->withPresenceCount($this->cachedFeaturedRooms()),
             'public_categories' => $this->cachedPublicCategories(),
-            'public_rooms' => $this->sortRoomsByPresence(
+            'homepage_hidden_category_ids' => $this->homepageHiddenCategoryIds(),
+            'public_rooms' => $this->sortRoomsByPopularity(
                 $this->withPresenceCount($this->cachedPublicRooms()),
             ),
             'private_rooms' => $this->withPresenceCount($this->cachedPrivateRooms()),

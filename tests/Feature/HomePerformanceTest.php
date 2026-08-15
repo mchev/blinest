@@ -100,7 +100,7 @@ class HomePerformanceTest extends TestCase
             'tracks_by_round' => 10,
         ]);
 
-        Cache::put('homepage-public-rooms-v3', [[
+        Cache::put('homepage-public-rooms-v4', [[
             'id' => $room->id,
             'slug' => $room->slug,
             'name' => $room->name,
@@ -209,7 +209,7 @@ class HomePerformanceTest extends TestCase
                 ->where('public_rooms.0.category.name', 'Rock'));
     }
 
-    public function test_homepage_public_rooms_are_sorted_by_presence(): void
+    public function test_homepage_public_rooms_are_sorted_by_popularity(): void
     {
         $category = Category::create(['name' => 'Pop']);
         $owner = User::factory()->create();
@@ -234,11 +234,39 @@ class HomePerformanceTest extends TestCase
             'tracks_by_round' => 10,
         ]);
 
-        $this->mock(RoomPresenceService::class, function ($mock) use ($quietRoom, $busyRoom): void {
+        $popularButEmptyRoom = Room::create([
+            'name' => 'Popular History Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $quietRoom->rounds()->createMany([
+            ['is_playing' => false, 'current' => 0, 'tracks' => [1], 'finished_at' => now()],
+        ]);
+
+        $busyRoom->rounds()->createMany([
+            ['is_playing' => false, 'current' => 0, 'tracks' => [1], 'finished_at' => now()],
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            $popularButEmptyRoom->rounds()->create([
+                'is_playing' => false,
+                'current' => 0,
+                'tracks' => [1],
+                'finished_at' => now(),
+            ]);
+        }
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($quietRoom, $busyRoom, $popularButEmptyRoom): void {
             $mock->shouldReceive('getMemberCountsForRooms')
                 ->andReturn([
                     $quietRoom->id => 1,
                     $busyRoom->id => 12,
+                    $popularButEmptyRoom->id => 0,
                 ]);
         });
 
@@ -247,7 +275,39 @@ class HomePerformanceTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
                 ->where('public_rooms.0.name', 'Busy Room')
-                ->where('public_rooms.1.name', 'Quiet Room'));
+                ->where('public_rooms.1.name', 'Quiet Room')
+                ->where('public_rooms.2.name', 'Popular History Room')
+                ->where('public_rooms.0.rounds_count', 1)
+                ->where('public_rooms.2.rounds_count', 5));
+    }
+
+    public function test_homepage_exposes_hidden_category_ids_for_seasonal_rooms(): void
+    {
+        config(['blinest.homepage_hidden_category_ids' => [5]]);
+
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Regular Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('homepage_hidden_category_ids', [5]));
     }
 
     public function test_homepage_catalog_sections_are_cached(): void
@@ -273,7 +333,7 @@ class HomePerformanceTest extends TestCase
         $this->get(route('home'))->assertOk();
 
         $this->assertTrue(Cache::has('homepage-featured-rooms-v2'));
-        $this->assertTrue(Cache::has('homepage-public-rooms-v3'));
+        $this->assertTrue(Cache::has('homepage-public-rooms-v4'));
         $this->assertTrue(Cache::has('homepage-public-categories-v3'));
         $this->assertTrue(Cache::has('homepage-private-rooms-v2'));
     }

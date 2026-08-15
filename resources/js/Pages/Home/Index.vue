@@ -12,6 +12,7 @@ defineProps({
   filters: Object,
   public_categories: Array,
   public_rooms: Array,
+  homepage_hidden_category_ids: Array,
   minigames: Array,
   featured_rooms: Object,
   private_rooms: Object,
@@ -72,6 +73,7 @@ const user = usePage().props.auth.user
           v-if="public_rooms && public_rooms.length"
           :rooms="public_rooms"
           :categories="public_categories"
+          :hidden-category-ids="homepage_hidden_category_ids"
         />
 
         <div v-if="minigames && minigames.length">
