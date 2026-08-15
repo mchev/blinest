@@ -67,6 +67,7 @@ class RoomPresenceService
      * Get member counts for multiple rooms in one Redis round-trip (pipeline).
      * Prunes stale members before counting.
      *
+     * @param  Collection<int, Room|array<string, mixed>>  $rooms
      * @return array<int, int> room_id => count
      */
     public function getMemberCountsForRooms(Collection $rooms): array
@@ -78,7 +79,7 @@ class RoomPresenceService
         $cutoff = (string) (time() - self::PRUNE_SECONDS);
         $results = Redis::pipeline(function ($pipe) use ($rooms, $cutoff) {
             foreach ($rooms as $room) {
-                $key = sprintf(self::KEY_MEMBERS, $room->id);
+                $key = sprintf(self::KEY_MEMBERS, $this->roomId($room));
                 $pipe->zremrangebyscore($key, '-inf', $cutoff);
                 $pipe->zcard($key);
             }
@@ -87,12 +88,17 @@ class RoomPresenceService
         $counts = [];
         $i = 0;
         foreach ($rooms->values() as $room) {
-            $roomId = is_array($room) ? $room['id'] : $room->id;
+            $roomId = $this->roomId($room);
             $counts[$roomId] = (int) ($results[$i + 1] ?? 0);
             $i += 2;
         }
 
         return $counts;
+    }
+
+    private function roomId(Room|array $room): int
+    {
+        return is_array($room) ? $room['id'] : $room->id;
     }
 
     /**

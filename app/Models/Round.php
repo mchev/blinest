@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -205,7 +206,7 @@ class Round extends Model
         return $this->hasMany(Score::class);
     }
 
-    public function usersPodium()
+    public function usersPodium(): Collection
     {
         // Si le round est en cours, utiliser Redis (plus performant)
         if ($this->is_playing && ! $this->finished_at) {
@@ -259,10 +260,11 @@ class Round extends Model
                 'team_id',
             ])
             ->with('user.userLevel')
-            ->orderByDesc('total_score');
+            ->orderByDesc('total_score')
+            ->get();
     }
 
-    public function teamsPodium()
+    public function teamsPodium(): Collection
     {
         // Si le round est en cours, utiliser Redis (plus performant)
         if ($this->is_playing && ! $this->finished_at) {
@@ -329,7 +331,8 @@ class Round extends Model
             ->select([\DB::raw('SUM(total_score) as total'), 'team_id'])
             ->with('team')
             ->groupBy('team_id')
-            ->orderByDesc('total');
+            ->orderByDesc('total')
+            ->get();
     }
 
     public function standings(): HasMany

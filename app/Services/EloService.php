@@ -145,16 +145,7 @@ class EloService
 
         // Si podium n'est pas fourni, le calculer depuis les standings ou scores
         if ($podium === null) {
-            // Essayer depuis les standings d'abord (si round terminé)
-            if ($round->finished_at && $round->standings()->exists()) {
-                $podium = $round->standings()
-                    ->select('user_id', 'total_score as total', 'team_id')
-                    ->orderByDesc('total_score')
-                    ->get();
-            } else {
-                // Sinon, depuis les scores (compatibilité avec ancien système)
-                $podium = $round->usersPodium()->get();
-            }
+            $podium = $round->usersPodium();
         }
 
         // Si aucun joueur, ne rien faire
