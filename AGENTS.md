@@ -7,28 +7,11 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 ## Foundational Context
 
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
+This application is a Laravel application running on PHP 8.4. You are an expert with the Laravel ecosystem. Always use the APIs that match the installed major version of each package — do not assume a version.
 
-- php - 8.4
-- inertiajs/inertia-laravel (INERTIA_LARAVEL) - v2
-- laravel/framework (LARAVEL) - v12
-- laravel/horizon (HORIZON) - v5
-- laravel/nightwatch (NIGHTWATCH) - v1
-- laravel/prompts (PROMPTS) - v0
-- laravel/reverb (REVERB) - v1
-- laravel/sanctum (SANCTUM) - v4
-- laravel/socialite (SOCIALITE) - v5
-- tightenco/ziggy (ZIGGY) - v2
-- laravel/boost (BOOST) - v2
-- laravel/mcp (MCP) - v0
-- laravel/pint (PINT) - v1
-- phpunit/phpunit (PHPUNIT) - v11
-- @inertiajs/vue3 (INERTIA_VUE) - v2
-- eslint (ESLINT) - v9
-- laravel-echo (ECHO) - v1
-- prettier (PRETTIER) - v2
-- tailwindcss (TAILWINDCSS) - v3
-- vue (VUE) - v3
+Before relying on a package's API, confirm its installed version:
+- PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
+- JS packages: check `package.json` for the installed versions.
 
 ## Skills Activation
 
@@ -86,6 +69,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 2. Use `"quoted phrases"` for exact position matching: `"infinite scroll"` requires adjacent words in order.
 3. Combine words and phrases for mixed queries: `middleware "rate limit"`.
 4. Use multiple queries for OR logic: `queries=["authentication", "middleware"]`.
+
+## Project Rules
+
+- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists (settled decisions, non-obvious traps, standing constraints). Framework and package guidelines that only apply to specific paths (testing, frontend, components) also live there, under `.ai/rules/boost` — this is not just recorded decisions, it is load-bearing guidance you have not seen inline. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
+- Record durable rules with `record-rule` so the next agent or teammate inherits them instead of working them out again. Pass a `glob` (e.g. `app/Http/Controllers/**`), a short `title`, and a few-line `note`. Always use `record-rule`, never your native memory or notes tool — native memory is personal and session-scoped; only `.ai/rules` is shared with the team and persists in the repo.
 
 ## Artisan
 
@@ -175,31 +163,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
-=== laravel/v12 rules ===
-
-# Laravel 12
-
-- CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
-- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
-
-## Laravel 12 Structure
-
-- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
-- Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
-- `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
-- `bootstrap/providers.php` contains application specific service providers.
-- The `app/Console/Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
-- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
-
-## Database
-
-- When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
-
-### Models
-
-- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
-
 === pint/core rules ===
 
 # Laravel Pint Code Formatter
@@ -231,26 +194,5 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 Vue components must have a single root element.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
-
-=== player-gameplay rules ===
-
-# Player & Gameplay Changes
-
-**Before any edit:** activate the `player-gameplay` skill, then read and follow `.agents/skills/player-gameplay/SKILL.md`.
-
-## Hard rules
-
-- Server jobs (`ProcessTrackPlayed` / `ProcessTrackEnded`) own the track chain — never chain tracks from the client alone.
-- `Show.vue` owns `Echo.leave`; other components only `stopListening`.
-- Do not add high-frequency HTTP (polling `/time`, repeated `/joined`) — scale is ~400k users.
-- Changing `TrackPlayed` / `TrackEnded` payload requires updating every Echo listener (Show, Player, UserInput, Answers).
-- Touching jobs requires a PHPUnit test with `Queue::fake()`.
-- Manual QA: track 2+, mid-join, reconnect — first-track-only testing is not enough.
-
-## Prefer
-
-- Small, focused changes (UI vs timing vs scoring separated).
-- Client-only visual improvements without new server endpoints.
-- Explicit stale-event guards on `TrackEnded`.
 
 </laravel-boost-guidelines>
