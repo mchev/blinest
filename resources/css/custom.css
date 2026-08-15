@@ -358,6 +358,43 @@
     --rc-border: rgb(255 255 255 / 0.1);
   }
 
+  .guest-join-modal {
+    @apply px-6 py-8 sm:px-10 sm:py-10;
+  }
+
+  .guest-join-modal__header {
+    @apply mb-8 text-center;
+  }
+
+  .guest-join-modal__title {
+    @apply retro-title retro-title--white mb-3 text-lg uppercase tracking-[0.12em] sm:text-xl;
+  }
+
+  .guest-join-modal__subtitle {
+    @apply mx-auto max-w-sm text-sm leading-relaxed text-white/70 sm:text-base;
+  }
+
+  .guest-join-modal__actions {
+    @apply mx-auto flex max-w-md flex-col gap-4;
+  }
+
+  .guest-join-modal__btn {
+    @apply !min-h-[3rem] w-full;
+  }
+
+  .guest-join-modal__divider {
+    @apply relative my-1 flex items-center justify-center;
+  }
+
+  .guest-join-modal__divider::before {
+    content: '';
+    @apply absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-white/10;
+  }
+
+  .guest-join-modal__divider span {
+    @apply relative bg-brand-deep px-3 text-xs font-medium uppercase tracking-[0.18em] text-white/50;
+  }
+
   .retro-modal-footer {
     @apply border-t border-white/10 bg-brand-midnight/60 px-6 py-4;
   }

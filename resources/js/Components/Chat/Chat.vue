@@ -152,10 +152,7 @@ const focusInput = () => {
 
     <div v-if="user?.is_guest" class="flex w-full p-3">
       <div class="chat-guest-banner text-center">
-        <Link :href="route('guest.to-register')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Register') }}</Link>
-        {{ __(' or ') }}
-        <Link :href="route('guest.to-login')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Login') }}</Link>
-        {{ __('to chat with other players') }}
+        <Link :href="route('guest.to-register')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Register') }}</Link>{{ __(' or ') }}<Link :href="route('guest.to-login')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Login') }}</Link>{{ __('to chat with other players') }}
       </div>
     </div>
 

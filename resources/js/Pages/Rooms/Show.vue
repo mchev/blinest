@@ -6,7 +6,6 @@ import Card from '@/Components/Card.vue'
 import Spinner from '@/Components/Spinner.vue'
 import Chat from '@/Components/Chat/Chat.vue'
 import Tip from '@/Components/Tip.vue'
-import Modal from '@/Components/Modal.vue'
 
 import RoomActions from './partials/RoomActions.vue'
 import Player from './partials/Player.vue'
@@ -15,6 +14,7 @@ import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
+import GuestJoinModal from './partials/GuestJoinModal.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
 import { EZOIC, clearEzoicAds, scheduleEzoicSync } from '@/ezoic'
 
@@ -294,44 +294,7 @@ watch(roomAdsEnabled, (enabled) => {
 </script>
 <template>
   <RoomLayout>
-    <Modal v-if="!user" :show="true" :maxWidth="'3xl'">
-      <div class="p-6 text-center">
-        <h2 class="retro-title retro-title--white text-xl mb-2">{{ room.name }}</h2>
-        <p class="text-white/70 mb-8">{{ __('Join the game and test your music knowledge!') }}</p>
-
-        <div class="space-y-4">
-          <a
-            :href="route('rooms.guest-join', room.slug)"
-            class="game-btn-play-join block w-full text-center !min-h-[3rem]"
-          >
-            {{ __('Play as guest') }}
-          </a>
-
-          <div class="relative my-6">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-white/10"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="bg-brand-deep px-3 text-white/60">{{ __('or') }}</span>
-            </div>
-          </div>
-
-          <Link
-            :href="route('login')"
-            class="game-btn-play-live block w-full text-center !min-h-[3rem]"
-          >
-            {{ __('Login with my account') }}
-          </Link>
-
-          <Link
-            :href="route('register')"
-            class="game-btn-play-neutral block w-full text-center !min-h-[3rem]"
-          >
-            {{ __('Create an account') }}
-          </Link>
-        </div>
-      </div>
-    </Modal>
+    <GuestJoinModal v-if="!user" :room="room" />
 
     <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">
       <Spinner class="h-8 w-8" />

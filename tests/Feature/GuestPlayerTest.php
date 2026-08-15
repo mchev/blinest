@@ -110,6 +110,20 @@ class GuestPlayerTest extends TestCase
         $this->assertEquals(1, User::where('is_guest', true)->count());
     }
 
+    public function test_authenticated_guest_rejoin_is_not_rate_limited(): void
+    {
+        $room = $this->createRoom();
+
+        $this->get('/rooms/'.$room->slug.'/guest-join');
+
+        for ($attempt = 0; $attempt < 35; $attempt++) {
+            $response = $this->get('/rooms/'.$room->slug.'/guest-join');
+            $response->assertRedirect(route('rooms.show', $room->slug));
+        }
+
+        $this->assertEquals(1, User::where('is_guest', true)->count());
+    }
+
     public function test_guest_cannot_access_me_page(): void
     {
         $room = $this->createRoom();
