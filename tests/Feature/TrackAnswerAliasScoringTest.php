@@ -100,7 +100,7 @@ class TrackAnswerAliasScoringTest extends TestCase
             'tracks' => [$track->id],
         ]);
 
-        Cache::forget('track-'.$track->id.'-answers');
+        Cache::forget(Track::answersCacheKey($track->id));
 
         $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
             'text' => 'Alias Artist',
@@ -183,7 +183,7 @@ class TrackAnswerAliasScoringTest extends TestCase
             'tracks' => [$track->id],
         ]);
 
-        Cache::forget('track-'.$track->id.'-answers');
+        Cache::forget(Track::answersCacheKey($track->id));
 
         $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
             'text' => 'a',
@@ -195,6 +195,82 @@ class TrackAnswerAliasScoringTest extends TestCase
         $this->assertNotEmpty($response->json('good_answers'));
         $ids = collect($response->json('good_answers'))->pluck('id')->all();
         $this->assertContains($hintAnswer->id, $ids);
+        $this->assertSame('good', $response->json('message.type'));
+    }
+
+    public function test_cached_track_answers_survive_restricted_cache_unserialization(): void
+    {
+        config(['cache.serializable_classes' => false]);
+
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner3@test.com',
+            'password' => bcrypt('password'),
+            'elo' => 1500,
+        ]);
+        $room = Room::create([
+            'name' => 'Test Room 3',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $player = User::factory()->create(['elo' => 1500]);
+
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist 3',
+            'user_id' => $owner->id,
+        ]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'test456',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+
+        TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $answerType->id,
+            'value' => 'Cached Artist',
+            'aliases' => [],
+            'score' => 1.0,
+        ]);
+
+        TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $answerType->id,
+            'value' => 'Other Answer',
+            'aliases' => [],
+            'score' => 1.0,
+        ]);
+
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => null,
+            'is_playing' => true,
+            'current' => 1,
+            'tracks' => [$track->id],
+        ]);
+
+        Cache::forget(Track::answersCacheKey($track->id));
+
+        $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
+            'text' => 'Cached Artist',
+            'words' => [],
+            'currentTime' => 4.0,
+        ]);
+
+        $response->assertOk();
+        $this->assertIsArray(Cache::get(Track::answersCacheKey($track->id)));
+        $this->assertNotEmpty($response->json('good_answers'));
         $this->assertSame('good', $response->json('message.type'));
     }
 }

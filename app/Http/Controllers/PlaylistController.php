@@ -149,9 +149,15 @@ class PlaylistController extends Controller
                 ],
                 'filters' => Request::only('search'),
                 'answer_types' => Cache::remember('answer_types_'.app()->getLocale(), 60 * 24, function () {
-                    return AnswerType::all()->sortBy(function ($answerType) {
-                        return __($answerType->name);
-                    }, SORT_REGULAR, false)->values();
+                    return AnswerType::query()
+                        ->get()
+                        ->sortBy(fn (AnswerType $answerType) => __($answerType->name), SORT_REGULAR, false)
+                        ->values()
+                        ->map(fn (AnswerType $answerType) => [
+                            'id' => $answerType->id,
+                            'name' => $answerType->name,
+                        ])
+                        ->all();
                 }),
                 'tracks' => $tracks->through(fn ($track) => [
                     'id' => $track->id,

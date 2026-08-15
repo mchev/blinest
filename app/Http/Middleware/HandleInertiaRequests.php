@@ -71,7 +71,10 @@ class HandleInertiaRequests extends Middleware
                             'has_team' => $user->hasTeam(),
                         ] : null,
                         'notifications' => Cache::rememberForever("{$user->id}_unread_notifications", function () use ($user) {
-                            return $user->unreadNotifications;
+                            return $user->unreadNotifications
+                                ->map(fn ($notification) => $notification->toArray())
+                                ->values()
+                                ->all();
                         }),
                         'can' => Gate::forUser($user)->abilities(),
                         'pending_requests' => $user->teamRequests()->whereNull('declined_at')->pluck('team_id'),
@@ -80,7 +83,12 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'publicModerators' => Cache::remember('public-moderators', 3600, function () {
-                return User::publicModerators()->select('id', 'name', 'photo_path')->get();
+                return User::publicModerators()
+                    ->select('id', 'name', 'photo_path')
+                    ->get()
+                    ->map(fn (User $moderator) => $moderator->only(['id', 'name', 'photo_path']) + ['photo' => $moderator->photo])
+                    ->values()
+                    ->all();
             }),
             'flash' => function () use ($request) {
                 return [

@@ -87,7 +87,8 @@ class RoomPresenceService
         $counts = [];
         $i = 0;
         foreach ($rooms->values() as $room) {
-            $counts[$room->id] = (int) ($results[$i + 1] ?? 0);
+            $roomId = is_array($room) ? $room['id'] : $room->id;
+            $counts[$roomId] = (int) ($results[$i + 1] ?? 0);
             $i += 2;
         }
 

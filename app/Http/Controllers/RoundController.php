@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\NewScore;
 use App\Events\TrackEnded;
 use App\Events\UserHasFoundAllTheAnswers;
+use App\Models\AnswerType;
 use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
@@ -322,9 +323,54 @@ class RoundController extends Controller
 
     private function getCachedTrackAnswers(Track $track): Collection
     {
-        $key = 'track-'.$track->id.'-answers';
+        $cached = Cache::rememberForever(Track::answersCacheKey($track->id), function () use ($track) {
+            return $this->serializeTrackAnswersForCache(
+                $track->answers()->with('type:id,name')->get()
+            );
+        });
 
-        return Cache::rememberForever($key, fn () => $track->answers);
+        return $this->hydrateTrackAnswersFromCache($cached);
+    }
+
+    /**
+     * @return list<array{id: int, value: string|null, aliases: array|null, score: float, answer_type_id: int, type_name: string}>
+     */
+    private function serializeTrackAnswersForCache(Collection $answers): array
+    {
+        return $answers
+            ->map(fn (TrackAnswer $answer) => [
+                'id' => $answer->id,
+                'value' => $answer->value,
+                'aliases' => $answer->aliases,
+                'score' => $answer->score,
+                'answer_type_id' => $answer->answer_type_id,
+                'type_name' => $answer->type->name,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  list<array{id: int, value: string|null, aliases: array|null, score: float, answer_type_id: int, type_name: string}>  $cached
+     */
+    private function hydrateTrackAnswersFromCache(array $cached): Collection
+    {
+        return collect($cached)->map(function (array $data): TrackAnswer {
+            $answer = (new TrackAnswer)->forceFill([
+                'id' => $data['id'],
+                'value' => $data['value'],
+                'aliases' => $data['aliases'],
+                'score' => $data['score'],
+                'answer_type_id' => $data['answer_type_id'],
+            ]);
+            $answer->exists = true;
+            $answer->setRelation('type', (new AnswerType)->forceFill([
+                'id' => $data['answer_type_id'],
+                'name' => $data['type_name'],
+            ]));
+
+            return $answer;
+        });
     }
 
     /**

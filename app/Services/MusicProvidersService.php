@@ -29,7 +29,10 @@ class MusicProvidersService
 
             // Try to get cached results first
             if ($cached = Cache::get($cacheKey)) {
-                return $cached;
+                return [
+                    'results' => collect($cached['results']),
+                    'errors' => collect($cached['errors']),
+                ];
             }
 
             $merged = collect();
@@ -82,8 +85,8 @@ class MusicProvidersService
             }
 
             $result = [
-                'results' => $merged,
-                'errors' => $errors,
+                'results' => $merged->values()->all(),
+                'errors' => $errors->values()->all(),
             ];
 
             // Cache the results

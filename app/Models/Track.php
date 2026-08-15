@@ -31,6 +31,11 @@ class Track extends Model
         return $this->hasMany(TrackAnswer::class)->orderBy('answer_type_id');
     }
 
+    public static function answersCacheKey(int $trackId): string
+    {
+        return "track-{$trackId}-answers-v2";
+    }
+
     public function scores(): HasMany
     {
         return $this->hasMany(Score::class);

@@ -29,7 +29,7 @@ class TrackAnswerController extends Controller
             'aliases' => $aliases === [] ? null : $aliases,
         ]);
 
-        Cache::forget('track-'.$track->id.'-answers');
+        Cache::forget(Track::answersCacheKey($track->id));
 
         return Redirect::back();
     }
@@ -53,7 +53,7 @@ class TrackAnswerController extends Controller
             'aliases' => $aliases === [] ? null : $aliases,
         ]);
 
-        Cache::forget('track-'.$track->id.'-answers');
+        Cache::forget(Track::answersCacheKey($track->id));
 
         return Redirect::back();
     }
@@ -62,7 +62,7 @@ class TrackAnswerController extends Controller
     {
         $answer->delete();
 
-        Cache::forget('track-'.$track->id.'-answers');
+        Cache::forget(Track::answersCacheKey($track->id));
 
         return Redirect::back();
     }

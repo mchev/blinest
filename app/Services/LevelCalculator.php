@@ -113,7 +113,7 @@ class LevelCalculator
     public function updateScore(): void
     {
         $publicRoomIds = Cache::flexible('public_room_ids', [518400, 604800], function () {
-            return Room::isPublic()->pluck('id');
+            return Room::isPublic()->pluck('id')->all();
         });
 
         $totalScore = $this->user->totalScores()

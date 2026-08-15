@@ -28,7 +28,8 @@ class WeeklyTopUsers extends Command
     public function handle(): void
     {
         // Utiliser round_standings au lieu de scores (plus performant et cohérent)
-        $weekly_top_users = RoundStanding::with('user')
+        $weeklyTopUsers = RoundStanding::query()
+            ->with('user:id,name,photo_path,elo')
             ->join('rounds', 'round_standings.round_id', '=', 'rounds.id')
             ->join('rooms', 'round_standings.room_id', '=', 'rooms.id')
             ->where('rooms.is_public', true)
@@ -37,9 +38,21 @@ class WeeklyTopUsers extends Command
             ->groupBy('round_standings.user_id')
             ->orderByDesc('total_score')
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(fn (RoundStanding $standing) => [
+                'user_id' => $standing->user_id,
+                'total_score' => $standing->total_score,
+                'user' => $standing->user ? [
+                    'id' => $standing->user->id,
+                    'name' => $standing->user->name,
+                    'photo' => $standing->user->photo,
+                    'elo' => $standing->user->elo,
+                ] : null,
+            ])
+            ->values()
+            ->all();
 
-        Cache::put('weekly-top-10-users', $weekly_top_users);
+        Cache::put('weekly-top-10-users', $weeklyTopUsers);
         $this->info('Weekly top 10 users cached successfully');
     }
 }

@@ -225,7 +225,7 @@ class TrackController extends Controller
         }
 
         foreach ($tracks as $track) {
-            Cache::forget('track-'.$track->id.'-answers');
+            Cache::forget(Track::answersCacheKey($track->id));
             Cache::forget('track_'.$track->id.'_duration');
             ProcessDeletedTrack::dispatch($track, $user);
         }
