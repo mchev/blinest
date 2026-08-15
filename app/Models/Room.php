@@ -230,7 +230,7 @@ class Room extends Model
      */
     public function toHomepageArray(): array
     {
-        return $this->withoutAppends(['subscriptions', 'current_track_index'])->toArray();
+        return (clone $this)->setAppends(['photo'])->toArray();
     }
 
     public function scopeIsPublic($query)

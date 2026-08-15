@@ -23,6 +23,39 @@ class HomePerformanceTest extends TestCase
         Cache::flush();
     }
 
+    public function test_homepage_room_payload_includes_photo_without_reverb_lookup(): void
+    {
+        $broadcastManager = Mockery::mock(BroadcastManager::class);
+        $broadcastManager->shouldNotReceive('getPusher');
+        $this->app->instance(BroadcastManager::class, $broadcastManager);
+
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Featured Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => true,
+            'photo_path' => 'rooms/test.webp',
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->has('featured_rooms', 1)
+                ->where('featured_rooms.0.photo', fn ($photo) => is_string($photo) && $photo !== ''));
+    }
+
     public function test_homepage_room_payload_skips_reverb_subscription_lookup(): void
     {
         $broadcastManager = Mockery::mock(BroadcastManager::class);
@@ -106,8 +139,8 @@ class HomePerformanceTest extends TestCase
 
         $this->get(route('home'))->assertOk();
 
-        $this->assertTrue(Cache::has('homepage-featured-rooms-v1'));
-        $this->assertTrue(Cache::has('homepage-categories-v1'));
-        $this->assertTrue(Cache::has('homepage-private-rooms-v1'));
+        $this->assertTrue(Cache::has('homepage-featured-rooms-v2'));
+        $this->assertTrue(Cache::has('homepage-categories-v2'));
+        $this->assertTrue(Cache::has('homepage-private-rooms-v2'));
     }
 }

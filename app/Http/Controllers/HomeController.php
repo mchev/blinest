@@ -74,7 +74,7 @@ class HomeController extends Controller
      */
     private function cachedFeaturedRooms(): array
     {
-        return Cache::remember('homepage-featured-rooms-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+        return Cache::remember('homepage-featured-rooms-v2', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
             return Room::query()
                 ->where('is_featured', true)
                 ->whereNull('password')
@@ -94,7 +94,7 @@ class HomeController extends Controller
      */
     private function cachedCategoryRooms(): array
     {
-        return Cache::remember('homepage-categories-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+        return Cache::remember('homepage-categories-v2', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
             return Category::query()
                 ->with(['rooms' => function ($query) {
                     $query->isPublic()
@@ -126,7 +126,7 @@ class HomeController extends Controller
      */
     private function cachedPrivateRooms(): array
     {
-        return Cache::remember('homepage-private-rooms-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+        return Cache::remember('homepage-private-rooms-v2', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
             return Room::query()
                 ->isPrivate()
                 ->whereNull('password')
