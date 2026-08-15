@@ -4,6 +4,7 @@ namespace App\Services\MusicProviders;
 
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
+use App\Services\MusicProviders\Concerns\CachesResetTime;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Request;
 
 class YoutubeWithoutApiService
 {
+    use CachesResetTime;
+
     protected string $baseUrl = 'https://www.youtube.com';
 
     protected array $userAgents = [
@@ -142,23 +145,21 @@ class YoutubeWithoutApiService
 
     protected function isRateLimited(): bool
     {
-        if (Cache::has('youtube_scraping_rate_limited')) {
-            $resetTime = Cache::get('youtube_scraping_reset_time');
-            if ($resetTime && now()->lessThan($resetTime)) {
-                return true;
-            }
-            Cache::forget('youtube_scraping_rate_limited');
-            Cache::forget('youtube_scraping_reset_time');
-        }
-
-        return false;
+        return $this->isBeforeCachedResetTime(
+            'youtube_scraping_rate_limited',
+            'youtube_scraping_reset_time',
+        );
     }
 
     protected function markRateLimited(): void
     {
         $resetTime = now()->addHours(1);
-        Cache::put('youtube_scraping_rate_limited', true, $resetTime);
-        Cache::put('youtube_scraping_reset_time', $resetTime, $resetTime);
+
+        $this->cacheResetTime(
+            'youtube_scraping_rate_limited',
+            'youtube_scraping_reset_time',
+            $resetTime,
+        );
     }
 
     protected function getRateLimitResetTime(): string

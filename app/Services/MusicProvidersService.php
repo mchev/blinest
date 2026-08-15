@@ -92,7 +92,10 @@ class MusicProvidersService
             // Cache the results
             Cache::put($cacheKey, $result, self::CACHE_TTL);
 
-            return $result;
+            return [
+                'results' => collect($result['results']),
+                'errors' => collect($result['errors']),
+            ];
         } catch (\Exception $e) {
             Log::error('Error in music provider search: '.$e->getMessage(), [
                 'term' => $term,

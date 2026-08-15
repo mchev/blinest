@@ -4,6 +4,7 @@ namespace App\Services\MusicProviders;
 
 use App\Jobs\ProcessImportTrack;
 use App\Models\Playlist;
+use App\Services\MusicProviders\Concerns\CachesResetTime;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Request;
 
 class YouTubeMusicService
 {
+    use CachesResetTime;
+
     protected string $apiKey;
 
     public function __construct()
@@ -190,28 +193,23 @@ class YouTubeMusicService
 
     protected function isQuotaExceeded(): bool
     {
-        if (Cache::has('youtube_api_quota_exceeded')) {
-            $resetTime = Cache::get('youtube_api_quota_reset_time');
-            if ($resetTime && now()->lessThan($resetTime)) {
-                return true;
-            }
-            // If we're past reset time, clear the cache
-            Cache::forget('youtube_api_quota_exceeded');
-            Cache::forget('youtube_api_quota_reset_time');
-        }
-
-        return false;
+        return $this->isBeforeCachedResetTime(
+            'youtube_api_quota_exceeded',
+            'youtube_api_quota_reset_time',
+        );
     }
 
     protected function markQuotaExceeded(): void
     {
-        // Cache the quota exceeded status until midnight PST (when YouTube resets quotas)
         $resetTime = now()
             ->setTimezone('America/Los_Angeles')
             ->addDay()
             ->startOfDay();
 
-        Cache::put('youtube_api_quota_exceeded', true, $resetTime);
-        Cache::put('youtube_api_quota_reset_time', $resetTime, $resetTime);
+        $this->cacheResetTime(
+            'youtube_api_quota_exceeded',
+            'youtube_api_quota_reset_time',
+            $resetTime,
+        );
     }
 }

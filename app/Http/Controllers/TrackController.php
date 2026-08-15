@@ -59,7 +59,7 @@ class TrackController extends Controller
 
             return response()->json([
                 'filters' => Request::only('term', 'providers'),
-                'tracks' => $searchResponse['results']->map(function ($track) use ($playlist) {
+                'tracks' => collect($searchResponse['results'])->map(function ($track) use ($playlist) {
                     return [
                         'provider' => $track['provider'],
                         'provider_id' => $track['provider_id'],

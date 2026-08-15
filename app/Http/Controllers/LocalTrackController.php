@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LocalTrackRequest;
 use App\Models\LocalTrack;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
 
 class LocalTrackController extends Controller
 {
@@ -62,17 +62,18 @@ class LocalTrackController extends Controller
     private function processAndStoreArtwork(array $validated): string
     {
         try {
-            $manager = new ImageManager(['driver' => 'gd']);
-            $image = $manager->make($validated['artwork']);
-            $image->resize(300, 300, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
+            $filename = Str::slug($validated['artist_name']).'_'.Str::slug($validated['track_name']).'.webp';
 
-            $path = 'artworks/'.Str::slug($validated['artist_name']).'_'.Str::slug($validated['track_name']).'.webp';
-            Storage::disk('ovh')->put($path, $image->encode('webp'), 'public');
+            $storedPath = Image::fromUpload($validated['artwork'])
+                ->contain(300, 300)
+                ->toWebp()
+                ->storePubliclyAs('artworks', $filename, 'ovh');
 
-            return $path;
+            if ($storedPath === false) {
+                throw new \RuntimeException('Unable to store artwork on disk.');
+            }
+
+            return $storedPath;
         } catch (\Exception $e) {
             Log::error('Erreur lors du traitement de la pochette: '.$e->getMessage());
             throw new \Exception('Erreur lors du traitement de la pochette: '.$e->getMessage());
