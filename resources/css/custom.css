@@ -1,7 +1,81 @@
 @layer components {
 
+  .surface-card {
+    @apply rounded-xl border border-zinc-700/50 bg-arena-card shadow-lg;
+  }
+
+  .surface-card:hover {
+    @apply border-zinc-600/60;
+  }
+
+  .surface-nav {
+    @apply border-b border-zinc-800 bg-arena-panel/95 backdrop-blur-md;
+  }
+
+  .surface-footer {
+    @apply border-t border-zinc-800 bg-arena-panel/80;
+  }
+
+  .text-muted-accessible {
+    @apply text-zinc-300;
+  }
+
+  .game-section-kicker {
+    @apply text-[11px] font-bold uppercase tracking-[0.22em] text-red-400;
+  }
+
+  .game-card {
+    @apply overflow-hidden rounded-xl bg-arena-card ring-1 ring-zinc-700/60 transition duration-200;
+    @apply hover:-translate-y-1 hover:ring-zinc-500/70 hover:shadow-xl hover:shadow-black/40;
+  }
+
+  .live-pill {
+    @apply inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-white;
+    background-color: #eb0400;
+  }
+
+  .game-btn-play {
+    @apply flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-black uppercase tracking-wide text-white transition;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-twitch/70 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-card;
+    @apply active:translate-y-px;
+  }
+
+  .game-btn-play-primary {
+    @apply game-btn-play bg-gradient-to-b from-red-500 to-red-700 shadow-[0_3px_0_0_#991b1b] hover:brightness-110;
+  }
+
+  .game-btn-play-live {
+    @apply game-btn-play bg-gradient-to-b from-red-500 to-red-700 shadow-[0_3px_0_0_#991b1b] hover:brightness-110;
+  }
+
+  .game-btn-play-join {
+    @apply game-btn-play bg-gradient-to-b from-emerald-500 to-emerald-700 shadow-[0_3px_0_0_#047857] hover:brightness-110;
+  }
+
+  .game-btn-play-neutral {
+    @apply game-btn-play bg-gradient-to-b from-zinc-600 to-zinc-800 shadow-[0_3px_0_0_#27272a] hover:brightness-110;
+  }
+
+  .game-btn-secondary {
+    @apply inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-arena-card px-4 py-2 text-sm font-semibold text-zinc-100 transition;
+    @apply hover:border-zinc-500 hover:bg-arena-hover hover:text-white;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-twitch/60 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-panel;
+    @apply active:scale-[0.98];
+  }
+
+  .game-link-action {
+    @apply text-sm font-semibold text-red-400 transition hover:text-red-300;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-panel;
+  }
+
+  .sidebar-tile {
+    @apply flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-arena-card p-3 text-center transition;
+    @apply hover:border-zinc-600 hover:bg-arena-hover;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-twitch/60 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-panel;
+  }
+
   .badge {
-    @apply m-1 bg-neutral-600 text-xs py-1 px-2 rounded hover:bg-neutral-700;
+    @apply m-1 rounded bg-surface-hover px-2 py-1 text-xs text-slate-200 hover:bg-surface-overlay;
   }
 
   /* Squircle effect - Apple-style rounded corners */

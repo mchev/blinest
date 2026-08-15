@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
+import HomeSectionHeader from './HomeSectionHeader.vue'
 
 const props = defineProps({
   minigames: {
@@ -101,16 +102,17 @@ onUnmounted(() => {
 
 <template>
   <div v-if="hasGames" class="relative w-full max-w-full">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-3xl font-bold text-white">{{ __('Mini-games') }}</h2>
-      <Link
-        :href="route('minigames.index')"
-        class="text-sm font-medium text-teal-400 transition hover:text-teal-300"
-      >
-        {{ __('View all') }}
-        <Icon name="cheveron-right" class="inline-block h-4 w-4" />
-      </Link>
-    </div>
+    <HomeSectionHeader :title="__('Mini-games')" accent="teal" :kicker="__('Solo')">
+      <template #action>
+        <Link
+          :href="route('minigames.index')"
+          class="game-link-action"
+        >
+          {{ __('View all') }}
+          <Icon name="cheveron-right" class="inline-block h-4 w-4" />
+        </Link>
+      </template>
+    </HomeSectionHeader>
     <div ref="containerRef" class="w-full max-w-full">
       <div
         ref="trackRef"
@@ -130,29 +132,32 @@ onUnmounted(() => {
         >
           <Link
             :href="game.play_url"
-            class="group block overflow-hidden rounded-2xl border-2 border-neutral-700/60 bg-neutral-800/70 shadow-xl ring-1 ring-neutral-600/30 transition-all duration-200 hover:-translate-y-1 hover:border-teal-500/50 hover:shadow-[0_0_40px_rgba(20,184,166,0.15)] hover:ring-teal-500/30"
+            class="game-card group flex h-full flex-col overflow-hidden ring-teal-500/20 hover:ring-teal-500/40"
           >
-            <div class="flex flex-col gap-3 p-5">
+            <div class="flex flex-1 flex-col gap-3 bg-gradient-to-b from-teal-950/40 to-arena-card p-5">
               <div
-                class="flex h-14 w-14 flex-shrink-0 items-center justify-center self-center rounded-xl border-2 border-teal-500/30 bg-gradient-to-br from-teal-500/40 to-cyan-500/30 text-2xl shadow-[0_0_20px_rgba(20,184,166,0.2)]"
+                class="flex h-14 w-14 flex-shrink-0 items-center justify-center self-center rounded-xl border-2 border-teal-400/40 bg-teal-500/25 text-2xl text-teal-200 shadow-lg shadow-teal-900/30 transition group-hover:scale-105"
                 aria-hidden="true"
               >
-                ▶
+                <Icon name="play" class="h-7 w-7" />
               </div>
-              <div class="min-w-0 text-center">
-                <h3 class="font-black text-neutral-100 transition-colors group-hover:text-teal-400">
+              <div class="min-w-0 flex-1 text-center">
+                <h3 class="font-bold tracking-tight text-white transition-colors group-hover:text-teal-300">
                   {{ game.name }}
                 </h3>
-                <p class="mt-1 line-clamp-2 text-xs text-neutral-400">
+                <p class="mt-1 line-clamp-2 text-xs text-zinc-300">
                   {{ game.description }}
                 </p>
                 <p
                   v-if="game.score !== undefined && game.score > 0"
-                  class="mt-2 inline-flex items-center rounded-full border border-teal-500/40 bg-teal-500/20 px-2 py-0.5 text-xs font-bold text-teal-400"
+                  class="mt-2 inline-flex items-center rounded-md bg-teal-500/25 px-2 py-0.5 text-xs font-black text-teal-300"
                 >
                   {{ game.score }} {{ __('points') }}
                 </p>
               </div>
+              <span class="game-btn-play-join mt-auto text-xs">
+                {{ __('Play') }}
+              </span>
             </div>
           </Link>
         </div>

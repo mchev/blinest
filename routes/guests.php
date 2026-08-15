@@ -112,6 +112,10 @@ Route::middleware(['auth.banned', 'ip.banned'])->group(function () {
         ->name('home');
 
     // Room
+    Route::get('rooms/{room:slug}/public-state', [RoomController::class, 'publicState'])
+        ->name('rooms.public-state')
+        ->middleware('throttle:120,1');
+
     Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
         ->name('rooms.show');
 });

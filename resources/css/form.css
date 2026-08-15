@@ -1,17 +1,16 @@
 @layer components {
   .form-label {
-    @apply mb-2 block text-stone-200 text-sm font-medium select-none;
+    @apply mb-2 block select-none text-sm font-medium text-slate-200;
   }
 
   .form-input,
   .form-textarea,
   .form-select {
-    @apply py-2.5 leading-normal block w-full border border-stone-700/50 bg-stone-800/80 font-sans rounded-lg text-left appearance-none relative transition-all duration-200;
-    @apply focus:border-teal-500/50 focus:ring-2 focus:ring-teal-500/20 focus:bg-stone-800;
-    @apply text-stone-200;
+    @apply relative block w-full appearance-none rounded-lg border border-white/10 bg-surface-raised/70 py-2.5 text-left font-sans leading-normal text-slate-100 transition-all duration-200;
+    @apply focus:border-red-400/40 focus:bg-surface-raised focus:ring-2 focus:ring-red-400/20;
 
     &::placeholder {
-      @apply text-stone-400 opacity-100;
+      @apply text-slate-400 opacity-100;
     }
   }
 

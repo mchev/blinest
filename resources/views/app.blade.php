@@ -51,9 +51,9 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="apple-mobile-web-app-title" content="Blinest">
-        <meta name="theme-color" content="#0F172A">
-        <meta name="msapplication-TileColor" content="#0F172A">
-        <meta name="msapplication-navbutton-color" content="#0F172A">
+        <meta name="theme-color" content="#0e0e10">
+        <meta name="msapplication-TileColor" content="#0e0e10">
+        <meta name="msapplication-navbutton-color" content="#0e0e10">
         <meta name="application-name" content="Blinest">
         
         <!-- Prevent address bar from showing on mobile -->
@@ -83,7 +83,7 @@
         @routes()
         @inertiaHead
 </head>
-<body class="font-sans antialiased bg-[#0F172A]">
+<body class="font-sans antialiased bg-surface-base">
     @inertia
 </body>
 </html>

@@ -499,6 +499,18 @@ class RoomController extends Controller
         return response()->json(['ok' => true]);
     }
 
+    /**
+     * Public snapshot for homepage room cards (no auth).
+     */
+    public function publicState(Room $room): JsonResponse
+    {
+        if ($room->trashed()) {
+            abort(404);
+        }
+
+        return response()->json($room->publicStatePayload());
+    }
+
     public function start(Request $request, Room $room)
     {
         if ($request->user()->hasRoomControl($room) && ! $room->is_playing) {

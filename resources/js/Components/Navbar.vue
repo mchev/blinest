@@ -11,12 +11,12 @@ import Dropdown from '@/Components/Dropdown.vue'
 const user = usePage().props.auth?.user
 </script>
 <template>
-  <div class="hidden md:flex relative items-center justify-between py-2 px-4 sm:px-6 md:px-12 border-b border-neutral-800/50 bg-gradient-to-b from-neutral-900/95 to-neutral-900/80 backdrop-blur-md">
+  <div class="surface-nav hidden md:flex relative items-center justify-between border-b py-2 px-4 sm:px-6 md:px-12">
     <!-- Desktop: Logo complet -->
     <div class="relative z-10 w-full lg:w-1/4">
       <Link :href="route('home')" title="Blinest" class="group transition-all duration-200 hover:scale-[102%]">
         <Logo class="w-24 fill-inherit lg:w-36 mt-2 transition-all duration-200 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.4)]" />
-        <p class="mt-1 hidden text-sm text-neutral-400 lg:block tracking-widest group-hover:text-neutral-300 transition-colors duration-200">{{ __('Tune In, Test Out!') }}</p>
+        <p class="mt-1 hidden text-sm text-zinc-400 lg:block tracking-widest transition-colors duration-200 group-hover:text-red-400">{{ __('Tune In, Test Out!') }}</p>
       </Link>
     </div>
 
@@ -28,7 +28,7 @@ const user = usePage().props.auth?.user
           <template #default>
             <div
               :title="__('Help & Documentation')"
-              class="text-neutral-400 hover:text-blue-400 transition-all duration-200 hover:scale-110 cursor-pointer"
+              class="text-slate-300 transition-all duration-200 hover:scale-110 hover:text-blue-400 cursor-pointer"
             >
               <Icon name="faq" class="h-6 w-6 drop-shadow-[0_0_4px_currentColor]" />
             </div>
@@ -36,12 +36,12 @@ const user = usePage().props.auth?.user
           <template #dropdown>
             <div class="min-w-[240px] py-1">
               <!-- Guides principaux -->
-              <div class="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {{ __('Guides') }}
               </div>
               <Link
                 :href="route('docs.howto')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -52,7 +52,7 @@ const user = usePage().props.auth?.user
               </Link>
               <Link
                 :href="route('docs.create-content')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -63,15 +63,15 @@ const user = usePage().props.auth?.user
               </Link>
               
               <!-- Séparateur -->
-              <div class="border-t border-neutral-700/50 my-1"></div>
+              <div class="my-1 border-t border-white/10"></div>
               
               <!-- Référence -->
-              <div class="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {{ __('Référence') }}
               </div>
               <Link
                 :href="route('docs.glossary')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -82,7 +82,7 @@ const user = usePage().props.auth?.user
               </Link>
               <Link
                 :href="route('docs.faq')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <Icon name="faq" class="h-4 w-4" />
@@ -91,15 +91,15 @@ const user = usePage().props.auth?.user
               </Link>
               
               <!-- Séparateur -->
-              <div class="border-t border-neutral-700/50 my-1"></div>
+              <div class="my-1 border-t border-white/10"></div>
               
               <!-- Systèmes de progression -->
-              <div class="px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+              <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {{ __('Systèmes de progression') }}
               </div>
               <Link
                 :href="route('docs.index')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -110,7 +110,7 @@ const user = usePage().props.auth?.user
               </Link>
               <Link
                 :href="route('docs.level')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -121,7 +121,7 @@ const user = usePage().props.auth?.user
               </Link>
               <Link
                 :href="route('docs.elo')"
-                class="block px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                class="block px-4 py-2 text-sm text-slate-200 transition-colors hover:bg-surface-hover hover:text-white"
               >
                 <div class="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -136,7 +136,7 @@ const user = usePage().props.auth?.user
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="group flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800/50 border border-neutral-700/50 text-yellow-500 hover:text-yellow-400 hover:bg-neutral-700/50 hover:border-yellow-500/50 transition-all duration-200 hover:scale-110">
+        <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-surface-raised/60 text-yellow-500 transition-all duration-200 hover:scale-110 hover:border-yellow-500/50 hover:bg-surface-hover/70 hover:text-yellow-400">
           <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_6px_rgba(234,179,8,0.6)]" />
         </Link>
         <Notifications v-if="user && !user.is_guest" />

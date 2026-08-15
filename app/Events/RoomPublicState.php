@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\Room;
-use App\Services\RoomPresenceService;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -34,18 +33,6 @@ class RoomPublicState implements ShouldBroadcastNow
 
     public function broadcastWith(): array
     {
-        $this->room->refresh();
-        $memberCount = app(RoomPresenceService::class)->getMemberCount($this->room);
-        $currentRound = $this->room->currentRound()->first();
-        $currentTrackIndex = $currentRound ? ($currentRound->current ?? 0) : 0;
-        $tracksByRound = (int) $this->room->tracks_by_round;
-
-        return [
-            'roomId' => $this->room->id,
-            'memberCount' => $memberCount,
-            'currentTrackIndex' => $currentTrackIndex,
-            'tracksByRound' => $tracksByRound,
-            'isPlaying' => (bool) $this->room->is_playing,
-        ];
+        return $this->room->publicStatePayload();
     }
 }

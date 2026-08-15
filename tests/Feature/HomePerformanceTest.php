@@ -56,23 +56,71 @@ class HomePerformanceTest extends TestCase
                 ->where('featured_rooms.0.photo', fn ($photo) => is_string($photo) && $photo !== ''));
     }
 
-    public function test_homepage_room_payload_skips_reverb_subscription_lookup(): void
+    public function test_to_homepage_array_includes_cached_track_index_when_playing(): void
     {
-        $broadcastManager = Mockery::mock(BroadcastManager::class);
-        $broadcastManager->shouldNotReceive('getPusher');
-        $this->app->instance(BroadcastManager::class, $broadcastManager);
-
         $category = Category::create(['name' => 'Pop']);
         $owner = User::factory()->create();
 
-        Room::create([
-            'name' => 'Featured Room',
+        $room = Room::create([
+            'name' => 'Live Room',
             'user_id' => $owner->id,
             'category_id' => $category->id,
             'is_public' => true,
-            'is_featured' => true,
+            'is_featured' => false,
+            'is_playing' => true,
             'track_duration' => 30,
             'tracks_by_round' => 10,
+        ]);
+
+        $room->rounds()->create([
+            'is_playing' => true,
+            'current' => 4,
+            'tracks' => [1, 2, 3, 4, 5],
+        ]);
+
+        $payload = $room->fresh()->toHomepageArray();
+
+        $this->assertSame(4, $payload['current_track_index']);
+        $this->assertArrayHasKey('photo', $payload);
+    }
+
+    public function test_homepage_overlays_live_room_state_on_cached_catalog(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'Cached Live Room',
+            'slug' => 'cached-live-room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        Cache::put('homepage-public-rooms-v3', [[
+            'id' => $room->id,
+            'slug' => $room->slug,
+            'name' => $room->name,
+            'is_playing' => false,
+            'current_track_index' => 0,
+            'tracks_by_round' => 10,
+            'is_public' => true,
+            'is_autostart' => true,
+            'photo' => '',
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+            ],
+        ]], now()->addMinute());
+
+        $room->update(['is_playing' => true]);
+        $room->rounds()->create([
+            'is_playing' => true,
+            'current' => 3,
+            'tracks' => [1, 2, 3, 4, 5],
         ]);
 
         $this->mock(RoomPresenceService::class, function ($mock): void {
@@ -84,10 +132,51 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
-                ->has('featured_rooms', 1));
+                ->where('public_rooms.0.is_playing', true)
+                ->where('public_rooms.0.current_track_index', 3));
     }
 
-    public function test_homepage_limits_public_rooms_per_category(): void
+    public function test_room_public_state_endpoint_returns_live_progress(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'Public State Room',
+            'slug' => 'public-state-room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'is_playing' => true,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $room->rounds()->create([
+            'is_playing' => true,
+            'current' => 2,
+            'tracks' => [1, 2, 3, 4, 5],
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($room): void {
+            $mock->shouldReceive('getMemberCount')
+                ->with(Mockery::on(fn ($arg) => $arg->id === $room->id))
+                ->andReturn(3);
+        });
+
+        $this->getJson(route('rooms.public-state', ['room' => $room->slug]))
+            ->assertOk()
+            ->assertJson([
+                'roomId' => $room->id,
+                'memberCount' => 3,
+                'currentTrackIndex' => 2,
+                'tracksByRound' => 10,
+                'isPlaying' => true,
+            ]);
+    }
+
+    public function test_homepage_includes_all_public_rooms(): void
     {
         $category = Category::create(['name' => 'Rock']);
         $owner = User::factory()->create();
@@ -113,8 +202,52 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
-                ->has('categories', 1)
-                ->where('categories.0.rooms', fn ($rooms) => count($rooms) === 12));
+                ->has('public_categories', 1)
+                ->where('public_categories.0.rooms_count', 15)
+                ->where('public_rooms', fn ($rooms) => count($rooms) === 15)
+                ->where('public_rooms.0.category.id', $category->id)
+                ->where('public_rooms.0.category.name', 'Rock'));
+    }
+
+    public function test_homepage_public_rooms_are_sorted_by_presence(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $quietRoom = Room::create([
+            'name' => 'Quiet Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $busyRoom = Room::create([
+            'name' => 'Busy Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($quietRoom, $busyRoom): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([
+                    $quietRoom->id => 1,
+                    $busyRoom->id => 12,
+                ]);
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('public_rooms.0.name', 'Busy Room')
+                ->where('public_rooms.1.name', 'Quiet Room'));
     }
 
     public function test_homepage_catalog_sections_are_cached(): void
@@ -140,7 +273,8 @@ class HomePerformanceTest extends TestCase
         $this->get(route('home'))->assertOk();
 
         $this->assertTrue(Cache::has('homepage-featured-rooms-v2'));
-        $this->assertTrue(Cache::has('homepage-categories-v2'));
+        $this->assertTrue(Cache::has('homepage-public-rooms-v3'));
+        $this->assertTrue(Cache::has('homepage-public-categories-v3'));
         $this->assertTrue(Cache::has('homepage-private-rooms-v2'));
     }
 }

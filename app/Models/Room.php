@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Traits\HasPicture;
 use App\Http\Traits\Sluggable;
+use App\Services\RoomPresenceService;
 use Illuminate\Broadcasting\BroadcastManager;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -230,7 +231,32 @@ class Room extends Model
      */
     public function toHomepageArray(): array
     {
-        return (clone $this)->setAppends(['photo'])->toArray();
+        $payload = (clone $this)->setAppends(['photo'])->toArray();
+
+        $payload['current_track_index'] = 0;
+        if ($this->is_playing) {
+            $currentRound = $this->currentRound()->first(['current']);
+            $payload['current_track_index'] = $currentRound ? (int) ($currentRound->current ?? 0) : 0;
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @return array{roomId: int, memberCount: int, currentTrackIndex: int, tracksByRound: int, isPlaying: bool}
+     */
+    public function publicStatePayload(): array
+    {
+        $this->refresh();
+        $currentRound = $this->currentRound()->first(['current']);
+
+        return [
+            'roomId' => $this->id,
+            'memberCount' => app(RoomPresenceService::class)->getMemberCount($this),
+            'currentTrackIndex' => $currentRound ? (int) ($currentRound->current ?? 0) : 0,
+            'tracksByRound' => (int) $this->tracks_by_round,
+            'isPlaying' => (bool) $this->is_playing,
+        ];
     }
 
     public function scopeIsPublic($query)
