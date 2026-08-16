@@ -563,8 +563,7 @@
 
   /* ── Room gameplay ── */
   .room-player-shell {
-    @apply relative mb-1;
-    padding-top: 2.25rem;
+    @apply relative mb-1 flex flex-col gap-1;
   }
 
   .room-player {
@@ -574,12 +573,13 @@
   }
 
   .room-player__markers {
-    @apply absolute inset-x-0 top-0 z-30 m-0 h-9 list-none p-0;
+    @apply relative z-30 m-0 min-h-[1.875rem] w-full list-none p-0;
     pointer-events: none;
   }
 
   .room-player__marker {
-    @apply pointer-events-auto absolute top-0 flex max-w-[9rem] items-center gap-1.5 px-2 py-1 text-xs font-semibold text-white shadow-lg transition-transform duration-200 hover:z-40 hover:scale-105;
+    @apply pointer-events-auto absolute bottom-0 z-10 flex max-w-[9rem] items-center gap-1.5 px-2 py-1 text-xs font-semibold text-white shadow-lg transition-transform duration-200 hover:z-50 hover:scale-105;
+    transform: translateX(-50%);
     background: rgb(var(--color-accent));
     box-shadow: var(--glow-accent);
   }

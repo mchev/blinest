@@ -588,13 +588,14 @@ const startYoutubeProgress = () => {
   }, 100)
 }
 
-const markerPositionStyle = (user, index) => {
-  const percentOnTrack = (100 / props.room.track_duration) * (user.time ?? 0)
-  const clamped = Math.min(94, Math.max(6, percentOnTrack))
+const markerPositionStyle = (user) => {
+  const percent = Math.min(
+    94,
+    Math.max(6, (100 / props.room.track_duration) * (user.time ?? 0)),
+  )
 
   return {
-    left: `${clamped}%`,
-    transform: `translateX(-50%) translateY(${index * 4}px)`,
+    left: `${percent}%`,
   }
 }
 
@@ -672,10 +673,10 @@ onBeforeUnmount(() => {
       class="room-player__markers"
     >
       <li
-        v-for="(user, index) in usersWithAllAnswers"
+        v-for="user in usersWithAllAnswers"
         :key="user.id"
         class="room-player__marker"
-        :style="markerPositionStyle(user, index)"
+        :style="markerPositionStyle(user)"
         :title="user.name"
       >
         <img v-if="user.photo" :src="user.photo" :alt="user.name" class="room-player__marker-avatar" />
@@ -755,20 +756,18 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.user-answer-move,
+.user-answer-move {
+  transition: transform 0.35s ease;
+}
+
 .user-answer-enter-active,
 .user-answer-leave-active {
-  transition: all 0.5s ease;
+  transition: opacity 0.35s ease;
 }
 
 .user-answer-enter-from,
 .user-answer-leave-to {
   opacity: 0;
-  transform: translateY(30px);
-}
-
-.user-answer-leave-active {
-  position: absolute;
 }
 
 .shine-wave {
