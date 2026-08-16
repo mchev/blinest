@@ -90,13 +90,13 @@ const close = () => {
           <h3 class="retro-title retro-title--secondary mb-2 py-2 text-center text-lg sm:text-xl">{{ __('Ranking') }}</h3>
           <Podium :list="users_results" />
           <ul class="max-h-48 overflow-y-auto overflow-x-hidden">
-            <li v-for="(result, index) in users_results" :key="result.user?.id ?? index" class="room-rank-row m-1 min-w-0">
+            <li v-for="(result, index) in users_results" :key="result.user?.id ?? index" class="room-rank-row m-1 min-w-0 text-sm sm:text-base">
               <span class="shrink-0 text-lg font-bold sm:text-xl">{{ index + 1 }}</span>
               <span class="flex min-w-0 flex-grow items-center gap-2">
-                <span class="truncate">{{ result.user.name }}</span>
+                <span class="truncate font-medium">{{ result.user.name }}</span>
                 <EloBadge v-if="result.user.elo" :elo="result.user.elo" size="sm" variant="compact" />
               </span>
-              <span class="shrink-0 whitespace-nowrap">{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span class="shrink-0 whitespace-nowrap font-semibold">{{ result.total }}<sup class="ml-1 text-xs">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>
@@ -104,10 +104,10 @@ const close = () => {
           <h3 class="retro-title retro-title--secondary mb-2 py-2 text-center text-lg sm:text-xl">{{ __('Teams') }}</h3>
           <Podium :list="teams_results" />
           <ul class="max-h-48 overflow-y-auto overflow-x-hidden">
-            <li v-for="(result, index) in teams_results" :key="result.team?.id ?? index" class="room-rank-row m-1 min-w-0">
+            <li v-for="(result, index) in teams_results" :key="result.team?.id ?? index" class="room-rank-row m-1 min-w-0 text-sm sm:text-base">
               <span class="shrink-0 text-lg font-bold sm:text-xl">{{ index + 1 }}</span>
-              <span class="min-w-0 flex-grow truncate">{{ result.team.name }}</span>
-              <span class="shrink-0 whitespace-nowrap">{{ result.total }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span class="min-w-0 flex-grow truncate font-medium">{{ result.team.name }}</span>
+              <span class="shrink-0 whitespace-nowrap font-semibold">{{ result.total }}<sup class="ml-1 text-xs">{{ __('PTS') }}</sup></span>
             </li>
           </ul>
         </div>

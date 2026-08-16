@@ -4,147 +4,191 @@ import EloBadge from '@/Components/EloBadge.vue'
 
 const props = defineProps({
   list: Object,
-});
+})
 
-const podiumColors = {
-  0: 'from-yellow-400 to-yellow-600', // Gold for 1st
-  1: 'from-gray-300 to-gray-400',     // Silver for 2nd
-  2: 'from-amber-600 to-amber-800',   // Bronze for 3rd
-  3: 'from-purple-500 to-purple-700', // 4th
-  4: 'from-blue-500 to-blue-700',     // 5th
-};
+const hasEntries = computed(() => props.list && props.list.length > 0)
 
-const podiumHeights = {
-  0: 'h-32',  // 1st place
-  1: 'h-24',  // 2nd place
-  2: 'h-20',  // 3rd place
-  3: 'h-28',  // 4th place
-  4: 'h-24',  // 5th place
-};
+const podiumOrder = computed(() => {
+  if (! props.list?.length) {
+    return []
+  }
 
-const hasEntries = computed(() => props.list && props.list.length > 0);
+  const [first, second, third] = props.list
+
+  if (! second) {
+    return first ? [{ entry: first, rank: 1 }] : []
+  }
+
+  if (! third) {
+    return [
+      { entry: second, rank: 2 },
+      { entry: first, rank: 1 },
+    ]
+  }
+
+  return [
+    { entry: third, rank: 3 },
+    { entry: first, rank: 1 },
+    { entry: second, rank: 2 },
+  ]
+})
+
+const displayName = (entry) => entry.user?.name ?? entry.team?.name ?? ''
+
+const displayPhoto = (entry) => entry.user?.photo ?? entry.team?.photo ?? ''
+
+const displayScore = (entry) => entry.score ?? entry.total ?? 0
+
+const medalClass = (rank) => {
+  if (rank === 1) {
+    return 'medal gold'
+  }
+
+  if (rank === 2) {
+    return 'medal silver'
+  }
+
+  return 'medal bronze'
+}
+
+const scoreClass = (rank) => {
+  if (rank === 1) {
+    return 'text-brand-secondary'
+  }
+
+  if (rank === 2) {
+    return 'text-brand-accent'
+  }
+
+  return 'text-brand-primary'
+}
+
+const avatarRingClass = (rank) => {
+  if (rank === 1) {
+    return 'border-brand-secondary'
+  }
+
+  if (rank === 2) {
+    return 'border-brand-accent'
+  }
+
+  return 'border-brand-primary'
+}
+
+const standClass = (rank) => {
+  if (rank === 1) {
+    return 'podium-stand bg-brand-secondary text-brand-midnight'
+  }
+
+  if (rank === 2) {
+    return 'podium-stand bg-brand-accent text-brand-midnight'
+  }
+
+  return 'podium-stand bg-brand-primary'
+}
 </script>
 
 <template>
-  <div v-if="hasEntries" class="relative w-full min-w-0 py-4 sm:py-6">
-    <!-- Background decoration -->
-    <div class="absolute inset-0 opacity-10">
-      <div class="absolute top-0 left-1/4 w-32 h-32 rounded-full bg-brand-secondary blur-3xl opacity-20"></div>
-      <div class="absolute bottom-0 right-1/4 w-32 h-32 rounded-full bg-brand-accent blur-3xl opacity-20"></div>
+  <div v-if="hasEntries" class="podium-root relative w-full min-w-0 py-3 sm:py-6">
+    <div class="absolute inset-0 hidden opacity-10 sm:block">
+      <div class="absolute top-0 left-1/4 h-32 w-32 rounded-full bg-brand-secondary opacity-20 blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 h-32 w-32 rounded-full bg-brand-accent opacity-20 blur-3xl"></div>
     </div>
-    
-    <!-- Podium stands -->
-    <div class="relative z-10 flex h-40 items-end justify-center gap-1 px-1 sm:h-48 sm:gap-2 md:gap-4">
-      <!-- 3rd place -->
-      <div v-if="list[2]" class="podium-column min-w-0 max-w-[30%] sm:max-w-none">
-        <div class="flex flex-col items-center">
-          <div class="avatar-container">
-            <img 
-              class="h-12 w-12 rounded-full object-cover border-2 border-brand-primary shadow-lg" 
-              :src="list[2].user ? list[2].user.photo : (list[2].team ? list[2].team.photo : '')" 
-              :alt="list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : 'Third place')"
-            />
-            <div class="medal bronze">3</div>
-          </div>
-          <div class="mt-1 text-xs font-medium text-center text-white/80 max-w-20 truncate">
-            {{ list[2].user ? list[2].user.name : (list[2].team ? list[2].team.name : '') }}
-          </div>
-          <div class="flex items-center justify-center gap-1 mt-0.5">
-            <EloBadge v-if="list[2].user?.elo" :elo="list[2].user.elo" size="sm" variant="compact" />
-          </div>
-          <div class="text-brand-primary font-bold text-sm">{{ list[2].score || list[2].total || 0 }} pts</div>
-          <div class="podium-stand bg-brand-primary">
-            <span class="text-lg font-bold">3</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 1st place -->
-      <div v-if="list[0]" class="podium-column z-20 min-w-0 max-w-[34%] scale-105 sm:max-w-none sm:scale-110">
-        <div class="flex flex-col items-center">
-          <div class="avatar-container">
-            <img 
-              class="h-14 w-14 rounded-full object-cover border-2 border-brand-secondary shadow-lg" 
-              :src="list[0].user ? list[0].user.photo : (list[0].team ? list[0].team.photo : '')" 
-              :alt="list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : 'First place')"
-            />
-            <div class="medal gold">1</div>
-          </div>
-          <div class="mt-1 text-xs font-bold text-center text-white max-w-24 truncate">
-            {{ list[0].user ? list[0].user.name : (list[0].team ? list[0].team.name : '') }}
-          </div>
-          <div class="flex items-center justify-center gap-1 mt-0.5">
-            <EloBadge v-if="list[0].user?.elo" :elo="list[0].user.elo" size="sm" variant="compact" />
-          </div>
-          <div class="text-brand-secondary font-bold text-sm">{{ list[0].score || list[0].total || 0 }} pts</div>
-          <div class="podium-stand bg-brand-secondary text-brand-midnight">
-            <span class="text-xl font-bold">1</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 2nd place -->
-      <div v-if="list[1]" class="podium-column min-w-0 max-w-[30%] sm:max-w-none">
-        <div class="flex flex-col items-center">
-          <div class="avatar-container">
-            <img 
-              class="h-12 w-12 rounded-full object-cover border-2 border-brand-accent shadow-lg" 
-              :src="list[1].user ? list[1].user.photo : (list[1].team ? list[1].team.photo : '')" 
-              :alt="list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : 'Second place')"
-            />
-            <div class="medal silver">2</div>
-          </div>
-          <div class="mt-1 text-xs font-medium text-center text-white/80 max-w-20 truncate">
-            {{ list[1].user ? list[1].user.name : (list[1].team ? list[1].team.name : '') }}
-          </div>
-          <div class="flex items-center justify-center gap-1 mt-0.5">
-            <EloBadge v-if="list[1].user?.elo" :elo="list[1].user.elo" size="sm" variant="compact" />
-          </div>
-          <div class="text-brand-accent font-bold text-sm">{{ list[1].score || list[1].total || 0 }} pts</div>
-          <div class="podium-stand bg-brand-accent text-brand-midnight">
-            <span class="text-lg font-bold">2</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 4th and 5th places -->
-    <div class="mt-4 flex flex-wrap justify-center gap-2 px-2 sm:gap-4">
-      <div v-if="list[3]" class="flex items-center gap-2 border border-white/10 bg-brand-midnight px-3 py-1">
-        <div class="flex-shrink-0 relative">
-          <img
-            class="h-8 w-8 rounded-full object-cover border border-brand-accent" 
-            :src="list[3].user ? list[3].user.photo : (list[3].team ? list[3].team.photo : '')" 
-          />
-          <div class="absolute -top-1 -right-1 h-4 w-4 bg-brand-accent flex items-center justify-center text-[10px] font-bold text-brand-midnight">4</div>
-        </div>
-        <div class="text-xs">
-          <div class="font-medium text-white/80 truncate max-w-24">
-            {{ list[3].user ? list[3].user.name : (list[3].team ? list[3].team.name : '') }}
-          </div>
-          <div class="flex items-center gap-1 mt-0.5">
-            <EloBadge v-if="list[3].user?.elo" :elo="list[3].user.elo" size="sm" variant="compact" />
-          </div>
-          <div class="text-brand-accent text-[10px] font-bold">{{ list[3].score || list[3].total || 0 }} pts</div>
-        </div>
-      </div>
 
-      <div v-if="list[4]" class="flex items-center gap-2 border border-white/10 bg-brand-midnight px-3 py-1">
-        <div class="flex-shrink-0 relative">
-          <img
-            class="h-8 w-8 rounded-full object-cover border border-brand-primary" 
-            :src="list[4].user ? list[4].user.photo : (list[4].team ? list[4].team.photo : '')" 
-          />
-          <div class="absolute -top-1 -right-1 h-4 w-4 bg-brand-primary flex items-center justify-center text-[10px] font-bold text-white">5</div>
+    <div class="relative z-10 flex items-end justify-center gap-2 px-1 sm:h-48 sm:gap-4">
+      <div
+        v-for="{ entry, rank } in podiumOrder"
+        :key="`${displayName(entry)}-${rank}`"
+        class="podium-column min-w-0 max-w-[34%] flex-1"
+        :class="{ 'podium-column--first': rank === 1 }"
+      >
+        <div class="flex flex-col items-center gap-1.5 sm:gap-1">
+          <div class="avatar-container">
+            <img
+              class="rounded-full border-2 object-cover shadow-lg"
+              :class="[
+                rank === 1 ? 'h-16 w-16 sm:h-14 sm:w-14' : 'h-14 w-14 sm:h-12 sm:w-12',
+                avatarRingClass(rank),
+              ]"
+              :src="displayPhoto(entry)"
+              :alt="displayName(entry)"
+            />
+            <div :class="medalClass(rank)">{{ rank }}</div>
+          </div>
+
+          <p
+            class="podium-name w-full truncate text-center font-semibold leading-tight text-white"
+            :class="rank === 1 ? 'text-sm sm:text-xs' : 'text-xs sm:text-[11px]'"
+            :title="displayName(entry)"
+          >
+            {{ displayName(entry) }}
+          </p>
+
+          <div class="hidden min-h-[1.25rem] items-center justify-center sm:flex">
+            <EloBadge
+              v-if="entry.user?.elo"
+              :elo="entry.user.elo"
+              size="sm"
+              variant="compact"
+            />
+          </div>
+
+          <p
+            class="podium-score font-bold leading-none"
+            :class="[
+              scoreClass(rank),
+              rank === 1 ? 'text-lg sm:text-sm' : 'text-base sm:text-sm',
+            ]"
+          >
+            {{ displayScore(entry) }}
+            <span class="text-[11px] font-medium text-white/50 sm:text-[10px]">pts</span>
+          </p>
+
+          <div class="podium-stand hidden sm:flex" :class="standClass(rank)">
+            <span class="font-bold" :class="rank === 1 ? 'text-xl' : 'text-lg'">{{ rank }}</span>
+          </div>
         </div>
-        <div class="text-xs">
-          <div class="font-medium text-white/80 truncate max-w-24">
-            {{ list[4].user ? list[4].user.name : (list[4].team ? list[4].team.name : '') }}
+      </div>
+    </div>
+
+    <div v-if="list[3] || list[4]" class="mt-3 flex flex-wrap justify-center gap-2 px-2 sm:mt-4 sm:gap-4">
+      <div
+        v-for="(entry, offset) in [list[3], list[4]].filter(Boolean)"
+        :key="displayName(entry) + offset"
+        class="flex min-w-0 max-w-full items-center gap-2.5 border border-white/10 bg-brand-midnight px-3 py-2 sm:gap-2 sm:py-1"
+      >
+        <div class="relative shrink-0">
+          <img
+            class="h-9 w-9 rounded-full border object-cover sm:h-8 sm:w-8"
+            :class="offset === 0 ? 'border-brand-accent' : 'border-brand-primary'"
+            :src="displayPhoto(entry)"
+            :alt="displayName(entry)"
+          />
+          <div
+            class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center text-[10px] font-bold"
+            :class="offset === 0 ? 'bg-brand-accent text-brand-midnight' : 'bg-brand-primary text-white'"
+          >
+            {{ offset + 4 }}
           </div>
-          <div class="flex items-center gap-1 mt-0.5">
-            <EloBadge v-if="list[4].user?.elo" :elo="list[4].user.elo" size="sm" variant="compact" />
+        </div>
+        <div class="min-w-0 text-sm sm:text-xs">
+          <div class="truncate font-medium text-white/90">
+            {{ displayName(entry) }}
           </div>
-          <div class="text-brand-primary text-[10px] font-bold">{{ list[4].score || list[4].total || 0 }} pts</div>
+          <div class="hidden sm:block">
+            <EloBadge
+              v-if="entry.user?.elo"
+              :elo="entry.user.elo"
+              size="sm"
+              variant="compact"
+            />
+          </div>
+          <div
+            class="text-xs font-bold sm:text-[10px]"
+            :class="offset === 0 ? 'text-brand-accent' : 'text-brand-primary'"
+          >
+            {{ displayScore(entry) }} pts
+          </div>
         </div>
       </div>
     </div>
@@ -156,14 +200,22 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
+}
+
+.podium-column--first {
+  transform: scale(1.04);
+}
+
+@media (min-width: 640px) {
+  .podium-column--first {
+    transform: scale(1.1);
+  }
 }
 
 .podium-stand {
   height: 0;
   width: 2.25rem;
   border-radius: 6px 6px 0 0;
-  display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 6px;
@@ -181,7 +233,6 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 
 .avatar-container {
   position: relative;
-  margin-bottom: 6px;
   animation: bounce-in 0.5s ease-out;
 }
 
@@ -189,8 +240,8 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -201,31 +252,51 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+@media (min-width: 640px) {
+  .medal {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .gold {
-  background: #F9ED69;
-  color: #1A1A2E;
+  background: #f9ed69;
+  color: #1a1a2e;
   box-shadow: var(--glow-secondary);
 }
 
 .silver {
-  background: #00ADB5;
-  color: #1A1A2E;
+  background: #00adb5;
+  color: #1a1a2e;
   box-shadow: var(--glow-accent);
 }
 
 .bronze {
-  background: #E94560;
+  background: #e94560;
   box-shadow: var(--glow-primary);
 }
 
 @keyframes grow-up {
-  from { height: 0; }
-  to { height: 80px; }
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 80px;
+  }
 }
 
 @keyframes bounce-in {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
