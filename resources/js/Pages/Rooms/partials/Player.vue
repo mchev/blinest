@@ -578,7 +578,7 @@ const startCountdown = () => {
 
 const startYoutubeProgress = () => {
   clearInterval(progressInterval.value)
-  
+
   progressInterval.value = setInterval(() => {
     if (isYoutubeTrack.value && youtubePlayer.value && isPlaying.value) {
       handleTimeUpdate()
@@ -586,6 +586,16 @@ const startYoutubeProgress = () => {
       clearInterval(progressInterval.value)
     }
   }, 100)
+}
+
+const markerPositionStyle = (user, index) => {
+  const percentOnTrack = (100 / props.room.track_duration) * (user.time ?? 0)
+  const clamped = Math.min(94, Math.max(6, percentOnTrack))
+
+  return {
+    left: `${clamped}%`,
+    transform: `translateX(-50%) translateY(${index * 4}px)`,
+  }
 }
 
 // Watch for initialTrack to be set (in case it's set after mount)
@@ -654,30 +664,28 @@ onBeforeUnmount(() => {
 
 <template>
   <div id="youtube-player" class="hidden"></div>
-  
-  <div id="player" class="room-player">
-    <!-- User answers markers - moved outside the player container to be visible -->
+
+  <div class="room-player-shell">
     <TransitionGroup
       name="user-answer"
       tag="ul"
-      class="absolute w-full"
-      style="top: -2rem;"
+      class="room-player__markers"
     >
       <li
-        v-for="user in usersWithAllAnswers"
+        v-for="(user, index) in usersWithAllAnswers"
         :key="user.id"
-        class="room-player__marker hover:z-30 transform transition-transform duration-200 hover:scale-110"
-        :style="`left: calc(${(100 / props.room.track_duration) * user.time}% - 1rem);`"
+        class="room-player__marker"
+        :style="markerPositionStyle(user, index)"
+        :title="user.name"
       >
-        <div class="flex items-center space-x-1">
-          <img :src="user.photo" class="h-4 w-4 rounded-full" v-if="user.photo" />
-          <span class="whitespace-nowrap select-none max-w-16 truncate">{{ user.name }}</span>
-        </div>
-        <div class="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-[6px] border-l-[6px] border-r-[6px] border-t-brand-accent border-l-transparent border-r-transparent"></div>
+        <img v-if="user.photo" :src="user.photo" :alt="user.name" class="room-player__marker-avatar" />
+        <span class="room-player__marker-name">{{ user.name }}</span>
+        <div class="room-player__marker-tail" aria-hidden="true"></div>
       </li>
     </TransitionGroup>
 
-    <div class="overflow-hidden">
+    <div id="player" class="room-player">
+      <div class="room-player__track overflow-hidden">
       <!-- Error state -->
       <template v-if="error">
         <div class="flex flex-col h-auto w-full p-3 bg-brand-primary/10 text-white/90">
@@ -739,6 +747,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </template>
+      </div>
     </div>
   </div>
 

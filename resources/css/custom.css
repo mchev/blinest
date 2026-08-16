@@ -562,15 +562,45 @@
   }
 
   /* ── Room gameplay ── */
+  .room-player-shell {
+    @apply relative mb-1;
+    padding-top: 2.25rem;
+  }
+
   .room-player {
-    @apply retro-chamfer rc-10 relative mb-1 overflow-hidden shadow-lg;
+    @apply retro-chamfer rc-10 relative overflow-hidden shadow-lg;
     --rc-fill: rgb(var(--color-deep));
     --rc-border: rgb(255 255 255 / 0.1);
   }
 
+  .room-player__markers {
+    @apply absolute inset-x-0 top-0 z-30 m-0 h-9 list-none p-0;
+    pointer-events: none;
+  }
+
   .room-player__marker {
-    @apply absolute z-20 bg-brand-accent px-2 py-1 text-xs font-medium text-white shadow-lg;
+    @apply pointer-events-auto absolute top-0 flex max-w-[9rem] items-center gap-1.5 px-2 py-1 text-xs font-semibold text-white shadow-lg transition-transform duration-200 hover:z-40 hover:scale-105;
+    background: rgb(var(--color-accent));
     box-shadow: var(--glow-accent);
+  }
+
+  .room-player__marker-avatar {
+    @apply h-4 w-4 shrink-0 rounded-full ring-1 ring-white/30;
+  }
+
+  .room-player__marker-name {
+    @apply min-w-0 truncate select-none;
+  }
+
+  .room-player__marker-tail {
+    @apply absolute left-1/2 top-full h-0 w-0 -translate-x-1/2;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgb(var(--color-accent));
+  }
+
+  .room-player__track {
+    @apply relative min-h-[1.5rem];
   }
 
   .room-input-wrap {
