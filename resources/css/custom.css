@@ -784,7 +784,15 @@
   }
 
   .room-mobile-hud__panel-pane {
+    @apply min-h-0;
+  }
+
+  .room-mobile-hud__panel-pane--active {
     @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .room-mobile-hud__panel-pane.hidden {
+    display: none;
   }
 
   .room-mobile-hud__panel-pane .room-live-feed {

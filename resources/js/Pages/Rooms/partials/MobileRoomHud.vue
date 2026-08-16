@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import LiveFeed from './LiveFeed.vue'
@@ -45,6 +45,16 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const page = usePage()
+const selectedTab = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value !== selectedTab.value) {
+      selectedTab.value = value
+    }
+  },
+)
 
 function t(key, replace = {}) {
   let translation = page.props.language?.[key] ?? key
@@ -71,17 +81,25 @@ const tabs = computed(() => {
   return items
 })
 
-const activeTab = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
-})
-
 const tabButtonId = (tabId) => `room-hud-tab-${tabId}`
 const tabPanelId = (tabId) => `room-hud-panel-${tabId}`
 
+const isTabActive = (tabId) => selectedTab.value === tabId
+
 const selectTab = (tabId) => {
-  activeTab.value = tabId
+  if (selectedTab.value === tabId) {
+    return
+  }
+
+  selectedTab.value = tabId
+  emit('update:modelValue', tabId)
 }
+
+const panelClass = (tabId) => (
+  isTabActive(tabId)
+    ? 'room-mobile-hud__panel-pane room-mobile-hud__panel-pane--active'
+    : 'room-mobile-hud__panel-pane hidden'
+)
 
 const focusTab = (tabId) => {
   nextTick(() => {
@@ -118,7 +136,7 @@ const onTabKeydown = (event, index) => {
 
 <template>
   <div class="room-mobile-hud">
-    <div class="room-mobile-hud__tabs" role="tablist" :aria-label="__('Room panels')">
+    <div class="room-mobile-hud__tabs" role="tablist" :aria-label="t('Room panels')">
       <button
         v-for="(tab, index) in tabs"
         :key="tab.id"
@@ -126,10 +144,10 @@ const onTabKeydown = (event, index) => {
         type="button"
         role="tab"
         class="room-mobile-hud__tab"
-        :class="{ 'room-mobile-hud__tab--active': activeTab === tab.id }"
-        :aria-selected="activeTab === tab.id"
+        :class="{ 'room-mobile-hud__tab--active': isTabActive(tab.id) }"
+        :aria-selected="isTabActive(tab.id)"
         :aria-controls="tabPanelId(tab.id)"
-        :tabindex="activeTab === tab.id ? 0 : -1"
+        :tabindex="isTabActive(tab.id) ? 0 : -1"
         @click="selectTab(tab.id)"
         @keydown="onTabKeydown($event, index)"
       >
@@ -148,23 +166,22 @@ const onTabKeydown = (event, index) => {
     </div>
 
     <div class="room-mobile-hud__panel">
-      <LiveFeed
-        v-show="activeTab === 'live'"
+      <div
         :id="tabPanelId('live')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('live')"
-        :aria-hidden="activeTab !== 'live'"
-        class="room-mobile-hud__panel-pane"
-        :events="liveEvents"
-      />
+        :aria-hidden="!isTabActive('live')"
+        :class="panelClass('live')"
+      >
+        <LiveFeed :events="liveEvents" />
+      </div>
 
       <div
-        v-show="activeTab === 'rank'"
         :id="tabPanelId('rank')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('rank')"
-        :aria-hidden="activeTab !== 'rank'"
-        class="room-mobile-hud__panel-pane"
+        :aria-hidden="!isTabActive('rank')"
+        :class="panelClass('rank')"
       >
         <Ranking
           compact
@@ -177,23 +194,21 @@ const onTabKeydown = (event, index) => {
 
       <div
         v-if="room.is_chat_active"
-        v-show="activeTab === 'chat'"
         :id="tabPanelId('chat')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('chat')"
-        :aria-hidden="activeTab !== 'chat'"
-        class="room-mobile-hud__panel-pane"
+        :aria-hidden="!isTabActive('chat')"
+        :class="panelClass('chat')"
       >
         <Chat :room="room" embedded />
       </div>
 
       <div
-        v-show="activeTab === 'playlist'"
         :id="tabPanelId('playlist')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('playlist')"
-        :aria-hidden="activeTab !== 'playlist'"
-        class="room-mobile-hud__panel-pane"
+        :aria-hidden="!isTabActive('playlist')"
+        :class="panelClass('playlist')"
       >
         <Answers
           compact
