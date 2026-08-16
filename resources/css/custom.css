@@ -608,19 +608,44 @@
   }
 
   .room-input-wrap {
-    @apply retro-chamfer flex items-center overflow-hidden shadow-lg ring-1 ring-white/20;
-    --rc: 10px;
+    @apply retro-chamfer flex items-stretch gap-2 p-1.5 shadow-md;
+    --rc: 12px;
     --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.28);
+    --rc-border: rgb(255 255 255 / 0.14);
   }
 
   .room-input-wrap:focus-within {
-    --rc-border: rgb(var(--color-accent) / 0.45);
+    --rc-border: rgb(var(--color-accent) / 0.32);
     --rc-fill: rgb(var(--color-deep-hover));
   }
 
+  .room-input-field {
+    @apply flex min-w-0 flex-1 items-center rounded-lg bg-brand-midnight/30 ring-1 ring-inset ring-white/10 transition-colors duration-200;
+  }
+
+  .room-input-wrap:focus-within .room-input-field {
+    @apply bg-brand-midnight/45 ring-white/20;
+  }
+
   .room-input {
-    @apply relative z-[1] h-14 min-w-0 w-full flex-grow border-none bg-transparent px-4 text-lg font-medium text-white placeholder-white/60 focus:outline-none focus:ring-0 sm:text-xl;
+    @apply relative z-[1] h-12 min-w-0 w-full border-none bg-transparent px-3.5 text-base font-medium text-white placeholder-white/60 focus:outline-none focus:ring-0 sm:h-[3.25rem] sm:px-4 sm:text-lg;
+  }
+
+  .room-input-actions {
+    @apply flex shrink-0 items-center gap-1.5;
+  }
+
+  .room-input-settings {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-white/70 transition-colors duration-200 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 sm:h-[3.25rem] sm:w-11;
+  }
+
+  .room-input-submit {
+    @apply flex h-12 min-w-[3rem] shrink-0 items-center justify-center rounded-lg bg-brand-accent-dark px-4 text-white transition-colors duration-200 hover:bg-brand-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 disabled:cursor-not-allowed disabled:bg-brand-deep disabled:text-white/35 sm:h-[3.25rem] sm:min-w-[3.25rem];
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.15);
+  }
+
+  .room-input-submit:not(:disabled):active {
+    @apply scale-[0.98] bg-brand-accent-dark;
   }
 
   .room-answer-chip {
