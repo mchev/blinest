@@ -27,6 +27,7 @@ const toggleChat = () => {
 </script>
 
 <template>
+  <div class="room-actions-bar">
   <div class="room-actions">
     <button type="button" class="room-action-btn" @click="showShareModal = true">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
@@ -70,5 +71,6 @@ const toggleChat = () => {
 
     <PodiumModal v-if="user && showPodiumModal" :room="room" :show="showPodiumModal" @close="showPodiumModal = false" />
     <ShareModal v-if="showShareModal" :url="room.url" :show="showShareModal" @close="showShareModal = false" />
+  </div>
   </div>
 </template>

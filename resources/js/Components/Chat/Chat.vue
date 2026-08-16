@@ -150,13 +150,13 @@ const focusInput = () => {
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
 
-    <div v-if="user?.is_guest" class="flex w-full p-3">
+    <div v-if="user?.is_guest" class="chat-composer flex w-full">
       <div class="chat-guest-banner text-center">
         <Link :href="route('guest.to-register')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Register') }}</Link>{{ __(' or ') }}<Link :href="route('guest.to-login')" class="font-medium text-brand-accent hover:text-brand-accent-hover underline">{{ __('Login') }}</Link>{{ __('to chat with other players') }}
       </div>
     </div>
 
-    <div v-else class="relative flex w-full p-2">
+    <div v-else class="chat-composer relative flex w-full">
       <form
         @submit.prevent="sendMessage"
         class="flex w-full text-sm relative"

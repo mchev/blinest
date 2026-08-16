@@ -26,8 +26,8 @@ const props = defineProps({
     validator: (v) => v && typeof v.id !== 'undefined',
   },
   public_rooms: {
-    type: Object,
-    default: () => ({}),
+    type: Array,
+    default: () => [],
   },
 })
 
@@ -342,7 +342,7 @@ watch(roomAdsEnabled, (enabled) => {
                 {{ connectionState === 'connected' ? __('Connected') : __('Reconnecting…') }}
               </span>
             </div>
-            <div class="min-w-0 max-w-full overflow-x-auto sm:overflow-visible">
+            <div class="w-full min-w-0 sm:w-auto">
               <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
             </div>
           </article>
@@ -422,18 +422,18 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </Card>
 
-          <Card class="mt-8 hidden md:block">
-            <div class="flex flex-wrap items-center gap-3">
+          <Card v-if="public_rooms?.length" class="mt-8">
+            <div class="flex flex-col gap-3">
               <span class="text-sm font-medium uppercase tracking-wider text-brand-secondary">{{ __('Public Rooms') }}</span>
-              <div class="flex flex-wrap gap-2">
+              <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible">
                 <Link v-for="proom in public_rooms"
                       :key="'room-' + proom.id"
                       :href="route('rooms.show', proom.slug)"
-                      class="flex items-center space-x-2 border border-white/10 bg-brand-midnight px-3 py-1.5 transition-colors hover:border-white/20 hover:bg-brand-deep-hover">
+                      class="flex shrink-0 items-center space-x-2 border border-white/10 bg-brand-midnight px-3 py-1.5 transition-colors hover:border-white/20 hover:bg-brand-deep-hover">
                   <img :src="proom.photo"
                        :alt="proom.name"
                        class="h-5 w-5 rounded-full ring-1 ring-white/20"/>
-                  <span class="font-medium text-white/80">{{ proom.name }}</span>
+                  <span class="whitespace-nowrap font-medium text-white/80">{{ proom.name }}</span>
                 </Link>
               </div>
             </div>
@@ -443,7 +443,7 @@ watch(roomAdsEnabled, (enabled) => {
         </div>
 
         <div v-if="user && displayChat && room.is_chat_active"
-             class="chat-panel flex h-96 w-full flex-shrink-0 md:h-full md:w-1/5">
+             class="chat-panel flex w-full min-h-[24rem] h-[48dvh] max-h-[32rem] flex-shrink-0 md:h-full md:min-h-0 md:max-h-none md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>

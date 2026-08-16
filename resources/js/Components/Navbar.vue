@@ -11,6 +11,10 @@ import Dropdown from '@/Components/Dropdown.vue'
 const user = usePage().props.auth?.user
 </script>
 <template>
+  <div class="surface-nav border-b border-white/10 px-4 py-3 md:hidden">
+    <SearchRooms class="w-full" />
+  </div>
+
   <div class="surface-nav hidden md:flex relative items-center justify-between border-b py-2 px-4 sm:px-6 md:px-12">
     <div class="relative z-10 w-full lg:w-1/4">
       <Link :href="route('home')" title="Blinest" class="group transition-all duration-200 hover:scale-[102%]">

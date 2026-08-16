@@ -34,10 +34,10 @@ const accentClass = (accent) => {
 
 <template>
   <header v-if="compact" class="retro-section-header">
-    <h2 class="retro-title retro-title--primary min-w-0 flex-1">
+    <h2 class="retro-title retro-title--primary hidden min-w-0 flex-1 md:block">
       {{ title }}
     </h2>
-    <div v-if="$slots.action" class="shrink-0">
+    <div v-if="$slots.action" class="w-full shrink-0 md:w-auto">
       <slot name="action" />
     </div>
   </header>

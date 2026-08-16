@@ -199,6 +199,10 @@
     @apply relative border-t border-white/10 bg-brand-midnight/80 p-3 backdrop-blur-sm;
   }
 
+  .game-card__stats {
+    @apply mt-2 flex flex-row items-center justify-between gap-2 sm:gap-3;
+  }
+
   .game-card__deck::before {
     content: '';
     @apply absolute left-0 right-0 top-0 h-px;
@@ -225,6 +229,10 @@
 
   .retro-stat {
     @apply inline-flex items-center gap-1 text-[11px] font-medium text-white/75;
+  }
+
+  .retro-stat--card {
+    @apply min-w-0 gap-1.5 whitespace-nowrap text-xs font-medium text-white/90 sm:text-sm;
   }
 
   .retro-progress {
@@ -666,14 +674,43 @@
   }
 
   /* ── Room action bar ── */
+  .room-actions-bar {
+    @apply w-full sm:w-auto;
+  }
+
   .room-actions {
-    @apply flex max-w-full flex-nowrap items-center gap-1.5 sm:flex-wrap sm:gap-2;
+    @apply flex max-w-full flex-wrap items-center gap-2;
   }
 
   .room-action-btn {
-    @apply retro-chamfer rc-8 inline-flex shrink-0 items-center gap-1.5 px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200 sm:px-3 sm:text-xs;
+    @apply retro-chamfer retro-chamfer--shape-only rc-8 inline-flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200;
     --rc-fill: rgb(var(--color-deep));
     --rc-border: rgb(255 255 255 / 0.1);
+    background: rgb(var(--color-deep));
+  }
+
+  @media (max-width: 767px) {
+    .room-actions-bar {
+      @apply retro-chamfer rc-10 p-1;
+      --rc-fill: rgb(var(--color-deep));
+      --rc-border: rgb(255 255 255 / 0.12);
+    }
+
+    .room-actions {
+      @apply flex w-full flex-nowrap items-stretch gap-1;
+    }
+
+    .room-actions__group {
+      display: contents;
+    }
+
+    .room-action-btn {
+      @apply min-h-[2.75rem] min-w-0 flex-1 px-1 py-2;
+    }
+
+    .room-action-btn svg {
+      @apply h-5 w-5;
+    }
   }
 
   .room-action-btn:hover {
@@ -731,28 +768,35 @@
 
   /* ── Chat panel ── */
   .chat-panel {
-    @apply flex h-full flex-col border-l border-white/10 bg-brand-deep/90;
+    @apply flex h-full flex-col border-white/10 bg-brand-deep/90 max-md:border-l-0 max-md:border-t md:border-l md:border-t-0;
   }
 
   .chat-header {
-    @apply flex items-center justify-center gap-2 border-b border-white/10 bg-brand-midnight/60 px-2 py-3;
+    @apply flex shrink-0 items-center justify-center gap-2 border-b border-white/10 bg-brand-midnight/60 px-2 py-3;
   }
 
   .chat-messages {
+    @apply min-h-0 flex-1;
     scrollbar-width: thin;
     scrollbar-color: rgb(0 173 181 / 0.4) rgb(26 26 46 / 0.5);
   }
 
+  .chat-composer {
+    @apply shrink-0 border-t border-white/15 bg-brand-midnight/50 p-2;
+  }
+
   .chat-input-wrap {
-    @apply retro-chamfer relative flex flex-grow items-center transition-colors duration-200;
+    @apply retro-chamfer retro-chamfer--shape-only relative flex flex-grow items-center shadow-md ring-1 ring-white/20 transition-colors duration-200;
     --rc: 8px;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    --rc-fill: rgb(var(--color-midnight));
+    --rc-border: rgb(255 255 255 / 0.28);
     --rc-path: polygon(0 0, calc(100% - var(--rc)) 0, 100% var(--rc), 100% 100%, 0 100%);
+    background: rgb(var(--color-midnight));
   }
 
   .chat-input-wrap:focus-within {
-    --rc-border: rgb(var(--color-accent) / 0.4);
+    --rc-border: rgb(var(--color-accent) / 0.65);
+    box-shadow: var(--glow-accent);
   }
 
   .chat-send-btn {

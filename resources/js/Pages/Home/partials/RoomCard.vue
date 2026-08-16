@@ -94,6 +94,24 @@ const isLive = computed(() => isPlaying.value || cardState.value === 'hot' || ca
 
 const roomHref = computed(() => `/rooms/${props.room.slug}`)
 
+const trackStatLabel = computed(() => {
+    if (isPlaying.value) {
+        return t('Track :current / :total', { current: currentTrackIndex.value, total: tracksByRound.value })
+    }
+
+    return `${tracksByRound.value} ${t('tracks')}`
+})
+
+const trackStatValue = computed(() => {
+    if (isPlaying.value) {
+        return `${currentTrackIndex.value}/${tracksByRound.value}`
+    }
+
+    return String(tracksByRound.value)
+})
+
+const onlineStatLabel = computed(() => `${memberCount.value} ${t('online')}`)
+
 function dotFilled(index) {
     return index < currentTrackIndex.value
 }
@@ -182,30 +200,34 @@ function dotActive(index) {
 
                 <div v-if="!isCatalog" class="absolute bottom-0 left-0 right-0 z-20 p-3">
                     <h3
-                        class="truncate text-base font-bold uppercase tracking-wide text-brand-primary sm:text-lg"
+                        class="truncate text-base font-bold uppercase tracking-wide text-white sm:text-lg"
                         :title="room.name"
-                        style="text-shadow: 0 0 24px rgb(var(--color-primary) / 0.4)"
                     >
                         {{ room.name }}
                     </h3>
-                    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <span v-if="room.category" class="retro-badge">
-                            {{ __(room.category.name) }}
-                        </span>
-                        <span class="retro-stat" :class="{ 'scale-110': memberCountBump }">
-                            <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <div class="game-card__stats">
+                        <span
+                            class="retro-stat retro-stat--card"
+                            :class="{ 'scale-110': memberCountBump }"
+                            :aria-label="onlineStatLabel"
+                            :title="onlineStatLabel"
+                        >
+                            <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13Z" />
                             </svg>
-                            {{ memberCount }} {{ t('online') }}
+                            <span class="tabular-nums">{{ memberCount }}</span>
+                            <span class="hidden sm:inline">{{ t('online') }}</span>
                         </span>
-                        <span class="text-white/30" aria-hidden="true">·</span>
-                        <span class="retro-stat">
-                            <template v-if="isPlaying">
-                                {{ t('Track :current / :total', { current: currentTrackIndex, total: tracksByRound }) }}
-                            </template>
-                            <template v-else>
-                                {{ tracksByRound }} {{ t('tracks') }}
-                            </template>
+                        <span
+                            class="retro-stat retro-stat--card"
+                            :aria-label="trackStatLabel"
+                            :title="trackStatLabel"
+                        >
+                            <svg class="h-4 w-4 shrink-0 sm:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                            </svg>
+                            <span class="tabular-nums sm:hidden">{{ trackStatValue }}</span>
+                            <span class="hidden sm:inline">{{ trackStatLabel }}</span>
                         </span>
                     </div>
                 </div>
@@ -223,29 +245,34 @@ function dotActive(index) {
                 <template v-if="isCatalog">
                     <div class="min-w-0">
                         <h3
-                            class="truncate text-sm font-bold uppercase tracking-wide text-brand-primary sm:text-base"
+                            class="truncate text-sm font-bold uppercase tracking-wide text-white sm:text-base"
                             :title="room.name"
                         >
                             {{ room.name }}
                         </h3>
-                        <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <span v-if="room.category" class="retro-badge">
-                                {{ __(room.category.name) }}
-                            </span>
-                            <span class="retro-stat" :class="{ 'scale-110': memberCountBump }">
-                                <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <div class="game-card__stats">
+                            <span
+                                class="retro-stat retro-stat--card"
+                                :class="{ 'scale-110': memberCountBump }"
+                                :aria-label="onlineStatLabel"
+                                :title="onlineStatLabel"
+                            >
+                                <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13Z" />
                                 </svg>
-                                {{ memberCount }}
+                                <span class="tabular-nums">{{ memberCount }}</span>
+                                <span class="hidden sm:inline">{{ t('online') }}</span>
                             </span>
-                            <span class="text-white/30" aria-hidden="true">·</span>
-                            <span class="retro-stat">
-                                <template v-if="isPlaying">
-                                    {{ t('Track :current / :total', { current: currentTrackIndex, total: tracksByRound }) }}
-                                </template>
-                                <template v-else>
-                                    {{ tracksByRound }} {{ t('tracks') }}
-                                </template>
+                            <span
+                                class="retro-stat retro-stat--card"
+                                :aria-label="trackStatLabel"
+                                :title="trackStatLabel"
+                            >
+                                <svg class="h-4 w-4 shrink-0 sm:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                                </svg>
+                                <span class="tabular-nums sm:hidden">{{ trackStatValue }}</span>
+                                <span class="hidden sm:inline">{{ trackStatLabel }}</span>
                             </span>
                         </div>
                     </div>
