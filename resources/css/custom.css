@@ -349,7 +349,11 @@
 
   /* ── Site-wide chrome ── */
   .retro-modal-overlay {
-    @apply absolute inset-0 bg-brand-midnight/80 backdrop-blur-sm;
+    @apply absolute inset-0 bg-brand-midnight/55;
+  }
+
+  .retro-dropdown-overlay {
+    @apply fixed inset-0 bg-brand-midnight/35;
   }
 
   .retro-modal-panel {
@@ -396,7 +400,7 @@
   }
 
   .round-finalizing-overlay {
-    @apply fixed inset-0 z-[60] flex items-center justify-center bg-brand-midnight/75 px-4 backdrop-blur-sm;
+    @apply fixed inset-0 z-[60] flex items-center justify-center bg-brand-midnight/60 px-4;
   }
 
   .round-finalizing-overlay__panel {
@@ -514,9 +518,10 @@
   }
 
   .retro-dropdown-panel {
-    @apply retro-chamfer rc-10 overflow-hidden text-sm text-white shadow-2xl shadow-black/40;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply retro-chamfer retro-chamfer--shape-only rc-10 overflow-hidden text-sm text-white shadow-2xl shadow-black/60;
+    --rc-fill: rgb(var(--color-midnight));
+    --rc-border: rgb(255 255 255 / 0.15);
+    background: rgb(var(--color-midnight));
   }
 
   .retro-page-title {

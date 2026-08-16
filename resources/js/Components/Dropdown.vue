@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick, computed } from 'vue'
 import { createPopper } from '@popperjs/core'
 
 const props = defineProps({
@@ -11,6 +11,23 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  /** false = click-catcher only; 'subtle' = light dim; 'modal' = stronger dim (no blur) */
+  overlay: {
+    type: [Boolean, String],
+    default: 'subtle',
+  },
+})
+
+const overlayClass = computed(() => {
+  if (props.overlay === false || props.overlay === 'none') {
+    return 'bg-transparent'
+  }
+
+  if (props.overlay === 'modal') {
+    return 'retro-modal-overlay fixed inset-0'
+  }
+
+  return 'retro-dropdown-overlay'
 })
 
 const show = ref(false)
@@ -56,7 +73,7 @@ onMounted(() => {
       <slot />
       <teleport v-if="show" to="#dropdown">
         <div>
-          <div class="retro-modal-overlay fixed top-0 right-0 left-0 bottom-0 z-[99998]" @click="show = false" />
+          <div class="z-[99998]" :class="overlayClass" @click="show = false" />
           <div ref="dropdown" class="retro-dropdown-panel absolute z-[99999]" @click.stop="show = !autoClose">
             <slot name="dropdown" />
           </div>

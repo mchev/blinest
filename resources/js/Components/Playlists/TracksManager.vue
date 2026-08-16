@@ -582,7 +582,7 @@ const loading = ref(false)
               <h4 class="mb-1 text-sm font-semibold text-neutral-200">{{ __('Search for songs to add to your playlist') }}</h4>
               <p class="text-xs text-neutral-300 md:text-sm md:text-neutral-200">{{ __('Type the name of a song or artist to search on YouTube, Apple Music, Deezer and Blinest') }}</p>
             </div>
-            <Dropdown placement="bottom-start" :auto-close="false" class="w-full">
+            <Dropdown placement="bottom-start" :auto-close="false" :overlay="false" class="w-full">
           <template #default>
             <TextInput 
               class="w-full" 
