@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\TeamRequest;
 use App\Notifications\NewTeamRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Request;
 
 class TeamRequestController extends Controller
 {
@@ -39,38 +39,41 @@ class TeamRequestController extends Controller
         return redirect()->back()->with('error', __('It is not possible to join this team. The maximum number of members has been reached'));
     }
 
-    public function accept(TeamRequest $teamRequest)
+    public function accept(Request $request, TeamRequest $teamRequest)
     {
         if (Auth::user()->id === $teamRequest->team->owner->id) {
             $teamRequest->approve();
 
-            if (Request::has('notification_id')) {
-                Auth::user()->notifications()->where('id', Request::input('notification_id'))->update([
-                    'read_at' => now(),
-                ]);
-            }
+            $this->markTeamRequestNotificationAsRead($request);
 
-            return redirect()->back();
+            return redirect()->back()->with('success', __('The request has been accepted'));
         }
 
         return abort(403, __('Unauthorized action'));
     }
 
-    public function decline(TeamRequest $teamRequest)
+    public function decline(Request $request, TeamRequest $teamRequest)
     {
         if (Auth::user()->id === $teamRequest->team->owner->id) {
             $teamRequest->reject();
 
-            if (Request::has('notification_id')) {
-                Auth::user()->notifications()->where('id', Request::input('notification_id'))->update([
-                    'read_at' => now(),
-                ]);
-            }
+            $this->markTeamRequestNotificationAsRead($request);
 
-            return redirect()->back();
+            return redirect()->back()->with('success', __('The request has been declined'));
         }
 
         return abort(403, __('Unauthorized action'));
+    }
+
+    private function markTeamRequestNotificationAsRead(Request $request): void
+    {
+        if ($request->filled('notification_id')) {
+            Auth::user()->notifications()->where('id', $request->input('notification_id'))->update([
+                'read_at' => now(),
+            ]);
+        }
+
+        Cache::forget(Auth::id().'_unread_notifications');
     }
 
     public function cancel(Team $team)

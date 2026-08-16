@@ -11,7 +11,11 @@ import 'vue3-emoji-picker/css'
 const props = defineProps({
   room: {
     type: Object,
-    required: true
+    required: true,
+  },
+  embedded: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -118,8 +122,8 @@ const focusInput = () => {
 </script>
 
 <template>
-  <div class="chat-panel">
-    <div class="chat-header">
+  <div class="chat-panel" :class="{ 'chat-panel--embedded': embedded }">
+    <div v-if="! embedded" class="chat-header">
       <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-accent">{{ __('Chat') }}</span>
       <button
         v-if="!reported"
@@ -141,6 +145,31 @@ const focusInput = () => {
       </div>
       <a :href="route('docs.faq')" title="FAQ" target="_blank" rel="noopener noreferrer" class="chat-icon-btn !h-7 !w-7">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+        </svg>
+      </a>
+    </div>
+
+    <div v-else class="chat-header chat-header--embedded">
+      <button
+        v-if="!reported"
+        type="button"
+        class="chat-icon-btn !h-7 !w-7"
+        @click="alertingModerators = true"
+        :title="__('Report a problem on the chat')"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      </button>
+      <div v-else class="flex items-center text-brand-accent text-[10px]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        {{ __('Alert sent') }}
+      </div>
+      <a :href="route('docs.faq')" title="FAQ" target="_blank" rel="noopener noreferrer" class="chat-icon-btn !h-7 !w-7">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
         </svg>
       </a>
@@ -176,7 +205,7 @@ const focusInput = () => {
               'focus:outline-none',
               'bg-transparent',
               'text-base',
-              'py-3',
+              embedded ? 'py-2' : 'py-3',
               'pl-4',
               'pr-12',
             ]"

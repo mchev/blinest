@@ -35,9 +35,9 @@ class TeamRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function approve()
+    public function approve(): void
     {
-        $this->user()->update([
+        $this->user->update([
             'team_id' => $this->team_id,
         ]);
         $this->user->notify(new TeamRequestApproved($this));

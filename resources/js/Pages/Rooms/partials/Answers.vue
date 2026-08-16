@@ -1,6 +1,7 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3'
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
+import { TransitionGroup } from 'vue'
 import axios from 'axios'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -25,10 +26,15 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  compact: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const user = usePage().props.auth.user
 const tracks = ref([])
+let playlistChannel = null
 
 const progressPercentage = computed(() => {
   if (!props.round?.tracks?.length) {
@@ -58,9 +64,12 @@ watch(
 )
 
 onMounted(() => {
-  if (!props.channel) return
+  if (! props.channel) {
+    return
+  }
 
-  Echo.join(props.channel)
+  playlistChannel = Echo.join(props.channel)
+  playlistChannel
     .listen('RoundStarted', () => {
       tracks.value = []
     })
@@ -74,6 +83,17 @@ onMounted(() => {
         tracks.value[index].upvotes = e.track.upvotes
       }
     })
+})
+
+onUnmounted(() => {
+  if (! playlistChannel) {
+    return
+  }
+
+  playlistChannel.stopListening('RoundStarted')
+  playlistChannel.stopListening('TrackEnded')
+  playlistChannel.stopListening('TrackVoted')
+  playlistChannel = null
 })
 
 const voteTrackDown = (track) => {
@@ -93,30 +113,48 @@ const getUserAnswerForTrackAndAnswer = () => null
 
 </script>
 <template>
-  <Card>
+  <Card :class="compact ? 'room-playlist-card--compact h-full min-h-0 flex flex-col' : ''">
     <template #header>
       <div class="flex w-full items-center justify-between flex-wrap gap-2">
-        <h3 class="retro-title retro-title--accent text-base md:text-xl flex items-center" role="heading" aria-level="2">
+        <h3
+          class="retro-title retro-title--accent flex items-center"
+          :class="compact ? 'text-sm' : 'text-base md:text-xl'"
+          role="heading"
+          aria-level="2"
+        >
           <Icon name="music" class="mr-2 h-4 w-4 md:h-5 md:w-5" aria-hidden="true" />
           {{ __('Playlist') }}
         </h3>
-        <div v-if="round" class="flex flex-col items-end">
-          <div class="text-xs md:text-sm font-medium text-white/60" aria-label="Track progress">
+        <div v-if="round" class="flex items-center gap-2">
+          <div class="text-xs font-medium text-white/60" aria-label="Track progress">
             {{ __('Track') }} {{ trackCount }}
           </div>
-          <div class="w-20 md:w-32 bg-brand-midnight h-1.5 md:h-2 mt-1" role="progressbar" :aria-valuenow="progressPercentage" aria-valuemin="0" aria-valuemax="100">
-            <div class="bg-brand-accent h-1.5 md:h-2 transition-all duration-300" :style="`width: ${progressPercentage}%`"></div>
+          <div
+            class="bg-brand-midnight h-1.5 w-16 md:w-32"
+            role="progressbar"
+            :aria-valuenow="progressPercentage"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div class="bg-brand-accent h-1.5 transition-all duration-300" :style="`width: ${progressPercentage}%`"></div>
           </div>
         </div>
       </div>
     </template>
 
-    <div class="h-64 md:h-80 2xl:h-96 overflow-y-auto pr-2"
+    <div
+      class="overflow-y-auto pr-2"
+      :class="compact ? 'room-playlist-scroll--compact min-h-0 flex-1' : 'h-64 md:h-80 2xl:h-96'"
          style="scrollbar-width: thin; scrollbar-color: rgb(0 173 181 / 0.5) rgb(26 26 46 / 0.5);"
          role="list"
          aria-label="Played tracks">
-      <transition-group name="flip-list" tag="ul" class="space-y-3 md:space-y-4">
-        <template v-for="track in tracks" :key="track.id">
+      <component
+        :is="compact ? 'ul' : TransitionGroup"
+        :name="compact ? undefined : 'flip-list'"
+        tag="ul"
+        :class="compact ? 'space-y-1.5' : 'space-y-3 md:space-y-4'"
+      >
+        <template v-for="(track, index) in tracks" :key="track.id">
           <!-- Mobile version -->
           <AnswerCardMobile
             :track="track"
@@ -124,6 +162,7 @@ const getUserAnswerForTrackAndAnswer = () => null
             :voteTrackUp="voteTrackUp"
             :voteTrackDown="voteTrackDown"
             :user="user"
+            :is-latest="index === 0"
             class="md:hidden"
           />
           
@@ -146,7 +185,7 @@ const getUserAnswerForTrackAndAnswer = () => null
             <p>{{ __('No tracks played yet') }}</p>
           </div>
         </li>
-      </transition-group>
+      </component>
     </div>
   </Card>
 </template>

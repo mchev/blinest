@@ -41,7 +41,7 @@ const user = usePage().props.auth?.user
       </div>
 
       <div v-if="user && !user.is_guest" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">
-        <Notifications />
+        <Notifications placement="top-end" />
       </div>
 
       <div v-if="user && !user.is_guest" class="flex items-center justify-center min-w-0 flex-1 px-2 py-2">

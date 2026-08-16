@@ -8,10 +8,11 @@ import Chat from '@/Components/Chat/Chat.vue'
 import Tip from '@/Components/Tip.vue'
 
 import RoomActions from './partials/RoomActions.vue'
-import Player from './partials/Player.vue'
-import UserInput from './partials/UserInput.vue'
+import RoomPlayerSection from './partials/RoomPlayerSection.vue'
 import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
+import MobileRoomHud from './partials/MobileRoomHud.vue'
+import MobileTopThree from './partials/MobileTopThree.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
@@ -32,6 +33,18 @@ const props = defineProps({
 })
 
 const user = usePage().props.auth.user
+const page = usePage()
+
+function t(key, replace = {}) {
+  let translation = page.props.language?.[key] ?? key
+
+  Object.entries(replace).forEach(([placeholder, value]) => {
+    translation = translation.replace(`:${placeholder}`, String(value))
+  })
+
+  return translation
+}
+
 const room = ref({ ...props.room })
 const channel = `rooms.${room.value.id}`
 const round = ref(null)
@@ -63,7 +76,8 @@ const startFinalizingFallback = () => {
 }
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
-const currentTime = ref(0)
+const mobileTab = ref('live')
+const liveFeedEvents = ref([])
 const users_podium = ref([])
 const teams_podium = ref([])
 const initialTrack = ref(null)
@@ -128,6 +142,51 @@ function callPresenceLeft(options = {}) {
   axios.post(url).catch(() => {})
 }
 
+function normalizeScores(scores) {
+  if (scores == null || Array.isArray(scores)) {
+    return {}
+  }
+
+  return scores
+}
+
+function pushLiveFeedEvents(score) {
+  const uid = score.user_id
+  const player = roomState.value.users.find((u) => u.id === uid)
+
+  if (! score.answers?.length) {
+    return
+  }
+
+  for (const answer of score.answers) {
+    liveFeedEvents.value.unshift({
+      id: `${uid}-${answer.id}-${score.time ?? Date.now()}`,
+      userId: uid,
+      userName: player?.name ?? t('Player'),
+      userPhoto: player?.photo ?? null,
+      answerName: answer.name,
+      answerValue: answer.value,
+      order: answer.order,
+      speedBonus: answer.speedBonus,
+      points: null,
+    })
+  }
+
+  if (liveFeedEvents.value.length > 40) {
+    liveFeedEvents.value.length = 40
+  }
+}
+
+function onDisplayChat(show) {
+  if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    mobileTab.value = show ? 'chat' : 'live'
+
+    return
+  }
+
+  displayChat.value = show
+}
+
 function hydrateRoomFromJoinedPayload(data) {
   if (data.round && data.track) {
     round.value = data.round
@@ -153,10 +212,10 @@ function resyncRoomAfterReconnect() {
   if (!joined.value) return
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
     hydrateRoomFromJoinedPayload(response.data)
-    if (response.data.scores && typeof response.data.scores === 'object') roomState.value.scores = response.data.scores
+    if (response.data.scores != null) roomState.value.scores = normalizeScores(response.data.scores)
     if (response.data.roundId != null) roomState.value.roundId = response.data.roundId
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
   }).catch(() => {})
@@ -185,7 +244,7 @@ onMounted(() => {
         if (roomState.value.users[0]?.id === user.id) dispatchUserCount(roomState.value.users.length)
       })
       .listen('RoomState', (e) => {
-        if (e.scores && typeof e.scores === 'object') roomState.value.scores = e.scores
+        if (e.scores != null) roomState.value.scores = normalizeScores(e.scores)
         if (e.roundId != null) roomState.value.roundId = e.roundId
       })
       .listen('NewScore', (e) => {
@@ -199,12 +258,14 @@ onMounted(() => {
               ...roomState.value.answersByUser,
               [uid]: [...prev, ...score.answers],
             }
+            pushLiveFeedEvents(score)
           }
         }
       })
       .listen('RoundStarted', (e) => {
         round.value = e.round
         playlistPlayedTracks.value = []
+        liveFeedEvents.value = []
         roundFinished.value = false
         finalizingRound.value = false
         roomState.value.roundId = e.round?.id ?? null
@@ -231,6 +292,7 @@ onMounted(() => {
         initialStartTime.value = 0
         currentTrack.value = e.track
         roomState.value.answersByUser = {}
+        liveFeedEvents.value = []
       })
       .listen('UserEloUpdated', (e) => {
         const u = roomState.value.users.find((x) => x.id === e.user_id)
@@ -280,8 +342,8 @@ const joining = () => {
   axios.get(`/rooms/${room.value.id}/joined`).then((response) => {
     hydrateRoomFromJoinedPayload(response.data)
     // Scores/roundId from server. User list = only from presence channel (.here/.joining/.leaving).
-    if (response.data.scores && typeof response.data.scores === 'object') {
-      roomState.value.scores = response.data.scores
+    if (response.data.scores != null) {
+      roomState.value.scores = normalizeScores(response.data.scores)
     }
     if (response.data.roundId != null) {
       roomState.value.roundId = response.data.roundId
@@ -289,7 +351,7 @@ const joining = () => {
     joined.value = true
     // Notify server for Redis count (home page) and to broadcast scores/roundId. User list = from Echo .here/.joining/.leaving.
     axios.post(`/rooms/${room.value.id}/presence-joined`).then((res) => {
-      if (res.data?.scores != null) roomState.value.scores = res.data.scores
+      if (res.data?.scores != null) roomState.value.scores = normalizeScores(res.data.scores)
       if (res.data?.roundId != null) roomState.value.roundId = res.data.roundId
     }).catch(() => {})
     startPresenceHeartbeat()
@@ -303,7 +365,7 @@ const fetchRoundScores = async (roundId) => {
   try {
     const res = await axios.get(`/rounds/${roundId}/scores`)
     if (res.data.scores) {
-      roomState.value.scores = { ...roomState.value.scores, ...res.data.scores }
+      roomState.value.scores = { ...roomState.value.scores, ...normalizeScores(res.data.scores) }
     }
   } catch (e) {
     console.error('Error fetching round scores:', e)
@@ -331,10 +393,9 @@ watch(roomAdsEnabled, (enabled) => {
       </div>
     </div>
 
-    <Transition name="slide-right">
-      <div v-if="joined || !user" class="h-full min-w-0 overflow-x-hidden md:flex">
-        <div class="relative min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+    <div v-if="joined || !user" class="room-show-root h-full min-w-0 overflow-x-hidden md:flex">
+        <div class="room-show-scroll relative min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
+          <article class="room-show-header flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:mb-6 md:gap-3">
             <div class="flex min-w-0 items-center gap-2 sm:gap-3">
               <h1 class="retro-title retro-title--white min-w-0 truncate text-xl sm:text-2xl">{{ room.name }}</h1>
               <span v-if="user" class="flex shrink-0 items-center gap-1.5 text-xs font-medium text-white/60 sm:text-sm" :class="{ 'text-brand-secondary': connectionState === 'reconnecting' }">
@@ -343,7 +404,7 @@ watch(roomAdsEnabled, (enabled) => {
               </span>
             </div>
             <div class="w-full min-w-0 sm:w-auto">
-              <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
+              <RoomActions :room="room" :channel="channel" :round="round" @displayChat="onDisplayChat" />
             </div>
           </article>
 
@@ -359,12 +420,33 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </Tip>
 
-          <div class="mb-8 min-w-0 space-y-2" v-if="user">
-            <Player :room="room" :channel="channel" :initialTrack="initialTrack" :initialStartTime="initialStartTime" @track:currentTime="currentTime = $event" />
-            <UserInput :channel="channel" :currentTime="currentTime" :room="room" :initialTrack="initialTrack" :initialRound="round" />
+          <div class="room-show-player mb-2 min-w-0 md:mb-8" v-if="user">
+            <RoomPlayerSection
+              :room="room"
+              :channel="channel"
+              :initial-track="initialTrack"
+              :initial-start-time="initialStartTime"
+              :initial-round="round"
+            />
           </div>
 
-          <div class="grid gap-8 md:grid-cols-2">
+          <!-- Mobile gameplay HUD -->
+          <div v-if="user" class="room-mobile-shell md:hidden">
+            <MobileTopThree :room-state="roomState" />
+            <MobileRoomHud
+              v-model="mobileTab"
+              :room="room"
+              :room-state="roomState"
+              :round="round"
+              :channel="channel"
+              :current-track="currentTrack || initialTrack"
+              :playlist-played-tracks="playlistPlayedTracks"
+              :live-events="liveFeedEvents"
+            />
+          </div>
+
+          <!-- Desktop: playlist + ranking side by side -->
+          <div class="hidden gap-8 md:grid md:grid-cols-2">
             <Answers
               class="mb-4 md:mb-0"
               :users="roomState.users"
@@ -376,7 +458,7 @@ watch(roomAdsEnabled, (enabled) => {
             <Ranking class="mb-4 md:mb-0" :room="room" :room-state="roomState" :track="currentTrack || initialTrack" />
           </div>
 
-          <Card class="mt-8">
+          <Card class="mt-8 hidden md:block">
             <template #header v-if="room.description">
               <h3 class="text-sm">{{ room.description }}</h3>
             </template>
@@ -422,7 +504,7 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </Card>
 
-          <Card v-if="public_rooms?.length" class="mt-8">
+          <Card v-if="public_rooms?.length" class="mt-8 hidden md:block">
             <div class="flex flex-col gap-3">
               <span class="text-sm font-medium uppercase tracking-wider text-brand-secondary">{{ __('Public Rooms') }}</span>
               <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible">
@@ -443,11 +525,10 @@ watch(roomAdsEnabled, (enabled) => {
         </div>
 
         <div v-if="user && displayChat && room.is_chat_active"
-             class="chat-panel flex w-full min-h-[24rem] h-[48dvh] max-h-[32rem] flex-shrink-0 md:h-full md:min-h-0 md:max-h-none md:w-1/5">
+             class="chat-panel hidden w-full min-h-[24rem] h-[48dvh] max-h-[32rem] flex-shrink-0 md:flex md:h-full md:min-h-0 md:max-h-none md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>
-    </Transition>
 
     <RoundFinalizingOverlay :show="finalizingRound && !roundFinished" />
 

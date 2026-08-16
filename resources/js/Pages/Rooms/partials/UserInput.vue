@@ -309,12 +309,12 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
     </div>
   </form>
 
-  <div class="relative min-w-0">
+  <div class="room-answer-chips-row relative min-w-0">
     <transition-group 
       name="fade-slide" 
       tag="ul" 
       v-if="track" 
-      class="flex flex-wrap gap-2 text-sm sm:gap-4"
+      class="room-answer-chips flex flex-wrap gap-2 text-sm sm:gap-4"
     >
       <li
         v-for="answer in track.answers"

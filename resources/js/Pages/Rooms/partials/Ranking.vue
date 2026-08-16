@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { TransitionGroup } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
@@ -17,11 +18,15 @@ const props = defineProps({
     validator: (v) =>
       v &&
       Array.isArray(v.users) &&
-      (v.scores == null || (typeof v.scores === 'object' && !Array.isArray(v.scores))),
+      (v.scores == null || (typeof v.scores === 'object' && (! Array.isArray(v.scores) || v.scores.length === 0))),
   },
   track: {
     type: Object,
     default: null,
+  },
+  compact: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -30,12 +35,15 @@ const showPodiumModal = ref(false)
 
 const sortedUsers = computed(() => {
   const users = props.roomState?.users || []
-  const scores = props.roomState?.scores || {}
+  const rawScores = props.roomState?.scores
+  const scores = rawScores == null || Array.isArray(rawScores) ? {} : rawScores
   return [...users].sort((a, b) => (scores[b.id] || 0) - (scores[a.id] || 0))
 })
 
 function userScore(user) {
-  return props.roomState?.scores?.[user.id] ?? 0
+  const rawScores = props.roomState?.scores
+  const scores = rawScores == null || Array.isArray(rawScores) ? {} : rawScores
+  return scores[user.id] ?? 0
 }
 
 function userAnswers(user) {
@@ -43,14 +51,17 @@ function userAnswers(user) {
 }
 </script>
 <template>
-  <div>
-    <Card>
+  <div :class="{ 'h-full min-h-0 flex flex-col': compact }">
+    <Card :class="{ 'room-ranking-card--compact h-full min-h-0 flex flex-col': compact }">
       <template #header>
         <div class="flex w-full items-center justify-between">
-          <h3 class="retro-title retro-title--secondary text-xl flex items-center">
+          <h3
+            class="retro-title retro-title--secondary flex items-center"
+            :class="compact ? 'text-lg' : 'text-xl'"
+          >
             {{ __('Ranking') }}
           </h3>
-          <div class="flex items-center">
+          <div v-if="! compact" class="flex items-center">
             <span class="badge border border-white/10 bg-brand-midnight text-white/80 mr-2">{{ sortedUsers.length }} {{ __('players') }}</span>
             <button
               v-if="me"
@@ -62,36 +73,52 @@ function userAnswers(user) {
               <Icon name="trophy" class="size-5" />
             </button>
           </div>
+          <span v-else class="text-sm font-medium uppercase tracking-wide text-white/55">
+            {{ sortedUsers.length }} {{ __('players') }}
+          </span>
         </div>
       </template>
 
       <div
-        class="h-48 sm:h-64 md:h-80 2xl:h-96 overflow-y-auto pr-2"
+        class="overflow-y-auto pr-2"
+        :class="compact ? 'room-ranking-scroll--compact min-h-0 flex-1' : 'h-48 sm:h-64 md:h-80 2xl:h-96'"
         style="scrollbar-width: thin; scrollbar-color: rgb(249 237 105 / 0.4) rgb(26 26 46 / 0.5);"
       >
         <p v-if="sortedUsers.length === 1" class="py-3 text-center text-sm text-white/60">
           {{ __('Waiting for other players…') }}
         </p>
-        <transition-group name="flip-list" tag="ul" class="space-y-1 sm:space-y-2">
+        <component
+          :is="compact ? 'ul' : TransitionGroup"
+          :name="compact ? undefined : 'flip-list'"
+          tag="ul"
+          :class="compact ? 'space-y-1' : 'space-y-1 sm:space-y-2'"
+        >
           <li
             v-for="(user, index) in sortedUsers"
             :key="user.id"
             class="room-rank-row"
-            :class="{ 'room-rank-row--me': me && me.id === user.id }"
+            :class="{
+              'room-rank-row--me': me && me.id === user.id,
+              'room-rank-row--compact': compact,
+            }"
           >
             <div
-              class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8"
-              :class="{
-                'bg-brand-secondary text-brand-midnight': index === 0,
-                'bg-brand-accent text-brand-midnight': index === 1,
-                'bg-brand-primary text-white': index === 2,
-                'bg-brand-midnight text-white/70': index > 2,
-              }"
+              class="flex shrink-0 items-center justify-center"
+              :class="[
+                compact ? 'h-8 w-8' : 'h-6 w-6 sm:h-8 sm:w-8',
+                {
+                  'bg-brand-secondary text-brand-midnight': index === 0,
+                  'bg-brand-accent text-brand-midnight': index === 1,
+                  'bg-brand-primary text-white': index === 2,
+                  'bg-brand-midnight text-white/70': index > 2,
+                },
+              ]"
             >
-              <span class="text-base sm:text-lg font-bold">{{ index + 1 }}</span>
+              <span :class="compact ? 'text-base font-bold' : 'text-base sm:text-lg font-bold'">{{ index + 1 }}</span>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center shrink-0">
               <UserProfileBadge
+                v-if="! compact"
                 :user="user"
                 size="md"
                 variant="badge"
@@ -99,35 +126,45 @@ function userAnswers(user) {
                 :show-elo="true"
                 :ring-color="index === 0 ? 'ring-brand-secondary' : index === 1 ? 'ring-brand-accent' : index === 2 ? 'ring-brand-primary' : 'ring-white/20'"
               />
+              <img
+                v-else-if="user.photo"
+                :src="user.photo"
+                :alt="user.name"
+                class="h-8 w-8 rounded-full ring-1 ring-white/20"
+              />
             </div>
             <div class="flex flex-grow flex-col min-w-0">
-              <div class="mb-1 sm:mb-2 flex items-center gap-2 flex-wrap">
+              <div class="mb-1 flex items-center gap-2 flex-wrap" :class="{ 'sm:mb-2': ! compact }">
                 <Link
                   v-if="user?.id"
                   :href="route('user.profile', { user: user.id })"
                   class="font-medium text-white hover:text-brand-secondary transition-colors truncate"
+                  :class="compact ? 'text-base' : ''"
                 >
                   {{ user.name }}
                 </Link>
-                <span v-else class="font-medium text-white/60 truncate">
+                <span v-else class="font-medium text-white/60 truncate" :class="compact ? 'text-sm' : ''">
                   {{ user?.name || __('Deleted user') }}
                 </span>
                 <Link
-                  v-if="user.team"
+                  v-if="user.team && ! compact"
                   :href="route('teams.show', user.team)"
                   class="border border-white/10 bg-brand-midnight px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] uppercase text-white/70 hover:border-white/20 transition-colors whitespace-nowrap"
                 >
                   {{ user.team.name }}
                 </Link>
               </div>
-              <div class="flex flex-wrap items-center gap-1">
+              <div v-if="userAnswers(user).length" class="flex flex-wrap items-center gap-1">
                 <span
                   v-for="userAnswer in userAnswers(user)"
                   :key="userAnswer.id"
                   class="room-answer-badge"
-                  :class="{ 'mr-2': userAnswer.order < 4 }"
+                  :class="[
+                    { 'mr-2': userAnswer.order < 4 && ! compact },
+                    compact ? 'room-answer-badge--compact' : '',
+                  ]"
                 >
-                  <span v-if="userAnswer.speedBonus" class="mr-1 text-brand-secondary">
+                  <span v-if="userAnswer.speedBonus && ! compact" class="mr-1 text-brand-secondary">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
@@ -141,15 +178,16 @@ function userAnswers(user) {
                       />
                     </svg>
                   </span>
-                  {{ __(userAnswer.name) }}
+                  {{ compact ? __(userAnswer.name).charAt(0) : __(userAnswer.name) }}
                   <span
                     v-if="userAnswer.order < 4"
-                    class="absolute -right-2 -top-1 flex h-3 w-3 sm:h-4 sm:w-4 items-center justify-center bg-brand-secondary text-[8px] sm:text-[10px] font-bold text-brand-midnight"
+                    class="absolute -right-2 -top-1 flex items-center justify-center bg-brand-secondary font-bold text-brand-midnight"
+                    :class="compact ? 'h-3 w-3 text-[8px]' : 'h-3 w-3 sm:h-4 sm:w-4 text-[8px] sm:text-[10px]'"
                   >
                     {{ userAnswer.order }}
                   </span>
                 </span>
-                <template v-if="props.track?.answers">
+                <template v-if="props.track?.answers && ! compact">
                   <span
                     v-for="answer in props.track.answers"
                     :key="answer.id"
@@ -162,14 +200,14 @@ function userAnswers(user) {
               </div>
             </div>
             <div
-              class="font-bold text-base sm:text-lg"
-              :class="{
-                'text-brand-secondary': index === 0,
-                'text-white': index > 0,
-              }"
+              class="font-bold shrink-0"
+              :class="[
+                compact ? 'text-lg' : 'text-base sm:text-lg',
+                index === 0 ? 'text-brand-secondary' : 'text-white',
+              ]"
             >
               {{ userScore(user) }}
-              <sup class="text-[10px] sm:text-xs text-white/50">{{ __('PTS') }}</sup>
+              <sup class="text-xs text-white/50">{{ __('PTS') }}</sup>
             </div>
           </li>
 
@@ -182,7 +220,7 @@ function userAnswers(user) {
               <p>{{ __('No players yet') }}</p>
             </div>
           </li>
-        </transition-group>
+        </component>
       </div>
     </Card>
 

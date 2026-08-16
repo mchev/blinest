@@ -10,6 +10,13 @@ import NewRoomAlert from './NewRoomAlert.vue'
 import NewSuggestion from './NewSuggestion.vue'
 import TrackDeleted from './TrackDeleted.vue'
 
+const { placement } = defineProps({
+  placement: {
+    type: String,
+    default: 'bottom-end',
+  },
+})
+
 const user = usePage().props.auth.user
 const notifications = ref(user.notifications)
 const popup = ref(null)
@@ -49,7 +56,7 @@ const hideItemBeforeRefresh = (notification) => {
         <NewRoomAlert v-if="popup.type === 'App\\Notifications\\NewRoomAlert'" :notification="popup" @markedAsdone="markAsDone(popup)" />
       </div>
     </div>
-    <dropdown placement="bottom-end" :autoClose="false">
+    <dropdown :placement="placement" :autoClose="false">
       <template #default>
         <div class="retro-icon-btn relative cursor-pointer" title="Notifications">
           <div v-if="notifications.length" class="absolute -top-1 -right-1 z-10 flex h-5 w-5 items-center justify-center truncate bg-brand-primary border-2 border-brand-midnight text-[10px] font-bold text-white shadow-lg z-10">
@@ -67,7 +74,11 @@ const hideItemBeforeRefresh = (notification) => {
         <div class="p-2 font-light">
           <ul v-if="notifications.length" class="max-h-96 max-w-xl overflow-y-scroll pr-2">
             <li v-for="notification in notifications" :key="notification.id" class="my-2 flex border border-white/10 bg-brand-midnight p-2">
-              <NewTeamRequest v-if="notification.type === 'App\\Notifications\\NewTeamRequest'" :notification="notification" />
+              <NewTeamRequest
+                v-if="notification.type === 'App\\Notifications\\NewTeamRequest'"
+                :notification="notification"
+                @handled="hideItemBeforeRefresh"
+              />
               <TeamRequestApproved v-if="notification.type === 'App\\Notifications\\TeamRequestApproved'" :notification="notification" />
               <NewRoomAlert v-if="notification.type === 'App\\Notifications\\NewRoomAlert'" :notification="notification" @markedAsdone="markAsDone(notification)" />
               <NewSuggestion v-if="notification.type === 'App\\Notifications\\NewSuggestion'" :notification="notification" @markedAsdone="markAsDone(notification)" />

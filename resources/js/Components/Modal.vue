@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { initChamferBorders } from '@/chamfer-borders'
 const props = defineProps({
   show: {
     type: [Boolean, Number],
@@ -17,9 +18,11 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 watch(
   () => props.show,
-  () => {
-    if (props.show) {
+  async (visible) => {
+    if (visible) {
       document.body.style.overflow = 'hidden'
+      await nextTick()
+      requestAnimationFrame(() => initChamferBorders())
     } else {
       document.body.style.overflow = null
     }

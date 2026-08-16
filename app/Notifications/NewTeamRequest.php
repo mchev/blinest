@@ -43,10 +43,8 @@ class NewTeamRequest extends Notification implements ShouldQueue
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'data' => [
-                'teamRequest' => $this->teamRequest,
-                'message' => '@'.$this->teamRequest->user->name.' '.__('wishes to join your team'),
-            ],
+            'teamRequest' => $this->teamRequest,
+            'message' => '@'.$this->teamRequest->user->name.' '.__('wishes to join your team'),
         ]);
     }
 

@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Logo from '@/Components/Logo.vue'
 import Icon from '@/Components/Icon.vue'
@@ -8,10 +9,12 @@ import Notifications from '@/Components/Notifications/Notifications.vue'
 import LevelDisplay from '@/Components/LevelDisplay.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 
-const user = usePage().props.auth?.user
+const page = usePage()
+const user = page.props.auth?.user
+const showRoomSearch = computed(() => page.component !== 'Rooms/Show')
 </script>
 <template>
-  <div class="surface-nav border-b border-white/10 px-4 py-3 md:hidden">
+  <div v-if="showRoomSearch" class="surface-nav border-b border-white/10 px-4 py-3 md:hidden">
     <SearchRooms class="w-full" />
   </div>
 
@@ -25,7 +28,7 @@ const user = usePage().props.auth?.user
 
     <div class="relative z-10 flex w-full lg:w-3/4 items-center justify-between pl-2 pr-8 md:flex-shrink-0">
       <div class="mt-1 flex items-center gap-3">
-        <SearchRooms class="transition hover:scale-[104%] focus:scale-[104%]" />
+        <SearchRooms v-if="showRoomSearch" class="transition hover:scale-[104%] focus:scale-[104%]" />
         <Dropdown placement="bottom-end">
           <template #default>
             <div

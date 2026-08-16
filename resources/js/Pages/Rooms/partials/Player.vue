@@ -666,11 +666,12 @@ onBeforeUnmount(() => {
 <template>
   <div id="youtube-player" class="hidden"></div>
 
-  <div class="room-player-shell">
+  <div class="room-player-shell room-player-shell--mobile">
     <TransitionGroup
       name="user-answer"
       tag="ul"
       class="room-player__markers"
+      :class="{ 'room-player__markers--empty': usersWithAllAnswers.length === 0 }"
     >
       <li
         v-for="user in usersWithAllAnswers"
