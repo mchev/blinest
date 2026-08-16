@@ -44,7 +44,7 @@ onUnmounted(() => {
   document.body.style.overflow = null
 })
 const maxWidthClass = computed(() => {
-  return {
+  const widths = {
     sm: 'sm:max-w-sm',
     md: 'sm:max-w-md',
     lg: 'sm:max-w-lg',
@@ -53,7 +53,9 @@ const maxWidthClass = computed(() => {
     '3xl': 'sm:max-w-3xl',
     '4xl': 'sm:max-w-4xl',
     '5xl': 'sm:max-w-5xl',
-  }[props.maxWidth]
+  }
+
+  return widths[props.maxWidth] ?? widths['2xl']
 })
 </script>
 
@@ -68,7 +70,11 @@ const maxWidthClass = computed(() => {
         </transition>
 
         <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to-class="opacity-100 translate-y-0 sm:scale-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100 translate-y-0 sm:scale-100" leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-          <div v-show="show" v-bind="{ ...$attrs, class: maxWidthClass }" class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all sm:max-w-none sm:w-full">
+          <div
+            v-show="show"
+            class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all"
+            :class="maxWidthClass"
+          >
             <slot v-if="show" />
           </div>
         </transition>

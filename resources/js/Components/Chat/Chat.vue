@@ -21,7 +21,7 @@ const props = defineProps({
 
 const channel = computed(() => `chat-room.${props.room.id}`)
 const body = ref('')
-const messages = ref(props.room.latest_messages)
+const messages = ref([...(props.room.latest_messages ?? [])])
 const { auth } = usePage().props
 const user = auth.user
 const users = ref([])
@@ -54,6 +54,10 @@ onMounted(() => {
 
   Echo.private(channel.value)
     .listen('NewMessage', ({ message }) => {
+      if (messages.value.some((existing) => existing.id === message.id)) {
+        return
+      }
+
       messages.value.unshift(message)
       nextTick(() => {
         messagesContainer.value.scrollTop = 0
@@ -72,6 +76,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   Echo.leave(channel.value)
+  Echo.private(channel.value)
+    .stopListening('NewMessage')
+    .stopListening('MessageReported')
+    .stopListening('MessageDeleted')
 })
 
 const sendMessage = async () => {

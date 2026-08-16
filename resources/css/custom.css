@@ -365,7 +365,7 @@
   }
 
   .retro-modal-panel {
-    @apply retro-chamfer retro-chamfer--shape-only rc-16 max-h-[calc(100dvh-6rem)] w-full overflow-x-hidden overflow-y-auto text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
+    @apply retro-chamfer retro-chamfer--shape-only rc-16 mx-auto max-h-[calc(100dvh-6rem)] w-full overflow-x-hidden overflow-y-auto text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
     --rc-fill: rgb(var(--color-midnight));
     --rc-border: rgb(255 255 255 / 0.15);
     background: rgb(var(--color-midnight));

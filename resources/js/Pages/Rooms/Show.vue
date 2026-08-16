@@ -76,6 +76,8 @@ const startFinalizingFallback = () => {
 }
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
+const showDesktopChat = ref(typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches)
+let desktopChatMediaQuery = null
 const mobileTab = ref('live')
 const liveFeedEvents = ref([])
 const users_podium = ref([])
@@ -315,7 +317,15 @@ onMounted(() => {
     }
   }
   window.addEventListener('beforeunload', onBeforeUnloadPresenceLeft)
+
+  desktopChatMediaQuery = window.matchMedia('(min-width: 768px)')
+  desktopChatMediaQuery.addEventListener('change', syncDesktopChatVisibility)
+  syncDesktopChatVisibility()
 })
+
+function syncDesktopChatVisibility() {
+  showDesktopChat.value = desktopChatMediaQuery?.matches ?? false
+}
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
@@ -325,6 +335,8 @@ onBeforeUnmount(() => {
 })
 
 onUnmounted(() => {
+  desktopChatMediaQuery?.removeEventListener('change', syncDesktopChatVisibility)
+
   if (roundsChannel) {
     roundsChannel.stopListening('RoundStarted')
     roundsChannel.stopListening('RoundFinalizing')
@@ -523,8 +535,8 @@ watch(roomAdsEnabled, (enabled) => {
           <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
         </div>
 
-        <div v-if="user && displayChat && room.is_chat_active"
-             class="chat-panel hidden w-full min-h-[24rem] h-[48dvh] max-h-[32rem] flex-shrink-0 md:flex md:h-full md:min-h-0 md:max-h-none md:w-1/5">
+        <div v-if="user && displayChat && room.is_chat_active && showDesktopChat"
+             class="chat-panel flex w-full min-h-[24rem] h-[48dvh] max-h-[32rem] flex-shrink-0 md:h-full md:min-h-0 md:max-h-none md:w-1/5">
           <Chat :room="room" />
         </div>
       </div>
