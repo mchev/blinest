@@ -10,7 +10,7 @@
     @apply focus:border-white/25 focus:bg-surface-raised focus:ring-2 focus:ring-white/15;
 
     &::placeholder {
-      @apply text-white/40 opacity-100;
+      @apply text-white/60 opacity-100;
     }
   }
 
@@ -33,6 +33,6 @@
   }
 
   .form-error {
-    @apply mt-2 text-sm text-brand-primary;
+    @apply mt-2 text-sm text-brand-primary-light;
   }
 }

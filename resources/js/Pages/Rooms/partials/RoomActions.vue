@@ -29,7 +29,7 @@ const toggleChat = () => {
 <template>
   <div class="room-actions-bar">
   <div class="room-actions">
-    <button type="button" class="room-action-btn" @click="showShareModal = true">
+    <button type="button" class="room-action-btn" :aria-label="__('Share this room')" @click="showShareModal = true">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
         <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
       </svg>
@@ -44,7 +44,7 @@ const toggleChat = () => {
       v-if="user"
       type="button"
       @click="showPodiumModal = true"
-      :title="__('Show rankings for this room')"
+      :aria-label="__('Show rankings for this room')"
       class="room-action-btn room-action-btn--highlight"
     >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
@@ -61,7 +61,8 @@ const toggleChat = () => {
       class="room-action-btn"
       :class="{ 'room-action-btn--active': showSidebar }"
       @click="toggleChat"
-      :title="__('Hide/Show chatbox')"
+      :aria-label="showSidebar ? __('Hide chatbox') : __('Show chatbox')"
+      :aria-pressed="showSidebar"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />

@@ -1,32 +1,33 @@
 /**
- * Blinest — palette rétro-futuriste
- * Backgrounds : #1A1A2E · #16213E
- * Titres & boutons : #E94560 · #F9ED69 · #00ADB5
- * Texte : blanc
+ * Blinest — palette rétro sobre (RGAA AA)
+ * Fonds : midnight · deep
+ * Accents : rose poussière · champagne · teal adouci
  */
 :root {
   color-scheme: dark;
 
-  --color-midnight: 26 26 46;
-  --color-deep: 22 33 62;
-  --color-deep-hover: 30 42 74;
-  --color-deep-card: 22 33 62;
+  --color-midnight: 24 24 42;
+  --color-deep: 20 30 54;
+  --color-deep-hover: 28 38 66;
+  --color-deep-card: 20 30 54;
 
-  --color-primary: 233 69 96;
-  --color-primary-hover: 255 95 120;
-  --color-primary-dark: 196 50 72;
-  --color-primary-light: 255 120 140;
+  --color-primary: 186 86 106;
+  --color-primary-hover: 202 102 122;
+  --color-primary-dark: 158 68 86;
+  --color-primary-light: 220 142 152;
 
-  --color-secondary: 249 237 105;
-  --color-secondary-dark: 212 196 45;
+  --color-secondary: 196 184 132;
+  --color-secondary-dark: 168 156 108;
+  --color-secondary-strong: 128 114 64;
 
-  --color-accent: 0 173 181;
-  --color-accent-hover: 51 196 203;
-  --color-accent-dark: 0 138 145;
+  --color-accent: 64 148 154;
+  --color-accent-hover: 88 168 174;
+  --color-accent-dark: 48 124 130;
+  --color-accent-light: 132 192 198;
 
-  --glow-primary: 0 0 28px rgb(var(--color-primary) / 0.45);
-  --glow-accent: 0 0 28px rgb(var(--color-accent) / 0.45);
-  --glow-secondary: 0 0 24px rgb(var(--color-secondary) / 0.35);
+  --glow-primary: 0 0 16px rgb(var(--color-primary) / 0.14);
+  --glow-accent: 0 0 16px rgb(var(--color-accent) / 0.14);
+  --glow-secondary: 0 0 12px rgb(var(--color-secondary) / 0.1);
 
   --surface-base: rgb(var(--color-midnight));
   --surface-raised: rgb(var(--color-deep));

@@ -86,7 +86,7 @@ watch(() => form.search, () => debouncedSearch())
         <input
           ref="searchInput"
           v-model="form.search"
-          class="w-full bg-transparent px-3 py-1 text-sm text-white placeholder-white/40 focus:outline-none"
+          class="w-full bg-transparent px-3 py-1 text-sm text-white placeholder-white/60 focus:outline-none"
           :placeholder="__(`${props.placeholder}`) + '...'"
           spellcheck="false"
           @focus="isSearchFocused = true"

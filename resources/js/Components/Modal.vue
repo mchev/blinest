@@ -1,6 +1,12 @@
 <script setup>
-import { computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted, watch, nextTick, ref, useId } from 'vue'
 import { initChamferBorders } from '@/chamfer-borders'
+import {
+  assignDialogLabel,
+  focusInitialElement,
+  handleFocusTrapKeydown,
+} from '@/composables/useFocusTrap'
+
 const props = defineProps({
   show: {
     type: [Boolean, Number],
@@ -14,35 +20,73 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  ariaLabel: {
+    type: String,
+    default: null,
+  },
 })
+
 const emit = defineEmits(['close'])
+
+const dialogRef = ref(null)
+const labelledBy = ref(null)
+const fallbackLabelId = useId()
+let previouslyFocused = null
+
 watch(
   () => props.show,
   async (visible) => {
     if (visible) {
+      previouslyFocused = document.activeElement
       document.body.style.overflow = 'hidden'
       await nextTick()
-      requestAnimationFrame(() => initChamferBorders())
+      requestAnimationFrame(() => {
+        initChamferBorders()
+
+        if (dialogRef.value) {
+          labelledBy.value = assignDialogLabel(dialogRef.value, fallbackLabelId)
+          focusInitialElement(dialogRef.value)
+        }
+      })
     } else {
       document.body.style.overflow = null
+      labelledBy.value = null
+
+      if (previouslyFocused?.focus) {
+        previouslyFocused.focus()
+      }
+
+      previouslyFocused = null
     }
   },
 )
+
 const close = () => {
   if (props.closeable) {
     emit('close')
   }
 }
-const closeOnEscape = (e) => {
-  if (e.key === 'Escape' && props.show) {
-    close()
+
+const handleKeydown = (event) => {
+  if (!props.show) {
+    return
   }
+
+  if (event.key === 'Escape') {
+    close()
+
+    return
+  }
+
+  handleFocusTrapKeydown(event, dialogRef.value)
 }
-onMounted(() => document.addEventListener('keydown', closeOnEscape))
+
+onMounted(() => document.addEventListener('keydown', handleKeydown))
 onUnmounted(() => {
-  document.removeEventListener('keydown', closeOnEscape)
+  document.removeEventListener('keydown', handleKeydown)
   document.body.style.overflow = null
 })
+
 const maxWidthClass = computed(() => {
   const widths = {
     sm: 'sm:max-w-sm',
@@ -72,8 +116,14 @@ const maxWidthClass = computed(() => {
         <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to-class="opacity-100 translate-y-0 sm:scale-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100 translate-y-0 sm:scale-100" leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
           <div
             v-show="show"
-            class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all"
+            ref="dialogRef"
+            role="dialog"
+            aria-modal="true"
+            tabindex="-1"
+            class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all focus:outline-none"
             :class="maxWidthClass"
+            :aria-labelledby="labelledBy ?? undefined"
+            :aria-label="!labelledBy && ariaLabel ? ariaLabel : undefined"
           >
             <slot v-if="show" />
           </div>

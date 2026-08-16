@@ -21,7 +21,7 @@ const visit = (url) => {
     <template v-for="(link, key) in links" :key="key">
       <span
         v-if="!link.url"
-        class="retro-pagination-link cursor-default text-white/40"
+        class="retro-pagination-link cursor-default text-white/60"
         v-html="link.label"
       />
       <Link

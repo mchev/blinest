@@ -108,7 +108,7 @@ const props = defineProps({
               <Icon name="thumb-down" class="h-3.5 w-3.5 text-white" aria-hidden="true" />
             </div>
             <span class="text-xs font-medium text-white/60 group-hover:text-brand-primary transition-colors min-w-[1.5rem] text-center"
-                  :class="{ 'text-brand-primary': track.user_voted_down }">
+                  :class="{ 'text-brand-primary-light': track.user_voted_down }">
               {{ track.downvotes }}
             </span>
           </button>

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import LiveFeed from './LiveFeed.vue'
@@ -76,28 +76,62 @@ const activeTab = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
+const tabButtonId = (tabId) => `room-hud-tab-${tabId}`
+const tabPanelId = (tabId) => `room-hud-panel-${tabId}`
+
 const selectTab = (tabId) => {
   activeTab.value = tabId
 }
 
-const panelClass = (tabId) => [
-  'room-mobile-hud__panel-pane h-full min-h-0',
-  activeTab.value === tabId ? 'flex flex-col' : 'hidden',
-]
+const focusTab = (tabId) => {
+  nextTick(() => {
+    document.getElementById(tabButtonId(tabId))?.focus()
+  })
+}
+
+const onTabKeydown = (event, index) => {
+  const tabIds = tabs.value.map((tab) => tab.id)
+  let nextIndex = index
+
+  switch (event.key) {
+    case 'ArrowRight':
+      nextIndex = (index + 1) % tabIds.length
+      break
+    case 'ArrowLeft':
+      nextIndex = (index - 1 + tabIds.length) % tabIds.length
+      break
+    case 'Home':
+      nextIndex = 0
+      break
+    case 'End':
+      nextIndex = tabIds.length - 1
+      break
+    default:
+      return
+  }
+
+  event.preventDefault()
+  selectTab(tabIds[nextIndex])
+  focusTab(tabIds[nextIndex])
+}
 </script>
 
 <template>
   <div class="room-mobile-hud">
     <div class="room-mobile-hud__tabs" role="tablist" :aria-label="__('Room panels')">
       <button
-        v-for="tab in tabs"
+        v-for="(tab, index) in tabs"
         :key="tab.id"
+        :id="tabButtonId(tab.id)"
         type="button"
         role="tab"
         class="room-mobile-hud__tab"
         :class="{ 'room-mobile-hud__tab--active': activeTab === tab.id }"
         :aria-selected="activeTab === tab.id"
+        :aria-controls="tabPanelId(tab.id)"
+        :tabindex="activeTab === tab.id ? 0 : -1"
         @click="selectTab(tab.id)"
+        @keydown="onTabKeydown($event, index)"
       >
         <span class="room-mobile-hud__tab-icon" aria-hidden="true">
           <svg v-if="tab.id === 'live'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -115,11 +149,21 @@ const panelClass = (tabId) => [
 
     <div class="room-mobile-hud__panel flex min-h-0 flex-1 flex-col overflow-hidden">
       <LiveFeed
-        :class="panelClass('live')"
+        :id="tabPanelId('live')"
+        role="tabpanel"
+        :aria-labelledby="tabButtonId('live')"
+        :hidden="activeTab !== 'live'"
+        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
         :events="liveEvents"
       />
 
-      <div :class="panelClass('rank')">
+      <div
+        :id="tabPanelId('rank')"
+        role="tabpanel"
+        :aria-labelledby="tabButtonId('rank')"
+        :hidden="activeTab !== 'rank'"
+        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+      >
         <Ranking
           compact
           class="h-full"
@@ -129,11 +173,24 @@ const panelClass = (tabId) => [
         />
       </div>
 
-      <div v-if="room.is_chat_active" :class="panelClass('chat')">
+      <div
+        v-if="room.is_chat_active"
+        :id="tabPanelId('chat')"
+        role="tabpanel"
+        :aria-labelledby="tabButtonId('chat')"
+        :hidden="activeTab !== 'chat'"
+        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+      >
         <Chat :room="room" embedded />
       </div>
 
-      <div :class="panelClass('playlist')">
+      <div
+        :id="tabPanelId('playlist')"
+        role="tabpanel"
+        :aria-labelledby="tabButtonId('playlist')"
+        :hidden="activeTab !== 'playlist'"
+        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+      >
         <Answers
           compact
           class="h-full"

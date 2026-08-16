@@ -31,6 +31,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
     return [
         'id' => $user->id,
         'name' => $user->name,
+        'is_guest' => $user->isGuest(),
         'team' => $user->team,
         'photo' => $user->photo,
         'elo' => $user->elo ?? 1500,

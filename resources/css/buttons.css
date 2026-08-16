@@ -6,7 +6,7 @@
     @apply flex items-center justify-center rounded-md bg-brand-primary-dark px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-primary hover:shadow-lg focus:bg-brand-primary focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-primary-dark active:shadow-lg;
   }
   .btn-warning {
-    @apply flex items-center justify-center rounded-md bg-brand-secondary px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-secondary/90 hover:shadow-lg focus:bg-brand-secondary focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-secondary-dark active:shadow-lg;
+    @apply flex items-center justify-center rounded-md bg-brand-secondary-strong px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-secondary-dark hover:shadow-lg focus:bg-brand-secondary-dark focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-secondary-strong active:shadow-lg;
   }
   .btn-secondary {
     @apply relative flex min-h-[2.5rem] touch-manipulation items-center justify-center gap-2 rounded-lg border border-white/10 bg-surface-raised/60 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 ease-out;
@@ -31,7 +31,7 @@
   }
 
   .btn-send {
-    @apply flex items-center rounded-br-md bg-brand-accent px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-accent-hover hover:shadow-lg focus:bg-brand-accent-hover focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-accent-dark active:shadow-lg;
+    @apply flex items-center rounded-br-md bg-brand-accent-dark px-6 py-2.5 text-xs font-medium uppercase text-white shadow-md transition duration-150 ease-in-out hover:bg-brand-accent hover:shadow-lg focus:bg-brand-accent focus:shadow-lg focus:outline-none focus:ring-0 active:bg-brand-accent-dark active:shadow-lg;
   }
 
   .btn-spinner,

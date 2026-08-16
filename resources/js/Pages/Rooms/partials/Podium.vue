@@ -141,7 +141,7 @@ const standClass = (rank) => {
             ]"
           >
             {{ displayScore(entry) }}
-            <span class="text-[11px] font-medium text-white/50 sm:text-[10px]">pts</span>
+            <span class="text-[11px] font-medium text-white/60 sm:text-[10px]">pts</span>
           </p>
 
           <div class="podium-stand hidden sm:flex" :class="standClass(rank)">

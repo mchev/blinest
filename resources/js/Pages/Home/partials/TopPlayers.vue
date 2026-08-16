@@ -104,7 +104,7 @@ const rankBadgeClass = (rank) => {
 				class="flex items-center gap-3 border border-white/10 bg-brand-deep px-3 py-2 transition hover:border-white/20 hover:bg-brand-deep-hover"
 				style="clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
 			>
-				<span class="w-5 shrink-0 text-center text-xs font-black text-white/40">{{ index + 4 }}</span>
+				<span class="w-5 shrink-0 text-center text-xs font-black text-white/60">{{ index + 4 }}</span>
 				<Link v-if="score.user?.id" :href="route('user.profile', { user: score.user.id })" class="shrink-0">
 					<img :src="score.user.photo" :alt="score.user.name" class="h-8 w-8 rounded-full ring-1 ring-white/15" loading="lazy" />
 				</Link>

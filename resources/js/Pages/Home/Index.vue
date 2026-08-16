@@ -32,7 +32,7 @@ const user = usePage().props.auth.user
     <link rel="canonical" href="https://blinest.com/" />
   </Head>
   <Layout>
-    <h1 class="hidden">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
+    <h1 class="sr-only">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
 
     <!-- Search Results -->
     <section v-if="search_result" class="mb-12">

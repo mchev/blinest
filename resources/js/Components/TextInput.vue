@@ -28,7 +28,7 @@ defineEmits(['update:modelValue'])
     <label v-if="label" class="form-label" :for="id">{{ label }}:</label>
     <div class="relative group">
       <Icon v-if="prependIcon" :name="prependIcon" class="pointer-events-none absolute top-1/2 left-3.5 z-10 h-5 w-5 flex-shrink-0 -translate-y-1/2 transform text-white/50 group-focus-within:text-brand-accent transition-colors duration-200" />
-      <input :id="id" ref="input" v-bind="{ ...$attrs, class: $attrs.inputClass }" class="form-input px-2 placeholder-white/40 focus:placeholder-white/60" :class="{ error: error, 'pl-11': prependIcon, 'pr-11': appendIcon || loading }" :type="type" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
+      <input :id="id" ref="input" v-bind="{ ...$attrs, class: $attrs.inputClass }" class="form-input px-2 placeholder-white/60 focus:placeholder-white/70" :class="{ error: error, 'pl-11': prependIcon, 'pr-11': appendIcon || loading }" :type="type" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
       <Icon v-if="appendIcon" :name="appendIcon" class="pointer-events-none absolute top-1/2 right-3.5 z-10 h-5 w-5 flex-shrink-0 -translate-y-1/2 transform text-white/50 group-focus-within:text-brand-accent transition-colors duration-200" />
       <svg v-if="loading" class="pointer-events-none absolute top-1/2 right-3.5 z-10 h-5 w-5 flex-shrink-0 -translate-y-1/2 transform animate-spin text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />

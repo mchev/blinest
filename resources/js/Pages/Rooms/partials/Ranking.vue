@@ -46,6 +46,10 @@ function userScore(user) {
   return scores[user.id] ?? 0
 }
 
+function canLinkToProfile(user) {
+  return Boolean(user?.id && ! user.is_guest)
+}
+
 function userAnswers(user) {
   return props.roomState?.answersByUser?.[user.id] ?? []
 }
@@ -67,19 +71,22 @@ function userAnswers(user) {
               v-if="me"
               type="button"
               @click="showPodiumModal = true"
-              :title="__('Show rankings for this room')"
+              :aria-label="__('Show rankings for this room')"
               class="retro-icon-btn !h-8 !w-8 text-brand-secondary"
             >
               <Icon name="trophy" class="size-5" />
             </button>
           </div>
-          <span v-else class="text-sm font-medium uppercase tracking-wide text-white/55">
+          <span v-else class="text-sm font-medium uppercase tracking-wide text-white/60">
             {{ sortedUsers.length }} {{ __('players') }}
           </span>
         </div>
       </template>
 
       <div
+        aria-live="polite"
+        aria-relevant="additions text"
+        aria-atomic="false"
         class="overflow-y-auto pr-2"
         :class="compact ? 'room-ranking-scroll--compact min-h-0 flex-1' : 'h-48 sm:h-64 md:h-80 2xl:h-96'"
         style="scrollbar-width: thin; scrollbar-color: rgb(249 237 105 / 0.4) rgb(26 26 46 / 0.5);"
@@ -136,14 +143,14 @@ function userAnswers(user) {
             <div class="flex flex-grow flex-col min-w-0">
               <div class="mb-1 flex items-center gap-2 flex-wrap" :class="{ 'sm:mb-2': ! compact }">
                 <Link
-                  v-if="user?.id"
+                  v-if="canLinkToProfile(user)"
                   :href="route('user.profile', { user: user.id })"
                   class="font-medium text-white hover:text-brand-secondary transition-colors truncate"
                   :class="compact ? 'text-base' : ''"
                 >
                   {{ user.name }}
                 </Link>
-                <span v-else class="font-medium text-white/60 truncate" :class="compact ? 'text-sm' : ''">
+                <span v-else class="font-medium truncate" :class="compact ? 'text-base text-white/80' : 'text-white/60'">
                   {{ user?.name || __('Deleted user') }}
                 </span>
                 <Link

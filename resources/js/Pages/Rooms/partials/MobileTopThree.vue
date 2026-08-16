@@ -85,7 +85,7 @@ const slotClass = (slot) => ({
 </script>
 
 <template>
-  <div v-if="sortedUsers.length > 0" class="room-mobile-podium">
+  <div v-if="sortedUsers.length > 0" class="room-mobile-podium" aria-live="polite" aria-relevant="text" aria-atomic="false">
     <div class="room-mobile-podium__grid" :class="{ 'room-mobile-podium__grid--solo': podiumSlots.length === 1 }">
       <div
         v-for="slot in podiumSlots"
@@ -112,13 +112,13 @@ const slotClass = (slot) => ({
         </p>
         <p class="room-mobile-podium__score">
           {{ scores[slot.player.id] ?? 0 }}
-          <span class="text-white/45">{{ __('PTS') }}</span>
+          <span class="text-white/60">{{ __('PTS') }}</span>
         </p>
       </div>
     </div>
 
     <div v-if="showMyRankBar" class="room-mobile-podium__me">
-      <span class="text-xs font-semibold uppercase tracking-wide text-white/55">{{ __('You') }}</span>
+      <span class="text-xs font-semibold uppercase tracking-wide text-white/60">{{ __('You') }}</span>
       <span class="font-bold text-brand-accent">#{{ myRank }}</span>
       <span class="font-semibold text-white">{{ myScore }} {{ __('PTS') }}</span>
     </div>

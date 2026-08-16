@@ -168,7 +168,7 @@ const sizeConfig = computed(() => {
       <!-- Name -->
       <div v-if="showName" class="flex items-center gap-1.5 flex-wrap">
         <Link 
-          v-if="user?.id && clickable" 
+          v-if="user?.id && clickable && ! user.is_guest" 
           :href="route('user.profile', { user: user.id })" 
           :class="[
             'font-medium text-neutral-100 hover:text-yellow-400 transition-colors truncate',

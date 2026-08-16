@@ -59,7 +59,7 @@ const toggleExpanded = () => {
           <p class="truncate text-sm font-medium text-white/90">
             {{ summaryLine }}
           </p>
-          <p v-if="! expanded" class="mt-0.5 truncate text-xs tracking-wide text-white/45">
+          <p v-if="! expanded" class="mt-0.5 truncate text-xs tracking-wide text-white/60">
             {{ track.answers?.length }} {{ __('Answers') }}
           </p>
         </div>
@@ -93,7 +93,7 @@ const toggleExpanded = () => {
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4 shrink-0 text-white/40 transition-transform duration-200"
+          class="h-4 w-4 shrink-0 text-white/60 transition-transform duration-200"
           :class="{ 'rotate-180': expanded }"
           fill="none"
           viewBox="0 0 24 24"

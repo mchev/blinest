@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/vue3'
 import StructuredData from '@/Components/StructuredData.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import Navbar from '@/Components/Navbar.vue'
+import SkipLink from '@/Components/SkipLink.vue'
 import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 
 const page = usePage()
@@ -65,6 +66,7 @@ const metaDescription = computed(() => {
     <meta name="twitter:image:alt" :content="`Illustration de la room ${room.name}`" />
   </Head>
   <div class="text-white">
+    <SkipLink />
     <div id="dropdown" />
     <div class="md:flex md:flex-col">
       <div class="md:flex md:h-screen md:flex-col">
@@ -72,10 +74,15 @@ const metaDescription = computed(() => {
 
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right">
-            <div v-if="$slots.default" class="min-w-0 overflow-x-hidden pb-20 md:pb-0 md:flex-1">
+            <main
+              v-if="$slots.default"
+              id="main-content"
+              tabindex="-1"
+              class="min-w-0 overflow-x-hidden pb-20 focus:outline-none md:pb-0 md:flex-1"
+            >
               <FlashMessages />
               <slot />
-            </div>
+            </main>
           </Transition>
         </div>
       </div>

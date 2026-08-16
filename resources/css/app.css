@@ -16,9 +16,9 @@
     background-image:
       linear-gradient(rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
-      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--color-deep) / 0.85), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 50%, rgb(var(--color-deep) / 0.4), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 0% 80%, rgb(var(--color-deep) / 0.35), transparent 50%),
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--color-deep) / 0.5), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 50%, rgb(var(--color-deep) / 0.22), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 0% 80%, rgb(var(--color-deep) / 0.18), transparent 50%),
       linear-gradient(180deg, rgb(var(--color-midnight)) 0%, rgb(var(--color-midnight)) 100%);
     background-size: 48px 48px, 48px 48px, auto, auto, auto, auto;
     background-attachment: fixed;
@@ -30,6 +30,10 @@
 
   :focus-visible {
     @apply outline-none ring-2 ring-white/30 ring-offset-2 ring-offset-brand-midnight;
+  }
+
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-deep focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:ring-2 focus:ring-white/30;
   }
 }
 

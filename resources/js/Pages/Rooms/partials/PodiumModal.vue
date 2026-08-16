@@ -159,7 +159,7 @@ const switchTab = (tabId) => {
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-brand-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p class="text-brand-primary mb-4">{{ error }}</p>
+        <p class="text-brand-primary-light mb-4">{{ error }}</p>
         <button @click="fetchScores" class="game-btn-play-join !min-h-[2.5rem] !w-auto px-4">
           {{ __('Retry') }}
         </button>
@@ -443,7 +443,7 @@ const switchTab = (tabId) => {
                           @error="$event.target.src='https://ui-avatars.com/api/?name=' + encodeURIComponent(activeTab === 'teams' ? score.team?.name || 'Team' : score.user?.name || 'User') + '&color=7F9CF5&background=EBF4FF'"
                         />
                         <Link 
-                          v-if="activeTab === 'teams' ? score.team?.id : score.user?.id"
+                          v-if="activeTab === 'teams' ? score.team?.id : (score.user?.id && ! score.user?.is_guest)"
                           :href="activeTab === 'teams' ? route('teams.show', { team: score.team.id }) : route('user.profile', { user: score.user.id })"
                           class="font-medium text-white hover:text-brand-accent transition-colors duration-150"
                         >
