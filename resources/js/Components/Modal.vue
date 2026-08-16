@@ -57,7 +57,7 @@ const maxWidthClass = computed(() => {
 <template>
   <teleport to="body">
     <transition leave-active-class="duration-200">
-      <div v-show="show" class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0" scroll-region>
+      <div v-show="show" class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 pb-24 sm:px-0 sm:pb-6" scroll-region>
         <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0" enter-to-class="opacity-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100" leave-to-class="opacity-0">
           <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
             <div class="retro-modal-overlay" />
@@ -65,7 +65,7 @@ const maxWidthClass = computed(() => {
         </transition>
 
         <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to-class="opacity-100 translate-y-0 sm:scale-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100 translate-y-0 sm:scale-100" leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-          <div v-show="show" v-bind="{ ...$attrs, class: maxWidthClass }" class="retro-modal-panel mb-6 transform transition-all sm:mx-auto sm:w-full">
+          <div v-show="show" v-bind="{ ...$attrs, class: maxWidthClass }" class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all sm:max-w-none sm:w-full">
             <slot v-if="show" />
           </div>
         </transition>

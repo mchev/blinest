@@ -26,7 +26,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 </script>
 
 <template>
-  <div v-if="hasEntries" class="relative w-full py-6 overflow-hidden">
+  <div v-if="hasEntries" class="relative w-full min-w-0 py-4 sm:py-6">
     <!-- Background decoration -->
     <div class="absolute inset-0 opacity-10">
       <div class="absolute top-0 left-1/4 w-32 h-32 rounded-full bg-brand-secondary blur-3xl opacity-20"></div>
@@ -34,9 +34,9 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
     </div>
     
     <!-- Podium stands -->
-    <div class="flex items-end justify-center gap-2 md:gap-4 h-48 relative z-10">
+    <div class="relative z-10 flex h-40 items-end justify-center gap-1 px-1 sm:h-48 sm:gap-2 md:gap-4">
       <!-- 3rd place -->
-      <div v-if="list[2]" class="podium-column">
+      <div v-if="list[2]" class="podium-column min-w-0 max-w-[30%] sm:max-w-none">
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
@@ -60,7 +60,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
       </div>
       
       <!-- 1st place -->
-      <div v-if="list[0]" class="podium-column scale-110 z-20">
+      <div v-if="list[0]" class="podium-column z-20 min-w-0 max-w-[34%] scale-105 sm:max-w-none sm:scale-110">
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
@@ -84,7 +84,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
       </div>
       
       <!-- 2nd place -->
-      <div v-if="list[1]" class="podium-column">
+      <div v-if="list[1]" class="podium-column min-w-0 max-w-[30%] sm:max-w-none">
         <div class="flex flex-col items-center">
           <div class="avatar-container">
             <img 
@@ -109,7 +109,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
     </div>
     
     <!-- 4th and 5th places -->
-    <div class="flex justify-center gap-4 mt-4">
+    <div class="mt-4 flex flex-wrap justify-center gap-2 px-2 sm:gap-4">
       <div v-if="list[3]" class="flex items-center gap-2 border border-white/10 bg-brand-midnight px-3 py-1">
         <div class="flex-shrink-0 relative">
           <img
@@ -161,7 +161,7 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
 
 .podium-stand {
   height: 0;
-  width: 50px;
+  width: 2.25rem;
   border-radius: 6px 6px 0 0;
   display: flex;
   align-items: flex-start;
@@ -171,6 +171,12 @@ const hasEntries = computed(() => props.list && props.list.length > 0);
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
   animation: grow-up 1s ease-out forwards;
   overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .podium-stand {
+    width: 50px;
+  }
 }
 
 .avatar-container {
