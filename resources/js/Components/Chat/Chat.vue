@@ -175,7 +175,11 @@ const focusInput = () => {
       </a>
     </div>
 
-    <div ref="messagesContainer" class="chat-messages flex flex-1 flex-col-reverse overflow-y-auto gap-1 px-2 py-2">
+    <div
+      ref="messagesContainer"
+      class="chat-messages flex flex-1 overflow-y-auto gap-1 px-2 py-2"
+      :class="embedded ? 'flex-col' : 'flex-col-reverse'"
+    >
       <Message v-for="message in messages" :key="message.id" :message="message" :room="room" />
     </div>
 
@@ -246,7 +250,8 @@ const focusInput = () => {
         v-if="showEmojiPicker"
         :native="true"
         @select="onSelectEmoji"
-        class="absolute bottom-full right-2 z-50 shadow-xl border border-white/10 bg-brand-deep retro-dropdown-panel"
+        class="absolute right-2 z-50 shadow-xl border border-white/10 bg-brand-deep retro-dropdown-panel"
+        :class="embedded ? 'top-full mt-1' : 'bottom-full'"
         id="emoji-picker"
         role="dialog"
         aria-label="Emoji picker"

@@ -782,16 +782,20 @@
     @apply h-full min-h-0 border-0 bg-transparent;
   }
 
-  .chat-panel--embedded .chat-header {
-    @apply shrink-0 justify-end gap-1 border-white/10 px-1 py-1.5;
+  .chat-panel--embedded {
+    @apply bg-brand-deep/40;
   }
 
-  .chat-panel--embedded .chat-messages {
-    @apply min-h-0 flex-1 px-1 py-1;
+  .chat-panel--embedded .chat-header {
+    @apply order-1 shrink-0 justify-end gap-1 border-white/10 px-1 py-1;
   }
 
   .chat-panel--embedded .chat-composer {
-    @apply shrink-0 p-1.5;
+    @apply order-2 shrink-0 border-b border-white/15 border-t-0 bg-brand-midnight/70 p-1.5;
+  }
+
+  .chat-panel--embedded .chat-messages {
+    @apply order-3 min-h-0 flex-1 px-1 py-1;
   }
 
   .chat-panel--embedded .chat-send-btn {
