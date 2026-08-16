@@ -36,7 +36,6 @@ const hasEvents = computed(() => props.events.length > 0)
           </p>
           <p class="truncate text-sm text-white/80">
             <span class="text-brand-accent">{{ __(event.answerName) }}</span>
-            · {{ event.answerValue }}
           </p>
         </div>
         <div class="shrink-0 text-right">
@@ -56,7 +55,7 @@ const hasEvents = computed(() => props.events.length > 0)
       <svg xmlns="http://www.w3.org/2000/svg" class="mb-2 h-8 w-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
       </svg>
-      <p class="text-sm">{{ __('Answers will appear here in real time') }}</p>
+      <p class="text-sm">{{ __('Activity will appear here in real time') }}</p>
     </div>
   </div>
 </template>

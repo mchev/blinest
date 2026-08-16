@@ -807,23 +807,43 @@
   }
 
   .room-mobile-podium {
-    @apply mb-2 shrink-0 border border-white/10 bg-brand-midnight/60 px-2.5 py-2.5;
+    @apply mb-2 shrink-0 border border-white/10 bg-brand-midnight/80 px-2 py-2;
   }
 
-  .room-mobile-podium__leaders {
-    @apply flex gap-2 overflow-x-auto;
+  .room-mobile-podium__grid {
+    @apply grid grid-cols-3 items-end gap-1.5;
   }
 
-  .room-mobile-podium__entry {
-    @apply flex min-w-0 flex-1 items-center gap-2 border border-white/10 bg-brand-deep/80 px-2 py-1.5;
+  .room-mobile-podium__grid--solo {
+    @apply grid-cols-1 justify-items-center;
   }
 
-  .room-mobile-podium__entry--me {
-    @apply border-brand-accent/30 ring-1 ring-brand-accent/20;
+  .room-mobile-podium__slot {
+    @apply flex min-w-0 flex-col items-center gap-1 border border-white/10 bg-brand-deep/90 px-1.5 py-2 text-center;
   }
 
-  .room-mobile-podium__rank {
-    @apply flex h-7 w-7 shrink-0 items-center justify-center text-sm font-bold text-brand-midnight;
+  .room-mobile-podium__slot--first {
+    @apply border-brand-secondary/25 bg-brand-deep py-2.5;
+  }
+
+  .room-mobile-podium__slot--me {
+    @apply border-brand-accent/35 ring-1 ring-brand-accent/20;
+  }
+
+  .room-mobile-podium__avatar-wrap {
+    @apply relative shrink-0;
+  }
+
+  .room-mobile-podium__avatar {
+    @apply h-9 w-9 rounded-full object-cover ring-2 ring-white/15;
+  }
+
+  .room-mobile-podium__slot--first .room-mobile-podium__avatar {
+    @apply h-10 w-10 ring-brand-secondary/35;
+  }
+
+  .room-mobile-podium__rank-badge {
+    @apply absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center text-[10px] font-black text-brand-midnight shadow-md;
   }
 
   .room-mobile-podium__rank--gold {
@@ -838,12 +858,16 @@
     @apply bg-brand-primary text-white;
   }
 
-  .room-mobile-podium__avatar {
-    @apply h-8 w-8 shrink-0 rounded-full ring-1 ring-white/20;
+  .room-mobile-podium__name {
+    @apply w-full truncate text-xs font-semibold leading-tight text-white;
+  }
+
+  .room-mobile-podium__score {
+    @apply text-xs font-bold leading-none text-brand-secondary;
   }
 
   .room-mobile-podium__me {
-    @apply mt-2 flex items-center justify-end gap-2 border-t border-white/10 pt-2 text-base;
+    @apply mt-1.5 flex items-center justify-center gap-2 border border-brand-accent/25 bg-brand-accent/10 px-2 py-1.5 text-sm;
   }
 
   .room-live-feed__list {

@@ -165,7 +165,6 @@ function pushLiveFeedEvents(score) {
       userName: player?.name ?? t('Player'),
       userPhoto: player?.photo ?? null,
       answerName: answer.name,
-      answerValue: answer.value,
       order: answer.order,
       speedBonus: answer.speedBonus,
       points: null,
