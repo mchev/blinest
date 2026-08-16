@@ -763,9 +763,7 @@
   }
 
   .room-mobile-hud__tab--active {
-    @apply retro-chamfer rc-6 border-brand-accent/30 text-brand-accent-light;
-    --rc-fill: rgb(var(--color-accent) / 0.1);
-    --rc-border: rgb(var(--color-accent) / 0.28);
+    @apply rounded-md border-brand-accent/30 bg-brand-accent/10 text-brand-accent-light;
     box-shadow: inset 0 -2px 0 rgb(var(--color-accent-dark));
   }
 
@@ -782,11 +780,15 @@
   }
 
   .room-mobile-hud__panel {
-    @apply min-h-0 flex-1;
+    @apply flex min-h-0 flex-1 flex-col overflow-hidden;
   }
 
-  .room-mobile-hud__panel-pane.hidden {
-    display: none;
+  .room-mobile-hud__panel-pane {
+    @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .room-mobile-hud__panel-pane .room-live-feed {
+    @apply h-full min-h-0;
   }
 
   .room-mobile-hud__panel-pane .chat-panel {

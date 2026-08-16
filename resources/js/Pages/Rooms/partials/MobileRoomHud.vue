@@ -147,26 +147,28 @@ const onTabKeydown = (event, index) => {
       </button>
     </div>
 
-    <div class="room-mobile-hud__panel flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div class="room-mobile-hud__panel">
       <LiveFeed
+        v-show="activeTab === 'live'"
         :id="tabPanelId('live')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('live')"
-        :hidden="activeTab !== 'live'"
-        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+        :aria-hidden="activeTab !== 'live'"
+        class="room-mobile-hud__panel-pane"
         :events="liveEvents"
       />
 
       <div
+        v-show="activeTab === 'rank'"
         :id="tabPanelId('rank')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('rank')"
-        :hidden="activeTab !== 'rank'"
-        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+        :aria-hidden="activeTab !== 'rank'"
+        class="room-mobile-hud__panel-pane"
       >
         <Ranking
           compact
-          class="h-full"
+          class="h-full min-h-0"
           :room="room"
           :room-state="roomState"
           :track="currentTrack"
@@ -175,25 +177,27 @@ const onTabKeydown = (event, index) => {
 
       <div
         v-if="room.is_chat_active"
+        v-show="activeTab === 'chat'"
         :id="tabPanelId('chat')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('chat')"
-        :hidden="activeTab !== 'chat'"
-        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+        :aria-hidden="activeTab !== 'chat'"
+        class="room-mobile-hud__panel-pane"
       >
         <Chat :room="room" embedded />
       </div>
 
       <div
+        v-show="activeTab === 'playlist'"
         :id="tabPanelId('playlist')"
         role="tabpanel"
         :aria-labelledby="tabButtonId('playlist')"
-        :hidden="activeTab !== 'playlist'"
-        class="room-mobile-hud__panel-pane h-full min-h-0 flex flex-col"
+        :aria-hidden="activeTab !== 'playlist'"
+        class="room-mobile-hud__panel-pane"
       >
         <Answers
           compact
-          class="h-full"
+          class="h-full min-h-0"
           :users="roomState.users"
           :channel="channel"
           :round="round"
