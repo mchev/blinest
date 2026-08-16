@@ -309,12 +309,12 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
     </div>
   </form>
 
-  <div class="relative">
+  <div class="relative min-w-0">
     <transition-group 
       name="fade-slide" 
       tag="ul" 
       v-if="track" 
-      class="flex flex-wrap gap-4 text-sm"
+      class="flex flex-wrap gap-2 text-sm sm:gap-4"
     >
       <li
         v-for="answer in track.answers"
@@ -323,8 +323,8 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
         :class="{ 'room-answer-chip--found': isAnswerFound(answer.id) }"
       >
         <template v-if="isAnswerFound(answer.id)">
-          <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-brand-accent" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
-          <span class="font-medium text-white">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
+          <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-white/90" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
+          <span class="font-semibold text-white">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
         </template>
         <template v-else>
           <span class="font-medium">{{ __(answer.name) }} ?</span>
@@ -335,7 +335,7 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
     <transition name="fade">
       <blockquote
         v-if="message"
-        class="mt-2 absolute top-0 right-0 py-2 px-4 text-white shadow-lg backdrop-blur-sm flex items-center gap-2"
+        class="mt-2 flex items-center gap-2 px-4 py-2 text-white shadow-lg"
         :class="messageClass"
       >
         <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-brand-secondary flex-shrink-0" />

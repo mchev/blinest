@@ -604,28 +604,33 @@
   }
 
   .room-input-wrap {
-    @apply retro-chamfer flex items-center overflow-hidden shadow-lg;
+    @apply retro-chamfer flex items-center overflow-hidden shadow-lg ring-1 ring-white/20;
     --rc: 10px;
     --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    --rc-border: rgb(255 255 255 / 0.28);
+  }
+
+  .room-input-wrap:focus-within {
+    --rc-border: rgb(var(--color-accent) / 0.65);
+    --rc-fill: rgb(var(--color-deep-hover));
+    box-shadow: var(--glow-accent);
   }
 
   .room-input {
-    @apply relative z-[1] h-14 w-full flex-grow border-none bg-transparent px-4 text-xl font-medium text-white placeholder-white/40 focus:outline-none focus:ring-0;
+    @apply relative z-[1] h-14 min-w-0 w-full flex-grow border-none bg-transparent px-4 text-lg font-medium text-white placeholder-white/40 focus:outline-none focus:ring-0 sm:text-xl;
   }
 
   .room-answer-chip {
     @apply retro-chamfer rc-6 flex items-center px-3 py-1.5 text-sm text-white/80 shadow-md transition-all duration-300;
     --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.1);
+    --rc-border: rgb(255 255 255 / 0.15);
   }
 
   .room-answer-chip--found {
-    --rc-border: rgb(var(--color-accent) / 0.4);
-    --rc-fill: rgb(var(--color-accent) / 0.2);
-    @apply text-white;
+    --rc-border: rgb(var(--color-accent));
+    --rc-fill: rgb(var(--color-accent));
+    @apply font-semibold text-white;
     box-shadow: var(--glow-accent);
-    transform: scale(1.05);
   }
 
   .room-track-card {
@@ -657,11 +662,11 @@
 
   /* ── Room action bar ── */
   .room-actions {
-    @apply flex flex-wrap items-center gap-2;
+    @apply flex max-w-full flex-nowrap items-center gap-1.5 sm:flex-wrap sm:gap-2;
   }
 
   .room-action-btn {
-    @apply retro-chamfer rc-8 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200;
+    @apply retro-chamfer rc-8 inline-flex shrink-0 items-center gap-1.5 px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200 sm:px-3 sm:text-xs;
     --rc-fill: rgb(var(--color-deep));
     --rc-border: rgb(255 255 255 / 0.1);
   }

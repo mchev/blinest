@@ -332,17 +332,17 @@ watch(roomAdsEnabled, (enabled) => {
     </div>
 
     <Transition name="slide-right">
-      <div v-if="joined || !user" class="h-full md:flex">
-        <div class="relative flex-1 overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
-          <article class="mb-6 flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <h1 class="retro-title retro-title--white text-2xl">{{ room.name }}</h1>
-              <span v-if="user" class="flex items-center gap-1.5 text-sm font-medium text-white/60" :class="{ 'text-brand-secondary': connectionState === 'reconnecting' }">
+      <div v-if="joined || !user" class="h-full min-w-0 overflow-x-hidden md:flex">
+        <div class="relative min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-4 md:px-12 md:py-8" scroll-region>
+          <article class="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+              <h1 class="retro-title retro-title--white min-w-0 truncate text-xl sm:text-2xl">{{ room.name }}</h1>
+              <span v-if="user" class="flex shrink-0 items-center gap-1.5 text-xs font-medium text-white/60 sm:text-sm" :class="{ 'text-brand-secondary': connectionState === 'reconnecting' }">
                 <span class="h-2 w-2 rounded-full shrink-0" :class="connectionState === 'connected' ? 'bg-brand-accent' : 'bg-brand-secondary animate-pulse'"></span>
                 {{ connectionState === 'connected' ? __('Connected') : __('Reconnecting…') }}
               </span>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="min-w-0 max-w-full overflow-x-auto sm:overflow-visible">
               <RoomActions :room="room" :channel="channel" :round="round" @displayChat="displayChat = $event"/>
             </div>
           </article>
@@ -359,7 +359,7 @@ watch(roomAdsEnabled, (enabled) => {
             </div>
           </Tip>
 
-          <div class="mb-8 space-y-2" v-if="user">
+          <div class="mb-8 min-w-0 space-y-2" v-if="user">
             <Player :room="room" :channel="channel" :initialTrack="initialTrack" :initialStartTime="initialStartTime" @track:currentTime="currentTime = $event" />
             <UserInput :channel="channel" :currentTime="currentTime" :room="room" :initialTrack="initialTrack" :initialRound="round" />
           </div>

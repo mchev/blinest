@@ -72,7 +72,7 @@ const metaDescription = computed(() => {
 
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right" appear>
-            <div v-if="$slots.default" class="pb-20 md:pb-0 md:flex-1">
+            <div v-if="$slots.default" class="min-w-0 overflow-x-hidden pb-20 md:pb-0 md:flex-1">
               <FlashMessages />
               <slot />
             </div>
