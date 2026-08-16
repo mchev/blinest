@@ -72,7 +72,23 @@ class GuestPlayerTest extends TestCase
         $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response->assertRedirect();
+        $response->assertHeaderMissing('X-Ratelimit-Limit');
         $this->assertEquals(1, User::where('is_guest', true)->count());
+    }
+
+    public function test_guest_join_is_not_rate_limited_for_new_visitors(): void
+    {
+        $room = $this->createRoom();
+
+        for ($attempt = 0; $attempt < 10; $attempt++) {
+            Auth::logout();
+            $this->flushSession();
+
+            $response = $this->get('/rooms/'.$room->slug.'/guest-join');
+
+            $response->assertRedirect(route('rooms.show', $room->slug));
+            $response->assertHeaderMissing('X-Ratelimit-Limit');
+        }
     }
 
     public function test_guest_is_authenticated_after_join(): void

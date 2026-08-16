@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ProcessRoundElo;
+use App\Jobs\ProcessRoundFinalization;
 use App\Models\Round;
-use App\Services\EloService;
+use App\Services\RoundFinalizationService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +27,7 @@ class MigrateExistingScoresToStandings extends Command
     /**
      * Execute the console command.
      */
-    public function handle(EloService $eloService): int
+    public function handle(RoundFinalizationService $roundFinalizationService): int
     {
         $this->info('Starting migration of existing scores to standings...');
         $this->newLine();
@@ -74,7 +74,7 @@ class MigrateExistingScoresToStandings extends Command
         $bar = $this->output->createProgressBar($limit ?? $totalRounds);
         $bar->start();
 
-        $query->chunk($batchSize, function ($rounds) use ($eloService, &$processed, &$errors, &$skipped, $dryRun, $useQueue, $bar) {
+        $query->chunk($batchSize, function ($rounds) use ($roundFinalizationService, &$processed, &$errors, &$skipped, $dryRun, $useQueue, $bar) {
             foreach ($rounds as $round) {
                 try {
                     // Vérifier à nouveau qu'il n'y a pas déjà de standings (au cas où)
@@ -104,14 +104,11 @@ class MigrateExistingScoresToStandings extends Command
                         $this->line("Would process round #{$round->id} (room: {$roomName}, scores: {$scoreCount}, users: {$userCount})");
                         $processed++;
                     } elseif ($useQueue) {
-                        // Dispatcher le job en queue
-                        ProcessRoundElo::dispatch($round)
+                        ProcessRoundFinalization::dispatch($round)
                             ->onQueue('default');
                         $processed++;
                     } else {
-                        // Traiter directement
-                        $job = new ProcessRoundElo($round);
-                        $job->handle($eloService);
+                        $roundFinalizationService->finalize($round);
                         $processed++;
                     }
 

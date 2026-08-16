@@ -118,7 +118,7 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v12_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v13_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );

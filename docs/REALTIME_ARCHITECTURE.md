@@ -118,7 +118,7 @@ Composants enfants (Player, UserInput, etc.) : soit ils écoutent sur la **même
 | Count (home)        | Redis (option A)        | HTTP join/leave + heartbeat, prune avant count |
 | Progression (home)  | Room + round (DB)       | Events round/track → RoomPublicState        |
 | Scores pendant part | Redis par round         | addScore à chaque point                     |
-| Scores fin de part  | Redis → DB              | ProcessRoundFinalization lit tout Redis     |
+| Scores fin de part  | Redis → DB              | `RoundFinalizationService` (job `ProcessRoundFinalization`) |
 
 - **Channels** :  
   - `rooms.{id}` = presence (auth), tout ce qui se passe dans la room.  

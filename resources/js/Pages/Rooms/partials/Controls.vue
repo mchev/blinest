@@ -51,6 +51,10 @@ onMounted(() => {
       startingRound.value = false
       props.room.is_playing = true
     })
+    .listen('RoundFinalizing', () => {
+      endingRound.value = false
+      props.room.is_playing = false
+    })
     .listen('RoundFinished', (e) => {
       endingRound.value = false
       props.room.is_playing = false

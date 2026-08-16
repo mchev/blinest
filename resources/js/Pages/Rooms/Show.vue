@@ -13,6 +13,7 @@ import UserInput from './partials/UserInput.vue'
 import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
+import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 import GuestJoinModal from './partials/GuestJoinModal.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
@@ -43,6 +44,23 @@ const roomState = ref({
   answersByUser: {},
 })
 const roundFinished = ref(false)
+const finalizingRound = ref(false)
+let finalizingFallbackTimer = null
+
+const clearFinalizingFallback = () => {
+  if (finalizingFallbackTimer) {
+    clearTimeout(finalizingFallbackTimer)
+    finalizingFallbackTimer = null
+  }
+}
+
+const startFinalizingFallback = () => {
+  clearFinalizingFallback()
+  finalizingFallbackTimer = setTimeout(() => {
+    finalizingRound.value = false
+    finalizingFallbackTimer = null
+  }, 45000)
+}
 const sendingSuggestion = ref(false)
 const displayChat = ref(true)
 const currentTime = ref(0)
@@ -188,16 +206,23 @@ onMounted(() => {
         round.value = e.round
         playlistPlayedTracks.value = []
         roundFinished.value = false
+        finalizingRound.value = false
         roomState.value.roundId = e.round?.id ?? null
         roomState.value.scores = {}
         roomState.value.answersByUser = {}
         if (e.round?.id) fetchRoundScores(e.round.id)
       })
+      .listen('RoundFinalizing', () => {
+        finalizingRound.value = true
+        startFinalizingFallback()
+      })
       .listen('RoundFinished', (e) => {
         round.value = e.round
         users_podium.value = e.users_podium
         teams_podium.value = e.teams_podium
+        finalizingRound.value = false
         roundFinished.value = true
+        clearFinalizingFallback()
       })
       .listen('TrackPlayed', (e) => {
         round.value = e.round
@@ -233,6 +258,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', onBeforeUnloadPresenceLeft)
+  clearFinalizingFallback()
   stopPresenceHeartbeat()
   callPresenceLeft()
 })
@@ -240,6 +266,7 @@ onBeforeUnmount(() => {
 onUnmounted(() => {
   if (roundsChannel) {
     roundsChannel.stopListening('RoundStarted')
+    roundsChannel.stopListening('RoundFinalizing')
     roundsChannel.stopListening('RoundFinished')
     roundsChannel.stopListening('TrackPlayed')
     roundsChannel.stopListening('UserEloUpdated')
@@ -421,6 +448,8 @@ watch(roomAdsEnabled, (enabled) => {
         </div>
       </div>
     </Transition>
+
+    <RoundFinalizingOverlay :show="finalizingRound && !roundFinished" />
 
     <FinishedRoundModal v-if="round" 
                        :show="roundFinished" 

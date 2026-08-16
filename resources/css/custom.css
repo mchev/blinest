@@ -395,6 +395,31 @@
     @apply relative bg-brand-deep px-3 text-xs font-medium uppercase tracking-[0.18em] text-white/50;
   }
 
+  .round-finalizing-overlay {
+    @apply fixed inset-0 z-[60] flex items-center justify-center bg-brand-midnight/75 px-4 backdrop-blur-sm;
+  }
+
+  .round-finalizing-overlay__panel {
+    @apply relative flex max-w-md flex-col items-center px-8 py-10 text-center;
+    --rc-fill: rgb(var(--color-deep));
+    --rc-border: rgb(var(--color-accent) / 0.35);
+    box-shadow: var(--glow-accent), 0 24px 48px rgb(0 0 0 / 0.45);
+  }
+
+  .round-finalizing-overlay__pulse {
+    @apply pointer-events-none absolute inset-0 opacity-40;
+    background: radial-gradient(circle at 50% 35%, rgb(var(--color-accent) / 0.22), transparent 62%);
+    animation: finalizing-pulse 2s ease-in-out infinite;
+  }
+
+  .round-finalizing-overlay__title {
+    @apply retro-title retro-title--accent relative mt-4 text-sm uppercase tracking-[0.14em];
+  }
+
+  .round-finalizing-overlay__subtitle {
+    @apply relative mt-2 text-sm text-white/60;
+  }
+
   .retro-modal-footer {
     @apply border-t border-white/10 bg-brand-midnight/60 px-6 py-4;
   }
@@ -749,6 +774,11 @@
 @keyframes live-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+@keyframes finalizing-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.65; }
 }
 
 /* Level badge animations */

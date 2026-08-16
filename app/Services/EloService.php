@@ -175,7 +175,8 @@ class EloService
         }
 
         // Calculer le nombre total de tracks dans le round
-        $totalTracksInRound = count($round->tracks ?? []);
+        $tracks = $round->tracks ?? [];
+        $totalTracksInRound = count(is_array($tracks) ? $tracks : array_values((array) $tracks));
 
         // Utiliser l'historique des tracks depuis Redis (fourni en paramètre)
         // Calculer le nombre de tracks écoutées depuis l'historique
@@ -347,7 +348,7 @@ class EloService
         }
 
         // Enregistrer les standings et mettre à jour les ELO des utilisateurs (seulement si is_elo_counted)
-        // Note: Cette méthode est appelée depuis une transaction dans ProcessRoundElo
+        // Note: appelé depuis RoundFinalizationService après snapshot Redis/DB
         // On ne crée pas de nouvelle transaction ici pour éviter les transactions imbriquées
         $eloUpdates = [];
 

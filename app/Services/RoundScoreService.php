@@ -12,11 +12,35 @@ class RoundScoreService
      */
     private const REDIS_TTL = 3600;
 
+    private function playersKey(int $roundId): string
+    {
+        return "round:{$roundId}:players";
+    }
+
+    private function trackPlayer(int $roundId, int $userId): void
+    {
+        $key = $this->playersKey($roundId);
+        Redis::sadd($key, $userId);
+        Redis::expire($key, self::REDIS_TTL);
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function playerIds(int $roundId): array
+    {
+        $playerIds = Redis::smembers($this->playersKey($roundId));
+
+        return array_map('intval', $playerIds ?: []);
+    }
+
     /**
      * Ajoute un score pour un joueur dans un round
      */
     public function addScore(int $roundId, int $userId, float $score): void
     {
+        $this->trackPlayer($roundId, $userId);
+
         $key = "round:{$roundId}:scores:{$userId}";
         Redis::incrbyfloat($key, $score);
         Redis::expire($key, self::REDIS_TTL);
@@ -64,6 +88,8 @@ class RoundScoreService
      */
     public function recordTrackDetails(int $roundId, int $userId, int $trackId, ?float $responseTime = null, ?int $position = null, ?float $score = null, ?int $answerId = null): bool
     {
+        $this->trackPlayer($roundId, $userId);
+
         // Utiliser un Set Redis pour stocker les réponses trouvées (atomique)
         // Format: round:{roundId}:answers:{userId}:{trackId} = Set d'answer_ids
         $answersKey = "round:{$roundId}:answers:{$userId}:{$trackId}";
@@ -243,13 +269,15 @@ class RoundScoreService
      */
     public function getAllScores(int $roundId): array
     {
-        $pattern = "round:{$roundId}:scores:*";
-        $keys = Redis::keys($pattern);
-        $scores = [];
+        $scores = $this->getPodium($roundId, 10_000);
 
-        foreach ($keys as $key) {
-            $userId = (int) str_replace("round:{$roundId}:scores:", '', $key);
-            $score = Redis::get($key);
+        if ($scores !== []) {
+            return $scores;
+        }
+
+        // Legacy rounds may only have per-user score keys (avoid Redis KEYS in production).
+        foreach ($this->playerIds($roundId) as $userId) {
+            $score = Redis::get("round:{$roundId}:scores:{$userId}");
             if ($score !== null) {
                 $scores[$userId] = (float) $score;
             }
@@ -265,15 +293,12 @@ class RoundScoreService
      */
     public function getAllTracksHistory(int $roundId): array
     {
-        $pattern = "round:{$roundId}:tracks:*";
-        $keys = Redis::keys($pattern);
         $histories = [];
 
-        foreach ($keys as $key) {
-            $userId = (int) str_replace("round:{$roundId}:tracks:", '', $key);
-            $history = Redis::get($key);
-            if ($history) {
-                $histories[$userId] = json_decode($history, true) ?: [];
+        foreach ($this->playerIds($roundId) as $userId) {
+            $history = $this->getTracksHistory($roundId, $userId);
+            if ($history !== []) {
+                $histories[$userId] = $history;
             }
         }
 
@@ -316,10 +341,19 @@ class RoundScoreService
      */
     public function cleanup(int $roundId): void
     {
-        $pattern = "round:{$roundId}:*";
-        $keys = Redis::keys($pattern);
+        $keys = [
+            "round:{$roundId}:podium",
+            $this->playersKey($roundId),
+        ];
 
-        if (! empty($keys)) {
+        foreach ($this->playerIds($roundId) as $userId) {
+            $keys[] = "round:{$roundId}:scores:{$userId}";
+            $keys[] = "round:{$roundId}:tracks:{$userId}";
+        }
+
+        $keys = array_values(array_unique($keys));
+
+        if ($keys !== []) {
             Redis::del($keys);
         }
     }

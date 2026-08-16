@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Events\RoundFinalizing;
+use App\Events\RoundFinished;
 use App\Events\UserEloUpdated;
 use App\Jobs\ProcessRoundFinalization;
 use App\Models\AnswerType;
@@ -10,10 +12,11 @@ use App\Models\Playlist;
 use App\Models\Room;
 use App\Models\Round;
 use App\Models\RoundStanding;
+use App\Models\Score;
 use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Models\User;
-use App\Services\EloService;
+use App\Services\RoundFinalizationService;
 use App\Services\RoundScoreService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
@@ -124,7 +127,7 @@ class ProcessRoundFinalizationTest extends TestCase
 
         // Exécuter le job
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(EloService::class));
+        $job->handle(app(RoundFinalizationService::class));
 
         // Vérifier que les standings ont été créés
         $standings = RoundStanding::where('round_id', $round->id)->get();
@@ -201,7 +204,7 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(EloService::class));
+        $job->handle(app(RoundFinalizationService::class));
 
         $standings = RoundStanding::where('round_id', $round->id)->get();
         $this->assertCount(3, $standings);
@@ -285,7 +288,7 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(EloService::class));
+        $job->handle(app(RoundFinalizationService::class));
 
         $standings = RoundStanding::where('round_id', $round->id)->get();
         $this->assertCount(4, $standings);
@@ -364,8 +367,147 @@ class ProcessRoundFinalizationTest extends TestCase
         }
 
         $job = new ProcessRoundFinalization($round);
-        $job->handle($roundScoreService, app(EloService::class));
+        $job->handle(app(RoundFinalizationService::class));
 
         Event::assertDispatched(UserEloUpdated::class, 3);
+    }
+
+    public function test_database_scores_fallback_creates_standings_and_elo(): void
+    {
+        $category = Category::create(['name' => 'Legacy Category']);
+        $owner = User::factory()->create(['elo' => 1500]);
+        $room = Room::create([
+            'name' => 'Legacy Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $playlist = Playlist::create(['name' => 'Legacy Playlist', 'user_id' => $owner->id]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+
+        $trackIds = [];
+        for ($i = 0; $i < 10; $i++) {
+            $track = Track::create([
+                'playlist_id' => $playlist->id,
+                'user_id' => $owner->id,
+                'provider' => 'youtube',
+                'provider_id' => "legacy_{$i}",
+                'preview_url' => 'https://example.com/preview',
+                'artwork_url' => 'https://example.com/artwork',
+            ]);
+            $answer = TrackAnswer::create([
+                'track_id' => $track->id,
+                'answer_type_id' => $answerType->id,
+                'value' => "Artist {$i}",
+                'score' => 1.0,
+            ]);
+            $trackIds[] = ['track_id' => $track->id, 'answer_id' => $answer->id];
+        }
+
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 10,
+            'tracks' => collect($trackIds)->pluck('track_id')->all(),
+        ]);
+
+        foreach ($users as $index => $user) {
+            foreach ($trackIds as $trackData) {
+                Score::create([
+                    'round_id' => $round->id,
+                    'user_id' => $user->id,
+                    'track_id' => $trackData['track_id'],
+                    'answer_id' => $trackData['answer_id'],
+                    'score' => 10 - $index,
+                    'time' => 5.0,
+                ]);
+            }
+        }
+
+        $result = app(RoundFinalizationService::class)->finalize($round);
+
+        $this->assertTrue($result->processed);
+        $this->assertCount(3, RoundStanding::where('round_id', $round->id)->get());
+        $this->assertCount(3, $result->eloUpdates);
+        $this->assertEquals(0, $round->scores()->count());
+    }
+
+    public function test_round_finished_is_broadcast_after_finalization(): void
+    {
+        Event::fake([RoundFinished::class, UserEloUpdated::class]);
+
+        $category = Category::create(['name' => 'Broadcast Category']);
+        $owner = User::factory()->create(['elo' => 1500]);
+        $room = Room::create([
+            'name' => 'Broadcast Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+            'tracks' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        ]);
+
+        $roundScoreService = app(RoundScoreService::class);
+        foreach ($users as $index => $user) {
+            for ($trackId = 1; $trackId <= 10; $trackId++) {
+                $roundScoreService->addScore($round->id, $user->id, 10 - $index);
+                $roundScoreService->recordTrackDetails($round->id, $user->id, $trackId, 5.0, null, 10 - $index, $trackId);
+            }
+        }
+
+        $job = new ProcessRoundFinalization($round);
+        $job->handle(app(RoundFinalizationService::class));
+
+        Event::assertDispatched(RoundFinished::class);
+        Event::assertDispatched(UserEloUpdated::class, 3);
+    }
+
+    public function test_round_stop_broadcasts_finalizing_before_finished(): void
+    {
+        Event::fake([RoundFinalizing::class, RoundFinished::class]);
+        Bus::fake();
+
+        $category = Category::create(['name' => 'Stop Category']);
+        $owner = User::factory()->create();
+        $room = Room::create([
+            'name' => 'Stop Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 5,
+            'pause_between_rounds' => 10,
+        ]);
+
+        $round = Round::create([
+            'room_id' => $room->id,
+            'is_playing' => true,
+            'current' => 5,
+            'tracks' => [1, 2, 3, 4, 5],
+        ]);
+        $round->setRelation('room', $room);
+
+        $round->stop();
+
+        Event::assertDispatched(RoundFinalizing::class);
+        Event::assertNotDispatched(RoundFinished::class);
+        Bus::assertDispatched(ProcessRoundFinalization::class);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Events\RoomPublicState;
-use App\Events\RoundFinished;
+use App\Events\RoundFinalizing;
 use App\Events\TrackPaused;
 use App\Events\TrackPlayed;
 use App\Events\TrackResumed;
@@ -71,10 +71,10 @@ class Round extends Model
         ProcessRoundFinished::dispatch($this->room)
             ->delay(now()->addSeconds($this->room->pause_between_rounds));
 
-        // Agrégation finale : ELO, standings, total_scores en batch
+        // Standings, ELO, total_scores puis RoundFinished broadcast (via job)
         ProcessRoundFinalization::dispatch($this)->afterCommit();
 
-        broadcast(new RoundFinished($this));
+        broadcast(new RoundFinalizing($this));
         broadcast(new RoomPublicState($this->room));
     }
 
@@ -213,21 +213,7 @@ class Round extends Model
             $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
-            // Convertir en format compatible avec l'ancien système
-            // On charge les users et teams pour avoir les relations
-            $userIds = array_keys($podium);
-            $users = User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
-
-            return collect($podium)->map(function ($total, $userId) use ($users) {
-                $user = $users->get($userId);
-
-                return (object) [
-                    'user_id' => $userId,
-                    'total' => $total,
-                    'team_id' => $user?->team?->id,
-                    'user' => $user,
-                ];
-            })->values();
+            return $this->mapPodiumFromRedisScores($podium);
         }
 
         // Si le round est terminé mais que les standings n'existent pas encore,
@@ -236,20 +222,11 @@ class Round extends Model
             $roundScoreService = app(RoundScoreService::class);
             $podium = $roundScoreService->getPodium($this->id, 100);
 
-            // Convertir en format compatible avec l'ancien système
-            $userIds = array_keys($podium);
-            $users = User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+            if ($podium !== []) {
+                return $this->mapPodiumFromRedisScores($podium);
+            }
 
-            return collect($podium)->map(function ($total, $userId) use ($users) {
-                $user = $users->get($userId);
-
-                return (object) [
-                    'user_id' => $userId,
-                    'total' => $total,
-                    'team_id' => $user?->team?->id,
-                    'user' => $user,
-                ];
-            })->values();
+            return $this->podiumFromDatabaseScores();
         }
 
         // Sinon, utiliser les standings (déjà agrégés)
@@ -338,5 +315,50 @@ class Round extends Model
     public function standings(): HasMany
     {
         return $this->hasMany(RoundStanding::class);
+    }
+
+    /**
+     * @param  array<int, float>  $podium
+     */
+    private function mapPodiumFromRedisScores(array $podium): Collection
+    {
+        if ($podium === []) {
+            return collect();
+        }
+
+        $userIds = array_keys($podium);
+        $users = User::whereIn('id', $userIds)->with('userLevel', 'team')->get()->keyBy('id');
+
+        return collect($podium)->map(function ($total, $userId) use ($users) {
+            $user = $users->get($userId);
+
+            return (object) [
+                'user_id' => $userId,
+                'total' => $total,
+                'team_id' => $user?->team?->id,
+                'user' => $user,
+            ];
+        })->values();
+    }
+
+    private function podiumFromDatabaseScores(): Collection
+    {
+        return $this->scores()
+            ->select([
+                'user_id',
+                DB::raw('SUM(score) as total'),
+                'team_id',
+            ])
+            ->with('user.userLevel')
+            ->groupBy('user_id', 'team_id')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($row) => (object) [
+                'user_id' => $row->user_id,
+                'total' => (float) $row->total,
+                'team_id' => $row->team_id,
+                'user' => $row->user,
+            ])
+            ->values();
     }
 }
