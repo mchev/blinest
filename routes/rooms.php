@@ -73,7 +73,7 @@ Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
     Route::get('create/room', [RoomController::class, 'create'])
         ->name('rooms.create');
 
-    // Show is registered in guests.php (slugs)
+    // Show & public-state are registered in guests.php (locale-agnostic slugs)
     Route::resource('rooms', RoomController::class)
         ->except('show', 'create');
 

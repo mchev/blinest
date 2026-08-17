@@ -5,6 +5,7 @@ use App\Http\Controllers\GuestJoinController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialController;
 use App\Seo\LocaleUrl;
@@ -62,6 +63,16 @@ Route::get('language/{language}', function (string $language) {
 
     return redirect()->back();
 })->name('language');
+
+// Room pages — /rooms/{slug}, locale via session
+Route::middleware(['auth.banned', 'ip.banned'])->group(function (): void {
+    Route::get('rooms/{room:slug}/public-state', [RoomController::class, 'publicState'])
+        ->name('rooms.public-state')
+        ->middleware('throttle:120,1');
+
+    Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
+        ->name('rooms.show');
+});
 
 // Guest join (no auth, no banned check)
 Route::get('rooms/{room:slug}/guest-join', GuestJoinController::class)

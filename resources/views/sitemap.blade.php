@@ -25,14 +25,12 @@ $docPaths = [
   @endforeach
 
   @foreach($publicRooms as $room)
-    @foreach($room->urls as $url)
   <url>
-    <loc>{{ $url }}</loc>
+    <loc>{{ $room->url }}</loc>
     <lastmod>{{ $room->updated_at->toAtomString() }}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
-    @endforeach
   @endforeach
 
   @foreach($pages as $page)

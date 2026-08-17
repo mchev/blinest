@@ -93,7 +93,7 @@ class LocaleUrl
             return true;
         }
 
-        return (bool) preg_match('#^rooms/[^/]+$#', $path);
+        return false;
     }
 
     public static function localizedPath(string $path, string $locale): string

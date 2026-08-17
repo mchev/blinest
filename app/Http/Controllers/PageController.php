@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Seo\LocaleUrl;
 use Inertia\Inertia;
 use Laravel\Head\Facades\Head;
 
@@ -11,7 +12,12 @@ class PageController extends Controller
     public function show(string $slug)
     {
         if ($page = Page::where('slug', $slug)->orderByDesc('revised_at')->first()) {
-            Head::title($page->title);
+            $path = 'pages/'.$page->slug;
+            $localeUrl = app(LocaleUrl::class);
+
+            Head::title($page->title)
+                ->canonical($localeUrl->canonical($path))
+                ->alternates($localeUrl->alternates($path));
 
             return Inertia::render('Pages/Show', [
                 'page' => $page,

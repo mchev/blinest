@@ -15,15 +15,12 @@ class RoomHead
             'suffix' => __('Room title suffix'),
         ]);
         $image = $room->photo ?: url('images/statics/screenshot.png');
-        $roomUrl = url('/rooms/'.$room->slug);
-        $roomPath = 'rooms/'.$room->slug;
-        $localeUrl = app(LocaleUrl::class);
+        $roomUrl = route('rooms.show', $room->slug);
         $fullTitle = "{$title} | Blinest";
 
         Head::title($title)
             ->description($description)
-            ->canonical($localeUrl->canonical($roomPath))
-            ->alternates($localeUrl->alternates($roomPath))
+            ->canonical($roomUrl)
             ->when($isPasswordProtected, fn ($head) => $head->hiddenFromRobots())
             ->og(
                 type: 'website',
@@ -64,7 +61,7 @@ class RoomHead
             '@type' => 'VideoGame',
             'name' => $room->name,
             'description' => $description,
-            'url' => url('/rooms/'.$room->slug),
+            'url' => route('rooms.show', $room->slug),
             'image' => $room->photo ?: url('/images/statics/logo_blinest.png'),
             'gamePlatform' => 'Web Browser',
             'applicationCategory' => 'Game',

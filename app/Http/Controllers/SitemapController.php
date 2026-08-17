@@ -14,14 +14,13 @@ class SitemapController extends Controller
             ->view('sitemap', [
                 'locales' => LocaleUrl::availableLocales(),
                 'publicRooms' => Room::isPublic()
+                    ->whereNull('password')
                     ->whereNull('deleted_at')
                     ->withCount('rounds')
                     ->orderByDesc('rounds_count')
-                    ->get()
-                    ->map(fn ($room) => (object) [
-                        'urls' => collect(LocaleUrl::availableLocales())
-                            ->map(fn (string $locale): string => LocaleUrl::localizedPath('rooms/'.$room->slug, $locale))
-                            ->all(),
+                    ->get(['slug', 'updated_at'])
+                    ->map(fn (Room $room) => (object) [
+                        'url' => route('rooms.show', $room->slug),
                         'updated_at' => $room->updated_at,
                     ]),
                 'pages' => Page::select('id', 'title', 'slug', 'revised_at', 'updated_at')

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\FAQ;
+use App\Models\Page;
 use App\Models\Room;
 use App\Models\User;
 use App\Seo\RoomHead;
@@ -91,14 +92,14 @@ class SeoHeadTest extends TestCase
         $response->assertSee('content="none"', false);
     }
 
-    public function test_legacy_lang_query_redirects_to_english_prefix(): void
+    public function test_lang_query_redirects_to_english_prefix(): void
     {
         $response = $this->get('/?lang=en');
 
         $response->assertRedirect('/en');
     }
 
-    public function test_legacy_lang_query_on_french_url_redirects_without_query(): void
+    public function test_lang_query_on_french_url_redirects_without_query(): void
     {
         $response = $this->get('/docs/howto?lang=fr');
 
@@ -119,6 +120,121 @@ class SeoHeadTest extends TestCase
 
         $response->assertRedirect('/login');
         $this->assertSame('en', session('locale'));
+    }
+
+    public function test_language_route_keeps_room_urls_without_locale_prefix(): void
+    {
+        $response = $this->from('/rooms/quiz-general')->get(route('language', ['language' => 'es']));
+
+        $response->assertRedirect('/rooms/quiz-general');
+        $this->assertSame('es', session('locale'));
+    }
+
+    public function test_sitemap_lists_canonical_room_urls_once(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Sitemap Room',
+            'slug' => 'sitemap-room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+
+        $response->assertOk();
+        $content = $response->getContent();
+        $canonical = route('rooms.show', 'sitemap-room');
+
+        $this->assertSame(1, substr_count($content, $canonical));
+    }
+
+    public function test_lang_query_on_room_url_strips_query_without_locale_prefix(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Quiz General',
+            'slug' => 'quiz-general',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $response = $this->get('/rooms/quiz-general?lang=es');
+
+        $response->assertRedirect('/rooms/quiz-general');
+    }
+
+    public function test_cms_page_includes_canonical_and_hreflang_alternates(): void
+    {
+        Page::create([
+            'title' => 'Terms of Service',
+            'slug' => 'terms',
+            'content' => '<p>Terms content</p>',
+            'revised_at' => now(),
+        ]);
+
+        $response = $this->get(route('pages.show', 'terms'));
+
+        $response->assertOk();
+        $response->assertSee('Terms of Service', false);
+        $response->assertSee(route('pages.show', 'terms', absolute: true), false);
+        $response->assertSee('hreflang="fr"', false);
+        $response->assertSee('hreflang="en"', false);
+        $response->assertSee('hreflang="es"', false);
+        $response->assertSee('/en/pages/terms', false);
+        $response->assertSee('/es/pages/terms', false);
+    }
+
+    public function test_room_head_sets_canonical_without_hreflang_alternates(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'SEO Room',
+            'slug' => 'seo-room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $room->load('owner', 'category');
+
+        app(RoomHead::class)->apply($room, roundsCount: 3);
+
+        $html = Head::render()->toHtml();
+
+        $this->assertStringContainsString(route('rooms.show', 'seo-room'), $html);
+        $this->assertStringNotContainsString('hreflang=', $html);
+        $this->assertStringNotContainsString('/en/rooms/seo-room', $html);
+    }
+
+    public function test_spanish_homepage_includes_hreflang_alternates(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/es');
+
+        $response->assertOk();
+        $response->assertSee('hreflang="fr"', false);
+        $response->assertSee('hreflang="en"', false);
+        $response->assertSee('hreflang="es"', false);
+        $response->assertSee('/es', false);
     }
 
     public function test_googlebot_always_gets_french_homepage_title(): void

@@ -6,21 +6,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { route as ziggyRoute } from 'ziggy-js';
 import Translation from './translation';
-
-function createLocalizedRoute(route) {
-    return function localizedRoute(name, params, absolute, config) {
-        const page = this?.$page ?? this?.page;
-        const locale = page?.props?.locale ?? 'fr';
-        const ziggy = config ?? page?.props?.ziggy;
-        const localizedName = locale && locale !== 'fr' ? `${locale}.${name}` : name;
-
-        try {
-            return route(localizedName, params, absolute, ziggy);
-        } catch {
-            return route(name, params, absolute, ziggy);
-        }
-    };
-}
+import { createLocalizedRoute } from './localizedRoute';
 
 createServer((page) =>
     createInertiaApp({

@@ -7,21 +7,7 @@ import { ZiggyVue } from 'ziggy-js';
 import { route as ziggyRoute } from 'ziggy-js';
 import Translation from './translation';
 import { scheduleEzoicSync } from './ezoic';
-
-function createLocalizedRoute(route) {
-    return function localizedRoute(name, params, absolute, config) {
-        const page = this?.$page ?? this?.page;
-        const locale = page?.props?.locale ?? 'fr';
-        const ziggy = config ?? page?.props?.ziggy;
-        const localizedName = locale && locale !== 'fr' ? `${locale}.${name}` : name;
-
-        try {
-            return route(localizedName, params, absolute, ziggy);
-        } catch {
-            return route(name, params, absolute, ziggy);
-        }
-    };
-}
+import { createLocalizedRoute } from './localizedRoute';
 
 router.on('finish', (event) => {
     const path = new URL(event.detail.visit.url, window.location.origin).pathname;

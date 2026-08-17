@@ -25,7 +25,11 @@ class RedirectLegacyLangQuery
         }
 
         $path = LocaleUrl::stripLocalePrefix($request->path());
-        $target = LocaleUrl::localizedPath($path === '/' ? '' : ltrim($path, '/'), $lang);
+        $normalizedPath = ltrim($path, '/');
+
+        $target = LocaleUrl::isLocalizablePath($path)
+            ? LocaleUrl::localizedPath($normalizedPath === '' ? '' : $normalizedPath, $lang)
+            : $request->url();
 
         $query = $request->query();
         unset($query['lang']);

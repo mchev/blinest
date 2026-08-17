@@ -10,7 +10,6 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -52,12 +51,5 @@ return function (string $namePrefix): void {
     Route::middleware(['auth.banned', 'ip.banned'])->group(function () use ($namePrefix): void {
         Route::get('/', [HomeController::class, 'index'])
             ->name($namePrefix.'home');
-
-        Route::get('rooms/{room:slug}/public-state', [RoomController::class, 'publicState'])
-            ->name($namePrefix.'rooms.public-state')
-            ->middleware('throttle:120,1');
-
-        Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
-            ->name($namePrefix.'rooms.show');
     });
 };

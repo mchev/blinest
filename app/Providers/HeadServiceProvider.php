@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Seo\LocaleUrl;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Head\Facades\Head;
 use Laravel\Head\Facades\Schema;
@@ -20,7 +19,6 @@ class HeadServiceProvider extends ServiceProvider
     protected function registerDefaults(): void
     {
         Head::defaults(function (HeadBuilder $head): void {
-            $localeUrl = app(LocaleUrl::class);
             $appUrl = rtrim(config('app.url'), '/');
             $locale = $this->ogLocale();
             $defaultDescription = __('Play free multiplayer music quizzes! Online blind tests for all tastes: 2000s, Disney, French songs, 80s, Rock, Pop, and more.');
@@ -31,8 +29,6 @@ class HeadServiceProvider extends ServiceProvider
             $head
                 ->title(config('app.name', 'Blinest'), suffix: ' | Blinest')
                 ->description($defaultDescription)
-                ->canonical($localeUrl->canonical())
-                ->alternates($localeUrl->alternates())
                 ->searchableByRobots()
                 ->og(
                     type: 'website',
