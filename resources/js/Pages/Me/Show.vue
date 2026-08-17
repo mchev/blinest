@@ -1,6 +1,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -33,8 +33,7 @@ const deleteUser = () => {
 }
 </script>
 <template>
-  <Head :title="user.name" />
-  <AppLayout>
+<AppLayout>
     <div class="flex flex-wrap">
       <div class="lg:mr-4 pr-4 text-center w-full lg:w-auto mt-4">
 

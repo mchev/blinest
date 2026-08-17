@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureUserIsNotGuest;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RedirectLegacyLangQuery;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\UserIsAdministrator;
 use App\Http\Middleware\UserIsPublicModerator;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Laravel\Head\Inertia\ShareHead;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,7 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(AppServiceProvider::HOME);
 
         $middleware->web([
+            RedirectLegacyLangQuery::class,
             SetLocale::class,
+            ShareHead::class,
             HandleInertiaRequests::class,
         ]);
 

@@ -1,62 +1,13 @@
 @layer components {
 
-  /*
-   * Chamfered surfaces — fill + clip-path in CSS; 1px border drawn in SVG (see chamfer-borders.js).
-   */
-  .retro-chamfer {
-    --rc: 8px;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
-    --rc-path: polygon(
-      0 0,
-      calc(100% - var(--rc)) 0,
-      100% var(--rc),
-      100% 100%,
-      var(--rc) 100%,
-      0 calc(100% - var(--rc))
-    );
-    @apply relative isolate border-none bg-transparent;
-  }
-
-  .retro-chamfer__border {
-    @apply pointer-events-none absolute inset-0 -z-[1] h-full w-full;
-  }
-
-  .retro-chamfer__border [data-chamfer-stroke] {
-    fill: none;
-    stroke: var(--rc-border);
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-    transition: stroke 200ms ease;
-  }
-
-  .retro-chamfer--clip-media > :not(.retro-chamfer__border) {
-    clip-path: var(--rc-path);
-  }
-
-  .retro-chamfer--shape-only {
-    background: var(--rc-fill);
-    clip-path: var(--rc-path);
-  }
-
-  .rc-4 { --rc: 4px; }
-  .rc-5 { --rc: 5px; }
-  .rc-6 { --rc: 6px; }
-  .rc-8 { --rc: 8px; }
-  .rc-10 { --rc: 10px; }
-  .rc-12 { --rc: 12px; }
-  .rc-14 { --rc: 14px; }
-  .rc-16 { --rc: 16px; }
 
   /* ── Surfaces ── */
   .surface-card {
-    @apply retro-chamfer rc-12 shadow-lg shadow-black/30;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-xl border border-white/10 bg-brand-deep shadow-lg shadow-black/30;
   }
 
   .surface-card:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
+    @apply border-white/20;
   }
 
   .surface-nav {
@@ -73,9 +24,7 @@
 
   /* ── Retro panels (HUD) ── */
   .retro-panel {
-    @apply retro-chamfer rc-12 relative overflow-hidden;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-xl relative overflow-hidden border border-white/10 bg-brand-deep;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 16px 48px rgb(0 0 0 / 0.35);
   }
 
@@ -136,21 +85,17 @@
   }
 
   .retro-select {
-    @apply retro-chamfer rc-8 form-select min-w-[11rem] py-2 pl-3 pr-8 text-sm text-white;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.15);
+    @apply rounded-lg form-select border border-white/10 bg-brand-deep min-w-[11rem] py-2 pl-3 pr-8 text-sm text-white;
     @apply focus:ring-white/10;
   }
 
   .retro-select:focus {
-    --rc-border: rgb(255 255 255 / 0.3);
+    @apply border-white/30;
   }
 
   /* ── Cards ── */
   .game-card {
-    @apply retro-chamfer retro-chamfer--clip-media rc-14 relative overflow-hidden transition duration-300 ease-out;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.12);
+    @apply rounded-xl relative overflow-hidden border border-white/10 bg-brand-deep transition duration-300 ease-out;
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.07),
       0 8px 32px rgb(0 0 0 / 0.45);
@@ -158,11 +103,11 @@
 
   .group:hover .game-card,
   .game-card:focus-within {
-    --rc-border: rgb(255 255 255 / 0.22);
+    @apply border-white/20;
   }
 
   .game-card--live {
-    --rc-border: rgb(var(--color-primary) / 0.28);
+    @apply border-brand-primary/30;
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.08),
       0 8px 32px rgb(0 0 0 / 0.45),
@@ -203,8 +148,7 @@
   }
 
   .live-pill {
-    @apply retro-chamfer retro-chamfer--shape-only rc-6 relative inline-flex items-center gap-1.5 overflow-hidden px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white;
-    --rc-fill: rgb(var(--color-primary));
+    @apply rounded-md relative inline-flex bg-brand-primary items-center gap-1.5 overflow-hidden px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white;
     box-shadow: var(--glow-primary);
   }
 
@@ -214,9 +158,7 @@
   }
 
   .retro-badge {
-    @apply retro-chamfer rc-5 inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.15);
+    @apply rounded-sm inline-flex border border-white/10 bg-brand-deep items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white;
   }
 
   .retro-stat {
@@ -242,11 +184,10 @@
 
   /* ── Buttons ── */
   .game-btn-play {
-    @apply relative flex min-h-[44px] w-full items-center justify-center gap-2 overflow-hidden px-4 text-xs font-bold uppercase tracking-[0.14em] text-white;
+    @apply relative flex min-h-[44px] rounded-lg w-full items-center justify-center gap-2 overflow-hidden px-4 text-xs font-bold uppercase tracking-[0.14em] text-white;
     @apply transition-all duration-200;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-midnight;
     @apply active:scale-[0.98];
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   }
 
   .game-btn-play::after {
@@ -277,14 +218,11 @@
   }
 
   .game-btn-secondary {
-    @apply retro-chamfer rc-8 inline-flex min-h-[42px] items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white transition;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.15);
+    @apply rounded-lg inline-flex border border-white/10 bg-brand-deep min-h-[42px] items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white transition;
   }
 
   .game-btn-secondary:hover {
-    --rc-border: rgb(255 255 255 / 0.25);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/25 bg-brand-deep-hover;
   }
 
   .game-link-action {
@@ -292,24 +230,19 @@
   }
 
   .sidebar-tile {
-    @apply retro-chamfer rc-10 relative flex min-h-[92px] flex-col items-center justify-center gap-2.5 p-3 text-center transition;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg relative flex border border-white/10 bg-brand-deep min-h-[92px] flex-col items-center justify-center gap-2.5 p-3 text-center transition;
   }
 
   .sidebar-tile:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/20 bg-brand-deep-hover;
   }
 
   .sidebar-tile__icon {
-    @apply retro-chamfer rc-6 flex h-11 w-11 items-center justify-center text-white;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-md flex h-11 border border-white/10 bg-brand-midnight w-11 items-center justify-center text-white;
   }
 
   .group:hover .sidebar-tile__icon {
-    --rc-border: rgb(255 255 255 / 0.2);
+    @apply border-white/20;
   }
 
   .badge {
@@ -318,29 +251,23 @@
 
   /* ── Mobile hero ── */
   .retro-hero {
-    @apply retro-chamfer rc-16 relative overflow-hidden p-4;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-2xl relative overflow-hidden p-4;
+    @apply border border-white/10 bg-brand-deep;
   }
 
   .retro-hero__icon {
-    @apply retro-chamfer rc-8 flex h-12 w-12 shrink-0 items-center justify-center text-white;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg flex h-12 border border-white/10 bg-brand-midnight w-12 shrink-0 items-center justify-center text-white;
   }
 
   /* ── Podium ── */
   .retro-podium-block {
-    @apply retro-chamfer flex w-full flex-col items-center px-2 pb-2 pt-3;
-    --rc: 8px;
-    --rc-fill: rgb(var(--color-deep) / 0.8);
-    --rc-border: rgb(255 255 255 / 0.1);
-    --rc-path: polygon(0 0, 100% 0, 100% calc(100% - var(--rc)), calc(100% - var(--rc)) 100%, var(--rc) 100%, 0 calc(100% - var(--rc)));
+    @apply flex w-full flex-col items-center px-2 pb-2 pt-3;
+    @apply rounded-lg border border-white/10 bg-brand-deep/80;
   }
 
   .retro-rank-badge {
     @apply absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center text-[11px] font-black text-white;
-    clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+    @apply rounded-sm;
   }
 
   .retro-rank-badge--1 { @apply bg-brand-secondary text-brand-midnight; }
@@ -357,10 +284,7 @@
   }
 
   .retro-modal-panel {
-    @apply retro-chamfer retro-chamfer--shape-only rc-16 mx-auto max-h-[calc(100dvh-6rem)] w-full overflow-x-hidden overflow-y-auto text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.15);
-    background: rgb(var(--color-midnight));
+    @apply rounded-2xl mx-auto max-h-[calc(100dvh-6rem)] border border-white/10 bg-brand-midnight w-full overflow-x-hidden overflow-y-auto text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
   }
 
   .guest-join-modal {
@@ -406,8 +330,7 @@
 
   .round-finalizing-overlay__panel {
     @apply relative flex max-w-md flex-col items-center px-8 py-10 text-center;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(var(--color-accent) / 0.35);
+    @apply rounded-2xl border border-brand-accent/35 bg-brand-deep;
     box-shadow: 0 24px 48px rgb(0 0 0 / 0.45);
   }
 
@@ -430,62 +353,49 @@
   }
 
   .retro-search {
-    @apply retro-chamfer rc-10 flex items-center overflow-hidden px-4 py-2 transition-all duration-200;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg flex items-center overflow-hidden px-4 py-2 transition-all duration-200;
+    @apply border border-white/10 bg-brand-deep;
   }
 
   .retro-search:focus-within {
-    --rc-border: rgb(255 255 255 / 0.25);
-    --rc-fill: rgb(var(--color-deep-hover));
     @apply ring-2 ring-white/10;
   }
 
   .retro-flash {
-    @apply retro-chamfer rc-10 flex max-w-3xl items-center justify-between px-2 py-1 text-white shadow-xl;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.15);
+    @apply rounded-lg flex max-w-3xl border border-white/10 bg-brand-deep items-center justify-between px-2 py-1 text-white shadow-xl;
   }
 
   .retro-flash--success { box-shadow: 0 16px 40px rgb(0 0 0 / 0.35); }
   .retro-flash--error { box-shadow: 0 16px 40px rgb(0 0 0 / 0.35); }
 
   .retro-pagination-link {
-    @apply retro-chamfer rc-6 px-3 py-2 text-sm font-medium text-white transition sm:px-4 sm:py-2.5;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-md px-3 py-2 border border-white/10 bg-brand-deep text-sm font-medium text-white transition sm:px-4 sm:py-2.5;
   }
 
   .retro-pagination-link:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/20 bg-brand-deep-hover;
   }
 
   .retro-pagination-link--active {
-    --rc-fill: rgb(var(--color-secondary));
-    --rc-border: rgb(var(--color-secondary));
     @apply text-brand-midnight;
   }
 
   .retro-nav-btn {
     @apply px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-brand-deep-hover;
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    @apply rounded-md;
   }
 
   .retro-nav-btn--primary {
     @apply bg-brand-primary px-4 py-2 text-sm font-bold uppercase tracking-wide text-white hover:bg-brand-primary-hover;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    @apply rounded-lg;
   }
 
   .retro-icon-btn {
-    @apply retro-chamfer rc-8 flex h-10 w-10 items-center justify-center text-white transition;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg flex h-10 w-10 border border-white/10 bg-brand-deep items-center justify-center text-white transition;
   }
 
   .retro-icon-btn:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/20 bg-brand-deep-hover;
   }
 
   .retro-menu-label {
@@ -497,15 +407,12 @@
   }
 
   .retro-card {
-    @apply retro-chamfer rc-14 flex h-auto flex-col;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
-    background: rgb(var(--color-deep));
+    @apply rounded-xl flex h-auto flex-col border border-white/10 bg-brand-deep;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 12px 40px rgb(0 0 0 / 0.35);
   }
 
   .retro-card:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
+    @apply border-white/20;
   }
 
   .retro-card__header {
@@ -519,10 +426,7 @@
   }
 
   .retro-dropdown-panel {
-    @apply retro-chamfer retro-chamfer--shape-only rc-10 overflow-hidden text-sm text-white shadow-2xl shadow-black/60;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.15);
-    background: rgb(var(--color-midnight));
+    @apply rounded-lg overflow-hidden text-sm text-white shadow-2xl shadow-black/60 border border-white/10 bg-brand-midnight;
   }
 
   .retro-page-title {
@@ -534,36 +438,98 @@
   }
 
   .retro-list-row {
-    @apply retro-chamfer rc-10 flex items-center gap-4 px-4 py-3 transition-colors;
-    --rc-fill: rgb(var(--color-deep) / 0.8);
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg flex items-center gap-4 px-4 py-3 transition-colors border border-white/10 bg-brand-deep/80;
   }
 
   .retro-list-row:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/20 bg-brand-deep-hover;
   }
 
   .retro-stat-box {
-    @apply retro-chamfer rc-8 p-4;
-    --rc-fill: rgb(var(--color-deep) / 0.8);
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg p-4 border border-white/10 bg-brand-deep/80;
   }
 
   .retro-sort-btn {
-    @apply retro-chamfer rc-6 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-md px-3 py-1.5 text-xs font-medium text-white/70 transition-colors border border-white/10 bg-brand-deep;
   }
 
   .retro-sort-btn:hover {
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply bg-brand-deep-hover;
   }
 
   .retro-sort-btn--active {
-    --rc-border: rgb(var(--color-accent) / 0.4);
-    --rc-fill: rgb(var(--color-accent) / 0.1);
-    @apply text-brand-accent;
+    @apply border-brand-accent/40 bg-brand-accent/10 text-brand-accent;
+  }
+
+  .home-catalog-header {
+    @apply space-y-2;
+  }
+
+  .home-rooms-switch {
+    @apply flex w-full gap-1 overflow-x-auto rounded-lg border border-white/20 bg-brand-midnight p-1 shadow-md;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .home-rooms-switch::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .home-rooms-switch {
+      @apply grid overflow-visible;
+    }
+
+    .home-rooms-switch--tabs-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .home-rooms-switch--tabs-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .home-rooms-switch--tabs-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .home-rooms-switch__tab {
+    @apply min-h-[42px] min-w-[7.75rem] flex-shrink-0 snap-start rounded-md px-3 py-2 text-[11px] font-bold uppercase leading-snug tracking-wide text-white/75 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brand-midnight sm:min-w-[8.5rem] sm:px-4 sm:text-xs;
+  }
+
+  @media (min-width: 1024px) {
+    .home-rooms-switch__tab {
+      @apply min-w-0 flex-1;
+    }
+  }
+
+  .home-rooms-switch__tab:hover:not(.home-rooms-switch__tab--active) {
+    @apply bg-white/5 text-white;
+  }
+
+  .home-rooms-switch__tab--active {
+    @apply bg-brand-accent/15 text-brand-accent-light shadow-[inset_0_-2px_0_0_rgb(var(--color-accent-dark))];
+  }
+
+  .home-rooms-toolbar__filter {
+    @apply w-full py-2 text-sm lg:max-w-xs;
+  }
+
+  .home-rooms-empty {
+    @apply rounded-xl border border-dashed border-white/15 bg-arena-panel/40 px-6 py-10 text-center;
+  }
+
+  .home-catalog-skeleton {
+    @apply min-h-[11rem] animate-pulse rounded-lg border border-white/10 bg-white/5;
+  }
+
+  .home-catalog-panel {
+    @apply relative;
+  }
+
+  .home-catalog-panel__overlay {
+    @apply absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-brand-deep/70 pt-10 backdrop-blur-[1px];
   }
 
   /* ── Room gameplay ── */
@@ -572,9 +538,7 @@
   }
 
   .room-player {
-    @apply retro-chamfer rc-10 relative overflow-hidden shadow-lg;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg relative overflow-hidden shadow-lg border border-white/10 bg-brand-deep;
   }
 
   .room-player__markers {
@@ -608,15 +572,11 @@
   }
 
   .room-input-wrap {
-    @apply retro-chamfer flex items-stretch gap-2 p-1.5 shadow-md;
-    --rc: 12px;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.14);
+    @apply flex items-stretch gap-2 p-1.5 shadow-md rounded-xl border border-white/10 bg-brand-deep;
   }
 
   .room-input-wrap:focus-within {
-    --rc-border: rgb(var(--color-accent) / 0.32);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-brand-accent/30 bg-brand-deep-hover;
   }
 
   .room-input-field {
@@ -640,7 +600,7 @@
   }
 
   .room-input-submit {
-    @apply flex h-12 min-w-[3rem] shrink-0 items-center justify-center rounded-lg bg-brand-accent-dark px-4 text-white transition-colors duration-200 hover:bg-brand-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 disabled:cursor-not-allowed disabled:bg-brand-deep disabled:text-white/35 sm:h-[3.25rem] sm:min-w-[3.25rem];
+    @apply flex h-12 min-w-[3rem] shrink-0 items-center justify-center rounded-lg bg-brand-accent-dark px-4 text-white transition-colors duration-200 hover:bg-brand-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 disabled:cursor-not-allowed disabled:bg-brand-deep disabled:text-white/30 sm:h-[3.25rem] sm:min-w-[3.25rem];
     box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.15);
   }
 
@@ -649,25 +609,19 @@
   }
 
   .room-answer-chip {
-    @apply retro-chamfer rc-6 flex items-center px-3 py-1.5 text-sm text-white/80 shadow-md transition-all duration-300;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.15);
+    @apply rounded-md flex items-center px-3 py-1.5 text-sm text-white/80 shadow-md transition-all duration-300 border border-white/10 bg-brand-midnight;
   }
 
   .room-answer-chip--found {
-    --rc-border: rgb(var(--color-accent-dark));
-    --rc-fill: rgb(var(--color-accent-dark));
     @apply font-semibold text-white;
   }
 
   .room-track-card {
-    @apply retro-chamfer rc-8 overflow-hidden shadow-md transition-all duration-200;
-    --rc-fill: rgb(var(--color-deep) / 0.8);
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg overflow-hidden shadow-md transition-all duration-200 border border-white/10 bg-brand-deep/80;
   }
 
   .room-track-card:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
+    @apply border-white/20;
   }
 
   .room-answer-badge {
@@ -696,6 +650,14 @@
 
   .room-ranking-card--compact .retro-card__header {
     @apply py-3;
+  }
+
+  .room-answer-feedback {
+    @apply pointer-events-none absolute inset-x-0 top-full z-20 mt-1 flex justify-center;
+  }
+
+  .room-answer-feedback__message {
+    @apply flex max-w-full items-center gap-2 px-4 py-2 text-white shadow-lg;
   }
 
   /* ── Mobile room gameplay layout ── */
@@ -744,9 +706,7 @@
   }
 
   .room-mobile-hud__tabs {
-    @apply retro-chamfer rc-8 mb-2 flex shrink-0 gap-1 p-1;
-    --rc-fill: rgb(var(--color-midnight) / 0.95);
-    --rc-border: rgb(255 255 255 / 0.18);
+    @apply rounded-lg mb-2 flex shrink-0 gap-1 p-1 border border-white/10 bg-brand-midnight/95;
   }
 
   .room-mobile-hud__tab {
@@ -812,7 +772,7 @@
   }
 
   .chat-panel--embedded .chat-composer {
-    @apply order-2 shrink-0 border-b border-white/15 border-t-0 bg-brand-midnight/70 p-1.5;
+    @apply order-2 shrink-0 border-b border-white/10 border-t-0 bg-brand-midnight/70 p-1.5;
   }
 
   .chat-panel--embedded .chat-messages {
@@ -860,7 +820,7 @@
   }
 
   .room-mobile-podium__avatar {
-    @apply h-9 w-9 rounded-full object-cover ring-2 ring-white/15;
+    @apply h-9 w-9 rounded-full object-cover ring-2 ring-white/20;
   }
 
   .room-mobile-podium__slot--first .room-mobile-podium__avatar {
@@ -1004,17 +964,13 @@
   }
 
   .room-action-btn {
-    @apply retro-chamfer retro-chamfer--shape-only rc-8 inline-flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg inline-flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200 border border-white/10 bg-brand-deep;
     background: rgb(var(--color-deep));
   }
 
   @media (max-width: 767px) {
     .room-actions-bar {
-      @apply retro-chamfer rc-10 p-1;
-      --rc-fill: rgb(var(--color-deep));
-      --rc-border: rgb(255 255 255 / 0.12);
+      @apply rounded-lg p-1 border border-white/10 bg-brand-deep;
     }
 
     .room-actions {
@@ -1035,42 +991,35 @@
   }
 
   .room-action-btn:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
+    @apply border-white/20 bg-brand-deep-hover;
   }
 
   .room-action-btn--active {
-    --rc-border: rgb(var(--color-accent) / 0.3);
-    --rc-fill: rgb(var(--color-accent) / 0.12);
     @apply text-brand-accent-light;
   }
 
   .room-action-btn--saved {
-    --rc-border: rgb(var(--color-secondary) / 0.35);
     @apply text-brand-secondary;
   }
 
   .room-action-btn--saved:hover {
-    --rc-fill: rgb(var(--color-secondary) / 0.1);
+    @apply bg-brand-secondary/10;
   }
 
   .room-action-btn--danger {
-    --rc-border: rgb(var(--color-primary) / 0.35);
     @apply text-brand-primary-light;
   }
 
   .room-action-btn--danger:hover {
-    --rc-fill: rgb(var(--color-primary) / 0.1);
+    @apply bg-brand-primary/10;
   }
 
   .room-action-btn--play {
-    --rc-border: rgb(var(--color-accent) / 0.4);
-    --rc-fill: rgb(var(--color-accent) / 0.2);
     @apply text-white;
   }
 
   .room-action-btn--play:hover {
-    --rc-fill: rgb(var(--color-accent) / 0.25);
+    @apply bg-brand-accent/25;
   }
 
   .room-action-btn--highlight {
@@ -1078,8 +1027,7 @@
   }
 
   .room-action-btn--highlight:hover {
-    --rc-border: rgb(var(--color-secondary) / 0.35);
-    --rc-fill: rgb(var(--color-secondary) / 0.1);
+    @apply border-brand-secondary/35 bg-brand-secondary/10;
   }
 
   /* ── Chat panel ── */
@@ -1098,27 +1046,19 @@
   }
 
   .chat-composer {
-    @apply shrink-0 border-t border-white/15 bg-brand-midnight/50 p-2;
+    @apply shrink-0 border-t border-white/10 bg-brand-midnight/50 p-2;
   }
 
   .chat-input-wrap {
-    @apply retro-chamfer retro-chamfer--shape-only relative flex flex-grow items-center shadow-md ring-1 ring-white/20 transition-colors duration-200;
-    --rc: 8px;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.28);
-    --rc-path: polygon(0 0, calc(100% - var(--rc)) 0, 100% var(--rc), 100% 100%, 0 100%);
-    background: rgb(var(--color-midnight));
+    @apply relative flex flex-grow items-center shadow-md ring-1 ring-white/20 transition-colors duration-200 rounded-lg bg-brand-midnight;
   }
 
   .chat-input-wrap:focus-within {
-    --rc-border: rgb(var(--color-accent) / 0.45);
+    @apply ring-brand-accent/45;
   }
 
   .chat-send-btn {
-    @apply game-btn-play-join !min-h-[3rem] !w-auto !rounded-none px-4;
-    --rc: 8px;
-    --rc-path: polygon(var(--rc) 0, 100% 0, 100% 100%, 0 100%, 0 var(--rc));
-    clip-path: var(--rc-path);
+    @apply game-btn-play-join !min-h-[3rem] !w-auto !rounded-lg px-4;
   }
 
   .chat-message {
@@ -1126,36 +1066,27 @@
   }
 
   .chat-icon-btn {
-    @apply retro-chamfer rc-6 flex h-8 w-8 items-center justify-center text-white/70 transition;
-    --rc-fill: rgb(var(--color-deep));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-md flex h-8 w-8 items-center justify-center text-white/70 transition border border-white/10 bg-brand-deep;
   }
 
   .chat-icon-btn:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
-    --rc-fill: rgb(var(--color-deep-hover));
     @apply text-white;
   }
 
   .chat-reaction {
-    @apply retro-chamfer rc-4 flex items-center gap-1 px-2 py-1 text-sm transition;
-    --rc-fill: rgb(var(--color-midnight));
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded flex items-center gap-1 px-2 py-1 text-sm transition border border-white/10 bg-brand-midnight;
   }
 
   .chat-reaction:hover {
-    --rc-border: rgb(255 255 255 / 0.2);
+    @apply border-white/20;
   }
 
   .chat-reaction--mine {
-    --rc-border: rgb(var(--color-secondary) / 0.35);
-    --rc-fill: rgb(var(--color-secondary) / 0.1);
+    @apply border-brand-secondary/35 bg-brand-secondary/10;
   }
 
   .chat-guest-banner {
-    @apply retro-chamfer rc-10 w-full px-4 py-6 text-sm text-white/70;
-    --rc-fill: rgb(var(--color-midnight) / 0.8);
-    --rc-border: rgb(255 255 255 / 0.1);
+    @apply rounded-lg w-full px-4 py-6 text-sm text-white/70 border border-white/10 bg-brand-midnight/80;
   }
 
   .squircle-modern { border-radius: 1.5rem; }

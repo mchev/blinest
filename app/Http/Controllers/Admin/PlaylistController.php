@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class PlaylistController extends AdminController
 {
@@ -61,6 +62,8 @@ class PlaylistController extends AdminController
 
     public function edit(Playlist $playlist)
     {
+        Head::title($playlist->name);
+
         return Inertia::render('Admin/Playlists/Edit', [
             'playlist' => [
                 'id' => $playlist->id,

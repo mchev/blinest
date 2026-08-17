@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Head\Facades\Head;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -21,6 +22,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
+        Head::title(__('Login'))->robots('noindex, nofollow');
+
         return Inertia::render('Auth/Login');
     }
 

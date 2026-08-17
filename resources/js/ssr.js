@@ -4,24 +4,42 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import createServer from '@inertiajs/vue3/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
+import { route as ziggyRoute } from 'ziggy-js';
 import Translation from './translation';
 
-const appName = 'Blinest Music Quiz';
+function createLocalizedRoute(route) {
+    return function localizedRoute(name, params, absolute, config) {
+        const page = this?.$page ?? this?.page;
+        const locale = page?.props?.locale ?? 'fr';
+        const ziggy = config ?? page?.props?.ziggy;
+        const localizedName = locale && locale !== 'fr' ? `${locale}.${name}` : name;
+
+        try {
+            return route(localizedName, params, absolute, ziggy);
+        } catch {
+            return route(name, params, absolute, ziggy);
+        }
+    };
+}
 
 createServer((page) =>
     createInertiaApp({
         page,
+        serverHead: true,
         render: renderToString,
-        title: (title) => `${title} - ${appName}`,
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => h(App, props) })
+            const app = createSSRApp({ render: () => h(App, props) })
                 .use(plugin)
                 .use(ZiggyVue, {
                     ...page.props.ziggy,
                     location: new URL(page.props.ziggy.location),
                 })
                 .mixin(Translation);
+
+            app.config.globalProperties.route = createLocalizedRoute(ziggyRoute);
+
+            return app;
         },
     })
 );

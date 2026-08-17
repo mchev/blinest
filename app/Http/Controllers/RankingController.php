@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class RankingController extends Controller
 {
@@ -23,6 +24,8 @@ class RankingController extends Controller
 
     public function byLevel()
     {
+        Head::title(__('Rankings').' - '.__('Level'));
+
         $user = Auth::user();
 
         // Paginated by Level
@@ -72,6 +75,8 @@ class RankingController extends Controller
 
     public function byScore()
     {
+        Head::title(__('Rankings').' - '.__('Score'));
+
         $user = Auth::user();
 
         $paginatedScores = $this->publicUserScoresQuery()
@@ -146,6 +151,8 @@ class RankingController extends Controller
 
     public function byWeek()
     {
+        Head::title(__('Rankings').' - '.__('Top Week'));
+
         $user = Auth::user();
 
         // Paginated Week (last 7 days) - Utiliser round_standings au lieu de scores
@@ -240,6 +247,8 @@ class RankingController extends Controller
 
     public function byElo()
     {
+        Head::title(__('Rankings').' - '.__('ELO'));
+
         $user = Auth::user();
 
         // Paginated by ELO
@@ -281,6 +290,8 @@ class RankingController extends Controller
 
     public function byTeams()
     {
+        Head::title(__('Rankings').' - '.__('Teams'));
+
         $user = Auth::user();
 
         // Paginated Teams
@@ -353,6 +364,8 @@ class RankingController extends Controller
 
     public function byMinigames()
     {
+        Head::title(__('Rankings').' - '.__('Mini-games'));
+
         $user = Auth::user();
 
         $paginated = MinigameScore::query()

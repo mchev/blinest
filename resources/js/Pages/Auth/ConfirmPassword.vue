@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue'
 import LoadingButton from '@/Components/LoadingButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 
 const form = useForm({
     password: '',
@@ -17,9 +17,7 @@ const submit = () => {
 
 <template>
     <AppLayout>
-        <Head title="Confirm Password" />
-
-        <div class="mb-4 text-sm text-gray-600">
+<div class="mb-4 text-sm text-gray-600">
             {{ __('This is a secure area of the application. Please confirm your password before continuing') }}
         </div>
 

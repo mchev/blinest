@@ -18,7 +18,7 @@ defineProps({
       aria-live="polite"
       :aria-label="__('Calculating scores and rankings...')"
     >
-      <div class="round-finalizing-overlay__panel retro-chamfer rc-16">
+      <div class="round-finalizing-overlay__panel">
         <div class="round-finalizing-overlay__pulse" aria-hidden="true"></div>
         <Spinner class="!mr-0 h-8 w-8 !fill-brand-accent text-white/20" />
         <p class="round-finalizing-overlay__title">{{ __('Calculating scores and rankings...') }}</p>

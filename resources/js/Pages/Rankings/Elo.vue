@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
@@ -27,8 +26,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <Head :title="__('Rankings') + ' - ' + __('ELO')" />
-  <AppLayout>
+<AppLayout>
     <section>
       <div class="mx-auto max-w-5xl py-4 px-4 sm:py-8">
         <div class="mx-auto mb-6 text-center sm:mb-8">

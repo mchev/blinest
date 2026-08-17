@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class AnswerTypeController extends Controller
 {
@@ -65,6 +66,8 @@ class AnswerTypeController extends Controller
      */
     public function edit(AnswerType $answerType)
     {
+        Head::title($answerType->name);
+
         return Inertia::render('Admin/AnswerTypes/Edit', [
             'answer_type' => $answerType,
         ]);

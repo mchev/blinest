@@ -1,114 +1,60 @@
 @php
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+$baseUrl = rtrim(config('app.url'), '/');
+$now = now()->toAtomString();
+$docPaths = [
+    ['path' => '/docs', 'priority' => '0.60'],
+    ['path' => '/docs/howto', 'priority' => '0.65'],
+    ['path' => '/docs/glossary', 'priority' => '0.55'],
+    ['path' => '/docs/create-content', 'priority' => '0.55'],
+    ['path' => '/docs/faq', 'priority' => '0.50'],
+    ['path' => '/docs/level', 'priority' => '0.45'],
+    ['path' => '/docs/elo', 'priority' => '0.45'],
+    ['path' => '/contact', 'priority' => '0.25'],
+];
 @endphp
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  @foreach($locales as $locale)
   <url>
-    <loc>https://blinest.com/</loc>
-    <lastmod>2019-10-02T15:27:50+00:00</lastmod>
+    <loc>{{ \App\Seo\LocaleUrl::localizedPath('', $locale) }}</loc>
+    <lastmod>{{ $now }}</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.00</priority>
   </url>
+  @endforeach
 
-  @foreach($publicRooms as $key => $room)
+  @foreach($publicRooms as $room)
+    @foreach($room->urls as $url)
   <url>
-    <loc>{{ $room->url }}</loc>
+    <loc>{{ $url }}</loc>
     <lastmod>{{ $room->updated_at->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
+    @endforeach
   @endforeach
 
   @foreach($pages as $page)
+    @foreach($page->urls as $url)
   <url>
-    <loc>{{ $page->url }}</loc>
+    <loc>{{ $url }}</loc>
     <lastmod>{{ $page->updated_at->toAtomString() }}</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.10</priority>
+    <priority>0.30</priority>
   </url>
+    @endforeach
   @endforeach
 
+  @foreach($locales as $locale)
+    @foreach($docPaths as $doc)
   <url>
-    <loc>https://blinest.com/docs</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
+    <loc>{{ \App\Seo\LocaleUrl::localizedPath(ltrim($doc['path'], '/'), $locale) }}</loc>
+    <lastmod>{{ $now }}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.60</priority>
+    <priority>{{ $doc['priority'] }}</priority>
   </url>
-
-  <url>
-    <loc>https://blinest.com/docs/glossary</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
-  </url>
-
-  <url>
-    <loc>https://blinest.com/docs/howto</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.60</priority>
-  </url>
-
-  <url>
-    <loc>https://blinest.com/docs/create-content</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
-  </url>
-
-  <url>
-    <loc>https://blinest.com/docs/faq</loc>
-    <lastmod>2023-01-26T15:27:50+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
-  </url>
-
-  <url>
-    <loc>https://blinest.com/register</loc>
-    <lastmod>2019-10-02T15:27:50+00:00</lastmod>
-    <priority>0.20</priority>
-  </url>
-
-  <url>
-    <loc>https://blinest.com/contact</loc>
-    <lastmod>2019-10-02T15:27:50+00:00</lastmod>
-    <priority>0.20</priority>
-  </url>
-
-  <url>
-    <loc>{{ url(route('minigames.index')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.50</priority>
-  </url>
-  <url>
-    <loc>{{ url(route('minigames.quiz.play')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.45</priority>
-  </url>
-  <url>
-    <loc>{{ url(route('minigames.who_sang.play')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.45</priority>
-  </url>
-  <url>
-    <loc>{{ url(route('minigames.anagram.play')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.45</priority>
-  </url>
-  <url>
-    <loc>{{ url(route('minigames.first_letter.play')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.45</priority>
-  </url>
-  <url>
-    <loc>{{ url(route('minigames.album_cover.play')) }}</loc>
-    <lastmod>{{ now()->toAtomString() }}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.45</priority>
-  </url>
+    @endforeach
+  @endforeach
 
 </urlset>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
+import { Link, useForm, usePage } from '@inertiajs/vue3'
 import TextInput from '@/Components/TextInput.vue'
 import Pagination from '@/Components/Pagination.vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
@@ -60,8 +60,7 @@ const isTeamFull = (team) => Number(team.members_count) >= Number(team.seats)
 </script>
 
 <template>
-  <Head :title="__('Teams')" />
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto max-w-7xl pb-16 pt-6 md:pt-10">
       <!-- Hero -->
       <div class="relative mb-10 overflow-hidden rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-950/80 via-neutral-900/90 to-fuchsia-950/50 px-6 py-10 shadow-[0_0_60px_-12px_rgba(139,92,246,0.35)] sm:px-10 md:mb-14 md:py-12">

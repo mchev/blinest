@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import SelectInput from '@/Components/SelectInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -18,8 +18,7 @@ const store = () => {
 }
 </script>
 <template>
-  <Head title="Create FAQ" />
-  <AdminLayout>
+<AdminLayout>
     <Card>
       <template #header>
         <h1 class="text-xl font-bold">

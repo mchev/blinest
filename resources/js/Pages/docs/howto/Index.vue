@@ -1,8 +1,6 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import HowToStructuredData from '@/Components/HowToStructuredData.vue'
-
 const steps = [
   {
     number: 1,
@@ -78,14 +76,7 @@ const steps = [
 </script>
 
 <template>
-  <HowToStructuredData />
-  <Head>
-    <title>Comment jouer à un blind test sur Blinest - Guide étape par étape</title>
-    <meta name="description" content="Apprenez à jouer à un blind test sur Blinest en 7 étapes simples. Guide complet pour rejoindre une room, identifier des chansons et gagner des points dans les quiz musicaux multijoueurs." />
-    <meta name="keywords" content="comment jouer blinest, guide blind test, tutoriel quiz musical, comment jouer quiz musique" />
-    <link rel="canonical" href="https://blinest.com/docs/howto" />
-  </Head>
-  <AppLayout>
+<AppLayout>
     <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <!-- Header -->
       <div class="text-center space-y-4">

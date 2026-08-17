@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import axios from 'axios'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
@@ -107,8 +107,7 @@ const chartOptions = {
 }
 </script>
 <template>
-  <Head :title="user.name" />
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto max-w-7xl space-y-6 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0">
       <aside class="lg:col-span-4 space-y-6">
         <Card>

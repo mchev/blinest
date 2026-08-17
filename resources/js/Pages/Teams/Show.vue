@@ -1,6 +1,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
+import { Link, useForm, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
@@ -118,8 +118,7 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
 </script>
 
 <template>
-  <Head :title="team.name" />
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto max-w-4xl pb-16 pt-4 md:pt-8">
       <div class="mb-6">
         <Link

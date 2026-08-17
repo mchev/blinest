@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, usePage, useForm } from '@inertiajs/vue3'
+import { Link, usePage, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -63,9 +63,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <Head :title="__('Edit Room')" />
-
-  <AppLayout>
+<AppLayout>
     <h1 class="mb-8 flex items-center gap-2 text-3xl font-bold">
       <Link :href="route('rooms.index')">{{ __('Rooms') }}</Link> / {{ room.name }}
       <Link class="btn-primary ml-auto" :href="route('rooms.show', room.slug)">{{ __('Play') }}</Link>

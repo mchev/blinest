@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')->withHead(robots: 'noindex, nofollow')->group(function () {
 
     // Maintenance
     Route::post('/force-clear-rounds', [DashboardController::class, 'forceClearRounds'])
@@ -41,14 +41,17 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+        ->name('dashboard')
+        ->withHead(title: 'Dashboard');
 
     // Users
     Route::get('users', [UserController::class, 'index'])
-        ->name('users');
+        ->name('users')
+        ->withHead(title: 'Users');
 
     Route::get('users/create', [UserController::class, 'create'])
-        ->name('users.create');
+        ->name('users.create')
+        ->withHead(title: 'Create User');
 
     Route::post('users', [UserController::class, 'store'])
         ->name('users.store');
@@ -67,10 +70,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')
 
     // Teams
     Route::get('teams', [TeamController::class, 'index'])
-        ->name('teams');
+        ->name('teams')
+        ->withHead(title: 'Teams');
 
     Route::get('teams/create', [TeamController::class, 'create'])
-        ->name('teams.create');
+        ->name('teams.create')
+        ->withHead(title: 'Create Team');
 
     Route::post('teams', [TeamController::class, 'store'])
         ->name('teams.store');
@@ -89,10 +94,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')
 
     // Playlists
     Route::get('playlists', [PlaylistController::class, 'index'])
-        ->name('playlists');
+        ->name('playlists')
+        ->withHead(title: 'Playlists');
 
     Route::get('playlists/create', [PlaylistController::class, 'create'])
-        ->name('playlists.create');
+        ->name('playlists.create')
+        ->withHead(title: 'Create Playlist');
 
     Route::post('playlists', [PlaylistController::class, 'store'])
         ->name('playlists.store');
@@ -111,10 +118,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')
 
     // Rooms
     Route::get('rooms', [RoomController::class, 'index'])
-        ->name('rooms');
+        ->name('rooms')
+        ->withHead(title: 'Rooms');
 
     Route::get('rooms/create', [RoomController::class, 'create'])
-        ->name('rooms.create');
+        ->name('rooms.create')
+        ->withHead(title: 'Create Room');
 
     Route::post('rooms', [RoomController::class, 'store'])
         ->name('rooms.store');
@@ -133,17 +142,21 @@ Route::prefix('admin')->name('admin.')->middleware('auth', 'auth.administrator')
 
     // Categories
     Route::resource('categories', CategoryController::class)
-        ->except('show');
+        ->except('show')
+        ->withHead(title: 'Categories');
 
     // Answer Types
     Route::resource('answer_types', AnswerTypeController::class)
-        ->except('show');
+        ->except('show')
+        ->withHead(title: 'Answer Types');
 
     // Pages
     Route::resource('pages', PageController::class)
-        ->except('show');
+        ->except('show')
+        ->withHead(title: 'Pages');
 
     // FAQ
     Route::resource('faqs', FAQController::class)
-        ->except('show');
+        ->except('show')
+        ->withHead(title: 'FAQ');
 });

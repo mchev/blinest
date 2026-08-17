@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -47,9 +47,7 @@ const update = () => {
 }
 </script>
 <template>
-  <Head :title="__('Edit Room')" />
-
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link :href="route('admin.rooms')">{{ __('Rooms') }}</Link> / {{ room.name }}
     </h1>

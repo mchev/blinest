@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Logo from '@/Components/Logo.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -22,9 +22,7 @@ const register = () => {
 </script>
 <template>
   <AppLayout>
-    <Head :title="__('Register')" />
-
-    <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
+<div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
       <Card class="flex flex-grow">
         <template #header>
           <h1 class="retro-title retro-title--primary text-center text-xl">{{ __('Register') }}</h1>

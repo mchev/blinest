@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Laravel\Head\Facades\Head;
 
 class ProfileController extends Controller
 {
@@ -119,6 +120,8 @@ class ProfileController extends Controller
             'tracks_liked_count' => $userLevel->tracks_liked_count ?? 0,
             'has_team' => $user->team !== null,
         ] : null;
+
+        Head::title($user->name);
 
         return Inertia::render('Profiles/Show', [
             'user' => [

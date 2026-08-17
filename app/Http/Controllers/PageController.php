@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class PageController extends Controller
 {
     public function show(string $slug)
     {
         if ($page = Page::where('slug', $slug)->orderByDesc('revised_at')->first()) {
+            Head::title($page->title);
+
             return Inertia::render('Pages/Show', [
                 'page' => $page,
             ]);
@@ -25,6 +28,8 @@ class PageController extends Controller
         } else {
             abort(403, config('ban.messages.user'));
         }
+
+        Head::title(__('You have been banned!'))->robots('noindex, nofollow');
 
         return Inertia::render('Pages/Banned', [
             'ban' => $ban ? [

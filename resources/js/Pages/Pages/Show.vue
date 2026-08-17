@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
@@ -10,10 +9,7 @@ defineProps({
 })
 </script>
 <template>
-  <Head>
-    <title>{{ page.title }}</title>
-  </Head>
-  <AppLayout>
+<AppLayout>
     <Card class="mx-auto">
       <template #header>
         <div class="flex w-full items-center justify-between">

@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class NewPasswordController extends Controller
 {
@@ -23,6 +24,8 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request)
     {
+        Head::title(__('Reset Password'))->robots('noindex, nofollow');
+
         return Inertia::render('Auth/ResetPassword', [
             'email' => $request->email,
             'token' => $request->token,

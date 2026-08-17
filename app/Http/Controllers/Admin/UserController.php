@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class UserController extends AdminController
 {
@@ -62,6 +63,8 @@ class UserController extends AdminController
 
     public function edit(User $user)
     {
+        Head::title($user->name);
+
         return Inertia::render('Admin/Users/Edit', [
             'user' => [
                 'id' => $user->id,

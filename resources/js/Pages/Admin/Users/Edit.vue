@@ -1,7 +1,6 @@
 <template>
   <div>
-    <Head :title="`${form.name}`" />
-    <div class="mb-8 flex max-w-3xl justify-start">
+<div class="mb-8 flex max-w-3xl justify-start">
       <h1 class="text-3xl font-bold">
         <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.users')">Users</Link>
         <span class="font-medium text-gray-400">/</span>
@@ -36,7 +35,7 @@
 </template>
 
 <script>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FileInput from '@/Components/FileInput.vue'
@@ -48,7 +47,6 @@ import Card from '@/Components/Card.vue'
 export default {
   components: {
     FileInput,
-    Head,
     Link,
     LoadingButton,
     SelectInput,

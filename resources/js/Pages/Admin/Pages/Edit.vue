@@ -1,6 +1,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import TextEditor from '@/Components/TextEditor.vue'
@@ -26,8 +26,7 @@ const destroy = () => {
 }
 </script>
 <template>
-  <Head title="Create Category" />
-  <AdminLayout>
+<AdminLayout>
     <Card>
       <template #header>
         <div class="flex w-full items-center justify-between">

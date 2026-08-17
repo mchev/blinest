@@ -1,12 +1,9 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
 
 defineProps({
-  pageTitle: { type: String, required: true },
-  /** Optional meta description for SEO (translated string). */
-  metaDescription: { type: String, default: '' },
   backUrl: { type: String, required: true },
   homeUrl: { type: String, required: true },
   questionsPerRound: { type: Number, default: 5 },
@@ -26,11 +23,7 @@ const emit = defineEmits(['retry'])
 </script>
 
 <template>
-  <Head>
-    <title>{{ pageTitle }} | Blinest</title>
-    <meta v-if="metaDescription" head-key="minigame-description" name="description" :content="metaDescription" />
-  </Head>
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto max-w-xl px-4 py-8">
       <header class="mb-6">
         <div class="flex items-center justify-between">

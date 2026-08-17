@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EloBadge from '@/Components/EloBadge.vue'
 import LevelBadge from '@/Components/LevelBadge.vue'
@@ -18,8 +18,7 @@ const __ = (key, replace = {}) => {
 </script>
 
 <template>
-  <Head title="Systèmes de progression - Vue d'ensemble | Blinest" />
-  <AppLayout>
+<AppLayout>
     <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <!-- Header -->
       <div class="text-center space-y-4">

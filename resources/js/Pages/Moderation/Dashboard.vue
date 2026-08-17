@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import Layout from './Layout.vue'
 import Card from '@/Components/Card.vue'
 

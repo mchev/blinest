@@ -1,22 +1,20 @@
 <script setup>
-import { Head, usePage } from '@inertiajs/vue3'
+import { Link, router, usePage } from '@inertiajs/vue3'
 import Layout from '@/Layouts/AppLayout.vue'
 import Room from './partials/Room.vue'
-import Rooms from './partials/Rooms.vue'
-import MinigamesSlider from './partials/MinigamesSlider.vue'
 import HomeSectionHeader from './partials/HomeSectionHeader.vue'
 import HomeSidebar from './partials/HomeSidebar.vue'
 import PublicRoomsGrid from './partials/PublicRoomsGrid.vue'
 
 defineProps({
   filters: Object,
+  catalog: String,
+  catalog_items: Object,
+  catalog_category_id: [Number, String, null],
   public_categories: Array,
-  public_rooms: Array,
+  community_categories: Array,
   homepage_hidden_category_ids: Array,
-  minigames: Array,
   featured_rooms: Object,
-  private_rooms: Object,
-  user_rooms: Object,
   search_result: Object,
   weekly_top_users: Object,
 })
@@ -25,23 +23,18 @@ const user = usePage().props.auth.user
 </script>
 
 <template>
-  <Head>
-    <title>{{ __('Free multiplayer music quizzes') }} | Blinest - Quiz musicaux gratuits</title>
-    <meta head-key="description" name="description" content="Jouez à des quiz musicaux multijoueurs gratuits en ligne ! Rejoignez des milliers de joueurs pour tester vos connaissances musicales. Blind-tests pour tous les goûts : Années 2000, Disney, Chanson française, Années 80, Rock, Pop, Rap, et bien plus encore." />
-    <meta name="keywords" content="quiz musical, blind test, quiz musique, test musical, quiz multijoueur, jeu musical en ligne, quiz gratuit, blind test gratuit, quiz années 2000, quiz disney, quiz chanson française, quiz rock, quiz pop" />
-    <link rel="canonical" href="https://blinest.com/" />
-  </Head>
-  <Layout>
+<Layout>
     <h1 class="sr-only">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
 
     <!-- Search Results -->
     <section v-if="search_result" class="mb-12">
+      <h2 class="sr-only">{{ __('Search Results') }}</h2>
       <HomeSectionHeader :title="__('Search Results')">
         <template #action>
           <button
             type="button"
             class="game-btn-secondary"
-            @click="$inertia.get('/')"
+            @click="router.visit(route('home'))"
           >
             {{ __('Clear Search') }}
           </button>
@@ -52,7 +45,7 @@ const user = usePage().props.auth.user
       </div>
     </section>
 
-    <div v-else class="flex flex-col gap-8">
+    <div v-else class="flex flex-col gap-4 lg:gap-8">
       <div class="lg:hidden">
         <div class="retro-hero flex items-center gap-4">
           <div class="retro-hero__icon">
@@ -70,28 +63,14 @@ const user = usePage().props.auth.user
       <!-- Main Content -->
       <section class="min-w-0 flex-1 space-y-8">
         <PublicRoomsGrid
-          v-if="public_rooms && public_rooms.length"
-          :rooms="public_rooms"
+          v-if="catalog_items"
+          :catalog="catalog"
+          :catalog-items="catalog_items"
+          :catalog-category-id="catalog_category_id"
           :categories="public_categories"
+          :community-categories="community_categories"
           :hidden-category-ids="homepage_hidden_category_ids"
         />
-
-        <div v-if="minigames && minigames.length">
-          <MinigamesSlider :minigames="minigames" />
-        </div>
-
-        <div>
-          <HomeSectionHeader
-            :title="__('Private rooms')"
-            :subtitle="__('Community rooms created by players')"
-          />
-          <Rooms :rooms="private_rooms" id="privateRooms" layout="grid" :limit="12" />
-        </div>
-
-        <div v-if="user">
-          <HomeSectionHeader :title="__('My rooms')" />
-          <Rooms :rooms="user_rooms" id="userRooms" layout="grid" :limit="8" />
-        </div>
       </section>
 
       <!-- Sidebar -->

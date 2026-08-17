@@ -158,8 +158,6 @@ onMounted(() => {
 
 <template>
   <MinigamePlayLayout
-    :page-title="__('First letter')"
-    :meta-description="__('First letter meta description')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"

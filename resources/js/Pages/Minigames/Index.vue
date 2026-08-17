@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
 
@@ -12,12 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <Head>
-    <title>{{ __('Mini-games') }} | Blinest</title>
-    <meta head-key="minigames-description" name="description" :content="__('Mini-games meta description')" />
-    <meta head-key="minigames-keywords" name="keywords" :content="__('Mini-games meta keywords')" />
-  </Head>
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto max-w-3xl px-4 py-8">
         <Link
           :href="route('home')"

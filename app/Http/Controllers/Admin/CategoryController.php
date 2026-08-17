@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class CategoryController extends Controller
 {
@@ -64,6 +65,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        Head::title($category->name);
+
         return Inertia::render('Admin/Categories/Edit', [
             'category' => [
                 'id' => $category->id,

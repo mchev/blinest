@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 const page = usePage()
@@ -104,8 +104,7 @@ const levelProgression = [
 </script>
 
 <template>
-  <Head :title="__('Level System')" />
-  <AppLayout>
+<AppLayout>
     <div class="max-w-4xl mx-auto px-4 py-8 space-y-8">
       <!-- Header -->
       <div class="text-center space-y-4">

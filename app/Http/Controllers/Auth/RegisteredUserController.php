@@ -16,6 +16,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class RegisteredUserController extends Controller
 {
@@ -26,6 +27,8 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
+        Head::title(__('Register'))->robots('noindex, nofollow');
+
         return Inertia::render('Auth/Register');
     }
 

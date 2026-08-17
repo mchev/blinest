@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
+use App\Seo\RoomHead;
 use App\Services\RoomPresenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,11 +23,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class RoomController extends Controller
 {
+    public function __construct(private RoomHead $roomHead) {}
+
     public function index(Request $request)
     {
+        Head::title(__('My Rooms'));
+
         return Inertia::render('Rooms/Index', [
             'filters' => $request->all('search', 'trashed'),
             'rooms' => $request->user()->moderatedRooms()
@@ -72,8 +78,7 @@ class RoomController extends Controller
             $roundsCountFromCache = Cache::get("room_{$room->id}_rounds_count");
             $roundsCount = Cache::flexible("room_{$room->id}_rounds_count", [300, 900], fn () => $room->rounds()->count());
 
-            // Generate structured data server-side for SEO (even for password-protected rooms)
-            $structuredData = $this->generateStructuredData($room, $roundsCount);
+            $this->roomHead->apply($room, $roundsCount, isPasswordProtected: true);
 
             return Inertia::render('Rooms/Password', [
                 'room' => [
@@ -85,7 +90,6 @@ class RoomController extends Controller
                     'rounds_count' => $roundsCount,
                     'rounds_count_from_cache' => $roundsCountFromCache !== null,
                 ],
-                'structured_data' => $structuredData,
             ]);
         }
 
@@ -103,8 +107,7 @@ class RoomController extends Controller
         $tracksCountFromCache = Cache::get("room_{$room->id}_tracks_count");
         $tracksCount = Cache::flexible("room_{$room->id}_tracks_count", [300, 900], fn () => $room->tracks()->count());
 
-        // Generate structured data server-side for SEO
-        $structuredData = $this->generateStructuredData($room, $roundsCount);
+        $this->roomHead->apply($room, $roundsCount);
 
         return Inertia::render('Rooms/Show', [
             'room' => [
@@ -134,12 +137,13 @@ class RoomController extends Controller
                 'rounds_count_from_cache' => $roundsCountFromCache !== null,
             ],
             'public_rooms' => Room::isPublic()->orderBy('name')->select('id', 'slug', 'name', 'photo_path')->get(),
-            'structured_data' => $structuredData,
         ]);
     }
 
     public function create()
     {
+        Head::title('Create Room');
+
         return Inertia::render('Rooms/Create', [
             'categories' => Category::orderBy('name')->select('id', 'name')->get(),
         ]);
@@ -180,6 +184,8 @@ class RoomController extends Controller
 
         $available_playlists = Playlist::isPublic()->get()
             ->merge($user->moderatedPlaylists);
+
+        Head::title(__('Edit Room'));
 
         return Inertia::render('Rooms/Edit', [
             'room' => $room,
@@ -270,82 +276,6 @@ class RoomController extends Controller
         $room->deletePhoto();
 
         return Redirect::back()->with('success', __('Room picture deleted'));
-    }
-
-    /**
-     * Generate structured data for a room (SEO)
-     */
-    protected function generateStructuredData(Room $room, int $roundsCount): array
-    {
-        $description = $room->description ?: sprintf(
-            '%s est un quiz musical multijoueur gratuit sur Blinest. Les joueurs doivent identifier des chansons en écoutant des extraits audio.',
-            $room->name
-        );
-
-        $structuredData = [
-            '@context' => 'https://schema.org',
-            '@type' => 'VideoGame',
-            'name' => $room->name,
-            'description' => $description,
-            'url' => url('/rooms/'.$room->slug),
-            'image' => $room->photo ?: url('/images/statics/logo_blinest.png'),
-            'gamePlatform' => 'Web Browser',
-            'applicationCategory' => 'Game',
-            'genre' => $room->category?->name ?: 'Music Quiz',
-            'gameItem' => [
-                '@type' => 'Thing',
-                'name' => 'Blind test musical',
-                'description' => 'Jeu où les participants identifient des chansons en écoutant uniquement des extraits audio',
-            ],
-            'offers' => [
-                '@type' => 'Offer',
-                'price' => '0',
-                'priceCurrency' => 'EUR',
-                'availability' => 'https://schema.org/InStock',
-            ],
-            'publisher' => [
-                '@type' => 'Organization',
-                'name' => 'Blinest',
-                'url' => config('app.url'),
-                'logo' => [
-                    '@type' => 'ImageObject',
-                    'url' => url('/images/statics/logo_blinest.png'),
-                ],
-            ],
-            'inLanguage' => ['fr', 'en', 'es'],
-            'isAccessibleForFree' => true,
-            'playMode' => 'MultiPlayer',
-            'numberOfPlayers' => [
-                'minValue' => 1,
-                'maxValue' => 100,
-            ],
-            'datePublished' => $room->created_at?->toIso8601String(),
-            'dateModified' => $room->updated_at?->toIso8601String(),
-            'mainEntity' => [
-                '@type' => 'Thing',
-                'name' => 'Blind test musical multijoueur',
-                'description' => 'Jeu où plusieurs joueurs identifient simultanément des chansons en écoutant des extraits audio',
-            ],
-        ];
-
-        if ($roundsCount > 0) {
-            $structuredData['aggregateRating'] = [
-                '@type' => 'AggregateRating',
-                'ratingValue' => '4.5',
-                'ratingCount' => $roundsCount,
-                'bestRating' => '5',
-                'worstRating' => '1',
-            ];
-        }
-
-        if ($room->owner) {
-            $structuredData['author'] = [
-                '@type' => 'Person',
-                'name' => $room->owner->name,
-            ];
-        }
-
-        return $structuredData;
     }
 
     /**

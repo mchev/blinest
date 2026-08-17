@@ -1,18 +1,12 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
 const currentDate = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
 
 <template>
-  <Head>
-    <title>Créer des rooms et playlists - Guide complet | Blinest</title>
-    <meta name="description" content="Guide complet pour créer des rooms et playlists sur Blinest. Apprenez la différence entre rooms et playlists, comment ajouter des tracks, configurer les réponses, les points et les options de jeu." />
-    <meta name="keywords" content="créer room blinest, créer playlist blinest, ajouter tracks, réponses tracks, points blinest, options room" />
-    <link rel="canonical" href="https://blinest.com/docs/create-content" />
-  </Head>
-  <AppLayout>
+<AppLayout>
     <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <!-- Header -->
       <div class="text-center space-y-4">

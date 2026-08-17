@@ -109,7 +109,8 @@ Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
 
     // Rankings
     Route::get('rankings', [RankingController::class, 'index'])
-        ->name('rankings.index');
+        ->name('rankings.index')
+        ->withHead(title: 'Rankings');
     Route::get('rankings/level', [RankingController::class, 'byLevel'])
         ->name('rankings.level');
     Route::get('rankings/score', [RankingController::class, 'byScore'])
@@ -260,35 +261,35 @@ require __DIR__.'/rooms.php';
 require __DIR__.'/minigames.php';
 require __DIR__.'/admin.php';
 
-Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')->name('moderation.')->group(function () {
+Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')->name('moderation.')->withHead(robots: 'noindex, nofollow')->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->withHead(title: 'Tableau de bord');
 
     // Trashed Messages
-    Route::get('/trashed-messages', [TrashedMessageController::class, 'index'])->name('trashed-messages.index');
+    Route::get('/trashed-messages', [TrashedMessageController::class, 'index'])->name('trashed-messages.index')->withHead(title: 'Messages supprimés');
     Route::post('/trashed-messages/{message}/restore', [TrashedMessageController::class, 'restore'])->name('trashed-messages.restore');
     Route::delete('/trashed-messages/{message}', [TrashedMessageController::class, 'destroy'])->name('trashed-messages.destroy');
 
     // Banned Users
-    Route::get('/banned-users', [BannedUserController::class, 'index'])->name('banned-users.index');
+    Route::get('/banned-users', [BannedUserController::class, 'index'])->name('banned-users.index')->withHead(title: 'Utilisateurs bannis');
     Route::post('/banned-users/{user}/unban', [BannedUserController::class, 'unban'])->name('banned-users.unban');
     Route::post('/banned-users/{user}/ban', [BannedUserController::class, 'ban'])->name('banned-users.ban');
 
     // User Management
-    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
-    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show');
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index')->withHead(title: 'Gestion des utilisateurs');
+    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show')->withHead(title: 'Gestion des utilisateurs');
     Route::post('/users/{user}/warn', [UserManagementController::class, 'warn'])->name('users.warn');
     Route::post('/users/{user}/mute', [UserManagementController::class, 'mute'])->name('users.mute');
     Route::post('/users/{user}/unmute', [UserManagementController::class, 'unmute'])->name('users.unmute');
     Route::post('/users/{user}/ban', [UserManagementController::class, 'ban'])->name('users.ban');
 
     // Moderators
-    Route::get('/moderators', [ModeratorController::class, 'index'])->name('moderators.index');
+    Route::get('/moderators', [ModeratorController::class, 'index'])->name('moderators.index')->withHead(title: 'Modérateurs');
     Route::post('/moderators/{user}', [ModeratorController::class, 'store'])->name('moderators.store');
     Route::delete('/moderators/{user}', [ModeratorController::class, 'destroy'])->name('moderators.destroy');
 
     // Tracks Manager
-    Route::get('/tracks', [App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index');
+    Route::get('/tracks', [App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index')->withHead(title: 'Gestionnaire de pistes');
     Route::delete('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
     Route::put('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'update'])->name('tracks.update');
 

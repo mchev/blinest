@@ -121,8 +121,6 @@ onMounted(() => {
 
 <template>
   <MinigamePlayLayout
-    :page-title="__('Anagram')"
-    :meta-description="__('Anagram meta description')"
     :back-url="backUrl"
     :home-url="homeUrl"
     :questions-per-round="QUESTIONS_PER_ROUND"

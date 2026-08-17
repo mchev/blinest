@@ -1,7 +1,6 @@
 <template>
   <div>
-    <Head title="Create User" />
-    <h1 class="mb-8 text-3xl font-bold">
+<h1 class="mb-8 text-3xl font-bold">
       <Link class="text-gray-400 hover:text-teal-600" href="/users">{{ __('Users') }}</Link>
       <span class="font-medium text-gray-400">/</span> Create
     </h1>
@@ -30,7 +29,7 @@
 </template>
 
 <script>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -40,7 +39,6 @@ import LoadingButton from '@/Components/LoadingButton.vue'
 export default {
   components: {
     FileInput,
-    Head,
     Link,
     LoadingButton,
     SelectInput,

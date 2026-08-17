@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class TeamController extends AdminController
 {
@@ -51,6 +52,8 @@ class TeamController extends AdminController
 
     public function edit(Team $team)
     {
+        Head::title($team->name);
+
         return Inertia::render('Admin/Teams/Edit', [
             'team' => [
                 'id' => $team->id,

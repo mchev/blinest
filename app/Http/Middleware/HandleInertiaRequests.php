@@ -97,7 +97,7 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'ziggy' => function () use ($request) {
-                $routes = Cache::remember('inertia_ziggy_routes_v1', 3600, fn () => (new Ziggy)->toArray());
+                $routes = Cache::remember('inertia_ziggy_routes_v2', 3600, fn () => (new Ziggy)->toArray());
 
                 return array_merge($routes, [
                     'location' => $request->url(),
@@ -118,7 +118,7 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v18_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v24_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );

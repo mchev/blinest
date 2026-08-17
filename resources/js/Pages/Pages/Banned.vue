@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import Tip from '@/Components/Tip.vue'
@@ -9,10 +8,7 @@ defineProps({
 })
 </script>
 <template>
-  <Head>
-    <title>{{ __('You have been banned!') }}</title>
-  </Head>
-  <AppLayout>
+<AppLayout>
     <Card class="mx-auto">
       <template #header>
         <div class="flex w-full items-center justify-between">

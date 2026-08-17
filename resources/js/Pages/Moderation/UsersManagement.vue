@@ -1,5 +1,5 @@
 <script setup>
-import { Head, router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import Layout from './Layout.vue'
 import { ref, watch } from 'vue'
 import debounce from 'lodash/debounce'

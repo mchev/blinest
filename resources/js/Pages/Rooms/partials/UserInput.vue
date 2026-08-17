@@ -313,6 +313,19 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
           </button>
         </div>
       </div>
+
+      <div class="room-answer-feedback" aria-live="polite" aria-atomic="true">
+        <transition name="fade">
+          <blockquote
+            v-if="message"
+            class="room-answer-feedback__message"
+            :class="messageClass"
+          >
+            <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-brand-secondary flex-shrink-0" />
+            <span>{{ message.body }}</span>
+          </blockquote>
+        </transition>
+      </div>
     </div>
   </form>
 
@@ -338,17 +351,6 @@ const getFoundAnswer = (answerId) => answers.value.find(a => a.id === answerId)
         </template>
       </li>
     </transition-group>
-
-    <transition name="fade">
-      <blockquote
-        v-if="message"
-        class="mt-2 flex items-center gap-2 px-4 py-2 text-white shadow-lg"
-        :class="messageClass"
-      >
-        <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 text-brand-secondary flex-shrink-0" />
-        <span>{{ message.body }}</span>
-      </blockquote>
-    </transition>
-    </div>
+  </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import FileInput from '@/Components/FileInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -14,8 +14,7 @@ const store = () => {
 }
 </script>
 <template>
-  <Head title="Create Team" />
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.teams')">{{ __('Teams') }}</Link>
       <span class="font-medium text-gray-400">/</span> Create

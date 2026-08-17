@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
@@ -17,8 +17,7 @@ const store = () => {
 }
 </script>
 <template>
-  <Head title="Create Category" />
-  <AdminLayout>
+<AdminLayout>
     <Card>
       <template #header>
         <h1 class="text-3xl font-bold">

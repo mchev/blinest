@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Head, router } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import Layout from './Layout.vue'
 import Card from '@/Components/Card.vue'
 import debounce from 'lodash/debounce'

@@ -1,11 +1,10 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { Head, Link, useForm, router } from '@inertiajs/vue3'
+import { Link, useForm, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
 import TextInput from '@/Components/TextInput.vue'
 import FAQ from './partials/FAQ.vue'
-import FAQStructuredData from '@/Components/FAQStructuredData.vue'
 import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
 import throttle from 'lodash/throttle'
@@ -65,8 +64,6 @@ watch(
 </script>
 
 <template>
-  <Head title="FAQ" />
-  <FAQStructuredData v-if="faqs.data.length > 0" :faqs="faqs.data" />
   <AppLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="mb-8 sm:mb-12">

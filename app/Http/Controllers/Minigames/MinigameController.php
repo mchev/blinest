@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Minigames;
 
 use App\Http\Controllers\Controller;
 use App\Models\MinigameScore;
+use App\Seo\MinigameHead;
 use App\Services\Minigames\MinigameScoreService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class MinigameController extends Controller
 {
+    public function __construct(private MinigameHead $minigameHead) {}
+
     /**
      * Build the list of minigames with play URLs and scores (for index and home slider).
      *
@@ -61,6 +64,8 @@ class MinigameController extends Controller
 
     public function index(Request $request)
     {
+        $this->minigameHead->applyIndex();
+
         $user = $request->user();
         $scoreService = app(MinigameScoreService::class);
         $scoresByType = $scoreService->getTotalsByTypeForUser($user);

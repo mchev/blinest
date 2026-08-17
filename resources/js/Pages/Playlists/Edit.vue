@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
+import { Link, useForm, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -53,8 +53,7 @@ const confirmRestore = () => {
 }
 </script>
 <template>
-  <Head :title="`${form.name}`" />
-  <AppLayout>
+<AppLayout>
     <!-- Header -->
     <div class="mb-6 flex items-center justify-between w-full gap-4">
       <nav>

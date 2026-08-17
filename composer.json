@@ -13,11 +13,12 @@
         "ext-gd": "*",
         "getbrevo/brevo-php": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
-        "inertiajs/inertia-laravel": "^2.0",
+        "inertiajs/inertia-laravel": "^3.1",
         "intervention/image": "^4.0",
         "james-heinrich/getid3": "^1.9",
         "jwilsson/spotify-web-api-php": "^6.1",
         "laravel/framework": "^13.0",
+        "laravel/head": "^0.2",
         "laravel/horizon": "^5.22",
         "laravel/nightwatch": "^1.11",
         "laravel/reverb": "^1.0",
@@ -45,6 +46,7 @@
         "barryvdh/laravel-debugbar": "^4.0",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.0",
+        "laravel/pail": "^1.2",
         "laravel/pint": "^1.18",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
@@ -80,6 +82,13 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "ci:check": [
+            "Composer\\Config::disableProcessTimeout",
+            "npm run lint:check",
+            "npm run format:check",
+            "npm run types:check",
+            "@test"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",

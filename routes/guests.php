@@ -1,87 +1,69 @@
 <?php
 
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Docs\CreateContentController;
-use App\Http\Controllers\Docs\EloController;
-use App\Http\Controllers\Docs\GlossaryController;
-use App\Http\Controllers\Docs\HowToController;
-use App\Http\Controllers\Docs\OverviewController;
-use App\Http\Controllers\FAQController;
 use App\Http\Controllers\GuestJoinController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LevelController;
+use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialController;
+use App\Seo\LocaleUrl;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+$registerLocalizableRoutes = require __DIR__.'/localizable.php';
 
 // Banned users
 Route::get('/user/banned', [PageController::class, 'bannedUser']);
 
+// Crawlers & GEO
+Route::get('/robots.txt', RobotsController::class)->name('robots');
+Route::get('/llms.txt', LlmsTxtController::class)->name('llms');
+
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
-// FAQ
-Route::get('/faq', [FAQController::class, 'index'])
-    ->name('faq');
-
-// Documentation
-Route::get('/docs', [OverviewController::class, 'index'])
-    ->name('docs.index');
-
-Route::get('/docs/level', [LevelController::class, 'index'])
-    ->name('docs.level');
-
-Route::get('/docs/faq', [FAQController::class, 'index'])
-    ->name('docs.faq');
-
-Route::get('/docs/elo', [EloController::class, 'index'])
-    ->name('docs.elo');
-
-Route::get('/docs/glossary', [GlossaryController::class, 'index'])
-    ->name('docs.glossary');
-
-Route::get('/docs/howto', [HowToController::class, 'index'])
-    ->name('docs.howto');
-
-Route::get('/docs/create-content', [CreateContentController::class, 'index'])
-    ->name('docs.create-content');
-
-// Pages
-Route::get('/pages/{slug}', [PageController::class, 'show'])
-    ->name('pages.show');
-
-// Contact
-Route::get('/contact', [ContactController::class, 'index'])
-    ->name('contact');
+// Contact form (POST stays at root for all locales)
 Route::post('/contact', [ContactController::class, 'send'])
     ->name('contact.send');
 
 // Auth Social Providers
-
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])
     ->name('auth.redirect');
 
 Route::get('/callback/{provider}', [SocialController::class, 'callback'])
     ->name('auth.callback');
 
-// Language
+// Language switcher endpoint (prefixed URL for SEO pages, session fallback elsewhere)
+Route::get('language/{language}', function (string $language) {
+    $availableLocales = LocaleUrl::availableLocales();
 
-Route::get('language/{language}', function ($language) {
-    $availableLocales = config('app.available_locales', ['fr', 'en']);
-
-    // Valider que la langue demandée est disponible
-    if (! in_array($language, $availableLocales)) {
+    if (! in_array($language, $availableLocales, true)) {
         abort(404, 'Language not available');
     }
 
-    Session()->put('locale', $language);
+    session()->put('locale', $language);
+
+    $referer = request()->headers->get('referer');
+    $path = '/';
+
+    if (is_string($referer) && $referer !== '') {
+        $parsedPath = parse_url($referer, PHP_URL_PATH);
+        $path = is_string($parsedPath) && $parsedPath !== '' ? $parsedPath : '/';
+    }
+
+    $stripped = LocaleUrl::stripLocalePrefix($path);
+
+    if (LocaleUrl::isLocalizablePath($stripped)) {
+        return redirect()->to(
+            LocaleUrl::localizedPath(ltrim($stripped, '/'), $language),
+        );
+    }
 
     return redirect()->back();
 })->name('language');
 
 // Guest join (no auth, no banned check)
-// GET volontairement : navigation classique + redirect naturelle, pas de complexité Inertia/axios
 Route::get('rooms/{room:slug}/guest-join', GuestJoinController::class)
     ->name('rooms.guest-join');
 
@@ -104,17 +86,14 @@ Route::middleware('auth')->group(function () {
     })->name('guest.to-register');
 });
 
-Route::middleware(['auth.banned', 'ip.banned'])->group(function () {
+// French (default) — unchanged URLs at root
+$registerLocalizableRoutes('');
 
-    // Home
-    Route::get('/', [HomeController::class, 'index'])
-        ->name('home');
+// English & Spanish prefixed surfaces
+Route::prefix('en')->group(function () use ($registerLocalizableRoutes): void {
+    $registerLocalizableRoutes('en.');
+});
 
-    // Room
-    Route::get('rooms/{room:slug}/public-state', [RoomController::class, 'publicState'])
-        ->name('rooms.public-state')
-        ->middleware('throttle:120,1');
-
-    Route::get('rooms/{room:slug}', [RoomController::class, 'show'])
-        ->name('rooms.show');
+Route::prefix('es')->group(function () use ($registerLocalizableRoutes): void {
+    $registerLocalizableRoutes('es.');
 });

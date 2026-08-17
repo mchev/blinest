@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PlaylistController extends Controller
@@ -24,6 +25,8 @@ class PlaylistController extends Controller
         if (! auth()->user()->moderatedPlaylists()->count()) {
             return redirect()->route('playlists.create');
         }
+
+        Head::title(__('My Playlists'));
 
         return Inertia::render('Playlists/Index', [
             'filters' => Request::all('search', 'trashed'),
@@ -57,6 +60,8 @@ class PlaylistController extends Controller
 
     public function create()
     {
+        Head::title('Create Playlist');
+
         return Inertia::render('Playlists/Create');
     }
 
@@ -124,6 +129,8 @@ class PlaylistController extends Controller
             $totalTracks = Cache::remember('playlist_total_tracks_'.$playlist->id, 30 * 60, function () use ($playlist) {
                 return $playlist->tracks()->count();
             });
+
+            Head::title($playlist->name);
 
             return Inertia::render('Playlists/Edit', [
                 'playlist' => [

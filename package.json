@@ -5,13 +5,14 @@
         "dev": "vite",
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr",
-        "fix:eslint": "eslint --ext .js,.vue resources/js/ --fix",
-        "fix:prettier": "prettier --write --loglevel warn 'resources/js/**/*.vue'",
-        "fix-code-style": "npm run fix:prettier && npm run fix:eslint"
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/",
+        "lint": "eslint . --fix",
+        "lint:check": "eslint .",
+        "types:check": "vue-tsc --noEmit"
     },
     "devDependencies": {
-        "@inertiajs/server": "^0.1.0",
-        "@inertiajs/vue3": "^2.0.8",
+        "@inertiajs/vue3": "^3.6.1",
         "@popperjs/core": "^2.11.0",
         "@tailwindcss/typography": "^0.5.7",
         "@tiptap/starter-kit": "^2.1.12",
@@ -19,6 +20,7 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/server-renderer": "^3.5.13",
         "autoprefixer": "^10.4.7",
+        "axios": "^1.19.0",
         "chart.js": "^4.4.1",
         "eslint": "^9.19.0",
         "eslint-plugin-vue": "^9.9.0",

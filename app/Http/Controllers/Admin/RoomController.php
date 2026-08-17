@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class RoomController extends AdminController
 {
@@ -101,6 +102,8 @@ class RoomController extends AdminController
 
     public function edit(Room $room)
     {
+        Head::title(__('Edit Room'));
+
         return Inertia::render('Admin/Rooms/Edit', [
             'room' => $room->makeVisible(['discord_webhook_url']),
             'categories' => Category::orderBy('name')->get(),

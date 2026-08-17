@@ -1,5 +1,4 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
 import { usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
@@ -15,8 +14,7 @@ const __ = (key, replace = {}) => {
 </script>
 
 <template>
-  <Head :title="__('Rankings')" />
-  <AppLayout>
+<AppLayout>
     <section>
       <div class="mx-auto py-8 px-4">
         <div class="mx-auto mb-8 text-center">

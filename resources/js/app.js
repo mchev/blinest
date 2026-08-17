@@ -1,41 +1,53 @@
 import './bootstrap';
 import '../css/app.css';
-import { createApp, h } from 'vue'
+import { createApp, createSSRApp, h } from 'vue'
 import { createInertiaApp, router } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
+import { route as ziggyRoute } from 'ziggy-js';
 import Translation from './translation';
 import { scheduleEzoicSync } from './ezoic';
-import { initChamferBorders, watchChamferBorders } from './chamfer-borders';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Blinest Music Quiz';
+function createLocalizedRoute(route) {
+    return function localizedRoute(name, params, absolute, config) {
+        const page = this?.$page ?? this?.page;
+        const locale = page?.props?.locale ?? 'fr';
+        const ziggy = config ?? page?.props?.ziggy;
+        const localizedName = locale && locale !== 'fr' ? `${locale}.${name}` : name;
 
-function syncChamferBorders() {
-    requestAnimationFrame(() => initChamferBorders());
+        try {
+            return route(localizedName, params, absolute, ziggy);
+        } catch {
+            return route(name, params, absolute, ziggy);
+        }
+    };
 }
 
 router.on('finish', (event) => {
     const path = new URL(event.detail.visit.url, window.location.origin).pathname;
 
     scheduleEzoicSync(path);
-    syncChamferBorders();
 });
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    serverHead: true,
     resolve: (name) => resolvePageComponent(
         `./Pages/${name}.vue`,
         import.meta.glob('./Pages/**/*.vue'),
     ),
     setup({ el, App, props, plugin }) {
-        const app = createApp({ render: () => h(App, props) })
+        const createVueApp = el.hasAttribute('data-server-rendered') ? createSSRApp : createApp;
+
+        const app = createVueApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
-            .mixin(Translation)
-            .mount(el);
+            .mixin(Translation);
+
+        app.config.globalProperties.route = createLocalizedRoute(ziggyRoute);
+
+        app.mount(el);
 
         scheduleEzoicSync(window.location.pathname);
-        watchChamferBorders();
 
         return app;
     },

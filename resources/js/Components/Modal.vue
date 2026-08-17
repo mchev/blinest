@@ -1,6 +1,5 @@
 <script setup>
 import { computed, onMounted, onUnmounted, watch, nextTick, ref, useId } from 'vue'
-import { initChamferBorders } from '@/chamfer-borders'
 import {
   assignDialogLabel,
   focusInitialElement,
@@ -41,8 +40,6 @@ watch(
       document.body.style.overflow = 'hidden'
       await nextTick()
       requestAnimationFrame(() => {
-        initChamferBorders()
-
         if (dialogRef.value) {
           labelledBy.value = assignDialogLabel(dialogRef.value, fallbackLabelId)
           focusInitialElement(dialogRef.value)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Seo\LocaleUrl;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,81 +10,36 @@ use Symfony\Component\HttpFoundation\Response;
 class SetLocale
 {
     /**
-     * Handle an incoming request.
-     *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $availableLocales = config('app.available_locales', ['fr', 'en']);
-        $defaultLocale = config('app.locale', 'fr');
+        $availableLocales = LocaleUrl::availableLocales();
+        $defaultLocale = LocaleUrl::defaultLocale();
+        $pathLocale = LocaleUrl::localeFromPath($request->path());
 
-        // Si l'utilisateur a déjà choisi une langue dans la session, l'utiliser
-        if (session()->has('locale')) {
+        if ($pathLocale !== null && in_array($pathLocale, LocaleUrl::prefixedLocales(), true)) {
+            app()->setLocale($pathLocale);
+            session()->put('locale', $pathLocale);
+        } elseif (LocaleUrl::isSearchEngineBot($request) && $pathLocale === null) {
+            app()->setLocale($defaultLocale);
+        } elseif (session()->has('locale')) {
             $locale = session('locale');
-            if (in_array($locale, $availableLocales)) {
+
+            if (is_string($locale) && in_array($locale, $availableLocales, true)) {
                 app()->setLocale($locale);
-
-                return $next($request);
+            } else {
+                app()->setLocale($defaultLocale);
             }
-        }
-
-        // Sinon, essayer de détecter la langue du navigateur
-        $browserLocale = $this->detectBrowserLocale($request, $availableLocales);
-        if ($browserLocale) {
-            app()->setLocale($browserLocale);
-            // Sauvegarder la détection automatique en session pour éviter de redétecter à chaque requête
-            session()->put('locale', $browserLocale);
         } else {
-            // Utiliser la locale par défaut
             app()->setLocale($defaultLocale);
         }
 
-        return $next($request);
-    }
+        /** @var Response $response */
+        $response = $next($request);
 
-    /**
-     * Detect browser locale from Accept-Language header
-     */
-    private function detectBrowserLocale(Request $request, array $availableLocales): ?string
-    {
-        $acceptLanguage = $request->header('Accept-Language');
+        $response->headers->set('Content-Language', app()->getLocale());
 
-        if (! $acceptLanguage) {
-            return null;
-        }
-
-        // Parser l'en-tête Accept-Language
-        // Format: "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7"
-        $languages = [];
-        $parts = explode(',', $acceptLanguage);
-
-        foreach ($parts as $part) {
-            $part = trim($part);
-            if (strpos($part, ';') !== false) {
-                [$locale, $quality] = explode(';', $part);
-                $quality = (float) str_replace('q=', '', $quality);
-            } else {
-                $locale = $part;
-                $quality = 1.0;
-            }
-
-            // Extraire le code de langue principal (ex: "fr" depuis "fr-FR")
-            $locale = strtolower(explode('-', $locale)[0]);
-
-            if (in_array($locale, $availableLocales)) {
-                $languages[$locale] = $quality;
-            }
-        }
-
-        if (empty($languages)) {
-            return null;
-        }
-
-        // Trier par qualité décroissante
-        arsort($languages);
-
-        // Retourner la première langue disponible avec la meilleure qualité
-        return array_key_first($languages);
+        return $response;
     }
 }

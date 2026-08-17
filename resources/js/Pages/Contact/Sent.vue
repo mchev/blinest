@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
 import Button from '@/Components/LoadingButton.vue'
@@ -14,9 +14,7 @@ const send = () => {
 }
 </script>
 <template>
-  <Head :title="__('Contact')" />
-
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto flex w-full max-w-2xl flex-col">
       <Card class="mb-4">
         <template #header>

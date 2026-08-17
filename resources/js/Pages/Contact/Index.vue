@@ -1,5 +1,5 @@
 <script setup>
-import { Head, usePage, useForm } from '@inertiajs/vue3'
+import { usePage, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import TextareaInput from '@/Components/TextareaInput.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -17,12 +17,7 @@ const send = () => {
 }
 </script>
 <template>
-  <Head>
-    <title>{{ __('Contact') }}</title>
-    <meta name="description" content="Envoyez votre message à Blinest. Réponse garantie!" />
-  </Head>
-
-  <AppLayout>
+<AppLayout>
     <div class="mx-auto flex w-full max-w-2xl flex-col">
       <Card class="mb-4">
         <template #header>

@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
@@ -16,8 +16,7 @@ const store = () => {
 }
 </script>
 <template>
-  <Head title="Create Playlist" />
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
       <span class="font-medium text-gray-400">/</span> Create

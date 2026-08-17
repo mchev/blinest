@@ -4,8 +4,7 @@
     target="_blank"
     rel="external nofollow"
     data-umami-event="Ouvrage banner click"
-    class="group relative block overflow-hidden border border-white/10 bg-gradient-to-br from-brand-deep to-brand-midnight p-4 transition hover:border-white/20"
-    style="clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))"
+    class="group relative block overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-brand-deep to-brand-midnight p-4 transition hover:border-white/20"
   >
     <div class="mb-3 flex items-start gap-3">
       <img

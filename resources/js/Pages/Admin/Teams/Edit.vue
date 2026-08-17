@@ -1,6 +1,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import SelectInput from '@/Components/SelectInput.vue'
@@ -36,8 +36,7 @@ const restore = () => {
 }
 </script>
 <template>
-  <Head :title="form.name" />
-  <AdminLayout>
+<AdminLayout>
     <div class="mb-8 flex items-center">
       <img v-if="team.photo" class="mr-4 block h-8 w-8 rounded-full" :src="team.photo" />
       <h1 class="text-3xl font-bold">

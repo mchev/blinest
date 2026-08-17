@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class PageController extends Controller
 {
@@ -67,6 +68,8 @@ class PageController extends Controller
      */
     public function edit(Page $page)
     {
+        Head::title($page->title);
+
         return Inertia::render('Admin/Pages/Edit', [
             'page' => $page,
         ]);

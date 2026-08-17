@@ -1,8 +1,6 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import GlossaryStructuredData from '@/Components/GlossaryStructuredData.vue'
-
 const definitions = [
   {
     term: 'Blind test',
@@ -92,14 +90,7 @@ const definitions = [
 </script>
 
 <template>
-  <GlossaryStructuredData />
-  <Head>
-    <title>Glossaire - Définitions des termes Blinest | Blinest</title>
-    <meta name="description" content="Définitions claires et précises des termes utilisés sur Blinest : blind test, quiz musical, room, round, track, score, level, ELO, XP, playlist et plus encore." />
-    <meta name="keywords" content="glossaire blinest, définition blind test, quiz musical définition, room définition, ELO définition, score définition, level définition" />
-    <link rel="canonical" href="https://blinest.com/docs/glossary" />
-  </Head>
-  <AppLayout>
+<AppLayout>
     <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
       <!-- Header -->
       <div class="text-center space-y-4">

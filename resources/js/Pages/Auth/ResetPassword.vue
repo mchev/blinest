@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
 import Card from '@/Components/Card.vue'
-import { Head, useForm } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 
 const props = defineProps({
   email: String,
@@ -24,9 +24,7 @@ const submit = () => {
 
 <template>
   <AppLayout>
-    <Head :title="__('Reset Password')" />
-
-    <Card class="mx-auto max-w-xl">
+<Card class="mx-auto max-w-xl">
       <template #header>
         {{ __('Reset Password') }}
       </template>

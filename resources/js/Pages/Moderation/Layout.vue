@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { Head, Link, usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
 
@@ -77,8 +77,7 @@ const toggleSidebar = () => {
 </script>
 
 <template>
-  <Head :title="title" />
-  <div class="min-h-screen flex flex-col">
+<div class="min-h-screen flex flex-col">
     <div class="flex-1 flex flex-col">
       <div class="flex h-full">
         <button

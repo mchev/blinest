@@ -132,8 +132,8 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
-                ->where('public_rooms.0.is_playing', true)
-                ->where('public_rooms.0.current_track_index', 3));
+                ->where('catalog_items.data.0.is_playing', true)
+                ->where('catalog_items.data.0.current_track_index', 3));
     }
 
     public function test_room_public_state_endpoint_returns_live_progress(): void
@@ -204,9 +204,10 @@ class HomePerformanceTest extends TestCase
                 ->component('Home/Index')
                 ->has('public_categories', 1)
                 ->where('public_categories.0.rooms_count', 15)
-                ->where('public_rooms', fn ($rooms) => count($rooms) === 15)
-                ->where('public_rooms.0.category.id', $category->id)
-                ->where('public_rooms.0.category.name', 'Rock'));
+                ->where('catalog_items.data', fn ($rooms) => count($rooms) === 15)
+                ->where('catalog_items.total', 15)
+                ->where('catalog_items.data.0.category.id', $category->id)
+                ->where('catalog_items.data.0.category.name', 'Rock'));
     }
 
     public function test_homepage_public_rooms_are_sorted_by_popularity(): void
@@ -274,11 +275,11 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
-                ->where('public_rooms.0.name', 'Busy Room')
-                ->where('public_rooms.1.name', 'Quiet Room')
-                ->where('public_rooms.2.name', 'Popular History Room')
-                ->where('public_rooms.0.rounds_count', 1)
-                ->where('public_rooms.2.rounds_count', 5));
+                ->where('catalog_items.data.0.name', 'Busy Room')
+                ->where('catalog_items.data.1.name', 'Quiet Room')
+                ->where('catalog_items.data.2.name', 'Popular History Room')
+                ->where('catalog_items.data.0.rounds_count', 1)
+                ->where('catalog_items.data.2.rounds_count', 5));
     }
 
     public function test_homepage_exposes_hidden_category_ids_for_seasonal_rooms(): void
@@ -332,9 +333,214 @@ class HomePerformanceTest extends TestCase
 
         $this->get(route('home'))->assertOk();
 
+        $this->get(route('home', ['tab' => 'community']))->assertOk();
+
         $this->assertTrue(Cache::has('homepage-featured-rooms-v2'));
         $this->assertTrue(Cache::has('homepage-public-rooms-v4'));
         $this->assertTrue(Cache::has('homepage-public-categories-v3'));
-        $this->assertTrue(Cache::has('homepage-private-rooms-v2'));
+        $this->assertTrue(Cache::has('homepage-community-categories-v1'));
+        $this->assertTrue(Cache::has('homepage-community-room-index-v1'));
+    }
+
+    public function test_homepage_does_not_load_community_rooms_by_default(): void
+    {
+        $category = Category::create(['name' => 'Community']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Community Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'official')
+                ->missing('private_rooms')
+                ->has('community_categories', 1)
+                ->where('community_categories.0.rooms_count', 1)
+                ->where('catalog_items.data', fn ($rooms) => collect($rooms)->doesntContain(
+                    fn ($room) => ($room['name'] ?? '') === 'Community Room',
+                )));
+    }
+
+    public function test_community_catalog_returns_paginated_private_rooms(): void
+    {
+        $category = Category::create(['name' => 'Indie']);
+        $owner = User::factory()->create();
+
+        for ($i = 0; $i < 20; $i++) {
+            Room::create([
+                'name' => "Community Room {$i}",
+                'user_id' => $owner->id,
+                'category_id' => $category->id,
+                'is_public' => false,
+                'is_featured' => false,
+                'track_duration' => 30,
+                'tracks_by_round' => 10,
+            ]);
+        }
+
+        Room::create([
+            'name' => 'Password Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'password' => 'secret',
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'community')
+                ->has('catalog_items.data', 16)
+                ->where('catalog_items.total', 20)
+                ->where('catalog_items.last_page', 2));
+
+        $this->get(route('home', ['tab' => 'community', 'catalog' => 2]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('catalog_items.data', 4));
+
+        $this->get(route('home', ['tab' => 'community', 'category_id' => $category->id]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog_items.total', 20));
+    }
+
+    public function test_community_catalog_is_sorted_by_player_count(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $quietRoom = Room::create([
+            'name' => 'Quiet Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $busyRoom = Room::create([
+            'name' => 'Busy Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($quietRoom, $busyRoom): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturnUsing(function ($rooms) use ($quietRoom, $busyRoom) {
+                    $counts = [];
+
+                    foreach ($rooms as $room) {
+                        $id = is_array($room) ? $room['id'] : $room->id;
+                        $counts[$id] = match ($id) {
+                            $busyRoom->id => 42,
+                            $quietRoom->id => 3,
+                            default => 0,
+                        };
+                    }
+
+                    return $counts;
+                });
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('catalog_items.data', 2)
+                ->where('catalog_items.data.0.id', $busyRoom->id)
+                ->where('catalog_items.data.0.subscriptions', 42)
+                ->where('catalog_items.data.1.id', $quietRoom->id));
+    }
+
+    public function test_mine_catalog_is_empty_when_user_has_no_private_rooms(): void
+    {
+        $user = User::factory()->create();
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->actingAs($user)
+            ->get(route('home', ['tab' => 'mine']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'mine')
+                ->where('catalog_items.data', [])
+                ->where('catalog_items.total', 0));
+    }
+
+    public function test_catalog_partial_reload_only_fetches_catalog_props(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        Room::create([
+            'name' => 'Official Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        for ($i = 0; $i < 20; $i++) {
+            Room::create([
+                'name' => "Community Room {$i}",
+                'user_id' => $owner->id,
+                'category_id' => $category->id,
+                'is_public' => false,
+                'is_featured' => false,
+                'track_duration' => 30,
+                'tracks_by_round' => 10,
+            ]);
+        }
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog', 'community')
+                ->reloadOnly(['catalog', 'catalog_items', 'catalog_category_id'], fn (Assert $reload) => $reload
+                    ->where('catalog', 'community')
+                    ->has('catalog_items.data', 16)
+                    ->missing('featured_rooms')
+                    ->missing('public_categories')
+                    ->missing('community_categories')
+                ));
     }
 }

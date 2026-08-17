@@ -1,7 +1,6 @@
 <template>
   <div>
-    <Head title="Users" />
-    <h1 class="mb-8 text-3xl font-bold">Users ({{ users.total }})</h1>
+<h1 class="mb-8 text-3xl font-bold">Users ({{ users.total }})</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset">
         <label class="mt-4 block text-gray-700">{{ __('Trashed:') }}</label>
@@ -76,7 +75,7 @@
 </template>
 
 <script>
-import { Head, Link } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
@@ -87,9 +86,7 @@ import Pagination from '@/Components/Pagination.vue'
 import Card from '@/Components/Card.vue'
 
 export default {
-  components: {
-    Head,
-    Icon,
+  components: { Icon,
     Link,
     SearchFilter,
     Pagination,

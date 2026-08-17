@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import TextInput from '@/Components/TextInput.vue'
 import LoadingButton from '@/Components/LoadingButton.vue'
@@ -13,8 +13,7 @@ const store = () => {
 }
 </script>
 <template>
-  <Head title="Create Category" />
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/categories">{{ __('Categories') }}</Link>
       <span class="font-medium text-indigo-400">/</span> Create

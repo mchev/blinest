@@ -16,12 +16,15 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class UserController extends Controller
 {
     public function show()
     {
         $user = Auth::user();
+
+        Head::title($user->name);
 
         return Inertia::render('Me/Show', [
             'user' => [

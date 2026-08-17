@@ -1,3 +1,0 @@
-User-agent: *
-Disallow:
-Sitemap: https://blinest.com/sitemap.xml

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Head\Facades\Head;
 
 class ConfirmablePasswordController extends Controller
 {
@@ -18,6 +19,8 @@ class ConfirmablePasswordController extends Controller
      */
     public function show(): Response
     {
+        Head::title('Confirm Password')->robots('noindex, nofollow');
+
         return Inertia::render('Auth/ConfirmPassword');
     }
 

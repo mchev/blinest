@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class FAQController extends Controller
 {
@@ -63,6 +64,8 @@ class FAQController extends Controller
      */
     public function edit(FAQ $faq)
     {
+        Head::title('Edit FAQ');
+
         return Inertia::render('Admin/FAQ/Edit', [
             'faq' => $faq,
         ]);

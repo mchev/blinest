@@ -77,8 +77,7 @@ export default {
       if (event.stopPropagation) {
         event.stopPropagation()
       }
-      router.visit(this.route('language', [selectedLocale]), {
-        preserveState: true,
+      router.visit(this.route('language', selectedLocale), {
         preserveScroll: true,
       })
     },

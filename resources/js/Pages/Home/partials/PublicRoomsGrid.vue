@@ -1,14 +1,29 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { Link, router, usePage } from '@inertiajs/vue3'
+import { useCatalogLoadMore } from '@/composables/useCatalogLoadMore'
 import Room from './Room.vue'
-import HomeSectionHeader from './HomeSectionHeader.vue'
+import MinigameCard from './MinigameCard.vue'
+import Icon from '@/Components/Icon.vue'
 
 const props = defineProps({
-  rooms: {
+  catalog: {
+    type: String,
+    default: 'official',
+  },
+  catalogItems: {
+    type: Object,
+    required: true,
+  },
+  catalogCategoryId: {
+    type: [Number, String, null],
+    default: null,
+  },
+  categories: {
     type: Array,
     default: () => [],
   },
-  categories: {
+  communityCategories: {
     type: Array,
     default: () => [],
   },
@@ -18,114 +33,412 @@ const props = defineProps({
   },
 })
 
-const selectedCategoryId = ref('')
-const showAll = ref(false)
-const initialLimit = 16
+const page = usePage()
+const pendingTab = ref(null)
+const pendingFilter = ref(false)
+const selectedCategoryId = ref(props.catalogCategoryId ? String(props.catalogCategoryId) : '')
 
-const sortedRooms = computed(() =>
-  [...(props.rooms || [])].sort(
-    (a, b) =>
-      (b.subscriptions ?? 0) - (a.subscriptions ?? 0)
-      || (b.rounds_count ?? 0) - (a.rounds_count ?? 0),
-  ),
+const user = computed(() => page.props.auth?.user ?? null)
+
+const displayCatalog = computed(() => pendingTab.value ?? props.catalog)
+
+const showTabSkeleton = computed(() => pendingTab.value !== null)
+
+const showFilterOverlay = computed(() => pendingFilter.value && pendingTab.value === null)
+
+const t = (key, replace = {}) => {
+  let translation = page.props.language?.[key] ?? key
+
+  Object.entries(replace).forEach(([placeholder, value]) => {
+    translation = translation.replace(`:${placeholder}`, String(value))
+  })
+
+  return translation
+}
+
+const tabs = computed(() => {
+  const items = [
+    { id: 'official', label: t('Official rooms') },
+    { id: 'community', label: t('Private rooms') },
+  ]
+
+  if (user.value) {
+    items.push({ id: 'mine', label: t('My rooms') })
+  }
+
+  items.push({ id: 'minigames', label: t('Mini-games') })
+
+  return items
+})
+
+const switchTabsClass = computed(() => `home-rooms-switch--tabs-${tabs.value.length}`)
+
+const showCategoryFilter = computed(() =>
+  displayCatalog.value === 'official' || displayCatalog.value === 'community',
 )
 
-const isHiddenByDefault = (room) =>
-  props.hiddenCategoryIds.includes(room.category?.id)
+const isMinigamesCatalog = computed(() => displayCatalog.value === 'minigames')
 
-const filteredRooms = computed(() => {
+const catalogHeading = computed(() => {
+  const tab = tabs.value.find((item) => item.id === displayCatalog.value)
+
+  return tab?.label ?? t('Home catalog')
+})
+
+const catalogSeoIntro = computed(() => {
+  if (isMinigamesCatalog.value) {
+    return t('Mini-games SEO intro')
+  }
+
+  if (displayCatalog.value === 'community') {
+    return t('Community rooms SEO intro')
+  }
+
+  if (displayCatalog.value === 'mine') {
+    return t('My rooms SEO intro')
+  }
+
+  if (selectedCategoryId.value) {
+    const category = activeCategories.value.find(
+      (item) => String(item.id) === selectedCategoryId.value,
+    )
+
+    if (category) {
+      return t('Official rooms SEO intro category', { category: t(category.name) })
+    }
+  }
+
+  return t('Official rooms SEO intro')
+})
+
+const activeCategories = computed(() =>
+  displayCatalog.value === 'official' ? props.categories : props.communityCategories,
+)
+
+const defaultOfficialCount = computed(() => {
+  const hidden = new Set(props.hiddenCategoryIds)
+
+  return props.categories.reduce((sum, category) => {
+    if (hidden.has(category.id)) {
+      return sum
+    }
+
+    return sum + (category.rooms_count ?? 0)
+  }, 0)
+})
+
+const communityCategoryTotal = computed(() =>
+  props.communityCategories.reduce((sum, category) => sum + (category.rooms_count ?? 0), 0),
+)
+
+const categoryFilterCount = computed(() => {
   if (!selectedCategoryId.value) {
-    return sortedRooms.value.filter((room) => !isHiddenByDefault(room))
+    return displayCatalog.value === 'official'
+      ? defaultOfficialCount.value
+      : communityCategoryTotal.value
   }
 
-  const categoryId = Number(selectedCategoryId.value)
+  const category = activeCategories.value.find(
+    (item) => String(item.id) === selectedCategoryId.value,
+  )
 
-  return sortedRooms.value.filter((room) => room.category?.id === categoryId)
+  return category?.rooms_count ?? 0
 })
 
-const defaultVisibleCount = computed(() =>
-  sortedRooms.value.filter((room) => !isHiddenByDefault(room)).length,
+const catalogItemsList = computed(() => {
+  if (pendingTab.value !== null) {
+    return []
+  }
+
+  return props.catalogItems?.data ?? []
+})
+
+const catalogQuery = () => ({
+  tab: props.catalog,
+  category_id: props.catalogCategoryId || undefined,
+})
+
+const {
+  loading: loadingMore,
+  hasMore,
+  showLoadMoreButton,
+  loadMore,
+  loadMoreTrigger,
+  syncAutoLoad,
+} = useCatalogLoadMore(() => props.catalogItems, catalogQuery)
+
+const partialReloadOptions = {
+  only: ['catalog', 'catalog_items', 'catalog_category_id'],
+  reset: ['catalog_items'],
+  preserveState: true,
+  preserveScroll: true,
+  showProgress: false,
+  replace: true,
+}
+
+const finishPartialReload = () => {
+  pendingTab.value = null
+  pendingFilter.value = false
+}
+
+const reloadCatalog = (query) => {
+  router.get(route('home'), {
+    catalog: 1,
+    ...query,
+  }, {
+    ...partialReloadOptions,
+    onSuccess: () => {
+      finishPartialReload()
+      syncAutoLoad()
+    },
+    onError: finishPartialReload,
+  })
+}
+
+const switchTab = (tab) => {
+  if (displayCatalog.value === tab) {
+    return
+  }
+
+  pendingTab.value = tab
+  selectedCategoryId.value = ''
+
+  reloadCatalog({ tab })
+}
+
+watch(selectedCategoryId, (value, previous) => {
+  if (previous === undefined) {
+    return
+  }
+
+  if (!showCategoryFilter.value) {
+    return
+  }
+
+  pendingFilter.value = true
+
+  reloadCatalog({
+    tab: props.catalog,
+    category_id: value || undefined,
+  })
+})
+
+watch(
+  () => props.catalogCategoryId,
+  (value) => {
+    selectedCategoryId.value = value ? String(value) : ''
+  },
 )
 
-const visibleRooms = computed(() => {
-  if (showAll.value) {
-    return filteredRooms.value
-  }
+watch(
+  () => props.catalog,
+  (value) => {
+    if (pendingTab.value === value) {
+      pendingTab.value = null
+    }
+  },
+)
 
-  return filteredRooms.value.slice(0, initialLimit)
-})
-
-const hiddenRoomCount = computed(() => {
-  if (showAll.value) {
-    return 0
-  }
-
-  return Math.max(0, filteredRooms.value.length - initialLimit)
-})
+const panelId = (tab) => `home-catalog-panel-${tab}`
+const tabId = (tab) => `home-catalog-tab-${tab}`
 </script>
 
 <template>
-  <section id="public-rooms" class="space-y-6">
-    <HomeSectionHeader :title="__('Official rooms')" compact>
-      <template #action>
-        <select
-          id="public-room-category-filter"
-          v-model="selectedCategoryId"
-          class="retro-select w-full sm:w-56"
-          :aria-label="__('Filter by category')"
-          @change="showAll = false"
+  <section id="home-catalog" class="space-y-4 lg:space-y-6" aria-labelledby="home-catalog-heading">
+    <header class="home-catalog-header">
+      <div class="sr-only">
+        <h2 id="home-catalog-heading">
+          {{ catalogHeading }}
+        </h2>
+        <p>
+          {{ catalogSeoIntro }}
+        </p>
+      </div>
+
+      <div
+        class="home-rooms-switch"
+        :class="switchTabsClass"
+        role="tablist"
+        :aria-label="t('Home catalog')"
+      >
+        <button
+          v-for="tab in tabs"
+          :id="tabId(tab.id)"
+          :key="tab.id"
+          type="button"
+          role="tab"
+          class="home-rooms-switch__tab"
+          :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id }"
+          :aria-selected="displayCatalog === tab.id"
+          :aria-controls="panelId(tab.id)"
+          :tabindex="displayCatalog === tab.id ? 0 : -1"
+          @click="switchTab(tab.id)"
         >
-          <option value="">
-            {{ __('All categories') }} ({{ defaultVisibleCount }})
-          </option>
-          <option
-            v-for="category in categories"
-            :key="category.id"
-            :value="String(category.id)"
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <select
+        v-if="showCategoryFilter"
+        id="home-room-category-filter"
+        v-model="selectedCategoryId"
+        class="retro-select home-rooms-toolbar__filter"
+        :aria-label="t('Filter by category')"
+        :disabled="showTabSkeleton || showFilterOverlay"
+      >
+        <option value="">
+          {{ t('All categories') }} ({{ categoryFilterCount }})
+        </option>
+        <option
+          v-for="category in activeCategories"
+          :key="category.id"
+          :value="String(category.id)"
+        >
+          {{ t(category.name) }} ({{ category.rooms_count }})
+        </option>
+      </select>
+    </header>
+
+    <div
+      :id="panelId(displayCatalog)"
+      role="tabpanel"
+      :aria-labelledby="tabId(displayCatalog)"
+      class="home-catalog-panel space-y-6"
+    >
+      <div
+        v-if="showTabSkeleton"
+        class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <div
+          v-for="index in 8"
+          :key="`catalog-skeleton-${index}`"
+          class="home-catalog-skeleton"
+        />
+        <span class="sr-only">{{ t('Loading rooms...') }}</span>
+      </div>
+
+      <template v-else>
+        <div
+          v-if="showFilterOverlay"
+          class="home-catalog-panel__overlay"
+          role="status"
+          aria-live="polite"
+        >
+          <p class="text-sm font-semibold text-white">{{ t('Loading rooms...') }}</p>
+        </div>
+
+        <div
+          v-if="isMinigamesCatalog && catalogItemsList.length"
+          class="mb-4 flex justify-end"
+        >
+          <Link
+            :href="route('minigames.index')"
+            class="game-link-action"
           >
-            {{ __(category.name) }} ({{ category.rooms_count }})
-          </option>
-        </select>
+            {{ t('View all') }}
+            <Icon name="cheveron-right" class="inline-block h-4 w-4" />
+          </Link>
+        </div>
+
+        <div
+          v-if="!catalogItemsList.length && displayCatalog === 'mine'"
+          class="home-rooms-empty flex flex-col items-center gap-4"
+        >
+          <h3 class="text-base font-bold text-white">
+            {{ t('No rooms yet') }}
+          </h3>
+          <p class="max-w-md text-sm text-white/70">
+            {{ t('Create your first room to start playing') }}
+          </p>
+          <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              :href="route('rooms.create')"
+              class="game-btn-secondary inline-flex"
+            >
+              {{ t('Create my first room') }}
+            </Link>
+            <Link
+              :href="route('docs.create-content')"
+              class="game-link-action inline-flex items-center gap-1"
+            >
+              {{ t('Créer rooms & playlists') }}
+              <Icon name="cheveron-right" class="inline-block h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div
+          v-else-if="!catalogItemsList.length"
+          class="home-rooms-empty"
+        >
+          <p class="text-sm font-semibold text-white">
+            {{
+              selectedCategoryId
+                ? t('No rooms in this category right now.')
+                : t('No rooms available at the moment.')
+            }}
+          </p>
+          <button
+            v-if="selectedCategoryId"
+            type="button"
+            class="game-link-action mt-3"
+            @click="selectedCategoryId = ''"
+          >
+            {{ t('Show all categories') }}
+          </button>
+        </div>
+
+        <template v-else>
+          <div
+            id="catalog-grid"
+            class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
+            :class="{ 'opacity-50': showFilterOverlay }"
+          >
+            <template v-if="isMinigamesCatalog">
+              <MinigameCard
+                v-for="game in catalogItemsList"
+                :key="game.type"
+                :game="game"
+              />
+            </template>
+            <template v-else>
+              <Room
+                v-for="room in catalogItemsList"
+                :key="room.id"
+                :room="room"
+                variant="catalog"
+              />
+            </template>
+          </div>
+
+          <div
+            v-if="hasMore"
+            ref="loadMoreTrigger"
+            class="flex justify-center py-4"
+          >
+            <button
+              v-if="showLoadMoreButton"
+              type="button"
+              class="game-btn-secondary"
+              :disabled="loadingMore"
+              @click="loadMore"
+            >
+              {{ loadingMore ? t('Loading rooms...') : t('Show more rooms') }}
+            </button>
+
+            <p
+              v-else-if="loadingMore"
+              class="text-sm font-semibold text-white/70"
+              role="status"
+            >
+              {{ t('Loading rooms...') }}
+            </p>
+          </div>
+        </template>
       </template>
-    </HomeSectionHeader>
-
-    <div
-      v-if="visibleRooms.length"
-      class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
-    >
-      <Room
-        v-for="room in visibleRooms"
-        :key="room.id"
-        :room="room"
-        variant="catalog"
-      />
-    </div>
-
-    <div v-if="hiddenRoomCount > 0" class="flex justify-center">
-      <button
-        type="button"
-        class="game-btn-secondary"
-        @click="showAll = true"
-      >
-        {{ __('Show more rooms') }}
-        <span class="text-white/50">(+{{ hiddenRoomCount }})</span>
-      </button>
-    </div>
-
-    <div
-      v-else-if="!visibleRooms.length"
-      class="rounded-xl border border-dashed border-white/15 bg-arena-panel/40 px-6 py-10 text-center"
-    >
-      <p class="text-sm font-semibold text-white">
-        {{ __('No rooms in this category right now.') }}
-      </p>
-      <button
-        type="button"
-        class="game-link-action mt-3"
-        @click="selectedCategoryId = ''"
-      >
-        {{ __('Show all categories') }}
-      </button>
     </div>
   </section>
 </template>

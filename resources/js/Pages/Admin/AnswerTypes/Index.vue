@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import pickBy from 'lodash/pickBy'
@@ -32,8 +32,7 @@ const reset = () => {
 }
 </script>
 <template>
-  <Head title="Answer Types" />
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">{{ __('Answer Types') }}</h1>
     <div class="mb-6 flex items-center justify-between">
       <search-filter v-model="form.search" class="mr-4 w-full max-w-md" @reset="reset" />

@@ -1,6 +1,6 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue'
-import { Head, router, usePage } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 
 const props = defineProps({
@@ -71,8 +71,7 @@ const regenerateTop10 = () => {
 
 </script>
 <template>
-  <Head title="Dashboard" />
-  <AdminLayout>
+<AdminLayout>
    
     <section class="space-y-8">
       <h2 class="text-2xl font-bold">Maintenance</h2>

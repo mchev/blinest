@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class TeamController extends Controller
 {
     public function index(Request $request)
     {
+        Head::title(__('Teams'));
+
         $publicRankingScores = TotalScore::query()
             ->selectRaw('total_scores.totalscorable_id as team_id')
             ->selectRaw('ROUND(SUM(total_scores.score), 1) as public_rank_score')
@@ -64,6 +67,8 @@ class TeamController extends Controller
 
     public function create()
     {
+        Head::title('Create Team');
+
         return Auth::user()->hasTeam()
             ? redirect()->back()->with('error', __('You are already part of a team'))
             : Inertia::render('Teams/Create');
@@ -118,6 +123,8 @@ class TeamController extends Controller
 
     public function show(Team $team)
     {
+        Head::title($team->name);
+
         $team->load('owner');
         $memberIds = $team->members->pluck('id');
 

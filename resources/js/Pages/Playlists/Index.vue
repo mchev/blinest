@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -34,8 +34,7 @@ const reset = () => {
 </script>
 
 <template>
-  <Head :title="__('My Playlists')" />
-  <AppLayout>
+<AppLayout>
     <!-- Header Section -->
     <header class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
       <div>

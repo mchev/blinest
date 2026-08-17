@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Inertia\Inertia;
+use Laravel\Head\Facades\Head;
 
 class PasswordResetLinkController extends Controller
 {
@@ -19,6 +20,8 @@ class PasswordResetLinkController extends Controller
      */
     public function create()
     {
+        Head::title(__('Forgot your password?'))->robots('noindex, nofollow');
+
         return Inertia::render('Auth/ForgotPassword');
     }
 

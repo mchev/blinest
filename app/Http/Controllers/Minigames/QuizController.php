@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Minigames;
 use App\Http\Controllers\Controller;
 use App\Models\MinigameScore;
 use App\Models\Track;
+use App\Seo\MinigameHead;
 use App\Services\Minigames\MinigameScoreService;
 use App\Services\Minigames\TrackPickerService;
 use Illuminate\Http\JsonResponse;
@@ -13,10 +14,14 @@ use Inertia\Inertia;
 
 class QuizController extends Controller
 {
+    public function __construct(private MinigameHead $minigameHead) {}
+
     private const POINTS_CORRECT = 1;
 
     public function play(Request $request)
     {
+        $this->minigameHead->applyPlay(MinigameScore::TYPE_QUIZ);
+
         return Inertia::render('Minigames/Quiz/Play', [
             'gameType' => MinigameScore::TYPE_QUIZ,
         ]);

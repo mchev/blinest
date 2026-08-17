@@ -1,6 +1,6 @@
 <script setup>
 import { router } from '@inertiajs/vue3'
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import Card from '@/Components/Card.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -41,8 +41,7 @@ const restore = () => {
 }
 </script>
 <template>
-  <Head :title="`${form.name}`" />
-  <AdminLayout>
+<AdminLayout>
     <h1 class="mb-4 text-3xl font-bold text-teal-600">
       <Link :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
       <span class="font-medium"> / </span>
