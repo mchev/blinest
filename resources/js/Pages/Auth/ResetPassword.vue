@@ -24,7 +24,7 @@ const submit = () => {
 
 <template>
   <AppLayout>
-<Card class="mx-auto max-w-xl">
+    <Card class="mx-auto max-w-xl">
       <template #header>
         {{ __('Reset Password') }}
       </template>
@@ -36,7 +36,7 @@ const submit = () => {
           <TextInput type="password" :label="__('Confirm Password')" v-model="form.password_confirmation" :error="form.errors.password_confirmation" required autofocus />
         </div>
 
-        <div class="mt-6 mb-4 flex items-center justify-end">
+        <div class="mb-4 mt-6 flex items-center justify-end">
           <LoadingButton :class="{ 'opacity-25': form.processing }" class="btn-primary" :disabled="form.processing" :loading="form.processing">
             {{ __('Reset Password') }}
           </LoadingButton>

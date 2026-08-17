@@ -8,7 +8,7 @@ defineProps({
 })
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <Card class="mx-auto">
       <template #header>
         <div class="flex w-full items-center justify-between">
@@ -16,8 +16,13 @@ defineProps({
         </div>
       </template>
       <div class="prose prose-invert" v-if="ban">
-        <p><b>{{ __('Reason for ban:') }}</b><br />{{ ban.comment }}</p>
-        <p><b>{{ __('The eviction from the site ends on:') }}</b> <br />{{ ban.expired_at }}</p>
+        <p>
+          <b>{{ __('Reason for ban:') }}</b
+          ><br />{{ ban.comment }}
+        </p>
+        <p>
+          <b>{{ __('The eviction from the site ends on:') }}</b> <br />{{ ban.expired_at }}
+        </p>
         <Tip class="text-orange-500">{{ __('In some cases, a report can be made to the relevant authorities') }}</Tip>
         <Tip class="text-orange-500">{{ __('You can always access your account management to comply with data protection rules, but in case of reporting we reserve the right to retain evidence as provided by law') }}</Tip>
       </div>

@@ -31,19 +31,7 @@ const currentTime = ref(0)
 
 <template>
   <div class="min-w-0 space-y-2">
-    <Player
-      :room="room"
-      :channel="channel"
-      :initial-track="initialTrack"
-      :initial-start-time="initialStartTime"
-      @track:currentTime="currentTime = $event"
-    />
-    <UserInput
-      :channel="channel"
-      :current-time="currentTime"
-      :room="room"
-      :initial-track="initialTrack"
-      :initial-round="initialRound"
-    />
+    <Player :room="room" :channel="channel" :initial-track="initialTrack" :initial-start-time="initialStartTime" @track:currentTime="currentTime = $event" />
+    <UserInput :channel="channel" :current-time="currentTime" :room="room" :initial-track="initialTrack" :initial-round="initialRound" />
   </div>
 </template>

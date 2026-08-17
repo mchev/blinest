@@ -51,9 +51,7 @@ async function preloadRound() {
   showSummary.value = false
   currentQuestionIndex.value = 0
   try {
-    const responses = await Promise.all(
-      Array.from({ length: QUESTIONS_PER_ROUND }, () => axios.post(nextUrl)),
-    )
+    const responses = await Promise.all(Array.from({ length: QUESTIONS_PER_ROUND }, () => axios.post(nextUrl)))
     roundTracks.value = responses.map((r) => r.data)
     if (roundTracks.value.length > 0) {
       applyQuestion(0)
@@ -140,30 +138,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <MinigamePlayLayout
-    :back-url="backUrl"
-    :home-url="homeUrl"
-    :questions-per-round="QUESTIONS_PER_ROUND"
-    :session-score="sessionScore"
-    :show-summary="showSummary"
-    :current-question-index="currentQuestionIndex"
-    :round-results="roundResults"
-    :loading="loading"
-    :error="error"
-    :show-progress="showProgress"
-    @retry="preloadRound"
-  >
-    <div
-      v-if="track"
-      class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl shadow-teal-500/5 ring-1 ring-white/5"
-    >
+  <MinigamePlayLayout :back-url="backUrl" :home-url="homeUrl" :questions-per-round="QUESTIONS_PER_ROUND" :session-score="sessionScore" :show-summary="showSummary" :current-question-index="currentQuestionIndex" :round-results="roundResults" :loading="loading" :error="error" :show-progress="showProgress" @retry="preloadRound">
+    <div v-if="track" class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl shadow-teal-500/5 ring-1 ring-white/5">
       <div class="flex flex-col gap-6 p-6">
-        <MinigamePlayer
-          ref="playerRef"
-          :preview-url="track.preview_url"
-          :artwork-url="track.artwork_url"
-          @ended="onTrackEnded"
-        />
+        <MinigamePlayer ref="playerRef" :preview-url="track.preview_url" :artwork-url="track.artwork_url" @ended="onTrackEnded" />
 
         <div v-if="!result" class="flex flex-col gap-3">
           <p class="text-center text-sm font-bold uppercase tracking-wider text-neutral-400">
@@ -171,12 +149,7 @@ onMounted(() => {
           </p>
           <ul class="flex flex-col gap-2">
             <li v-for="(choice, index) in choices" :key="index">
-              <button
-                type="button"
-                class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 text-left font-semibold text-neutral-100 transition hover:border-teal-500 hover:bg-teal-500/10 hover:shadow-[0_0_20px_rgba(20,184,166,0.15)] focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50"
-                :disabled="checking"
-                @click="submitChoice(choice)"
-              >
+              <button type="button" class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 text-left font-semibold text-neutral-100 transition hover:border-teal-500 hover:bg-teal-500/10 hover:shadow-[0_0_20px_rgba(20,184,166,0.15)] focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50" :disabled="checking" @click="submitChoice(choice)">
                 {{ choice }}
               </button>
             </li>
@@ -184,27 +157,17 @@ onMounted(() => {
         </div>
 
         <div v-else class="space-y-5">
-          <div
-            v-if="timeUp"
-            class="rounded-xl border-2 border-amber-500/40 bg-amber-500/10 px-4 py-3 text-center font-bold uppercase tracking-wider text-amber-400"
-          >
-            {{ __('Time\'s up!') }}
+          <div v-if="timeUp" class="rounded-xl border-2 border-amber-500/40 bg-amber-500/10 px-4 py-3 text-center font-bold uppercase tracking-wider text-amber-400">
+            {{ __("Time's up!") }}
           </div>
-          <p
-            :class="result.correct ? 'text-teal-400' : 'text-amber-500'"
-            class="text-center text-lg font-bold"
-          >
+          <p :class="result.correct ? 'text-teal-400' : 'text-amber-500'" class="text-center text-lg font-bold">
             {{ result.correct ? __('Correct!') : __(wrongMessageKey) }}
             <template v-if="result.points"> +{{ result.points }} {{ __('points') }}</template>
           </p>
           <p v-if="!result.correct && result.correct_value" class="text-center text-neutral-400">
             {{ __('Correct answer') }}: <span class="font-semibold text-neutral-200">{{ result.correct_value }}</span>
           </p>
-          <button
-            type="button"
-            class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg shadow-teal-500/30 transition hover:from-teal-500 hover:to-cyan-500 hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900"
-            @click="nextQuestion"
-          >
+          <button type="button" class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg shadow-teal-500/30 transition hover:from-teal-500 hover:to-cyan-500 hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900" @click="nextQuestion">
             {{ currentQuestionIndex >= QUESTIONS_PER_ROUND - 1 ? __('See results') : __('Next question') }}
           </button>
         </div>

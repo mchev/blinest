@@ -47,14 +47,8 @@ const accentClass = (accent) => {
       <div class="min-w-0 flex-1">
         <p v-if="kicker" class="game-section-kicker mb-2">{{ kicker }}</p>
         <div class="retro-title-bar">
-          <span
-            class="retro-title-bar__accent"
-            :class="accentClass(accent).bar"
-          />
-          <h2
-            class="retro-title min-w-0 flex-1 truncate sm:text-2xl"
-            :class="accentClass(accent).title"
-          >
+          <span class="retro-title-bar__accent" :class="accentClass(accent).bar" />
+          <h2 class="retro-title min-w-0 flex-1 truncate sm:text-2xl" :class="accentClass(accent).title">
             {{ title }}
           </h2>
         </div>
@@ -63,10 +57,7 @@ const accentClass = (accent) => {
         <slot name="action" />
       </div>
     </div>
-    <p
-      v-if="subtitle || $slots.subtitle"
-      class="text-xs leading-relaxed text-white/70 sm:text-sm"
-    >
+    <p v-if="subtitle || $slots.subtitle" class="text-xs leading-relaxed text-white/70 sm:text-sm">
       <slot name="subtitle">{{ subtitle }}</slot>
     </p>
   </div>

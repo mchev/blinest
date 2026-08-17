@@ -104,10 +104,10 @@ const levelProgression = [
 </script>
 
 <template>
-<AppLayout>
-    <div class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+  <AppLayout>
+    <div class="mx-auto max-w-4xl space-y-8 px-4 py-8">
       <!-- Header -->
-      <div class="text-center space-y-4">
+      <div class="space-y-4 text-center">
         <h1 class="text-4xl font-bold">{{ __('Level System') }}</h1>
         <p class="text-lg text-neutral-400">
           {{ __('Understand how the level system works and how to earn XP to progress.') }}
@@ -115,8 +115,8 @@ const levelProgression = [
       </div>
 
       <!-- Introduction -->
-      <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">{{ __('How it works') }}</h2>
+      <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
+        <h2 class="mb-4 text-2xl font-bold">{{ __('How it works') }}</h2>
         <div class="space-y-3 text-neutral-300">
           <p>
             {{ __('The level system rewards your activity and engagement on Blinest. Your level is calculated based on your total XP (Experience Points), which you earn through various activities.') }}
@@ -134,30 +134,30 @@ const levelProgression = [
       </div>
 
       <!-- Level Progression -->
-      <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700">
-        <h2 class="text-2xl font-bold mb-4">{{ __('Level Progression') }}</h2>
-        <p class="text-neutral-400 mb-4">
+      <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
+        <h2 class="mb-4 text-2xl font-bold">{{ __('Level Progression') }}</h2>
+        <p class="mb-4 text-neutral-400">
           {{ __('The XP required to reach the next level increases progressively. Here are some examples:') }}
         </p>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-slate-700">
-                <th class="text-left py-3 px-4 font-semibold">{{ __('Level') }}</th>
-                <th class="text-left py-3 px-4 font-semibold">{{ __('XP needed for next level') }}</th>
-                <th class="text-left py-3 px-4 font-semibold">{{ __('Total XP range') }}</th>
+                <th class="px-4 py-3 text-left font-semibold">{{ __('Level') }}</th>
+                <th class="px-4 py-3 text-left font-semibold">{{ __('XP needed for next level') }}</th>
+                <th class="px-4 py-3 text-left font-semibold">{{ __('Total XP range') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(prog, index) in levelProgression" :key="prog.level" :class="index % 2 === 0 ? 'bg-slate-800/50' : ''">
-                <td class="py-3 px-4 font-bold">{{ prog.level }}</td>
-                <td class="py-3 px-4">{{ prog.xpNeeded }} {{ __('XP') }}</td>
-                <td class="py-3 px-4">{{ prog.totalXp }} {{ __('XP') }}</td>
+                <td class="px-4 py-3 font-bold">{{ prog.level }}</td>
+                <td class="px-4 py-3">{{ prog.xpNeeded }} {{ __('XP') }}</td>
+                <td class="px-4 py-3">{{ prog.totalXp }} {{ __('XP') }}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p class="text-xs text-neutral-500 mt-4">
+        <p class="mt-4 text-xs text-neutral-500">
           {{ __('Note: The XP requirement increases by 50 XP per level. There is no maximum level - you can progress infinitely!') }}
         </p>
       </div>
@@ -170,13 +170,9 @@ const levelProgression = [
         </p>
 
         <div class="grid gap-4 md:grid-cols-2">
-          <div
-            v-for="metric in metrics"
-            :key="metric.title"
-            :class="['rounded-xl p-5 border border-slate-700', metric.bgColor]"
-          >
+          <div v-for="metric in metrics" :key="metric.title" :class="['rounded-xl border border-slate-700 p-5', metric.bgColor]">
             <div class="flex items-start gap-4">
-              <div :class="['flex-shrink-0 p-2 rounded-lg', metric.bgColor]">
+              <div :class="['flex-shrink-0 rounded-lg p-2', metric.bgColor]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" :class="['h-6 w-6', metric.color]">
                   <path v-if="metric.icon === 'podium'" stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236v4.069m0 0a8.97 8.97 0 01-2.916.52m2.916-.52v4.069m0 0v2.613m0 0c-1.027-.083-2.05-.213-3.062-.38m3.062.38v-2.613m0 0h2.613m-2.613 0a8.97 8.97 0 01-2.916-.52m2.916.52v-2.613m0 0h-2.613m2.613 0a8.97 8.97 0 012.916-.52m-2.916.52v4.069m0 0h2.613m-2.613 0a8.97 8.97 0 00-2.916.52m2.916-.52v-2.613m0 0h-2.613m2.613 0a8.97 8.97 0 012.916-.52m-2.916.52v-2.613m0 0h-2.613m2.613 0a8.97 8.97 0 00-2.916-.52m2.916.52v-4.069m0 0h-2.613m2.613 0a8.97 8.97 0 012.916-.52m-2.916-.52v4.069m0 0h-2.613" />
                   <path v-else-if="metric.icon === 'calendar'" stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -199,12 +195,10 @@ const levelProgression = [
                   {{ metric.description }}
                 </p>
                 <div class="flex flex-wrap gap-2 pt-2">
-                  <span class="text-xs font-semibold bg-slate-700 px-2 py-1 rounded">
+                  <span class="rounded bg-slate-700 px-2 py-1 text-xs font-semibold">
                     {{ metric.formula }}
                   </span>
-                  <span class="text-xs text-neutral-400 px-2 py-1">
-                    {{ __('Max') }}: {{ metric.max }}
-                  </span>
+                  <span class="px-2 py-1 text-xs text-neutral-400"> {{ __('Max') }}: {{ metric.max }} </span>
                 </div>
               </div>
             </div>
@@ -213,66 +207,63 @@ const levelProgression = [
       </div>
 
       <!-- Updates -->
-      <div class="bg-gradient-to-br from-blue-900/20 to-blue-800/20 rounded-2xl p-6 border border-blue-700/50">
-        <h2 class="text-2xl font-bold mb-4 text-blue-400">{{ __('When are levels updated?') }}</h2>
+      <div class="rounded-2xl border border-blue-700/50 bg-gradient-to-br from-blue-900/20 to-blue-800/20 p-6">
+        <h2 class="mb-4 text-2xl font-bold text-blue-400">{{ __('When are levels updated?') }}</h2>
         <ul class="space-y-2 text-neutral-300">
           <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
+            <span class="mt-1 text-blue-400">•</span>
             <span>{{ __('In real-time when you score points in public rooms') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
+            <span class="mt-1 text-blue-400">•</span>
             <span>{{ __('When you create a room or playlist') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
+            <span class="mt-1 text-blue-400">•</span>
             <span>{{ __('When you like or unlike a track') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
+            <span class="mt-1 text-blue-400">•</span>
             <span>{{ __('When you join a team') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-blue-400 mt-1">•</span>
+            <span class="mt-1 text-blue-400">•</span>
             <span>{{ __('When you log in (if not updated in the last hour)') }}</span>
           </li>
         </ul>
       </div>
 
       <!-- Important Notes -->
-      <div class="bg-gradient-to-br from-amber-900/20 to-amber-800/20 rounded-2xl p-6 border border-amber-700/50">
-        <h2 class="text-2xl font-bold mb-4 text-amber-400">{{ __('Important Notes') }}</h2>
+      <div class="rounded-2xl border border-amber-700/50 bg-gradient-to-br from-amber-900/20 to-amber-800/20 p-6">
+        <h2 class="mb-4 text-2xl font-bold text-amber-400">{{ __('Important Notes') }}</h2>
         <ul class="space-y-2 text-neutral-300">
           <li class="flex items-start gap-2">
-            <span class="text-amber-400 mt-1">•</span>
+            <span class="mt-1 text-amber-400">•</span>
             <span>{{ __('Only scores from public rooms (without password) count towards your level.') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-amber-400 mt-1">•</span>
+            <span class="mt-1 text-amber-400">•</span>
             <span>{{ __('Each metric has a maximum XP cap to ensure balanced progression.') }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-amber-400 mt-1">•</span>
-            <span>{{ __('Your consecutive days streak resets if you don\'t log in for more than 24 hours.') }}</span>
+            <span class="mt-1 text-amber-400">•</span>
+            <span>{{ __("Your consecutive days streak resets if you don't log in for more than 24 hours.") }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-amber-400 mt-1">•</span>
-            <span>{{ __('Level updates are broadcast in real-time, so you\'ll see your level increase immediately.') }}</span>
+            <span class="mt-1 text-amber-400">•</span>
+            <span>{{ __("Level updates are broadcast in real-time, so you'll see your level increase immediately.") }}</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-amber-400 mt-1">•</span>
+            <span class="mt-1 text-amber-400">•</span>
             <span>{{ __('There is no maximum level - the progression continues infinitely. The XP requirement increases by 50 XP per level (not by 10).') }}</span>
           </li>
         </ul>
       </div>
 
       <!-- Back link -->
-      <div class="text-center pt-4">
-        <Link :href="route('home')" class="text-blue-400 hover:text-blue-300 transition-colors">
-          ← {{ __('Back to home') }}
-        </Link>
+      <div class="pt-4 text-center">
+        <Link :href="route('home')" class="text-blue-400 transition-colors hover:text-blue-300"> ← {{ __('Back to home') }} </Link>
       </div>
     </div>
   </AppLayout>
 </template>
-

@@ -14,12 +14,7 @@ import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 
         <div class="md:flex md:flex-grow md:overflow-hidden">
           <Transition name="slide-right">
-            <main
-              v-if="$slots.default"
-              id="main-content"
-              tabindex="-1"
-              class="min-w-0 overflow-x-hidden pb-20 focus:outline-none md:pb-0 md:flex-1"
-            >
+            <main v-if="$slots.default" id="main-content" tabindex="-1" class="min-w-0 overflow-x-hidden pb-20 focus:outline-none md:flex-1 md:pb-0">
               <FlashMessages />
               <slot />
             </main>

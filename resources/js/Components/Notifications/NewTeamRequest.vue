@@ -29,7 +29,7 @@ const form = useForm({
 })
 
 const submit = (action) => {
-  if (! teamRequestId.value || form.processing) {
+  if (!teamRequestId.value || form.processing) {
     return
   }
 
@@ -46,20 +46,10 @@ const submit = (action) => {
       {{ payload.message }}
     </div>
     <div class="mt-1 flex items-center justify-end">
-      <button
-        type="button"
-        class="btn-danger btn-sm mr-2 opacity-80"
-        :disabled="!teamRequestId || form.processing"
-        @click.stop="submit('decline')"
-      >
+      <button type="button" class="btn-danger btn-sm mr-2 opacity-80" :disabled="!teamRequestId || form.processing" @click.stop="submit('decline')">
         {{ form.processing ? __('Decline') + '…' : __('Decline') }}
       </button>
-      <button
-        type="button"
-        class="btn-primary btn-sm opacity-80"
-        :disabled="!teamRequestId || form.processing"
-        @click.stop="submit('accept')"
-      >
+      <button type="button" class="btn-primary btn-sm opacity-80" :disabled="!teamRequestId || form.processing" @click.stop="submit('accept')">
         {{ form.processing ? __('Accept') + '…' : __('Accept') }}
       </button>
     </div>

@@ -58,12 +58,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="christmas-decorations pointer-events-none absolute inset-0 overflow-hidden z-0">
+  <div class="christmas-decorations pointer-events-none absolute inset-0 z-0 overflow-hidden">
     <!-- Snowflakes -->
     <div
       v-for="snowflake in snowflakes"
       :key="snowflake.id"
-      class="snowflake absolute text-white select-none"
+      class="snowflake absolute select-none text-white"
       :style="{
         left: `${snowflake.left}%`,
         fontSize: `${snowflake.size}px`,
@@ -78,7 +78,7 @@ onUnmounted(() => {
     <div
       v-for="star in stars"
       :key="star.id"
-      class="star absolute text-yellow-300 select-none"
+      class="star absolute select-none text-yellow-300"
       :style="{
         left: `${star.left}%`,
         top: `${star.top}%`,
@@ -122,7 +122,8 @@ onUnmounted(() => {
 }
 
 @keyframes twinkle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
@@ -130,4 +131,3 @@ onUnmounted(() => {
   }
 }
 </style>
-

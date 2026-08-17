@@ -68,15 +68,15 @@ const __ = (key, replace = {}) => {
 
 // Get XP data from props or user
 const currentXpValue = computed(() => {
-  return props.currentXp !== null ? props.currentXp : (user?.current_xp ?? 0)
+  return props.currentXp !== null ? props.currentXp : user?.current_xp ?? 0
 })
 
 const xpForNext = computed(() => {
-  return props.xpForNextLevel !== null ? props.xpForNextLevel : (user?.xp_for_next_level ?? 100)
+  return props.xpForNextLevel !== null ? props.xpForNextLevel : user?.xp_for_next_level ?? 100
 })
 
 const totalXpValue = computed(() => {
-  return props.totalXp !== null ? props.totalXp : (user?.total_xp ?? 0)
+  return props.totalXp !== null ? props.totalXp : user?.total_xp ?? 0
 })
 
 // Check if badge should be clickable (has all necessary data or is current user)
@@ -156,73 +156,20 @@ const sizeConfig = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="variant !== 'minimal'"
-    :class="[
-      'inline-flex items-center justify-center',
-      sizeConfig.container,
-      isLevelUp ? 'animate-level-up' : '',
-      isUpdating && !isLevelUp ? 'animate-xp-update' : '',
-      isClickable ? 'cursor-pointer hover:opacity-80 transition-opacity' : '',
-    ]"
-    :title="`${__('Level')} ${level}`"
-    @click="handleClick"
-  >
+  <div v-if="variant !== 'minimal'" :class="['inline-flex items-center justify-center', sizeConfig.container, isLevelUp ? 'animate-level-up' : '', isUpdating && !isLevelUp ? 'animate-xp-update' : '', isClickable ? 'cursor-pointer transition-opacity hover:opacity-80' : '']" :title="`${__('Level')} ${level}`" @click="handleClick">
     <!-- Simple circle with progress ring (GeoGuessr style) -->
-    <div 
-      class="relative"
-      :class="[
-        isLevelUp ? 'animate-scale-pulse' : '',
-      ]"
-      :style="`width: ${sizeConfig.size}px; height: ${sizeConfig.size}px;`"
-    >
-      <svg
-        :width="sizeConfig.size"
-        :height="sizeConfig.size"
-        class="transform -rotate-90"
-      >
+    <div class="relative" :class="[isLevelUp ? 'animate-scale-pulse' : '']" :style="`width: ${sizeConfig.size}px; height: ${sizeConfig.size}px;`">
+      <svg :width="sizeConfig.size" :height="sizeConfig.size" class="-rotate-90 transform">
         <!-- Background circle (full) -->
-        <circle
-          :cx="sizeConfig.size / 2"
-          :cy="sizeConfig.size / 2"
-          :r="radius"
-          :stroke-width="sizeConfig.strokeWidth"
-          stroke="rgba(255, 255, 255, 0.1)"
-          fill="none"
-        />
-        
+        <circle :cx="sizeConfig.size / 2" :cy="sizeConfig.size / 2" :r="radius" :stroke-width="sizeConfig.strokeWidth" stroke="rgba(255, 255, 255, 0.1)" fill="none" />
+
         <!-- Progress circle -->
-        <circle
-          :cx="sizeConfig.size / 2"
-          :cy="sizeConfig.size / 2"
-          :r="radius"
-          :stroke-width="sizeConfig.strokeWidth"
-          :stroke="levelColor"
-          fill="none"
-          :stroke-dasharray="circumference"
-          :stroke-dashoffset="strokeDashoffset"
-          stroke-linecap="round"
-          :class="[
-            'transition-all duration-500 ease-out',
-            isLevelUp ? 'animate-glow-pulse' : '',
-          ]"
-        />
+        <circle :cx="sizeConfig.size / 2" :cy="sizeConfig.size / 2" :r="radius" :stroke-width="sizeConfig.strokeWidth" :stroke="levelColor" fill="none" :stroke-dasharray="circumference" :stroke-dashoffset="strokeDashoffset" stroke-linecap="round" :class="['transition-all duration-500 ease-out', isLevelUp ? 'animate-glow-pulse' : '']" />
       </svg>
 
       <!-- Level number (centered) -->
-      <div
-        class="absolute inset-0 flex items-center justify-center pointer-events-none"
-      >
-        <span
-          :class="[
-            'font-extrabold',
-            'leading-none',
-            sizeConfig.numberSize,
-            'transition-all duration-300',
-            isLevelUp ? 'animate-number-bounce' : isUpdating ? 'animate-number-pulse' : '',
-          ]"
-          :style="`color: ${levelColor};`"
-        >
+      <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <span :class="['font-extrabold', 'leading-none', sizeConfig.numberSize, 'transition-all duration-300', isLevelUp ? 'animate-number-bounce' : isUpdating ? 'animate-number-pulse' : '']" :style="`color: ${levelColor};`">
           {{ level }}
         </span>
       </div>
@@ -230,42 +177,11 @@ const sizeConfig = computed(() => {
   </div>
 
   <!-- Variant minimal : étoile simple -->
-  <div
-    v-else
-    :class="[
-      'inline-flex items-center justify-center gap-1',
-      isClickable ? 'cursor-pointer hover:opacity-80 transition-opacity' : '',
-    ]"
-    :title="`${__('Level')} ${level}`"
-    @click="handleClick"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      :class="[
-        size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-5 w-5' : 'h-6 w-6',
-        props.level >= 50 ? 'text-purple-400' :
-        props.level >= 30 ? 'text-yellow-400' :
-        props.level >= 20 ? 'text-blue-400' :
-        props.level >= 10 ? 'text-green-400' :
-        'text-neutral-400'
-      ]"
-    >
+  <div v-else :class="['inline-flex items-center justify-center gap-1', isClickable ? 'cursor-pointer transition-opacity hover:opacity-80' : '']" :title="`${__('Level')} ${level}`" @click="handleClick">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" :class="[size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-5 w-5' : 'h-6 w-6', props.level >= 50 ? 'text-purple-400' : props.level >= 30 ? 'text-yellow-400' : props.level >= 20 ? 'text-blue-400' : props.level >= 10 ? 'text-green-400' : 'text-neutral-400']">
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
     </svg>
-    <span
-      v-if="showText"
-      :class="[
-        'font-bold',
-        sizeConfig.numberSize,
-        props.level >= 50 ? 'text-purple-400' :
-        props.level >= 30 ? 'text-yellow-400' :
-        props.level >= 20 ? 'text-blue-400' :
-        props.level >= 10 ? 'text-green-400' :
-        'text-neutral-400'
-      ]"
-    >
+    <span v-if="showText" :class="['font-bold', sizeConfig.numberSize, props.level >= 50 ? 'text-purple-400' : props.level >= 30 ? 'text-yellow-400' : props.level >= 20 ? 'text-blue-400' : props.level >= 10 ? 'text-green-400' : 'text-neutral-400']">
       {{ level }}
     </span>
   </div>

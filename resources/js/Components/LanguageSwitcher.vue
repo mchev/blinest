@@ -1,20 +1,8 @@
 <template>
   <div v-if="standalone" class="relative">
     <label for="language-select" class="sr-only">{{ __('Language') }}</label>
-    <select
-      id="language-select"
-      :value="currentLocale"
-      @change="handleLanguageChange"
-      class="retro-select cursor-pointer pr-8"
-    >
-      <option
-        v-for="locale in availableLocales"
-        :key="locale"
-        :value="locale"
-        class="bg-brand-deep text-white"
-      >
-        {{ locale }} - {{ localeNames[locale] || locale }}
-      </option>
+    <select id="language-select" :value="currentLocale" @change="handleLanguageChange" class="retro-select cursor-pointer pr-8">
+      <option v-for="locale in availableLocales" :key="locale" :value="locale" class="bg-brand-deep text-white">{{ locale }} - {{ localeNames[locale] || locale }}</option>
     </select>
     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
       <svg class="h-4 w-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,18 +12,8 @@
   </div>
   <div v-else class="flex items-center gap-2" @click.stop>
     <label for="language-select-dropdown" class="sr-only">{{ __('Language') }}</label>
-    <select
-      id="language-select-dropdown"
-      :value="currentLocale"
-      @change="handleLanguageChange"
-      class="retro-select cursor-pointer bg-transparent px-2 py-1 text-sm"
-    >
-      <option
-        v-for="locale in availableLocales"
-        :key="locale"
-        :value="locale"
-        class="bg-brand-deep text-white"
-      >
+    <select id="language-select-dropdown" :value="currentLocale" @change="handleLanguageChange" class="retro-select cursor-pointer bg-transparent px-2 py-1 text-sm">
+      <option v-for="locale in availableLocales" :key="locale" :value="locale" class="bg-brand-deep text-white">
         {{ locale }}
       </option>
     </select>
@@ -63,11 +41,13 @@ export default {
     },
 
     localeNames() {
-      return usePage().props.locale_names || {
-        'fr': 'Français',
-        'en': 'English',
-        'es': 'Español',
-      }
+      return (
+        usePage().props.locale_names || {
+          fr: 'Français',
+          en: 'English',
+          es: 'Español',
+        }
+      )
     },
   },
 

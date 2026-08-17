@@ -6,9 +6,9 @@ const currentYear = new Date().getFullYear()
 <template>
   <footer class="surface-footer mt-16 py-12">
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8">
+      <div class="grid grid-cols-1 gap-8 pb-8 md:grid-cols-4">
         <div class="col-span-1">
-          <div class="flex items-center mb-4">
+          <div class="mb-4 flex items-center">
             <span class="text-xl font-bold uppercase tracking-[0.12em] text-brand-primary">Blinest</span>
           </div>
           <p class="mb-4 text-white/70">{{ __('Free multiplayer music quizzes for everyone. Challenge friends and discover new music.') }}</p>
@@ -31,9 +31,15 @@ const currentYear = new Date().getFullYear()
         <div class="col-span-1">
           <h3 class="retro-footer-title">{{ __('Quick Links') }}</h3>
           <ul class="space-y-2">
-            <li><Link href="/" class="text-white/70 transition-colors hover:text-white">{{ __('Home') }}</Link></li>
-            <li><Link :href="route('docs.faq')" class="text-white/70 transition-colors hover:text-white">{{ __('FAQ') }}</Link></li>
-            <li><Link href="/contact" class="text-white/70 transition-colors hover:text-white">{{ __('Contact') }}</Link></li>
+            <li>
+              <Link href="/" class="text-white/70 transition-colors hover:text-white">{{ __('Home') }}</Link>
+            </li>
+            <li>
+              <Link :href="route('docs.faq')" class="text-white/70 transition-colors hover:text-white">{{ __('FAQ') }}</Link>
+            </li>
+            <li>
+              <Link href="/contact" class="text-white/70 transition-colors hover:text-white">{{ __('Contact') }}</Link>
+            </li>
             <li>
               <a target="_blank" rel="external nofollow" href="https://github.com/mchev/blinest/issues/new" class="text-white/70 transition-colors hover:text-white">
                 {{ __('Report a bug') }}
@@ -61,13 +67,8 @@ const currentYear = new Date().getFullYear()
         <div class="col-span-1">
           <h3 class="retro-footer-title">{{ __('Support Blinest') }}</h3>
           <p class="mb-4 text-white/70">{{ __('Help us keep the music playing!') }}</p>
-          <a
-            target="_blank"
-            rel="external nofollow"
-            href="https://donate.stripe.com/00g2bvf8i08X8De6oo"
-            class="btn-primary inline-flex items-center"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <a target="_blank" rel="external nofollow" href="https://donate.stripe.com/00g2bvf8i08X8De6oo" class="btn-primary inline-flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
             </svg>
             {{ __('Donate') }}
@@ -76,12 +77,8 @@ const currentYear = new Date().getFullYear()
       </div>
 
       <div class="flex flex-col items-center justify-between border-t border-white/10 pt-8 md:flex-row">
-        <div class="mb-4 text-white/50 md:mb-0">
-          &copy; {{ currentYear }} Blinest. {{ __('All rights reserved.') }}
-        </div>
-        <div class="text-white/50">
-          {{ __('Site personnel fait bénévolement avec') }} ❤️ {{ __('en France') }}
-        </div>
+        <div class="mb-4 text-white/50 md:mb-0">&copy; {{ currentYear }} Blinest. {{ __('All rights reserved.') }}</div>
+        <div class="text-white/50">{{ __('Site personnel fait bénévolement avec') }} ❤️ {{ __('en France') }}</div>
       </div>
     </div>
   </footer>

@@ -16,8 +16,8 @@ defineEmits(['close'])
       <p class="mb-1 text-sm text-white/70">{{ __('Copy URL:') }}</p>
       <Clip class="mb-6" :text="url" />
       <div class="flex flex-col gap-2 sm:flex-row">
-        <a class="game-btn-play-live flex-1 text-center !min-h-[2.75rem]" target="_blank" :href="`https://www.facebook.com/sharer/sharer.php?u=${url}`">{{ __('Share on Facebook') }}</a>
-        <a class="game-btn-play-neutral flex-1 text-center !min-h-[2.75rem]" target="_blank" :href="`https://twitter.com/intent/tweet?&url=${url}`">{{ __('Share on X') }}</a>
+        <a class="game-btn-play-live !min-h-[2.75rem] flex-1 text-center" target="_blank" :href="`https://www.facebook.com/sharer/sharer.php?u=${url}`">{{ __('Share on Facebook') }}</a>
+        <a class="game-btn-play-neutral !min-h-[2.75rem] flex-1 text-center" target="_blank" :href="`https://twitter.com/intent/tweet?&url=${url}`">{{ __('Share on X') }}</a>
       </div>
       <div class="mt-6 flex justify-end">
         <button type="button" class="game-btn-secondary" @click="$emit('close')">{{ __('Close') }}</button>

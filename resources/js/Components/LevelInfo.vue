@@ -126,9 +126,7 @@ const metricsXp = computed(() => {
       <div class="flex items-center gap-3">
         <LevelBadge :level="level" :size="compact ? 'sm' : 'md'" variant="default" :clickable="false" />
         <div>
-          <h3 :class="['text-lg font-bold', levelColor]">
-            {{ __('Level') }} {{ level }}
-          </h3>
+          <h3 :class="['text-lg font-bold', levelColor]">{{ __('Level') }} {{ level }}</h3>
           <p class="text-xs text-neutral-400">
             {{ __('Total XP') }}: <span :class="['font-semibold', levelColor]">{{ totalXp.toLocaleString('fr-FR') }} {{ __('XP') }}</span>
           </p>
@@ -138,59 +136,43 @@ const metricsXp = computed(() => {
 
     <div class="rounded-lg border border-neutral-700 bg-neutral-800/50 p-4">
       <div class="mb-3">
-        <div class="flex items-center justify-between mb-2">
+        <div class="mb-2 flex items-center justify-between">
           <span class="text-xs font-medium text-neutral-400">{{ __('XP in this level') }}</span>
-          <span :class="['text-xs font-bold', levelColor]">
-            {{ currentXp }} / {{ xpForNextLevel }} {{ __('XP') }}
-          </span>
+          <span :class="['text-xs font-bold', levelColor]"> {{ currentXp }} / {{ xpForNextLevel }} {{ __('XP') }} </span>
         </div>
         <div class="relative h-2 w-full overflow-hidden rounded-full bg-neutral-700">
-          <div
-            :class="['h-full transition-all duration-500 ease-out rounded-full', levelBgColor]"
-            :style="{ width: `${progressPercentage}%` }"
-          />
+          <div :class="['h-full rounded-full transition-all duration-500 ease-out', levelBgColor]" :style="{ width: `${progressPercentage}%` }" />
         </div>
-        <div class="flex justify-between text-xs text-neutral-500 mt-1">
+        <div class="mt-1 flex justify-between text-xs text-neutral-500">
           <span>{{ __('Progress to next level') }}</span>
           <span>{{ Math.round(progressPercentage) }}%</span>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-neutral-700">
-        <div class="flex justify-between items-center">
+      <div class="border-t border-neutral-700 pt-3">
+        <div class="flex items-center justify-between">
           <span class="text-xs text-neutral-400">{{ __('XP needed') }}</span>
-          <span :class="['text-sm font-bold', levelColor]">
-            {{ xpForNextLevel - currentXp }} {{ __('XP') }}
-          </span>
+          <span :class="['text-sm font-bold', levelColor]"> {{ xpForNextLevel - currentXp }} {{ __('XP') }} </span>
         </div>
       </div>
     </div>
 
     <div v-if="metricsXp && !compact" class="rounded-lg border border-neutral-700 bg-neutral-800/50 p-4">
-      <h4 class="text-sm font-bold text-neutral-300 mb-3">
+      <h4 class="mb-3 text-sm font-bold text-neutral-300">
         {{ __('XP Breakdown') }}
       </h4>
       <div class="space-y-2">
-        <div
-          v-for="(metric, key) in metricsXp"
-          :key="key"
-          class="flex items-center justify-between py-2 px-3 bg-neutral-900/50 rounded-lg"
-        >
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-0.5">
-              <span class="text-xs font-semibold text-neutral-300 truncate">{{ metric.label }}</span>
-              <span
-                v-if="metric.max && metric.xp >= metric.max"
-                class="text-xs bg-yellow-500/20 text-yellow-400 px-1.5 py-0.5 rounded font-semibold flex-shrink-0"
-              >
+        <div v-for="(metric, key) in metricsXp" :key="key" class="flex items-center justify-between rounded-lg bg-neutral-900/50 px-3 py-2">
+          <div class="min-w-0 flex-1">
+            <div class="mb-0.5 flex items-center gap-2">
+              <span class="truncate text-xs font-semibold text-neutral-300">{{ metric.label }}</span>
+              <span v-if="metric.max && metric.xp >= metric.max" class="flex-shrink-0 rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-semibold text-yellow-400">
                 {{ __('MAX') }}
               </span>
             </div>
-            <p class="text-xs text-neutral-500 truncate">
-              {{ metric.value }} {{ key === 'seniority' ? __('months') : key === 'streak' ? __('days') : key === 'team' ? '' : key === 'score' || key === 'minigame_scores' ? __('points') : '' }}
-            </p>
+            <p class="truncate text-xs text-neutral-500">{{ metric.value }} {{ key === 'seniority' ? __('months') : key === 'streak' ? __('days') : key === 'team' ? '' : key === 'score' || key === 'minigame_scores' ? __('points') : '' }}</p>
           </div>
-          <div class="text-right ml-2 flex-shrink-0">
+          <div class="ml-2 flex-shrink-0 text-right">
             <p :class="['text-sm font-bold', metric.xp > 0 ? levelColor : 'text-neutral-500']">
               {{ metric.xp }}
             </p>
@@ -201,4 +183,3 @@ const metricsXp = computed(() => {
     </div>
   </div>
 </template>
-

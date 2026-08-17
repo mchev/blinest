@@ -50,7 +50,7 @@ const userHasBeenBanned = () => {
           <li v-for="user in users.data" :key="user.id" class="flex items-center p-2">
             <img v-if="user.photo" class="-my-2 mr-2 block h-8 w-8 rounded-full" :src="user.photo" />
             <span class="mr-4">{{ user.name }}</span>
-            <button class="ml-auto rounded-full bg-blue-500 py-1 px-2 text-xs uppercase" @click="selectUser(user)">{{ __('Select') }}</button>
+            <button class="ml-auto rounded-full bg-blue-500 px-2 py-1 text-xs uppercase" @click="selectUser(user)">{{ __('Select') }}</button>
           </li>
         </ul>
       </template>

@@ -19,18 +19,8 @@ const visit = (url) => {
 <template>
   <div v-if="links.length > 3" class="flex flex-wrap justify-center gap-1.5 sm:gap-2">
     <template v-for="(link, key) in links" :key="key">
-      <span
-        v-if="!link.url"
-        class="retro-pagination-link cursor-default text-white/60"
-        v-html="link.label"
-      />
-      <Link
-        v-else
-        :href="link.url"
-        class="retro-pagination-link"
-        :class="link.active ? 'retro-pagination-link--active' : ''"
-        v-html="link.label"
-      />
+      <span v-if="!link.url" class="retro-pagination-link cursor-default text-white/60" v-html="link.label" />
+      <Link v-else :href="link.url" class="retro-pagination-link" :class="link.active ? 'retro-pagination-link--active' : ''" v-html="link.label" />
     </template>
   </div>
 </template>

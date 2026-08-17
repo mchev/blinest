@@ -26,7 +26,7 @@ const destroy = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-indigo-400 hover:text-indigo-600" href="/admin/answer_types">Answer Types</Link>
       <span class="font-medium text-indigo-400">/</span>

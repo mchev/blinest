@@ -28,15 +28,15 @@ const topThree = computed(() => sortedUsers.value.slice(0, 3))
 const podiumSlots = computed(() => {
   const [first, second, third] = topThree.value
 
-  if (! first) {
+  if (!first) {
     return []
   }
 
-  if (! second) {
+  if (!second) {
     return [{ player: first, rank: 1 }]
   }
 
-  if (! third) {
+  if (!third) {
     return [
       { player: second, rank: 2 },
       { player: first, rank: 1 },
@@ -51,7 +51,7 @@ const podiumSlots = computed(() => {
 })
 
 const myRank = computed(() => {
-  if (! me) {
+  if (!me) {
     return null
   }
 
@@ -64,7 +64,7 @@ const myScore = computed(() => scores.value[me?.id] ?? 0)
 
 const isMeInTopThree = computed(() => topThree.value.some((user) => user.id === me?.id))
 
-const showMyRankBar = computed(() => me && myRank.value && ! isMeInTopThree.value)
+const showMyRankBar = computed(() => me && myRank.value && !isMeInTopThree.value)
 
 const rankMedalClass = (rank) => {
   if (rank === 1) {
@@ -87,23 +87,10 @@ const slotClass = (slot) => ({
 <template>
   <div v-if="sortedUsers.length > 0" class="room-mobile-podium" aria-live="polite" aria-relevant="text" aria-atomic="false">
     <div class="room-mobile-podium__grid" :class="{ 'room-mobile-podium__grid--solo': podiumSlots.length === 1 }">
-      <div
-        v-for="slot in podiumSlots"
-        :key="slot.player.id"
-        class="room-mobile-podium__slot"
-        :class="slotClass(slot)"
-      >
+      <div v-for="slot in podiumSlots" :key="slot.player.id" class="room-mobile-podium__slot" :class="slotClass(slot)">
         <div class="room-mobile-podium__avatar-wrap">
-          <img
-            v-if="slot.player.photo"
-            :src="slot.player.photo"
-            :alt="slot.player.name"
-            class="room-mobile-podium__avatar"
-          />
-          <span
-            class="room-mobile-podium__rank-badge"
-            :class="rankMedalClass(slot.rank)"
-          >
+          <img v-if="slot.player.photo" :src="slot.player.photo" :alt="slot.player.name" class="room-mobile-podium__avatar" />
+          <span class="room-mobile-podium__rank-badge" :class="rankMedalClass(slot.rank)">
             {{ slot.rank }}
           </span>
         </div>

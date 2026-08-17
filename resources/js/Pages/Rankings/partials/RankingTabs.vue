@@ -36,96 +36,32 @@ const isActive = (tab) => {
 
 <template>
   <div class="mb-6 border-b border-neutral-800 sm:mb-8">
-    <nav class="flex gap-2 overflow-x-auto -mb-px [-webkit-scrollbar]:hidden [-ms-overflow-style]:none [scrollbar-width]:none" aria-label="Tabs">
-      <Link
-        v-for="tab in tabs"
-        :key="tab.id"
-        :href="tab.route"
-        :class="[
-          'group inline-flex flex-shrink-0 items-center gap-2 px-3 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:py-3 sm:text-sm',
-          isActive(tab)
-            ? 'border-b-2 border-yellow-500 text-yellow-500 bg-yellow-500/5'
-            : 'border-b-2 border-transparent text-neutral-400 hover:text-neutral-300 hover:border-neutral-600',
-        ]"
-      >
-        <svg
-          v-if="tab.icon === 'shield'"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        >
+    <nav class="[-webkit-scrollbar]:hidden [-ms-overflow-style]:none [scrollbar-width]:none -mb-px flex gap-2 overflow-x-auto" aria-label="Tabs">
+      <Link v-for="tab in tabs" :key="tab.id" :href="tab.route" :class="['group inline-flex flex-shrink-0 items-center gap-2 px-3 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:py-3 sm:text-sm', isActive(tab) ? 'border-b-2 border-yellow-500 bg-yellow-500/5 text-yellow-500' : 'border-b-2 border-transparent text-neutral-400 hover:border-neutral-600 hover:text-neutral-300']">
+        <svg v-if="tab.icon === 'shield'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 sm:h-5 sm:w-5">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        <Icon
-          v-else-if="tab.icon === 'trophy'"
-          name="trophy"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        />
-        <svg
-          v-else-if="tab.icon === 'gamepad'"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        >
+        <Icon v-else-if="tab.icon === 'trophy'" name="trophy" class="h-4 w-4 sm:h-5 sm:w-5" />
+        <svg v-else-if="tab.icon === 'gamepad'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 sm:h-5 sm:w-5">
           <line x1="6" x2="10" y1="12" y2="12" />
           <line x1="8" x2="8" y1="10" y2="14" />
           <line x1="15" x2="15.01" y1="13" y2="13" />
           <line x1="18" x2="18.01" y1="11" y2="11" />
           <rect width="20" height="12" x="2" y="6" rx="2" />
         </svg>
-        <svg
-          v-else-if="tab.icon === 'calendar'"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        >
+        <svg v-else-if="tab.icon === 'calendar'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 sm:h-5 sm:w-5">
           <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
           <line x1="16" x2="16" y1="2" y2="6" />
           <line x1="8" x2="8" y1="2" y2="6" />
           <line x1="3" x2="21" y1="10" y2="10" />
         </svg>
-        <svg
-          v-else-if="tab.icon === 'users'"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        >
+        <svg v-else-if="tab.icon === 'users'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 sm:h-5 sm:w-5">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
           <circle cx="9" cy="7" r="4" />
           <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
-        <svg
-          v-else-if="tab.icon === 'star'"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-4 w-4 sm:h-5 sm:w-5"
-        >
+        <svg v-else-if="tab.icon === 'star'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 sm:h-5 sm:w-5">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
         {{ tab.label }}

@@ -15,13 +15,17 @@ const nextPage = ref(props.user.scores ? props.user.scores.current_page + 1 : 1)
 const lastPage = ref(props.user.scores ? props.user.scores.last_page : 1)
 const loading = ref(false)
 
-watch(() => props.user.scores, (newScores) => {
-  if (newScores) {
-    scores.value = [...newScores.data]
-    nextPage.value = newScores.current_page + 1
-    lastPage.value = newScores.last_page
-  }
-}, { immediate: true })
+watch(
+  () => props.user.scores,
+  (newScores) => {
+    if (newScores) {
+      scores.value = [...newScores.data]
+      nextPage.value = newScores.current_page + 1
+      lastPage.value = newScores.last_page
+    }
+  },
+  { immediate: true },
+)
 
 const sortKey = ref('updated_at')
 const sortDir = ref('desc')
@@ -52,7 +56,7 @@ const sortedScores = computed(() => {
       bVal = Number(bVal)
     }
 
-    return dir === 'asc' ? (aVal > bVal ? 1 : aVal < bVal ? -1 : 0) : (aVal < bVal ? 1 : aVal > bVal ? -1 : 0)
+    return dir === 'asc' ? (aVal > bVal ? 1 : aVal < bVal ? -1 : 0) : aVal < bVal ? 1 : aVal > bVal ? -1 : 0
   })
 })
 
@@ -75,7 +79,7 @@ const loadMore = () => {
       onError: () => {
         loading.value = false
       },
-    }
+    },
   )
 }
 
@@ -87,7 +91,7 @@ const expandSection = () => {
       preserveState: true,
       preserveScroll: true,
       only: ['user'],
-    }
+    },
   )
 }
 </script>
@@ -106,7 +110,7 @@ const expandSection = () => {
     </div>
     <div v-for="score in sortedScores" :key="score.id" class="retro-list-row">
       <Link class="flex items-center" :href="route('rooms.show', score.room.slug)">
-        <img v-if="score.room.photo" class="h-12 w-12 squircle-nested-xs object-cover" :src="score.room.photo" loading="lazy" />
+        <img v-if="score.room.photo" class="squircle-nested-xs h-12 w-12 object-cover" :src="score.room.photo" loading="lazy" />
         <div class="ml-3 flex flex-col">
           <span class="font-medium text-white">{{ score.room.name }}</span>
           <span class="text-xs text-white/60">{{ score.updated_at }}</span>
@@ -124,9 +128,7 @@ const expandSection = () => {
       </svg>
     </div>
     <div v-if="!isExpanded && scores.length > 0 && scores.length < (user.scores?.total || 0)" class="flex justify-center pt-4">
-      <button @click="expandSection" class="squircle-nested-xs border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-600">
-        {{ __('View all') }} ({{ user.scores?.total || 0 }})
-      </button>
+      <button @click="expandSection" class="squircle-nested-xs border border-neutral-600 bg-neutral-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-600">{{ __('View all') }} ({{ user.scores?.total || 0 }})</button>
     </div>
     <div v-else-if="isExpanded && nextPage <= lastPage && !loading && scores.length > 0" class="flex justify-center pt-4">
       <button @click="loadMore" class="squircle-nested-xs border border-neutral-600 bg-neutral-700 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-600">

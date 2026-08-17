@@ -51,7 +51,7 @@ const hideItemBeforeRefresh = (notification) => {
 </script>
 <template>
   <div>
-    <div class="absolute top-0 left-0 right-0 z-30 flex w-full justify-center" v-if="popup">
+    <div class="absolute left-0 right-0 top-0 z-30 flex w-full justify-center" v-if="popup">
       <div class="retro-flash retro-flash--success my-2 max-w-2xl p-2">
         <NewRoomAlert v-if="popup.type === 'App\\Notifications\\NewRoomAlert'" :notification="popup" @markedAsdone="markAsDone(popup)" />
       </div>
@@ -59,7 +59,7 @@ const hideItemBeforeRefresh = (notification) => {
     <dropdown :placement="placement" :autoClose="false">
       <template #default>
         <div class="retro-icon-btn relative cursor-pointer" title="Notifications">
-          <div v-if="notifications.length" class="absolute -top-1 -right-1 z-10 flex h-5 w-5 items-center justify-center truncate bg-brand-primary border-2 border-brand-midnight text-[10px] font-bold text-white shadow-lg z-10">
+          <div v-if="notifications.length" class="absolute -right-1 -top-1 z-10 z-10 flex h-5 w-5 items-center justify-center truncate border-2 border-brand-midnight bg-brand-primary text-[10px] font-bold text-white shadow-lg">
             {{ notifications.length > 99 ? '99+' : notifications.length }}
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/70 transition-colors duration-200 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -74,11 +74,7 @@ const hideItemBeforeRefresh = (notification) => {
         <div class="p-2 font-light">
           <ul v-if="notifications.length" class="max-h-96 max-w-xl overflow-y-scroll pr-2">
             <li v-for="notification in notifications" :key="notification.id" class="my-2 flex border border-white/10 bg-brand-midnight p-2">
-              <NewTeamRequest
-                v-if="notification.type === 'App\\Notifications\\NewTeamRequest'"
-                :notification="notification"
-                @handled="hideItemBeforeRefresh"
-              />
+              <NewTeamRequest v-if="notification.type === 'App\\Notifications\\NewTeamRequest'" :notification="notification" @handled="hideItemBeforeRefresh" />
               <TeamRequestApproved v-if="notification.type === 'App\\Notifications\\TeamRequestApproved'" :notification="notification" />
               <NewRoomAlert v-if="notification.type === 'App\\Notifications\\NewRoomAlert'" :notification="notification" @markedAsdone="markAsDone(notification)" />
               <NewSuggestion v-if="notification.type === 'App\\Notifications\\NewSuggestion'" :notification="notification" @markedAsdone="markAsDone(notification)" />

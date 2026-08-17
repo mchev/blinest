@@ -26,7 +26,7 @@ const destroy = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <Card>
       <template #header>
         <div class="flex w-full items-center justify-between">

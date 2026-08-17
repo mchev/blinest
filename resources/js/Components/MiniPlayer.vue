@@ -6,8 +6,8 @@ import Icon from '@/Components/Icon.vue'
 const props = defineProps({
   track: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const audio = new Audio()
@@ -50,7 +50,7 @@ const play = () => {
   error.value = false
   loading.value = true
   isPlaying.value = true
-  
+
   isYoutubeTrack.value = props.track.provider === 'youtube'
 
   if (isYoutubeTrack.value) {
@@ -61,8 +61,8 @@ const play = () => {
         initYoutubePlayer()
       }
     }
-    } else {
-    document.querySelectorAll('[id^="youtube-player-"]').forEach(player => {
+  } else {
+    document.querySelectorAll('[id^="youtube-player-"]').forEach((player) => {
       if (window.YT) {
         const ytPlayer = YT.get(player.id)
         if (ytPlayer) {
@@ -70,11 +70,11 @@ const play = () => {
         }
       }
     })
-    
+
     // Use audio attribute if available (for stored tracks), otherwise use preview_url (for search results)
     // Note: For Deezer search results, preview_url contains the real URL (not placeholder)
     let audioUrl = props.track.audio ?? props.track.preview_url
-    
+
     // Safety check: if we somehow get a Deezer placeholder, don't try to play it
     if (audioUrl && audioUrl.startsWith('deezer://')) {
       console.warn('Deezer placeholder URL detected in MiniPlayer, cannot play:', audioUrl)
@@ -83,24 +83,32 @@ const play = () => {
       isPlaying.value = false
       return
     }
-    
+
     audio.src = audioUrl
     audio.crossOrigin = 'anonymous'
-    
-    audio.addEventListener('error', () => {
-      error.value = true
-      loading.value = false
-      isPlaying.value = false
-    }, { once: true })
 
-    audio.addEventListener('canplaythrough', () => {
-      loading.value = false
-      audio.play().catch((e) => {
-        console.error('Audio playback failed:', e)
-        error.value = true 
+    audio.addEventListener(
+      'error',
+      () => {
+        error.value = true
+        loading.value = false
         isPlaying.value = false
-      })
-    }, { once: true })
+      },
+      { once: true },
+    )
+
+    audio.addEventListener(
+      'canplaythrough',
+      () => {
+        loading.value = false
+        audio.play().catch((e) => {
+          console.error('Audio playback failed:', e)
+          error.value = true
+          isPlaying.value = false
+        })
+      },
+      { once: true },
+    )
 
     audio.addEventListener('ended', () => {
       isPlaying.value = false
@@ -124,19 +132,19 @@ const initYoutubePlayer = () => {
     width: '1',
     videoId: props.track.preview_url,
     playerVars: {
-      'autoplay': 1,
-      'controls': 0,
-      'playsinline': 1
+      autoplay: 1,
+      controls: 0,
+      playsinline: 1,
     },
     events: {
-      'onStateChange': (event) => {
+      onStateChange: (event) => {
         if (event.data === YT.PlayerState.ENDED) {
           isPlaying.value = false
           progress.value = 0
         }
         if (event.data === YT.PlayerState.PLAYING) {
           loading.value = false
-          document.querySelectorAll('[id^="youtube-player-"]').forEach(player => {
+          document.querySelectorAll('[id^="youtube-player-"]').forEach((player) => {
             if (player.id !== youtubePlayerId && window.YT) {
               const ytPlayer = YT.get(player.id)
               if (ytPlayer && ytPlayer !== youtubePlayer.value) {
@@ -146,12 +154,12 @@ const initYoutubePlayer = () => {
           })
         }
       },
-      'onError': () => {
+      onError: () => {
         error.value = true
         loading.value = false
         isPlaying.value = false
-      }
-    }
+      },
+    },
   })
 }
 
@@ -174,36 +182,28 @@ const stop = () => {
       <div :id="youtubePlayerId"></div>
     </div>
     <div class="relative">
-      <Icon v-if="!isPlaying && !error" 
-            name="play" 
-            class="h-10 w-10 flex-shrink-0 cursor-pointer hover:text-red-500 transition-colors" 
-            @click="play" />
-            
-      <div v-else-if="loading" 
-           class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800">
-        <Spinner class="h-6 w-6 block mx-auto" />
+      <Icon v-if="!isPlaying && !error" name="play" class="h-10 w-10 flex-shrink-0 cursor-pointer transition-colors hover:text-red-500" @click="play" />
+
+      <div v-else-if="loading" class="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800">
+        <Spinner class="mx-auto block h-6 w-6" />
       </div>
-      
-      <Icon v-else-if="error" 
-            name="exclamation-circle" 
-            class="h-10 w-10 flex-shrink-0 text-red-500" 
-            title="Failed to load audio" />
+
+      <Icon v-else-if="error" name="exclamation-circle" class="h-10 w-10 flex-shrink-0 text-red-500" title="Failed to load audio" />
 
       <div v-else class="relative">
-        <Icon name="stop" 
-              class="h-10 w-10 flex-shrink-0 cursor-pointer hover:text-red-500 transition-colors relative z-20" 
-              @click="stop" />
+        <Icon name="stop" class="relative z-20 h-10 w-10 flex-shrink-0 cursor-pointer transition-colors hover:text-red-500" @click="stop" />
 
-        <svg v-if="isPlaying && !loading"
-             class="absolute z-10 inset-0 -rotate-90 transform pointer-events-none"
-             viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" 
-                  class="fill-none stroke-neutral-800 stroke-[10]" />
-          <circle cx="50" cy="50" r="45"
-                  class="fill-none stroke-red-500 stroke-[10] transition-all duration-200"
-                  :style="{
-                    strokeDasharray: `${progress * 2.83}, 283`
-                  }" />
+        <svg v-if="isPlaying && !loading" class="pointer-events-none absolute inset-0 z-10 -rotate-90 transform" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" class="fill-none stroke-neutral-800 stroke-[10]" />
+          <circle
+            cx="50"
+            cy="50"
+            r="45"
+            class="fill-none stroke-red-500 stroke-[10] transition-all duration-200"
+            :style="{
+              strokeDasharray: `${progress * 2.83}, 283`,
+            }"
+          />
         </svg>
       </div>
     </div>

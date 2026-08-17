@@ -95,11 +95,7 @@ const selectTab = (tabId) => {
   emit('update:modelValue', tabId)
 }
 
-const panelClass = (tabId) => (
-  isTabActive(tabId)
-    ? 'room-mobile-hud__panel-pane room-mobile-hud__panel-pane--active'
-    : 'room-mobile-hud__panel-pane hidden'
-)
+const panelClass = (tabId) => (isTabActive(tabId) ? 'room-mobile-hud__panel-pane room-mobile-hud__panel-pane--active' : 'room-mobile-hud__panel-pane hidden')
 
 const focusTab = (tabId) => {
   nextTick(() => {
@@ -137,20 +133,7 @@ const onTabKeydown = (event, index) => {
 <template>
   <div class="room-mobile-hud">
     <div class="room-mobile-hud__tabs" role="tablist" :aria-label="t('Room panels')">
-      <button
-        v-for="(tab, index) in tabs"
-        :key="tab.id"
-        :id="tabButtonId(tab.id)"
-        type="button"
-        role="tab"
-        class="room-mobile-hud__tab"
-        :class="{ 'room-mobile-hud__tab--active': isTabActive(tab.id) }"
-        :aria-selected="isTabActive(tab.id)"
-        :aria-controls="tabPanelId(tab.id)"
-        :tabindex="isTabActive(tab.id) ? 0 : -1"
-        @click="selectTab(tab.id)"
-        @keydown="onTabKeydown($event, index)"
-      >
+      <button v-for="(tab, index) in tabs" :key="tab.id" :id="tabButtonId(tab.id)" type="button" role="tab" class="room-mobile-hud__tab" :class="{ 'room-mobile-hud__tab--active': isTabActive(tab.id) }" :aria-selected="isTabActive(tab.id)" :aria-controls="tabPanelId(tab.id)" :tabindex="isTabActive(tab.id) ? 0 : -1" @click="selectTab(tab.id)" @keydown="onTabKeydown($event, index)">
         <span class="room-mobile-hud__tab-icon" aria-hidden="true">
           <svg v-if="tab.id === 'live'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
@@ -166,59 +149,20 @@ const onTabKeydown = (event, index) => {
     </div>
 
     <div class="room-mobile-hud__panel">
-      <div
-        :id="tabPanelId('live')"
-        role="tabpanel"
-        :aria-labelledby="tabButtonId('live')"
-        :aria-hidden="!isTabActive('live')"
-        :class="panelClass('live')"
-      >
+      <div :id="tabPanelId('live')" role="tabpanel" :aria-labelledby="tabButtonId('live')" :aria-hidden="!isTabActive('live')" :class="panelClass('live')">
         <LiveFeed :events="liveEvents" />
       </div>
 
-      <div
-        :id="tabPanelId('rank')"
-        role="tabpanel"
-        :aria-labelledby="tabButtonId('rank')"
-        :aria-hidden="!isTabActive('rank')"
-        :class="panelClass('rank')"
-      >
-        <Ranking
-          compact
-          class="h-full min-h-0"
-          :room="room"
-          :room-state="roomState"
-          :track="currentTrack"
-        />
+      <div :id="tabPanelId('rank')" role="tabpanel" :aria-labelledby="tabButtonId('rank')" :aria-hidden="!isTabActive('rank')" :class="panelClass('rank')">
+        <Ranking compact class="h-full min-h-0" :room="room" :room-state="roomState" :track="currentTrack" />
       </div>
 
-      <div
-        v-if="room.is_chat_active"
-        :id="tabPanelId('chat')"
-        role="tabpanel"
-        :aria-labelledby="tabButtonId('chat')"
-        :aria-hidden="!isTabActive('chat')"
-        :class="panelClass('chat')"
-      >
+      <div v-if="room.is_chat_active" :id="tabPanelId('chat')" role="tabpanel" :aria-labelledby="tabButtonId('chat')" :aria-hidden="!isTabActive('chat')" :class="panelClass('chat')">
         <Chat :room="room" embedded />
       </div>
 
-      <div
-        :id="tabPanelId('playlist')"
-        role="tabpanel"
-        :aria-labelledby="tabButtonId('playlist')"
-        :aria-hidden="!isTabActive('playlist')"
-        :class="panelClass('playlist')"
-      >
-        <Answers
-          compact
-          class="h-full min-h-0"
-          :users="roomState.users"
-          :channel="channel"
-          :round="round"
-          :room-id="room.id"
-          :initial-played-tracks="playlistPlayedTracks"
-        />
+      <div :id="tabPanelId('playlist')" role="tabpanel" :aria-labelledby="tabButtonId('playlist')" :aria-hidden="!isTabActive('playlist')" :class="panelClass('playlist')">
+        <Answers compact class="h-full min-h-0" :users="roomState.users" :channel="channel" :round="round" :room-id="room.id" :initial-played-tracks="playlistPlayedTracks" />
       </div>
     </div>
   </div>

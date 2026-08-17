@@ -1,14 +1,14 @@
 export const replaceEmojis = (text) => {
   return Object.keys(emojiMapping).reduce((updatedText, emojiCode) => {
-    const emoji = emojiMapping[emojiCode];
-    const regex = new RegExp(escapeRegExp(emojiCode), 'g');
-    return updatedText.replace(regex, emoji);
-  }, text);
-};
+    const emoji = emojiMapping[emojiCode]
+    const regex = new RegExp(escapeRegExp(emojiCode), 'g')
+    return updatedText.replace(regex, emoji)
+  }, text)
+}
 
 const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
 
 const emojiMapping = {
   ':thumbsup:': '👍',
@@ -51,4 +51,4 @@ const emojiMapping = {
   ':*': '😘',
   ':/': '😕',
   ':$': '🤑',
-};
+}

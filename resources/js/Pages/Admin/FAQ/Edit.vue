@@ -27,10 +27,9 @@ const destroy = () => {
     router.delete(`/admin/faqs/${props.faq.id}`)
   }
 }
-
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <Card>
       <template #header>
         <h1 class="text-xl font-bold">

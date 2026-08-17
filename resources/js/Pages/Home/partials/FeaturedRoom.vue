@@ -2,13 +2,13 @@
 import RoomCard from './RoomCard.vue'
 
 defineProps({
-    room: {
-        type: Object,
-        required: true,
-    },
+  room: {
+    type: Object,
+    required: true,
+  },
 })
 </script>
 
 <template>
-    <RoomCard :room="room" variant="featured" />
+  <RoomCard :room="room" variant="featured" />
 </template>

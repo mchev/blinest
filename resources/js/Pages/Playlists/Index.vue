@@ -34,7 +34,7 @@ const reset = () => {
 </script>
 
 <template>
-<AppLayout>
+  <AppLayout>
     <!-- Header Section -->
     <header class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -43,11 +43,7 @@ const reset = () => {
           {{ __('Total') }}: <span class="font-medium text-neutral-200">{{ playlists.total }}</span> {{ __('playlists') }}
         </p>
       </div>
-      <Link 
-        class="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:from-teal-400 hover:to-teal-500 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900 active:scale-100" 
-        :href="route('playlists.create')"
-        :aria-label="__('Create a new playlist')"
-      >
+      <Link class="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:scale-105 hover:from-teal-400 hover:to-teal-500 hover:shadow-xl hover:shadow-teal-500/40 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900 active:scale-100" :href="route('playlists.create')" :aria-label="__('Create a new playlist')">
         <Icon name="plus" class="h-5 w-5 text-white transition-transform duration-200 group-hover:rotate-90" aria-hidden="true" />
         <span>{{ __('Create a playlist') }}</span>
       </Link>
@@ -60,21 +56,9 @@ const reset = () => {
         <div class="p-4">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex-1">
-              <text-input 
-                id="search-playlists"
-                v-model="form.search" 
-                prepend-icon="search" 
-                :placeholder="__('Search playlists') + '...'"
-                class="w-full bg-neutral-900/50 border-neutral-600/50 focus:border-teal-500/50"
-                :aria-label="__('Search playlists by name or description')"
-              />
+              <text-input id="search-playlists" v-model="form.search" prepend-icon="search" :placeholder="__('Search playlists') + '...'" class="w-full border-neutral-600/50 bg-neutral-900/50 focus:border-teal-500/50" :aria-label="__('Search playlists by name or description')" />
             </div>
-            <button 
-              v-if="form.search" 
-              class="px-4 py-2 text-sm text-neutral-400 hover:text-neutral-200 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded"
-              @click="reset"
-              :aria-label="__('Reset search')"
-            >
+            <button v-if="form.search" class="rounded px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" @click="reset" :aria-label="__('Reset search')">
               {{ __('Reset') }}
             </button>
           </div>
@@ -99,13 +83,9 @@ const reset = () => {
           <tbody>
             <tr v-for="playlist in playlists.data" :key="playlist.id" class="group border-t border-neutral-700/50 transition-colors hover:bg-neutral-800/30">
               <td class="px-4 py-4">
-                <Link 
-                  class="flex items-center focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded" 
-                  :href="route('playlists.edit', playlist.id)"
-                  :aria-label="`${__('Edit playlist')}: ${playlist.name}`"
-                >
+                <Link class="flex items-center rounded focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" :href="route('playlists.edit', playlist.id)" :aria-label="`${__('Edit playlist')}: ${playlist.name}`">
                   <div class="flex min-w-0 flex-col">
-                    <span class="font-medium text-neutral-100 group-hover:text-teal-400 transition-colors truncate">{{ playlist.name }}</span>
+                    <span class="truncate font-medium text-neutral-100 transition-colors group-hover:text-teal-400">{{ playlist.name }}</span>
                     <icon v-if="playlist.deleted_at" name="trash" class="mt-1 h-3 w-3 flex-shrink-0 fill-red-400" aria-hidden="true" />
                   </div>
                 </Link>
@@ -125,20 +105,10 @@ const reset = () => {
               </td>
               <td class="px-4 py-4">
                 <div class="flex flex-wrap gap-2">
-                  <span 
-                    v-for="moderator in playlist.moderators.slice(0, 3)" 
-                    :key="moderator.id"
-                    class="badge bg-neutral-700/50 text-sm text-neutral-200"
-                  >
+                  <span v-for="moderator in playlist.moderators.slice(0, 3)" :key="moderator.id" class="badge bg-neutral-700/50 text-sm text-neutral-200">
                     {{ moderator.name }}
                   </span>
-                  <span 
-                    v-if="playlist.moderators.length > 3"
-                    class="text-sm text-neutral-400"
-                    :aria-label="__('More moderators')"
-                  >
-                    +{{ playlist.moderators.length - 3 }}
-                  </span>
+                  <span v-if="playlist.moderators.length > 3" class="text-sm text-neutral-400" :aria-label="__('More moderators')"> +{{ playlist.moderators.length - 3 }} </span>
                   <span v-if="playlist.moderators.length === 0" class="text-sm text-neutral-400">{{ __('None') }}</span>
                 </div>
               </td>
@@ -146,11 +116,7 @@ const reset = () => {
                 <span class="text-sm text-neutral-400">{{ __('Updated') }}: {{ new Date(playlist.updated_at).toLocaleDateString() }}</span>
               </td>
               <td class="w-px px-4">
-                <Link 
-                  class="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded" 
-                  :href="route('playlists.edit', playlist.id)"
-                  :aria-label="`${__('Edit playlist')}: ${playlist.name}`"
-                >
+                <Link class="flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" :href="route('playlists.edit', playlist.id)" :aria-label="`${__('Edit playlist')}: ${playlist.name}`">
                   <icon name="cheveron-right" class="block h-6 w-6 fill-neutral-400 transition-colors group-hover:fill-teal-400" aria-hidden="true" />
                 </Link>
               </td>
@@ -164,7 +130,7 @@ const reset = () => {
         </table>
       </div>
       <!-- Pagination -->
-      <div v-if="playlists && playlists.links && playlists.links.length > 3" class="border-t border-neutral-700/50 px-4 py-6 bg-neutral-800/30">
+      <div v-if="playlists && playlists.links && playlists.links.length > 3" class="border-t border-neutral-700/50 bg-neutral-800/30 px-4 py-6">
         <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div class="text-sm text-neutral-300" role="status" aria-live="polite">
             <span class="font-medium text-neutral-200">{{ playlists.from || 0 }}</span>
@@ -183,20 +149,12 @@ const reset = () => {
 
     <!-- Mobile/Tablet Card View (below lg) -->
     <div class="grid gap-4 sm:grid-cols-2 lg:hidden">
-      <Card 
-        v-for="playlist in playlists.data" 
-        :key="playlist.id"
-        class="group transition-all hover:shadow-xl hover:border-teal-500/50"
-      >
-        <Link 
-          :href="route('playlists.edit', playlist.id)"
-          class="block focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded"
-          :aria-label="`${__('Edit playlist')}: ${playlist.name}`"
-        >
+      <Card v-for="playlist in playlists.data" :key="playlist.id" class="group transition-all hover:border-teal-500/50 hover:shadow-xl">
+        <Link :href="route('playlists.edit', playlist.id)" class="block rounded focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" :aria-label="`${__('Edit playlist')}: ${playlist.name}`">
           <div class="p-4 lg:p-5">
             <!-- Header -->
             <div class="mb-4 flex items-start justify-between gap-3">
-              <div class="flex-1 min-w-0">
+              <div class="min-w-0 flex-1">
                 <h3 class="mb-1 truncate text-lg font-bold text-neutral-200 transition-colors group-hover:text-teal-400">
                   {{ playlist.name }}
                 </h3>
@@ -204,12 +162,7 @@ const reset = () => {
                   {{ playlist.description }}
                 </p>
               </div>
-              <Icon 
-                v-if="playlist.deleted_at" 
-                name="trash" 
-                class="h-4 w-4 flex-shrink-0 text-red-400" 
-                aria-hidden="true"
-              />
+              <Icon v-if="playlist.deleted_at" name="trash" class="h-4 w-4 flex-shrink-0 text-red-400" aria-hidden="true" />
             </div>
 
             <!-- Stats -->
@@ -232,20 +185,10 @@ const reset = () => {
               </div>
               <div v-if="playlist.moderators.length > 0" class="flex flex-wrap items-center gap-1.5">
                 <span class="text-xs text-neutral-500">{{ __('Moderators') }}:</span>
-                <span 
-                  v-for="moderator in playlist.moderators.slice(0, 3)" 
-                  :key="moderator.id"
-                  class="inline-flex items-center rounded-full bg-neutral-700/50 px-2 py-0.5 text-xs text-neutral-200"
-                >
+                <span v-for="moderator in playlist.moderators.slice(0, 3)" :key="moderator.id" class="inline-flex items-center rounded-full bg-neutral-700/50 px-2 py-0.5 text-xs text-neutral-200">
                   {{ moderator.name }}
                 </span>
-                <span 
-                  v-if="playlist.moderators.length > 3"
-                  class="text-xs text-neutral-400"
-                  :aria-label="__('More moderators')"
-                >
-                  +{{ playlist.moderators.length - 3 }}
-                </span>
+                <span v-if="playlist.moderators.length > 3" class="text-xs text-neutral-400" :aria-label="__('More moderators')"> +{{ playlist.moderators.length - 3 }} </span>
               </div>
             </div>
 
@@ -266,12 +209,7 @@ const reset = () => {
             <p class="text-sm text-neutral-400">
               {{ form.search ? __('Try adjusting your search') : __('Create your first playlist to get started') }}
             </p>
-            <Link 
-              v-if="!form.search" 
-              class="btn-primary mt-4 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" 
-              :href="route('playlists.create')"
-              :aria-label="__('Create your first playlist')"
-            >
+            <Link v-if="!form.search" class="btn-primary mt-4 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-800" :href="route('playlists.create')" :aria-label="__('Create your first playlist')">
               {{ __('Create a playlist') }}
             </Link>
           </div>
@@ -295,20 +233,12 @@ const reset = () => {
     </div>
 
     <!-- Empty State (No playlists at all) -->
-    <div v-if="playlists.data.length == 0 && !filters.search" class="mx-auto mt-8 max-w-screen-xl py-8 px-4 text-center lg:px-6">
+    <div v-if="playlists.data.length == 0 && !filters.search" class="mx-auto mt-8 max-w-screen-xl px-4 py-8 text-center lg:px-6">
       <div class="flex flex-col items-center space-y-4">
-        <Icon 
-          name="music" 
-          class="h-16 w-16 text-neutral-400"
-          aria-hidden="true"
-        />
+        <Icon name="music" class="h-16 w-16 text-neutral-400" aria-hidden="true" />
         <h2 class="text-xl font-medium text-neutral-200">{{ __('No playlists yet') }}</h2>
         <p class="text-neutral-400">{{ __('Create your first playlist to get started') }}</p>
-        <Link 
-          class="btn-primary btn-lg mt-4 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900" 
-          :href="route('playlists.create')"
-          :aria-label="__('Create your first playlist')"
-        >
+        <Link class="btn-primary btn-lg mt-4 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:ring-offset-2 focus:ring-offset-neutral-900" :href="route('playlists.create')" :aria-label="__('Create your first playlist')">
           {{ __('Create my first playlist') }}
         </Link>
       </div>

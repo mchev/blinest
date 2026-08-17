@@ -18,23 +18,20 @@ const isRoomShow = computed(() => page.component === 'Rooms/Show')
     <SearchRooms class="w-full" />
   </div>
 
-  <div class="surface-nav hidden md:flex relative items-center justify-between border-b py-2 px-4 sm:px-6 md:px-12">
+  <div class="surface-nav relative hidden items-center justify-between border-b px-4 py-2 sm:px-6 md:flex md:px-12">
     <div class="relative z-10 w-full lg:w-1/4">
       <Link :href="route('home')" title="Blinest" class="group transition-all duration-200 hover:scale-[102%]">
-        <Logo class="w-24 fill-inherit lg:w-36 mt-2 transition-all duration-200 group-hover:drop-shadow-[0_0_12px_rgb(233_69_96/0.5)]" />
-        <p class="mt-1 hidden text-sm text-white/60 lg:block tracking-widest transition-colors duration-200 group-hover:text-white">{{ __('Tune In, Test Out!') }}</p>
+        <Logo class="mt-2 w-24 fill-inherit transition-all duration-200 group-hover:drop-shadow-[0_0_12px_rgb(233_69_96/0.5)] lg:w-36" />
+        <p class="mt-1 hidden text-sm tracking-widest text-white/60 transition-colors duration-200 group-hover:text-white lg:block">{{ __('Tune In, Test Out!') }}</p>
       </Link>
     </div>
 
-    <div class="relative z-10 flex w-full lg:w-3/4 items-center justify-between pl-2 pr-8 md:flex-shrink-0">
+    <div class="relative z-10 flex w-full items-center justify-between pl-2 pr-8 md:flex-shrink-0 lg:w-3/4">
       <div class="mt-1 flex items-center gap-3">
         <SearchRooms class="transition hover:scale-[104%] focus:scale-[104%]" />
         <Dropdown placement="bottom-end">
           <template #default>
-            <div
-              :title="__('Help & Documentation')"
-              class="retro-icon-btn cursor-pointer text-white/70 hover:text-brand-accent"
-            >
+            <div :title="__('Help & Documentation')" class="retro-icon-btn cursor-pointer text-white/70 hover:text-brand-accent">
               <Icon name="faq" class="h-5 w-5" />
             </div>
           </template>
@@ -84,7 +81,7 @@ const isRoomShow = computed(() => page.component === 'Rooms/Show')
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4 text-brand-accent">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                   </svg>
-                  <span>{{ __('Vue d\'ensemble') }}</span>
+                  <span>{{ __("Vue d'ensemble") }}</span>
                 </div>
               </Link>
               <Link :href="route('docs.level')" class="retro-menu-link">
@@ -109,35 +106,17 @@ const isRoomShow = computed(() => page.component === 'Rooms/Show')
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <Link
-          v-if="user && !user.is_guest"
-          :href="route('rankings.index')"
-          :title="__('Rankings')"
-          class="retro-icon-btn text-brand-secondary hover:text-brand-secondary"
-        >
+        <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="retro-icon-btn text-brand-secondary hover:text-brand-secondary">
           <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_8px_rgb(249_237_105/0.5)]" />
         </Link>
         <Notifications v-if="user && !user.is_guest" />
-        <LevelDisplay
-          v-if="user && !user.is_guest"
-          :level="user.level || 1"
-          :current-xp="user.current_xp || 0"
-          :xp-for-next-level="user.xp_for_next_level || 100"
-        />
+        <LevelDisplay v-if="user && !user.is_guest" :level="user.level || 1" :current-xp="user.current_xp || 0" :xp-for-next-level="user.xp_for_next_level || 100" />
         <UserDropdown v-if="user && !user.is_guest" />
         <div v-if="!user || user.is_guest" class="flex gap-3">
-          <Link
-            :href="user?.is_guest ? route('guest.to-login') : route('login')"
-            :title="__('Login')"
-            class="retro-nav-btn"
-          >
+          <Link :href="user?.is_guest ? route('guest.to-login') : route('login')" :title="__('Login')" class="retro-nav-btn">
             {{ __('Login') }}
           </Link>
-          <Link
-            :href="user?.is_guest ? route('guest.to-register') : route('register')"
-            class="hidden lg:block retro-nav-btn--primary"
-            :title="__('Register')"
-          >
+          <Link :href="user?.is_guest ? route('guest.to-register') : route('register')" class="retro-nav-btn--primary hidden lg:block" :title="__('Register')">
             {{ __('Register') }}
           </Link>
         </div>

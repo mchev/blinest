@@ -1,0 +1,6 @@
+vendor
+public
+node_modules
+storage
+bootstrap/ssr
+resources/js/ziggy.js

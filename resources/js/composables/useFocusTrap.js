@@ -1,10 +1,7 @@
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export function getFocusableElements(container) {
-  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
-    (element) => element.tabIndex !== -1 && !element.hasAttribute('disabled'),
-  )
+  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR)).filter((element) => element.tabIndex !== -1 && !element.hasAttribute('disabled'))
 }
 
 export function assignDialogLabel(container, fallbackId) {

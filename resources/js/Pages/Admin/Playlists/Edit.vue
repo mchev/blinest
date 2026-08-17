@@ -41,7 +41,7 @@ const restore = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <h1 class="mb-4 text-3xl font-bold text-teal-600">
       <Link :href="route('admin.playlists')">{{ __('Playlists') }}</Link>
       <span class="font-medium"> / </span>
@@ -63,7 +63,7 @@ const restore = () => {
             </select-input>
             <select-input v-model="form.user_id" :error="form.errors.user_id" class="w-full" :label="__('Owner')">
               <option :value="playlist.owner.id">{{ playlist.owner.name }}</option>
-              <option v-for="moderator in playlist.moderators" :value="moderator.id">{{ moderator.name }}</option>
+              <option v-for="moderator in playlist.moderators" :key="moderator.id" :value="moderator.id">{{ moderator.name }}</option>
             </select-input>
             <small>{{ __('You can transfer the playlist management to a moderator') }}</small>
           </form>

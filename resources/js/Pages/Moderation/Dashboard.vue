@@ -36,7 +36,7 @@ const statCards = [
     subtext: `${props.stats.public_playlists} publiques, ${props.stats.private_playlists} privées`,
   },
   {
-    name: 'Messages aujourd\'hui',
+    name: "Messages aujourd'hui",
     value: props.stats.todays_messages,
     icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
       <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
@@ -68,7 +68,7 @@ const statCards = [
     <div class="space-y-6">
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div v-for="stat in statCards" :key="stat.name" class="overflow-hidden rounded-lg bg-black/20 backdrop-blur-sm shadow">
+        <div v-for="stat in statCards" :key="stat.name" class="overflow-hidden rounded-lg bg-black/20 shadow backdrop-blur-sm">
           <div class="p-5">
             <div class="flex items-center">
               <div class="flex-shrink-0">
@@ -101,7 +101,7 @@ const statCards = [
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Recent Activity -->
         <Card class="overflow-hidden">
-          <div class="bg-black/20 backdrop-blur-sm p-6">
+          <div class="bg-black/20 p-6 backdrop-blur-sm">
             <h3 class="text-lg font-medium text-white">Activité récente</h3>
             <div class="mt-6 space-y-6">
               <!-- Deleted Messages -->
@@ -110,11 +110,9 @@ const statCards = [
                 <ul role="list" class="mt-3 divide-y divide-neutral-800">
                   <li v-for="message in recentActivity.deleted_messages" :key="message.id" class="py-3">
                     <div class="flex items-center justify-between">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm text-white truncate">{{ message.body }}</p>
-                        <p class="mt-1 text-xs text-neutral-400">
-                          Par {{ message.user.name }} dans {{ message.room.name }}
-                        </p>
+                      <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm text-white">{{ message.body }}</p>
+                        <p class="mt-1 text-xs text-neutral-400">Par {{ message.user.name }} dans {{ message.room.name }}</p>
                       </div>
                       <div class="ml-4 text-xs text-neutral-400">
                         {{ message.deleted_at }}
@@ -130,12 +128,12 @@ const statCards = [
                 <ul role="list" class="mt-3 divide-y divide-neutral-800">
                   <li v-for="user in recentActivity.banned_users" :key="user.id" class="py-3">
                     <div class="flex items-center justify-between">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm text-white truncate">{{ user.name }}</p>
+                      <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm text-white">{{ user.name }}</p>
                         <p v-if="user.team_name" class="mt-1 text-xs text-neutral-400">{{ user.team_name }}</p>
                         <p v-if="user.reason" class="mt-1 text-xs text-orange-400">{{ user.reason }}</p>
                       </div>
-                      <div class="ml-4 text-xs text-neutral-400 text-right">
+                      <div class="ml-4 text-right text-xs text-neutral-400">
                         le {{ user.banned_at }} par {{ user.moderator_name }}
                         <p v-if="user.duration" class="mt-1 text-xs text-neutral-400">Durée : {{ user.duration }}</p>
                       </div>
@@ -149,14 +147,14 @@ const statCards = [
 
         <!-- Room Stats -->
         <Card class="overflow-hidden">
-          <div class="bg-black/20 backdrop-blur-sm p-6">
+          <div class="bg-black/20 p-6 backdrop-blur-sm">
             <h3 class="text-lg font-medium text-white">Rooms populaires</h3>
             <div class="mt-6">
               <ul role="list" class="divide-y divide-neutral-800">
                 <li v-for="room in roomStats" :key="room.id" class="py-3">
                   <div class="flex items-center justify-between">
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-white truncate">{{ room.name }}</p>
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate text-sm font-medium text-white">{{ room.name }}</p>
                       <div class="mt-1 flex items-center gap-4 text-xs text-neutral-400">
                         <span>{{ room.messages_count }} messages</span>
                         <span v-if="room.is_public" class="text-teal-400">Publique</span>
@@ -172,4 +170,4 @@ const statCards = [
       </div>
     </div>
   </Layout>
-</template> 
+</template>

@@ -22,11 +22,11 @@ const props = defineProps({
 </script>
 
 <template>
-<AppLayout>
+  <AppLayout>
     <section>
-      <div class="mx-auto max-w-5xl py-4 px-4 sm:py-8">
+      <div class="mx-auto max-w-5xl px-4 py-4 sm:py-8">
         <div class="mx-auto mb-6 text-center sm:mb-8">
-          <h1 class="mb-2 text-3xl font-extrabold bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent sm:mb-4 sm:text-5xl">
+          <h1 class="mb-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-3xl font-extrabold text-transparent sm:mb-4 sm:text-5xl">
             {{ __('Rankings') }}
           </h1>
           <p class="text-sm text-neutral-400 sm:text-lg">{{ __('Compete with the best players') }}</p>
@@ -36,12 +36,7 @@ const props = defineProps({
         <RankingTabs />
 
         <!-- User Position -->
-        <UserPosition
-          v-if="userPosition"
-          :position="userPosition"
-          :score="null"
-          type="level"
-        />
+        <UserPosition v-if="userPosition" :position="userPosition" :score="null" type="level" />
 
         <!-- Ranking List -->
         <div v-if="topByLevel && topByLevel.data && topByLevel.data.length > 0" class="mt-6">
@@ -55,4 +50,3 @@ const props = defineProps({
     </section>
   </AppLayout>
 </template>
-

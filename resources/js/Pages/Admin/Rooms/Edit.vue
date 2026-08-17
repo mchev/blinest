@@ -47,7 +47,7 @@ const update = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link :href="route('admin.rooms')">{{ __('Rooms') }}</Link> / {{ room.name }}
     </h1>
@@ -87,23 +87,23 @@ const update = () => {
           </template>
           <form @submit.prevent="update" id="optionsForm" class="flex flex-wrap">
             <div class="flex w-full flex-wrap">
-              <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="50" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Tracks by round')" />
+              <text-input v-model="form.tracks_by_round" :error="form.errors.tracks_by_round" type="number" step="1" min="1" max="50" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Tracks by round')" />
 
-              <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Track duration')" />
+              <text-input v-model="form.track_duration" :error="form.errors.track_duration" type="number" step="1" min="5" max="30" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Track duration')" />
 
-              <text-input v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" type="number" step="1" min="0" max="60" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pause between tracks')" />
+              <text-input v-model="form.pause_between_tracks" :error="form.errors.pause_between_tracks" type="number" step="1" min="0" max="60" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Pause between tracks')" />
 
-              <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pause between rounds')" />
+              <text-input v-model="form.pause_between_rounds" :error="form.errors.pause_between_rounds" type="number" step="1" min="0" max="60" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Pause between rounds')" />
             </div>
 
-            <text-input v-model="form.color" type="color" :error="form.errors.color" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Color')" />
+            <text-input v-model="form.color" type="color" :error="form.errors.color" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Color')" />
 
             <div class="flex w-full flex-wrap">
-              <checkbox-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Public')" />
-              <checkbox-input v-model="form.is_pro" :error="form.errors.is_pro" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Pro')" />
-              <checkbox-input v-model="form.is_active" :error="form.errors.is_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Active')" />
-              <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Chatbox')" />
-              <checkbox-input v-model="form.password" class="w-full pr-4 pb-4 md:w-1/2" :label="__('Password')" />
+              <checkbox-input v-model="form.is_public" :error="form.errors.is_public" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Public')" />
+              <checkbox-input v-model="form.is_pro" :error="form.errors.is_pro" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Pro')" />
+              <checkbox-input v-model="form.is_active" :error="form.errors.is_active" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Active')" />
+              <checkbox-input v-model="form.is_chat_active" :error="form.errors.is_chat_active" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Chatbox')" />
+              <checkbox-input v-model="form.password" class="w-full pb-4 pr-4 md:w-1/2" :label="__('Password')" />
             </div>
 
             <text-input v-show="form.password" v-model="form.password" :error="form.errors.password" class="pb-6" type="password" autocomplete="new-password" :label="__('Password')" />

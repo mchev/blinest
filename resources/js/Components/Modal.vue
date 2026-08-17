@@ -1,10 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, watch, nextTick, ref, useId } from 'vue'
-import {
-  assignDialogLabel,
-  focusInitialElement,
-  handleFocusTrapKeydown,
-} from '@/composables/useFocusTrap'
+import { assignDialogLabel, focusInitialElement, handleFocusTrapKeydown } from '@/composables/useFocusTrap'
 
 const props = defineProps({
   show: {
@@ -111,17 +107,7 @@ const maxWidthClass = computed(() => {
         </transition>
 
         <transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to-class="opacity-100 translate-y-0 sm:scale-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100 translate-y-0 sm:scale-100" leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-          <div
-            v-show="show"
-            ref="dialogRef"
-            role="dialog"
-            aria-modal="true"
-            tabindex="-1"
-            class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all focus:outline-none"
-            :class="maxWidthClass"
-            :aria-labelledby="labelledBy ?? undefined"
-            :aria-label="!labelledBy && ariaLabel ? ariaLabel : undefined"
-          >
+          <div v-show="show" ref="dialogRef" role="dialog" aria-modal="true" tabindex="-1" class="retro-modal-panel mx-auto mb-6 w-full max-w-[calc(100vw-2rem)] transform transition-all focus:outline-none" :class="maxWidthClass" :aria-labelledby="labelledBy ?? undefined" :aria-label="!labelledBy && ariaLabel ? ariaLabel : undefined">
             <slot v-if="show" />
           </div>
         </transition>

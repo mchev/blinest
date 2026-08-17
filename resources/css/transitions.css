@@ -47,7 +47,8 @@
 }
 
 /*List*/
-.list-enter-active, .list-leave-active {
+.list-enter-active,
+.list-leave-active {
   transition: all 1s;
 }
 .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
@@ -57,9 +58,8 @@
 
 /*Flip List*/
 .flip-list-move {
-  transition: transform .3s;
+  transition: transform 0.3s;
 }
-
 
 .shine {
   position: relative;

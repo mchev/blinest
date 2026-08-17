@@ -30,7 +30,7 @@ const copy = () => {
 
 <template>
   <span class="relative inline-block">
-    <div v-if="message.content" v-text="message.content" class="absolute right-0 bottom-full mb-1 rounded-lg p-1 text-xs text-white shadow" :class="message.status ? 'bg-green-500' : 'bg-red-500'" />
+    <div v-if="message.content" v-text="message.content" class="absolute bottom-full right-0 mb-1 rounded-lg p-1 text-xs text-white shadow" :class="message.status ? 'bg-green-500' : 'bg-red-500'" />
     <div class="flex">
       <div type="text" id="website-admin" class="min-w-0 rounded-none rounded-l-lg border border-gray-300 border-gray-300 bg-gray-50 px-1.5 py-1 font-mono text-xs text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500" v-text="text" />
 

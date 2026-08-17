@@ -23,7 +23,7 @@ const user = usePage().props.auth.user
 </script>
 
 <template>
-<Layout>
+  <Layout>
     <h1 class="sr-only">Blinest, {{ __('Free multiplayer music quizzes') }}</h1>
 
     <!-- Search Results -->
@@ -31,11 +31,7 @@ const user = usePage().props.auth.user
       <h2 class="sr-only">{{ __('Search Results') }}</h2>
       <HomeSectionHeader :title="__('Search Results')">
         <template #action>
-          <button
-            type="button"
-            class="game-btn-secondary"
-            @click="router.visit(route('home'))"
-          >
+          <button type="button" class="game-btn-secondary" @click="router.visit(route('home'))">
             {{ __('Clear Search') }}
           </button>
         </template>
@@ -53,32 +49,20 @@ const user = usePage().props.auth.user
               <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
             </svg>
           </div>
-          <p class="text-sm font-bold uppercase tracking-wide leading-snug text-white">
+          <p class="text-sm font-bold uppercase leading-snug tracking-wide text-white">
             {{ __('Pick a room, listen to the excerpt, be the fastest to answer.') }}
           </p>
         </div>
       </div>
 
       <div class="flex flex-col gap-8 lg:flex-row lg:gap-8 xl:gap-10">
-      <!-- Main Content -->
-      <section class="min-w-0 flex-1 space-y-8">
-        <PublicRoomsGrid
-          v-if="catalog_items"
-          :catalog="catalog"
-          :catalog-items="catalog_items"
-          :catalog-category-id="catalog_category_id"
-          :categories="public_categories"
-          :community-categories="community_categories"
-          :hidden-category-ids="homepage_hidden_category_ids"
-        />
-      </section>
+        <!-- Main Content -->
+        <section class="min-w-0 flex-1 space-y-8">
+          <PublicRoomsGrid v-if="catalog_items" :catalog="catalog" :catalog-items="catalog_items" :catalog-category-id="catalog_category_id" :categories="public_categories" :community-categories="community_categories" :hidden-category-ids="homepage_hidden_category_ids" />
+        </section>
 
-      <!-- Sidebar -->
-      <HomeSidebar
-        :user="user"
-        :featured-rooms="featured_rooms"
-        :weekly-top-users="weekly_top_users"
-      />
+        <!-- Sidebar -->
+        <HomeSidebar :user="user" :featured-rooms="featured_rooms" :weekly-top-users="weekly_top_users" />
       </div>
     </div>
   </Layout>

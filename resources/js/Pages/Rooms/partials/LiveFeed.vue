@@ -13,29 +13,10 @@ const hasEvents = computed(() => props.events.length > 0)
 
 <template>
   <div class="room-live-feed flex h-full min-h-0 flex-col">
-    <div
-      v-if="hasEvents"
-      aria-live="polite"
-      aria-relevant="additions"
-      aria-atomic="false"
-      class="min-h-0 flex flex-1 flex-col"
-    >
-      <ul
-        class="room-live-feed__list min-h-0 flex-1 overflow-y-auto pr-1"
-        role="list"
-      >
-        <li
-          v-for="event in events"
-          :key="event.id"
-          class="room-live-feed__item room-live-feed__item--enter"
-          role="listitem"
-        >
-          <img
-            v-if="event.userPhoto"
-            :src="event.userPhoto"
-            :alt="event.userName"
-            class="room-live-feed__avatar"
-          />
+    <div v-if="hasEvents" aria-live="polite" aria-relevant="additions" aria-atomic="false" class="flex min-h-0 flex-1 flex-col">
+      <ul class="room-live-feed__list min-h-0 flex-1 overflow-y-auto pr-1" role="list">
+        <li v-for="event in events" :key="event.id" class="room-live-feed__item room-live-feed__item--enter" role="listitem">
+          <img v-if="event.userPhoto" :src="event.userPhoto" :alt="event.userName" class="room-live-feed__avatar" />
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold text-white">
               {{ event.userName }}
@@ -49,9 +30,7 @@ const hasEvents = computed(() => props.events.length > 0)
               +{{ event.points }}
               <span class="sr-only">{{ __('points') }}</span>
             </p>
-            <p v-else-if="event.order && event.order < 4" class="text-xs font-bold text-brand-secondary">
-              #{{ event.order }}
-            </p>
+            <p v-else-if="event.order && event.order < 4" class="text-xs font-bold text-brand-secondary">#{{ event.order }}</p>
             <p v-else class="text-sm text-brand-accent">
               <span aria-hidden="true">✓</span>
               <span class="sr-only">{{ __('Correct answer') }}</span>

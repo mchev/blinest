@@ -36,7 +36,7 @@ const close = () => {
       <template #header>
         <div class="flex w-full items-center justify-between">
           <h2 class="retro-title retro-title--primary">{{ __('Moderation') }}</h2>
-          <span class="pr-2 text-sm text-white/60 italic">{{ message.user.name }}</span>
+          <span class="pr-2 text-sm italic text-white/60">{{ message.user.name }}</span>
         </div>
       </template>
 

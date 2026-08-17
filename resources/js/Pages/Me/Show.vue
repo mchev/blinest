@@ -22,21 +22,20 @@ const update = () => {
   form.post(route('users.update', props.user.id), {
     onSuccess: () => {
       form.reset('photo')
-    }
+    },
   })
 }
 
 const deleteUser = () => {
-  if(confirm('Attention, cette action est irréversible. Voulez-vous vraiment supprimer votre compte et tous les scores associés?')) {
+  if (confirm('Attention, cette action est irréversible. Voulez-vous vraiment supprimer votre compte et tous les scores associés?')) {
     router.delete(route('users.destroy', props.user.id))
   }
 }
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <div class="flex flex-wrap">
-      <div class="lg:mr-4 pr-4 text-center w-full lg:w-auto mt-4">
-
+      <div class="mt-4 w-full pr-4 text-center lg:mr-4 lg:w-auto">
         <figure class="mb-6 flex justify-center">
           <img :src="user.photo" :alt="user.name" class="w-60 rounded-lg" />
         </figure>
@@ -48,12 +47,12 @@ const deleteUser = () => {
           <li class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Registered at') }}</span>
             <span
-              >{{ user.created_at }}<br><small>{{ user.created_at_from_now }}</small></span
+              >{{ user.created_at }}<br /><small>{{ user.created_at_from_now }}</small></span
             >
           </li>
           <li class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Id') }}</span>
-            {{ user.id}}
+            {{ user.id }}
           </li>
           <li v-if="user.latest_round_at" class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Last round played at') }}</span>
@@ -64,7 +63,9 @@ const deleteUser = () => {
           </li>
           <li class="mb-4 flex flex-col">
             <span class="font-bold">{{ __('Score') }}</span>
-            <span>{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+            <span
+              >{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span
+            >
           </li>
         </ul>
 
@@ -93,20 +94,19 @@ const deleteUser = () => {
             <h2 class="text-xl font-bold">{{ __('Bookmark') }}</h2>
           </template>
           <ul class="flex flex-wrap items-center" v-if="user.bookmarked_rooms.length">
-            <li v-for="room in user.bookmarked_rooms" :key="'bookmarked_rooms-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
+            <li v-for="room in user.bookmarked_rooms" :key="'bookmarked_rooms-' + room.id" class="badge bg-teal-900">
               <Link :href="route('rooms.show', room.slug)">{{ room.name }}</Link>
             </li>
           </ul>
         </Card>
 
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Card class="">
             <template #header>
               <h2 class="text-xl font-bold">{{ __('My Playlists') }}</h2>
             </template>
             <ul class="flex flex-wrap items-center" v-if="user.playlists.length">
-              <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge" :class="'bg-teal-900', playlist.user_id === user.id">
+              <li v-for="playlist in user.playlists" :key="'playlist-' + playlist.id" class="badge bg-teal-900">
                 <Link :href="route('playlists.edit', playlist.id)">{{ playlist.name }}</Link>
               </li>
             </ul>
@@ -117,7 +117,7 @@ const deleteUser = () => {
               <h2 class="text-xl font-bold">{{ __('My Rooms') }}</h2>
             </template>
             <ul class="flex flex-wrap items-center" v-if="user.rooms.length">
-              <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge" :class="'bg-teal-900', room.user_id === user.id">
+              <li v-for="room in user.rooms" :key="'room-' + room.id" class="badge bg-teal-900">
                 <Link :href="route('rooms.edit', room.id)">{{ room.name }}</Link>
               </li>
             </ul>
@@ -126,50 +126,52 @@ const deleteUser = () => {
 
         <Card class="my-4 hidden lg:flex">
           <template #header>
-            <div class="flex w-full justify-between items-center">
+            <div class="flex w-full items-center justify-between">
               <h2 class="text-xl font-bold">{{ __('Scores') }}</h2>
-              <span>{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span>
+              <span
+                >{{ user.total_score }}<sup class="ml-1">{{ __('PTS') }}</sup></span
+              >
             </div>
           </template>
-          <div class="overflow-x-auto relative">
+          <div class="relative overflow-x-auto">
             <table class="w-full whitespace-nowrap">
               <thead>
-              <tr class="text-left font-bold">
-                <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
-                <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
-                <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
-                <th class="px-6 pb-4 pt-6">{{ __('Score') }} Max</th>
-              </tr>
+                <tr class="text-left font-bold">
+                  <th class="px-6 pb-4 pt-6">{{ __('Room') }}</th>
+                  <th class="px-6 pb-4 pt-6">{{ __('Last played game') }}</th>
+                  <th class="px-6 pb-4 pt-6">{{ __('Score') }}</th>
+                  <th class="px-6 pb-4 pt-6">{{ __('Score') }} Max</th>
+                </tr>
               </thead>
               <tbody>
-              <tr v-for="score in user.scores.data" :key="score.room_id">
-                <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('rooms.show', score.room_slug)">
-                    <div class="flex flex-col">
-                      {{ score.name }}
-                    </div>
-                  </Link>
-                </td>
-                <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
-                    {{ score.date }}
-                  </Link>
-                </td>
-                <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
-                    {{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup>
-                  </Link>
-                </td>
-                <td class="border-t border-neutral-500">
-                  <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
-                    {{ score.max }}<sup class="ml-1">{{ __('PTS') }}</sup>
-                  </Link>
-                </td>
-              </tr>
-              <tr v-if="user.scores.length === 0">
-                <td class="border-t border-neutral-500 px-6 py-4" colspan="3">{{ __('No scores') }}</td>
-              </tr>
-            </tbody>
+                <tr v-for="score in user.scores.data" :key="score.room_id">
+                  <td class="border-t border-neutral-500">
+                    <Link class="flex items-center px-6 py-4 focus:text-teal-500" :href="route('rooms.show', score.room_slug)">
+                      <div class="flex flex-col">
+                        {{ score.name }}
+                      </div>
+                    </Link>
+                  </td>
+                  <td class="border-t border-neutral-500">
+                    <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
+                      {{ score.date }}
+                    </Link>
+                  </td>
+                  <td class="border-t border-neutral-500">
+                    <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
+                      {{ score.total }}<sup class="ml-1">{{ __('PTS') }}</sup>
+                    </Link>
+                  </td>
+                  <td class="border-t border-neutral-500">
+                    <Link class="flex items-center px-6 py-4" :href="route('rooms.show', score.room_slug)" tabindex="-1">
+                      {{ score.max }}<sup class="ml-1">{{ __('PTS') }}</sup>
+                    </Link>
+                  </td>
+                </tr>
+                <tr v-if="user.scores.length === 0">
+                  <td class="border-t border-neutral-500 px-6 py-4" colspan="3">{{ __('No scores') }}</td>
+                </tr>
+              </tbody>
             </table>
 
             <Pagination :links="user.scores.links" />

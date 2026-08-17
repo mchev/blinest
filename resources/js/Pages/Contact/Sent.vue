@@ -14,7 +14,7 @@ const send = () => {
 }
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <div class="mx-auto flex w-full max-w-2xl flex-col">
       <Card class="mb-4">
         <template #header>

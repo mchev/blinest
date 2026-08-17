@@ -12,4 +12,4 @@ const props = defineProps({
   <Layout title="Utilisateurs bannis">
     <BannedUsers :bannedUsers="bannedUsers" :filters="filters" />
   </Layout>
-</template> 
+</template>

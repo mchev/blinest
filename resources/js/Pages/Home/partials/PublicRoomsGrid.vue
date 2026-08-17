@@ -73,9 +73,7 @@ const tabs = computed(() => {
 
 const switchTabsClass = computed(() => `home-rooms-switch--tabs-${tabs.value.length}`)
 
-const showCategoryFilter = computed(() =>
-  displayCatalog.value === 'official' || displayCatalog.value === 'community',
-)
+const showCategoryFilter = computed(() => displayCatalog.value === 'official' || displayCatalog.value === 'community')
 
 const isMinigamesCatalog = computed(() => displayCatalog.value === 'minigames')
 
@@ -99,9 +97,7 @@ const catalogSeoIntro = computed(() => {
   }
 
   if (selectedCategoryId.value) {
-    const category = activeCategories.value.find(
-      (item) => String(item.id) === selectedCategoryId.value,
-    )
+    const category = activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value)
 
     if (category) {
       return t('Official rooms SEO intro category', { category: t(category.name) })
@@ -111,9 +107,7 @@ const catalogSeoIntro = computed(() => {
   return t('Official rooms SEO intro')
 })
 
-const activeCategories = computed(() =>
-  displayCatalog.value === 'official' ? props.categories : props.communityCategories,
-)
+const activeCategories = computed(() => (displayCatalog.value === 'official' ? props.categories : props.communityCategories))
 
 const defaultOfficialCount = computed(() => {
   const hidden = new Set(props.hiddenCategoryIds)
@@ -127,20 +121,14 @@ const defaultOfficialCount = computed(() => {
   }, 0)
 })
 
-const communityCategoryTotal = computed(() =>
-  props.communityCategories.reduce((sum, category) => sum + (category.rooms_count ?? 0), 0),
-)
+const communityCategoryTotal = computed(() => props.communityCategories.reduce((sum, category) => sum + (category.rooms_count ?? 0), 0))
 
 const categoryFilterCount = computed(() => {
   if (!selectedCategoryId.value) {
-    return displayCatalog.value === 'official'
-      ? defaultOfficialCount.value
-      : communityCategoryTotal.value
+    return displayCatalog.value === 'official' ? defaultOfficialCount.value : communityCategoryTotal.value
   }
 
-  const category = activeCategories.value.find(
-    (item) => String(item.id) === selectedCategoryId.value,
-  )
+  const category = activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value)
 
   return category?.rooms_count ?? 0
 })
@@ -158,14 +146,7 @@ const catalogQuery = () => ({
   category_id: props.catalogCategoryId || undefined,
 })
 
-const {
-  loading: loadingMore,
-  hasMore,
-  showLoadMoreButton,
-  loadMore,
-  loadMoreTrigger,
-  syncAutoLoad,
-} = useCatalogLoadMore(() => props.catalogItems, catalogQuery)
+const { loading: loadingMore, hasMore, showLoadMoreButton, loadMore, loadMoreTrigger, syncAutoLoad } = useCatalogLoadMore(() => props.catalogItems, catalogQuery)
 
 const partialReloadOptions = {
   only: ['catalog', 'catalog_items', 'catalog_category_id'],
@@ -182,17 +163,21 @@ const finishPartialReload = () => {
 }
 
 const reloadCatalog = (query) => {
-  router.get(route('home'), {
-    catalog: 1,
-    ...query,
-  }, {
-    ...partialReloadOptions,
-    onSuccess: () => {
-      finishPartialReload()
-      syncAutoLoad()
+  router.get(
+    route('home'),
+    {
+      catalog: 1,
+      ...query,
     },
-    onError: finishPartialReload,
-  })
+    {
+      ...partialReloadOptions,
+      onSuccess: () => {
+        finishPartialReload()
+        syncAutoLoad()
+      },
+      onError: finishPartialReload,
+    },
+  )
 }
 
 const switchTab = (tab) => {
@@ -255,98 +240,37 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         </p>
       </div>
 
-      <div
-        class="home-rooms-switch"
-        :class="switchTabsClass"
-        role="tablist"
-        :aria-label="t('Home catalog')"
-      >
-        <button
-          v-for="tab in tabs"
-          :id="tabId(tab.id)"
-          :key="tab.id"
-          type="button"
-          role="tab"
-          class="home-rooms-switch__tab"
-          :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id }"
-          :aria-selected="displayCatalog === tab.id"
-          :aria-controls="panelId(tab.id)"
-          :tabindex="displayCatalog === tab.id ? 0 : -1"
-          @click="switchTab(tab.id)"
-        >
+      <div class="home-rooms-switch" :class="switchTabsClass" role="tablist" :aria-label="t('Home catalog')">
+        <button v-for="tab in tabs" :id="tabId(tab.id)" :key="tab.id" type="button" role="tab" class="home-rooms-switch__tab" :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id }" :aria-selected="displayCatalog === tab.id" :aria-controls="panelId(tab.id)" :tabindex="displayCatalog === tab.id ? 0 : -1" @click="switchTab(tab.id)">
           {{ tab.label }}
         </button>
       </div>
 
-      <select
-        v-if="showCategoryFilter"
-        id="home-room-category-filter"
-        v-model="selectedCategoryId"
-        class="retro-select home-rooms-toolbar__filter"
-        :aria-label="t('Filter by category')"
-        :disabled="showTabSkeleton || showFilterOverlay"
-      >
-        <option value="">
-          {{ t('All categories') }} ({{ categoryFilterCount }})
-        </option>
-        <option
-          v-for="category in activeCategories"
-          :key="category.id"
-          :value="String(category.id)"
-        >
-          {{ t(category.name) }} ({{ category.rooms_count }})
-        </option>
+      <select v-if="showCategoryFilter" id="home-room-category-filter" v-model="selectedCategoryId" class="retro-select home-rooms-toolbar__filter" :aria-label="t('Filter by category')" :disabled="showTabSkeleton || showFilterOverlay">
+        <option value="">{{ t('All categories') }} ({{ categoryFilterCount }})</option>
+        <option v-for="category in activeCategories" :key="category.id" :value="String(category.id)">{{ t(category.name) }} ({{ category.rooms_count }})</option>
       </select>
     </header>
 
-    <div
-      :id="panelId(displayCatalog)"
-      role="tabpanel"
-      :aria-labelledby="tabId(displayCatalog)"
-      class="home-catalog-panel space-y-6"
-    >
-      <div
-        v-if="showTabSkeleton"
-        class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
-        role="status"
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <div
-          v-for="index in 8"
-          :key="`catalog-skeleton-${index}`"
-          class="home-catalog-skeleton"
-        />
+    <div :id="panelId(displayCatalog)" role="tabpanel" :aria-labelledby="tabId(displayCatalog)" class="home-catalog-panel space-y-6">
+      <div v-if="showTabSkeleton" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" role="status" aria-live="polite" aria-busy="true">
+        <div v-for="index in 8" :key="`catalog-skeleton-${index}`" class="home-catalog-skeleton" />
         <span class="sr-only">{{ t('Loading rooms...') }}</span>
       </div>
 
       <template v-else>
-        <div
-          v-if="showFilterOverlay"
-          class="home-catalog-panel__overlay"
-          role="status"
-          aria-live="polite"
-        >
+        <div v-if="showFilterOverlay" class="home-catalog-panel__overlay" role="status" aria-live="polite">
           <p class="text-sm font-semibold text-white">{{ t('Loading rooms...') }}</p>
         </div>
 
-        <div
-          v-if="isMinigamesCatalog && catalogItemsList.length"
-          class="mb-4 flex justify-end"
-        >
-          <Link
-            :href="route('minigames.index')"
-            class="game-link-action"
-          >
+        <div v-if="isMinigamesCatalog && catalogItemsList.length" class="mb-4 flex justify-end">
+          <Link :href="route('minigames.index')" class="game-link-action">
             {{ t('View all') }}
             <Icon name="cheveron-right" class="inline-block h-4 w-4" />
           </Link>
         </div>
 
-        <div
-          v-if="!catalogItemsList.length && displayCatalog === 'mine'"
-          class="home-rooms-empty flex flex-col items-center gap-4"
-        >
+        <div v-if="!catalogItemsList.length && displayCatalog === 'mine'" class="home-rooms-empty flex flex-col items-center gap-4">
           <h3 class="text-base font-bold text-white">
             {{ t('No rooms yet') }}
           </h3>
@@ -354,86 +278,41 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
             {{ t('Create your first room to start playing') }}
           </p>
           <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link
-              :href="route('rooms.create')"
-              class="game-btn-secondary inline-flex"
-            >
+            <Link :href="route('rooms.create')" class="game-btn-secondary inline-flex">
               {{ t('Create my first room') }}
             </Link>
-            <Link
-              :href="route('docs.create-content')"
-              class="game-link-action inline-flex items-center gap-1"
-            >
+            <Link :href="route('docs.create-content')" class="game-link-action inline-flex items-center gap-1">
               {{ t('Créer rooms & playlists') }}
               <Icon name="cheveron-right" class="inline-block h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div
-          v-else-if="!catalogItemsList.length"
-          class="home-rooms-empty"
-        >
+        <div v-else-if="!catalogItemsList.length" class="home-rooms-empty">
           <p class="text-sm font-semibold text-white">
-            {{
-              selectedCategoryId
-                ? t('No rooms in this category right now.')
-                : t('No rooms available at the moment.')
-            }}
+            {{ selectedCategoryId ? t('No rooms in this category right now.') : t('No rooms available at the moment.') }}
           </p>
-          <button
-            v-if="selectedCategoryId"
-            type="button"
-            class="game-link-action mt-3"
-            @click="selectedCategoryId = ''"
-          >
+          <button v-if="selectedCategoryId" type="button" class="game-link-action mt-3" @click="selectedCategoryId = ''">
             {{ t('Show all categories') }}
           </button>
         </div>
 
         <template v-else>
-          <div
-            id="catalog-grid"
-            class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4"
-            :class="{ 'opacity-50': showFilterOverlay }"
-          >
+          <div id="catalog-grid" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" :class="{ 'opacity-50': showFilterOverlay }">
             <template v-if="isMinigamesCatalog">
-              <MinigameCard
-                v-for="game in catalogItemsList"
-                :key="game.type"
-                :game="game"
-              />
+              <MinigameCard v-for="game in catalogItemsList" :key="game.type" :game="game" />
             </template>
             <template v-else>
-              <Room
-                v-for="room in catalogItemsList"
-                :key="room.id"
-                :room="room"
-                variant="catalog"
-              />
+              <Room v-for="room in catalogItemsList" :key="room.id" :room="room" variant="catalog" />
             </template>
           </div>
 
-          <div
-            v-if="hasMore"
-            ref="loadMoreTrigger"
-            class="flex justify-center py-4"
-          >
-            <button
-              v-if="showLoadMoreButton"
-              type="button"
-              class="game-btn-secondary"
-              :disabled="loadingMore"
-              @click="loadMore"
-            >
+          <div v-if="hasMore" ref="loadMoreTrigger" class="flex justify-center py-4">
+            <button v-if="showLoadMoreButton" type="button" class="game-btn-secondary" :disabled="loadingMore" @click="loadMore">
               {{ loadingMore ? t('Loading rooms...') : t('Show more rooms') }}
             </button>
 
-            <p
-              v-else-if="loadingMore"
-              class="text-sm font-semibold text-white/70"
-              role="status"
-            >
+            <p v-else-if="loadingMore" class="text-sm font-semibold text-white/70" role="status">
               {{ t('Loading rooms...') }}
             </p>
           </div>

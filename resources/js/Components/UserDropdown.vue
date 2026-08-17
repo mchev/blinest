@@ -18,7 +18,7 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-white/20 group-hover:border-brand-accent transition-colors" :alt="user.name" />
+          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-white/20 transition-colors group-hover:border-brand-accent" :alt="user.name" />
         </div>
       </div>
     </template>
@@ -54,7 +54,7 @@ const isUrl = (...urls) => {
             {{ __('Modération') }}
           </Link>
         </li>
-        <li class="border-t border-white/10 my-1">
+        <li class="my-1 border-t border-white/10">
           <div class="flex items-center justify-between px-4 py-3">
             <span class="text-sm text-white/70">{{ __('Language') }}</span>
             <LanguageSwitcher :standalone="false" />

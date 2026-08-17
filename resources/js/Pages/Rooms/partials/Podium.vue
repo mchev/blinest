@@ -9,17 +9,17 @@ const props = defineProps({
 const hasEntries = computed(() => props.list && props.list.length > 0)
 
 const podiumOrder = computed(() => {
-  if (! props.list?.length) {
+  if (!props.list?.length) {
     return []
   }
 
   const [first, second, third] = props.list
 
-  if (! second) {
+  if (!second) {
     return first ? [{ entry: first, rank: 1 }] : []
   }
 
-  if (! third) {
+  if (!third) {
     return [
       { entry: second, rank: 2 },
       { entry: first, rank: 1 },
@@ -91,55 +91,27 @@ const standClass = (rank) => {
 <template>
   <div v-if="hasEntries" class="podium-root relative w-full min-w-0 py-3 sm:py-6">
     <div class="absolute inset-0 hidden opacity-10 sm:block">
-      <div class="absolute top-0 left-1/4 h-32 w-32 rounded-full bg-brand-secondary opacity-20 blur-3xl"></div>
+      <div class="absolute left-1/4 top-0 h-32 w-32 rounded-full bg-brand-secondary opacity-20 blur-3xl"></div>
       <div class="absolute bottom-0 right-1/4 h-32 w-32 rounded-full bg-brand-accent opacity-20 blur-3xl"></div>
     </div>
 
     <div class="relative z-10 flex items-end justify-center gap-2 px-1 sm:h-48 sm:gap-4">
-      <div
-        v-for="{ entry, rank } in podiumOrder"
-        :key="`${displayName(entry)}-${rank}`"
-        class="podium-column min-w-0 max-w-[34%] flex-1"
-        :class="{ 'podium-column--first': rank === 1 }"
-      >
+      <div v-for="{ entry, rank } in podiumOrder" :key="`${displayName(entry)}-${rank}`" class="podium-column min-w-0 max-w-[34%] flex-1" :class="{ 'podium-column--first': rank === 1 }">
         <div class="flex flex-col items-center gap-1.5 sm:gap-1">
           <div class="avatar-container">
-            <img
-              class="rounded-full border-2 object-cover shadow-lg"
-              :class="[
-                rank === 1 ? 'h-16 w-16 sm:h-14 sm:w-14' : 'h-14 w-14 sm:h-12 sm:w-12',
-                avatarRingClass(rank),
-              ]"
-              :src="displayPhoto(entry)"
-              :alt="displayName(entry)"
-            />
+            <img class="rounded-full border-2 object-cover shadow-lg" :class="[rank === 1 ? 'h-16 w-16 sm:h-14 sm:w-14' : 'h-14 w-14 sm:h-12 sm:w-12', avatarRingClass(rank)]" :src="displayPhoto(entry)" :alt="displayName(entry)" />
             <div :class="medalClass(rank)">{{ rank }}</div>
           </div>
 
-          <p
-            class="podium-name w-full truncate text-center font-semibold leading-tight text-white"
-            :class="rank === 1 ? 'text-sm sm:text-xs' : 'text-xs sm:text-[11px]'"
-            :title="displayName(entry)"
-          >
+          <p class="podium-name w-full truncate text-center font-semibold leading-tight text-white" :class="rank === 1 ? 'text-sm sm:text-xs' : 'text-xs sm:text-[11px]'" :title="displayName(entry)">
             {{ displayName(entry) }}
           </p>
 
           <div class="hidden min-h-[1.25rem] items-center justify-center sm:flex">
-            <EloBadge
-              v-if="entry.user?.elo"
-              :elo="entry.user.elo"
-              size="sm"
-              variant="compact"
-            />
+            <EloBadge v-if="entry.user?.elo" :elo="entry.user.elo" size="sm" variant="compact" />
           </div>
 
-          <p
-            class="podium-score font-bold leading-none"
-            :class="[
-              scoreClass(rank),
-              rank === 1 ? 'text-lg sm:text-sm' : 'text-base sm:text-sm',
-            ]"
-          >
+          <p class="podium-score font-bold leading-none" :class="[scoreClass(rank), rank === 1 ? 'text-lg sm:text-sm' : 'text-base sm:text-sm']">
             {{ displayScore(entry) }}
             <span class="text-[11px] font-medium text-white/60 sm:text-[10px]">pts</span>
           </p>
@@ -152,22 +124,10 @@ const standClass = (rank) => {
     </div>
 
     <div v-if="list[3] || list[4]" class="mt-3 flex flex-wrap justify-center gap-2 px-2 sm:mt-4 sm:gap-4">
-      <div
-        v-for="(entry, offset) in [list[3], list[4]].filter(Boolean)"
-        :key="displayName(entry) + offset"
-        class="flex min-w-0 max-w-full items-center gap-2.5 border border-white/10 bg-brand-midnight px-3 py-2 sm:gap-2 sm:py-1"
-      >
+      <div v-for="(entry, offset) in [list[3], list[4]].filter(Boolean)" :key="displayName(entry) + offset" class="flex min-w-0 max-w-full items-center gap-2.5 border border-white/10 bg-brand-midnight px-3 py-2 sm:gap-2 sm:py-1">
         <div class="relative shrink-0">
-          <img
-            class="h-9 w-9 rounded-full border object-cover sm:h-8 sm:w-8"
-            :class="offset === 0 ? 'border-brand-accent' : 'border-brand-primary'"
-            :src="displayPhoto(entry)"
-            :alt="displayName(entry)"
-          />
-          <div
-            class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center text-[10px] font-bold"
-            :class="offset === 0 ? 'bg-brand-accent text-brand-midnight' : 'bg-brand-primary text-white'"
-          >
+          <img class="h-9 w-9 rounded-full border object-cover sm:h-8 sm:w-8" :class="offset === 0 ? 'border-brand-accent' : 'border-brand-primary'" :src="displayPhoto(entry)" :alt="displayName(entry)" />
+          <div class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center text-[10px] font-bold" :class="offset === 0 ? 'bg-brand-accent text-brand-midnight' : 'bg-brand-primary text-white'">
             {{ offset + 4 }}
           </div>
         </div>
@@ -176,19 +136,9 @@ const standClass = (rank) => {
             {{ displayName(entry) }}
           </div>
           <div class="hidden sm:block">
-            <EloBadge
-              v-if="entry.user?.elo"
-              :elo="entry.user.elo"
-              size="sm"
-              variant="compact"
-            />
+            <EloBadge v-if="entry.user?.elo" :elo="entry.user.elo" size="sm" variant="compact" />
           </div>
-          <div
-            class="text-xs font-bold sm:text-[10px]"
-            :class="offset === 0 ? 'text-brand-accent' : 'text-brand-primary'"
-          >
-            {{ displayScore(entry) }} pts
-          </div>
+          <div class="text-xs font-bold sm:text-[10px]" :class="offset === 0 ? 'text-brand-accent' : 'text-brand-primary'">{{ displayScore(entry) }} pts</div>
         </div>
       </div>
     </div>

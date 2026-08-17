@@ -12,9 +12,9 @@ defineProps({
 })
 </script>
 <template>
-  <div class="text-white min-h-screen overflow-hidden">
+  <div class="min-h-screen overflow-hidden text-white">
     <div id="dropdown" />
-    <div class="md:flex md:flex-col h-full">
+    <div class="h-full md:flex md:flex-col">
       <div class="md:flex md:h-full md:flex-col">
         <div class="surface-nav md:flex md:flex-shrink-0">
           <div class="flex items-center justify-between px-6 py-4 md:w-56 md:flex-shrink-0 md:justify-center">
@@ -36,7 +36,7 @@ defineProps({
           </div>
           <div class="md:text-md items center grid w-full grid-cols-2 p-4 text-sm md:px-12 md:py-0">
             <div class="retro-page-title flex items-center justify-end gap-2 text-lg sm:text-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
               {{ __('Administration') }}
@@ -47,9 +47,9 @@ defineProps({
             </div>
           </div>
         </div>
-        <div class="md:flex md:flex-grow md:overflow-hidden md:min-h-0">
-          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto border-r border-white/10 bg-brand-deep py-12 px-4 md:block md:min-h-0" />
-          <div class="px-4 py-8 md:flex-1 md:overflow-y-auto md:p-12 md:min-h-0" scroll-region>
+        <div class="md:flex md:min-h-0 md:flex-grow md:overflow-hidden">
+          <admin-menu class="hidden w-56 flex-shrink-0 overflow-y-auto border-r border-white/10 bg-brand-deep px-4 py-12 md:block md:min-h-0" />
+          <div class="px-4 py-8 md:min-h-0 md:flex-1 md:overflow-y-auto md:p-12" scroll-region>
             <flash-messages />
             <slot />
           </div>

@@ -1,43 +1,40 @@
-import './bootstrap';
-import '../css/app.css';
+import './bootstrap'
+import '../css/app.css'
 import { createApp, createSSRApp, h } from 'vue'
 import { createInertiaApp, router } from '@inertiajs/vue3'
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from 'ziggy-js';
-import { route as ziggyRoute } from 'ziggy-js';
-import Translation from './translation';
-import { scheduleEzoicSync } from './ezoic';
-import { createLocalizedRoute } from './localizedRoute';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import { ZiggyVue } from 'ziggy-js'
+import { route as ziggyRoute } from 'ziggy-js'
+import Translation from './translation'
+import { scheduleEzoicSync } from './ezoic'
+import { createLocalizedRoute } from './localizedRoute'
 
 router.on('finish', (event) => {
-    const path = new URL(event.detail.visit.url, window.location.origin).pathname;
+  const path = new URL(event.detail.visit.url, window.location.origin).pathname
 
-    scheduleEzoicSync(path);
-});
+  scheduleEzoicSync(path)
+})
 
 createInertiaApp({
-    serverHead: true,
-    resolve: (name) => resolvePageComponent(
-        `./Pages/${name}.vue`,
-        import.meta.glob('./Pages/**/*.vue'),
-    ),
-    setup({ el, App, props, plugin }) {
-        const createVueApp = el.hasAttribute('data-server-rendered') ? createSSRApp : createApp;
+  serverHead: true,
+  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+  setup({ el, App, props, plugin }) {
+    const createVueApp = el.hasAttribute('data-server-rendered') ? createSSRApp : createApp
 
-        const app = createVueApp({ render: () => h(App, props) })
-            .use(plugin)
-            .use(ZiggyVue)
-            .mixin(Translation);
+    const app = createVueApp({ render: () => h(App, props) })
+      .use(plugin)
+      .use(ZiggyVue)
+      .mixin(Translation)
 
-        app.config.globalProperties.route = createLocalizedRoute(ziggyRoute);
+    app.config.globalProperties.route = createLocalizedRoute(ziggyRoute)
 
-        app.mount(el);
+    app.mount(el)
 
-        scheduleEzoicSync(window.location.pathname);
+    scheduleEzoicSync(window.location.pathname)
 
-        return app;
-    },
-    progress: {
-        color: '#4B5563',
-    },
-});
+    return app
+  },
+  progress: {
+    color: '#4B5563',
+  },
+})

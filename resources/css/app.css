@@ -11,15 +11,9 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased text-white;
+    @apply font-sans text-white antialiased;
     background-color: var(--surface-base);
-    background-image:
-      linear-gradient(rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(var(--color-deep) / 0.04) 1px, transparent 1px),
-      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--color-deep) / 0.5), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 50%, rgb(var(--color-deep) / 0.22), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 0% 80%, rgb(var(--color-deep) / 0.18), transparent 50%),
-      linear-gradient(180deg, rgb(var(--color-midnight)) 0%, rgb(var(--color-midnight)) 100%);
+    background-image: linear-gradient(rgb(var(--color-deep) / 0.04) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--color-deep) / 0.04) 1px, transparent 1px), radial-gradient(ellipse 90% 60% at 50% -10%, rgb(var(--color-deep) / 0.5), transparent 55%), radial-gradient(ellipse 50% 40% at 100% 50%, rgb(var(--color-deep) / 0.22), transparent 50%), radial-gradient(ellipse 50% 40% at 0% 80%, rgb(var(--color-deep) / 0.18), transparent 50%), linear-gradient(180deg, rgb(var(--color-midnight)) 0%, rgb(var(--color-midnight)) 100%);
     background-size: 48px 48px, 48px 48px, auto, auto, auto, auto;
     background-attachment: fixed;
   }

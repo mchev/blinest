@@ -7,20 +7,20 @@ const props = defineProps({
   room: {
     type: Object,
     required: true,
-    validator: (room) => room.track_duration && room.pause_between_tracks
+    validator: (room) => room.track_duration && room.pause_between_tracks,
   },
   channel: {
     type: String,
-    required: true
+    required: true,
   },
   initialTrack: {
     type: Object,
-    default: null
+    default: null,
   },
   initialStartTime: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 })
 
 const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped', 'track:currentTime'])
@@ -89,7 +89,7 @@ const triggerUserGesture = async () => {
 const initializeAudio = () => {
   audio.value.muted = true
   audio.value.volume = volume.value
-  
+
   if (!window.YT && !windowYTScriptLoaded.value) {
     loadYouTubeAPI()
   }
@@ -127,7 +127,7 @@ const cleanupYoutubePlayer = () => {
 
 const initYoutubePlayer = (videoId, startTime = 0) => {
   cleanupYoutubePlayer()
-  
+
   const player = new YT.Player('youtube-player', {
     height: '0',
     width: '0',
@@ -136,7 +136,7 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
       autoplay: 1,
       controls: 0,
       disablekb: 1,
-      origin: window.location.origin
+      origin: window.location.origin,
     },
     events: {
       onReady: (event) => {
@@ -168,7 +168,7 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
           5: 'HTML5 player error',
           100: 'Video not found',
           101: 'Video playback not allowed',
-          150: 'Video playback not allowed'
+          150: 'Video playback not allowed',
         }
         const errorCode = event.data
         const videoUrl = track.value?.preview_url
@@ -180,16 +180,20 @@ const initYoutubePlayer = (videoId, startTime = 0) => {
           - Video URL: ${videoUrl}
           - Provider: ${trackProvider}
           - Browser: ${navigator.userAgent}
-          ${errorCode === 5 ? `
+          ${
+            errorCode === 5
+              ? `
           Possible causes:
           - Browser doesn't support HTML5 video
           - YouTube player failed to initialize
           - Network connectivity issues
-          ` : ''}`
+          `
+              : ''
+          }`
         loading.value = false
         isPlaying.value = false
-      }
-    }
+      },
+    },
   })
 }
 
@@ -198,13 +202,13 @@ const play = async (startTime = 0) => {
 
   // Clear waitingForNextTrack when we start playing
   waitingForNextTrack.value = false
-  
+
   loading.value = true
   error.value = null
   isPlaying.value = true
   pendingStartTime.value = startTime
   currentTime.value = startTime
-  
+
   // Initialize percent based on startTime if joining mid-track
   if (startTime > 0) {
     const calculatedPercent = (100 / props.room.track_duration) * (startTime + 0.25)
@@ -235,18 +239,19 @@ const play = async (startTime = 0) => {
     audio.value.src = track.value.audio
     audio.value.crossOrigin = 'anonymous'
     audio.value.muted = false
-    
+
     // Add event listeners before loading
     addAudioEventListeners()
-    
+
     // Load the audio - handleCanPlayThrough will apply the startTime
     audio.value.load()
-    
+
     // If we have a startTime, also try to set it early (but handleCanPlayThrough is the main handler)
     if (startTime > 0) {
       // Try to set it as soon as metadata is available
       const trySetStartTime = () => {
-        if (audio.value.readyState >= 1) { // HAVE_METADATA
+        if (audio.value.readyState >= 1) {
+          // HAVE_METADATA
           try {
             audio.value.currentTime = startTime
             currentTime.value = startTime
@@ -291,7 +296,7 @@ const setupEventListeners = () => {
 
 const cleanup = () => {
   stop()
-  
+
   // Clean up Echo listeners only (do not Echo.leave - Show.vue owns the presence subscription)
   if (playerChannel) {
     playerChannel.stopListening('TrackPlayed')
@@ -301,7 +306,7 @@ const cleanup = () => {
     playerChannel.stopListening('UserHasFoundAllTheAnswers')
     playerChannel = null
   }
-  
+
   window.removeEventListener('volume-localstorage-changed', handleVolumeChange)
   removeAudioEventListeners()
   clearInterval(countdownInterval.value)
@@ -319,14 +324,14 @@ const handleTrackPlayed = (e) => {
   }
   track.value = e.track
   waitingForNextTrack.value = false
-  
+
   // Enregistrer que le joueur a écouté cette track (même sans trouver de réponse)
   if (e.round && e.round.id && e.track && e.track.id) {
     axios.post(`/rounds/${e.round.id}/tracks/${e.track.id}/listened`).catch(() => {
       // Ignorer les erreurs silencieusement (peut arriver si le round est terminé)
     })
   }
-  
+
   play()
 }
 
@@ -338,7 +343,7 @@ const handleTrackEnded = () => {
 }
 
 const handleUserFoundAllAnswers = (e) => {
-  if (!usersWithAllAnswers.value.some(user => user.id === e.user.id)) {
+  if (!usersWithAllAnswers.value.some((user) => user.id === e.user.id)) {
     usersWithAllAnswers.value.push(e.user)
   }
 }
@@ -352,7 +357,7 @@ const addAudioEventListeners = () => {
     loadeddata: handleCanPlayThrough,
     canplaythrough: handleCanPlayThrough,
     timeupdate: handleTimeUpdate,
-    ended: handleAudioEnded
+    ended: handleAudioEnded,
   }
 
   Object.entries(events).forEach(([event, handler]) => {
@@ -367,7 +372,7 @@ const removeAudioEventListeners = () => {
     loadeddata: handleCanPlayThrough,
     canplaythrough: handleCanPlayThrough,
     timeupdate: handleTimeUpdate,
-    ended: handleAudioEnded
+    ended: handleAudioEnded,
   }
 
   Object.entries(events).forEach(([event, handler]) => {
@@ -380,7 +385,7 @@ const handleAudioError = () => {
     1: 'Fetching process aborted by user',
     2: 'Error occurred while downloading',
     3: 'Error occurred while decoding',
-    4: 'Audio not supported'
+    4: 'Audio not supported',
   }
 
   const errorCode = audio.value.error.code
@@ -396,14 +401,18 @@ const handleAudioError = () => {
   }
 
   error.value = `Audio Error (${errorCode}): ${errorMessages[errorCode] || errorMessage}
-    ${errorCode === 4 ? `
+    ${
+      errorCode === 4
+        ? `
     Possible causes:
     - Unsupported audio format
     - Invalid audio URL: ${trackUrl}
     - Provider: ${trackProvider}
     - Browser: ${navigator.userAgent}
-    ` : ''}`
-    
+    `
+        : ''
+    }`
+
   isPlaying.value = false
   loading.value = false
 }
@@ -445,7 +454,7 @@ const handleCanPlayThrough = async () => {
   }
 
   loading.value = false
-  
+
   // For iOS, we need to pause and set time before playing
   if (isIOS.value && targetStartTime > 0) {
     audio.value.pause()
@@ -456,18 +465,19 @@ const handleCanPlayThrough = async () => {
       console.warn('Player::handleCanPlayThrough - Could not set currentTime on iOS:', e)
     }
   }
-  
+
   try {
     await audio.value.play()
-    
+
     // CRITICAL: Verify and re-apply startTime AFTER play() - browsers often reset it
     if (targetStartTime > 0) {
       // Wait a tiny bit for the browser to settle, then check and fix
       setTimeout(() => {
         const actualTime = audio.value.currentTime
         const timeDiff = Math.abs(actualTime - targetStartTime)
-        
-        if (timeDiff > 0.2) { // If more than 200ms off, fix it
+
+        if (timeDiff > 0.2) {
+          // If more than 200ms off, fix it
           try {
             audio.value.currentTime = targetStartTime
             currentTime.value = targetStartTime
@@ -477,7 +487,7 @@ const handleCanPlayThrough = async () => {
             console.warn('Could not fix startTime:', e)
           }
         }
-        
+
         // Clear pendingStartTime after we've applied it
         pendingStartTime.value = 0
       }, 50) // Small delay to let browser settle
@@ -489,27 +499,29 @@ const handleCanPlayThrough = async () => {
     }
     // If play failed, try to apply startTime when it succeeds
     if (targetStartTime > 0) {
-      audio.value.addEventListener('play', () => {
-        try {
-          audio.value.currentTime = targetStartTime
-          currentTime.value = targetStartTime
-          pendingStartTime.value = 0
-        } catch (e) {
-          console.warn('Could not apply startTime on play event:', e)
-        }
-      }, { once: true })
+      audio.value.addEventListener(
+        'play',
+        () => {
+          try {
+            audio.value.currentTime = targetStartTime
+            currentTime.value = targetStartTime
+            pendingStartTime.value = 0
+          } catch (e) {
+            console.warn('Could not apply startTime on play event:', e)
+          }
+        },
+        { once: true },
+      )
     }
   }
 }
 
 const handleTimeUpdate = () => {
-  const time = isYoutubeTrack.value && youtubePlayer.value
-    ? youtubePlayer.value.getCurrentTime()
-    : audio.value.currentTime
+  const time = isYoutubeTrack.value && youtubePlayer.value ? youtubePlayer.value.getCurrentTime() : audio.value.currentTime
 
   currentTime.value = time
   emit('track:currentTime', time)
-  
+
   const calculatedPercent = (100 / props.room.track_duration) * (time + 0.25)
   percent.value = Math.min(100, Math.round(calculatedPercent))
 }
@@ -547,7 +559,7 @@ const resume = async () => {
 
 const stop = async () => {
   isPlaying.value = false
-  
+
   if (isYoutubeTrack.value) {
     cleanupYoutubePlayer()
   } else {
@@ -555,7 +567,7 @@ const stop = async () => {
     audio.value.currentTime = 0
     removeAudioEventListeners()
   }
-  
+
   waitingForNextTrack.value = true
   emit('track:stopped', track.value)
 }
@@ -563,9 +575,9 @@ const stop = async () => {
 const startCountdown = () => {
   countdown.value = parseInt(props.room.pause_between_tracks)
   countdowning.value = true
-  
+
   clearInterval(countdownInterval.value)
-  
+
   countdownInterval.value = setInterval(() => {
     if (countdown.value <= 0) {
       clearInterval(countdownInterval.value)
@@ -589,10 +601,7 @@ const startYoutubeProgress = () => {
 }
 
 const markerPositionStyle = (user) => {
-  const percent = Math.min(
-    94,
-    Math.max(6, (100 / props.room.track_duration) * (user.time ?? 0)),
-  )
+  const percent = Math.min(94, Math.max(6, (100 / props.room.track_duration) * (user.time ?? 0)))
 
   return {
     left: `${percent}%`,
@@ -600,46 +609,47 @@ const markerPositionStyle = (user) => {
 }
 
 // Watch for initialTrack to be set (in case it's set after mount)
-watch(() => [props.initialTrack, props.initialStartTime], (newValue, oldValue) => {
-  // Safely destructure newValue and oldValue
-  const [newTrack, newStartTime] = newValue || [null, null]
-  const [oldTrack, oldStartTime] = oldValue || [null, null]
-  
-  // If initialTrack was null and is now set (joining mid-track after mount)
-  // This is the key case: we mounted without a track, now we have one
-  if (!oldTrack && newTrack && hasHandledInitialTrack.value) {
-    track.value = newTrack
-    const startTime = newStartTime || 0
-    waitingForNextTrack.value = false
-    loading.value = false
-    play(startTime)
-    return
-  }
-  
-  // Play if we have a new track and:
-  // 1. We don't have a track yet, OR
-  // 2. The track ID has changed (new track)
-  const shouldPlay = newTrack && (
-    !track.value || 
-    (track.value && track.value.id !== newTrack.id)
-  )
-  
-  if (shouldPlay) {
-    track.value = newTrack
-    const startTime = newStartTime || 0
-    waitingForNextTrack.value = false
-    loading.value = false
-    play(startTime)
-  } else if (newTrack && track.value && track.value.id === newTrack.id && newStartTime !== oldStartTime && newStartTime !== currentTime.value) {
-    // If it's the same track but the start time changed (e.g., a re-sync)
-    play(newStartTime) // Re-play from the new start time
-  }
-}, { immediate: true, deep: true }) // immediate: true to catch initial values
+watch(
+  () => [props.initialTrack, props.initialStartTime],
+  (newValue, oldValue) => {
+    // Safely destructure newValue and oldValue
+    const [newTrack, newStartTime] = newValue || [null, null]
+    const [oldTrack, oldStartTime] = oldValue || [null, null]
+
+    // If initialTrack was null and is now set (joining mid-track after mount)
+    // This is the key case: we mounted without a track, now we have one
+    if (!oldTrack && newTrack && hasHandledInitialTrack.value) {
+      track.value = newTrack
+      const startTime = newStartTime || 0
+      waitingForNextTrack.value = false
+      loading.value = false
+      play(startTime)
+      return
+    }
+
+    // Play if we have a new track and:
+    // 1. We don't have a track yet, OR
+    // 2. The track ID has changed (new track)
+    const shouldPlay = newTrack && (!track.value || (track.value && track.value.id !== newTrack.id))
+
+    if (shouldPlay) {
+      track.value = newTrack
+      const startTime = newStartTime || 0
+      waitingForNextTrack.value = false
+      loading.value = false
+      play(startTime)
+    } else if (newTrack && track.value && track.value.id === newTrack.id && newStartTime !== oldStartTime && newStartTime !== currentTime.value) {
+      // If it's the same track but the start time changed (e.g., a re-sync)
+      play(newStartTime) // Re-play from the new start time
+    }
+  },
+  { immediate: true, deep: true },
+) // immediate: true to catch initial values
 
 onMounted(() => {
   initializeAudio()
   setupEventListeners()
-  
+
   // If we have an initial track at mount time, play it immediately
   if (props.initialTrack) {
     track.value = props.initialTrack
@@ -667,19 +677,8 @@ onBeforeUnmount(() => {
   <div id="youtube-player" class="hidden"></div>
 
   <div class="room-player-shell room-player-shell--mobile">
-    <TransitionGroup
-      name="user-answer"
-      tag="ul"
-      class="room-player__markers"
-      :class="{ 'room-player__markers--empty': usersWithAllAnswers.length === 0 }"
-    >
-      <li
-        v-for="user in usersWithAllAnswers"
-        :key="user.id"
-        class="room-player__marker"
-        :style="markerPositionStyle(user)"
-        :title="user.name"
-      >
+    <TransitionGroup name="user-answer" tag="ul" class="room-player__markers" :class="{ 'room-player__markers--empty': usersWithAllAnswers.length === 0 }">
+      <li v-for="user in usersWithAllAnswers" :key="user.id" class="room-player__marker" :style="markerPositionStyle(user)" :title="user.name">
         <img v-if="user.photo" :src="user.photo" :alt="user.name" class="room-player__marker-avatar" />
         <span class="room-player__marker-name">{{ user.name }}</span>
         <div class="room-player__marker-tail" aria-hidden="true"></div>
@@ -688,67 +687,55 @@ onBeforeUnmount(() => {
 
     <div id="player" class="room-player">
       <div class="room-player__track overflow-hidden">
-      <!-- Error state -->
-      <template v-if="error">
-        <div class="flex flex-col h-auto w-full p-3 bg-brand-primary/10 text-white/90">
-          <div class="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-brand-primary" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium text-brand-primary-light">{{ error.split('\n')[0] }}</span>
-          </div>
-          <div class="text-sm whitespace-pre-line pl-7 text-white/70">
-            {{ error.split('\n').slice(1).join('\n') }}
-          </div>
-        </div>
-      </template>
-
-      <!-- Loading state -->
-      <template v-else-if="loading && !countdowning">
-        <div class="flex h-6 w-full items-center justify-center bg-brand-midnight/60">
-          <div class="flex items-center space-x-2">
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-brand-accent border-t-transparent"></div>
-            <span class="text-sm font-medium text-white/80">{{ __('Loading') }}</span>
-          </div>
-        </div>
-      </template>
-
-      <!-- Countdown state -->
-      <template v-else-if="countdowning && countdown !== -1">
-        <div class="flex max-w-full flex-grow flex-col">
-          <div class="relative h-6 w-full overflow-hidden bg-brand-midnight">
-            <div
-              class="flex h-6 items-center justify-center bg-brand-accent/80 text-white transition-all duration-1000 ease-linear"
-              :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"
-            >
+        <!-- Error state -->
+        <template v-if="error">
+          <div class="flex h-auto w-full flex-col bg-brand-primary/10 p-3 text-white/90">
+            <div class="mb-2 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5 text-brand-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              <span class="font-medium text-brand-primary-light">{{ error.split('\n')[0] }}</span>
             </div>
-            <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
-              {{ __('Next track in') }} {{ countdown }}s
-            </span>
-          </div>
-        </div>
-      </template>
-
-      <!-- Playing state -->
-      <template v-else>
-        <div class="relative h-6 w-full">
-          <!-- Red zone indicator (first 18%) -->
-          <div
-            class="absolute top-0 left-0 z-10 h-6 bg-brand-primary/80 transition-all duration-500 ease-linear"
-            :style="`width: ${Math.min(percent, 18)}%`"
-          />
-
-          <!-- Progress bar -->
-          <div
-            class="absolute top-0 left-0 h-6 bg-brand-accent/90 transition-all duration-500 ease-linear"
-            :style="`width: ${percent}%`"
-          >
-            <div class="absolute inset-0 opacity-10">
-              <div class="shine-wave"></div>
+            <div class="whitespace-pre-line pl-7 text-sm text-white/70">
+              {{ error.split('\n').slice(1).join('\n') }}
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+
+        <!-- Loading state -->
+        <template v-else-if="loading && !countdowning">
+          <div class="flex h-6 w-full items-center justify-center bg-brand-midnight/60">
+            <div class="flex items-center space-x-2">
+              <div class="h-4 w-4 animate-spin rounded-full border-2 border-brand-accent border-t-transparent"></div>
+              <span class="text-sm font-medium text-white/80">{{ __('Loading') }}</span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Countdown state -->
+        <template v-else-if="countdowning && countdown !== -1">
+          <div class="flex max-w-full flex-grow flex-col">
+            <div class="relative h-6 w-full overflow-hidden bg-brand-midnight">
+              <div class="flex h-6 items-center justify-center bg-brand-accent/80 text-white transition-all duration-1000 ease-linear" :style="`width: ${(countdown / parseInt(props.room.pause_between_tracks)) * 100}%`"></div>
+              <span class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"> {{ __('Next track in') }} {{ countdown }}s </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Playing state -->
+        <template v-else>
+          <div class="relative h-6 w-full">
+            <!-- Red zone indicator (first 18%) -->
+            <div class="absolute left-0 top-0 z-10 h-6 bg-brand-primary/80 transition-all duration-500 ease-linear" :style="`width: ${Math.min(percent, 18)}%`" />
+
+            <!-- Progress bar -->
+            <div class="absolute left-0 top-0 h-6 bg-brand-accent/90 transition-all duration-500 ease-linear" :style="`width: ${percent}%`">
+              <div class="absolute inset-0 opacity-10">
+                <div class="shine-wave"></div>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -777,12 +764,7 @@ onBeforeUnmount(() => {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
   animation: shine 2s infinite;
 }
 

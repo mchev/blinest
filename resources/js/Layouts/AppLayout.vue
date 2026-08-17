@@ -8,21 +8,15 @@ import EzoicAd from '@/Components/EzoicAd.vue'
 import { EZOIC } from '@/ezoic'
 </script>
 <template>
-  <div class="text-white min-h-screen">
+  <div class="min-h-screen text-white">
     <SkipLink />
     <div id="dropdown" />
-    <div class="md:flex md:flex-col h-full">
+    <div class="h-full md:flex md:flex-col">
       <div class="md:flex md:h-full md:flex-col">
         <Navbar />
-        <div class="md:flex md:flex-grow md:overflow-hidden md:min-h-0">
+        <div class="md:flex md:min-h-0 md:flex-grow md:overflow-hidden">
           <Transition name="slide-right" appear>
-            <main
-              v-if="$slots.default"
-              id="main-content"
-              tabindex="-1"
-              class="flex flex-col justify-between px-4 py-4 pb-20 md:pb-4 md:flex-1 md:overflow-y-auto md:px-12 md:pt-6 md:min-h-0 focus:outline-none"
-              scroll-region
-            >
+            <main v-if="$slots.default" id="main-content" tabindex="-1" class="flex flex-col justify-between px-4 py-4 pb-20 focus:outline-none md:min-h-0 md:flex-1 md:overflow-y-auto md:px-12 md:pb-4 md:pt-6" scroll-region>
               <flash-messages />
               <slot />
               <EzoicAd :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8 mb-4" />

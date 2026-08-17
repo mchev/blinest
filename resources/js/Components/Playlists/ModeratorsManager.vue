@@ -36,7 +36,7 @@ const showDeleteModal = ref(false)
 const moderatorToDelete = ref(null)
 
 const isOwner = computed(() => {
-  return props.playlist.moderators.some(m => m.id === props.playlist.user_id)
+  return props.playlist.moderators.some((m) => m.id === props.playlist.user_id)
 })
 
 watch(
@@ -47,12 +47,15 @@ watch(
       return
     }
     searching.value = true
-    axios.get('/api/users', { params: { search: search.value } }).then((response) => {
-      users.value = response.data.users
-      searching.value = false
-    }).catch(() => {
-      searching.value = false
-    })
+    axios
+      .get('/api/users', { params: { search: search.value } })
+      .then((response) => {
+        users.value = response.data.users
+        searching.value = false
+      })
+      .catch(() => {
+        searching.value = false
+      })
   }, 300),
 )
 
@@ -66,7 +69,7 @@ const attach = (user) => {
       onSuccess: () => {
         search.value = ''
         users.value = null
-      }
+      },
     })
 }
 
@@ -77,7 +80,7 @@ const detach = (user) => {
 
 const confirmDetach = () => {
   if (!moderatorToDelete.value) return
-  
+
   form
     .transform((data) => ({
       user_id: moderatorToDelete.value.id,
@@ -86,12 +89,17 @@ const confirmDetach = () => {
       preserveScroll: true,
       onSuccess: () => {
         moderatorToDelete.value = null
-      }
+      },
     })
 }
 
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
+  moderatorToDelete.value = null
+}
+
 const isModerator = (userId) => {
-  return props.playlist.moderators.some(m => m.id === userId)
+  return props.playlist.moderators.some((m) => m.id === userId)
 }
 </script>
 <template>
@@ -100,64 +108,43 @@ const isModerator = (userId) => {
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-bold text-neutral-200">{{ __('Moderators') }}</h3>
-          <p class="text-sm text-neutral-200 mt-0.5">{{ __('Moderators can edit tracks and manage the playlist') }}</p>
+          <p class="mt-0.5 text-sm text-neutral-200">{{ __('Moderators can edit tracks and manage the playlist') }}</p>
         </div>
       </div>
     </template>
 
-    <div class="p-4 lg:p-5 space-y-4">
+    <div class="space-y-4 p-4 lg:p-5">
       <!-- Add Moderator Section -->
       <div>
-        <label class="block text-sm font-medium text-neutral-200 mb-2">{{ __('Add a moderator') }}</label>
+        <label class="mb-2 block text-sm font-medium text-neutral-200">{{ __('Add a moderator') }}</label>
         <Dropdown placement="bottom-start" class="w-full" @closed="search = ''">
           <template #default>
-            <TextInput 
-              v-model="search" 
-              prepend-icon="search" 
-              append-icon="cheveron-down" 
-              :loading="searching" 
-              :placeholder="__('Search for a user') + '...'" 
-              class="w-full"
-            />
+            <TextInput v-model="search" prepend-icon="search" append-icon="cheveron-down" :loading="searching" :placeholder="__('Search for a user') + '...'" class="w-full" />
           </template>
           <template #dropdown>
             <div class="max-h-80 overflow-y-auto">
               <div v-if="searching" class="p-4 text-center">
                 <div class="inline-block">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin text-teal-500">
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                   </svg>
                 </div>
-                <p class="text-sm text-neutral-200 mt-2">{{ __('Searching') }}...</p>
+                <p class="mt-2 text-sm text-neutral-200">{{ __('Searching') }}...</p>
               </div>
               <ul v-else-if="users && users.data && users.data.length" class="py-1">
-                <li 
-                  v-for="user in users.data" 
-                  :key="user.id" 
-                  class="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-800/50 transition-colors"
-                >
-                  <img 
-                    v-if="user.photo" 
-                    class="h-8 w-8 rounded-full object-cover flex-shrink-0" 
-                    :src="user.photo" 
-                    :alt="user.name"
-                  />
-                  <div v-else class="h-8 w-8 rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0">
+                <li v-for="user in users.data" :key="user.id" class="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-neutral-800/50">
+                  <img v-if="user.photo" class="h-8 w-8 flex-shrink-0 rounded-full object-cover" :src="user.photo" :alt="user.name" />
+                  <div v-else class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-700">
                     <span class="text-xs text-neutral-400">{{ user.name.charAt(0).toUpperCase() }}</span>
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-neutral-200 truncate">{{ user.name }}</p>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-neutral-200">{{ user.name }}</p>
                   </div>
-                  <button 
-                    v-if="!isModerator(user.id)"
-                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-teal-500 hover:bg-teal-600 rounded-lg transition-colors flex-shrink-0"
-                    :title="__('Add')" 
-                    @click="attach(user)"
-                  >
+                  <button v-if="!isModerator(user.id)" class="flex flex-shrink-0 items-center gap-1.5 rounded-lg bg-teal-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-teal-600" :title="__('Add')" @click="attach(user)">
                     <Icon name="plus" class="h-3 w-3" />
                     {{ __('Add') }}
                   </button>
-                  <span v-else class="text-xs text-neutral-400 flex-shrink-0">{{ __('Already added') }}</span>
+                  <span v-else class="flex-shrink-0 text-xs text-neutral-400">{{ __('Already added') }}</span>
                 </li>
               </ul>
               <div v-else-if="search && search.length >= 2 && !searching" class="p-4 text-center">
@@ -173,61 +160,38 @@ const isModerator = (userId) => {
 
       <!-- Moderators List -->
       <div>
-        <div class="flex items-center justify-between mb-2">
+        <div class="mb-2 flex items-center justify-between">
           <label class="block text-sm font-medium text-neutral-200">{{ __('Current moderators') }}</label>
           <span class="text-sm text-neutral-300">{{ playlist.moderators.length }}</span>
         </div>
-        
+
         <ul v-if="playlist.moderators.length" class="space-y-2">
-          <li 
-            v-for="moderator in playlist.moderators" 
-            :key="moderator.id" 
-            class="flex items-center gap-3 rounded-lg p-2.5 bg-neutral-800/40 border border-neutral-700/50 hover:bg-neutral-800/60 transition-colors"
-          >
-            <img 
-              v-if="moderator.photo" 
-              class="h-8 w-8 rounded-full object-cover flex-shrink-0" 
-              :src="moderator.photo" 
-              :alt="moderator.name"
-            />
-            <div v-else class="h-8 w-8 rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0">
+          <li v-for="moderator in playlist.moderators" :key="moderator.id" class="flex items-center gap-3 rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-2.5 transition-colors hover:bg-neutral-800/60">
+            <img v-if="moderator.photo" class="h-8 w-8 flex-shrink-0 rounded-full object-cover" :src="moderator.photo" :alt="moderator.name" />
+            <div v-else class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-700">
               <span class="text-xs text-neutral-400">{{ moderator.name.charAt(0).toUpperCase() }}</span>
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-neutral-200 truncate">{{ moderator.name }}</p>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-neutral-200">{{ moderator.name }}</p>
               <p v-if="moderator.id === playlist.user_id" class="text-sm text-teal-400">{{ __('Owner') }}</p>
               <p v-else class="text-sm text-neutral-300">{{ __('Moderator') }}</p>
             </div>
-            <button 
-              v-if="moderator.id !== playlist.user_id"
-              class="flex items-center justify-center h-7 w-7 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex-shrink-0"
-              :title="__('Remove moderator')" 
-              @click="detach(moderator)"
-            >
+            <button v-if="moderator.id !== playlist.user_id" class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-500/10 hover:text-red-400" :title="__('Remove moderator')" @click="detach(moderator)">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </li>
         </ul>
-        <div v-else class="rounded-lg p-4 bg-neutral-800/20 border border-neutral-700/30 text-center">
-          <Icon name="users" class="h-8 w-8 mx-auto mb-2 text-neutral-600" />
+        <div v-else class="rounded-lg border border-neutral-700/30 bg-neutral-800/20 p-4 text-center">
+          <Icon name="users" class="mx-auto mb-2 h-8 w-8 text-neutral-600" />
           <p class="text-sm text-neutral-200">{{ __('No moderators yet') }}</p>
-          <p class="text-sm text-neutral-300 mt-1">{{ __('Add moderators to help manage this playlist') }}</p>
+          <p class="mt-1 text-sm text-neutral-300">{{ __('Add moderators to help manage this playlist') }}</p>
         </div>
       </div>
     </div>
   </Card>
 
   <!-- Delete Moderator Confirmation Modal -->
-  <ConfirmModal
-    :show="showDeleteModal"
-    :title="__('Remove moderator')"
-    :message="moderatorToDelete ? __('Are you sure you want to remove :name as a moderator?', { name: moderatorToDelete.name }) : __('Are you sure you want to remove this moderator?')"
-    :confirm-text="__('Remove')"
-    :cancel-text="__('Cancel')"
-    variant="danger"
-    @close="showDeleteModal = false; moderatorToDelete = null"
-    @confirm="confirmDetach"
-  />
+  <ConfirmModal :show="showDeleteModal" :title="__('Remove moderator')" :message="moderatorToDelete ? __('Are you sure you want to remove :name as a moderator?', { name: moderatorToDelete.name }) : __('Are you sure you want to remove this moderator?')" :confirm-text="__('Remove')" :cancel-text="__('Cancel')" variant="danger" @close="closeDeleteModal" @confirm="confirmDetach" />
 </template>

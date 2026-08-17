@@ -46,21 +46,30 @@ const isScoreUpdated = ref(false)
 const showModal = ref(false)
 
 // Update when props change
-watch(() => props.level, (newLevel) => {
-  const wasLevelUp = newLevel > previousLevel.value
-  previousLevel.value = newLevel
-  currentLevel.value = newLevel
-  
-  if (wasLevelUp) {
-    triggerLevelUpAnimation()
-  }
-})
-watch(() => props.currentXp, (newXp) => {
-  currentXpValue.value = newXp
-})
-watch(() => props.xpForNextLevel, (newXpForNext) => {
-  currentXpForNextLevel.value = newXpForNext
-})
+watch(
+  () => props.level,
+  (newLevel) => {
+    const wasLevelUp = newLevel > previousLevel.value
+    previousLevel.value = newLevel
+    currentLevel.value = newLevel
+
+    if (wasLevelUp) {
+      triggerLevelUpAnimation()
+    }
+  },
+)
+watch(
+  () => props.currentXp,
+  (newXp) => {
+    currentXpValue.value = newXp
+  },
+)
+watch(
+  () => props.xpForNextLevel,
+  (newXpForNext) => {
+    currentXpForNextLevel.value = newXpForNext
+  },
+)
 
 // Animation functions
 const triggerUpdateAnimation = () => {
@@ -88,24 +97,24 @@ const triggerScoreUpdateAnimation = () => {
 onMounted(() => {
   if (user && window.Echo) {
     const channel = window.Echo.private(`App.Models.User.${user.id}`)
-    
+
     channel
       .listen('.user.level.updated', (data) => {
         const wasLevelUp = data.level > currentLevel.value
-        
+
         currentLevel.value = data.level
         currentXpValue.value = data.current_xp
         currentXpForNextLevel.value = data.xp_for_next_level
         totalXp.value = data.total_xp ?? 0
-        
+
         // Update metrics if provided
         if (data.level_metrics) {
           levelMetrics.value = data.level_metrics
         }
-        
+
         // Trigger score update animation
         triggerScoreUpdateAnimation()
-        
+
         if (wasLevelUp) {
           triggerLevelUpAnimation()
         } else {
@@ -154,18 +163,21 @@ const levelColor = computed(() => {
 const levelMetrics = ref(user?.level_metrics || null)
 
 // Update metrics when props change
-watch(() => user?.level_metrics, (newMetrics) => {
-  if (newMetrics) {
-    levelMetrics.value = newMetrics
-  }
-})
+watch(
+  () => user?.level_metrics,
+  (newMetrics) => {
+    if (newMetrics) {
+      levelMetrics.value = newMetrics
+    }
+  },
+)
 
 // Calcul des XP pour chaque métrique
 const metricsXp = computed(() => {
   if (!levelMetrics.value) return null
-  
+
   const metrics = levelMetrics.value
-  
+
   return {
     score: {
       label: __('Total score'),
@@ -215,32 +227,10 @@ const metricsXp = computed(() => {
 
 <template>
   <div>
-    <div 
-      :class="[
-        'cursor-pointer flex items-center justify-center h-10 w-10 transition-all duration-300',
-        isScoreUpdated ? 'animate-score-update' : ''
-      ]"
-      @click="showModal = true"
-    >
-      <LevelBadge 
-        :level="currentLevel" 
-        :current-xp="currentXpValue"
-        :xp-for-next-level="currentXpForNextLevel"
-        size="lg" 
-        variant="compact"
-        :is-level-up="isLevelUp"
-        :is-updating="isUpdating"
-      />
+    <div :class="['flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300', isScoreUpdated ? 'animate-score-update' : '']" @click="showModal = true">
+      <LevelBadge :level="currentLevel" :current-xp="currentXpValue" :xp-for-next-level="currentXpForNextLevel" size="lg" variant="compact" :is-level-up="isLevelUp" :is-updating="isUpdating" />
     </div>
 
-    <LevelModal
-      :show="showModal"
-      :level="currentLevel"
-      :current-xp="currentXpValue"
-      :xp-for-next-level="currentXpForNextLevel"
-      :total-xp="totalXp"
-      :level-metrics="levelMetrics"
-      @close="showModal = false"
-    />
+    <LevelModal :show="showModal" :level="currentLevel" :current-xp="currentXpValue" :xp-for-next-level="currentXpForNextLevel" :total-xp="totalXp" :level-metrics="levelMetrics" @close="showModal = false" />
   </div>
 </template>

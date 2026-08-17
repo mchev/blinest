@@ -35,7 +35,7 @@ const store = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.rooms')">{{ __('Rooms') }}</Link>
       <span class="font-medium text-gray-400">/</span> {{ __('Create') }}

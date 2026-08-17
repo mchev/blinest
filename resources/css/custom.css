@@ -1,6 +1,4 @@
 @layer components {
-
-
   /* ── Surfaces ── */
   .surface-card {
     @apply rounded-xl border border-white/10 bg-brand-deep shadow-lg shadow-black/30;
@@ -24,7 +22,7 @@
 
   /* ── Retro panels (HUD) ── */
   .retro-panel {
-    @apply rounded-xl relative overflow-hidden border border-white/10 bg-brand-deep;
+    @apply relative overflow-hidden rounded-xl border border-white/10 bg-brand-deep;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 16px 48px rgb(0 0 0 / 0.35);
   }
 
@@ -40,12 +38,7 @@
   .retro-section-header::after {
     content: '';
     @apply absolute bottom-0 left-0 right-0 h-px;
-    background: linear-gradient(
-      90deg,
-      rgb(var(--color-primary) / 0.35) 0%,
-      rgb(var(--color-primary) / 0.08) 35%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, rgb(var(--color-primary) / 0.35) 0%, rgb(var(--color-primary) / 0.08) 35%, transparent 100%);
   }
 
   .retro-title {
@@ -85,7 +78,7 @@
   }
 
   .retro-select {
-    @apply rounded-lg form-select border border-white/10 bg-brand-deep min-w-[11rem] py-2 pl-3 pr-8 text-sm text-white;
+    @apply form-select min-w-[11rem] rounded-lg border border-white/10 bg-brand-deep py-2 pl-3 pr-8 text-sm text-white;
     @apply focus:ring-white/10;
   }
 
@@ -95,10 +88,8 @@
 
   /* ── Cards ── */
   .game-card {
-    @apply rounded-xl relative overflow-hidden border border-white/10 bg-brand-deep transition duration-300 ease-out;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.07),
-      0 8px 32px rgb(0 0 0 / 0.45);
+    @apply relative overflow-hidden rounded-xl border border-white/10 bg-brand-deep transition duration-300 ease-out;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 8px 32px rgb(0 0 0 / 0.45);
   }
 
   .group:hover .game-card,
@@ -108,28 +99,17 @@
 
   .game-card--live {
     @apply border-brand-primary/30;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.08),
-      0 8px 32px rgb(0 0 0 / 0.45),
-      0 0 12px rgb(var(--color-primary) / 0.08);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 8px 32px rgb(0 0 0 / 0.45), 0 0 12px rgb(var(--color-primary) / 0.08);
   }
 
   .game-card__scanlines {
     @apply pointer-events-none absolute inset-0 z-[1] opacity-[0.07];
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgb(255 255 255 / 0.5) 2px,
-      rgb(255 255 255 / 0.5) 4px
-    );
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgb(255 255 255 / 0.5) 2px, rgb(255 255 255 / 0.5) 4px);
   }
 
   .game-card__poster-grid {
     @apply pointer-events-none absolute inset-0 z-[1] opacity-20;
-    background-image:
-      linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-image: linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
     background-size: 20px 20px;
   }
 
@@ -148,7 +128,7 @@
   }
 
   .live-pill {
-    @apply rounded-md relative inline-flex bg-brand-primary items-center gap-1.5 overflow-hidden px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white;
+    @apply relative inline-flex items-center gap-1.5 overflow-hidden rounded-md bg-brand-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white;
     box-shadow: var(--glow-primary);
   }
 
@@ -158,7 +138,7 @@
   }
 
   .retro-badge {
-    @apply rounded-sm inline-flex border border-white/10 bg-brand-deep items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white;
+    @apply inline-flex items-center rounded-sm border border-white/10 bg-brand-deep px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white;
   }
 
   .retro-stat {
@@ -184,7 +164,7 @@
 
   /* ── Buttons ── */
   .game-btn-play {
-    @apply relative flex min-h-[44px] rounded-lg w-full items-center justify-center gap-2 overflow-hidden px-4 text-xs font-bold uppercase tracking-[0.14em] text-white;
+    @apply relative flex min-h-[44px] w-full items-center justify-center gap-2 overflow-hidden rounded-lg px-4 text-xs font-bold uppercase tracking-[0.14em] text-white;
     @apply transition-all duration-200;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-midnight;
     @apply active:scale-[0.98];
@@ -218,7 +198,7 @@
   }
 
   .game-btn-secondary {
-    @apply rounded-lg inline-flex border border-white/10 bg-brand-deep min-h-[42px] items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white transition;
+    @apply inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg border border-white/10 bg-brand-deep px-5 py-2 text-sm font-semibold text-white transition;
   }
 
   .game-btn-secondary:hover {
@@ -230,7 +210,7 @@
   }
 
   .sidebar-tile {
-    @apply rounded-lg relative flex border border-white/10 bg-brand-deep min-h-[92px] flex-col items-center justify-center gap-2.5 p-3 text-center transition;
+    @apply relative flex min-h-[92px] flex-col items-center justify-center gap-2.5 rounded-lg border border-white/10 bg-brand-deep p-3 text-center transition;
   }
 
   .sidebar-tile:hover {
@@ -238,7 +218,7 @@
   }
 
   .sidebar-tile__icon {
-    @apply rounded-md flex h-11 border border-white/10 bg-brand-midnight w-11 items-center justify-center text-white;
+    @apply flex h-11 w-11 items-center justify-center rounded-md border border-white/10 bg-brand-midnight text-white;
   }
 
   .group:hover .sidebar-tile__icon {
@@ -251,12 +231,12 @@
 
   /* ── Mobile hero ── */
   .retro-hero {
-    @apply rounded-2xl relative overflow-hidden p-4;
+    @apply relative overflow-hidden rounded-2xl p-4;
     @apply border border-white/10 bg-brand-deep;
   }
 
   .retro-hero__icon {
-    @apply rounded-lg flex h-12 border border-white/10 bg-brand-midnight w-12 shrink-0 items-center justify-center text-white;
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-brand-midnight text-white;
   }
 
   /* ── Podium ── */
@@ -270,9 +250,15 @@
     @apply rounded-sm;
   }
 
-  .retro-rank-badge--1 { @apply bg-brand-secondary text-brand-midnight; }
-  .retro-rank-badge--2 { @apply bg-brand-accent-dark text-white; }
-  .retro-rank-badge--3 { @apply bg-brand-primary text-white; }
+  .retro-rank-badge--1 {
+    @apply bg-brand-secondary text-brand-midnight;
+  }
+  .retro-rank-badge--2 {
+    @apply bg-brand-accent-dark text-white;
+  }
+  .retro-rank-badge--3 {
+    @apply bg-brand-primary text-white;
+  }
 
   /* ── Site-wide chrome ── */
   .retro-modal-overlay {
@@ -284,7 +270,7 @@
   }
 
   .retro-modal-panel {
-    @apply rounded-2xl mx-auto max-h-[calc(100dvh-6rem)] border border-white/10 bg-brand-midnight w-full overflow-x-hidden overflow-y-auto text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
+    @apply mx-auto max-h-[calc(100dvh-6rem)] w-full overflow-y-auto overflow-x-hidden rounded-2xl border border-white/10 bg-brand-midnight text-white shadow-2xl shadow-black/60 sm:max-h-[calc(100dvh-3rem)];
   }
 
   .guest-join-modal {
@@ -353,7 +339,7 @@
   }
 
   .retro-search {
-    @apply rounded-lg flex items-center overflow-hidden px-4 py-2 transition-all duration-200;
+    @apply flex items-center overflow-hidden rounded-lg px-4 py-2 transition-all duration-200;
     @apply border border-white/10 bg-brand-deep;
   }
 
@@ -362,14 +348,18 @@
   }
 
   .retro-flash {
-    @apply rounded-lg flex max-w-3xl border border-white/10 bg-brand-deep items-center justify-between px-2 py-1 text-white shadow-xl;
+    @apply flex max-w-3xl items-center justify-between rounded-lg border border-white/10 bg-brand-deep px-2 py-1 text-white shadow-xl;
   }
 
-  .retro-flash--success { box-shadow: 0 16px 40px rgb(0 0 0 / 0.35); }
-  .retro-flash--error { box-shadow: 0 16px 40px rgb(0 0 0 / 0.35); }
+  .retro-flash--success {
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+  }
+  .retro-flash--error {
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+  }
 
   .retro-pagination-link {
-    @apply rounded-md px-3 py-2 border border-white/10 bg-brand-deep text-sm font-medium text-white transition sm:px-4 sm:py-2.5;
+    @apply rounded-md border border-white/10 bg-brand-deep px-3 py-2 text-sm font-medium text-white transition sm:px-4 sm:py-2.5;
   }
 
   .retro-pagination-link:hover {
@@ -391,7 +381,7 @@
   }
 
   .retro-icon-btn {
-    @apply rounded-lg flex h-10 w-10 border border-white/10 bg-brand-deep items-center justify-center text-white transition;
+    @apply flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-brand-deep text-white transition;
   }
 
   .retro-icon-btn:hover {
@@ -407,7 +397,7 @@
   }
 
   .retro-card {
-    @apply rounded-xl flex h-auto flex-col border border-white/10 bg-brand-deep;
+    @apply flex h-auto flex-col rounded-xl border border-white/10 bg-brand-deep;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 12px 40px rgb(0 0 0 / 0.35);
   }
 
@@ -419,14 +409,16 @@
     @apply flex-shrink-0 border-b border-white/10 bg-brand-midnight/50 px-5 py-3 backdrop-blur-sm sm:px-6 sm:py-3.5;
   }
 
-  .retro-card__body { @apply px-5 py-5 sm:px-6 sm:py-6; }
+  .retro-card__body {
+    @apply px-5 py-5 sm:px-6 sm:py-6;
+  }
 
   .retro-card__footer {
     @apply border-t border-white/10 bg-brand-midnight/40 px-5 py-4 sm:px-6 sm:py-5;
   }
 
   .retro-dropdown-panel {
-    @apply rounded-lg overflow-hidden text-sm text-white shadow-2xl shadow-black/60 border border-white/10 bg-brand-midnight;
+    @apply overflow-hidden rounded-lg border border-white/10 bg-brand-midnight text-sm text-white shadow-2xl shadow-black/60;
   }
 
   .retro-page-title {
@@ -438,7 +430,7 @@
   }
 
   .retro-list-row {
-    @apply rounded-lg flex items-center gap-4 px-4 py-3 transition-colors border border-white/10 bg-brand-deep/80;
+    @apply flex items-center gap-4 rounded-lg border border-white/10 bg-brand-deep/80 px-4 py-3 transition-colors;
   }
 
   .retro-list-row:hover {
@@ -446,11 +438,11 @@
   }
 
   .retro-stat-box {
-    @apply rounded-lg p-4 border border-white/10 bg-brand-deep/80;
+    @apply rounded-lg border border-white/10 bg-brand-deep/80 p-4;
   }
 
   .retro-sort-btn {
-    @apply rounded-md px-3 py-1.5 text-xs font-medium text-white/70 transition-colors border border-white/10 bg-brand-deep;
+    @apply rounded-md border border-white/10 bg-brand-deep px-3 py-1.5 text-xs font-medium text-white/70 transition-colors;
   }
 
   .retro-sort-btn:hover {
@@ -538,7 +530,7 @@
   }
 
   .room-player {
-    @apply rounded-lg relative overflow-hidden shadow-lg border border-white/10 bg-brand-deep;
+    @apply relative overflow-hidden rounded-lg border border-white/10 bg-brand-deep shadow-lg;
   }
 
   .room-player__markers {
@@ -557,7 +549,7 @@
   }
 
   .room-player__marker-name {
-    @apply min-w-0 truncate select-none;
+    @apply min-w-0 select-none truncate;
   }
 
   .room-player__marker-tail {
@@ -572,7 +564,7 @@
   }
 
   .room-input-wrap {
-    @apply flex items-stretch gap-2 p-1.5 shadow-md rounded-xl border border-white/10 bg-brand-deep;
+    @apply flex items-stretch gap-2 rounded-xl border border-white/10 bg-brand-deep p-1.5 shadow-md;
   }
 
   .room-input-wrap:focus-within {
@@ -588,7 +580,7 @@
   }
 
   .room-input {
-    @apply relative z-[1] h-12 min-w-0 w-full border-none bg-transparent px-3.5 text-base font-medium text-white placeholder-white/60 focus:outline-none focus:ring-0 sm:h-[3.25rem] sm:px-4 sm:text-lg;
+    @apply relative z-[1] h-12 w-full min-w-0 border-none bg-transparent px-3.5 text-base font-medium text-white placeholder-white/60 focus:outline-none focus:ring-0 sm:h-[3.25rem] sm:px-4 sm:text-lg;
   }
 
   .room-input-actions {
@@ -609,7 +601,7 @@
   }
 
   .room-answer-chip {
-    @apply rounded-md flex items-center px-3 py-1.5 text-sm text-white/80 shadow-md transition-all duration-300 border border-white/10 bg-brand-midnight;
+    @apply flex items-center rounded-md border border-white/10 bg-brand-midnight px-3 py-1.5 text-sm text-white/80 shadow-md transition-all duration-300;
   }
 
   .room-answer-chip--found {
@@ -617,7 +609,7 @@
   }
 
   .room-track-card {
-    @apply rounded-lg overflow-hidden shadow-md transition-all duration-200 border border-white/10 bg-brand-deep/80;
+    @apply overflow-hidden rounded-lg border border-white/10 bg-brand-deep/80 shadow-md transition-all duration-200;
   }
 
   .room-track-card:hover {
@@ -706,7 +698,7 @@
   }
 
   .room-mobile-hud__tabs {
-    @apply rounded-lg mb-2 flex shrink-0 gap-1 p-1 border border-white/10 bg-brand-midnight/95;
+    @apply mb-2 flex shrink-0 gap-1 rounded-lg border border-white/10 bg-brand-midnight/95 p-1;
   }
 
   .room-mobile-hud__tab {
@@ -772,7 +764,7 @@
   }
 
   .chat-panel--embedded .chat-composer {
-    @apply order-2 shrink-0 border-b border-white/10 border-t-0 bg-brand-midnight/70 p-1.5;
+    @apply order-2 shrink-0 border-b border-t-0 border-white/10 bg-brand-midnight/70 p-1.5;
   }
 
   .chat-panel--embedded .chat-messages {
@@ -964,13 +956,13 @@
   }
 
   .room-action-btn {
-    @apply rounded-lg inline-flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200 border border-white/10 bg-brand-deep;
+    @apply inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-brand-deep px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all duration-200;
     background: rgb(var(--color-deep));
   }
 
   @media (max-width: 767px) {
     .room-actions-bar {
-      @apply rounded-lg p-1 border border-white/10 bg-brand-deep;
+      @apply rounded-lg border border-white/10 bg-brand-deep p-1;
     }
 
     .room-actions {
@@ -1050,7 +1042,7 @@
   }
 
   .chat-input-wrap {
-    @apply relative flex flex-grow items-center shadow-md ring-1 ring-white/20 transition-colors duration-200 rounded-lg bg-brand-midnight;
+    @apply relative flex flex-grow items-center rounded-lg bg-brand-midnight shadow-md ring-1 ring-white/20 transition-colors duration-200;
   }
 
   .chat-input-wrap:focus-within {
@@ -1066,7 +1058,7 @@
   }
 
   .chat-icon-btn {
-    @apply rounded-md flex h-8 w-8 items-center justify-center text-white/70 transition border border-white/10 bg-brand-deep;
+    @apply flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-brand-deep text-white/70 transition;
   }
 
   .chat-icon-btn:hover {
@@ -1074,7 +1066,7 @@
   }
 
   .chat-reaction {
-    @apply rounded flex items-center gap-1 px-2 py-1 text-sm transition border border-white/10 bg-brand-midnight;
+    @apply flex items-center gap-1 rounded border border-white/10 bg-brand-midnight px-2 py-1 text-sm transition;
   }
 
   .chat-reaction:hover {
@@ -1086,83 +1078,171 @@
   }
 
   .chat-guest-banner {
-    @apply rounded-lg w-full px-4 py-6 text-sm text-white/70 border border-white/10 bg-brand-midnight/80;
+    @apply w-full rounded-lg border border-white/10 bg-brand-midnight/80 px-4 py-6 text-sm text-white/70;
   }
 
-  .squircle-modern { border-radius: 1.5rem; }
-  .squircle-nested { border-radius: 1.25rem; }
-  .squircle-nested-sm { border-radius: 1rem; }
-  .squircle-nested-xs { border-radius: 0.75rem; }
+  .squircle-modern {
+    border-radius: 1.5rem;
+  }
+  .squircle-nested {
+    border-radius: 1.25rem;
+  }
+  .squircle-nested-sm {
+    border-radius: 1rem;
+  }
+  .squircle-nested-xs {
+    border-radius: 0.75rem;
+  }
 }
 
 @keyframes neon-pulse-primary {
-  0%, 100% { box-shadow: var(--glow-primary); }
-  50% { box-shadow: 0 0 36px rgb(var(--color-primary) / 0.65); }
+  0%,
+  100% {
+    box-shadow: var(--glow-primary);
+  }
+  50% {
+    box-shadow: 0 0 36px rgb(var(--color-primary) / 0.65);
+  }
 }
 
 @keyframes live-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
 }
 
 @keyframes finalizing-pulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.65; }
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.65;
+  }
 }
 
 /* Level badge animations */
 @keyframes xp-update {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
-.animate-xp-update { animation: xp-update 0.6s ease-in-out; }
+.animate-xp-update {
+  animation: xp-update 0.6s ease-in-out;
+}
 
 @keyframes level-up {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.15) rotate(-5deg); }
-  50% { transform: scale(1.2) rotate(5deg); }
-  75% { transform: scale(1.1) rotate(-3deg); }
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.15) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-3deg);
+  }
 }
-.animate-level-up { animation: level-up 1.5s ease-in-out; }
+.animate-level-up {
+  animation: level-up 1.5s ease-in-out;
+}
 
 @keyframes scale-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
-.animate-scale-pulse { animation: scale-pulse 1.5s ease-in-out; }
+.animate-scale-pulse {
+  animation: scale-pulse 1.5s ease-in-out;
+}
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 1; filter: drop-shadow(0 0 2px currentColor); }
-  50% { opacity: 1; filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 12px currentColor); }
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 12px currentColor);
+  }
 }
-.animate-glow-pulse { animation: glow-pulse 1.5s ease-in-out; }
+.animate-glow-pulse {
+  animation: glow-pulse 1.5s ease-in-out;
+}
 
 @keyframes number-bounce {
-  0%, 100% { transform: scale(1) translateY(0); }
-  25% { transform: scale(1.3) translateY(-3px); }
-  50% { transform: scale(1.2) translateY(0); }
-  75% { transform: scale(1.1) translateY(-1px); }
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  25% {
+    transform: scale(1.3) translateY(-3px);
+  }
+  50% {
+    transform: scale(1.2) translateY(0);
+  }
+  75% {
+    transform: scale(1.1) translateY(-1px);
+  }
 }
-.animate-number-bounce { animation: number-bounce 1.5s ease-in-out; }
+.animate-number-bounce {
+  animation: number-bounce 1.5s ease-in-out;
+}
 
 @keyframes number-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
-.animate-number-pulse { animation: number-pulse 0.6s ease-in-out; }
+.animate-number-pulse {
+  animation: number-pulse 0.6s ease-in-out;
+}
 
 @keyframes score-update {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
 }
-.animate-score-update { animation: score-update 0.5s ease-out; }
+.animate-score-update {
+  animation: score-update 0.5s ease-out;
+}
 
 @supports (-webkit-touch-callout: none) {
   body {
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
   }
-  p, span, div[contenteditable], input, textarea {
+  p,
+  span,
+  div[contenteditable],
+  input,
+  textarea {
     -webkit-user-select: text;
     user-select: text;
   }
@@ -1187,6 +1267,11 @@ body {
 }
 
 @media (max-width: 768px) {
-  ::-webkit-scrollbar { display: none; }
-  * { -ms-overflow-style: none; scrollbar-width: none; }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

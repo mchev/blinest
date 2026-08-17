@@ -5,23 +5,26 @@ import { usePage } from '@inertiajs/vue3'
 const show = ref(false)
 
 const flash = computed(function () {
-  return usePage().props.flash;
-});
-
-watch(flash, (val) => {
-  show.value = true
-  setTimeout(() => {
-    show.value = false
-  }, 3000)
-}, {
-  immediate: true,
-  deep: true,
+  return usePage().props.flash
 })
 
+watch(
+  flash,
+  (val) => {
+    show.value = true
+    setTimeout(() => {
+      show.value = false
+    }, 3000)
+  },
+  {
+    immediate: true,
+    deep: true,
+  },
+)
 </script>
 <template>
   <Transition name="slide-top">
-    <div v-if="show" class="absolute top-20 right-10 z-50 flex justify-end">
+    <div v-if="show" class="absolute right-10 top-20 z-50 flex justify-end">
       <div v-if="$page.props.flash.success && show" class="retro-flash retro-flash--success mb-8">
         <div class="flex items-center">
           <svg class="ml-4 mr-2 h-4 w-4 flex-shrink-0 fill-brand-accent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><polygon points="0 11 2 9 7 14 18 3 20 5 7 18" /></svg>

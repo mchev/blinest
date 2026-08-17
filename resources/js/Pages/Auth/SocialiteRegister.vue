@@ -22,7 +22,7 @@ import SocialIcon from '@/Components/SocialIcon.vue'
         Deezer
       </a>
 
-<!--       <a :href="route('auth.redirect', 'spotify')" class="btn-secondary my-2">
+      <!--       <a :href="route('auth.redirect', 'spotify')" class="btn-secondary my-2">
         <SocialIcon name="spotify" class="mr-2 h-6 w-6" />
         Spotify
       </a>

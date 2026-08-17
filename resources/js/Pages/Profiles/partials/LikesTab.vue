@@ -17,20 +17,24 @@ const nextPage = ref(props.user.likes ? props.user.likes.current_page + 1 : 1)
 const lastPage = ref(props.user.likes ? props.user.likes.last_page : 1)
 const loading = ref(false)
 
-watch(() => props.user.likes, (newLikes) => {
-  if (newLikes) {
-    likes.value = [...newLikes.data]
-    nextPage.value = newLikes.current_page + 1
-    lastPage.value = newLikes.last_page
-  }
-}, { immediate: true })
+watch(
+  () => props.user.likes,
+  (newLikes) => {
+    if (newLikes) {
+      likes.value = [...newLikes.data]
+      nextPage.value = newLikes.current_page + 1
+      lastPage.value = newLikes.last_page
+    }
+  },
+  { immediate: true },
+)
 
 const unlike = (track) => {
   router.delete(route('profiles.likes.delete', track.id), {
     preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
-      const index = likes.value.findIndex(l => l.id === track.id)
+      const index = likes.value.findIndex((l) => l.id === track.id)
       if (index > -1) {
         likes.value.splice(index, 1)
       }
@@ -57,7 +61,7 @@ const loadMore = () => {
       onError: () => {
         loading.value = false
       },
-    }
+    },
   )
 }
 
@@ -69,28 +73,20 @@ const expandSection = () => {
       preserveState: true,
       preserveScroll: true,
       only: ['user'],
-    }
+    },
   )
 }
 </script>
 <template>
   <div class="space-y-3">
     <div v-for="track in likes" :key="track.id" class="retro-list-row">
-      <img v-if="track.cover || track.artwork_url" :src="track.cover || track.artwork_url" class="h-12 w-12 squircle-nested-xs object-cover" loading="lazy" />
+      <img v-if="track.cover || track.artwork_url" :src="track.cover || track.artwork_url" class="squircle-nested-xs h-12 w-12 object-cover" loading="lazy" />
       <div class="flex min-w-0 flex-1 flex-col">
         <span class="truncate font-medium text-white">
-          {{
-            track.title
-            || (track.answers && track.answers.find(a => a.type && a.type.name === 'Title')?.value)
-            || 'No title'
-          }}
+          {{ track.title || (track.answers && track.answers.find((a) => a.type && a.type.name === 'Title')?.value) || 'No title' }}
         </span>
         <span class="truncate text-sm text-white/60">
-          {{
-            track.artist
-            || (track.answers && track.answers.find(a => a.type && a.type.name === 'Artist')?.value)
-            || 'No artist'
-          }}
+          {{ track.artist || (track.answers && track.answers.find((a) => a.type && a.type.name === 'Artist')?.value) || 'No artist' }}
         </span>
       </div>
       <button v-if="currentUser && currentUser.id === props.user.id" @click="unlike(track)" class="ml-auto p-1 text-white/50 transition-colors hover:text-brand-primary">
@@ -105,9 +101,7 @@ const expandSection = () => {
       </svg>
     </div>
     <div v-if="!isExpanded && likes.length > 0 && likes.length < (user.likes?.total || 0)" class="flex justify-center pt-4">
-      <button @click="expandSection" class="retro-nav-btn--primary text-sm">
-        {{ __('View all') }} ({{ user.likes?.total || 0 }})
-      </button>
+      <button @click="expandSection" class="retro-nav-btn--primary text-sm">{{ __('View all') }} ({{ user.likes?.total || 0 }})</button>
     </div>
     <div v-else-if="isExpanded && nextPage <= lastPage && !loading && likes.length > 0" class="flex justify-center pt-4">
       <button @click="loadMore" class="retro-nav-btn--primary text-sm">

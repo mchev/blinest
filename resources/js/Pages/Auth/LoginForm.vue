@@ -40,7 +40,6 @@ const login = () => {
             <input id="remember" v-model="form.remember" class="mr-1" type="checkbox" />
             <span class="text-sm">{{ __('Remember Me') }}</span>
           </label>
-
         </div>
         <div class="flex px-6 py-4">
           <Link class="btn-secondary ml-auto mr-2" :href="route('register')">{{ __('Register') }}</Link>

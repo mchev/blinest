@@ -53,17 +53,17 @@ const confirmRestore = () => {
 }
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <!-- Header -->
-    <div class="mb-6 flex items-center justify-between w-full gap-4">
+    <div class="mb-6 flex w-full items-center justify-between gap-4">
       <nav>
-        <Link :href="route('playlists')" class="text-neutral-400 hover:text-neutral-200 transition-colors">
+        <Link :href="route('playlists')" class="text-neutral-400 transition-colors hover:text-neutral-200">
           {{ __('Playlists') }}
         </Link>
         <span class="mx-2 text-neutral-600">/</span>
         <span class="text-neutral-300">{{ form.name }}</span>
       </nav>
-      <h1 class="text-2xl lg:text-3xl font-bold text-neutral-100 flex-shrink-0">
+      <h1 class="flex-shrink-0 text-2xl font-bold text-neutral-100 lg:text-3xl">
         {{ form.name }}
       </h1>
     </div>
@@ -74,26 +74,26 @@ const confirmRestore = () => {
     </trashed-message>
 
     <!-- Main Layout -->
-    <div class="space-y-6 lg:space-y-0 lg:flex lg:gap-6">
+    <div class="space-y-6 lg:flex lg:gap-6 lg:space-y-0">
       <!-- Main Content: Tracks Manager (first on mobile, left on desktop) -->
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0 flex-1">
         <TracksManager :playlist="playlist" :filters="filters" :tracks="tracks" :answer_types="answer_types" />
       </div>
 
       <!-- Sidebar: Settings & Info (second on mobile, right on desktop) -->
-      <aside v-if="user.id === playlist.user_id" class="w-full lg:w-80 xl:w-96 flex-shrink-0 space-y-4 lg:space-y-6">
+      <aside v-if="user.id === playlist.user_id" class="w-full flex-shrink-0 space-y-4 lg:w-80 lg:space-y-6 xl:w-96">
         <!-- Playlist Statistics Summary -->
         <Card>
           <template #header>
             <div>
               <h3 class="text-lg font-bold text-neutral-200">{{ __('Statistics') }}</h3>
-              <p class="text-sm text-neutral-200 mt-0.5">{{ __('Playlist overview') }}</p>
+              <p class="mt-0.5 text-sm text-neutral-200">{{ __('Playlist overview') }}</p>
             </div>
           </template>
-          
-          <div class="p-4 lg:p-5 space-y-4">
+
+          <div class="space-y-4 p-4 lg:p-5">
             <!-- Total Tracks -->
-            <div class="flex items-center justify-between rounded-lg bg-neutral-800/40 p-3 border border-neutral-700/50">
+            <div class="flex items-center justify-between rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-3">
               <div class="flex items-center gap-2">
                 <Icon name="music" class="h-5 w-5 text-teal-400" />
                 <span class="text-sm font-medium text-neutral-200">{{ __('Total tracks') }}</span>
@@ -103,20 +103,18 @@ const confirmRestore = () => {
 
             <!-- Difficulty Distribution -->
             <div class="space-y-2">
-              <h4 class="text-sm font-semibold text-neutral-200 uppercase tracking-wide">{{ __('Difficulty distribution') }}</h4>
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-neutral-200">{{ __('Difficulty distribution') }}</h4>
               <div class="space-y-2">
                 <div v-for="(difficulty, key) in { Easy: 'Easy', Medium: 'Medium', Difficult: 'Difficult', Expert: 'Expert' }" :key="key">
-                  <div class="flex items-center justify-between text-sm mb-1">
-                    <span class="text-neutral-200 font-medium">{{ __(difficulty) }}</span>
-                    <span class="text-neutral-100 font-medium">
-                      {{ playlist.difficulties[difficulty] || 0 }} 
-                      <span class="text-neutral-300">
-                        ({{ playlist.total_tracks > 0 ? Math.round((playlist.difficulties[difficulty] || 0) / playlist.total_tracks * 100) : 0 }}%)
-                      </span>
+                  <div class="mb-1 flex items-center justify-between text-sm">
+                    <span class="font-medium text-neutral-200">{{ __(difficulty) }}</span>
+                    <span class="font-medium text-neutral-100">
+                      {{ playlist.difficulties[difficulty] || 0 }}
+                      <span class="text-neutral-300"> ({{ playlist.total_tracks > 0 ? Math.round(((playlist.difficulties[difficulty] || 0) / playlist.total_tracks) * 100) : 0 }}%) </span>
                     </span>
                   </div>
-                  <div class="h-2 bg-neutral-800 rounded-full overflow-hidden">
-                    <div 
+                  <div class="h-2 overflow-hidden rounded-full bg-neutral-800">
+                    <div
                       :class="{
                         'bg-teal-400': difficulty === 'Easy',
                         'bg-yellow-400': difficulty === 'Medium',
@@ -124,7 +122,7 @@ const confirmRestore = () => {
                         'bg-red-400': difficulty === 'Expert',
                       }"
                       class="h-full transition-all duration-300"
-                      :style="{ width: playlist.total_tracks > 0 ? `${Math.round((playlist.difficulties[difficulty] || 0) / playlist.total_tracks * 100)}%` : '0%' }"
+                      :style="{ width: playlist.total_tracks > 0 ? `${Math.round(((playlist.difficulties[difficulty] || 0) / playlist.total_tracks) * 100)}%` : '0%' }"
                     ></div>
                   </div>
                 </div>
@@ -138,69 +136,43 @@ const confirmRestore = () => {
           <template #header>
             <div>
               <h3 class="text-lg font-bold text-neutral-200">{{ __('Playlist settings') }}</h3>
-              <p class="text-sm text-neutral-200 mt-0.5">{{ __('Edit playlist information and transfer ownership') }}</p>
+              <p class="mt-0.5 text-sm text-neutral-200">{{ __('Edit playlist information and transfer ownership') }}</p>
             </div>
           </template>
-          
-          <form id="playlistForm" class="p-4 lg:p-5 space-y-5" @submit.prevent="update">
+
+          <form id="playlistForm" class="space-y-5 p-4 lg:p-5" @submit.prevent="update">
             <!-- Title -->
             <div>
-              <text-input 
-                v-model="form.name" 
-                :error="form.errors.name" 
-                class="w-full" 
-                :label="__('Title')" 
-              />
+              <text-input v-model="form.name" :error="form.errors.name" class="w-full" :label="__('Title')" />
             </div>
-            
+
             <!-- Description -->
             <div>
-              <textarea-input 
-                v-model="form.description" 
-                :error="form.errors.description" 
-                class="w-full" 
-                :label="__('Description')" 
-              />
+              <textarea-input v-model="form.description" :error="form.errors.description" class="w-full" :label="__('Description')" />
             </div>
-            
+
             <!-- Owner Transfer -->
             <div class="rounded-lg border border-neutral-700/50 bg-neutral-800/40 p-3">
-              <select-input 
-                v-model="form.user_id" 
-                :error="form.errors.user_id" 
-                class="w-full mb-2" 
-                :label="__('Owner')"
-              >
-                <option v-for="moderator in playlist.moderators" :value="moderator.id">
+              <select-input v-model="form.user_id" :error="form.errors.user_id" class="mb-2 w-full" :label="__('Owner')">
+                <option v-for="moderator in playlist.moderators" :key="moderator.id" :value="moderator.id">
                   {{ moderator.name }}
                 </option>
               </select-input>
-              <p class="text-sm text-neutral-200 leading-relaxed">
+              <p class="text-sm leading-relaxed text-neutral-200">
                 {{ __('Transfer the playlist management to a moderator') }}
               </p>
             </div>
           </form>
-          
+
           <template #footer>
             <div class="flex items-center justify-between gap-3">
-              <button 
-                v-if="!playlist.deleted_at" 
-                class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all" 
-                tabindex="-1" 
-                type="button" 
-                @click="destroy"
-              >
+              <button v-if="!playlist.deleted_at" class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10 hover:text-red-300" tabindex="-1" type="button" @click="destroy">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>
                 {{ __('Delete') }}
               </button>
-              <loading-button 
-                :loading="form.processing" 
-                class="btn-primary px-4 py-2 text-sm font-medium" 
-                form="playlistForm" 
-                type="submit"
-              >
+              <loading-button :loading="form.processing" class="btn-primary px-4 py-2 text-sm font-medium" form="playlistForm" type="submit">
                 {{ __('Update') }}
               </loading-button>
             </div>
@@ -216,27 +188,9 @@ const confirmRestore = () => {
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <ConfirmModal
-      :show="showDeleteModal"
-      :title="__('Delete playlist')"
-      :message="__('Are you sure you want to delete this playlist? This action cannot be undone.')"
-      :confirm-text="__('Delete')"
-      :cancel-text="__('Cancel')"
-      variant="danger"
-      @close="showDeleteModal = false"
-      @confirm="confirmDelete"
-    />
+    <ConfirmModal :show="showDeleteModal" :title="__('Delete playlist')" :message="__('Are you sure you want to delete this playlist? This action cannot be undone.')" :confirm-text="__('Delete')" :cancel-text="__('Cancel')" variant="danger" @close="showDeleteModal = false" @confirm="confirmDelete" />
 
     <!-- Restore Confirmation Modal -->
-    <ConfirmModal
-      :show="showRestoreModal"
-      :title="__('Restore playlist')"
-      :message="__('Are you sure you want to restore this playlist?')"
-      :confirm-text="__('Restore')"
-      :cancel-text="__('Cancel')"
-      variant="info"
-      @close="showRestoreModal = false"
-      @confirm="confirmRestore"
-    />
+    <ConfirmModal :show="showRestoreModal" :title="__('Restore playlist')" :message="__('Are you sure you want to restore this playlist?')" :confirm-text="__('Restore')" :cancel-text="__('Cancel')" variant="info" @close="showRestoreModal = false" @confirm="confirmRestore" />
   </AppLayout>
 </template>

@@ -17,7 +17,7 @@ const send = () => {
 }
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <div class="mx-auto flex w-full max-w-2xl flex-col">
       <Card class="mb-4">
         <template #header>
@@ -31,14 +31,7 @@ const send = () => {
         >
 
         <form @submit.prevent="send" id="roomForm" class="mt-4">
-          <text-input
-            v-model="form.email"
-            type="email"
-            :error="form.errors.email"
-            class="mb-4 w-full"
-            :label="__('Email')"
-            required
-          />
+          <text-input v-model="form.email" type="email" :error="form.errors.email" class="mb-4 w-full" :label="__('Email')" required />
           <textarea-input v-model="form.message" :error="form.errors.message" rows="10" class="mb-4 w-full" :label="__('Message')" />
         </form>
         <template #footer>

@@ -21,7 +21,7 @@
   }
 
   .btn-sm {
-    @apply text-xs px-3 py-1.5 min-h-[2rem];
+    @apply min-h-[2rem] px-3 py-1.5 text-xs;
     @media (max-width: 768px) {
       @apply min-h-[2.25rem] px-2.5 py-1.5;
     }
@@ -54,7 +54,11 @@
   }
 
   @keyframes spinning {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

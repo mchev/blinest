@@ -14,11 +14,11 @@ const __ = (key, replace = {}) => {
 </script>
 
 <template>
-<AppLayout>
+  <AppLayout>
     <section>
-      <div class="mx-auto py-8 px-4">
+      <div class="mx-auto px-4 py-8">
         <div class="mx-auto mb-8 text-center">
-          <h1 class="mb-4 text-5xl font-extrabold bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent">
+          <h1 class="mb-4 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-5xl font-extrabold text-transparent">
             {{ __('Rankings') }}
           </h1>
           <p class="text-lg text-neutral-400">{{ __('Compete with the best players') }}</p>

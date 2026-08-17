@@ -23,19 +23,23 @@ export function useCatalogLoadMore(getCatalogItems, getQuery) {
 
     loading.value = true
 
-    router.get(route('home'), {
-      catalog: catalogItems.current_page + 1,
-      ...getQuery(),
-    }, {
-      only: ['catalog_items'],
-      preserveState: true,
-      preserveScroll: true,
-      showProgress: false,
-      headers: { [MERGE_HEADER]: 'append' },
-      onFinish: () => {
-        loading.value = false
+    router.get(
+      route('home'),
+      {
+        catalog: catalogItems.current_page + 1,
+        ...getQuery(),
       },
-    })
+      {
+        only: ['catalog_items'],
+        preserveState: true,
+        preserveScroll: true,
+        showProgress: false,
+        headers: { [MERGE_HEADER]: 'append' },
+        onFinish: () => {
+          loading.value = false
+        },
+      },
+    )
   }
 
   let observer = null
@@ -63,11 +67,7 @@ export function useCatalogLoadMore(getCatalogItems, getQuery) {
     observer.observe(loadMoreTrigger.value)
   }
 
-  watch(
-    () => [getCatalogItems()?.data?.length, hasMore.value],
-    syncAutoLoad,
-    { flush: 'post' },
-  )
+  watch(() => [getCatalogItems()?.data?.length, hasMore.value], syncAutoLoad, { flush: 'post' })
 
   watch(loadMoreTrigger, syncAutoLoad)
 

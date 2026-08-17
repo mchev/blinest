@@ -14,7 +14,7 @@ const store = () => {
 }
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <Card class="mx-auto max-w-xl">
       <template #header>
         <h1 class="text-xl font-bold">{{ __('Creating a team') }}</h1>

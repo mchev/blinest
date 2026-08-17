@@ -6,8 +6,8 @@ import Card from '@/Components/Card.vue'
 const props = defineProps({
   forceShow: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const show = ref(false)
@@ -24,7 +24,7 @@ const showModal = () => {
 }
 
 defineExpose({
-  showModal
+  showModal,
 })
 
 onMounted(() => {

@@ -1,6 +1,6 @@
 <template>
   <div>
-<div class="mb-8 flex max-w-3xl justify-start">
+    <div class="mb-8 flex max-w-3xl justify-start">
       <h1 class="text-3xl font-bold">
         <Link class="text-gray-400 hover:text-teal-600" :href="route('admin.users')">Users</Link>
         <span class="font-medium text-gray-400">/</span>
@@ -14,7 +14,7 @@
         <div class="-mb-8 -mr-6 flex flex-wrap p-8">
           <text-input v-model="form.name" :error="form.errors.name" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Name')" />
           <text-input v-model="form.email" :error="form.errors.email" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Email')" />
-          <text-input v-model="form.password" :error="form.errors.password" class="w-full pb-8 pr-6 lg:w-1/2" type="password" autocomplete="new-password" :label="__('Password')"/>
+          <text-input v-model="form.password" :error="form.errors.password" class="w-full pb-8 pr-6 lg:w-1/2" type="password" autocomplete="new-password" :label="__('Password')" />
           <select-input v-model="form.team_id" :error="form.errors.team_id" class="w-full pb-8 pr-6 lg:w-1/2" :label="__('Team')">
             <option :value="0">{{ __('Yes') }}</option>
             <option :value="1">{{ __('No') }}</option>

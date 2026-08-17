@@ -66,11 +66,12 @@ const importPlaylist = () => {
         <form @submit.prevent="checkPlaylist" class="flex flex-col gap-4">
           <Tip v-if="checkForm.provider === 'Spotify'">Les imports depuis Spotify ne sont plus disponibles.</Tip>
           <SelectInput v-model="checkForm.provider" :error="checkForm.provider.error" :label="__('Playlist source')" required>
-            <option v-for="provider in providers" :value="provider">{{ provider }}</option>
+            <option v-for="provider in providers" :key="provider" :value="provider">{{ provider }}</option>
           </SelectInput>
           <div v-if="checkForm.provider != 'Blinest likes'">
             <TextInput v-model="checkForm.playlist_id" :error="checkForm.errors.playlist_id" type="text" :label="__('Playlist ID')" required />
-            <small>{{ __('You can find the ID of the playlist in the address bar of your browser') }}</small><br />
+            <small>{{ __('You can find the ID of the playlist in the address bar of your browser') }}</small
+            ><br />
             <small v-show="checkForm.provider === 'Spotify'">{{ __('Spotify ID example: https://open.spotify.com/playlist/') }}<span class="font-bold underline">37i9dQZF1DXcBWIGoYBM5M</span></small>
             <small v-show="checkForm.provider === 'Deezer'">{{ __('Deezer ID example: https://www.deezer.com/fr/playlist/') }}<span class="font-bold underline">53362031</span></small>
           </div>
@@ -82,7 +83,9 @@ const importPlaylist = () => {
       </Card>
       <!-- Step 2 -->
       <Card class="shadow-none" v-if="step === 2">
-        <template #header> <h3 class="uppercase">{{ __('Confirm import') }}</h3> </template>
+        <template #header>
+          <h3 class="uppercase">{{ __('Confirm import') }}</h3>
+        </template>
         <div class="mb-4 flex items-center">
           <img :src="pp.image" class="mr-2 h-20 w-20 rounded-full" />
           <div class="flex flex-col">
@@ -91,9 +94,15 @@ const importPlaylist = () => {
           </div>
         </div>
         <ul class="mb-4">
-          <li><b>{{ __('Source:') }}</b> {{ checkForm.provider }}</li>
-          <li v-if="pp.id"><b>{{ __('Playlist ID:') }}</b> {{ pp.id }}</li>
-          <li><b>{{ __('Tracks to be imported:') }}</b> {{ pp.tracks_count }}</li>
+          <li>
+            <b>{{ __('Source:') }}</b> {{ checkForm.provider }}
+          </li>
+          <li v-if="pp.id">
+            <b>{{ __('Playlist ID:') }}</b> {{ pp.id }}
+          </li>
+          <li>
+            <b>{{ __('Tracks to be imported:') }}</b> {{ pp.tracks_count }}
+          </li>
         </ul>
         <Tip>{{ __('Duplicated tracks will not be imported') }}</Tip>
         <div class="mt-4 flex items-center justify-end gap-2">

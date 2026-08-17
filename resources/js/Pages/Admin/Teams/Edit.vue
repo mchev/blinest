@@ -36,7 +36,7 @@ const restore = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <div class="mb-8 flex items-center">
       <img v-if="team.photo" class="mr-4 block h-8 w-8 rounded-full" :src="team.photo" />
       <h1 class="text-3xl font-bold">

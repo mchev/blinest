@@ -22,7 +22,7 @@ const register = () => {
 </script>
 <template>
   <AppLayout>
-<div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
+    <div class="mx-auto flex flex-wrap justify-center gap-4 lg:max-w-3xl">
       <Card class="flex flex-grow">
         <template #header>
           <h1 class="retro-title retro-title--primary text-center text-xl">{{ __('Register') }}</h1>

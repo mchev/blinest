@@ -4,18 +4,18 @@ import { usePage } from '@inertiajs/vue3'
 import { shouldServeEzoicAds } from '@/ezoic'
 
 const props = defineProps({
-    placementId: {
-        type: Number,
-        required: true,
-    },
-    compact: {
-        type: Boolean,
-        default: false,
-    },
-    wrapperClass: {
-        type: String,
-        default: '',
-    },
+  placementId: {
+    type: Number,
+    required: true,
+  },
+  compact: {
+    type: Boolean,
+    default: false,
+  },
+  wrapperClass: {
+    type: String,
+    default: '',
+  },
 })
 
 const page = usePage()
@@ -24,14 +24,7 @@ const visible = computed(() => shouldServeEzoicAds(page.url))
 </script>
 
 <template>
-    <div
-        v-if="visible"
-        class="ezoic-ad-slot overflow-hidden rounded-xl border border-slate-700/40 bg-slate-800/20"
-        :class="[
-            compact ? 'min-h-[60px]' : 'min-h-[90px]',
-            wrapperClass,
-        ]"
-    >
-        <div :id="`ezoic-pub-ad-placeholder-${placementId}`" />
-    </div>
+  <div v-if="visible" class="ezoic-ad-slot overflow-hidden rounded-xl border border-slate-700/40 bg-slate-800/20" :class="[compact ? 'min-h-[60px]' : 'min-h-[90px]', wrapperClass]">
+    <div :id="`ezoic-pub-ad-placeholder-${placementId}`" />
+  </div>
 </template>

@@ -36,7 +36,7 @@ const banUser = () => {
       <option :value="null">{{ __('Unlimited') }}</option>
     </SelectInput>
     <SelectInput v-model="form.comment" :label="__('Reason')" required>
-      <option v-for="reason in reasons" :value="reason">{{ __(reason) }}</option>
+      <option v-for="reason in reasons" :key="reason" :value="reason">{{ __(reason) }}</option>
     </SelectInput>
     <button type="submit" class="btn-danger btn-sm my-4" @click="banUser">{{ __('Confirm and ban') }} {{ user.name }}</button>
   </form>

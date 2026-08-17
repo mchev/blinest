@@ -1,14 +1,6 @@
 <template>
-  <section
-    :class="['retro-card transition-all duration-200 ease-out focus-visible:outline-none']"
-    role="region"
-    :aria-labelledby="$slots.header ? `${id}-header` : undefined"
-  >
-    <header
-      v-if="$slots.header"
-      :id="`${id}-header`"
-      class="retro-card__header"
-    >
+  <section :class="['retro-card transition-all duration-200 ease-out focus-visible:outline-none']" role="region" :aria-labelledby="$slots.header ? `${id}-header` : undefined">
+    <header v-if="$slots.header" :id="`${id}-header`" class="retro-card__header">
       <div class="flex items-center gap-3">
         <slot name="header" />
       </div>

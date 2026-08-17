@@ -36,6 +36,11 @@ function togglePlay() {
   }
 }
 
+function handleAutoplayClick() {
+  needsUserClick.value = false
+  togglePlay()
+}
+
 function onPlay() {
   isPlaying.value = true
   countdown.value = null
@@ -126,78 +131,28 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="flex flex-col items-center gap-4">
-    <div
-      class="relative flex h-40 w-40 flex-shrink-0 overflow-hidden rounded-xl bg-neutral-700/50"
-      :class="{ 'ring-2 ring-teal-500': isPlaying }"
-    >
-      <img
-        v-if="artworkUrl"
-        :src="artworkUrl"
-        alt=""
-        class="h-full w-full object-cover"
-      />
-      <div
-        v-else
-        class="flex h-full w-full items-center justify-center text-neutral-500"
-      >
+    <div class="relative flex h-40 w-40 flex-shrink-0 overflow-hidden rounded-xl bg-neutral-700/50" :class="{ 'ring-2 ring-teal-500': isPlaying }">
+      <img v-if="artworkUrl" :src="artworkUrl" alt="" class="h-full w-full object-cover" />
+      <div v-else class="flex h-full w-full items-center justify-center text-neutral-500">
         <Icon name="play" class="h-16 w-16" />
       </div>
       <!-- Countdown overlay -->
-      <div
-        v-if="countdown !== null"
-        class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white"
-      >
+      <div v-if="countdown !== null" class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white">
         <span class="text-sm font-medium">{{ __('Music starts in') }}</span>
         <span class="text-4xl font-bold tabular-nums">{{ countdown }}</span>
       </div>
       <!-- Autoplay blocked: click to play -->
-      <div
-        v-else-if="needsUserClick"
-        class="absolute inset-0 flex flex-col items-center justify-center bg-black/70 text-white gap-2"
-      >
+      <div v-else-if="needsUserClick" class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 text-white">
         <p class="text-sm">{{ __('Click to play') }}</p>
-        <button
-          type="button"
-          class="flex h-14 w-14 items-center justify-center rounded-full bg-teal-500 text-2xl text-white hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
-          :aria-label="__('Play')"
-          @click="needsUserClick = false; togglePlay()"
-        >
-          ▶
-        </button>
+        <button type="button" class="flex h-14 w-14 items-center justify-center rounded-full bg-teal-500 text-2xl text-white hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-400" :aria-label="__('Play')" @click="handleAutoplayClick">▶</button>
       </div>
       <!-- Play / Pause button (hidden during countdown) -->
-      <button
-        v-else
-        type="button"
-        class="absolute inset-0 flex items-center justify-center bg-black/40 transition hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-teal-500"
-        :aria-label="isPlaying ? __('Pause') : __('Play')"
-        @click="togglePlay"
-      >
-        <span
-          v-if="!isPlaying"
-          class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-2xl text-neutral-800"
-          aria-hidden="true"
-        >
-          ▶
-        </span>
-        <span
-          v-else
-          class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-2xl text-neutral-800"
-          aria-hidden="true"
-        >
-          ❚❚
-        </span>
+      <button v-else type="button" class="absolute inset-0 flex items-center justify-center bg-black/40 transition hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-teal-500" :aria-label="isPlaying ? __('Pause') : __('Play')" @click="togglePlay">
+        <span v-if="!isPlaying" class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-2xl text-neutral-800" aria-hidden="true"> ▶ </span>
+        <span v-else class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-2xl text-neutral-800" aria-hidden="true"> ❚❚ </span>
       </button>
     </div>
-    <audio
-      v-if="previewUrl"
-      ref="audio"
-      :src="previewUrl"
-      class="hidden"
-      @play="onPlay"
-      @pause="onPause"
-      @ended="onEnded"
-    />
+    <audio v-if="previewUrl" ref="audio" :src="previewUrl" class="hidden" @play="onPlay" @pause="onPause" @ended="onEnded" />
     <p v-else class="text-sm text-amber-500">
       {{ __('No preview available for this track.') }}
     </p>

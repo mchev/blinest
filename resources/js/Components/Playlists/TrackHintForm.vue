@@ -27,11 +27,15 @@ const form = useForm({
 })
 
 // Update form when track changes
-watch(() => props.track, (newTrack) => {
-  if (newTrack) {
-    form.hint = newTrack.hint || ''
-  }
-}, { immediate: true })
+watch(
+  () => props.track,
+  (newTrack) => {
+    if (newTrack) {
+      form.hint = newTrack.hint || ''
+    }
+  },
+  { immediate: true },
+)
 
 const close = () => {
   emit('close')
@@ -69,40 +73,21 @@ const deleteHint = () => {
         </div>
 
         <div class="mt-4">
-          <text-input 
-            v-model="form.hint" 
-            type="text" 
-            :error="form.errors.hint" 
-            class="w-full" 
-            :label="__('Hint')"
-            :placeholder="__('Hint')"
-          />
+          <text-input v-model="form.hint" type="text" :error="form.errors.hint" class="w-full" :label="__('Hint')" :placeholder="__('Hint')" />
         </div>
       </div>
 
       <div class="flex items-center justify-between px-2 py-4 text-right">
-        <button 
-          v-if="track?.hint" 
-          type="button" 
-          class="mx-2 text-red-400" 
-          :class="{ 'opacity-25': form.processing }" 
-          :disabled="form.processing" 
-          @click="deleteHint"
-        >
+        <button v-if="track?.hint" type="button" class="mx-2 text-red-400" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteHint">
           {{ __('Delete') }}
         </button>
 
-        <div class="flex items-center ml-auto">
+        <div class="ml-auto flex items-center">
           <button class="btn-secondary mx-2 bg-gray-400" @click="close">
             {{ __('Close') }}
           </button>
 
-          <button 
-            type="submit" 
-            class="btn-primary ml-2" 
-            :class="{ 'opacity-25': form.processing }" 
-            :disabled="form.processing"
-          >
+          <button type="submit" class="btn-primary ml-2" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ __('Save') }}
           </button>
         </div>
@@ -110,4 +95,3 @@ const deleteHint = () => {
     </form>
   </modal>
 </template>
-

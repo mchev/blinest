@@ -9,7 +9,7 @@ defineProps({
 })
 </script>
 <template>
-<AppLayout>
+  <AppLayout>
     <Card class="mx-auto">
       <template #header>
         <div class="flex w-full items-center justify-between">

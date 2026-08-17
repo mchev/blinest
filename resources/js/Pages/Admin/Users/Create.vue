@@ -1,6 +1,6 @@
 <template>
   <div>
-<h1 class="mb-8 text-3xl font-bold">
+    <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-gray-400 hover:text-teal-600" href="/users">{{ __('Users') }}</Link>
       <span class="font-medium text-gray-400">/</span> Create
     </h1>

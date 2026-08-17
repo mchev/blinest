@@ -31,7 +31,7 @@ const checkTheme = (theme) => {
 </script>
 <template>
   <div class="ml-4">
-    <dropdown class="mt-1 ml-auto" placement="bottom-end">
+    <dropdown class="ml-auto mt-1" placement="bottom-end">
       <template #default>
         <div class="group flex cursor-pointer select-none items-center">
           <div class="mr-1 whitespace-nowrap">
@@ -40,15 +40,15 @@ const checkTheme = (theme) => {
         </div>
       </template>
       <template #dropdown>
-        <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'dark'">
+        <button type="button" class="flex cursor-pointer items-center px-2 py-1" @click="theme = 'dark'">
           <Icon name="dark" class="mr-2 inline-block h-6 w-6" />
           {{ __('Dark') }}
         </button>
-        <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'light'">
+        <button type="button" class="flex cursor-pointer items-center px-2 py-1" @click="theme = 'light'">
           <Icon name="light" class="mr-2 inline-block h-6 w-6" />
           {{ __('Light') }}
         </button>
-        <button type="button" class="flex cursor-pointer items-center py-1 px-2" @click="theme = 'system'">
+        <button type="button" class="flex cursor-pointer items-center px-2 py-1" @click="theme = 'system'">
           <Icon name="system" class="mr-2 inline-block h-6 w-6" />
           {{ __('System') }}
         </button>

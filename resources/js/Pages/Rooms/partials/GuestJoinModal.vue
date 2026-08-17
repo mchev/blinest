@@ -21,10 +21,7 @@ defineProps({
       </header>
 
       <div class="guest-join-modal__actions">
-        <a
-          :href="route('rooms.guest-join', room.slug)"
-          class="game-btn-play-join guest-join-modal__btn"
-        >
+        <a :href="route('rooms.guest-join', room.slug)" class="game-btn-play-join guest-join-modal__btn">
           {{ __('Play as guest') }}
         </a>
 
@@ -32,17 +29,11 @@ defineProps({
           <span>{{ __('or') }}</span>
         </div>
 
-        <Link
-          :href="route('login')"
-          class="game-btn-play-live guest-join-modal__btn"
-        >
+        <Link :href="route('login')" class="game-btn-play-live guest-join-modal__btn">
           {{ __('Login with my account') }}
         </Link>
 
-        <Link
-          :href="route('register')"
-          class="game-btn-play-neutral guest-join-modal__btn"
-        >
+        <Link :href="route('register')" class="game-btn-play-neutral guest-join-modal__btn">
           {{ __('Create an account') }}
         </Link>
       </div>

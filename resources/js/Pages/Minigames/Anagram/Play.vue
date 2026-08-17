@@ -49,9 +49,7 @@ async function preloadRound() {
   showSummary.value = false
   currentQuestionIndex.value = 0
   try {
-    const responses = await Promise.all(
-      Array.from({ length: QUESTIONS_PER_ROUND }, () => axios.post(nextUrl)),
-    )
+    const responses = await Promise.all(Array.from({ length: QUESTIONS_PER_ROUND }, () => axios.post(nextUrl)))
     roundTracks.value = responses.map((r) => r.data)
     if (roundTracks.value.length > 0) {
       applyQuestion(0)
@@ -120,70 +118,33 @@ onMounted(() => {
 </script>
 
 <template>
-  <MinigamePlayLayout
-    :back-url="backUrl"
-    :home-url="homeUrl"
-    :questions-per-round="QUESTIONS_PER_ROUND"
-    :session-score="sessionScore"
-    :show-summary="showSummary"
-    :current-question-index="currentQuestionIndex"
-    :round-results="roundResults"
-    :loading="loading"
-    :error="error"
-    result-item-label="Artist"
-    :show-progress="showProgress"
-    @retry="preloadRound"
-  >
-    <div
-      v-if="currentQuestion"
-      class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl ring-1 ring-white/5"
-    >
+  <MinigamePlayLayout :back-url="backUrl" :home-url="homeUrl" :questions-per-round="QUESTIONS_PER_ROUND" :session-score="sessionScore" :show-summary="showSummary" :current-question-index="currentQuestionIndex" :round-results="roundResults" :loading="loading" :error="error" result-item-label="Artist" :show-progress="showProgress" @retry="preloadRound">
+    <div v-if="currentQuestion" class="overflow-hidden rounded-2xl border-2 border-teal-500/20 bg-neutral-900/80 shadow-2xl ring-1 ring-white/5">
       <div class="flex flex-col gap-6 p-6">
         <div v-if="!result" class="flex flex-col gap-3">
           <p class="text-center text-sm font-bold uppercase tracking-wider text-neutral-400">
             {{ __('Unscramble the letters to find the artist name') }}
           </p>
-          <p
-            class="font-mono text-center text-2xl font-bold tracking-[0.3em] text-teal-400 uppercase"
-            aria-label="Scrambled letters"
-          >
+          <p class="text-center font-mono text-2xl font-bold uppercase tracking-[0.3em] text-teal-400" aria-label="Scrambled letters">
             {{ currentQuestion.scrambled_artist }}
           </p>
           <form class="flex flex-col gap-3" @submit.prevent="submitAnswer">
-            <input
-              v-model="userInput"
-              type="text"
-              class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 font-semibold text-neutral-100 placeholder-neutral-500 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
-              :placeholder="__('Type the artist name...')"
-              :disabled="checking"
-              autocomplete="off"
-            />
-            <button
-              type="submit"
-              class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3.5 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50"
-              :disabled="checking || !userInput?.trim()"
-            >
+            <input v-model="userInput" type="text" class="w-full rounded-xl border-2 border-neutral-600 bg-neutral-800/80 px-4 py-3.5 font-semibold text-neutral-100 placeholder-neutral-500 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50" :placeholder="__('Type the artist name...')" :disabled="checking" autocomplete="off" />
+            <button type="submit" class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-3.5 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900 disabled:opacity-50" :disabled="checking || !userInput?.trim()">
               {{ __('Validate') }}
             </button>
           </form>
         </div>
 
         <div v-else class="space-y-5">
-          <p
-            :class="result.correct ? 'text-teal-400' : 'text-amber-500'"
-            class="text-center text-lg font-bold"
-          >
+          <p :class="result.correct ? 'text-teal-400' : 'text-amber-500'" class="text-center text-lg font-bold">
             {{ result.correct ? __('Correct!') : __(wrongMessageKey) }}
             <template v-if="result.points"> +{{ result.points }} {{ __('points') }}</template>
           </p>
           <p v-if="!result.correct && result.correct_value" class="text-center text-neutral-400">
             {{ __('Correct answer') }}: <span class="font-semibold text-neutral-200">{{ result.correct_value }}</span>
           </p>
-          <button
-            type="button"
-            class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900"
-            @click="nextQuestion"
-          >
+          <button type="button" class="w-full rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-4 py-4 font-black text-white shadow-lg transition hover:from-teal-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-neutral-900" @click="nextQuestion">
             {{ currentQuestionIndex >= QUESTIONS_PER_ROUND - 1 ? __('See results') : __('Next question') }}
           </button>
         </div>
@@ -191,4 +152,3 @@ onMounted(() => {
     </div>
   </MinigamePlayLayout>
 </template>
-

@@ -18,7 +18,7 @@ const store = () => {
 }
 </script>
 <template>
-<AdminLayout>
+  <AdminLayout>
     <Card>
       <template #header>
         <h1 class="text-xl font-bold">

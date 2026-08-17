@@ -27,7 +27,7 @@ const endingRound = ref(false)
 const showingOptionsModal = ref(false)
 
 const stopRound = () => {
-  if(!props.round) {
+  if (!props.round) {
     alert("Erreur : la room est en lecture mais aucune partie n'est en cours.")
     return
   }
@@ -62,7 +62,6 @@ onMounted(() => {
 })
 </script>
 <template>
-
   <div class="room-actions__group flex items-center gap-2">
     <button type="button" class="room-action-btn" @click="showingOptionsModal = true">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 shrink-0">
@@ -88,7 +87,9 @@ onMounted(() => {
 
   <Modal :show="showingOptionsModal" @close="showingOptionsModal = false">
     <Card class="p-4">
-      <template #header><span class="retro-title retro-title--accent">{{ __('Room options') }}</span></template>
+      <template #header
+        ><span class="retro-title retro-title--accent">{{ __('Room options') }}</span></template
+      >
       <EditOptionsForm :room="room" :modal="true" @close="showingOptionsModal = false" />
     </Card>
   </Modal>

@@ -65,95 +65,57 @@ watch(
 
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mb-8 sm:mb-12">
-        <div class="text-center mb-8">
-          <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">
+        <div class="mb-8 text-center">
+          <h1 class="mb-4 text-4xl font-bold text-white sm:text-5xl">
             {{ __('Frequently Asked Questions') }}
           </h1>
-          <p class="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p class="mx-auto max-w-2xl text-lg text-neutral-400">
             {{ __('Find answers to common questions about Blinest') }}
           </p>
         </div>
 
-        <div class="max-w-2xl mx-auto mb-6">
+        <div class="mx-auto mb-6 max-w-2xl">
           <label for="faq-search" class="sr-only">{{ __('Search in FAQ') }}</label>
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none" aria-hidden="true">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4" aria-hidden="true">
               <Icon name="search" class="h-5 w-5 text-neutral-500" />
             </div>
-            <TextInput
-              id="faq-search"
-              v-model="form.search"
-              :placeholder="__('Search in FAQ...')"
-              class="w-full pl-11 pr-4 py-3 bg-neutral-800/50 border-neutral-700/50 focus:border-teal-500/50 focus:ring-teal-500/20"
-              :aria-label="__('Search in FAQ')"
-            />
+            <TextInput id="faq-search" v-model="form.search" :placeholder="__('Search in FAQ...')" class="w-full border-neutral-700/50 bg-neutral-800/50 py-3 pl-11 pr-4 focus:border-teal-500/50 focus:ring-teal-500/20" :aria-label="__('Search in FAQ')" />
           </div>
         </div>
 
         <div v-if="faqs.data.length > 0" class="text-center">
-          <p class="text-sm text-neutral-500">
-            {{ __('Showing') }} {{ faqs.data.length }} {{ __('results') }}
-          </p>
+          <p class="text-sm text-neutral-500">{{ __('Showing') }} {{ faqs.data.length }} {{ __('results') }}</p>
         </div>
       </div>
 
-      <div class="max-w-4xl mx-auto">
-        <TransitionGroup
-          name="faq"
-          tag="section"
-          v-if="faqs.data.length"
-          class="space-y-4"
-          role="list"
-          :aria-label="__('Frequently Asked Questions')"
-        >
-          <FAQ
-            v-for="faq in faqs.data"
-            :key="faq.id"
-            :faq="faq"
-            :is-open="openFaqs.has(faq.id)"
-            @toggle="toggleFaq"
-          />
+      <div class="mx-auto max-w-4xl">
+        <TransitionGroup name="faq" tag="section" v-if="faqs.data.length" class="space-y-4" role="list" :aria-label="__('Frequently Asked Questions')">
+          <FAQ v-for="faq in faqs.data" :key="faq.id" :faq="faq" :is-open="openFaqs.has(faq.id)" @toggle="toggleFaq" />
         </TransitionGroup>
 
-        <div
-          v-else
-          class="text-center py-16 px-4 rounded-2xl border border-neutral-700/50 bg-gradient-to-br from-neutral-800/40 to-neutral-800/20"
-        >
-          <div class="max-w-md mx-auto">
+        <div v-else class="rounded-2xl border border-neutral-700/50 bg-gradient-to-br from-neutral-800/40 to-neutral-800/20 px-4 py-16 text-center">
+          <div class="mx-auto max-w-md">
             <div class="mb-4 flex justify-center">
               <div class="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-700/30">
                 <Icon name="search" class="h-8 w-8 text-neutral-500" />
               </div>
             </div>
-            <h3 class="text-xl font-semibold text-white mb-2">
+            <h3 class="mb-2 text-xl font-semibold text-white">
               {{ __('No results found') }}
             </h3>
-            <p class="text-neutral-400 mb-6">
+            <p class="mb-6 text-neutral-400">
               {{ __('Try adjusting your search terms') }}
             </p>
-            <div class="pt-6 border-t border-neutral-700/30">
-              <p class="text-sm text-neutral-400 mb-4">
+            <div class="border-t border-neutral-700/30 pt-6">
+              <p class="mb-4 text-sm text-neutral-400">
                 {{ __('Still have questions?') }}
               </p>
-              <Link
-                :href="route('contact')"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 text-white font-medium hover:from-teal-600 hover:to-teal-700 transition-all duration-200 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="h-5 w-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                  />
+              <Link :href="route('contact')" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 font-medium text-white shadow-lg shadow-teal-500/20 transition-all duration-200 hover:from-teal-600 hover:to-teal-700 hover:shadow-teal-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
                 {{ __('Contact us') }}
               </Link>
@@ -165,34 +127,17 @@ watch(
           <Pagination :links="faqs.links" class="justify-center" />
         </div>
 
-        <div
-          v-if="faqs.data.length > 0"
-          class="mt-12 text-center py-8 px-6 rounded-2xl border border-neutral-700/50 bg-gradient-to-br from-neutral-800/40 to-neutral-800/20"
-        >
-          <div class="max-w-2xl mx-auto">
-            <h3 class="text-xl font-semibold text-white mb-2">
+        <div v-if="faqs.data.length > 0" class="mt-12 rounded-2xl border border-neutral-700/50 bg-gradient-to-br from-neutral-800/40 to-neutral-800/20 px-6 py-8 text-center">
+          <div class="mx-auto max-w-2xl">
+            <h3 class="mb-2 text-xl font-semibold text-white">
               {{ __('Still have questions?') }}
             </h3>
-            <p class="text-neutral-400 mb-6">
-              {{ __('If you couldn\'t find the answer you were looking for, feel free to contact us.') }}
+            <p class="mb-6 text-neutral-400">
+              {{ __("If you couldn't find the answer you were looking for, feel free to contact us.") }}
             </p>
-            <Link
-              :href="route('contact')"
-              class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 text-white font-medium hover:from-teal-600 hover:to-teal-700 transition-all duration-200 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                class="h-5 w-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                />
+            <Link :href="route('contact')" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3 font-medium text-white shadow-lg shadow-teal-500/20 transition-all duration-200 hover:from-teal-600 hover:to-teal-700 hover:shadow-teal-500/30">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
               </svg>
               {{ __('Contact us') }}
             </Link>

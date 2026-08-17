@@ -11,13 +11,7 @@ defineProps({
 
 <template>
   <Transition name="round-finalizing-fade">
-    <div
-      v-if="show"
-      class="round-finalizing-overlay"
-      role="status"
-      aria-live="polite"
-      :aria-label="__('Calculating scores and rankings...')"
-    >
+    <div v-if="show" class="round-finalizing-overlay" role="status" aria-live="polite" :aria-label="__('Calculating scores and rankings...')">
       <div class="round-finalizing-overlay__panel">
         <div class="round-finalizing-overlay__pulse" aria-hidden="true"></div>
         <Spinner class="!mr-0 h-8 w-8 !fill-brand-accent text-white/20" />

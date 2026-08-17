@@ -16,10 +16,7 @@ defineProps({
 </script>
 
 <template>
-  <section
-    class="relative p-4"
-    :class="{ 'border-b border-white/10': border }"
-  >
+  <section class="relative p-4" :class="{ 'border-b border-white/10': border }">
     <header v-if="kicker || title" class="mb-3">
       <p v-if="kicker" class="game-section-kicker">{{ kicker }}</p>
       <h3 v-if="title" class="retro-title retro-title--secondary text-sm">

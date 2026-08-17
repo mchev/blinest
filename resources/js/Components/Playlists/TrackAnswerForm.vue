@@ -116,14 +116,7 @@ const deleteAnswer = () => {
 
           <text-input v-model="form.value" :error="form.errors.value" class="w-full pb-8 pr-6" :label="__('Answer')" />
 
-          <textarea-input
-            v-model="aliasesText"
-            rows="4"
-            class="w-full pb-8 pr-6"
-            :label="__('Alternative answers')"
-            :error="form.errors.aliases"
-            :placeholder="__('One alternative answer per line')"
-          />
+          <textarea-input v-model="aliasesText" rows="4" class="w-full pb-8 pr-6" :label="__('Alternative answers')" :error="form.errors.aliases" :placeholder="__('One alternative answer per line')" />
         </div>
       </div>
 

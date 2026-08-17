@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref } from "vue";
+import { watch, ref } from 'vue'
 
 const props = defineProps({
   modelValue: File,
@@ -11,11 +11,14 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const file = ref('')
 
-watch(() => props.modelValue, (value) => {
-  if (!value) {
-    file.value = '';
-  }
-});
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (!value) {
+      file.value = ''
+    }
+  },
+)
 
 const filesize = (size) => {
   var i = Math.floor(Math.log(size) / Math.log(1024))
@@ -33,7 +36,6 @@ const change = (e) => {
 const remove = () => {
   emit('update:modelValue', null)
 }
-
 </script>
 <template>
   <div>

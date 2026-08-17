@@ -41,7 +41,7 @@ const formatNumber = (num) => {
 }
 
 const formatDate = (iso) => {
-  if (! iso) {
+  if (!iso) {
     return null
   }
   try {
@@ -118,13 +118,10 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
 </script>
 
 <template>
-<AppLayout>
+  <AppLayout>
     <div class="mx-auto max-w-4xl pb-16 pt-4 md:pt-8">
       <div class="mb-6">
-        <Link
-          href="/teams"
-          class="inline-flex items-center gap-2 text-sm font-medium text-violet-300/90 transition hover:text-violet-200"
-        >
+        <Link href="/teams" class="inline-flex items-center gap-2 text-sm font-medium text-violet-300/90 transition hover:text-violet-200">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
           </svg>
@@ -138,16 +135,8 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
         <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-10">
           <div class="relative mx-auto shrink-0 sm:mx-0">
             <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-60 blur-lg" />
-            <img
-              v-if="team.photo"
-              :src="team.photo"
-              :alt="team.name"
-              class="relative h-28 w-28 rounded-full object-cover ring-4 ring-violet-400/40 ring-offset-4 ring-offset-neutral-950 sm:h-36 sm:w-36"
-            >
-            <div
-              v-else
-              class="relative flex h-28 w-28 items-center justify-center rounded-full bg-neutral-800 text-3xl font-black text-violet-300 ring-4 ring-violet-400/30 ring-offset-4 ring-offset-neutral-950 sm:h-36 sm:w-36"
-            >
+            <img v-if="team.photo" :src="team.photo" :alt="team.name" class="relative h-28 w-28 rounded-full object-cover ring-4 ring-violet-400/40 ring-offset-4 ring-offset-neutral-950 sm:h-36 sm:w-36" />
+            <div v-else class="relative flex h-28 w-28 items-center justify-center rounded-full bg-neutral-800 text-3xl font-black text-violet-300 ring-4 ring-violet-400/30 ring-offset-4 ring-offset-neutral-950 sm:h-36 sm:w-36">
               {{ team.name?.charAt(0)?.toUpperCase() }}
             </div>
           </div>
@@ -156,23 +145,14 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
               <span class="rounded-full border border-amber-400/35 bg-amber-400/10 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-200">
                 {{ __('Squad') }}
               </span>
-              <Link
-                :href="route('rankings.teams')"
-                class="text-xs font-semibold text-violet-300/90 underline-offset-2 hover:text-violet-200 hover:underline"
-              >
-                {{ __('Team rankings') }} →
-              </Link>
+              <Link :href="route('rankings.teams')" class="text-xs font-semibold text-violet-300/90 underline-offset-2 hover:text-violet-200 hover:underline"> {{ __('Team rankings') }} → </Link>
             </div>
             <h1 class="mb-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
               {{ team.name }}
             </h1>
             <p class="mb-4 text-sm text-neutral-400">
               {{ __('Captain') }}:
-              <Link
-                v-if="team.owner?.id"
-                :href="route('user.profile', { user: team.owner.id })"
-                class="font-semibold text-violet-300 hover:text-violet-200"
-              >
+              <Link v-if="team.owner?.id" :href="route('user.profile', { user: team.owner.id })" class="font-semibold text-violet-300 hover:text-violet-200">
                 {{ team.owner.name }}
               </Link>
               <span v-else class="font-semibold text-neutral-300">{{ team.owner?.name }}</span>
@@ -227,7 +207,8 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
           <TextInput v-model="form.name" :label="__('Name')" class="mb-4" :error="form.errors.name" />
           <FileInput v-if="user.can.changeTeamPicture" v-model="form.photo" :label="__('Image')" class="mb-4" :error="form.errors.photo" />
           <Tip v-if="!user.can.changeTeamPicture">
-            {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand') }}<sup>{{ __('PTS') }}</sup>.
+            {{ __('In order to change team picture, you need to have a minimum of three months of seniority and a total score above two thousand') }}<sup>{{ __('PTS') }}</sup
+            >.
           </Tip>
           <LoadingButton type="submit" :loading="form.processing" class="btn-primary mb-4 ml-auto">
             {{ __('Update') }}
@@ -239,80 +220,46 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
         <template #header>
           <div class="flex w-full flex-wrap items-center justify-between gap-2">
             <span class="text-sm font-bold text-neutral-200">{{ __('Squad roster') }}</span>
-            <span class="rounded-full border border-neutral-600 bg-neutral-800/80 px-3 py-1 text-xs font-semibold text-neutral-300">
-              {{ members.length }} / {{ team.seats }}
-            </span>
+            <span class="rounded-full border border-neutral-600 bg-neutral-800/80 px-3 py-1 text-xs font-semibold text-neutral-300"> {{ members.length }} / {{ team.seats }} </span>
           </div>
         </template>
         <ul class="flex flex-col gap-3">
-          <li
-            v-for="(member, index) in members"
-            :key="member.id"
-            :class="['flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center', rowStyle(index)]"
-          >
+          <li v-for="(member, index) in members" :key="member.id" :class="['flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center', rowStyle(index)]">
             <div class="flex min-w-0 flex-1 items-center gap-3">
               <div class="flex h-10 w-10 shrink-0 items-center justify-center text-xl font-black tabular-nums text-neutral-500">
                 <span v-if="medalForRank(index)">{{ medalForRank(index) }}</span>
                 <span v-else>{{ index + 1 }}</span>
               </div>
-              <Link
-                :href="route('user.profile', { user: member.id })"
-                class="flex min-w-0 items-center gap-3 transition hover:opacity-90"
-              >
-                <img
-                  v-if="member.photo"
-                  :src="member.photo"
-                  alt=""
-                  class="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-neutral-600"
-                >
+              <Link :href="route('user.profile', { user: member.id })" class="flex min-w-0 items-center gap-3 transition hover:opacity-90">
+                <img v-if="member.photo" :src="member.photo" alt="" class="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-neutral-600" />
                 <div v-else class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neutral-700 text-sm font-bold text-neutral-300">
                   {{ member.name?.charAt(0)?.toUpperCase() }}
                 </div>
                 <div class="min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
                     <span class="truncate font-bold text-white">{{ member.name }}</span>
-                    <span
-                      v-if="member.id === user.id"
-                      class="shrink-0 rounded bg-violet-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-violet-200"
-                    >
+                    <span v-if="member.id === user.id" class="shrink-0 rounded bg-violet-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase text-violet-200">
                       {{ __('You') }}
                     </span>
                     <span v-if="member.id === team.user_id" class="text-amber-400" title="Captain">★</span>
                   </div>
-                  <div class="mt-1 text-xs text-neutral-500">
-                    {{ member.rounds_played ?? 0 }} {{ __('Rounds played') }} · {{ __('Share of squad points') }} {{ member.contribution_percent ?? 0 }}%
-                  </div>
+                  <div class="mt-1 text-xs text-neutral-500">{{ member.rounds_played ?? 0 }} {{ __('Rounds played') }} · {{ __('Share of squad points') }} {{ member.contribution_percent ?? 0 }}%</div>
                 </div>
               </Link>
             </div>
             <div class="flex w-full flex-col gap-2 sm:w-48 sm:shrink-0">
               <div class="h-2 overflow-hidden rounded-full bg-neutral-800">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 transition-all"
-                  :style="{ width: `${Math.min(100, member.contribution_percent ?? 0)}%` }"
-                />
+                <div class="h-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 transition-all" :style="{ width: `${Math.min(100, member.contribution_percent ?? 0)}%` }" />
               </div>
               <div class="flex items-center justify-between text-sm">
                 <span class="font-black tabular-nums text-violet-200">{{ formatNumber(member.score) }} {{ __('PTS') }}</span>
                 <div class="flex items-center gap-1">
-                  <button
-                    v-if="user.id === team.user_id && member.id !== team.user_id"
-                    type="button"
-                    class="rounded p-1 text-amber-400/90 transition hover:bg-amber-500/10 hover:text-amber-300"
-                    :title="__('Transfer captain')"
-                    @click="switchOwner(member)"
-                  >
+                  <button v-if="user.id === team.user_id && member.id !== team.user_id" type="button" class="rounded p-1 text-amber-400/90 transition hover:bg-amber-500/10 hover:text-amber-300" :title="__('Transfer captain')" @click="switchOwner(member)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                     </svg>
                   </button>
-                  <button
-                    v-if="user.id === team.user_id && member.id !== team.user_id"
-                    type="button"
-                    class="rounded p-1 text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
-                    :title="__('Remove member')"
-                    @click="removeMember(member)"
-                  >
+                  <button v-if="user.id === team.user_id && member.id !== team.user_id" type="button" class="rounded p-1 text-red-400 transition hover:bg-red-500/10 hover:text-red-300" :title="__('Remove member')" @click="removeMember(member)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
                     </svg>
@@ -325,54 +272,21 @@ const isTeamFull = () => props.members.length >= Number(props.team.seats)
       </Card>
 
       <div class="mt-8 flex flex-wrap items-center gap-3">
-        <button
-          v-if="members.length === 1 && team.user_id === user.id"
-          type="button"
-          class="btn-danger"
-          @click="destroy"
-        >
-          {{ __('Delete') }} {{ __('The Team') }}
-        </button>
-        <button
-          v-else-if="members.find((x) => x.id === user.id)"
-          type="button"
-          class="btn-danger"
-          @click="leave"
-        >
+        <button v-if="members.length === 1 && team.user_id === user.id" type="button" class="btn-danger" @click="destroy">{{ __('Delete') }} {{ __('The Team') }}</button>
+        <button v-else-if="members.find((x) => x.id === user.id)" type="button" class="btn-danger" @click="leave">
           {{ __('Leave the team') }}
         </button>
         <div v-else class="flex flex-wrap gap-3">
-          <button
-            v-if="user.declined_requests.includes(team.id)"
-            type="button"
-            class="btn-danger"
-            @click="cancelRequest(team)"
-          >
+          <button v-if="user.declined_requests.includes(team.id)" type="button" class="btn-danger" @click="cancelRequest(team)">
             {{ __('Declined request') }}
           </button>
-          <button
-            v-else-if="user.pending_requests.includes(team.id)"
-            type="button"
-            class="btn-danger"
-            @click="cancelRequest(team)"
-          >
+          <button v-else-if="user.pending_requests.includes(team.id)" type="button" class="btn-danger" @click="cancelRequest(team)">
             {{ __('Cancel join request') }}
           </button>
-          <button
-            v-else-if="isTeamFull()"
-            type="button"
-            disabled
-            class="cursor-not-allowed rounded-lg border border-neutral-600 bg-neutral-800/80 px-4 py-2 text-sm font-semibold text-neutral-500"
-            :title="__('It is not possible to join this team. The maximum number of members has been reached')"
-          >
+          <button v-else-if="isTeamFull()" type="button" disabled class="cursor-not-allowed rounded-lg border border-neutral-600 bg-neutral-800/80 px-4 py-2 text-sm font-semibold text-neutral-500" :title="__('It is not possible to join this team. The maximum number of members has been reached')">
             {{ __('Team is full') }}
           </button>
-          <button
-            v-else
-            type="button"
-            class="btn-secondary"
-            @click="sendRequest(team)"
-          >
+          <button v-else type="button" class="btn-secondary" @click="sendRequest(team)">
             {{ __('Send a join request') }}
           </button>
         </div>

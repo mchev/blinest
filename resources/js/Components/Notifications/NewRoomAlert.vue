@@ -21,7 +21,7 @@ const emit = defineEmits(['markedAsdone'])
     <div class="my-2 text-sm font-medium">
       <Link :href="route('rooms.show', notification.data.room.slug)">{{ notification.data.message }}</Link>
     </div>
-    <button type="button" class="btn-primary btn-sm mt-2 ml-auto" @click="$emit('markedAsdone')">
+    <button type="button" class="btn-primary btn-sm ml-auto mt-2" @click="$emit('markedAsdone')">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-4 w-4">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
       </svg>

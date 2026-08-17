@@ -16,11 +16,11 @@ const emit = defineEmits(['close'])
   <Modal :show="show" @close="emit('close')" maxWidth="2xl">
     <div class="p-6">
       <div class="mb-6">
-        <h2 class="text-2xl font-bold text-white mb-2">
+        <h2 class="mb-2 text-2xl font-bold text-white">
           {{ __('Facebook login is no longer available') }}
         </h2>
         <p class="text-neutral-400">
-          {{ __('Don\'t worry! You can still access your account. Follow these simple steps:') }}
+          {{ __("Don't worry! You can still access your account. Follow these simple steps:") }}
         </p>
       </div>
 
@@ -28,23 +28,21 @@ const emit = defineEmits(['close'])
         <!-- Step 1 -->
         <div class="flex gap-4">
           <div class="flex-shrink-0">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-xl shadow-lg">
-              1
-            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-xl font-bold text-white shadow-lg">1</div>
           </div>
           <div class="flex-1 pt-1">
-            <h3 class="text-lg font-semibold text-white mb-2">
+            <h3 class="mb-2 text-lg font-semibold text-white">
               {{ __('Find your email address') }}
             </h3>
-            <p class="text-neutral-300 leading-relaxed mb-2">
+            <p class="mb-2 leading-relaxed text-neutral-300">
               {{ __('When you created your account with Facebook, we saved your email address.') }}
             </p>
-            <p class="text-white font-medium mb-2">
+            <p class="mb-2 font-medium text-white">
               {{ __('This is the email address you used on Facebook.') }}
             </p>
-            <div class="mt-3 p-3 bg-neutral-700/50 rounded-lg border border-neutral-600">
-              <p class="text-neutral-400 text-sm flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+            <div class="mt-3 rounded-lg border border-neutral-600 bg-neutral-700/50 p-3">
+              <p class="flex items-start gap-2 text-sm text-neutral-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
                 <span>{{ __('Tip: Check your Facebook account settings to find the email address you used.') }}</span>
@@ -56,25 +54,19 @@ const emit = defineEmits(['close'])
         <!-- Step 2 -->
         <div class="flex gap-4">
           <div class="flex-shrink-0">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-bold text-xl shadow-lg">
-              2
-            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-xl font-bold text-white shadow-lg">2</div>
           </div>
           <div class="flex-1 pt-1">
-            <h3 class="text-lg font-semibold text-white mb-2">
+            <h3 class="mb-2 text-lg font-semibold text-white">
               {{ __('Reset your password') }}
             </h3>
-            <p class="text-neutral-300 leading-relaxed mb-3">
+            <p class="mb-3 leading-relaxed text-neutral-300">
               {{ __('Click the button below to reset your password.') }}
             </p>
-            <p class="text-white font-medium mb-4">
+            <p class="mb-4 font-medium text-white">
               {{ __('We will send you an email with instructions.') }}
             </p>
-            <Link 
-              :href="route('password.request')" 
-              class="btn-primary inline-flex items-center gap-2 hover:scale-105 transition-transform"
-              @click="emit('close')"
-            >
+            <Link :href="route('password.request')" class="btn-primary inline-flex items-center gap-2 transition-transform hover:scale-105" @click="emit('close')">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
               </svg>
@@ -86,18 +78,16 @@ const emit = defineEmits(['close'])
         <!-- Step 3 -->
         <div class="flex gap-4">
           <div class="flex-shrink-0">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white font-bold text-xl shadow-lg">
-              3
-            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 text-xl font-bold text-white shadow-lg">3</div>
           </div>
           <div class="flex-1 pt-1">
-            <h3 class="text-lg font-semibold text-white mb-2">
+            <h3 class="mb-2 text-lg font-semibold text-white">
               {{ __('Log in with your email and new password') }}
             </h3>
-            <p class="text-neutral-300 leading-relaxed mb-2">
-              {{ __('Once you\'ve set your new password, come back here and log in normally with your email and password.') }}
+            <p class="mb-2 leading-relaxed text-neutral-300">
+              {{ __("Once you've set your new password, come back here and log in normally with your email and password.") }}
             </p>
-            <p class="text-green-300 font-medium flex items-center gap-2">
+            <p class="flex items-center gap-2 font-medium text-green-300">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
@@ -107,18 +97,15 @@ const emit = defineEmits(['close'])
         </div>
       </div>
 
-      <div class="mt-8 p-4 bg-blue-900/20 border border-blue-700/50 rounded-lg">
-        <p class="text-blue-200 text-sm">
+      <div class="mt-8 rounded-lg border border-blue-700/50 bg-blue-900/20 p-4">
+        <p class="text-sm text-blue-200">
           <strong class="text-blue-100">{{ __('Good news:') }}</strong>
-          {{ __('You won\'t lose anything! Your account, scores, level, and all your progress are safe. You just need to set a password to log in.') }}
+          {{ __("You won't lose anything! Your account, scores, level, and all your progress are safe. You just need to set a password to log in.") }}
         </p>
       </div>
 
       <div class="mt-6 flex justify-end">
-        <button 
-          @click="emit('close')" 
-          class="btn-secondary"
-        >
+        <button @click="emit('close')" class="btn-secondary">
           {{ __('Got it, thanks!') }}
         </button>
       </div>
