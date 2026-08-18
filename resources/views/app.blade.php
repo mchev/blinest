@@ -37,5 +37,8 @@
     </head>
     <body class="font-sans antialiased bg-surface-base">
         <x-inertia::app />
+        @if (! empty($seoLandingHtml))
+            {!! $seoLandingHtml !!}
+        @endif
     </body>
 </html>

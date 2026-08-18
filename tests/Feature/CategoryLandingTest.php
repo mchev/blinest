@@ -147,6 +147,9 @@ class CategoryLandingTest extends TestCase
         $response->assertOk();
         $response->assertSee('name="description"', false);
         $response->assertSee('blind test', false);
+        $response->assertSee('id="seo-landing-server"', false);
+        $response->assertSee('FAQPage', false);
+        $response->assertSee('BreadcrumbList', false);
     }
 
     public function test_genre_musical_category_page_uses_specific_content(): void

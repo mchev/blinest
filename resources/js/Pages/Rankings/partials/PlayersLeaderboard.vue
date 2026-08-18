@@ -89,12 +89,7 @@ const metricClass = (metric) => {
 
 <template>
   <div class="space-y-2.5 sm:space-y-3">
-    <article
-      v-for="(entry, index) in items.data"
-      :key="entry.user.id"
-      class="rounded-xl border p-3 shadow-sm transition-colors hover:border-neutral-700 sm:p-4"
-      :class="rowClass(index, items.current_page)"
-    >
+    <article v-for="(entry, index) in items.data" :key="entry.user.id" class="rounded-xl border p-3 shadow-sm transition-colors hover:border-neutral-700 sm:p-4" :class="rowClass(index, items.current_page)">
       <div class="flex flex-col gap-3">
         <div class="flex items-start gap-3">
           <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-800 text-sm font-bold sm:h-11 sm:w-11">

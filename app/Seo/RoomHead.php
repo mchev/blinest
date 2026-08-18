@@ -3,13 +3,23 @@
 namespace App\Seo;
 
 use App\Models\Room;
+use App\Services\Rooms\RoomContentService;
 use Laravel\Head\Facades\Head;
 
 class RoomHead
 {
-    public function apply(Room $room, int $roundsCount, bool $isPasswordProtected = false): void
-    {
-        $description = $this->description($room);
+    public function apply(
+        Room $room,
+        int $roundsCount,
+        bool $isPasswordProtected = false,
+        ?RoomContentService $roomContent = null,
+        array $stats = [],
+        ?array $landingContent = null,
+        ?array $breadcrumbs = null,
+    ): void {
+        $description = $roomContent !== null && $stats !== []
+            ? $roomContent->metaDescription($room, $stats)
+            : $this->description($room);
         $title = __(':room — :suffix', [
             'room' => $room->name,
             'suffix' => __('Room title suffix'),
@@ -18,7 +28,7 @@ class RoomHead
         $roomUrl = route('rooms.show', $room->slug);
         $fullTitle = "{$title} | Blinest";
 
-        Head::title($title)
+        $head = Head::title($title)
             ->description($description)
             ->canonical($roomUrl)
             ->when($isPasswordProtected, fn ($head) => $head->hiddenFromRobots())
@@ -46,15 +56,24 @@ class RoomHead
                 image: $image,
             )
             ->twitterImage($image, alt: __('Room OG image alt', ['room' => $room->name]))
-            ->schema($this->structuredData($room));
+            ->schema($this->structuredData($room, $landingContent));
+
+        if ($breadcrumbs !== null) {
+            $head->schema(BreadcrumbSchema::build($breadcrumbs));
+        }
+
+        if ($landingContent !== null) {
+            $head->schema(FaqPageSchema::build($landingContent['faq']));
+        }
     }
 
     /**
+     * @param  array{intro: string, intro_secondary: string, faq: list<array{question: string, answer: string}>}|null  $landingContent
      * @return array<string, mixed>
      */
-    protected function structuredData(Room $room): array
+    protected function structuredData(Room $room, ?array $landingContent = null): array
     {
-        $description = $room->description ?: __('Room schema default description', ['room' => $room->name]);
+        $description = $landingContent['intro'] ?? ($room->description ?: __('Room schema default description', ['room' => $room->name]));
 
         $structuredData = [
             '@context' => 'https://schema.org',

@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Room from '@/Pages/Home/partials/Room.vue'
@@ -20,6 +21,10 @@ defineProps({
     type: Number,
     default: 0,
   },
+})
+
+onMounted(() => {
+  document.getElementById('seo-landing-server')?.remove()
 })
 </script>
 

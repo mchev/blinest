@@ -15,7 +15,12 @@ use App\Notifications\NewRoomAlert;
 use App\Notifications\NewSuggestion;
 use App\Rules\Reserved;
 use App\Seo\RoomHead;
+use App\Seo\SeoLandingHtml;
+use App\Services\Auth\GuestAuthService;
 use App\Services\RoomPresenceService;
+use App\Services\Rooms\OfficialRoomRegistry;
+use App\Services\Rooms\RoomContentService;
+use App\Services\Rooms\RoomLandingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +32,14 @@ use Laravel\Head\Facades\Head;
 
 class RoomController extends Controller
 {
-    public function __construct(private RoomHead $roomHead) {}
+    public function __construct(
+        private RoomHead $roomHead,
+        private OfficialRoomRegistry $officialRooms,
+        private RoomContentService $roomContent,
+        private RoomLandingService $roomLanding,
+        private GuestAuthService $guestAuth,
+        private SeoLandingHtml $seoLandingHtml,
+    ) {}
 
     public function index(Request $request)
     {
@@ -97,6 +109,8 @@ class RoomController extends Controller
             return redirect()->back()->with('error', __('The password is incorrect'));
         }
 
+        $this->guestAuth->ensureGuestSession();
+
         $room->load('category', 'owner');
 
         // Check if rounds_count is in cache before calling flexible (to display stat)
@@ -107,9 +121,42 @@ class RoomController extends Controller
         $tracksCountFromCache = Cache::get("room_{$room->id}_tracks_count");
         $tracksCount = Cache::flexible("room_{$room->id}_tracks_count", [300, 900], fn () => $room->tracks()->count());
 
-        $this->roomHead->apply($room, $roundsCount);
+        $stats = [
+            'rounds' => $roundsCount,
+            'tracks' => $tracksCount,
+            'players_online' => $this->roomLanding->playersOnline($room),
+        ];
+
+        $isOfficialSeoRoom = $this->officialRooms->isOfficialSeoRoom($room);
+        $seo = null;
+
+        if ($isOfficialSeoRoom) {
+            $seo = [
+                'content' => $this->roomContent->forRoom($room, $stats),
+                'breadcrumbs' => $this->roomLanding->breadcrumbs($room),
+                'similar_rooms' => $this->roomLanding->similarRooms($room),
+                'stats' => $stats,
+            ];
+        }
+
+        $this->roomHead->apply(
+            $room,
+            $roundsCount,
+            roomContent: $isOfficialSeoRoom ? $this->roomContent : null,
+            stats: $stats,
+            landingContent: $seo['content'] ?? null,
+            breadcrumbs: $seo['breadcrumbs'] ?? null,
+        );
+
+        if ($seo !== null) {
+            $this->seoLandingHtml->shareRoom([
+                'room' => $room,
+                'seo' => $seo,
+            ]);
+        }
 
         return Inertia::render('Rooms/Show', [
+            'seo' => $seo,
             'room' => [
                 'id' => $room->id,
                 'name' => $room->name,
@@ -136,7 +183,13 @@ class RoomController extends Controller
                 'rounds_count' => $roundsCount,
                 'rounds_count_from_cache' => $roundsCountFromCache !== null,
             ],
-            'public_rooms' => Room::isPublic()->orderBy('name')->select('id', 'slug', 'name', 'photo_path')->get(),
+            'public_rooms' => Room::isPublic()
+                ->whereNull('password')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (Room $publicRoom) => $publicRoom->toHomepageArray())
+                ->values()
+                ->all(),
         ]);
     }
 

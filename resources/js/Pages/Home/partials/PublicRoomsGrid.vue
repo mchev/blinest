@@ -259,11 +259,7 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         <option v-for="category in activeCategories" :key="category.id" :value="String(category.id)">{{ t(category.name) }} ({{ category.rooms_count }})</option>
       </select>
 
-      <Link
-        v-if="selectedCategory?.slug && displayCatalog === 'official'"
-        :href="route('categories.show', selectedCategory.slug)"
-        class="game-link-action text-sm"
-      >
+      <Link v-if="selectedCategory?.slug && displayCatalog === 'official'" :href="route('categories.show', selectedCategory.slug)" class="game-link-action text-sm">
         {{ t('View category page') }}
         <Icon name="cheveron-right" class="inline-block h-4 w-4" />
       </Link>

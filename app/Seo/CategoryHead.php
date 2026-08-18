@@ -8,12 +8,13 @@ use Laravel\Head\Facades\Head;
 
 class CategoryHead
 {
-    public function apply(Category $category, array $rooms, CategoryContentService $content): void
+    public function apply(Category $category, array $rooms, CategoryContentService $contentService): void
     {
         $localeUrl = app(LocaleUrl::class);
         $path = $category->landingPath();
-        $title = $content->metaTitle($category);
-        $description = $content->metaDescription($category, count($rooms));
+        $pageContent = $contentService->forCategory($category, $rooms);
+        $title = $contentService->metaTitle($category);
+        $description = $contentService->metaDescription($category, count($rooms));
         $label = __($category->name);
 
         Head::title($title)
@@ -21,20 +22,26 @@ class CategoryHead
             ->canonical($localeUrl->canonical($path))
             ->alternates($localeUrl->alternates($path))
             ->meta('keywords', __('Category page meta keywords', ['category' => $label]))
-            ->schema($this->collectionPageSchema($category, $rooms, $localeUrl->canonical($path), $content));
+            ->schema($this->collectionPageSchema($category, $rooms, $localeUrl->canonical($path), $contentService, $pageContent))
+            ->schema(BreadcrumbSchema::build([
+                ['label' => __('Home'), 'href' => route('home')],
+                ['label' => $label, 'href' => null],
+            ]))
+            ->schema(FaqPageSchema::build($pageContent['faq']));
     }
 
     /**
      * @param  list<array<string, mixed>>  $rooms
+     * @param  array{rooms_heading: string}  $pageContent
      * @return array<string, mixed>
      */
-    protected function collectionPageSchema(Category $category, array $rooms, string $pageUrl, CategoryContentService $content): array
+    protected function collectionPageSchema(Category $category, array $rooms, string $pageUrl, CategoryContentService $contentService, array $pageContent): array
     {
         return [
             '@context' => 'https://schema.org',
             '@type' => 'CollectionPage',
-            'name' => $content->schemaName($category),
-            'description' => $content->metaDescription($category, count($rooms)),
+            'name' => $contentService->schemaName($category),
+            'description' => $contentService->metaDescription($category, count($rooms)),
             'url' => $pageUrl,
             'inLanguage' => LocaleUrl::availableLocales(),
             'isPartOf' => [
@@ -44,7 +51,7 @@ class CategoryHead
             ],
             'mainEntity' => [
                 '@type' => 'ItemList',
-                'name' => $content->forCategory($category, $rooms)['rooms_heading'],
+                'name' => $pageContent['rooms_heading'],
                 'numberOfItems' => count($rooms),
                 'itemListElement' => collect($rooms)
                     ->take(20)

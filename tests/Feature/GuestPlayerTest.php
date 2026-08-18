@@ -7,12 +7,27 @@ use App\Models\Room;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class GuestPlayerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->clearGuestRateLimits();
+    }
+
+    private function clearGuestRateLimits(): void
+    {
+        foreach (['minute', 'hour', 'day'] as $window) {
+            RateLimiter::clear('guest-create:'.$window.':127.0.0.1');
+        }
+    }
 
     private function createRoom(): Room
     {
@@ -65,6 +80,30 @@ class GuestPlayerTest extends TestCase
         $this->assertEquals('test-room', $room->slug);
     }
 
+    public function test_room_show_authenticates_guest_silently(): void
+    {
+        $room = $this->createRoom();
+
+        $response = $this->get('/rooms/'.$room->slug);
+
+        $response->assertOk();
+        $this->assertAuthenticated();
+        $this->assertTrue(auth()->user()->isGuest());
+        $this->assertEquals(1, User::where('is_guest', true)->count());
+    }
+
+    public function test_room_show_does_not_create_guest_before_password(): void
+    {
+        $room = $this->createRoom();
+        $room->update(['password' => 'secret']);
+
+        $response = $this->get('/rooms/'.$room->slug);
+
+        $response->assertOk();
+        $this->assertGuest();
+        $this->assertEquals(0, User::where('is_guest', true)->count());
+    }
+
     public function test_guest_join_route_exists_and_works(): void
     {
         $room = $this->createRoom();
@@ -72,23 +111,43 @@ class GuestPlayerTest extends TestCase
         $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
         $response->assertRedirect();
-        $response->assertHeaderMissing('X-Ratelimit-Limit');
         $this->assertEquals(1, User::where('is_guest', true)->count());
     }
 
-    public function test_guest_join_is_not_rate_limited_for_new_visitors(): void
+    public function test_guest_creation_is_rate_limited_per_ip(): void
     {
         $room = $this->createRoom();
+        $limit = (int) config('guests.rate_limit.per_minute', 3);
 
-        for ($attempt = 0; $attempt < 10; $attempt++) {
+        for ($attempt = 0; $attempt < $limit; $attempt++) {
             Auth::logout();
             $this->flushSession();
 
             $response = $this->get('/rooms/'.$room->slug.'/guest-join');
 
             $response->assertRedirect(route('rooms.show', $room->slug));
-            $response->assertHeaderMissing('X-Ratelimit-Limit');
         }
+
+        Auth::logout();
+        $this->flushSession();
+
+        $response = $this->get('/rooms/'.$room->slug.'/guest-join');
+
+        $response->assertStatus(Response::HTTP_TOO_MANY_REQUESTS);
+        $this->assertEquals($limit, User::where('is_guest', true)->count());
+    }
+
+    public function test_search_engine_bot_does_not_create_guest_on_room_show(): void
+    {
+        $room = $this->createRoom();
+
+        $response = $this->withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        ])->get('/rooms/'.$room->slug);
+
+        $response->assertOk();
+        $this->assertGuest();
+        $this->assertEquals(0, User::where('is_guest', true)->count());
     }
 
     public function test_guest_is_authenticated_after_join(): void

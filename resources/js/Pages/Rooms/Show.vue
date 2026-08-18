@@ -16,7 +16,7 @@ import MobileRoomInfo from './partials/MobileRoomInfo.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
-import GuestJoinModal from './partials/GuestJoinModal.vue'
+import RoomSeoPanel from './partials/RoomSeoPanel.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
 import { EZOIC, clearEzoicAds, scheduleEzoicSync } from '@/ezoic'
 
@@ -29,6 +29,10 @@ const props = defineProps({
   public_rooms: {
     type: Array,
     default: () => [],
+  },
+  seo: {
+    type: Object,
+    default: null,
   },
 })
 
@@ -202,6 +206,8 @@ function resyncRoomAfterReconnect() {
 }
 
 onMounted(() => {
+  document.getElementById('seo-landing-server')?.remove()
+
   if (user) {
     // Presence channel: list from Reverb (.here = everyone on channel, .joining/.leaving = live updates).
     // When alone, .here() can be [] (Reverb sends list before adding us); ensure we appear.
@@ -379,8 +385,6 @@ watch(
 </script>
 <template>
   <RoomLayout>
-    <GuestJoinModal v-if="!user" :room="room" />
-
     <div v-if="!joined && user" class="flex h-full w-full items-center justify-center space-x-4">
       <Spinner class="h-8 w-8" />
       <div class="flex flex-col">
@@ -389,7 +393,7 @@ watch(
       </div>
     </div>
 
-    <div v-if="joined || !user" class="room-show-root h-full min-w-0 overflow-x-hidden md:flex">
+    <div v-if="joined" class="room-show-root h-full min-w-0 overflow-x-hidden md:flex">
       <div class="room-show-scroll relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-4 md:px-12 md:py-8" scroll-region>
         <article class="room-show-header flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:mb-6 md:gap-3">
           <div class="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -480,6 +484,8 @@ watch(
             </div>
           </div>
         </Card>
+
+        <RoomSeoPanel v-if="seo" :room="room" :seo="seo" />
 
         <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
       </div>

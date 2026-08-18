@@ -97,25 +97,14 @@ const onRoomChange = (event) => {
 
         <div class="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
           <div class="flex flex-wrap gap-2">
-            <Link
-              v-for="sortOption in sorts"
-              :key="sortOption.id"
-              :href="route('rankings.index', rankingQuery({ sort: sortOption.id, page: undefined }))"
-              preserve-scroll
-              class="rounded-full border px-3 py-1.5 text-xs font-medium transition-colors sm:text-sm"
-              :class="sort === sortOption.id ? 'border-yellow-500 bg-yellow-500/15 text-yellow-400' : 'border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-neutral-200'"
-            >
+            <Link v-for="sortOption in sorts" :key="sortOption.id" :href="route('rankings.index', rankingQuery({ sort: sortOption.id, page: undefined }))" preserve-scroll class="rounded-full border px-3 py-1.5 text-xs font-medium transition-colors sm:text-sm" :class="sort === sortOption.id ? 'border-yellow-500 bg-yellow-500/15 text-yellow-400' : 'border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-neutral-200'">
               {{ sortOption.label }}
             </Link>
           </div>
 
           <label class="flex min-w-[12rem] flex-col gap-1 text-xs text-neutral-400 sm:text-sm">
             <span>{{ __('Filter by room') }}</span>
-            <select
-              :value="roomId ?? ''"
-              class="rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/40"
-              @change="onRoomChange"
-            >
+            <select :value="roomId ?? ''" class="rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/40" @change="onRoomChange">
               <option value="">{{ __('All official rooms') }}</option>
               <option v-for="room in officialRooms" :key="room.id" :value="room.id">{{ room.name }}</option>
             </select>

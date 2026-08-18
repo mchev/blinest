@@ -242,14 +242,7 @@ const switchTab = (tabId) => {
 
       <div v-else class="p-3 sm:p-4">
         <div class="mb-4 flex gap-1 overflow-x-auto border-b border-white/10 sm:mb-6">
-          <button
-            v-for="tab in tabs"
-            :key="tab.id"
-            type="button"
-            @click="switchTab(tab.id)"
-            class="relative -mb-px shrink-0 border-b-2 px-3 py-2 text-sm font-medium transition-colors sm:px-4"
-            :class="activeTab === tab.id ? 'border-brand-accent text-white' : 'border-transparent text-white/60 hover:text-white'"
-          >
+          <button v-for="tab in tabs" :key="tab.id" type="button" @click="switchTab(tab.id)" class="relative -mb-px shrink-0 border-b-2 px-3 py-2 text-sm font-medium transition-colors sm:px-4" :class="activeTab === tab.id ? 'border-brand-accent text-white' : 'border-transparent text-white/60 hover:text-white'">
             {{ __(tab.label) }}
           </button>
         </div>
@@ -286,24 +279,13 @@ const switchTab = (tabId) => {
         </div>
 
         <div v-if="currentScores.length > 0" class="space-y-2">
-          <article
-            v-for="(entry, index) in currentScores"
-            :key="entryKey(entry, index)"
-            class="rounded-lg border p-3 transition-colors sm:p-4"
-            :class="getRowHighlight(index)"
-          >
+          <article v-for="(entry, index) in currentScores" :key="entryKey(entry, index)" class="rounded-lg border p-3 transition-colors sm:p-4" :class="getRowHighlight(index)">
             <div v-if="isTeamsTab" class="flex items-center gap-3">
               <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-midnight/70 text-sm font-bold sm:h-11 sm:w-11">
                 <span v-if="getMedalEmoji(index)" class="text-lg">{{ getMedalEmoji(index) }}</span>
                 <span v-else class="text-white/70">#{{ entry.rank || index + 1 }}</span>
               </div>
-              <img
-                :src="entry.team?.photo"
-                :alt="entry.team?.name"
-                class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-white/20 sm:h-11 sm:w-11"
-                loading="lazy"
-                @error="$event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.team?.name || 'Team') + '&color=7F9CF5&background=EBF4FF'"
-              />
+              <img :src="entry.team?.photo" :alt="entry.team?.name" class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-white/20 sm:h-11 sm:w-11" loading="lazy" @error="$event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.team?.name || 'Team') + '&color=7F9CF5&background=EBF4FF'" />
               <div class="min-w-0 flex-1">
                 <Link v-if="entry.team?.id" :href="route('teams.show', { team: entry.team.id })" class="block truncate font-semibold text-white hover:text-brand-accent">
                   {{ entry.team?.name }}
@@ -323,13 +305,7 @@ const switchTab = (tabId) => {
                   <span v-else class="text-white/70">#{{ entry.rank || index + 1 }}</span>
                 </div>
 
-                <img
-                  :src="entry.user?.photo"
-                  :alt="entry.user?.name"
-                  class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-white/20 sm:h-11 sm:w-11"
-                  loading="lazy"
-                  @error="$event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.user?.name || 'User') + '&color=7F9CF5&background=EBF4FF'"
-                />
+                <img :src="entry.user?.photo" :alt="entry.user?.name" class="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-white/20 sm:h-11 sm:w-11" loading="lazy" @error="$event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(entry.user?.name || 'User') + '&color=7F9CF5&background=EBF4FF'" />
 
                 <div class="min-w-0 flex-1">
                   <Link v-if="entry.user?.id && !entry.user?.is_guest" :href="route('user.profile', { user: entry.user.id })" class="block truncate font-semibold text-white hover:text-brand-accent">
