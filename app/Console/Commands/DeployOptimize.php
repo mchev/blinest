@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Support\ZiggyRouteCache;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 
 class DeployOptimize extends Command
 {
@@ -45,9 +45,9 @@ class DeployOptimize extends Command
         Artisan::call('view:clear');
         $this->line('  ✓ View cache cleared');
 
-        // Inertia shares Ziggy routes from Redis (see HandleInertiaRequests)
+        // Inertia shares Ziggy routes from Redis (see ZiggyRouteCache — auto-invalidates on route:cache)
         $this->info('Clearing Inertia Ziggy route cache...');
-        Cache::forget('inertia_ziggy_routes_v4');
+        app(ZiggyRouteCache::class)->bust();
         $this->line('  ✓ Inertia Ziggy route cache cleared');
 
         // Clear event cache (in case events/listeners changed)

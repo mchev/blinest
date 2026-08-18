@@ -4,11 +4,11 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
+use App\Support\ZiggyRouteCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -100,7 +100,7 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'ziggy' => function () use ($request) {
-                $routes = Cache::remember('inertia_ziggy_routes_v4', 3600, fn () => (new Ziggy)->toArray());
+                $routes = app(ZiggyRouteCache::class)->routes();
 
                 return array_merge($routes, [
                     'location' => $request->url(),
