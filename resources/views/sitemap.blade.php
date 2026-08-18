@@ -7,6 +7,7 @@ $docPaths = [
     ['path' => '/docs/howto', 'priority' => '0.65'],
     ['path' => '/docs/glossary', 'priority' => '0.55'],
     ['path' => '/docs/create-content', 'priority' => '0.55'],
+    ['path' => '/docs/support', 'priority' => '0.55'],
     ['path' => '/docs/faq', 'priority' => '0.50'],
     ['path' => '/docs/level', 'priority' => '0.45'],
     ['path' => '/docs/elo', 'priority' => '0.45'],

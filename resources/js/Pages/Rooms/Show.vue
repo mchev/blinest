@@ -93,7 +93,7 @@ let roundsChannel = null
 let presenceHeartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
-const roomAdsEnabled = computed(() => joined.value && !round.value?.is_playing && !room.value.is_playing)
+const roomAdsEnabled = computed(() => joined.value && !round.value?.is_playing && !room.value.is_playing && !page.props.donation_goal?.ads_disabled)
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
 function onBeforeUnloadPresenceLeft() {
   callPresenceLeft({ useBeacon: true })

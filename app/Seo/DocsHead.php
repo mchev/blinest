@@ -57,6 +57,13 @@ class DocsHead
             ->meta('keywords', __('Docs create content keywords')));
     }
 
+    public function applySupport(): void
+    {
+        $this->applyPage('docs/support', fn ($head) => $head
+            ->title(__('Docs support title'))
+            ->description(__('Docs support description')));
+    }
+
     /**
      * @param  callable(HeadBuilder): void  $configure
      */

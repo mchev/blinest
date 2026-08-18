@@ -11,8 +11,9 @@ import { createLocalizedRoute } from './localizedRoute'
 
 router.on('finish', (event) => {
   const path = new URL(event.detail.visit.url, window.location.origin).pathname
+  const adsDisabled = event.detail.page?.props?.donation_goal?.ads_disabled ?? false
 
-  scheduleEzoicSync(path)
+  scheduleEzoicSync(path, { adsDisabled })
 })
 
 createInertiaApp({
@@ -30,7 +31,9 @@ createInertiaApp({
 
     app.mount(el)
 
-    scheduleEzoicSync(window.location.pathname)
+    scheduleEzoicSync(window.location.pathname, {
+      adsDisabled: props.initialPage?.props?.donation_goal?.ads_disabled ?? false,
+    })
 
     return app
   },

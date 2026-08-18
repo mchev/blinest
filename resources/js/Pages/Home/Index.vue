@@ -5,6 +5,7 @@ import Room from './partials/Room.vue'
 import HomeSectionHeader from './partials/HomeSectionHeader.vue'
 import HomeSidebar from './partials/HomeSidebar.vue'
 import PublicRoomsGrid from './partials/PublicRoomsGrid.vue'
+import DonationGoalMobileBar from '@/Components/Donations/DonationGoalMobileBar.vue'
 
 defineProps({
   filters: Object,
@@ -42,7 +43,7 @@ const user = usePage().props.auth.user
     </section>
 
     <div v-else class="flex flex-col gap-4 lg:gap-8">
-      <div class="lg:hidden">
+      <div class="space-y-2 lg:hidden">
         <div class="retro-hero flex items-center gap-4">
           <div class="retro-hero__icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
@@ -53,6 +54,7 @@ const user = usePage().props.auth.user
             {{ __('Pick a room, listen to the excerpt, be the fastest to answer.') }}
           </p>
         </div>
+        <DonationGoalMobileBar />
       </div>
 
       <div class="flex flex-col gap-8 lg:flex-row lg:gap-8 xl:gap-10">

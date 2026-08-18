@@ -48,6 +48,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.moderator' => UserIsPublicModerator::class,
             'not.guest' => EnsureUserIsNotGuest::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

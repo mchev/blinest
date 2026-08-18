@@ -20,7 +20,8 @@ const props = defineProps({
 
 const page = usePage()
 
-const visible = computed(() => shouldServeEzoicAds(page.url))
+const adsDisabled = computed(() => page.props.donation_goal?.ads_disabled ?? false)
+const visible = computed(() => shouldServeEzoicAds(page.url, { adsDisabled: adsDisabled.value }))
 </script>
 
 <template>

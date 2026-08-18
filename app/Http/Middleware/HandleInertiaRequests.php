@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\User;
+use App\Services\Donations\DonationGoalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
@@ -42,15 +43,17 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request)
     {
         $user = $request->user()?->load('userLevel');
+        $donationGoal = app(DonationGoalService::class);
 
         return array_merge(parent::share($request), [
-            'auth' => function () use ($user) {
+            'auth' => function () use ($user, $donationGoal) {
                 return [
                     'user' => $user ? [
                         'id' => $user->id,
                         'name' => $user->name,
                         'photo' => $user->photo,
                         'is_guest' => $user->isGuest(),
+                        'is_supporter' => $donationGoal->userIsSupporter($user),
                         'admin' => $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,
@@ -120,12 +123,16 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v24_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v35_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );
                 });
             },
+            'donation_goal' => fn () => $donationGoal->currentProgressForUser(
+                $request->user(),
+                app()->getLocale(),
+            ),
         ]);
     }
 }

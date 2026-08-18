@@ -273,6 +273,11 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'user_id');
     }
 
+    public function donations(): HasMany
+    {
+        return $this->hasMany(Donation::class);
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;

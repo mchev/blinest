@@ -8,6 +8,7 @@ use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Seo\LocaleUrl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,9 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 // Contact form (POST stays at root for all locales)
 Route::post('/contact', [ContactController::class, 'send'])
     ->name('contact.send');
+
+Route::post('stripe/webhook', StripeWebhookController::class)
+    ->name('stripe.webhook');
 
 // Auth Social Providers
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])

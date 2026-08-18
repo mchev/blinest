@@ -6,6 +6,7 @@ use App\Jobs\UpdateUserLevel;
 use App\Models\Room;
 use App\Models\Track;
 use App\Models\User;
+use App\Services\Donations\DonationGoalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -14,6 +15,8 @@ use Laravel\Head\Facades\Head;
 
 class ProfileController extends Controller
 {
+    public function __construct(private DonationGoalService $donationGoal) {}
+
     public function show(Request $request, User $user): InertiaResponse
     {
         if ($user->isGuest()) {
@@ -147,6 +150,9 @@ class ProfileController extends Controller
                 'scores' => $scores,
                 'likes' => $likes,
                 'bookmarks' => $bookmarks,
+                'is_supporter' => $this->donationGoal->userIsSupporter($user),
+                'donation_summary' => $this->donationGoal->userDonationSummary($user),
+                'donations' => $this->donationGoal->userDonationHistory($user),
             ],
         ]);
     }

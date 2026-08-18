@@ -6,7 +6,11 @@ const roomManagedPathPattern = /^\/rooms\/[^/]+$/
 /** Anchor ads are allowed only on low-interaction, content-first pages. */
 const anchorAdPathPatterns = [/^\/$/, /^\/docs\/faq$/, /^\/rankings(?:\/|$)/, /^\/pages\//]
 
-export function shouldServeEzoicAds(path) {
+export function shouldServeEzoicAds(path, { adsDisabled = false } = {}) {
+  if (adsDisabled) {
+    return false
+  }
+
   return !excludedPathPatterns.some((pattern) => pattern.test(path))
 }
 
@@ -48,8 +52,8 @@ export function clearEzoicAds() {
   })
 }
 
-export function syncEzoicAds(path, { force = false } = {}) {
-  if (!shouldServeEzoicAds(path)) {
+export function syncEzoicAds(path, { force = false, adsDisabled = false } = {}) {
+  if (!shouldServeEzoicAds(path, { adsDisabled })) {
     clearEzoicAds()
 
     return

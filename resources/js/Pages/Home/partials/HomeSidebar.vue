@@ -5,6 +5,7 @@ import FeaturedRoom from './FeaturedRoom.vue'
 import TopPlayers from './TopPlayers.vue'
 import HomeSidebarSection from './HomeSidebarSection.vue'
 import OuvragePromo from './OuvragePromo.vue'
+import DonationGoalCard from '@/Components/Donations/DonationGoalCard.vue'
 
 defineProps({
   user: {
@@ -25,6 +26,10 @@ defineProps({
 <template>
   <aside class="w-full shrink-0 lg:w-80 xl:w-96">
     <div class="retro-panel lg:sticky lg:top-6 lg:self-start">
+      <div id="home-donation-goal" class="scroll-mt-24 border-b border-white/10 p-4">
+        <DonationGoalCard />
+      </div>
+
       <HomeSidebarSection v-for="featuredRoom in featuredRooms" :key="`featured-${featuredRoom.id}`" :kicker="__('Featured')">
         <FeaturedRoom :room="featuredRoom" />
       </HomeSidebarSection>
@@ -64,16 +69,7 @@ defineProps({
         </div>
       </HomeSidebarSection>
 
-      <HomeSidebarSection :kicker="__('Support Blinest')" :border="false">
-        <p class="mb-3 text-sm leading-relaxed text-white/70">
-          {{ __('Help ensure the longevity and growth of Blinest. Your donation contributes to server costs and ongoing improvements.') }}
-        </p>
-        <a href="https://donate.stripe.com/00g2bvf8i08X8De6oo" target="_blank" rel="external nofollow" data-umami-event="Faire un don" class="game-btn-play-primary">
-          {{ __('Donate') }}
-        </a>
-      </HomeSidebarSection>
-
-      <HomeSidebarSection :kicker="__('Partner')" :title="__('For artisans and self-employed')">
+      <HomeSidebarSection :kicker="__('Partner')" :title="__('For artisans and self-employed')" :border="false">
         <OuvragePromo />
       </HomeSidebarSection>
     </div>

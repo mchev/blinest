@@ -8,6 +8,8 @@ import LevelBadge from '@/Components/LevelBadge.vue'
 import EloBadge from '@/Components/EloBadge.vue'
 import LevelInfo from '@/Components/LevelInfo.vue'
 import LevelModal from '@/Components/LevelModal.vue'
+import SupporterBadge from '@/Components/Donations/SupporterBadge.vue'
+import DonationHistoryList from '@/Components/Donations/DonationHistoryList.vue'
 import ScoresTab from './partials/ScoresTab.vue'
 import LikesTab from './partials/LikesTab.vue'
 import BookmarksTab from './partials/BookmarksTab.vue'
@@ -108,7 +110,10 @@ const chartOptions = {
                 <LevelBadge :level="user.level" :current-xp="user.current_xp" :xp-for-next-level="user.xp_for_next_level" :total-xp="user.total_xp" :level-metrics="user.level_metrics" size="sm" @click="showLevelModal = true" />
               </div>
             </div>
-            <h1 class="mb-2 text-2xl font-bold text-white">{{ user.name }}</h1>
+            <h1 class="mb-2 flex flex-wrap items-center justify-center gap-2 text-2xl font-bold text-white">
+              {{ user.name }}
+              <SupporterBadge v-if="user.is_supporter" size="md" />
+            </h1>
             <Link v-if="user.team" :href="route('teams.show', user.team.id)" class="group mb-4 block w-full max-w-[280px] rounded-xl border border-violet-500/30 bg-gradient-to-br from-violet-950/50 via-neutral-900/80 to-fuchsia-950/30 p-3 text-left shadow-[0_0_24px_-8px_rgba(139,92,246,0.35)] transition hover:border-violet-400/45 hover:shadow-[0_0_32px_-6px_rgba(139,92,246,0.45)]">
               <div class="flex items-center gap-3">
                 <div class="relative shrink-0">
@@ -174,6 +179,13 @@ const chartOptions = {
 
         <Card>
           <LevelInfo :level="user.level" :current-xp="user.current_xp" :xp-for-next-level="user.xp_for_next_level" :total-xp="user.total_xp" :level-metrics="user.level_metrics" :compact="true" />
+        </Card>
+
+        <Card v-if="user.donation_summary?.donation_count > 0">
+          <template #header>
+            <h2 class="text-lg font-bold text-white">{{ __('Donation history') }}</h2>
+          </template>
+          <DonationHistoryList :donations="user.donations" :summary="user.donation_summary" />
         </Card>
 
         <Card>

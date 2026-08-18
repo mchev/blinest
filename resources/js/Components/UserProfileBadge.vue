@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import LevelBadge from '@/Components/LevelBadge.vue'
 import EloBadge from '@/Components/EloBadge.vue'
+import SupporterBadge from '@/Components/Donations/SupporterBadge.vue'
 
 const props = defineProps({
   user: {
@@ -125,7 +126,8 @@ const sizeConfig = computed(() => {
     </div>
 
     <!-- ELO number - completely below the avatar, reduced spacing -->
-    <div v-if="showElo && user.elo" class="mt-0.5 flex items-center justify-center">
+    <div v-if="showElo && user.elo" class="mt-0.5 flex flex-col items-center justify-center gap-0.5">
+      <SupporterBadge v-if="user?.is_supporter" size="sm" />
       <div v-if="!hasPlayed" class="text-[10px] font-medium text-neutral-500" :title="__('Player has not played yet - ELO will be calculated after first game')" aria-label="Not played yet">
         {{ __('N/A') }}
       </div>
@@ -150,6 +152,7 @@ const sizeConfig = computed(() => {
         <span v-else :class="['truncate font-medium text-neutral-400', sizeConfig.name]">
           {{ user?.name || __('Deleted user') }}
         </span>
+        <SupporterBadge v-if="user?.is_supporter" :size="size === 'lg' ? 'md' : 'sm'" />
       </div>
 
       <!-- Level and ELO badges -->

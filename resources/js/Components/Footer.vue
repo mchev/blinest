@@ -1,5 +1,6 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
+import DonationGoalCard from '@/Components/Donations/DonationGoalCard.vue'
 
 const currentYear = new Date().getFullYear()
 </script>
@@ -66,13 +67,7 @@ const currentYear = new Date().getFullYear()
 
         <div class="col-span-1">
           <h3 class="retro-footer-title">{{ __('Support Blinest') }}</h3>
-          <p class="mb-4 text-white/70">{{ __('Help us keep the music playing!') }}</p>
-          <a target="_blank" rel="external nofollow" href="https://donate.stripe.com/00g2bvf8i08X8De6oo" class="btn-primary inline-flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-            </svg>
-            {{ __('Donate') }}
-          </a>
+          <DonationGoalCard compact />
         </div>
       </div>
 

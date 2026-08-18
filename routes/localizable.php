@@ -6,6 +6,7 @@ use App\Http\Controllers\Docs\EloController;
 use App\Http\Controllers\Docs\GlossaryController;
 use App\Http\Controllers\Docs\HowToController;
 use App\Http\Controllers\Docs\OverviewController;
+use App\Http\Controllers\Docs\SupportController;
 use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LevelController;
@@ -41,6 +42,9 @@ return function (string $namePrefix): void {
 
     Route::get('docs/create-content', [CreateContentController::class, 'index'])
         ->name($namePrefix.'docs.create-content');
+
+    Route::get('docs/support', [SupportController::class, 'index'])
+        ->name($namePrefix.'docs.support');
 
     Route::get('pages/{slug}', [PageController::class, 'show'])
         ->name($namePrefix.'pages.show');

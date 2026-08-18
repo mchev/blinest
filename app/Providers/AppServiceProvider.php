@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Services\Donations\DonationGoalService;
 use App\Support\ClientIp;
 use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Console\ClearCommand;
 use Laravel\Horizon\Console\TerminateCommand;
@@ -68,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->bootAuth();
         $this->bootRoute();
+        $this->bootViews();
     }
 
     public function bootAuth(): void
@@ -85,5 +88,12 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: ClientIp::from($request));
         });
 
+    }
+
+    public function bootViews(): void
+    {
+        View::composer('app', function ($view): void {
+            $view->with('serveEzoicAds', ! app(DonationGoalService::class)->shouldDisableAds());
+        });
     }
 }
