@@ -1016,5 +1016,18 @@
     "Rounds played": "Manches jouées",
     "Filter by room": "Filtrer par room",
     "All official rooms": "Toutes les rooms officielles",
-    "How do rankings work?": "Comment fonctionnent les classements ?"
+    "How do rankings work?": "Comment fonctionnent les classements ?",
+    "Your experience level based on XP earned while playing.": "Ton niveau d'expérience, basé sur l'XP gagnée en jouant.",
+    "Your competitive skill rating. It can go up or down depending on your results.": "Ton niveau compétitif. Il peut monter ou descendre selon tes résultats.",
+    "Total points earned in official rooms across all games played.": "Total de points gagnés dans les rooms officielles, toutes parties confondues.",
+    "Total points earned in this room across all games played.": "Total de points gagnés dans cette room, toutes parties confondues.",
+    "Points earned in the last 7 days in official rooms. This is a score, not a rank.": "Points gagnés sur les 7 derniers jours dans les rooms officielles. C'est un score, pas un rang.",
+    "Average time to complete an excerpt (all answers found), in seconds. Lower is faster.": "Temps moyen pour compléter un extrait (toutes les réponses trouvées), en secondes. Plus c'est bas, plus c'est rapide.",
+    "Your highest score achieved in a single round.": "Ton meilleur score sur une seule manche.",
+    "Your highest score achieved in a single round in this room.": "Ton meilleur score sur une seule manche dans cette room.",
+    "Your longest streak of consecutive round wins in the same room.": "Ta plus longue série de victoires consécutives dans une même room.",
+    "Your longest streak of consecutive round wins in this room.": "Ta plus longue série de victoires consécutives dans cette room.",
+    "Number of complete rounds played in official rooms.": "Nombre de manches complètes jouées dans les rooms officielles.",
+    "Number of complete rounds played in this room.": "Nombre de manches complètes jouées dans cette room.",
+    "Average score earned per round in this room.": "Score moyen gagné par manche dans cette room."
 }

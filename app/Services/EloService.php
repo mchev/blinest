@@ -9,6 +9,10 @@ use Illuminate\Support\Collection;
 
 class EloService
 {
+    public function __construct(
+        private RoundPerformanceMetricsService $performanceMetricsService,
+    ) {}
+
     /**
      * Nombre de rounds de placement pour les nouveaux joueurs
      */
@@ -197,9 +201,10 @@ class EloService
             }
         }
 
-        // Récupérer la durée des tracks pour calculer les réponses rapides
-        $trackDuration = $round->room->track_duration ?? 30;
-        $speedBonusThreshold = $trackDuration * 0.18; // 18% de la durée
+        $speedBonusThreshold = $this->performanceMetricsService->speedBonusThresholdForRoom($round->room);
+
+        $trackIds = $this->performanceMetricsService->trackIdsFromRound($tracks);
+        $requiredAnswersPerTrack = $this->performanceMetricsService->requiredAnswersPerTrack($trackIds);
 
         // Préparer les données pour le calcul
         $standings = [];
@@ -242,20 +247,25 @@ class EloService
             $userElo = $user->elo ?? self::INITIAL_ELO;
             $totalScore = (float) $podiumEntry->total;
 
-            // Calculer les métriques de performance
-            // Si on utilise Redis, les scores individuels peuvent ne plus exister
-            // On calcule les métriques depuis les scores DB si disponibles, sinon valeurs par défaut
-            $userScores = $scoresByUser->get($userId, collect());
-            if ($userScores->isEmpty()) {
-                // Pas de scores individuels (utilisation de Redis), métriques par défaut
-                $performanceMetrics = [
-                    'average_response_time' => null,
-                    'fast_answers_count' => 0,
-                    'total_answers_count' => 0,
-                ];
-            } else {
-                $performanceMetrics = $this->calculatePerformanceMetrics($userScores, $speedBonusThreshold);
+            // Calculer les métriques de performance depuis l'historique Redis (ou legacy scores)
+            $userTracksHistory = $tracksHistory[$userId] ?? [];
+            if ($userTracksHistory === [] && $scoresByUser->has($userId)) {
+                $userTracksHistory = $scoresByUser->get($userId)->map(function ($score) {
+                    return [
+                        'track_id' => $score->track_id,
+                        'answer_id' => $score->answer_id,
+                        'response_time' => $score->time,
+                        'position' => null,
+                        'score' => $score->score,
+                    ];
+                })->values()->all();
             }
+
+            $performanceMetrics = $this->performanceMetricsService->fromTracksHistory(
+                $userTracksHistory,
+                $requiredAnswersPerTrack,
+                $speedBonusThreshold,
+            );
 
             // Calculer le win streak
             $winStreak = $this->calculateWinStreak($round, $userId, $position);
@@ -309,23 +319,6 @@ class EloService
                 // Pas de changement d'ELO si les conditions ne sont pas remplies
                 $eloChange = 0;
                 $eloAfter = $userElo;
-            }
-
-            // Récupérer l'historique des tracks depuis Redis
-            // Si vide, construire depuis les scores DB (pour les anciens rounds)
-            $userTracksHistory = $tracksHistory[$userId] ?? [];
-            if (empty($userTracksHistory) && $scoresByUser->has($userId)) {
-                // Construire l'historique depuis les scores DB pour compatibilité
-                $userScores = $scoresByUser->get($userId);
-                $userTracksHistory = $userScores->map(function ($score) {
-                    return [
-                        'track_id' => $score->track_id,
-                        'answer_id' => $score->answer_id,
-                        'response_time' => $score->time,
-                        'position' => null, // Ne peut pas être calculé sans comparer avec les autres
-                        'score' => $score->score,
-                    ];
-                })->values()->toArray();
             }
 
             $standings[] = [
@@ -393,45 +386,6 @@ class EloService
         }
 
         return true;
-    }
-
-    /**
-     * Calcule les métriques de performance pour un joueur
-     *
-     * @param  Collection  $userScores  Collection des scores du joueur pour ce round
-     * @param  float  $speedBonusThreshold  Seuil pour considérer une réponse comme rapide (en secondes)
-     */
-    private function calculatePerformanceMetrics(Collection $userScores, float $speedBonusThreshold): array
-    {
-        if ($userScores->isEmpty()) {
-            return [
-                'average_response_time' => null,
-                'fast_answers_count' => 0,
-                'total_answers_count' => 0,
-            ];
-        }
-
-        // Filtrer les scores qui ont un temps (time n'est pas null)
-        $scoresWithTime = $userScores->filter(fn ($score) => $score->time !== null);
-
-        // Calculer le temps moyen de réponse
-        $averageResponseTime = $scoresWithTime->isNotEmpty()
-            ? $scoresWithTime->avg('time')
-            : null;
-
-        // Compter les réponses rapides (time < seuil)
-        $fastAnswersCount = $scoresWithTime->filter(function ($score) use ($speedBonusThreshold) {
-            return $score->time < $speedBonusThreshold;
-        })->count();
-
-        // Nombre total de réponses
-        $totalAnswersCount = $userScores->count();
-
-        return [
-            'average_response_time' => $averageResponseTime ? round($averageResponseTime, 3) : null,
-            'fast_answers_count' => $fastAnswersCount,
-            'total_answers_count' => $totalAnswersCount,
-        ];
     }
 
     /**

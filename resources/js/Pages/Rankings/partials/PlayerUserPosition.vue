@@ -1,5 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
+import MetricTooltip from '@/Components/MetricTooltip.vue'
 
 const page = usePage()
 
@@ -78,20 +79,20 @@ const metricClass = (metric) => {
 
       <div class="flex flex-wrap gap-2">
         <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('level')">
-          <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('Level') }}</span>
+          <MetricTooltip :label="__('Level')" :tooltip="__('Your experience level based on XP earned while playing.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
           <span class="text-sm font-bold text-white">{{ entry.stats.level }}</span>
         </div>
         <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('elo')">
-          <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('ELO') }}</span>
+          <MetricTooltip :label="__('ELO')" :tooltip="__('Your competitive skill rating. It can go up or down depending on your results.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
           <span class="text-sm font-bold text-white">{{ formatNumber(entry.stats.elo) }}</span>
         </div>
         <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('score')">
-          <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('Score') }}</span>
+          <MetricTooltip :label="__('Score')" :tooltip="__('Total points earned in official rooms across all games played.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
           <span class="text-sm font-bold text-white">{{ formatNumber(entry.stats.score) }}</span>
           <span class="text-[10px] uppercase text-neutral-500">{{ __('PTS') }}</span>
         </div>
         <div v-if="entry.stats.week_score > 0" class="inline-flex items-baseline gap-1.5 rounded-md border border-neutral-700/60 bg-neutral-900/60 px-2 py-1" :class="metricClass('week')">
-          <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('Top Week') }}</span>
+          <MetricTooltip :label="__('Top Week')" :tooltip="__('Points earned in the last 7 days in official rooms. This is a score, not a rank.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
           <span class="text-sm font-bold text-white">{{ formatNumber(entry.stats.week_score) }}</span>
         </div>
       </div>

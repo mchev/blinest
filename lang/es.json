@@ -984,5 +984,18 @@
     "Rounds played": "Rondas jugadas",
     "Filter by room": "Filtrar por sala",
     "All official rooms": "Todas las salas oficiales",
-    "How do rankings work?": "¿Cómo funcionan las clasificaciones?"
+    "How do rankings work?": "¿Cómo funcionan las clasificaciones?",
+    "Your experience level based on XP earned while playing.": "Tu nivel de experiencia, basado en la XP ganada al jugar.",
+    "Your competitive skill rating. It can go up or down depending on your results.": "Tu nivel competitivo. Puede subir o bajar según tus resultados.",
+    "Total points earned in official rooms across all games played.": "Total de puntos ganados en salas oficiales, en todas las partidas.",
+    "Total points earned in this room across all games played.": "Total de puntos ganados en esta sala, en todas las partidas.",
+    "Points earned in the last 7 days in official rooms. This is a score, not a rank.": "Puntos ganados en los últimos 7 días en salas oficiales. Es una puntuación, no un rango.",
+    "Average time to complete an excerpt (all answers found), in seconds. Lower is faster.": "Tiempo medio para completar un extracto (todas las respuestas encontradas), en segundos. Cuanto más bajo, más rápido.",
+    "Your highest score achieved in a single round.": "Tu mejor puntuación en una sola ronda.",
+    "Your highest score achieved in a single round in this room.": "Tu mejor puntuación en una sola ronda en esta sala.",
+    "Your longest streak of consecutive round wins in the same room.": "Tu racha más larga de victorias consecutivas en la misma sala.",
+    "Your longest streak of consecutive round wins in this room.": "Tu racha más larga de victorias consecutivas en esta sala.",
+    "Number of complete rounds played in official rooms.": "Número de rondas completas jugadas en salas oficiales.",
+    "Number of complete rounds played in this room.": "Número de rondas completas jugadas en esta sala.",
+    "Average score earned per round in this room.": "Puntuación media por ronda en esta sala."
 }

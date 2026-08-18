@@ -413,5 +413,18 @@
     "Rounds played": "Rounds played",
     "Filter by room": "Filter by room",
     "All official rooms": "All official rooms",
-    "How do rankings work?": "How do rankings work?"
+    "How do rankings work?": "How do rankings work?",
+    "Your experience level based on XP earned while playing.": "Your experience level based on XP earned while playing.",
+    "Your competitive skill rating. It can go up or down depending on your results.": "Your competitive skill rating. It can go up or down depending on your results.",
+    "Total points earned in official rooms across all games played.": "Total points earned in official rooms across all games played.",
+    "Total points earned in this room across all games played.": "Total points earned in this room across all games played.",
+    "Points earned in the last 7 days in official rooms. This is a score, not a rank.": "Points earned in the last 7 days in official rooms. This is a score, not a rank.",
+    "Average time to complete an excerpt (all answers found), in seconds. Lower is faster.": "Average time to complete an excerpt (all answers found), in seconds. Lower is faster.",
+    "Your highest score achieved in a single round.": "Your highest score achieved in a single round.",
+    "Your highest score achieved in a single round in this room.": "Your highest score achieved in a single round in this room.",
+    "Your longest streak of consecutive round wins in the same room.": "Your longest streak of consecutive round wins in the same room.",
+    "Your longest streak of consecutive round wins in this room.": "Your longest streak of consecutive round wins in this room.",
+    "Number of complete rounds played in official rooms.": "Number of complete rounds played in official rooms.",
+    "Number of complete rounds played in this room.": "Number of complete rounds played in this room.",
+    "Average score earned per round in this room.": "Average score earned per round in this room."
 }

@@ -164,6 +164,158 @@ class ProcessRoundFinalizationTest extends TestCase
         $firstStanding = $standings->where('user_id', $users[0]->id)->first();
         $this->assertEquals(1, $firstStanding->position);
         $this->assertEquals(100.0, (float) $firstStanding->total_score);
+        $this->assertEquals(5.0, (float) $firstStanding->average_response_time);
+    }
+
+    public function test_standings_average_response_time_uses_excerpt_completion_time(): void
+    {
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::factory()->create(['elo' => 1500]);
+        $room = Room::create([
+            'name' => 'Completion Time Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist',
+            'user_id' => $owner->id,
+        ]);
+        $titleType = AnswerType::create(['name' => 'Title']);
+        $artistType = AnswerType::create(['name' => 'Artist']);
+
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'completion-time-track',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+
+        $titleAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $titleType->id,
+            'value' => 'Around the World',
+            'score' => 1.0,
+        ]);
+        $artistAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $artistType->id,
+            'value' => 'Daft Punk',
+            'score' => 1.0,
+        ]);
+
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+            'tracks' => [$track->id],
+        ]);
+
+        $roundScoreService = app(RoundScoreService::class);
+
+        foreach ($users as $index => $user) {
+            $roundScoreService->addScore($round->id, $user->id, 2.0);
+            $roundScoreService->recordTrackDetails($round->id, $user->id, $track->id, 5.0, null, 1.0, $titleAnswer->id);
+            $roundScoreService->recordTrackDetails(
+                $round->id,
+                $user->id,
+                $track->id,
+                12.0 + $index,
+                null,
+                1.0,
+                $artistAnswer->id,
+            );
+        }
+
+        $job = new ProcessRoundFinalization($round);
+        $job->handle(app(RoundFinalizationService::class));
+
+        $standing = RoundStanding::query()
+            ->where('round_id', $round->id)
+            ->where('user_id', $users[0]->id)
+            ->first();
+
+        $this->assertNotNull($standing);
+        $this->assertEquals(12.0, (float) $standing->average_response_time);
+    }
+
+    public function test_standings_ignore_partially_completed_excerpts_for_average_response_time(): void
+    {
+        $category = Category::create(['name' => 'Test Category']);
+        $owner = User::factory()->create(['elo' => 1500]);
+        $room = Room::create([
+            'name' => 'Partial Completion Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $users = User::factory()->count(3)->create(['elo' => 1500]);
+        $playlist = Playlist::create([
+            'name' => 'Test Playlist',
+            'user_id' => $owner->id,
+        ]);
+        $titleType = AnswerType::create(['name' => 'Title']);
+        $artistType = AnswerType::create(['name' => 'Artist']);
+
+        $track = Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'partial-completion-track',
+            'preview_url' => 'https://example.com/preview',
+            'artwork_url' => 'https://example.com/artwork',
+        ]);
+
+        $titleAnswer = TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $titleType->id,
+            'value' => 'One More Time',
+            'score' => 1.0,
+        ]);
+        TrackAnswer::create([
+            'track_id' => $track->id,
+            'answer_type_id' => $artistType->id,
+            'value' => 'Daft Punk',
+            'score' => 1.0,
+        ]);
+
+        $round = Round::create([
+            'room_id' => $room->id,
+            'finished_at' => now(),
+            'is_playing' => false,
+            'current' => 0,
+            'tracks' => [$track->id],
+        ]);
+
+        $roundScoreService = app(RoundScoreService::class);
+
+        foreach ($users as $user) {
+            $roundScoreService->addScore($round->id, $user->id, 1.0);
+            $roundScoreService->recordTrackDetails($round->id, $user->id, $track->id, 5.0, null, 1.0, $titleAnswer->id);
+        }
+
+        $job = new ProcessRoundFinalization($round);
+        $job->handle(app(RoundFinalizationService::class));
+
+        $standing = RoundStanding::query()
+            ->where('round_id', $round->id)
+            ->where('user_id', $users[0]->id)
+            ->first();
+
+        $this->assertNotNull($standing);
+        $this->assertNull($standing->average_response_time);
     }
 
     /**

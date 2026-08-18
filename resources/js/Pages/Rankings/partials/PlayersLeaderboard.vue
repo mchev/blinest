@@ -1,5 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
+import MetricTooltip from '@/Components/MetricTooltip.vue'
 
 const page = usePage()
 
@@ -114,15 +115,15 @@ const metricClass = (metric) => {
 
             <div class="mt-2 flex flex-wrap gap-2">
               <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('level')">
-                <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('Level') }}</span>
+                <MetricTooltip :label="__('Level')" :tooltip="__('Your experience level based on XP earned while playing.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
                 <span class="text-sm font-bold text-white">{{ entry.stats.level }}</span>
               </div>
               <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('elo')">
-                <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('ELO') }}</span>
+                <MetricTooltip :label="__('ELO')" :tooltip="__('Your competitive skill rating. It can go up or down depending on your results.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
                 <span class="text-sm font-bold text-white">{{ formatNumber(entry.stats.elo) }}</span>
               </div>
               <div class="inline-flex items-baseline gap-1.5 rounded-md border px-2 py-1" :class="metricClass('score')">
-                <span class="text-[10px] font-medium uppercase tracking-wide text-neutral-500">{{ __('Score') }}</span>
+                <MetricTooltip :label="__('Score')" :tooltip="__('Total points earned in official rooms across all games played.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
                 <span class="text-sm font-bold text-white">{{ formatNumber(entry.stats.score) }}</span>
                 <span class="text-[10px] uppercase text-neutral-500">{{ __('PTS') }}</span>
               </div>
@@ -132,23 +133,33 @@ const metricClass = (metric) => {
 
         <dl class="grid grid-cols-2 gap-2 border-t border-neutral-800 pt-2 text-xs sm:grid-cols-3 lg:grid-cols-5">
           <div class="rounded-md border px-2 py-1.5" :class="metricClass('week')">
-            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">{{ __('Top Week') }}</dt>
+            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">
+              <MetricTooltip :label="__('Top Week')" :tooltip="__('Points earned in the last 7 days in official rooms. This is a score, not a rank.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
+            </dt>
             <dd class="font-semibold text-white">{{ formatNumber(entry.stats.week_score) }}</dd>
           </div>
           <div class="rounded-md border px-2 py-1.5" :class="metricClass('avg_time')">
-            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">{{ __('Avg. response time') }}</dt>
+            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">
+              <MetricTooltip :label="__('Avg. response time')" :tooltip="__('Average time to complete an excerpt (all answers found), in seconds. Lower is faster.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
+            </dt>
             <dd class="font-semibold text-white">{{ formatSeconds(entry.stats.avg_response_time) }}</dd>
           </div>
           <div class="rounded-md border px-2 py-1.5" :class="metricClass('best_round')">
-            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">{{ __('Best round') }}</dt>
+            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">
+              <MetricTooltip :label="__('Best round')" :tooltip="__('Your highest score achieved in a single round.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
+            </dt>
             <dd class="font-semibold text-white">{{ entry.stats.best_round_score != null ? formatNumber(entry.stats.best_round_score) : '—' }}</dd>
           </div>
           <div class="rounded-md border border-neutral-700/60 bg-neutral-800/50 px-2 py-1.5">
-            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">{{ __('Best streak') }}</dt>
+            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">
+              <MetricTooltip :label="__('Best streak')" :tooltip="__('Your longest streak of consecutive round wins in the same room.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
+            </dt>
             <dd class="font-semibold text-white">{{ entry.stats.best_win_streak || '—' }}</dd>
           </div>
           <div class="rounded-md border border-neutral-700/60 bg-neutral-800/50 px-2 py-1.5">
-            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">{{ __('Rounds played') }}</dt>
+            <dt class="text-[10px] uppercase tracking-wide text-neutral-500">
+              <MetricTooltip :label="__('Rounds played')" :tooltip="__('Number of complete rounds played in official rooms.')" label-class="text-[10px] font-medium uppercase tracking-wide text-neutral-500" />
+            </dt>
             <dd class="font-semibold text-white">{{ entry.stats.rounds_played || 0 }}</dd>
           </div>
         </dl>
