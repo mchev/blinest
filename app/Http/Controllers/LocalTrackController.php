@@ -33,6 +33,11 @@ class LocalTrackController extends Controller
                 'user_id' => $request->user()->id,
             ]);
 
+            if (! empty($validated['playlist_id'])) {
+                return Redirect::route('playlists.edit', $validated['playlist_id'])
+                    ->withSuccess("L'audio a été importé. Vous pouvez maintenant l'ajouter à la playlist depuis la liste Blinest.");
+            }
+
             return Redirect::back()->withSuccess("L'audio a été importé. Vous pouvez maintenant l'ajouter à la playlist depuis la liste Blinest.");
 
         } catch (\Exception $e) {

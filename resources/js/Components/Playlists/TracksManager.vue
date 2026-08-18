@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { router, useForm, usePage } from '@inertiajs/vue3'
 import Icon from '@/Components/Icon.vue'
 import Card from '@/Components/Card.vue'
@@ -193,42 +193,54 @@ watch([search_online], () => {
   debouncedSearch()
 })
 
-// Optimized form updates with error handling
 // Separate loading state for search/filter operations
 const isSearching = ref(false)
+const trackMutationInFlight = ref(false)
+const loading = ref(false)
+
+const reloadTracksFromFilters = throttle(() => {
+  if (trackMutationInFlight.value) {
+    return
+  }
+
+  const data = pickBy({
+    search: form.search,
+    paginate: form.paginate,
+    sortable: form.sortable,
+    difficulty: form.difficulty,
+    provider: form.provider,
+    minUpvotes: form.minUpvotes,
+    minDownvotes: form.minDownvotes,
+  })
+
+  const isSearchOrFilter = Boolean(form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes || form.sortable)
+
+  if (isSearchOrFilter) {
+    isSearching.value = true
+  } else {
+    loading.value = true
+  }
+
+  router.get(route('playlists.edit', props.playlist.id), data, {
+    preserveScroll: true,
+    preserveState: true,
+    only: ['tracks', 'playlist'],
+    onFinish: () => {
+      loading.value = false
+      isSearching.value = false
+    },
+    onError: () => {
+      loading.value = false
+      isSearching.value = false
+    },
+  })
+}, 500)
 
 watch(
-  form,
-  throttle(() => {
-    const data = pickBy(form)
-    if (Object.keys(data).length) {
-      // Only show overlay for non-search operations
-      // For search/filter, use a more subtle indicator
-      const isSearchOrFilter = data.search || data.difficulty || data.provider || data.minUpvotes || data.minDownvotes
-
-      if (isSearchOrFilter) {
-        isSearching.value = true
-      } else {
-        loading.value = true
-      }
-
-      router.get(route('playlists.edit', props.playlist), data, {
-        preserveScroll: true,
-        preserveState: true,
-        only: ['tracks'],
-        onSuccess: () => {
-          loading.value = false
-          isSearching.value = false
-        },
-        onError: (errors) => {
-          loading.value = false
-          isSearching.value = false
-          console.error('Form update failed:', errors)
-        },
-      })
-    }
-  }, 500),
-  { deep: true },
+  () => [form.search, form.paginate, form.sortable, form.difficulty, form.provider, form.minUpvotes, form.minDownvotes],
+  () => {
+    reloadTracksFromFilters()
+  },
 )
 
 const toggleProvider = (provider) => {
@@ -258,25 +270,28 @@ const closeModal = () => {
 }
 
 // Improved track operations with error handling
-const addTrack = async (track) => {
-  if (loadingStates.value.addTrack) return
+const addTrack = (track) => {
+  if (loadingStates.value.addTrack || trackMutationInFlight.value) {
+    return
+  }
 
   loadingStates.value.addTrack = track.id
-  loading.value = true
+  trackMutationInFlight.value = true
 
-  try {
-    await router.post(route('playlists.tracks.store', props.playlist.id), track, {
-      preserveScroll: true,
-      preserveState: true,
-      only: ['tracks'],
-      onSuccess: () => debouncedSearch(),
-    })
-  } catch (error) {
-    console.error('Error adding track:', error)
-  } finally {
-    loadingStates.value.addTrack = null
-    loading.value = false
-  }
+  router.post(route('playlists.tracks.store', props.playlist.id), track, {
+    preserveScroll: true,
+    preserveState: true,
+    only: ['tracks', 'playlist'],
+    onSuccess: () => debouncedSearch(),
+    onFinish: () => {
+      loadingStates.value.addTrack = null
+      trackMutationInFlight.value = false
+    },
+    onError: () => {
+      loadingStates.value.addTrack = null
+      trackMutationInFlight.value = false
+    },
+  })
 }
 
 const removeTrack = (track) => {
@@ -296,45 +311,56 @@ const clearFilters = () => {
   form.minDownvotes = ''
 }
 
-const confirmDeleteTrack = async () => {
-  if (!trackToDelete.value || loadingStates.value.removeTrack) return
+const confirmDeleteTrack = () => {
+  if (!trackToDelete.value || loadingStates.value.removeTrack) {
+    return
+  }
 
   const track = trackToDelete.value
   loadingStates.value.removeTrack = track.id
-  loading.value = true
+  trackMutationInFlight.value = true
   const id = track.id ?? track.added
-  props.tracks.data = props.tracks.data.filter((t) => t.id !== id)
-  results.value = results.value.filter((t) => t.id !== id)
 
-  try {
-    await router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
-      preserveScroll: true,
-      onSuccess: () => {
-        debouncedSearch()
-        props.tracks.data = props.tracks.data.filter((t) => t.id !== id)
-        results.value = results.value.filter((t) => t.id !== id)
-      },
-      only: ['tracks'],
-    })
-  } catch (error) {
-    console.error('Error removing track:', error)
-  } finally {
-    loadingStates.value.removeTrack = null
-    loading.value = false
-    trackToDelete.value = null
-  }
+  router.delete(route('playlists.tracks.delete', [props.playlist.id, id]), {
+    preserveScroll: true,
+    preserveState: true,
+    only: ['tracks', 'playlist'],
+    onSuccess: () => {
+      debouncedSearch()
+      showDeleteTrackModal.value = false
+      trackToDelete.value = null
+    },
+    onFinish: () => {
+      loadingStates.value.removeTrack = null
+      trackMutationInFlight.value = false
+    },
+    onError: () => {
+      loadingStates.value.removeTrack = null
+      trackMutationInFlight.value = false
+    },
+  })
 }
 
 const confirmClearPlaylist = () => {
-  if (clearingPlaylist.value) return
+  if (clearingPlaylist.value || trackMutationInFlight.value) {
+    return
+  }
+
   clearingPlaylist.value = true
-  loading.value = true
+  trackMutationInFlight.value = true
+
   router.delete(route('playlists.tracks.clear', props.playlist.id), {
     preserveScroll: true,
+    preserveState: true,
     only: ['tracks', 'playlist'],
     onFinish: () => {
       clearingPlaylist.value = false
-      loading.value = false
+      trackMutationInFlight.value = false
+      showClearPlaylistModal.value = false
+    },
+    onError: () => {
+      clearingPlaylist.value = false
+      trackMutationInFlight.value = false
     },
   })
 }
@@ -371,12 +397,19 @@ const editHint = (track) => {
 }
 
 // Add this event listener setup in your script
+let removeRouterStartListener
+let removeRouterFinishListener
+
 onMounted(() => {
-  router.on('start', () => {
-    loading.value = true
+  removeRouterStartListener = router.on('start', (event) => {
+    const only = event.detail?.visit?.only
+
+    if (!only || only.length === 0) {
+      loading.value = true
+    }
   })
 
-  router.on('finish', () => {
+  removeRouterFinishListener = router.on('finish', () => {
     loading.value = false
   })
 
@@ -396,17 +429,18 @@ onMounted(() => {
     localStorage.removeItem('youtube_quota_reset_time')
     localStorage.removeItem('provider_errors')
   }
+})
 
-  // Cleanup function
-  return () => {
-    if (searchController.value) {
-      searchController.value.abort()
-    }
+onUnmounted(() => {
+  removeRouterStartListener?.()
+  removeRouterFinishListener?.()
+
+  if (searchController.value) {
+    searchController.value.abort()
   }
 })
 
-// Keep your existing loading ref
-const loading = ref(false)
+// Keep your existing loading ref - declared above with isSearching
 </script>
 
 <!-- Template remains the same -->
@@ -667,7 +701,7 @@ const loading = ref(false)
               <h4 class="mb-1 text-sm font-semibold text-neutral-200">{{ __('Upload a song from your computer') }}</h4>
               <p class="text-xs text-neutral-300 md:text-sm md:text-neutral-200">{{ __('Import an MP3 file from your computer. You can select a 30-second segment to use in the game') }}</p>
             </div>
-            <UploadTrack :playlist="playlist" />
+            <UploadTrack :playlist="playlist" @new-track-uploaded="debouncedSearch" />
           </div>
         </div>
       </div>

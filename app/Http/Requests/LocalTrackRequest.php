@@ -24,6 +24,7 @@ class LocalTrackRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'playlist_id' => ['nullable', 'integer', 'exists:playlists,id'],
             'artist_name' => ['required', 'max:255'],
             'track_name' => ['required', 'max:255', 'unique:local_tracks,track_name,NULL,id,artist_name,'.$this->artist_name],
             'audio' => ['required', 'file', 'mimes:mp3', 'max:1024', new AudioDuration(30)],

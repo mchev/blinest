@@ -33,6 +33,7 @@ const isGeneratingWaveform = ref(false)
 const audioPreviewUrl = ref(null)
 
 const form = useForm({
+  playlist_id: props.playlist.id,
   artist_name: '',
   track_name: '',
   audio: null,
@@ -181,38 +182,37 @@ async function extract30sSegment(file, start, duration = 30) {
 watch(
   () => form.audio,
   async (newFile) => {
-    if (newFile) {
-      try {
-        // Clean up previous audio preview URL if it exists
-        if (audioPreviewUrl.value) {
-          URL.revokeObjectURL(audioPreviewUrl.value)
-        }
+    teardownAudioPreview()
 
-        audioPreviewUrl.value = URL.createObjectURL(newFile)
-        const audio = new Audio(audioPreviewUrl.value)
-        audioPreview.value = audio
+    if (!newFile) {
+      return
+    }
 
-        audio.addEventListener('loadedmetadata', () => {
-          audioDuration.value = audio.duration
-          segmentEnd.value = Math.min(30, audio.duration)
-        })
+    try {
+      audioPreviewUrl.value = URL.createObjectURL(newFile)
+      const audio = new Audio(audioPreviewUrl.value)
+      audioPreview.value = audio
 
-        audio.addEventListener('timeupdate', () => {
-          currentTime.value = audio.currentTime
-          if (audio.currentTime >= segmentStart.value + 30) {
-            audio.pause()
-            isPlaying.value = false
-          }
-        })
+      audio.addEventListener('loadedmetadata', () => {
+        audioDuration.value = audio.duration
+        segmentEnd.value = Math.min(30, audio.duration)
+      })
 
-        audio.addEventListener('ended', () => {
+      audio.addEventListener('timeupdate', () => {
+        currentTime.value = audio.currentTime
+        if (audio.currentTime >= segmentStart.value + 30) {
+          audio.pause()
           isPlaying.value = false
-        })
+        }
+      })
 
-        await generateWaveform(newFile)
-      } catch (error) {
-        console.error("Erreur lors du chargement de l'audio:", error)
-      }
+      audio.addEventListener('ended', () => {
+        isPlaying.value = false
+      })
+
+      await generateWaveform(newFile)
+    } catch (error) {
+      console.error("Erreur lors du chargement de l'audio:", error)
     }
   },
 )
@@ -236,6 +236,7 @@ const playPreview = () => {
     audioPreview.value.pause()
     isPlaying.value = false
   } else {
+    audioPreview.value.currentTime = segmentStart.value
     audioPreview.value.play()
     isPlaying.value = true
   }
@@ -358,10 +359,13 @@ const uploadTrack = async () => {
   }
 
   form.post(route('local-tracks.store'), {
+    preserveScroll: true,
+    preserveState: true,
     onSuccess: () => {
       uploadingTrack.value = false
       emit('new-track-uploaded')
       form.reset()
+      form.playlist_id = props.playlist.id
       resetAudio()
     },
     onError: (errors) => {
@@ -370,25 +374,35 @@ const uploadTrack = async () => {
   })
 }
 
-const resetAudio = () => {
+const teardownAudioPreview = () => {
   if (audioPreview.value) {
     audioPreview.value.pause()
+    audioPreview.value.removeAttribute('src')
+    audioPreview.value.load()
     audioPreview.value = null
   }
+
   if (audioPreviewUrl.value) {
     URL.revokeObjectURL(audioPreviewUrl.value)
     audioPreviewUrl.value = null
   }
-  if (artworkPreview.value) {
-    URL.revokeObjectURL(artworkPreview.value)
-    artworkPreview.value = null
-  }
+
+  isPlaying.value = false
+  currentTime.value = 0
   waveformData.value = []
   audioDuration.value = 0
   segmentStart.value = 0
   segmentEnd.value = 30
-  isPlaying.value = false
-  currentTime.value = 0
+  form.start_time = 0
+}
+
+const resetAudio = () => {
+  teardownAudioPreview()
+
+  if (artworkPreview.value) {
+    URL.revokeObjectURL(artworkPreview.value)
+    artworkPreview.value = null
+  }
 }
 
 const close = () => {

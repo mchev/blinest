@@ -9,13 +9,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
-const file = ref('')
+const file = ref(null)
 
 watch(
   () => props.modelValue,
   (value) => {
-    if (!value) {
-      file.value = ''
+    if (!value && file.value) {
+      file.value.value = ''
     }
   },
 )
@@ -34,6 +34,10 @@ const change = (e) => {
 }
 
 const remove = () => {
+  if (file.value) {
+    file.value.value = ''
+  }
+
   emit('update:modelValue', null)
 }
 </script>

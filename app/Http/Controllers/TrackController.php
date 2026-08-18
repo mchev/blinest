@@ -99,21 +99,24 @@ class TrackController extends Controller
             ]);
 
             // TRACK
-            $track = $playlist->tracks()->updateOrCreate(
-                [
-                    'provider' => Request::get('provider'),
-                    'provider_id' => Request::get('provider_id'),
-                ],
-                [
-                    'provider_url' => Request::get('provider_url'),
-                    // 'artist_name' => Request::get('artist_name'),
-                    // 'track_name' => Request::get('track_name'),
-                    // 'album_name' => Request::get('album_name'),
-                    'preview_url' => Request::get('preview_url'),
-                    // 'release_date' => Request::get('release_date'),
-                    'artwork_url' => Request::get('artwork_url'),
-                ]
-            );
+            $track = $playlist->tracks()->firstOrNew([
+                'provider' => Request::get('provider'),
+                'provider_id' => Request::get('provider_id'),
+            ]);
+
+            $isNewTrack = ! $track->exists;
+
+            $track->fill([
+                'provider_url' => Request::get('provider_url'),
+                'preview_url' => Request::get('preview_url'),
+                'artwork_url' => Request::get('artwork_url'),
+            ]);
+
+            if ($isNewTrack) {
+                $track->user_id = Auth::id();
+            }
+
+            $track->save();
 
             // ANSWERS
             $track->answers()->updateOrCreate(
@@ -146,6 +149,8 @@ class TrackController extends Controller
 
             return Redirect::back()->with('success', __('Track added'));
         }
+
+        abort(403, __('Unauthorized action'));
     }
 
     public function update(Playlist $playlist, Track $track)

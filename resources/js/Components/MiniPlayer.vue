@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onUnmounted, onMounted } from 'vue'
+import { ref, onUnmounted, onMounted, watch } from 'vue'
 import Spinner from '@/Components/Spinner.vue'
 import Icon from '@/Components/Icon.vue'
 
@@ -118,6 +118,15 @@ const play = () => {
     audio.addEventListener('timeupdate', updateProgress)
   }
 }
+
+watch(
+  () => props.track.preview_url,
+  () => {
+    stop()
+    audio.removeAttribute('src')
+    audio.load()
+  },
+)
 
 const initYoutubePlayer = () => {
   const existingPlayer = YT.get(youtubePlayerId)
