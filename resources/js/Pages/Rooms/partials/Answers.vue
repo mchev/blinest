@@ -117,7 +117,7 @@ const getUserAnswerForTrackAndAnswer = () => null
           <Icon name="music" class="mr-2 h-4 w-4 md:h-5 md:w-5" aria-hidden="true" />
           {{ __('Playlist') }}
         </h3>
-        <div v-if="round" class="flex items-center gap-2">
+        <div v-if="round && !compact" class="flex items-center gap-2">
           <div class="text-xs font-medium text-white/60" aria-label="Track progress">{{ __('Track') }} {{ trackCount }}</div>
           <div class="h-1.5 w-16 bg-brand-midnight md:w-32" role="progressbar" :aria-valuenow="progressPercentage" aria-valuemin="0" aria-valuemax="100">
             <div class="h-1.5 bg-brand-accent transition-all duration-300" :style="`width: ${progressPercentage}%`"></div>

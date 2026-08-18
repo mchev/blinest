@@ -12,7 +12,7 @@ import RoomPlayerSection from './partials/RoomPlayerSection.vue'
 import Answers from './partials/Answers.vue'
 import Ranking from './partials/Ranking.vue'
 import MobileRoomHud from './partials/MobileRoomHud.vue'
-import MobileTopThree from './partials/MobileTopThree.vue'
+import MobileRoomInfo from './partials/MobileRoomInfo.vue'
 import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
@@ -78,8 +78,7 @@ const sendingSuggestion = ref(false)
 const displayChat = ref(true)
 const showDesktopChat = ref(typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches)
 let desktopChatMediaQuery = null
-const mobileTab = ref('live')
-const liveFeedEvents = ref([])
+const mobileTab = ref('rank')
 const users_podium = ref([])
 const teams_podium = ref([])
 const initialTrack = ref(null)
@@ -152,35 +151,9 @@ function normalizeScores(scores) {
   return scores
 }
 
-function pushLiveFeedEvents(score) {
-  const uid = score.user_id
-  const player = roomState.value.users.find((u) => u.id === uid)
-
-  if (!score.answers?.length) {
-    return
-  }
-
-  for (const answer of score.answers) {
-    liveFeedEvents.value.unshift({
-      id: `${uid}-${answer.id}-${score.time ?? Date.now()}`,
-      userId: uid,
-      userName: player?.name ?? t('Player'),
-      userPhoto: player?.photo ?? null,
-      answerName: answer.name,
-      order: answer.order,
-      speedBonus: answer.speedBonus,
-      points: null,
-    })
-  }
-
-  if (liveFeedEvents.value.length > 40) {
-    liveFeedEvents.value.length = 40
-  }
-}
-
 function onDisplayChat(show) {
   if (typeof window !== 'undefined' && window.innerWidth < 768) {
-    mobileTab.value = show ? 'chat' : 'live'
+    mobileTab.value = show ? 'chat' : 'rank'
 
     return
   }
@@ -265,14 +238,12 @@ onMounted(() => {
               ...roomState.value.answersByUser,
               [uid]: [...prev, ...score.answers],
             }
-            pushLiveFeedEvents(score)
           }
         }
       })
       .listen('RoundStarted', (e) => {
         round.value = e.round
         playlistPlayedTracks.value = []
-        liveFeedEvents.value = []
         roundFinished.value = false
         finalizingRound.value = false
         roomState.value.roundId = e.round?.id ?? null
@@ -299,7 +270,6 @@ onMounted(() => {
         initialStartTime.value = 0
         currentTrack.value = e.track
         roomState.value.answersByUser = {}
-        liveFeedEvents.value = []
       })
       .listen('UserEloUpdated', (e) => {
         const u = roomState.value.users.find((x) => x.id === e.user_id)
@@ -452,8 +422,8 @@ watch(
 
         <!-- Mobile gameplay HUD -->
         <div v-if="user" class="room-mobile-shell md:hidden">
-          <MobileTopThree :room-state="roomState" />
-          <MobileRoomHud v-model="mobileTab" :room="room" :room-state="roomState" :round="round" :channel="channel" :current-track="currentTrack || initialTrack" :playlist-played-tracks="playlistPlayedTracks" :live-events="liveFeedEvents" />
+          <MobileRoomHud v-model="mobileTab" :room="room" :room-state="roomState" :round="round" :channel="channel" :current-track="currentTrack || initialTrack" :playlist-played-tracks="playlistPlayedTracks" />
+          <MobileRoomInfo :room="room" :room-state="roomState" @send-suggestion="sendingSuggestion = true" />
         </div>
 
         <!-- Desktop: playlist + ranking side by side -->
