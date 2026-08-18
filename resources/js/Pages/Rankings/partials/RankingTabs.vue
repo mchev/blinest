@@ -5,6 +5,8 @@ import Icon from '@/Components/Icon.vue'
 
 const page = usePage()
 
+const user = computed(() => page.props.auth?.user ?? null)
+
 const __ = (key, replace = {}) => {
   let translation = page.props.language[key] ? page.props.language[key] : key
   Object.keys(replace).forEach(function (replaceKey) {
@@ -15,11 +17,20 @@ const __ = (key, replace = {}) => {
 
 const currentPath = computed(() => page.url.split('?')[0])
 
-const tabs = [
-  { id: 'players', label: __('Players'), icon: 'trophy', route: route('rankings.index') },
-  { id: 'minigames', label: __('Mini-games'), icon: 'gamepad', route: route('rankings.minigames') },
-  { id: 'teams', label: __('Teams'), icon: 'users', route: route('rankings.teams') },
-]
+const tabs = computed(() => {
+  const items = [
+    { id: 'players', label: __('Players'), icon: 'trophy', route: route('rankings.index') },
+  ]
+
+  if (user.value) {
+    items.push(
+      { id: 'minigames', label: __('Mini-games'), icon: 'gamepad', route: route('rankings.minigames') },
+      { id: 'teams', label: __('Teams'), icon: 'users', route: route('rankings.teams') },
+    )
+  }
+
+  return items
+})
 
 const isActive = (tab) => {
   const tabUrl = new URL(tab.route)

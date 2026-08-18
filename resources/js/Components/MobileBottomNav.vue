@@ -17,7 +17,7 @@ const user = usePage().props.auth?.user
         </div>
       </Link>
 
-      <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="flex min-w-0 flex-1 items-center justify-center px-2 py-2">
+      <Link :href="route('rankings.index')" :title="__('Rankings')" class="flex min-w-0 flex-1 items-center justify-center px-2 py-2">
         <div class="retro-icon-btn text-brand-secondary">
           <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_8px_rgb(249_237_105/0.5)]" />
         </div>

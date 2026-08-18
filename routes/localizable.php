@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Docs\CreateContentController;
 use App\Http\Controllers\Docs\EloController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -51,6 +53,24 @@ return function (string $namePrefix): void {
 
     Route::get('contact', [ContactController::class, 'index'])
         ->name($namePrefix.'contact');
+
+    Route::get('blind-test-{category:slug}', [CategoryController::class, 'show'])
+        ->name($namePrefix.'categories.show');
+
+    Route::get('rankings', [RankingController::class, 'index'])
+        ->name($namePrefix.'rankings.index');
+
+    Route::get('rankings/level', [RankingController::class, 'byLevel'])
+        ->name($namePrefix.'rankings.level');
+
+    Route::get('rankings/score', [RankingController::class, 'byScore'])
+        ->name($namePrefix.'rankings.score');
+
+    Route::get('rankings/elo', [RankingController::class, 'byElo'])
+        ->name($namePrefix.'rankings.elo');
+
+    Route::get('rankings/week', [RankingController::class, 'byWeek'])
+        ->name($namePrefix.'rankings.week');
 
     Route::middleware(['auth.banned', 'ip.banned'])->group(function () use ($namePrefix): void {
         Route::get('/', [HomeController::class, 'index'])

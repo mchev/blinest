@@ -54,7 +54,7 @@ defineProps({
             </span>
             <span class="text-xs font-semibold text-white">Discord</span>
           </a>
-          <Link v-if="user && !user.is_guest" :href="route('rankings.index')" class="sidebar-tile group">
+          <Link :href="route('rankings.index')" class="sidebar-tile group">
             <span class="sidebar-tile__icon group-hover:scale-105" aria-hidden="true">
               <Icon name="trophy" class="h-5 w-5" />
             </span>

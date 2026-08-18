@@ -106,7 +106,7 @@ const isRoomShow = computed(() => page.component === 'Rooms/Show')
       </div>
 
       <div class="flex items-center justify-end gap-3">
-        <Link v-if="user && !user.is_guest" :href="route('rankings.index')" :title="__('Rankings')" class="retro-icon-btn text-brand-secondary hover:text-brand-secondary">
+        <Link :href="route('rankings.index')" :title="__('Rankings')" class="retro-icon-btn text-brand-secondary hover:text-brand-secondary">
           <Icon name="trophy" class="h-5 w-5 drop-shadow-[0_0_8px_rgb(249_237_105/0.5)]" />
         </Link>
         <Notifications v-if="user && !user.is_guest" />

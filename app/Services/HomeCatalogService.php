@@ -447,7 +447,18 @@ class HomeCatalogService
     }
 
     /**
-     * @return list<array{id: int, name: string, rooms_count: int}>
+     * @return list<array<string, mixed>>
+     */
+    public function officialRoomsForCategory(int $categoryId): array
+    {
+        return collect($this->cachedPublicRooms())
+            ->filter(fn (array $room) => ($room['category']['id'] ?? null) === $categoryId)
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<array{id: int, name: string, slug: string, rooms_count: int}>
      */
     private function categoriesWithRoomCounts(bool $isPublic): array
     {
@@ -471,10 +482,11 @@ class HomeCatalogService
                 }
             }])
             ->orderBy('name')
-            ->get(['id', 'name'])
+            ->get(['id', 'name', 'slug'])
             ->map(fn (Category $category) => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'slug' => $category->slug,
                 'rooms_count' => $category->rooms_count,
             ])
             ->values()

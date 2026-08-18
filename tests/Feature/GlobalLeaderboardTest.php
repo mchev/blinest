@@ -154,4 +154,24 @@ class GlobalLeaderboardTest extends TestCase
         $this->actingAs($user)->get(route('rankings.week'))
             ->assertRedirect(route('rankings.index', ['sort' => 'week']));
     }
+
+    public function test_rankings_page_is_accessible_to_guests(): void
+    {
+        $response = $this->get(route('rankings.index'));
+
+        $response->assertOk();
+        $response->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('Rankings/Players')
+            ->where('userContext', null)
+        );
+    }
+
+    public function test_rankings_page_has_public_seo_meta_for_guests(): void
+    {
+        $response = $this->get(route('rankings.index'));
+
+        $response->assertOk();
+        $response->assertSee('name="description"', false);
+        $response->assertSee('Classement public', false);
+    }
 }

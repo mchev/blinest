@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Models\Room;
 use App\Seo\LocaleUrl;
+use App\Services\Categories\CategoryLandingService;
 
 class SitemapController extends Controller
 {
+    public function __construct(private CategoryLandingService $categoryLanding) {}
+
     public function index()
     {
         return response()
@@ -22,6 +25,13 @@ class SitemapController extends Controller
                     ->map(fn (Room $room) => (object) [
                         'url' => route('rooms.show', $room->slug),
                         'updated_at' => $room->updated_at,
+                    ]),
+                'categories' => $this->categoryLanding->indexableCategories()
+                    ->map(fn ($category) => (object) [
+                        'urls' => collect(LocaleUrl::availableLocales())
+                            ->map(fn (string $locale): string => LocaleUrl::localizedPath($category->landingPath(), $locale))
+                            ->all(),
+                        'updated_at' => $category->updated_at,
                     ]),
                 'pages' => Page::select('id', 'title', 'slug', 'revised_at', 'updated_at')
                     ->orderByDesc('revised_at')

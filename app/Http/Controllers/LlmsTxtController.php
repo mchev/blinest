@@ -27,6 +27,7 @@ Blinest runs official public rooms (80s, 2000s, Disney, French songs, rock, pop,
 ## Progression & docs
 
 - [Progression overview]({$baseUrl}/docs): Level, score, ELO and XP systems.
+- [Player rankings]({$baseUrl}/rankings): Public leaderboard with ELO, score, level and weekly stats.
 - [Level system]({$baseUrl}/docs/level): How XP and levels work.
 - [ELO system]({$baseUrl}/docs/elo): Competitive ranking explained.
 - [Create rooms & playlists]({$baseUrl}/docs/create-content): Guide for hosts and playlist creators.

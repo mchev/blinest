@@ -1,5 +1,6 @@
 <script setup>
 import { Link, usePage, router } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import { Deferred } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
@@ -9,13 +10,7 @@ import Pagination from '@/Components/Pagination.vue'
 
 const page = usePage()
 
-const __ = (key, replace = {}) => {
-  let translation = page.props.language[key] ? page.props.language[key] : key
-  Object.keys(replace).forEach(function (replaceKey) {
-    translation = translation.replace(':' + replaceKey, replace[replaceKey])
-  })
-  return translation
-}
+const user = computed(() => page.props.auth?.user ?? null)
 
 const props = defineProps({
   leaderboard: Object,
@@ -70,6 +65,9 @@ const onRoomChange = (event) => {
             {{ __('Rankings') }}
           </h1>
           <p class="text-sm text-neutral-400 sm:text-lg">{{ __('Compete with the best players') }}</p>
+          <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-neutral-500 sm:text-base">
+            {{ __('Rankings SEO intro') }}
+          </p>
           <Link :href="route('docs.index')" class="mt-3 inline-flex items-center gap-1.5 text-sm text-yellow-500/90 transition-colors hover:text-yellow-400">
             {{ __('How do rankings work?') }}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -79,6 +77,23 @@ const onRoomChange = (event) => {
         </div>
 
         <RankingTabs />
+
+        <div v-if="!user" class="mb-6 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 sm:p-5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="space-y-1">
+              <p class="font-semibold text-white">{{ __('Rankings guest CTA title') }}</p>
+              <p class="text-sm text-neutral-400">{{ __('Rankings guest CTA body') }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <Link :href="route('register')" class="game-btn-secondary inline-flex justify-center">
+                {{ __('Rankings guest CTA button') }}
+              </Link>
+              <Link :href="route('login')" class="game-link-action inline-flex items-center justify-center px-3 py-2">
+                {{ __('Log in') }}
+              </Link>
+            </div>
+          </div>
+        </div>
 
         <div class="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
           <div class="flex flex-wrap gap-2">

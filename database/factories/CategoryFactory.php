@@ -13,6 +13,7 @@ class CategoryFactory extends Factory
     {
         return [
             'name' => $this->faker->colorName(),
+            'slug' => $this->faker->unique()->slug(2),
         ];
     }
 }

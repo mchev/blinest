@@ -34,6 +34,26 @@ $docPaths = [
   </url>
   @endforeach
 
+  @foreach($locales as $locale)
+  <url>
+    <loc>{{ \App\Seo\LocaleUrl::localizedPath('rankings', $locale) }}</loc>
+    <lastmod>{{ $now }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  @endforeach
+
+  @foreach($categories as $category)
+    @foreach($category->urls as $url)
+  <url>
+    <loc>{{ $url }}</loc>
+    <lastmod>{{ $category->updated_at->toAtomString() }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+    @endforeach
+  @endforeach
+
   @foreach($pages as $page)
     @foreach($page->urls as $url)
   <url>

@@ -85,6 +85,14 @@ class LocaleUrl
             return true;
         }
 
+        if ($path === 'rankings' || str_starts_with($path, 'rankings/')) {
+            return true;
+        }
+
+        if (str_starts_with($path, 'blind-test-')) {
+            return true;
+        }
+
         if ($path === 'docs' || str_starts_with($path, 'docs/')) {
             return true;
         }

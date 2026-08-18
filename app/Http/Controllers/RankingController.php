@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Team;
 use App\Models\TotalScore;
 use App\Models\User;
+use App\Seo\RankingsHead;
 use App\Services\Rankings\GlobalLeaderboardService;
 use App\Services\Rooms\RoomLeaderboardService;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Laravel\Head\Facades\Head;
 
 class RankingController extends Controller
 {
+    public function __construct(private RankingsHead $rankingsHead) {}
+
     public function index(Request $request, GlobalLeaderboardService $leaderboardService)
     {
         return $this->players($request, $leaderboardService);
@@ -24,17 +27,18 @@ class RankingController extends Controller
 
     public function players(Request $request, GlobalLeaderboardService $leaderboardService)
     {
-        Head::title(__('Rankings'));
-
         $sort = $request->string('sort', 'elo')->toString();
         $page = max(1, (int) $request->get('page', 1));
         $roomId = $request->integer('room') ?: null;
 
         $user = Auth::user();
         $resolvedRoomId = $leaderboardService->resolveOfficialRoomId($roomId);
+        $leaderboard = $leaderboardService->paginatedPayload($sort, $page, $resolvedRoomId);
+
+        $this->rankingsHead->apply($sort, $leaderboard['data'] ?? []);
 
         return Inertia::render('Rankings/Players', [
-            'leaderboard' => $leaderboardService->paginatedPayload($sort, $page, $resolvedRoomId),
+            'leaderboard' => $leaderboard,
             'sort' => $sort,
             'sorts' => $leaderboardService->availableSorts(),
             'officialRooms' => $leaderboardService->officialRooms(),

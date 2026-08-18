@@ -133,6 +133,14 @@ const categoryFilterCount = computed(() => {
   return category?.rooms_count ?? 0
 })
 
+const selectedCategory = computed(() => {
+  if (!selectedCategoryId.value || displayCatalog.value !== 'official') {
+    return null
+  }
+
+  return activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value) ?? null
+})
+
 const catalogItemsList = computed(() => {
   if (pendingTab.value !== null) {
     return []
@@ -250,6 +258,15 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         <option value="">{{ t('All categories') }} ({{ categoryFilterCount }})</option>
         <option v-for="category in activeCategories" :key="category.id" :value="String(category.id)">{{ t(category.name) }} ({{ category.rooms_count }})</option>
       </select>
+
+      <Link
+        v-if="selectedCategory?.slug && displayCatalog === 'official'"
+        :href="route('categories.show', selectedCategory.slug)"
+        class="game-link-action text-sm"
+      >
+        {{ t('View category page') }}
+        <Icon name="cheveron-right" class="inline-block h-4 w-4" />
+      </Link>
     </header>
 
     <div :id="panelId(displayCatalog)" role="tabpanel" :aria-labelledby="tabId(displayCatalog)" class="home-catalog-panel space-y-6">
