@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, nextTick, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { createPopper } from '@popperjs/core'
 
 const props = defineProps({
@@ -36,8 +36,30 @@ const popper = ref(null)
 const root = ref(null)
 const emit = defineEmits(['closed'])
 
-watch(show, (show) => {
-  if (show) {
+const handleClickOutside = (event) => {
+  if (!show.value) {
+    return
+  }
+
+  if (root.value?.contains(event.target)) {
+    return
+  }
+
+  if (dropdown.value?.contains(event.target)) {
+    return
+  }
+
+  show.value = false
+}
+
+const handleEscapeKey = (event) => {
+  if (event.key === 'Escape') {
+    show.value = false
+  }
+}
+
+watch(show, (isShown) => {
+  if (isShown) {
     nextTick(() => {
       popper.value = createPopper(root.value, dropdown.value, {
         placement: props.placement,
@@ -51,20 +73,27 @@ watch(show, (show) => {
         ],
       })
     })
-  } else if (popper.value) {
-    setTimeout(() => {
-      popper.value.destroy()
-      emit('closed')
-    }, 100)
+
+    document.addEventListener('mousedown', handleClickOutside)
+  } else {
+    document.removeEventListener('mousedown', handleClickOutside)
+
+    if (popper.value) {
+      setTimeout(() => {
+        popper.value.destroy()
+        emit('closed')
+      }, 100)
+    }
   }
 })
 
 onMounted(() => {
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      show.value = false
-    }
-  })
+  document.addEventListener('keydown', handleEscapeKey)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscapeKey)
+  document.removeEventListener('mousedown', handleClickOutside)
 })
 </script>
 <template>
