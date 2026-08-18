@@ -100,7 +100,7 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'ziggy' => function () use ($request) {
-                $routes = Cache::remember('inertia_ziggy_routes_v3', 3600, fn () => (new Ziggy)->toArray());
+                $routes = Cache::remember('inertia_ziggy_routes_v4', 3600, fn () => (new Ziggy)->toArray());
 
                 return array_merge($routes, [
                     'location' => $request->url(),
