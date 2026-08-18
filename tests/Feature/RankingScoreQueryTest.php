@@ -49,6 +49,15 @@ class RankingScoreQueryTest extends TestCase
             'score' => 50,
         ]);
 
+        UserLevel::create([
+            'user_id' => $player->id,
+            'level' => 1,
+            'total_xp' => 50,
+            'current_xp' => 50,
+            'xp_for_next_level' => 100,
+            'score_public_rooms' => 50,
+        ]);
+
         TotalScore::create([
             'totalscorable_type' => User::class,
             'totalscorable_id' => $player->id,
@@ -57,14 +66,13 @@ class RankingScoreQueryTest extends TestCase
         ]);
 
         $this->actingAs($player)
-            ->get(route('rankings.score'))
+            ->get(route('rankings.index', ['sort' => 'score']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Rankings/Score')
-                ->where('userScore', 50)
-                ->where('userPosition', 1)
-                ->has('topByScore.data', 1)
-                ->where('topByScore.data.0.total_score', 50));
+                ->component('Rankings/Players')
+                ->where('sort', 'score')
+                ->has('leaderboard.data', 1)
+                ->where('leaderboard.data.0.stats.score', 50));
     }
 
     public function test_level_calculator_persists_minigame_scores_total(): void

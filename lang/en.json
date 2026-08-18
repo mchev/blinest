@@ -402,5 +402,16 @@
     "Donation thank you subject": "Thank you for your donation to Blinest",
     "Donation thank you greeting": "Thank you :name!",
     "Donation thank you body": "We received your donation of €:amount. Your support helps keep Blinest online for the whole community.",
-    "Donation thank you action": "View donation transparency"
+    "Donation thank you action": "View donation transparency",
+    "Avg. per round": "Avg. per round",
+    "Avg. response time": "Avg. response time",
+    "Fastest answer": "Fastest answer",
+    "Best round": "Best round",
+    "Best streak": "Best streak",
+    "Players": "Players",
+    "Your ranking": "Your ranking",
+    "Rounds played": "Rounds played",
+    "Filter by room": "Filter by room",
+    "All official rooms": "All official rooms",
+    "How do rankings work?": "How do rankings work?"
 }
