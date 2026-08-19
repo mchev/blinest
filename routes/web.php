@@ -75,7 +75,7 @@ Route::middleware(['auth', 'not.guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('rounds/{round}/tracks/{track}/check', [RoundController::class, 'check'])
         ->name('rounds.track.check')
-        ->middleware('throttle:60,1');
+        ->middleware('throttle:120,1');
     Route::post('rounds/{round}/tracks/{track}/listened', [RoundController::class, 'trackListened'])
         ->name('rounds.tracks.listened');
     Route::get('rounds/{round}/scores', [RoundController::class, 'scores'])

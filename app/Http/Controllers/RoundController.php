@@ -52,235 +52,242 @@ class RoundController extends Controller
 
     public function check(Request $request, Round $round, Track $track)
     {
-        // Check if the round is still running and if the track is corresponding
-        if (! $round->finished_at && $round->tracks[$round->current - 1] === $track->id) {
+        if ($round->finished_at || ! $this->isCurrentTrack($round, $track)) {
+            $error = $round->finished_at ? 'round_ended' : 'track_mismatch';
 
-            // Validate
-            $request->validate([
-                'text' => 'required|string|min:1|max:255',
-                'words' => 'nullable|array',
-                'currentTime' => 'required|numeric|min:0',
-            ]);
-
-            $user = $request->user();
-            $goodAnswers = [];
-            $answers = [];
-            $almostAnswers = false;
-            $duplicateAnswers = []; // Track duplicate answers to inform user
-            $trackDuration = Cache::rememberForever('track_'.$track->id.'_duration', function () use ($round) {
-                return $round->room->track_duration;
-            });
-
-            // Security: Validate currentTime is within reasonable bounds
-            // Allow some tolerance for network/processing delays (max 5 seconds over track duration)
-            $currentTime = (float) $request->input('currentTime');
-            $maxAllowedTime = $trackDuration + 5;
-
-            if ($currentTime < 0 || $currentTime > $maxAllowedTime) {
-                // Invalid time, reject the request
-                return response()->json([
-                    'error' => 'Invalid time',
-                ], 400);
-            }
-
-            $speedBonus = ($currentTime < ($trackDuration * 0.18));
-
-            // Updates the words array
-            $sanitized = sanitizeString($request->input('text'));
-
-            // Check for hint command (!indice or !hint)
-            $textLower = strtolower(trim($request->input('text')));
-            if ($textLower === '!indice' || $textLower === '!hint') {
-                if ($track->hint) {
-                    return response()->json([
-                        'message' => [
-                            'type' => 'hint',
-                            'body' => $track->hint,
-                        ],
-                        'words' => $request->input('words', []),
-                        'good_answers' => [],
-                    ]);
-                } else {
-                    return response()->json([
-                        'message' => [
-                            'type' => 'bad',
-                            'body' => __('No hint available'),
-                        ],
-                        'words' => $request->input('words', []),
-                        'good_answers' => [],
-                    ]);
-                }
-            }
-
-            $newWords = explode(' ', $sanitized);
-            // Filtrer les chaînes vides et sanitiser les mots du client
-            $newWords = array_filter($newWords, fn ($w) => ! empty(trim($w)));
-            $clientWords = $request->input('words', []);
-            // Sanitiser et filtrer les mots du client pour éviter les injections
-            $clientWords = is_array($clientWords) ? array_filter(array_map('trim', $clientWords), fn ($w) => ! empty($w)) : [];
-            $userWords = array_unique(array_merge($newWords, $clientWords));
-
-            // Récupérer les answer_ids déjà trouvés depuis Redis (nouveau système)
-            // Fallback vers scores DB pour compatibilité avec anciens rounds
-            $roundScoreService = app(RoundScoreService::class);
-            $alreadyFoundAnswersIds = $roundScoreService->getFoundAnswerIds($round->id, $user->id, $track->id);
-
-            // Si Redis est vide, fallback vers scores DB (anciens rounds)
-            if (empty($alreadyFoundAnswersIds)) {
-                $alreadyFoundAnswersIds = $user->scores()
-                    ->where('round_id', $round->id)
-                    ->where('track_id', $track->id)
-                    ->pluck('answer_id')
-                    ->toArray();
-            }
-
-            $trackAnswers = $this->getCachedTrackAnswers($track);
-
-            $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
-
-            foreach ($remainingAnswers as $answer) {
-                $candidateLines = $this->candidateLinesForTrackAnswer($answer);
-                $lineComplete = false;
-                $lineAlmost = false;
-
-                foreach ($candidateLines as $rawLine) {
-                    $match = $this->evaluateMatchForAnswerLine($sanitized, $userWords, $rawLine);
-                    if ($match['complete']) {
-                        $lineComplete = true;
-
-                        break;
-                    }
-                    if ($match['almost']) {
-                        $lineAlmost = true;
-                    }
-                }
-
-                $score = 0;
-
-                if ($lineComplete) {
-                    $score = $answer->score;
-                    $goodAnswers[] = $answer;
-
-                    // Calculer l'ordre (premier, deuxième, troisième) AVANT d'ajouter la réponse
-                    // On compte combien de joueurs ont déjà trouvé cette réponse (sans nous)
-                    $roundScoreService = app(RoundScoreService::class);
-                    $playersWhoFoundAnswer = $roundScoreService->countPlayersWhoFoundAnswer($round->id, $track->id, $answer->id, $user->id);
-                    $order = $playersWhoFoundAnswer + 1; // +1 car on est le prochain
-
-                    // Only apply bonuses if the base score is greater than 0
-                    if ($answer->score > 0) {
-                        if ($order < 4) {
-                            $score += 0.5;
-                        }
-
-                        // Flamme - Bonus speed (18% of the room track duration)
-                        // Only apply speed bonus if the base score is not 0
-                        $actualSpeedBonus = false;
-                        if ($speedBonus) {
-                            $score += 0.5;
-                            $actualSpeedBonus = true;
-                        }
-                    } else {
-                        // No bonuses for 0-point answers
-                        $actualSpeedBonus = false;
-                    }
-
-                    // Vérifier atomiquement si cette réponse a déjà été trouvée
-                    // recordTrackDetails retourne false si la réponse existe déjà
-                    $wasNewAnswer = $roundScoreService->recordTrackDetails(
-                        $round->id,
-                        $user->id,
-                        $track->id,
-                        $request->input('currentTime'),
-                        null, // position sera calculée à la fin du round
-                        $score,
-                        $answer->id // answer_id pour recoupements
-                    );
-
-                    // Si la réponse existait déjà, l'ajouter aux doublons et continuer
-                    if (! $wasNewAnswer) {
-                        $duplicateAnswers[] = $answer;
-
-                        continue;
-                    }
-
-                    $answers[] = [
-                        'id' => $answer->id,
-                        'order' => $order,
-                        'speedBonus' => $actualSpeedBonus,
-                        'name' => $answer->type->name,
-                        'value' => $answer->value, // Include original value with parentheses for display
-                    ];
-
-                    // Utiliser Redis pour les scores en temps réel (plus performant)
-                    // On ne crée plus de Score en DB pendant le round
-                    $roundScoreService->addScore($round->id, $user->id, $score);
-
-                    // Pour la compatibilité et les métriques, on peut encore créer un Score
-                    // mais seulement si nécessaire (pour les métriques de performance)
-                    // Pour l'instant, on stocke juste le total dans Redis
-                    // Les métriques détaillées seront calculées depuis Redis si nécessaire
-
-                } elseif ($lineAlmost) {
-                    $almostAnswers = true;
-                }
-            }
-
-            if (! empty($goodAnswers)) {
-                // Récupérer le score total depuis Redis
-                $roundScoreService = app(RoundScoreService::class);
-                $totalScore = $roundScoreService->getUserScore($round->id, $user->id);
-
-                // Compter toutes les réponses trouvées par l'utilisateur pour cette track (depuis Redis)
-                $totalUserAnswers = $roundScoreService->countFoundAnswersForUser($round->id, $user->id, $track->id);
-                $totalTrackAnswers = $trackAnswers->count();
-                $message = $this->getMessage('good');
-
-                // Broadcast score to everyone (only if we have new answers)
-                if (! empty($answers)) {
-                    broadcast(new NewScore([
-                        'room_id' => $round->room->id,
-                        'user_id' => $user->id,
-                        'track_id' => $track->id,
-                        'answers' => $answers,
-                        'total' => $totalScore,
-                        'time' => $request->input('currentTime'),
-                    ]));
-                }
-
-                // If user has found all the answers send the bubble to the player
-                if ($totalUserAnswers === $totalTrackAnswers) {
-                    broadcast(new UserHasFoundAllTheAnswers($round->room, [
-                        'name' => $user->name,
-                        'id' => $user->id,
-                        'photo' => $user->photo,
-                        'time' => $request->input('currentTime'),
-                    ]));
-                }
-            } elseif (! empty($duplicateAnswers)) {
-                // Si toutes les réponses sont des doublons, informer l'utilisateur
-                // mais ne pas retourner un message "bad" car les réponses étaient correctes
-                $message = [
-                    'type' => 'good',
-                    'body' => __('You have already found these answers'),
-                ];
-            } elseif ($almostAnswers) {
-                $message = $this->getMessage('almost');
-            } else {
-                $message = $this->getMessage('bad');
-            }
-
-            return response()->json([
-                'words' => $userWords,
-                'good_answers' => $goodAnswers,
-                'message' => $message,
-            ], 200);
+            return response()->json(['error' => $error], 409);
         }
 
-        // Round ended or track mismatch: explicit response so the client can handle it
-        $error = $round->finished_at ? 'round_ended' : 'track_mismatch';
+        // Validate
+        $request->validate([
+            'text' => 'required|string|min:1|max:255',
+            'words' => 'nullable|array',
+            'currentTime' => 'required|numeric|min:0',
+        ]);
 
-        return response()->json(['error' => $error], 409);
+        $user = $request->user();
+        $goodAnswers = [];
+        $answers = [];
+        $almostAnswers = false;
+        $duplicateAnswers = []; // Track duplicate answers to inform user
+        $trackDuration = $round->room->track_duration;
+
+        // Security: Validate currentTime is within reasonable bounds
+        // Allow tolerance for network/processing delays and fast input buffering
+        $currentTime = (float) $request->input('currentTime');
+        $maxAllowedTime = $trackDuration + 8;
+
+        if ($currentTime < 0 || $currentTime > $maxAllowedTime) {
+            return response()->json([
+                'error' => 'invalid_time',
+                'message' => __('Answer window closed'),
+            ], 400);
+        }
+
+        $speedBonus = ($currentTime < ($trackDuration * 0.18));
+
+        // Updates the words array
+        $sanitized = sanitizeString($request->input('text'));
+
+        // Check for hint command (!indice or !hint)
+        $textLower = strtolower(trim($request->input('text')));
+        if ($textLower === '!indice' || $textLower === '!hint') {
+            if ($track->hint) {
+                return response()->json([
+                    'message' => [
+                        'type' => 'hint',
+                        'body' => $track->hint,
+                    ],
+                    'words' => $request->input('words', []),
+                    'good_answers' => [],
+                ]);
+            } else {
+                return response()->json([
+                    'message' => [
+                        'type' => 'bad',
+                        'body' => __('No hint available'),
+                    ],
+                    'words' => $request->input('words', []),
+                    'good_answers' => [],
+                ]);
+            }
+        }
+
+        $newWords = explode(' ', $sanitized);
+        // Filtrer les chaînes vides et sanitiser les mots du client
+        $newWords = array_filter($newWords, fn ($w) => ! empty(trim($w)));
+        $clientWords = $request->input('words', []);
+        // Sanitiser et filtrer les mots du client pour éviter les injections
+        $clientWords = is_array($clientWords) ? array_filter(array_map('trim', $clientWords), fn ($w) => ! empty($w)) : [];
+        $userWords = array_unique(array_merge($newWords, $clientWords));
+
+        // Récupérer les answer_ids déjà trouvés depuis Redis (nouveau système)
+        // Fallback vers scores DB pour compatibilité avec anciens rounds
+        $roundScoreService = app(RoundScoreService::class);
+        $alreadyFoundAnswersIds = $roundScoreService->getFoundAnswerIds($round->id, $user->id, $track->id);
+
+        // Si Redis est vide, fallback vers scores DB (anciens rounds)
+        if (empty($alreadyFoundAnswersIds)) {
+            $alreadyFoundAnswersIds = $user->scores()
+                ->where('round_id', $round->id)
+                ->where('track_id', $track->id)
+                ->pluck('answer_id')
+                ->toArray();
+        }
+
+        $trackAnswers = $this->getCachedTrackAnswers($track);
+
+        $remainingAnswers = $trackAnswers->whereNotIn('id', $alreadyFoundAnswersIds)->all();
+
+        foreach ($remainingAnswers as $answer) {
+            $candidateLines = $this->candidateLinesForTrackAnswer($answer);
+            $lineComplete = false;
+            $lineAlmost = false;
+
+            foreach ($candidateLines as $rawLine) {
+                $match = $this->evaluateMatchForAnswerLine($sanitized, $userWords, $rawLine);
+                if ($match['complete']) {
+                    $lineComplete = true;
+
+                    break;
+                }
+                if ($match['almost']) {
+                    $lineAlmost = true;
+                }
+            }
+
+            $score = 0;
+
+            if ($lineComplete) {
+                $score = $answer->score;
+                $goodAnswers[] = $answer;
+
+                // Calculer l'ordre (premier, deuxième, troisième) AVANT d'ajouter la réponse
+                // On compte combien de joueurs ont déjà trouvé cette réponse (sans nous)
+                $roundScoreService = app(RoundScoreService::class);
+                $playersWhoFoundAnswer = $roundScoreService->countPlayersWhoFoundAnswer($round->id, $track->id, $answer->id, $user->id);
+                $order = $playersWhoFoundAnswer + 1; // +1 car on est le prochain
+
+                // Only apply bonuses if the base score is greater than 0
+                if ($answer->score > 0) {
+                    if ($order < 4) {
+                        $score += 0.5;
+                    }
+
+                    // Flamme - Bonus speed (18% of the room track duration)
+                    // Only apply speed bonus if the base score is not 0
+                    $actualSpeedBonus = false;
+                    if ($speedBonus) {
+                        $score += 0.5;
+                        $actualSpeedBonus = true;
+                    }
+                } else {
+                    // No bonuses for 0-point answers
+                    $actualSpeedBonus = false;
+                }
+
+                // Vérifier atomiquement si cette réponse a déjà été trouvée
+                // recordTrackDetails retourne false si la réponse existe déjà
+                $wasNewAnswer = $roundScoreService->recordTrackDetails(
+                    $round->id,
+                    $user->id,
+                    $track->id,
+                    $request->input('currentTime'),
+                    null, // position sera calculée à la fin du round
+                    $score,
+                    $answer->id // answer_id pour recoupements
+                );
+
+                // Si la réponse existait déjà, l'ajouter aux doublons et continuer
+                if (! $wasNewAnswer) {
+                    $duplicateAnswers[] = $answer;
+
+                    continue;
+                }
+
+                $answers[] = [
+                    'id' => $answer->id,
+                    'order' => $order,
+                    'speedBonus' => $actualSpeedBonus,
+                    'name' => $answer->type->name,
+                    'value' => $answer->value, // Include original value with parentheses for display
+                ];
+
+                // Utiliser Redis pour les scores en temps réel (plus performant)
+                // On ne crée plus de Score en DB pendant le round
+                $roundScoreService->addScore($round->id, $user->id, $score);
+
+                // Pour la compatibilité et les métriques, on peut encore créer un Score
+                // mais seulement si nécessaire (pour les métriques de performance)
+                // Pour l'instant, on stocke juste le total dans Redis
+                // Les métriques détaillées seront calculées depuis Redis si nécessaire
+
+            } elseif ($lineAlmost) {
+                $almostAnswers = true;
+            }
+        }
+
+        if (! empty($goodAnswers)) {
+            // Récupérer le score total depuis Redis
+            $roundScoreService = app(RoundScoreService::class);
+            $totalScore = $roundScoreService->getUserScore($round->id, $user->id);
+
+            // Compter toutes les réponses trouvées par l'utilisateur pour cette track (depuis Redis)
+            $totalUserAnswers = $roundScoreService->countFoundAnswersForUser($round->id, $user->id, $track->id);
+            $totalTrackAnswers = $trackAnswers->count();
+            $message = $this->getMessage('good');
+
+            // Broadcast score to everyone (only if we have new answers)
+            if (! empty($answers)) {
+                broadcast(new NewScore([
+                    'room_id' => $round->room->id,
+                    'user_id' => $user->id,
+                    'track_id' => $track->id,
+                    'answers' => $answers,
+                    'total' => $totalScore,
+                    'time' => $request->input('currentTime'),
+                ]));
+            }
+
+            // If user has found all the answers send the bubble to the player
+            if ($totalUserAnswers === $totalTrackAnswers) {
+                broadcast(new UserHasFoundAllTheAnswers($round->room, [
+                    'name' => $user->name,
+                    'id' => $user->id,
+                    'photo' => $user->photo,
+                    'time' => $request->input('currentTime'),
+                ]));
+            }
+        } elseif (! empty($duplicateAnswers)) {
+            // Si toutes les réponses sont des doublons, informer l'utilisateur
+            // mais ne pas retourner un message "bad" car les réponses étaient correctes
+            $message = [
+                'type' => 'good',
+                'body' => __('You have already found these answers'),
+            ];
+        } elseif ($almostAnswers) {
+            $message = $this->getMessage('almost');
+        } else {
+            $message = $this->getMessage('bad');
+        }
+
+        return response()->json([
+            'words' => $userWords,
+            'good_answers' => $goodAnswers,
+            'message' => $message,
+        ], 200);
+    }
+
+    private function isCurrentTrack(Round $round, Track $track): bool
+    {
+        $tracks = (array) $round->tracks;
+        $index = (int) $round->current - 1;
+
+        if ($index < 0 || ! array_key_exists($index, $tracks)) {
+            return false;
+        }
+
+        return (int) $tracks[$index] === (int) $track->id;
     }
 
     /**

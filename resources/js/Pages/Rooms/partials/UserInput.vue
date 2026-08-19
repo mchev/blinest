@@ -4,13 +4,15 @@ import { usePage } from '@inertiajs/vue3'
 import Volume from '@/Components/Volume.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import Icon from '@/Components/Icon.vue'
+import { useAnswerSubmissionQueue } from '@/composables/useAnswerSubmissionQueue'
+import { useAnswerFeedbackSounds } from '@/composables/useAnswerFeedbackSounds'
 
 const props = defineProps({
   room: Object,
   channel: String,
   currentTime: Number,
-  initialTrack: Object, // Track currently playing when component mounts
-  initialRound: Object, // Round currently active when component mounts
+  initialTrack: Object,
+  initialRound: Object,
 })
 
 const input = ref(null)
@@ -18,31 +20,58 @@ const track = ref(props.initialTrack || null)
 const round = ref(props.initialRound || null)
 const text = ref('')
 const words = ref([])
-const message = ref(null)
 const answers = ref([])
-const { auth } = usePage().props
+const feedbackFlash = ref(null)
+const hintMessage = ref(null)
+const flashingAnswerIds = ref([])
+const page = usePage()
+const { auth } = page.props
 const user = auth.user
-// Input is disabled only if there's no active track
+
+const __ = (key, replace = {}) => {
+  const translation = page.props.language?.[key] || key
+  let result = translation
+
+  Object.keys(replace).forEach((replaceKey) => {
+    result = result.replace(`:${replaceKey}`, replace[replaceKey])
+  })
+
+  return result
+}
 const inputDisabled = computed(() => !track.value || !round.value)
 const autoFocus = ref(localStorage.getItem('autoFocus') !== 'false')
-const userHasInteracted = ref(false) // Track if user has manually interacted with input
+const answerSounds = ref(localStorage.getItem('answerSounds') !== 'false')
+const userHasInteracted = ref(false)
+const isComposing = ref(false)
+const { playSend, playGood, playAlmost, playBad, primeAnswerFeedbackAudio } = useAnswerFeedbackSounds()
 
-// Non-blocking focus - only if autofocus is enabled and user hasn't manually interacted
+let feedbackTimer = null
+let hintTimer = null
+
+const clearFeedbackTimer = () => {
+  if (feedbackTimer) {
+    clearTimeout(feedbackTimer)
+    feedbackTimer = null
+  }
+}
+
+const clearHintTimer = () => {
+  if (hintTimer) {
+    clearTimeout(hintTimer)
+    hintTimer = null
+  }
+}
+
 const attemptAutoFocus = () => {
-  // Never force focus if user has manually interacted or autofocus is off
   if (!autoFocus.value || userHasInteracted.value) {
     return
   }
 
   if (input.value && !inputDisabled.value) {
-    // Use requestAnimationFrame to avoid blocking user interactions
     requestAnimationFrame(() => {
-      // Double-check conditions haven't changed
       if (input.value && !inputDisabled.value && autoFocus.value && !userHasInteracted.value) {
-        // Only focus if input doesn't already have focus
         if (document.activeElement !== input.value) {
           input.value.focus()
-          // Only select if field is empty
           if (!text.value || text.value.length === 0) {
             requestAnimationFrame(() => {
               if (input.value && (!text.value || text.value.length === 0)) {
@@ -56,17 +85,13 @@ const attemptAutoFocus = () => {
   }
 }
 
-// Watch for initial props changes (when joining a room in progress)
-// Use flush: 'post' to avoid blocking input during rapid typing
 watch(
   () => [props.initialTrack, props.initialRound],
   ([newTrack, newRound]) => {
     if (newTrack && newRound && (!track.value || track.value.id !== newTrack.id)) {
       track.value = newTrack
       round.value = newRound
-      // Reset interaction flag when receiving initial track
       userHasInteracted.value = false
-      // Attempt autofocus if enabled (non-blocking)
       attemptAutoFocus()
     }
   },
@@ -78,124 +103,152 @@ const toggleAutoFocus = () => {
   localStorage.setItem('autoFocus', autoFocus.value)
 }
 
-const showMessage = (data) => {
-  message.value = data
-  // Hints should display longer (5 seconds) than other messages (1.6 seconds)
-  const duration = data?.type === 'hint' ? 5000 : 1600
-  setTimeout(() => {
-    message.value = null
-  }, duration)
+const toggleAnswerSounds = () => {
+  answerSounds.value = !answerSounds.value
+  localStorage.setItem('answerSounds', answerSounds.value ? 'true' : 'false')
+
+  if (answerSounds.value) {
+    primeAnswerFeedbackAudio()
+    playBad()
+  }
 }
 
-// Debounce flag to prevent multiple rapid submissions
-const isSubmitting = ref(false)
+const playResultSound = (type) => {
+  if (type === 'good') {
+    playGood()
+  } else if (type === 'almost') {
+    playAlmost()
+  } else if (type === 'bad') {
+    playBad()
+  }
+}
+
+const flashAnswerChips = (goodAnswers) => {
+  const ids = goodAnswers.map((answer) => answer.id)
+  flashingAnswerIds.value = [...new Set([...flashingAnswerIds.value, ...ids])]
+
+  window.setTimeout(() => {
+    flashingAnswerIds.value = flashingAnswerIds.value.filter((id) => !ids.includes(id))
+  }, 450)
+}
+
+const showFeedback = (type) => {
+  if (!['good', 'bad', 'almost'].includes(type)) {
+    return
+  }
+
+  clearFeedbackTimer()
+  feedbackFlash.value = type
+  playResultSound(type)
+
+  feedbackTimer = window.setTimeout(() => {
+    feedbackFlash.value = null
+  }, 550)
+}
+
+const showHint = (body) => {
+  clearHintTimer()
+  hintMessage.value = body
+
+  hintTimer = window.setTimeout(() => {
+    hintMessage.value = null
+  }, 5000)
+}
+
+const onServerMessage = (data) => {
+  if (data.type === 'hint') {
+    showHint(data.body)
+
+    return
+  }
+
+  showFeedback(data.type)
+}
+
+const { submit, reset, pendingCount } = useAnswerSubmissionQueue({
+  getRound: () => round.value,
+  getTrack: () => track.value,
+  getCurrentTime: () => props.currentTime,
+  getWords: () => words.value,
+  setWords: (nextWords) => {
+    words.value = nextWords
+  },
+  onGoodAnswers: (goodAnswers) => {
+    answers.value.push(...goodAnswers)
+    flashAnswerChips(goodAnswers)
+  },
+  onMessage: onServerMessage,
+  isDisabled: () => inputDisabled.value,
+})
+
+const clearInput = () => {
+  text.value = ''
+
+  if (input.value) {
+    input.value.value = ''
+  }
+}
 
 const check = () => {
-  // Fast validation - return immediately if conditions not met
-  if (isSubmitting.value || inputDisabled.value || text.value.length < 1 || !track.value || !round.value) return
+  if (inputDisabled.value || isComposing.value) {
+    return
+  }
 
-  const currentText = text.value.trim()
-  if (currentText.length < 1) return
+  const submittedText = text.value.trim()
 
-  // Mark as submitting immediately to prevent double submissions
-  isSubmitting.value = true
+  if (submittedText.length < 1) {
+    return
+  }
 
-  // Store what was submitted - preserve original text including spaces
-  const submittedText = text.value // Keep original, not trimmed, to preserve user input
+  clearInput()
 
-  // Fire request immediately without waiting
-  const requestPromise = axios.post(`/rounds/${round.value.id}/tracks/${track.value.id}/check`, {
-    text: currentText,
-    words: words.value,
-    currentTime: props.currentTime,
+  const didSubmit = submit(submittedText)
+
+  if (!didSubmit) {
+    if (!inputDisabled.value && round.value && track.value) {
+      return
+    }
+
+    text.value = submittedText
+
+    return
+  }
+
+  primeAnswerFeedbackAudio()
+  playSend()
+
+  nextTick(() => {
+    requestAnimationFrame(() => {
+      if (input.value && !inputDisabled.value) {
+        input.value.focus()
+      }
+    })
   })
+}
 
-  // DON'T clear input here - wait for server response to avoid losing user input
-  // The input will be cleared only after successful response or if user typed something new
+const onInputInteract = () => {
+  userHasInteracted.value = true
+  primeAnswerFeedbackAudio()
+}
 
-  requestPromise
-    .then((response) => {
-      // Update state asynchronously to not block input
-      if (response.data.good_answers && response.data.good_answers.length > 0) {
-        answers.value.push(...response.data.good_answers)
-      }
-      words.value = response.data.words || []
-      showMessage(response.data.message)
-
-      // Only clear input if text still matches what we submitted (user didn't continue typing)
-      // This preserves rapid typing where user submits and immediately types next answer
-      const currentTextValue = text.value.trim()
-      if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
-        // Safe to clear - user hasn't started typing next answer yet
-        text.value = ''
-
-        // Maintain focus for next input
-        nextTick(() => {
-          requestAnimationFrame(() => {
-            if (input.value && !inputDisabled.value) {
-              input.value.focus()
-            }
-          })
-        })
-      }
-      // If text changed, user already started typing next answer - preserve it, don't clear
-    })
-    .catch((error) => {
-      console.error('Error checking answer:', error)
-
-      // Always reset submitting flag, even on error
-      isSubmitting.value = false
-
-      const status = error.response?.status
-      const isNetworkOrThrottle = !error.response || status === 429
-      const isConflict = status === 409
-
-      if (isNetworkOrThrottle) {
-        showMessage({ type: 'bad', body: __('Connection problem, please try again') })
-      } else if (isConflict) {
-        showMessage({ type: 'bad', body: __('The round has changed, try again on the next track') })
-        const currentTextValue = text.value.trim()
-        if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
-          text.value = ''
-        }
-      }
-
-      // Restore text on error so user can retry (unless validation or conflict)
-      if (status !== 400 && !isConflict) {
-        const currentTextValue = text.value.trim()
-        if (currentTextValue === '' || currentTextValue === currentText) {
-          text.value = submittedText
-        }
-      } else if (status === 400) {
-        const currentTextValue = text.value.trim()
-        if (currentTextValue === currentText || currentTextValue === submittedText.trim()) {
-          text.value = ''
-        }
-      }
-
-      nextTick(() => {
-        requestAnimationFrame(() => {
-          if (input.value && !inputDisabled.value) {
-            input.value.focus()
-          }
-        })
-      })
-    })
-    .finally(() => {
-      // Reset flag after request completes (if not already reset in catch)
-      if (isSubmitting.value) {
-        isSubmitting.value = false
-      }
-    })
+const onInputKeydown = () => {
+  primeAnswerFeedbackAudio()
 }
 
 const pastedAnswer = (event) => {
   event.preventDefault()
-  text.value = "Je copie colle et c'est mal. Je copie colle et c'est mal."
+  showFeedback('bad')
+}
+
+const resetFeedback = () => {
+  clearFeedbackTimer()
+  clearHintTimer()
+  feedbackFlash.value = null
+  hintMessage.value = null
+  flashingAnswerIds.value = []
 }
 
 onMounted(() => {
-  // If we have initial track/round, attempt autofocus
   if (track.value && round.value) {
     attemptAutoFocus()
   }
@@ -205,16 +258,19 @@ onMounted(() => {
       if (e.room) {
         Object.assign(props.room, e.room)
       }
+      resetFeedback()
+      reset()
       round.value = e.round
       track.value = e.track
       answers.value = []
       text.value = ''
-      // Reset interaction flag on new track - allow autofocus again
+      words.value = []
       userHasInteracted.value = false
-      // Attempt autofocus on new track (non-blocking)
       attemptAutoFocus()
     })
     .listen('TrackEnded', () => {
+      resetFeedback()
+      reset()
       track.value = null
       round.value = null
       text.value = ''
@@ -222,31 +278,46 @@ onMounted(() => {
     })
     .listen('UserHasFoundAllTheAnswers', (e) => {
       if (e.user === user) {
-        // Don't disable input, just prevent further submissions
-        // The input will be disabled automatically via computed when track ends
+        // Input disables automatically when track ends
       }
     })
 })
 
-const messageClass = computed(() => ({
-  'bg-brand-accent-dark': message.value?.type === 'good',
-  'bg-brand-secondary text-brand-midnight': message.value?.type === 'almost',
-  'bg-brand-primary': message.value?.type === 'bad',
-  'bg-brand-deep border border-brand-accent/30': message.value?.type === 'hint',
+const feedbackWrapClass = computed(() => ({
+  'room-input-wrap--flash-good': feedbackFlash.value === 'good',
+  'room-input-wrap--flash-almost': feedbackFlash.value === 'almost',
+  'room-input-wrap--flash-bad': feedbackFlash.value === 'bad',
 }))
+
+const feedbackAriaLabel = computed(() => {
+  switch (feedbackFlash.value) {
+    case 'good':
+      return __('Correct answer')
+    case 'almost':
+      return __('Almost!')
+    case 'bad':
+      return __('Wrong!')
+    default:
+      return ''
+  }
+})
 
 const isAnswerFound = (answerId) => answers.value.some((a) => a.id === answerId)
 
 const getFoundAnswer = (answerId) => answers.value.find((a) => a.id === answerId)
+
+const isAnswerFlashing = (answerId) => flashingAnswerIds.value.includes(answerId)
 </script>
 
 <template>
   <div class="room-user-input w-full space-y-2">
     <form class="m-0 flex w-full items-center justify-center p-0" @submit.prevent="check">
       <div class="relative flex w-full flex-col">
-        <div class="room-input-wrap">
+        <span class="sr-only" aria-live="polite" aria-atomic="true">{{ feedbackAriaLabel }}</span>
+
+        <div class="room-input-wrap" :class="feedbackWrapClass">
           <div class="room-input-field">
-            <input ref="input" v-model="text" type="text" class="room-input" :placeholder="__('Any idea?')" :aria-label="__('Any idea?')" tabindex="0" @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" @focus="userHasInteracted = true" @click="userHasInteracted = true" @keydown.enter.prevent="check" autocomplete="off" maxlength="255" :disabled="inputDisabled || isSubmitting" />
+            <input ref="input" v-model="text" type="text" class="room-input" :placeholder="__('Any idea?')" :aria-label="__('Any idea?')" tabindex="0" @paste.prevent="pastedAnswer" @drop.prevent="pastedAnswer" @focus="onInputInteract" @click="onInputInteract" @keydown="onInputKeydown" @compositionstart="isComposing = true" @compositionend="isComposing = false" @keydown.enter.prevent="check" autocomplete="off" maxlength="255" :disabled="inputDisabled" />
           </div>
 
           <div class="room-input-actions">
@@ -260,8 +331,8 @@ const getFoundAnswer = (answerId) => answers.value.find((a) => a.id === answerId
 
               <template #dropdown>
                 <div class="w-64 py-2">
-                  <div class="px-4 py-2">
-                    <div class="mb-3 flex items-center justify-between">
+                  <div class="space-y-3 px-4 py-2">
+                    <div class="flex items-center justify-between">
                       <label class="text-sm text-white/70">{{ __('Auto-focus') }}</label>
                       <button type="button" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200" :class="autoFocus ? 'bg-brand-accent-dark' : 'bg-brand-midnight'" :aria-pressed="autoFocus" @click="toggleAutoFocus">
                         <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="autoFocus ? 'translate-x-6' : 'translate-x-1'" />
@@ -269,14 +340,19 @@ const getFoundAnswer = (answerId) => answers.value.find((a) => a.id === answerId
                     </div>
 
                     <div class="flex items-center justify-between">
-                      <Volume class="w-full" />
+                      <label class="text-sm text-white/70">{{ __('Answer sounds') }}</label>
+                      <button type="button" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200" :class="answerSounds ? 'bg-brand-accent-dark' : 'bg-brand-midnight'" :aria-pressed="answerSounds" @click="toggleAnswerSounds">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200" :class="answerSounds ? 'translate-x-6' : 'translate-x-1'" />
+                      </button>
                     </div>
+
+                    <Volume class="w-full" />
                   </div>
                 </div>
               </template>
             </Dropdown>
 
-            <button type="submit" class="room-input-submit" :disabled="inputDisabled || !text.trim() || isSubmitting" :aria-label="__('Send')">
+            <button type="submit" class="room-input-submit" :class="{ 'room-input-submit--busy': pendingCount > 0 }" :disabled="inputDisabled || !text.trim()" :aria-label="__('Send')" :aria-busy="pendingCount > 0">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
@@ -284,20 +360,18 @@ const getFoundAnswer = (answerId) => answers.value.find((a) => a.id === answerId
           </div>
         </div>
 
-        <div class="room-answer-feedback" aria-live="polite" aria-atomic="true">
-          <transition name="fade">
-            <blockquote v-if="message" class="room-answer-feedback__message" :class="messageClass">
-              <Icon v-if="message.type === 'hint'" name="hint" class="h-4 w-4 flex-shrink-0 text-brand-secondary" />
-              <span>{{ message.body }}</span>
-            </blockquote>
-          </transition>
-        </div>
+        <transition name="fade">
+          <p v-if="hintMessage" class="room-input-hint">
+            <Icon name="hint" class="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{{ hintMessage }}</span>
+          </p>
+        </transition>
       </div>
     </form>
 
     <div class="room-answer-chips-row relative min-w-0">
       <transition-group name="fade-slide" tag="ul" v-if="track" class="room-answer-chips flex flex-wrap gap-2 text-sm sm:gap-4">
-        <li v-for="answer in track.answers" :key="answer.id" class="room-answer-chip" :class="{ 'room-answer-chip--found': isAnswerFound(answer.id) }">
+        <li v-for="answer in track.answers" :key="answer.id" class="room-answer-chip" :class="{ 'room-answer-chip--found': isAnswerFound(answer.id), 'room-answer-chip--flash': isAnswerFlashing(answer.id) }">
           <template v-if="isAnswerFound(answer.id)">
             <span v-if="getFoundAnswer(answer.id)?.type?.svg_icon" class="mr-2 text-white/90" v-html="getFoundAnswer(answer.id).type.svg_icon"></span>
             <span class="font-semibold text-white">{{ getFoundAnswer(answer.id)?.value || answer.value }}</span>
