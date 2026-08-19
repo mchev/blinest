@@ -459,6 +459,18 @@
     @apply min-h-[42px] min-w-[7.75rem] flex-shrink-0 snap-start rounded-md px-3 py-2 text-[11px] font-bold uppercase leading-snug tracking-wide text-white/75 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brand-midnight sm:min-w-[8.5rem] sm:px-4 sm:text-xs;
   }
 
+  .home-rooms-switch__tab-inner {
+    @apply inline-flex w-full items-center justify-center gap-2;
+  }
+
+  .home-rooms-switch__tab-count {
+    @apply inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-white;
+  }
+
+  .home-rooms-switch__tab--active .home-rooms-switch__tab-count {
+    @apply bg-brand-accent/20 text-brand-accent-light;
+  }
+
   @media (min-width: 1024px) {
     .home-rooms-switch__tab {
       @apply min-w-0 flex-1;

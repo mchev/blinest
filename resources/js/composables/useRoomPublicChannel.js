@@ -1,10 +1,14 @@
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, inject } from 'vue'
+
+const PUBLIC_STATE_POLL_MS = 30_000
 
 /**
  * Live state for homepage room cards via public Echo channel.
  * Subscribes only while the card is visible (IntersectionObserver).
  */
 export function useRoomPublicChannel(room, rootRef) {
+  const reportTabPlayerDelta = inject('reportTabPlayerDelta', null)
+
   const memberCount = ref(room.subscriptions ?? 0)
   const isPlaying = ref(Boolean(room.is_playing))
   const currentTrackIndex = ref(room.current_track_index ?? 0)
@@ -41,6 +45,27 @@ export function useRoomPublicChannel(room, rootRef) {
   let echoChannel = null
   let observer = null
   let bumpTimeout = null
+  let pollInterval = null
+  let lastReportedMemberCount = room.subscriptions ?? 0
+
+  function reportMemberCountDelta(nextCount) {
+    if (typeof reportTabPlayerDelta !== 'function') {
+      return
+    }
+
+    const delta = nextCount - lastReportedMemberCount
+
+    if (delta === 0) {
+      return
+    }
+
+    lastReportedMemberCount = nextCount
+    reportTabPlayerDelta({
+      roomId: room.id,
+      delta,
+      tab: room.is_public ? 'official' : 'community',
+    })
+  }
 
   function applyPublicState(payload) {
     if (payload.memberCount !== undefined && payload.memberCount > memberCount.value) {
@@ -55,6 +80,7 @@ export function useRoomPublicChannel(room, rootRef) {
 
     if (payload.memberCount !== undefined) {
       memberCount.value = payload.memberCount
+      reportMemberCountDelta(payload.memberCount)
     }
     if (payload.isPlaying !== undefined) {
       isPlaying.value = payload.isPlaying
@@ -64,14 +90,38 @@ export function useRoomPublicChannel(room, rootRef) {
     }
   }
 
-  function subscribeEcho() {
-    if (echoChannel) {
+  function listenForPublicState(channel) {
+    channel.listen('.RoomPublicState', applyPublicState)
+    channel.listen('RoomPublicState', applyPublicState)
+  }
+
+  function startPolling() {
+    if (pollInterval) {
       return
     }
 
-    echoChannel = Echo.channel(`room.public.${room.id}`)
-    echoChannel.listen('RoomPublicState', applyPublicState)
+    pollInterval = setInterval(fetchInitialPublicState, PUBLIC_STATE_POLL_MS)
+  }
+
+  function stopPolling() {
+    if (!pollInterval) {
+      return
+    }
+
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+
+  function subscribeEcho() {
     fetchInitialPublicState()
+    startPolling()
+
+    if (echoChannel || !window.Echo) {
+      return
+    }
+
+    echoChannel = window.Echo.channel(`room.public.${room.id}`)
+    listenForPublicState(echoChannel)
   }
 
   async function fetchInitialPublicState() {
@@ -91,16 +141,20 @@ export function useRoomPublicChannel(room, rootRef) {
         applyPublicState(await response.json())
       }
     } catch {
-      // Ignore network errors; Echo will catch up on the next broadcast.
+      // Ignore network errors; Echo or the next poll will catch up.
     }
   }
 
   function leaveEcho() {
-    if (!echoChannel) {
+    stopPolling()
+
+    if (!echoChannel || !window.Echo) {
+      echoChannel = null
+
       return
     }
 
-    Echo.leave(`room.public.${room.id}`)
+    window.Echo.leave(`room.public.${room.id}`)
     echoChannel = null
   }
 
@@ -109,6 +163,7 @@ export function useRoomPublicChannel(room, rootRef) {
     (value) => {
       if (value !== undefined && value !== null) {
         memberCount.value = value
+        lastReportedMemberCount = value
       }
     },
   )

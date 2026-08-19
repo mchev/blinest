@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, provide, ref, watch } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { useCatalogLoadMore } from '@/composables/useCatalogLoadMore'
 import Room from './Room.vue'
@@ -27,6 +27,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  catalogTabPlayerCounts: {
+    type: Object,
+    default: () => ({ official: 0, community: 0 }),
+  },
   hiddenCategoryIds: {
     type: Array,
     default: () => [],
@@ -37,6 +41,34 @@ const page = usePage()
 const pendingTab = ref(null)
 const pendingFilter = ref(false)
 const selectedCategoryId = ref(props.catalogCategoryId ? String(props.catalogCategoryId) : '')
+
+const liveTabPlayerCounts = ref({
+  official: props.catalogTabPlayerCounts?.official ?? 0,
+  community: props.catalogTabPlayerCounts?.community ?? 0,
+})
+
+watch(
+  () => props.catalogTabPlayerCounts,
+  (counts) => {
+    if (!counts) {
+      return
+    }
+
+    liveTabPlayerCounts.value = {
+      official: counts.official ?? 0,
+      community: counts.community ?? 0,
+    }
+  },
+  { deep: true },
+)
+
+provide('reportTabPlayerDelta', ({ tab, delta }) => {
+  if (!tab || delta === 0) {
+    return
+  }
+
+  liveTabPlayerCounts.value[tab] = Math.max(0, (liveTabPlayerCounts.value[tab] ?? 0) + delta)
+})
 
 const user = computed(() => page.props.auth?.user ?? null)
 
@@ -58,8 +90,16 @@ const t = (key, replace = {}) => {
 
 const tabs = computed(() => {
   const items = [
-    { id: 'official', label: t('Official rooms') },
-    { id: 'community', label: t('Private rooms') },
+    {
+      id: 'official',
+      label: t('Official rooms'),
+      playerCount: liveTabPlayerCounts.value?.official ?? null,
+    },
+    {
+      id: 'community',
+      label: t('Private rooms'),
+      playerCount: liveTabPlayerCounts.value?.community ?? null,
+    },
   ]
 
   if (user.value) {
@@ -250,7 +290,13 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
 
       <div class="home-rooms-switch" :class="switchTabsClass" role="tablist" :aria-label="t('Home catalog')">
         <button v-for="tab in tabs" :id="tabId(tab.id)" :key="tab.id" type="button" role="tab" class="home-rooms-switch__tab" :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id }" :aria-selected="displayCatalog === tab.id" :aria-controls="panelId(tab.id)" :tabindex="displayCatalog === tab.id ? 0 : -1" @click="switchTab(tab.id)">
-          {{ tab.label }}
+          <span class="home-rooms-switch__tab-inner">
+            <span>{{ tab.label }}</span>
+            <span v-if="tab.playerCount != null" class="home-rooms-switch__tab-count" :aria-label="t(':count players online', { count: tab.playerCount })">
+              <Icon name="users" class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>{{ tab.playerCount }}</span>
+            </span>
+          </span>
         </button>
       </div>
 

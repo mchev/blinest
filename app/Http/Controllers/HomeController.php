@@ -41,6 +41,7 @@ class HomeController extends Controller
             'featured_rooms' => fn () => $this->homeCatalog->featuredRooms(),
             'public_categories' => fn () => $this->homeCatalog->publicCategories(),
             'community_categories' => fn () => $this->homeCatalog->communityCategories(),
+            'catalog_tab_player_counts' => fn () => $this->homeCatalog->catalogTabPlayerCounts(),
             'homepage_hidden_category_ids' => fn () => config('blinest.homepage_hidden_category_ids', []),
         ]);
     }

@@ -2,6 +2,7 @@
 import { ref, computed, toRef } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import PlayingIcon from '@/Components/PlayingIcon.vue'
+import Icon from '@/Components/Icon.vue'
 import { useRoomPublicChannel } from '@/composables/useRoomPublicChannel'
 import { useRoomPoster } from '@/composables/useRoomPoster'
 
@@ -89,12 +90,20 @@ const trackStatLabel = computed(() => {
     return t('Track :current / :total', { current: currentTrackIndex.value, total: tracksByRound.value })
   }
 
+  if (isPrivateRoom.value && props.room.tracks_count != null) {
+    return `${props.room.tracks_count} ${t('tracks')}`
+  }
+
   return `${tracksByRound.value} ${t('tracks')}`
 })
 
 const trackStatValue = computed(() => {
   if (isPlaying.value) {
     return `${currentTrackIndex.value}/${tracksByRound.value}`
+  }
+
+  if (isPrivateRoom.value && props.room.tracks_count != null) {
+    return String(props.room.tracks_count)
   }
 
   return String(tracksByRound.value)
@@ -163,18 +172,14 @@ function dotActive(index) {
           </h3>
           <div class="game-card__stats">
             <span class="retro-stat retro-stat--card" :class="{ 'scale-110': memberCountBump }" :aria-label="onlineStatLabel" :title="onlineStatLabel">
-              <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13Z" />
-              </svg>
+              <Icon name="users" class="h-4 w-4 shrink-0" aria-hidden="true" />
               <span class="tabular-nums">{{ memberCount }}</span>
-              <span class="hidden sm:inline">{{ t('online') }}</span>
             </span>
             <span class="retro-stat retro-stat--card" :aria-label="trackStatLabel" :title="trackStatLabel">
-              <svg class="h-4 w-4 shrink-0 sm:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
               </svg>
-              <span class="tabular-nums sm:hidden">{{ trackStatValue }}</span>
-              <span class="hidden sm:inline">{{ trackStatLabel }}</span>
+              <span class="tabular-nums">{{ trackStatValue }}</span>
             </span>
           </div>
         </div>
@@ -192,18 +197,14 @@ function dotActive(index) {
             </h3>
             <div class="game-card__stats">
               <span class="retro-stat retro-stat--card" :class="{ 'scale-110': memberCountBump }" :aria-label="onlineStatLabel" :title="onlineStatLabel">
-                <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M2 22C2 17.5817 5.58172 14 10 14C14.4183 14 18 17.5817 18 22H16C16 18.6863 13.3137 16 10 16C6.68629 16 4 18.6863 4 22H2ZM10 13C6.685 13 4 10.315 4 7C4 3.685 6.685 1 10 1C13.315 1 16 3.685 16 7C16 10.315 13.315 13 10 13Z" />
-                </svg>
+                <Icon name="users" class="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span class="tabular-nums">{{ memberCount }}</span>
-                <span class="hidden sm:inline">{{ t('online') }}</span>
               </span>
               <span class="retro-stat retro-stat--card" :aria-label="trackStatLabel" :title="trackStatLabel">
-                <svg class="h-4 w-4 shrink-0 sm:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
                 </svg>
-                <span class="tabular-nums sm:hidden">{{ trackStatValue }}</span>
-                <span class="hidden sm:inline">{{ trackStatLabel }}</span>
+                <span class="tabular-nums">{{ trackStatValue }}</span>
               </span>
             </div>
           </div>

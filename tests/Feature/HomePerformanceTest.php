@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Playlist;
 use App\Models\Room;
+use App\Models\Track;
 use App\Models\User;
 use App\Services\RoomPresenceService;
 use Illuminate\Broadcasting\BroadcastManager;
@@ -428,6 +430,152 @@ class HomePerformanceTest extends TestCase
                 ->where('catalog_items.total', 20));
     }
 
+    public function test_homepage_includes_catalog_tab_player_counts(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $publicRoom = Room::create([
+            'name' => 'Public Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $privateRoom = Room::create([
+            'name' => 'Private Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($publicRoom, $privateRoom): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturnUsing(function ($rooms) use ($publicRoom, $privateRoom) {
+                    $counts = [];
+
+                    foreach ($rooms as $room) {
+                        $id = is_array($room) ? $room['id'] : $room->id;
+                        $counts[$id] = match ($id) {
+                            $publicRoom->id => 10,
+                            $privateRoom->id => 7,
+                            default => 0,
+                        };
+                    }
+
+                    return $counts;
+                });
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog_tab_player_counts.official', 10)
+                ->where('catalog_tab_player_counts.community', 7));
+    }
+
+    public function test_community_tab_player_count_uses_live_presence_not_cached_index(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'Private Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        Cache::put('homepage-community-room-ids-v1', [$room->id], now()->addMinute());
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($room): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturnUsing(function ($rooms) use ($room) {
+                    $counts = [];
+
+                    foreach ($rooms as $candidate) {
+                        $id = is_array($candidate) ? $candidate['id'] : $candidate->id;
+                        $counts[$id] = $id === $room->id ? 12 : 0;
+                    }
+
+                    return $counts;
+                });
+        });
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog_tab_player_counts.community', 12));
+    }
+
+    public function test_community_catalog_breaks_ties_by_round_count(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $veteranRoom = Room::create([
+            'name' => 'Veteran Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $newRoom = Room::create([
+            'name' => 'New Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $veteranRoom->rounds()->create([
+            'is_playing' => false,
+            'current' => 0,
+            'tracks' => [1, 2, 3],
+        ]);
+
+        $veteranRoom->rounds()->create([
+            'is_playing' => false,
+            'current' => 0,
+            'tracks' => [1, 2, 3],
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($newRoom, $veteranRoom): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturnUsing(function ($rooms) use ($newRoom, $veteranRoom) {
+                    $counts = [];
+
+                    foreach ($rooms as $room) {
+                        $id = is_array($room) ? $room['id'] : $room->id;
+                        $counts[$id] = in_array($id, [$newRoom->id, $veteranRoom->id], true) ? 5 : 0;
+                    }
+
+                    return $counts;
+                });
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog_items.data.0.id', $veteranRoom->id)
+                ->where('catalog_items.data.1.id', $newRoom->id));
+    }
+
     public function test_community_catalog_is_sorted_by_player_count(): void
     {
         $category = Category::create(['name' => 'Pop']);
@@ -477,7 +625,58 @@ class HomePerformanceTest extends TestCase
                 ->has('catalog_items.data', 2)
                 ->where('catalog_items.data.0.id', $busyRoom->id)
                 ->where('catalog_items.data.0.subscriptions', 42)
+                ->where('catalog_items.data.0.tracks_count', fn ($count) => is_int($count))
                 ->where('catalog_items.data.1.id', $quietRoom->id));
+    }
+
+    public function test_community_catalog_includes_playlist_tracks_count(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+        $playlist = Playlist::create([
+            'name' => 'Community Playlist',
+            'user_id' => $owner->id,
+        ]);
+
+        $room = Room::create([
+            'name' => 'Community Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $room->playlists()->attach($playlist->id);
+
+        Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'track-a',
+            'preview_url' => 'https://example.com/a',
+            'artwork_url' => 'https://example.com/a.jpg',
+        ]);
+
+        Track::create([
+            'playlist_id' => $playlist->id,
+            'user_id' => $owner->id,
+            'provider' => 'youtube',
+            'provider_id' => 'track-b',
+            'preview_url' => 'https://example.com/b',
+            'artwork_url' => 'https://example.com/b.jpg',
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog_items.data.0.tracks_count', 2));
     }
 
     public function test_mine_catalog_is_empty_when_user_has_no_private_rooms(): void

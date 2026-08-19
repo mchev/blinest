@@ -23,6 +23,20 @@ class HomeCatalogService
 
     public function __construct(private RoomPresenceService $roomPresence) {}
 
+    /** @var array<int, int>|null */
+    private ?array $memoizedPublicPresenceCounts = null;
+
+    /**
+     * @return array{official: int, community: int}
+     */
+    public function catalogTabPlayerCounts(): array
+    {
+        return [
+            'official' => array_sum($this->publicRoomPresenceCounts()),
+            'community' => $this->communityTabPlayerCount(),
+        ];
+    }
+
     /**
      * @return list<array<string, mixed>>
      */
@@ -129,7 +143,7 @@ class HomeCatalogService
         $pageName = 'catalog';
         $page = Paginator::resolveCurrentPage($pageName);
 
-        $sortedIds = collect($this->cachedCommunityRoomIndex())
+        $sortedIds = collect($this->communityRoomIndex())
             ->when(
                 $categoryId !== null,
                 fn (Collection $rows) => $rows->where('category_id', $categoryId),
@@ -165,7 +179,7 @@ class HomeCatalogService
         $rooms = collect($pageIds)
             ->map(fn (int $id) => $roomsById->get($id))
             ->filter()
-            ->map(fn (Room $room) => $this->mapRoomForHomepage($room))
+            ->map(fn (Room $room) => $this->mapRoomForHomepage($room, includeTracksCount: true))
             ->values()
             ->all();
 
@@ -216,10 +230,17 @@ class HomeCatalogService
      */
     private function officialRooms(Request $request): array
     {
+        $counts = $this->publicRoomPresenceCounts();
+
+        $rooms = array_map(
+            fn (array $room) => array_merge($room, [
+                'subscriptions' => $counts[$room['id']] ?? 0,
+            ]),
+            $this->cachedPublicRooms(),
+        );
+
         $rooms = $this->sortRoomsByPopularity(
-            $this->overlayLiveRoomState(
-                $this->applyPresenceCounts($this->cachedPublicRooms()),
-            ),
+            $this->overlayLiveRoomState($rooms),
         );
 
         $hiddenCategoryIds = config('blinest.homepage_hidden_category_ids', []);
@@ -240,34 +261,67 @@ class HomeCatalogService
     }
 
     /**
-     * @return list<array{id: int, category_id: int|null, subscriptions: int, rounds_count: int}>
+     * @return list<int>
      */
-    private function cachedCommunityRoomIndex(): array
+    private function cachedCommunityRoomIds(): array
     {
-        return Cache::remember('homepage-community-room-index-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
-            $candidates = Room::query()
+        return Cache::remember('homepage-community-room-ids-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+            return Room::query()
                 ->isPrivate()
                 ->whereNull('password')
-                ->withCount('rounds')
-                ->get(['id', 'category_id']);
-
-            if ($candidates->isEmpty()) {
-                return [];
-            }
-
-            $presenceCounts = $this->roomPresence->getMemberCountsForRooms($candidates);
-
-            return $candidates
-                ->map(fn (Room $room) => [
-                    'id' => $room->id,
-                    'category_id' => $room->category_id,
-                    'subscriptions' => $presenceCounts[$room->id] ?? 0,
-                    'rounds_count' => (int) ($room->rounds_count ?? 0),
-                ])
-                ->sortByDesc(fn (array $row) => [$row['subscriptions'], $row['rounds_count'], $row['id']])
-                ->values()
+                ->orderBy('id')
+                ->pluck('id')
                 ->all();
         });
+    }
+
+    /**
+     * @return list<array{id: int, category_id: int|null, subscriptions: int, rounds_count: int}>
+     */
+    private function communityRoomIndex(): array
+    {
+        $roomIds = $this->cachedCommunityRoomIds();
+
+        if ($roomIds === []) {
+            return [];
+        }
+
+        $candidates = Room::query()
+            ->whereIn('id', $roomIds)
+            ->withCount('rounds')
+            ->get(['id', 'category_id']);
+
+        if ($candidates->isEmpty()) {
+            return [];
+        }
+
+        $presenceCounts = $this->roomPresence->getMemberCountsForRooms($candidates);
+
+        return $candidates
+            ->map(fn (Room $room) => [
+                'id' => $room->id,
+                'category_id' => $room->category_id,
+                'subscriptions' => $presenceCounts[$room->id] ?? 0,
+                'rounds_count' => (int) ($room->rounds_count ?? 0),
+            ])
+            ->sortByDesc(fn (array $row) => [$row['subscriptions'], $row['rounds_count'], $row['id']])
+            ->values()
+            ->all();
+    }
+
+    private function communityTabPlayerCount(): int
+    {
+        $roomIds = $this->cachedCommunityRoomIds();
+
+        if ($roomIds === []) {
+            return 0;
+        }
+
+        return (int) array_sum(
+            $this->roomPresence->getMemberCountsForRooms(
+                collect($roomIds)->map(fn (int $id): array => ['id' => $id]),
+            ),
+        );
     }
 
     /**
@@ -296,7 +350,9 @@ class HomeCatalogService
 
         return $this->sortRoomsByPopularity(
             $this->overlayLiveRoomState(
-                $this->applyPresenceCounts($rooms),
+                $this->applyPresenceCounts(
+                    $this->applyTracksCountsToPayload($rooms),
+                ),
             ),
         );
     }
@@ -337,9 +393,9 @@ class HomeCatalogService
     /**
      * @return array<string, mixed>
      */
-    private function mapRoomForHomepage(Room $room): array
+    private function mapRoomForHomepage(Room $room, bool $includeTracksCount = false): array
     {
-        return array_merge(
+        $mapped = array_merge(
             $room->toHomepageArray(),
             [
                 'owner' => $room->owner?->toArray(),
@@ -350,6 +406,63 @@ class HomeCatalogService
                 ] : null,
             ],
         );
+
+        if ($includeTracksCount) {
+            $mapped['tracks_count'] = $this->tracksCountForRoom($room);
+        }
+
+        return $mapped;
+    }
+
+    private function tracksCountForRoom(Room $room): int
+    {
+        return (int) Cache::flexible(
+            "room_{$room->id}_tracks_count",
+            [300, 900],
+            fn () => $room->tracks()->count(),
+        );
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rooms
+     * @return list<array<string, mixed>>
+     */
+    private function applyTracksCountsToPayload(array $rooms): array
+    {
+        if ($rooms === []) {
+            return [];
+        }
+
+        $roomModels = Room::query()
+            ->whereIn('id', array_column($rooms, 'id'))
+            ->get()
+            ->keyBy('id');
+
+        return array_map(function (array $room) use ($roomModels): array {
+            $roomModel = $roomModels->get($room['id']);
+
+            if ($roomModel) {
+                $room['tracks_count'] = $this->tracksCountForRoom($roomModel);
+            }
+
+            return $room;
+        }, $rooms);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function publicRoomPresenceCounts(): array
+    {
+        if ($this->memoizedPublicPresenceCounts !== null) {
+            return $this->memoizedPublicPresenceCounts;
+        }
+
+        $this->memoizedPublicPresenceCounts = $this->roomPresence->getMemberCountsForRooms(
+            collect($this->cachedPublicRooms()),
+        );
+
+        return $this->memoizedPublicPresenceCounts;
     }
 
     /**

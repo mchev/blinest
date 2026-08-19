@@ -34,7 +34,11 @@ const visibleTab = computed(() => {
     return hasPlayers.value ? 'players' : 'teams'
   }
 
-  return activeTab.value
+  if (activeTab.value === 'teams' && hasTeams.value) {
+    return 'teams'
+  }
+
+  return hasPlayers.value ? 'players' : 'teams'
 })
 
 watch(
@@ -50,7 +54,9 @@ watch(
   () => props.show,
   (value) => {
     if (value) {
-      activeTab.value = hasPlayers.value ? 'players' : 'teams'
+      users_results.value = props.users_podium ?? users_results.value
+      teams_results.value = props.teams_podium ?? teams_results.value
+      activeTab.value = 'players'
       startCountdown()
     }
   },
