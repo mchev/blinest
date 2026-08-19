@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
-import { Link, usePage } from '@inertiajs/vue3'
+import { onMounted, ref, watch } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import { useDonationGoal } from '@/composables/useDonationGoal'
 
 defineProps({
@@ -10,73 +10,89 @@ defineProps({
   },
 })
 
-const page = usePage()
-const { goal, donationUrl, formatEuros } = useDonationGoal()
+const { goal, donationUrl, recentSupporters, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, translate } = useDonationGoal()
 
-const __ = (key, replace = {}) => {
-  let translation = page.props.language?.[key] || key
+const showConfetti = ref(false)
 
-  Object.keys(replace).forEach((placeholder) => {
-    translation = translation.replace(`:${placeholder}`, replace[placeholder])
-  })
+function triggerConfetti() {
+  if (!goal.value?.goal_reached) {
+    showConfetti.value = false
 
-  return translation
+    return
+  }
+
+  showConfetti.value = true
+  window.setTimeout(() => {
+    showConfetti.value = false
+  }, 4200)
 }
 
-const effectiveCents = computed(() => goal.value?.effective_cents ?? goal.value?.raised_cents ?? 0)
+onMounted(triggerConfetti)
 
-const statusLine = computed(() => {
-  if (!goal.value) {
-    return ''
-  }
-
-  if (goal.value.goal_reached) {
-    return __('Donation status reached')
-  }
-
-  return __('Donation status progress', {
-    days: goal.value.days_remaining,
-  })
-})
+watch(
+  () => goal.value?.goal_reached,
+  (reached) => {
+    if (reached) {
+      triggerConfetti()
+    }
+  },
+)
 </script>
 
 <template>
-  <div v-if="goal" class="space-y-3">
-    <div class="flex items-start justify-between gap-3">
-      <div class="min-w-0 space-y-1">
-        <p class="game-section-kicker">{{ __('Donation card kicker') }}</p>
-        <p class="text-sm leading-snug text-white/75" :class="compact ? 'text-xs' : ''">
-          {{ statusLine }}
-        </p>
-      </div>
-      <span class="shrink-0 text-sm font-bold tabular-nums" :class="goal.goal_reached ? 'text-emerald-400' : 'text-white'"> {{ goal.percent }}% </span>
+  <div v-if="goal" class="donation-goal-card relative overflow-hidden">
+    <div v-if="goal.goal_reached && showConfetti" class="donation-confetti pointer-events-none absolute inset-0 z-20" aria-hidden="true">
+      <span v-for="index in 14" :key="`confetti-${index}`" class="donation-confetti__piece" :style="{ '--piece': index }" />
     </div>
 
-    <div class="space-y-1.5">
-      <div class="flex items-baseline justify-between gap-2 text-sm tabular-nums">
-        <span class="font-semibold text-white">{{ formatEuros(effectiveCents) }}</span>
-        <span class="text-white/45">/ {{ formatEuros(goal.goal_cents) }}</span>
+    <div class="relative z-10 space-y-3">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0 space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="game-section-kicker">{{ translate('Donation card kicker') }}</p>
+            <span v-if="goal.goal_reached" class="donation-goal-badge">
+              {{ translate('Donation goal badge') }}
+            </span>
+          </div>
+          <p class="font-semibold leading-snug text-white" :class="compact ? 'text-sm' : 'text-base'">
+            {{ cardTitle }}
+          </p>
+          <p class="leading-snug text-white/70" :class="compact ? 'text-xs' : 'text-sm'">
+            {{ pitchLine }}
+          </p>
+        </div>
+
+        <div class="shrink-0 text-right">
+          <p class="text-2xl font-black tabular-nums leading-none" :class="goal.goal_reached ? 'text-emerald-400' : 'text-white'">
+            {{ goal.days_remaining }}
+          </p>
+          <p class="mt-1 max-w-[5.5rem] text-[10px] font-semibold uppercase leading-tight tracking-wide text-white/45">
+            {{ daysUnit }}
+          </p>
+        </div>
       </div>
 
-      <div class="h-1.5 overflow-hidden rounded-full bg-white/10">
+      <div v-if="recentSupporters.length" class="flex items-center gap-2.5">
+        <div class="flex -space-x-2">
+          <img v-for="supporter in recentSupporters" :key="supporter.id" :src="supporter.photo" :alt="supporter.name" :title="supporter.name" class="h-7 w-7 rounded-full object-cover ring-2 ring-brand-deep" loading="lazy" />
+        </div>
+        <p class="text-xs leading-snug text-white/55">
+          {{ translate('Donation recent supporters') }}
+        </p>
+      </div>
+
+      <div class="h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" :aria-valuenow="goal.percent" aria-valuemin="0" aria-valuemax="100" :aria-label="progressAriaLabel">
         <div class="h-full rounded-full transition-all duration-500 ease-out" :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'" :style="{ width: `${goal.percent}%` }" />
       </div>
 
-      <p v-if="goal.carryover_cents > 0" class="text-xs text-amber-200/80">
-        {{ __('Donation carryover included', { amount: formatEuros(goal.carryover_cents) }) }}
-      </p>
-      <p v-else-if="goal.surplus_cents > 0 && goal.goal_reached" class="text-xs text-emerald-300/80">
-        {{ __('Donation surplus provisioned', { amount: formatEuros(goal.surplus_cents) }) }}
-      </p>
-    </div>
-
-    <div class="flex flex-col gap-2 pt-1">
-      <a v-if="donationUrl" :href="donationUrl" target="_blank" rel="noopener noreferrer external nofollow" data-umami-event="Faire un don" class="game-btn-play-primary w-full" :class="compact ? 'min-h-[40px] text-[11px]' : ''">
-        {{ __('Donation cta') }}
-      </a>
-      <Link :href="route('docs.support')" class="text-center text-xs text-white/50 underline-offset-2 transition-colors hover:text-white hover:underline">
-        {{ __('Donation transparency link') }}
-      </Link>
+      <div class="flex flex-col gap-2 pt-1">
+        <a v-if="donationUrl" :href="donationUrl" target="_blank" rel="noopener noreferrer external nofollow" data-umami-event="Faire un don" class="game-btn-play-primary w-full" :class="compact ? 'min-h-[40px] text-[11px]' : ''">
+          {{ ctaLabel }}
+        </a>
+        <Link :href="route('docs.support')" class="text-center text-xs text-white/50 underline-offset-2 transition-colors hover:text-white hover:underline">
+          {{ translate('Donation transparency link') }}
+        </Link>
+      </div>
     </div>
   </div>
 </template>

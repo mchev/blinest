@@ -515,6 +515,51 @@
     @apply relative;
   }
 
+  .donation-goal-card {
+    @apply rounded-lg;
+  }
+
+  .donation-goal-badge {
+    @apply inline-flex items-center rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300;
+    animation: donation-badge-pop 600ms ease-out both;
+  }
+
+  @keyframes donation-badge-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .donation-confetti__piece {
+    @apply absolute top-0 h-2 w-1 rounded-sm opacity-90;
+    left: calc((var(--piece) * 7%) + 2%);
+    background: hsl(calc(var(--piece) * 26) 85% 62%);
+    animation: donation-confetti-fall 3.8s ease-out forwards;
+    animation-delay: calc(var(--piece) * 60ms);
+  }
+
+  @keyframes donation-confetti-fall {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -8px, 0) rotate(0deg);
+    }
+
+    12% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate3d(calc((var(--piece) - 7) * 6px), 180px, 0) rotate(calc(var(--piece) * 28deg));
+    }
+  }
+
   /* ── Room gameplay ── */
   .room-player-shell {
     @apply relative mb-1 flex flex-col gap-1;

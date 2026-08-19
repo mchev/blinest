@@ -71,8 +71,30 @@ class DonationGoalService
     {
         $progress = $this->currentProgress();
         $progress['payment_url'] = $this->paymentUrlForUser($user, $locale);
+        $progress['recent_supporters'] = $this->recentSupporters(3);
 
         return $progress;
+    }
+
+    /**
+     * @return list<array{id: int, name: string, photo: string}>
+     */
+    public function recentSupporters(int $limit = 3): array
+    {
+        return Donation::query()
+            ->with(['user:id,name,photo_path'])
+            ->whereNotNull('user_id')
+            ->orderByDesc('donated_at')
+            ->get()
+            ->unique('user_id')
+            ->take($limit)
+            ->map(fn (Donation $donation): array => [
+                'id' => $donation->user->id,
+                'name' => $donation->user->name,
+                'photo' => $donation->user->photo,
+            ])
+            ->values()
+            ->all();
     }
 
     public function monthKey(?CarbonInterface $date = null): string

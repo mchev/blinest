@@ -44,6 +44,7 @@ class DonationGoalTest extends TestCase
                 ->has('donation_goal')
                 ->where('donation_goal.raised_cents', 4_000)
                 ->where('donation_goal.goal_cents', 10_000)
+                ->has('donation_goal.recent_supporters')
                 ->where('auth.user.is_supporter', false));
     }
 

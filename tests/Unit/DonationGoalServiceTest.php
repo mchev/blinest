@@ -193,4 +193,51 @@ class DonationGoalServiceTest extends TestCase
         $this->assertSame(1_000, $history[0]['amount_cents']);
         $this->assertSame(1_000, $this->service->userDonationSummary($user)['total_cents']);
     }
+
+    public function test_recent_supporters_returns_unique_identified_donors(): void
+    {
+        $first = User::factory()->create(['is_guest' => false]);
+        $second = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_recent_1',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => $this->service->monthKey(),
+            'user_id' => $first->id,
+            'donated_at' => now('Europe/Paris')->subHour(),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_recent_2',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => $this->service->monthKey(),
+            'user_id' => $first->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_recent_3',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => $this->service->monthKey(),
+            'user_id' => $second->id,
+            'donated_at' => now('Europe/Paris')->subMinutes(30),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_recent_anon',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => $this->service->monthKey(),
+            'donated_at' => now('Europe/Paris')->subMinutes(10),
+        ]);
+
+        $supporters = $this->service->recentSupporters(3);
+
+        $this->assertCount(2, $supporters);
+        $this->assertSame($first->id, $supporters[0]['id']);
+        $this->assertSame($second->id, $supporters[1]['id']);
+    }
 }
