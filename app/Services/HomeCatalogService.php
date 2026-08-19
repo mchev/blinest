@@ -303,8 +303,11 @@ class HomeCatalogService
                 'category_id' => $room->category_id,
                 'subscriptions' => $presenceCounts[$room->id] ?? 0,
                 'rounds_count' => (int) ($room->rounds_count ?? 0),
+                'is_playing' => (bool) $room->is_playing,
             ])
-            ->sortByDesc(fn (array $row) => [$row['subscriptions'], $row['rounds_count'], $row['id']])
+            ->pipe(fn (Collection $rows) => collect($this->sortRoomsByPopularity(
+                $this->overlayLiveRoomState($rows->all()),
+            )))
             ->values()
             ->all();
     }
@@ -531,12 +534,22 @@ class HomeCatalogService
     private function sortRoomsByPopularity(array $rooms): array
     {
         return collect($rooms)
-            ->sortByDesc(fn (array $room) => [
-                (int) ($room['subscriptions'] ?? 0),
-                (int) ($room['rounds_count'] ?? 0),
-            ])
+            ->sortByDesc(fn (array $room) => $this->roomPopularitySortKey($room))
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array{0: int, 1: int, 2: int, 3: int}
+     */
+    private function roomPopularitySortKey(array $room): array
+    {
+        return [
+            (int) ($room['subscriptions'] ?? 0),
+            (bool) ($room['is_playing'] ?? false) ? 1 : 0,
+            (int) ($room['rounds_count'] ?? 0),
+            (int) ($room['id'] ?? 0),
+        ];
     }
 
     /**

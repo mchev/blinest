@@ -341,7 +341,7 @@ class HomePerformanceTest extends TestCase
         $this->assertTrue(Cache::has('homepage-public-rooms-v4'));
         $this->assertTrue(Cache::has('homepage-public-categories-v3'));
         $this->assertTrue(Cache::has('homepage-community-categories-v1'));
-        $this->assertTrue(Cache::has('homepage-community-room-index-v1'));
+        $this->assertTrue(Cache::has('homepage-community-room-ids-v1'));
     }
 
     public function test_homepage_does_not_load_community_rooms_by_default(): void
@@ -516,6 +516,68 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('catalog_tab_player_counts.community', 12));
+    }
+
+    public function test_community_catalog_prioritizes_playing_rooms_with_equal_player_count(): void
+    {
+        $category = Category::create(['name' => 'Pop']);
+        $owner = User::factory()->create();
+
+        $idleRoom = Room::create([
+            'name' => 'Idle Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $liveRoom = Room::create([
+            'name' => 'Live Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => false,
+            'is_featured' => false,
+            'is_playing' => true,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            $idleRoom->rounds()->create([
+                'is_playing' => false,
+                'current' => 0,
+                'tracks' => [1, 2, 3],
+                'finished_at' => now(),
+            ]);
+        }
+
+        $liveRoom->rounds()->create([
+            'is_playing' => true,
+            'current' => 2,
+            'tracks' => [1, 2, 3, 4, 5],
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock) use ($idleRoom, $liveRoom): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturnUsing(function ($rooms) use ($idleRoom, $liveRoom) {
+                    $counts = [];
+
+                    foreach ($rooms as $room) {
+                        $id = is_array($room) ? $room['id'] : $room->id;
+                        $counts[$id] = in_array($id, [$idleRoom->id, $liveRoom->id], true) ? 8 : 0;
+                    }
+
+                    return $counts;
+                });
+        });
+
+        $this->get(route('home', ['tab' => 'community']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog_items.data.0.id', $liveRoom->id)
+                ->where('catalog_items.data.1.id', $idleRoom->id));
     }
 
     public function test_community_catalog_breaks_ties_by_round_count(): void

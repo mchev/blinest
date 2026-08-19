@@ -5,6 +5,7 @@ import { useCatalogLoadMore } from '@/composables/useCatalogLoadMore'
 import Room from './Room.vue'
 import MinigameCard from './MinigameCard.vue'
 import Icon from '@/Components/Icon.vue'
+import RoomCardSkeleton from './RoomCardSkeleton.vue'
 
 const props = defineProps({
   catalog: {
@@ -77,6 +78,10 @@ const displayCatalog = computed(() => pendingTab.value ?? props.catalog)
 const showTabSkeleton = computed(() => pendingTab.value !== null)
 
 const showFilterOverlay = computed(() => pendingFilter.value && pendingTab.value === null)
+
+const showCatalogSkeleton = computed(() => showTabSkeleton.value || showFilterOverlay.value)
+
+const skeletonVariant = computed(() => (displayCatalog.value === 'minigames' ? 'minigame' : 'catalog'))
 
 const t = (key, replace = {}) => {
   let translation = page.props.language?.[key] ?? key
@@ -300,7 +305,7 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         </button>
       </div>
 
-      <select v-if="showCategoryFilter" id="home-room-category-filter" v-model="selectedCategoryId" class="retro-select home-rooms-toolbar__filter" :aria-label="t('Filter by category')" :disabled="showTabSkeleton || showFilterOverlay">
+      <select v-if="showCategoryFilter" id="home-room-category-filter" v-model="selectedCategoryId" class="retro-select home-rooms-toolbar__filter" :aria-label="t('Filter by category')" :disabled="showCatalogSkeleton">
         <option value="">{{ t('All categories') }} ({{ categoryFilterCount }})</option>
         <option v-for="category in activeCategories" :key="category.id" :value="String(category.id)">{{ t(category.name) }} ({{ category.rooms_count }})</option>
       </select>
@@ -312,16 +317,12 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
     </header>
 
     <div :id="panelId(displayCatalog)" role="tabpanel" :aria-labelledby="tabId(displayCatalog)" class="home-catalog-panel space-y-6">
-      <div v-if="showTabSkeleton" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" role="status" aria-live="polite" aria-busy="true">
-        <div v-for="index in 8" :key="`catalog-skeleton-${index}`" class="home-catalog-skeleton" />
+      <div v-if="showCatalogSkeleton" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" role="status" aria-live="polite" aria-busy="true">
+        <RoomCardSkeleton v-for="index in 8" :key="`catalog-skeleton-${index}`" :index="index" :variant="skeletonVariant" />
         <span class="sr-only">{{ t('Loading rooms...') }}</span>
       </div>
 
       <template v-else>
-        <div v-if="showFilterOverlay" class="home-catalog-panel__overlay" role="status" aria-live="polite">
-          <p class="text-sm font-semibold text-white">{{ t('Loading rooms...') }}</p>
-        </div>
-
         <div v-if="isMinigamesCatalog && catalogItemsList.length" class="mb-4 flex justify-end">
           <Link :href="route('minigames.index')" class="game-link-action">
             {{ t('View all') }}
@@ -357,7 +358,7 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         </div>
 
         <template v-else>
-          <div id="catalog-grid" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" :class="{ 'opacity-50': showFilterOverlay }">
+          <div id="catalog-grid" class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
             <template v-if="isMinigamesCatalog">
               <MinigameCard v-for="game in catalogItemsList" :key="game.type" :game="game" />
             </template>
