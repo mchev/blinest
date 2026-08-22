@@ -5,6 +5,7 @@ namespace App\Services\Donations;
 use App\Models\Donation;
 use App\Models\User;
 use App\Notifications\DonationThankYou;
+use App\Services\Profiles\ProfileCacheService;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
@@ -254,18 +255,29 @@ class DonationGoalService
                 'total_cents' => 0,
                 'donation_count' => 0,
                 'months_supported' => 0,
+                'supporter_duration_months' => 0,
                 'first_donated_at' => null,
                 'first_supported_month_key' => null,
             ];
         }
 
         $query = Donation::query()->where('user_id', $user->id);
+        $firstDonatedAt = (clone $query)->orderBy('donated_at')->value('donated_at');
+        $supporterDurationMonths = 0;
+
+        if ($firstDonatedAt !== null) {
+            $supporterDurationMonths = max(1, (int) $firstDonatedAt
+                ->timezone($this->timezone())
+                ->startOfDay()
+                ->diffInMonths(now($this->timezone())->startOfDay()));
+        }
 
         return [
             'total_cents' => (int) (clone $query)->sum('amount_cents'),
             'donation_count' => (int) (clone $query)->count(),
             'months_supported' => (int) (clone $query)->pluck('month_key')->unique()->count(),
-            'first_donated_at' => (clone $query)->orderBy('donated_at')->value('donated_at')?->toIso8601String(),
+            'supporter_duration_months' => $supporterDurationMonths,
+            'first_donated_at' => $firstDonatedAt?->toIso8601String(),
             'first_supported_month_key' => (clone $query)->orderBy('month_key')->value('month_key'),
         ];
     }
@@ -365,6 +377,7 @@ class DonationGoalService
         $this->forgetCache($monthKey);
 
         if ($user !== null) {
+            app(ProfileCacheService::class)->forget($user);
             $user->notify(new DonationThankYou($donation));
         }
 

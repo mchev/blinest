@@ -63,9 +63,14 @@ const loadMore = () => {
   <div v-if="minigames" class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <p class="text-sm text-white/55">{{ __('Mini-games scores on profile intro') }}</p>
-      <Link :href="minigames.rankings_url" class="text-xs font-semibold text-brand-secondary hover:text-brand-secondary/80">
-        {{ __('Mini-games rankings') }}
-      </Link>
+      <div class="flex flex-wrap items-center gap-3">
+        <p v-if="minigames.user_rank" class="text-xs font-semibold text-brand-secondary">
+          {{ __('Profile minigames rank', { rank: minigames.user_rank, score: minigames.user_total_score }) }}
+        </p>
+        <Link :href="minigames.rankings_url" class="text-xs font-semibold text-brand-secondary hover:text-brand-secondary/80">
+          {{ __('Mini-games rankings') }}
+        </Link>
+      </div>
     </div>
 
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

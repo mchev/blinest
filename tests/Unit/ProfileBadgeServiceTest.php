@@ -30,6 +30,7 @@ class ProfileBadgeServiceTest extends TestCase
 
         $this->assertNotNull($supporter);
         $this->assertTrue($supporter['earned']);
+        $this->assertSame('Profile badge supporter desc', $supporter['description_key']);
     }
 
     public function test_creator_badge_requires_at_least_one_room_created(): void

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Services\Profiles\ProfileCacheService;
 use Illuminate\Http\JsonResponse;
 
 class RoomBookmarkController extends Controller
@@ -12,7 +13,9 @@ class RoomBookmarkController extends Controller
      */
     public function store(Room $room): JsonResponse
     {
-        auth()->user()->bookmarkedRooms()->syncWithoutDetaching([$room->id]);
+        $user = auth()->user();
+        $user->bookmarkedRooms()->syncWithoutDetaching([$room->id]);
+        app(ProfileCacheService::class)->forget($user);
 
         return response()->json(['is_bookmarked' => true]);
     }
@@ -22,7 +25,9 @@ class RoomBookmarkController extends Controller
      */
     public function destroy(Room $room): JsonResponse
     {
-        auth()->user()->bookmarkedRooms()->detach($room);
+        $user = auth()->user();
+        $user->bookmarkedRooms()->detach($room);
+        app(ProfileCacheService::class)->forget($user);
 
         return response()->json(['is_bookmarked' => false]);
     }

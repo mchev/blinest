@@ -22,6 +22,7 @@ use App\Services\RoomPresenceService;
 use App\Services\Rooms\OfficialRoomRegistry;
 use App\Services\Rooms\RoomContentService;
 use App\Services\Rooms\RoomLandingService;
+use App\Services\Tracks\TrackAnswerCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -372,14 +373,14 @@ class RoomController extends Controller
                 }
                 if ($finishedIds !== []) {
                     $finishedTracks = Track::query()
-                        ->with(['answers.type'])
                         ->whereIn('id', $finishedIds)
                         ->get()
                         ->keyBy('id');
+                    $trackAnswerCache = app(TrackAnswerCacheService::class);
                     foreach ($finishedIds as $finishedId) {
                         $finishedTrack = $finishedTracks->get($finishedId);
                         if ($finishedTrack) {
-                            $playedTracksPayload[] = $this->playlistTrackPayloadForRoom($finishedTrack);
+                            $playedTracksPayload[] = $trackAnswerCache->playlistPayloadForRoom($finishedTrack);
                         }
                     }
                 }
@@ -572,36 +573,5 @@ class RoomController extends Controller
                 ->with('answers')
                 ->get('id')
         );
-    }
-
-    /**
-     * Payload for room playlist (Answers card), aligned with TrackEnded / AnswerCard shape.
-     * Avoids resolving the `audio` accessor N times on join (no live Deezer fetch per track).
-     *
-     * @return array<string, mixed>
-     */
-    private function playlistTrackPayloadForRoom(Track $track): array
-    {
-        $track->loadMissing('answers.type');
-
-        return [
-            'id' => $track->id,
-            'provider' => $track->provider,
-            'preview_url' => $track->preview_url,
-            'artwork_url' => $track->artwork_url,
-            'album_name' => null,
-            'hint' => $track->hint,
-            'upvotes' => $track->upvotes,
-            'downvotes' => $track->downvotes,
-            'answers' => $track->answers->map(function ($answer) {
-                return [
-                    'id' => $answer->id,
-                    'value' => $answer->value,
-                    'type' => [
-                        'name' => $answer->type->name,
-                    ],
-                ];
-            })->all(),
-        ];
     }
 }

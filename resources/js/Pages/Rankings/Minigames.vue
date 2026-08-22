@@ -1,26 +1,16 @@
 <script setup>
-import { usePage } from '@inertiajs/vue3'
+import { Deferred } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import RankingTabs from './partials/RankingTabs.vue'
 import RankingList from './partials/RankingList.vue'
 import UserPosition from './partials/UserPosition.vue'
 import Pagination from '@/Components/Pagination.vue'
 
-const page = usePage()
-const __ = (key, replace = {}) => {
-  let translation = page.props.language[key] ? page.props.language[key] : key
-  Object.keys(replace).forEach(function (key) {
-    translation = translation.replace(':' + key, replace[key])
-  })
-  return translation
-}
-
-const props = defineProps({
+defineProps({
   topByMinigames: Object,
-  userPosition: Number,
-  userScore: {
-    type: Number,
-    default: 0,
+  userContext: {
+    type: Object,
+    default: null,
   },
 })
 </script>
@@ -36,19 +26,21 @@ const props = defineProps({
           <p class="text-sm text-neutral-400 sm:text-lg">{{ __('Compete with the best players') }}</p>
         </div>
 
-        <!-- Tabs Navigation -->
         <RankingTabs />
 
-        <!-- User Position -->
-        <UserPosition v-if="userPosition" :position="userPosition" :score="userScore" type="minigames" />
+        <Deferred data="userContext">
+          <template #fallback>
+            <div class="mt-6 h-16 animate-pulse rounded-xl border border-white/10 bg-white/5" />
+          </template>
+          <UserPosition v-if="userContext?.position" :position="userContext.position" :score="userContext.score" type="minigames" />
+        </Deferred>
 
-        <!-- Ranking List -->
         <div v-if="topByMinigames && topByMinigames.data && topByMinigames.data.length > 0" class="mt-6">
           <RankingList :items="topByMinigames" type="minigames" />
           <Pagination :links="topByMinigames.links" />
         </div>
         <div v-else class="py-16 text-center">
-          <p class="text-neutral-400">{{ __('No rankings available') }}</p>
+          <p class="text-neutral-400">{{ __('No rankings yet') }}</p>
         </div>
       </div>
     </section>

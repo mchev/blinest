@@ -127,14 +127,115 @@ class HomeCatalogService
             return $this->paginateCommunityCatalog($request);
         }
 
+        if ($tab === 'official') {
+            return $this->paginateOfficialCatalog($request);
+        }
+
         $items = match ($tab) {
-            'official' => $this->officialRooms($request),
             'mine' => $this->userRooms($request),
             'minigames' => $this->minigames($request),
             default => [],
         };
 
         return $this->paginateItems($items, $request);
+    }
+
+    private function paginateOfficialCatalog(Request $request): LengthAwarePaginator
+    {
+        $categoryId = $request->integer('category_id') ?: null;
+        $pageName = 'catalog';
+        $page = Paginator::resolveCurrentPage($pageName);
+        $hiddenCategoryIds = config('blinest.homepage_hidden_category_ids', []);
+
+        $sortedIds = collect($this->officialRoomIndex())
+            ->when(
+                $categoryId !== null,
+                fn (Collection $rows) => $rows->where('category_id', $categoryId),
+                fn (Collection $rows) => $rows->reject(
+                    fn (array $row) => in_array($row['category_id'] ?? null, $hiddenCategoryIds, true),
+                ),
+            )
+            ->pluck('id')
+            ->values()
+            ->all();
+
+        $total = count($sortedIds);
+        $pageIds = array_slice($sortedIds, ($page - 1) * self::PER_PAGE, self::PER_PAGE);
+
+        if ($pageIds === []) {
+            return new LengthAwarePaginator(
+                [],
+                $total,
+                self::PER_PAGE,
+                $page,
+                [
+                    'pageName' => $pageName,
+                    'path' => Paginator::resolveCurrentPath(),
+                    'query' => $request->query(),
+                ],
+            );
+        }
+
+        $roomsById = Room::query()
+            ->whereIn('id', $pageIds)
+            ->with(['owner', 'category:id,name'])
+            ->withCount('rounds')
+            ->get()
+            ->keyBy('id');
+
+        $counts = $this->publicRoomPresenceCounts();
+
+        $rooms = collect($pageIds)
+            ->map(fn (int $id) => $roomsById->get($id))
+            ->filter()
+            ->map(function (Room $room) use ($counts) {
+                $mapped = $this->mapRoomForHomepage($room);
+                $mapped['subscriptions'] = $counts[$room->id] ?? 0;
+
+                return $mapped;
+            })
+            ->values()
+            ->all();
+
+        $rooms = $this->sortRoomsByPopularity(
+            $this->overlayLiveRoomState($rooms),
+        );
+
+        return new LengthAwarePaginator(
+            $rooms,
+            $total,
+            self::PER_PAGE,
+            $page,
+            [
+                'pageName' => $pageName,
+                'path' => Paginator::resolveCurrentPath(),
+                'query' => $request->query(),
+            ],
+        );
+    }
+
+    /**
+     * @return list<array{id: int, category_id: int|null, subscriptions: int, rounds_count: int, is_playing: bool}>
+     */
+    private function officialRoomIndex(): array
+    {
+        return Cache::remember('homepage-official-room-index-v1', now()->addSeconds(self::HOMEPAGE_CACHE_SECONDS), function () {
+            $counts = $this->publicRoomPresenceCounts();
+
+            $candidates = collect($this->cachedPublicRooms())
+                ->map(fn (array $room) => [
+                    'id' => $room['id'],
+                    'category_id' => $room['category']['id'] ?? null,
+                    'subscriptions' => $counts[$room['id']] ?? 0,
+                    'rounds_count' => (int) ($room['rounds_count'] ?? 0),
+                    'is_playing' => (bool) ($room['is_playing'] ?? false),
+                ])
+                ->all();
+
+            return $this->sortRoomsByPopularity(
+                $this->overlayLiveRoomState($candidates),
+            );
+        });
     }
 
     private function paginateCommunityCatalog(Request $request): LengthAwarePaginator

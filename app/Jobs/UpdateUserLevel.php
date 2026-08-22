@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Services\LevelCalculator;
+use App\Services\Profiles\ProfileCacheService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -46,5 +47,7 @@ class UpdateUserLevel implements ShouldBeUnique, ShouldQueue
         $type = $this->type ?? 'score';
         $calculator = new LevelCalculator($this->user, $type);
         $calculator->update();
+
+        app(ProfileCacheService::class)->forget($this->user);
     }
 }

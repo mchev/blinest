@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -11,6 +11,14 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  sort: {
+    type: String,
+    default: 'updated_at',
+  },
+  direction: {
+    type: String,
+    default: 'desc',
+  },
 })
 
 const scores = ref(props.paginator ? [...props.paginator.data] : [])
@@ -19,49 +27,22 @@ const lastPage = ref(props.paginator ? props.paginator.last_page : 1)
 const loading = ref(false)
 
 watch(
-  () => props.paginator,
-  (newPaginator) => {
-    if (newPaginator) {
-      scores.value = [...newPaginator.data]
-      nextPage.value = newPaginator.current_page + 1
-      lastPage.value = newPaginator.last_page
+  () => [props.paginator, props.sort, props.direction],
+  ([paginator]) => {
+    if (paginator) {
+      scores.value = [...paginator.data]
+      nextPage.value = paginator.current_page + 1
+      lastPage.value = paginator.last_page
     }
   },
   { immediate: true },
 )
 
-const sortKey = ref('updated_at')
-const sortDir = ref('desc')
+const applySort = (key) => {
+  const direction = props.sort === key && props.direction === 'desc' ? 'asc' : 'desc'
 
-const setSort = (key) => {
-  if (sortKey.value === key) {
-    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
-  } else {
-    sortKey.value = key
-    sortDir.value = 'asc'
-  }
+  router.get(route('user.profile', props.profileId), { tab: 'scores', sort: key, direction }, { preserveScroll: true, only: ['scores', 'activeTab', 'scoresSort', 'scoresDirection'] })
 }
-
-const sortedScores = computed(() => {
-  const items = [...scores.value]
-  const key = sortKey.value
-  const dir = sortDir.value
-
-  return items.sort((a, b) => {
-    let aVal = a[key]
-    let bVal = b[key]
-
-    if (key === 'room') {
-      aVal = a.room?.name || ''
-      bVal = b.room?.name || ''
-    } else if (key === 'score') {
-      aVal = Number(aVal)
-      bVal = Number(bVal)
-    }
-
-    return dir === 'asc' ? (aVal > bVal ? 1 : aVal < bVal ? -1 : 0) : aVal < bVal ? 1 : aVal > bVal ? -1 : 0
-  })
-})
 
 const loadMore = () => {
   if (loading.value || nextPage.value > lastPage.value || !props.paginator) {
@@ -72,11 +53,11 @@ const loadMore = () => {
 
   router.get(
     route('user.profile', props.profileId),
-    { tab: 'scores', page: nextPage.value },
+    { tab: 'scores', page: nextPage.value, sort: props.sort, direction: props.direction },
     {
       preserveState: true,
       preserveScroll: true,
-      only: ['scores', 'activeTab'],
+      only: ['scores', 'activeTab', 'scoresSort', 'scoresDirection'],
       onSuccess: (page) => {
         const newScores = page.props.scores?.data || []
         scores.value.push(...newScores)
@@ -95,18 +76,18 @@ const loadMore = () => {
 <template>
   <div class="space-y-3">
     <div class="flex flex-wrap gap-2">
-      <button type="button" @click="setSort('room')" :class="['retro-sort-btn', sortKey === 'room' ? 'retro-sort-btn--active' : '']">
-        {{ __('Room') }} <span v-if="sortKey === 'room'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+      <button type="button" @click="applySort('room')" :class="['retro-sort-btn', sort === 'room' ? 'retro-sort-btn--active' : '']">
+        {{ __('Room') }} <span v-if="sort === 'room'">{{ direction === 'asc' ? '▲' : '▼' }}</span>
       </button>
-      <button type="button" @click="setSort('updated_at')" :class="['retro-sort-btn', sortKey === 'updated_at' ? 'retro-sort-btn--active' : '']">
-        {{ __('Last played') }} <span v-if="sortKey === 'updated_at'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+      <button type="button" @click="applySort('updated_at')" :class="['retro-sort-btn', sort === 'updated_at' ? 'retro-sort-btn--active' : '']">
+        {{ __('Last played') }} <span v-if="sort === 'updated_at'">{{ direction === 'asc' ? '▲' : '▼' }}</span>
       </button>
-      <button type="button" @click="setSort('score')" :class="['retro-sort-btn', sortKey === 'score' ? 'retro-sort-btn--active' : '']">
-        {{ __('Score') }} <span v-if="sortKey === 'score'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+      <button type="button" @click="applySort('score')" :class="['retro-sort-btn', sort === 'score' ? 'retro-sort-btn--active' : '']">
+        {{ __('Score') }} <span v-if="sort === 'score'">{{ direction === 'asc' ? '▲' : '▼' }}</span>
       </button>
     </div>
 
-    <div v-for="score in sortedScores" :key="score.id" class="retro-list-row">
+    <div v-for="score in scores" :key="score.id" class="retro-list-row">
       <Link v-if="score.room" class="flex min-w-0 items-center" :href="route('rooms.show', score.room.slug)">
         <img v-if="score.room.photo" class="squircle-nested-xs h-12 w-12 shrink-0 object-cover" :src="score.room.photo" loading="lazy" />
         <div class="ml-3 flex min-w-0 flex-col">

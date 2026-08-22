@@ -4,6 +4,7 @@ import AccountHeader from './partials/AccountHeader.vue'
 import AccountSettingsForm from './partials/AccountSettingsForm.vue'
 import AccountPasswordForm from './partials/AccountPasswordForm.vue'
 import AccountShortcuts from './partials/AccountShortcuts.vue'
+import AccountSupporterPanel from './partials/AccountSupporterPanel.vue'
 import AccountDangerZone from './partials/AccountDangerZone.vue'
 
 defineProps({
@@ -31,7 +32,8 @@ defineProps({
           <AccountDangerZone :account="account" />
         </div>
 
-        <aside class="lg:col-span-5">
+        <aside class="space-y-6 lg:col-span-5">
+          <AccountSupporterPanel v-if="account.is_supporter" :account="account" />
           <AccountShortcuts :account="account" />
         </aside>
       </div>

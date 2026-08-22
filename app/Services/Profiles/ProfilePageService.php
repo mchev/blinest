@@ -2,6 +2,7 @@
 
 namespace App\Services\Profiles;
 
+use App\Models\AnswerType;
 use App\Models\MinigameScore;
 use App\Models\Room;
 use App\Models\RoundStanding;
@@ -11,6 +12,7 @@ use App\Services\Donations\DonationGoalService;
 use App\Services\Donations\DonorPerkService;
 use App\Services\Minigames\MinigameScoreService;
 use App\Services\Rankings\GlobalLeaderboardService;
+use App\Services\Rankings\MinigameLeaderboardService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
@@ -22,6 +24,7 @@ class ProfilePageService
         private GlobalLeaderboardService $leaderboard,
         private ProfileBadgeService $badges,
         private MinigameScoreService $minigameScores,
+        private MinigameLeaderboardService $minigameLeaderboard,
     ) {}
 
     /**
@@ -82,18 +85,28 @@ class ProfilePageService
         ], $user);
     }
 
-    public function scores(User $user, int $page = 1, int $perPage = 10): LengthAwarePaginator
+    public function scores(User $user, int $page = 1, int $perPage = 10, string $sort = 'updated_at', string $direction = 'desc'): LengthAwarePaginator
     {
-        $publicRoomIds = Room::query()
-            ->where('is_public', true)
-            ->whereNull('deleted_at')
-            ->select('id');
+        $allowedSorts = ['updated_at', 'score', 'room'];
+        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'updated_at';
+        $direction = $direction === 'asc' ? 'asc' : 'desc';
+        $publicRoomIds = Room::cachedPublicIds();
 
-        $paginator = $user->totalScores()
+        $query = $user->totalScores()
             ->whereIn('room_id', $publicRoomIds)
-            ->select('total_scores.id', 'total_scores.score', 'total_scores.room_id', 'total_scores.updated_at')
-            ->orderByDesc('total_scores.updated_at')
-            ->paginate($perPage, ['*'], 'page', $page);
+            ->select('total_scores.id', 'total_scores.score', 'total_scores.room_id', 'total_scores.updated_at');
+
+        if ($sort === 'room') {
+            $query->join('rooms', 'total_scores.room_id', '=', 'rooms.id')
+                ->orderBy('rooms.name', $direction)
+                ->select('total_scores.id', 'total_scores.score', 'total_scores.room_id', 'total_scores.updated_at');
+        } elseif ($sort === 'score') {
+            $query->orderBy('total_scores.score', $direction);
+        } else {
+            $query->orderBy('total_scores.updated_at', $direction);
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
 
         $rooms = Room::query()
             ->whereIn('id', $paginator->pluck('room_id')->unique())
@@ -120,6 +133,11 @@ class ProfilePageService
 
     public function likes(User $user, int $page = 1, int $perPage = 10): LengthAwarePaginator
     {
+        $answerTypeIds = Cache::remember('profile_like_answer_type_ids', 3600, fn () => AnswerType::query()
+            ->whereIn('name', ['Title', 'Artist'])
+            ->pluck('id')
+            ->all());
+
         return Track::query()
             ->join('votes', function ($join) use ($user) {
                 $join->on('tracks.id', '=', 'votes.votable_id')
@@ -128,9 +146,8 @@ class ProfilePageService
                     ->where('votes.votes', 1);
             })
             ->select('tracks.id', 'tracks.artwork_url', 'tracks.created_at')
-            ->with(['answers' => function ($query) {
-                $query->whereHas('type', fn ($typeQuery) => $typeQuery->whereIn('name', ['Title', 'Artist']))
-                    ->with('type:id,name');
+            ->with(['answers' => function ($query) use ($answerTypeIds) {
+                $query->whereIn('answer_type_id', $answerTypeIds)->with('type:id,name');
             }])
             ->orderByDesc('tracks.created_at')
             ->paginate($perPage, ['*'], 'page', $page)
@@ -174,7 +191,7 @@ class ProfilePageService
      */
     public function highlights(User $user): array
     {
-        return Cache::remember("user_profile_highlights_{$user->id}", 1800, function () use ($user) {
+        return Cache::remember("user_profile_highlights_v2_{$user->id}", 1800, function () use ($user) {
             $user->loadMissing('userLevel');
 
             $context = $this->leaderboard->userContext($user, 'elo');
@@ -201,6 +218,7 @@ class ProfilePageService
     public function minigames(User $user, int $page = 1, int $perPage = 15): array
     {
         $totals = $this->minigameScores->getTotalsByTypeForUser($user);
+        $minigameContext = $this->minigameLeaderboard->userContext($user);
 
         $games = collect($this->minigameDefinitions())
             ->map(fn (array $definition) => [
@@ -227,7 +245,39 @@ class ProfilePageService
             'games' => $games,
             'history' => $history,
             'rankings_url' => route('rankings.minigames'),
+            'user_rank' => $minigameContext['position'],
+            'user_total_score' => $minigameContext['score'],
         ];
+    }
+
+    /**
+     * @return list<array{date: string, total_score: float}>
+     */
+    public function scoreEvolution(User $user): array
+    {
+        return Cache::remember("user_score_evolution_{$user->id}", 3600, function () use ($user) {
+            $scoreHistory = $user->scores()
+                ->selectRaw('DATE(created_at) as date, SUM(score) as daily_score')
+                ->groupByRaw('DATE(created_at)')
+                ->orderBy('date')
+                ->limit(365)
+                ->get();
+
+            if ($scoreHistory->isEmpty()) {
+                return [];
+            }
+
+            $cumulative = 0;
+
+            return $scoreHistory->map(function ($row) use (&$cumulative) {
+                $cumulative += (float) $row->daily_score;
+
+                return [
+                    'date' => (string) $row->date,
+                    'total_score' => round($cumulative, 1),
+                ];
+            })->values()->all();
+        }) ?: [];
     }
 
     /**
@@ -258,10 +308,7 @@ class ProfilePageService
      */
     private function topRooms(User $user, int $limit = 3): array
     {
-        $publicRoomIds = Room::query()
-            ->where('is_public', true)
-            ->whereNull('deleted_at')
-            ->select('id');
+        $publicRoomIds = Room::cachedPublicIds();
 
         $scores = $user->totalScores()
             ->whereIn('room_id', $publicRoomIds)

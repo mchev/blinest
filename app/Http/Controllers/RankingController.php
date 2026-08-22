@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MinigameScore;
 use App\Models\Room;
 use App\Models\Team;
 use App\Models\TotalScore;
 use App\Models\User;
 use App\Seo\RankingsHead;
 use App\Services\Rankings\GlobalLeaderboardService;
+use App\Services\Rankings\MinigameLeaderboardService;
 use App\Services\Rooms\RoomLeaderboardService;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Laravel\Head\Facades\Head;
@@ -142,72 +141,19 @@ class RankingController extends Controller
         ]);
     }
 
-    public function byMinigames()
+    public function byMinigames(MinigameLeaderboardService $leaderboardService)
     {
         Head::title(__('Rankings').' - '.__('Mini-games'));
 
         $user = Auth::user();
-
-        $paginated = MinigameScore::query()
-            ->selectRaw('user_id, sum(score) as total_score')
-            ->groupBy('user_id')
-            ->orderByDesc('total_score')
-            ->paginate(50);
-
-        $userIds = $paginated->pluck('user_id');
-        $users = User::with('userLevel')
-            ->whereIn('id', $userIds)
-            ->get()
-            ->keyBy('id');
-
-        $mapped = $paginated->getCollection()->map(function ($row) use ($users) {
-            $user = $users->get($row->user_id);
-            if (! $user) {
-                return null;
-            }
-
-            return [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'photo' => $user->photo,
-                    'elo' => $user->elo ?? 1500,
-                    'userLevel' => $user->userLevel,
-                ],
-                'total_score' => (int) $row->total_score,
-            ];
-        })->filter()->values();
-
-        $topByMinigames = new LengthAwarePaginator(
-            $mapped,
-            $paginated->total(),
-            $paginated->perPage(),
-            $paginated->currentPage(),
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        $userPosition = null;
-        $userScore = null;
-        if ($user) {
-            $userScore = (int) MinigameScore::query()
-                ->where('user_id', $user->id)
-                ->sum('score');
-
-            $userPosition = MinigameScore::query()
-                ->fromSub(
-                    MinigameScore::query()
-                        ->selectRaw('user_id, sum(score) as total_score')
-                        ->groupBy('user_id'),
-                    'minigame_totals'
-                )
-                ->where('total_score', '>', $userScore)
-                ->count() + 1;
-        }
+        $page = max(1, (int) request()->get('page', 1));
+        $leaderboard = $leaderboardService->paginatedPayload($page);
 
         return Inertia::render('Rankings/Minigames', [
-            'topByMinigames' => $topByMinigames,
-            'userPosition' => $userPosition,
-            'userScore' => $userScore ?? 0,
+            'topByMinigames' => $leaderboard,
+            'userContext' => $user
+                ? Inertia::defer(fn () => $leaderboardService->userContext($user))
+                : null,
         ]);
     }
 

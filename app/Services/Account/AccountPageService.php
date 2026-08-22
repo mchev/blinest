@@ -3,6 +3,7 @@
 namespace App\Services\Account;
 
 use App\Models\User;
+use App\Services\Donations\DonationGoalService;
 use App\Services\Donations\DonorPerkService;
 use Illuminate\Support\Facades\Cache;
 
@@ -10,6 +11,7 @@ class AccountPageService
 {
     public function __construct(
         private DonorPerkService $donorPerks,
+        private DonationGoalService $donationGoal,
     ) {}
 
     /**
@@ -46,6 +48,7 @@ class AccountPageService
                 'rankings' => route('rankings.index'),
                 'support' => route('docs.support'),
             ],
+            'donation_summary' => $this->donationGoal->userDonationSummary($user),
         ];
 
         return $this->donorPerks->enrichUserPayload($payload, $user);

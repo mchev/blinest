@@ -145,6 +145,37 @@ class ProfilePageTest extends TestCase
             );
     }
 
+    public function test_profile_defers_score_evolution(): void
+    {
+        $viewer = User::factory()->create(['is_guest' => false]);
+        $profileUser = $this->createProfileUserWithScore();
+
+        $this->actingAs($viewer)
+            ->get(route('user.profile', $profileUser))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->missing('scoreEvolution')
+                ->loadDeferredProps(fn (Assert $reload) => $reload
+                    ->has('scoreEvolution')
+                )
+            );
+    }
+
+    public function test_profile_scores_tab_supports_server_sort(): void
+    {
+        $viewer = User::factory()->create(['is_guest' => false]);
+        $profileUser = $this->createProfileUserWithScore();
+
+        $this->actingAs($viewer)
+            ->get(route('user.profile', ['user' => $profileUser, 'tab' => 'scores', 'sort' => 'score', 'direction' => 'desc']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('scoresSort', 'score')
+                ->where('scoresDirection', 'desc')
+                ->has('scores.data', 1)
+            );
+    }
+
     private function createProfileUserWithScore(): User
     {
         $category = Category::create(['name' => 'Profile Category']);

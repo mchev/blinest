@@ -51,16 +51,39 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  scoreEvolution: {
+    type: Array,
+    default: () => [],
+  },
+  scoresSort: {
+    type: String,
+    default: 'updated_at',
+  },
+  scoresDirection: {
+    type: String,
+    default: 'desc',
+  },
 })
 
 const translate = useTranslate()
 const showLevelModal = ref(false)
 
 const supporterSinceLabel = computed(() => {
-  const months = props.profile.donation_summary?.months_supported
+  const summary = props.profile.donation_summary
+  const months = summary?.supporter_duration_months
 
   if (!months || months < 1) {
     return null
+  }
+
+  if (months >= 12) {
+    const years = Math.floor(months / 12)
+
+    if (years === 1) {
+      return translate('Supporter since one year')
+    }
+
+    return translate('Supporter since years', { count: years })
   }
 
   if (months === 1) {
@@ -118,7 +141,16 @@ const supporterSinceLabel = computed(() => {
             <template #header>
               <h2 class="text-lg font-bold text-white">{{ __('Evolution') }}</h2>
             </template>
-            <ProfileEvolutionChart :user-id="profile.id" />
+            <Deferred data="scoreEvolution">
+              <template #fallback>
+                <div class="relative h-44 sm:h-48">
+                  <div class="absolute inset-0 flex items-end gap-1 px-2 pb-2">
+                    <div v-for="index in 7" :key="index" class="w-full animate-pulse rounded-t bg-white/10" :style="{ height: `${20 + index * 8}%`, animationDelay: `${index * 0.08}s` }" />
+                  </div>
+                </div>
+              </template>
+              <ProfileEvolutionChart :score-evolution="scoreEvolution" />
+            </Deferred>
           </Card>
         </aside>
 
@@ -126,7 +158,7 @@ const supporterSinceLabel = computed(() => {
           <ProfileTabs :profile-id="profile.id" :active-tab="activeTab" />
 
           <Card>
-            <ScoresTab v-if="activeTab === 'scores'" :paginator="scores" :profile-id="profile.id" />
+            <ScoresTab v-if="activeTab === 'scores'" :paginator="scores" :profile-id="profile.id" :sort="scoresSort" :direction="scoresDirection" />
             <LikesTab v-else-if="activeTab === 'likes'" :paginator="likes" :profile="profile" />
             <BookmarksTab v-else-if="activeTab === 'bookmarks'" :paginator="bookmarks" :profile-id="profile.id" />
             <MinigamesTab v-else :minigames="minigames" :profile-id="profile.id" />

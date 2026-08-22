@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Score;
+use App\Services\Profiles\ProfileCacheService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -37,6 +38,8 @@ class ProcessAddScoreToTotalScore implements ShouldQueue
             $user->totalScores()->updateOrCreate(
                 ['room_id' => $room->id]
             )->increment('score', $score);
+
+            app(ProfileCacheService::class)->forget($user);
 
             if ($room->isPublic()) {
                 UpdateUserLevel::dispatch(

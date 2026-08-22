@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Donation;
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -192,6 +193,37 @@ class DonationGoalServiceTest extends TestCase
         $this->assertCount(1, $history);
         $this->assertSame(1_000, $history[0]['amount_cents']);
         $this->assertSame(1_000, $this->service->userDonationSummary($user)['total_cents']);
+    }
+
+    public function test_user_donation_summary_distinguishes_months_supported_from_supporter_duration(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-08-22 12:00:00', 'Europe/Paris'));
+
+        $user = User::factory()->create(['is_guest' => false]);
+
+        foreach ([
+            ['cs_2023', '2023-03', '2023-03-05 10:00:00'],
+            ['cs_2024', '2024-03', '2024-03-03 10:00:00'],
+            ['cs_2025', '2025-03', '2025-03-08 10:00:00'],
+            ['cs_2026', '2026-08', '2026-08-22 10:00:00'],
+        ] as [$sessionId, $monthKey, $donatedAt]) {
+            Donation::query()->create([
+                'stripe_checkout_session_id' => $sessionId,
+                'amount_cents' => 5_000,
+                'currency' => 'eur',
+                'month_key' => $monthKey,
+                'user_id' => $user->id,
+                'donated_at' => Carbon::parse($donatedAt, 'Europe/Paris'),
+            ]);
+        }
+
+        $summary = $this->service->userDonationSummary($user);
+
+        $this->assertSame(4, $summary['months_supported']);
+        $this->assertSame(41, $summary['supporter_duration_months']);
+        $this->assertSame('2023-03', $summary['first_supported_month_key']);
+
+        Carbon::setTestNow();
     }
 
     public function test_recent_supporters_returns_unique_identified_donors(): void

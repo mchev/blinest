@@ -21,6 +21,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  initialRound: {
+    type: Object,
+    default: null,
+  },
 })
 
 const emit = defineEmits(['track:played', 'track:ended', 'track:paused', 'track:stopped', 'track:currentTime'])
@@ -53,6 +57,9 @@ const isIOS = computed(() => /iPad|iPhone|iPod/.test(navigator.userAgent) && !wi
 // Intervals/timers refs for cleanup
 const countdownInterval = ref(null)
 const progressInterval = ref(null)
+const preloadedTrackId = ref(null)
+const preloadedAudioUrl = ref(null)
+const roundState = ref(props.initialRound)
 
 // Volume handling
 const volume = ref(parseFloat(localStorage.getItem('volume') || '1'))
@@ -235,15 +242,51 @@ const play = async (startTime = 0) => {
   }
 
   try {
-    // Set up audio source
-    audio.value.src = track.value.audio
-    audio.value.crossOrigin = 'anonymous'
-    audio.value.muted = false
+    const audioUrl = track.value?.audio
 
-    // Add event listeners before loading
+    if (!audioUrl) {
+      error.value = 'Missing audio URL'
+      loading.value = false
+      isPlaying.value = false
+      return
+    }
+
     addAudioEventListeners()
 
-    // Load the audio - handleCanPlayThrough will apply the startTime
+    const canReusePreload = preloadedTrackId.value === track.value.id && audio.value.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !isYoutubeTrack.value
+
+    if (canReusePreload) {
+      audio.value.muted = false
+      audio.value.volume = volume.value
+
+      if (startTime > 0) {
+        try {
+          audio.value.currentTime = startTime
+          currentTime.value = startTime
+        } catch (e) {
+          // handleCanPlayThrough may apply startTime
+        }
+      }
+
+      try {
+        await audio.value.play()
+        loading.value = false
+        clearPreloadState()
+        emit('track:played', track.value)
+        return
+      } catch (e) {
+        clearPreloadState()
+        // Fall through to full reload
+      }
+    }
+
+    clearPreloadState()
+
+    audio.value.src = audioUrl
+    audio.value.crossOrigin = 'anonymous'
+    audio.value.muted = false
+    audio.value.volume = volume.value
+
     audio.value.load()
 
     // If we have a startTime, also try to set it early (but handleCanPlayThrough is the main handler)
@@ -323,7 +366,12 @@ const handleTrackPlayed = (e) => {
     return // Already playing this track
   }
   track.value = e.track
+  if (e.round) {
+    roundState.value = e.round
+  }
   waitingForNextTrack.value = false
+  countdowning.value = false
+  clearInterval(countdownInterval.value)
 
   // Enregistrer que le joueur a écouté cette track (même sans trouver de réponse)
   if (e.round && e.round.id && e.track && e.track.id) {
@@ -335,11 +383,40 @@ const handleTrackPlayed = (e) => {
   play()
 }
 
-const handleTrackEnded = () => {
+const clearPreloadState = () => {
+  preloadedTrackId.value = null
+  preloadedAudioUrl.value = null
+}
+
+const preloadNextTrack = (audioUrl, trackId) => {
+  if (!audioUrl || !trackId || preloadedTrackId.value === trackId) {
+    return
+  }
+
+  preloadedTrackId.value = trackId
+  preloadedAudioUrl.value = audioUrl
+
+  removeAudioEventListeners()
+  audio.value.pause()
+  audio.value.muted = true
+  audio.value.preload = 'auto'
+  audio.value.crossOrigin = 'anonymous'
+  audio.value.src = audioUrl
+  audio.value.load()
+}
+
+const handleTrackEnded = (e) => {
   usersWithAllAnswers.value = []
   stop()
   waitingForNextTrack.value = true
-  startCountdown()
+
+  const nextAudioUrl = e?.next_track_audio_url || e?.next_track_preview_url
+
+  if (nextAudioUrl && e?.next_track_id) {
+    preloadNextTrack(nextAudioUrl, e.next_track_id)
+  }
+
+  startCountdown(e?.next_track_at)
 }
 
 const handleUserFoundAllAnswers = (e) => {
@@ -572,8 +649,15 @@ const stop = async () => {
   emit('track:stopped', track.value)
 }
 
-const startCountdown = () => {
-  countdown.value = parseInt(props.room.pause_between_tracks)
+const startCountdown = (nextTrackAt = null) => {
+  const pauseSeconds = parseInt(props.room.pause_between_tracks, 10)
+  let remaining = pauseSeconds
+
+  if (nextTrackAt) {
+    remaining = Math.max(0, Math.ceil((new Date(nextTrackAt).getTime() - Date.now()) / 1000))
+  }
+
+  countdown.value = remaining
   countdowning.value = true
 
   clearInterval(countdownInterval.value)

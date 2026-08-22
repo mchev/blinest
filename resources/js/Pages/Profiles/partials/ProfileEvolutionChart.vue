@@ -1,6 +1,5 @@
 <script setup>
-import { ref, computed, defineAsyncComponent, onMounted } from 'vue'
-import axios from 'axios'
+import { computed, defineAsyncComponent } from 'vue'
 
 const ChartLine = defineAsyncComponent(() =>
   Promise.all([import('chart.js'), import('vue-chartjs')]).then(([chartJs, vueChartJs]) => {
@@ -13,38 +12,23 @@ const ChartLine = defineAsyncComponent(() =>
 )
 
 const props = defineProps({
-  userId: {
-    type: Number,
-    required: true,
+  scoreEvolution: {
+    type: Array,
+    default: () => [],
   },
 })
 
-const scoreEvolution = ref([])
-const loading = ref(true)
-
-onMounted(async () => {
-  try {
-    const response = await axios.get(route('user.profile.score-evolution', props.userId))
-    scoreEvolution.value = response.data.score_evolution || []
-  } catch (error) {
-    console.error('Error loading score evolution:', error)
-    scoreEvolution.value = []
-  } finally {
-    loading.value = false
-  }
-})
-
 const chartData = computed(() => {
-  if (scoreEvolution.value.length === 0) {
+  if (props.scoreEvolution.length === 0) {
     return { labels: [], datasets: [] }
   }
 
   return {
-    labels: scoreEvolution.value.map((entry) => entry.date),
+    labels: props.scoreEvolution.map((entry) => entry.date),
     datasets: [
       {
         label: 'Score',
-        data: scoreEvolution.value.map((entry) => entry.total_score),
+        data: props.scoreEvolution.map((entry) => entry.total_score),
         fill: true,
         borderColor: '#f59e0b',
         backgroundColor: 'rgba(245, 158, 11, 0.08)',
@@ -77,10 +61,7 @@ const chartOptions = {
 
 <template>
   <div class="relative h-44 sm:h-48">
-    <div v-if="loading" class="absolute inset-0 flex items-end gap-1 px-2 pb-2">
-      <div v-for="index in 7" :key="index" class="w-full animate-pulse rounded-t bg-white/10" :style="{ height: `${20 + index * 8}%`, animationDelay: `${index * 0.08}s` }" />
-    </div>
-    <ChartLine v-else-if="scoreEvolution.length > 1" :data="chartData" :options="chartOptions" />
+    <ChartLine v-if="scoreEvolution.length > 1" :data="chartData" :options="chartOptions" />
     <div v-else class="flex h-full items-center justify-center text-sm text-white/45">
       {{ __('Not enough data for score evolution') }}
     </div>
