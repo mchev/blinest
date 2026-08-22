@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
+use App\Services\Donations\DonorPerkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -15,7 +16,10 @@ use Laravel\Head\Facades\Head;
 
 class ProfileController extends Controller
 {
-    public function __construct(private DonationGoalService $donationGoal) {}
+    public function __construct(
+        private DonationGoalService $donationGoal,
+        private DonorPerkService $donorPerks,
+    ) {}
 
     public function show(Request $request, User $user): InertiaResponse
     {
@@ -127,7 +131,7 @@ class ProfileController extends Controller
         Head::title($user->name);
 
         return Inertia::render('Profiles/Show', [
-            'user' => [
+            'user' => $this->donorPerks->enrichUserPayload([
                 'id' => $user->id,
                 'name' => $user->name,
                 'photo' => $user->photo,
@@ -150,10 +154,9 @@ class ProfileController extends Controller
                 'scores' => $scores,
                 'likes' => $likes,
                 'bookmarks' => $bookmarks,
-                'is_supporter' => $this->donationGoal->userIsSupporter($user),
                 'donation_summary' => $this->donationGoal->userDonationSummary($user),
                 'donations' => $this->donationGoal->userDonationHistory($user),
-            ],
+            ], $user),
         ]);
     }
 

@@ -7,11 +7,13 @@ import { ZiggyVue } from 'ziggy-js'
 import { route as ziggyRoute } from 'ziggy-js'
 import Translation from './translation'
 import { scheduleEzoicSync } from './ezoic'
+import { userHasDonorPerk } from '@/utils/donorPerks'
 import { createLocalizedRoute } from './localizedRoute'
 
 router.on('finish', (event) => {
   const path = new URL(event.detail.visit.url, window.location.origin).pathname
-  const adsDisabled = event.detail.page?.props?.donation_goal?.ads_disabled ?? false
+  const pageProps = event.detail.page?.props ?? {}
+  const adsDisabled = (pageProps.donation_goal?.ads_disabled ?? false) || userHasDonorPerk(pageProps.auth?.user, 'ad_free')
 
   scheduleEzoicSync(path, { adsDisabled })
 })
@@ -32,7 +34,7 @@ createInertiaApp({
     app.mount(el)
 
     scheduleEzoicSync(window.location.pathname, {
-      adsDisabled: props.initialPage?.props?.donation_goal?.ads_disabled ?? false,
+      adsDisabled: (props.initialPage?.props?.donation_goal?.ads_disabled ?? false) || userHasDonorPerk(props.initialPage?.props?.auth?.user, 'ad_free'),
     })
 
     return app

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Room;
 use App\Models\RoundStanding;
 use App\Models\User;
+use App\Services\Donations\DonorPerkService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
 
@@ -117,8 +118,10 @@ class RoomPresenceService
                 ->with(['userLevel', 'team'])
                 ->get();
 
+            $perkMap = app(DonorPerkService::class)->perkMapForUserIds($memberIds);
+
             foreach ($members as $user) {
-                $users[] = $this->formatUserForRoom($user, $room);
+                $users[] = $this->formatUserForRoom($user, $room, $perkMap);
             }
         }
 
@@ -140,8 +143,10 @@ class RoomPresenceService
 
     /**
      * Same shape as Broadcast::channel('rooms.{room}') for consistency.
+     *
+     * @param  array<int, list<string>>  $perkMap
      */
-    private function formatUserForRoom(User $user, Room $room): array
+    private function formatUserForRoom(User $user, Room $room, array $perkMap = []): array
     {
         $user->loadMissing('userLevel');
 
@@ -149,7 +154,7 @@ class RoomPresenceService
             ->where('is_elo_counted', true)
             ->count();
 
-        return [
+        return app(DonorPerkService::class)->enrichUserPayloadWithMap([
             'id' => $user->id,
             'name' => $user->name,
             'is_guest' => $user->isGuest(),
@@ -174,6 +179,6 @@ class RoomPresenceService
                 'tracks_liked_count' => $user->userLevel->tracks_liked_count ?? 0,
                 'has_team' => $user->team !== null,
             ] : null,
-        ];
+        ], $user->id, $perkMap);
     }
 }

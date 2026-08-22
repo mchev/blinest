@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
+use App\Services\Donations\DonorPerkService;
 use App\Support\ClientIp;
 use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -93,7 +94,13 @@ class AppServiceProvider extends ServiceProvider
     public function bootViews(): void
     {
         View::composer('app', function ($view): void {
-            $view->with('serveEzoicAds', ! app(DonationGoalService::class)->shouldDisableAds());
+            $donationGoal = app(DonationGoalService::class);
+            $donorPerks = app(DonorPerkService::class);
+
+            $serveEzoicAds = ! $donationGoal->shouldDisableAds()
+                && ! $donorPerks->shouldDisableAdsForUser(auth()->user());
+
+            $view->with('serveEzoicAds', $serveEzoicAds);
         });
     }
 }

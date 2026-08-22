@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
+use App\Services\Donations\DonorPerkService;
 use App\Support\ZiggyRouteCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -44,16 +45,20 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user()?->load('userLevel');
         $donationGoal = app(DonationGoalService::class);
+        $donorPerks = app(DonorPerkService::class);
 
         return array_merge(parent::share($request), [
-            'auth' => function () use ($user, $donationGoal) {
+            'auth' => function () use ($user, $donorPerks) {
+                if ($user === null) {
+                    return ['user' => null];
+                }
+
                 return [
-                    'user' => $user ? [
+                    'user' => $donorPerks->enrichUserPayload([
                         'id' => $user->id,
                         'name' => $user->name,
                         'photo' => $user->photo,
                         'is_guest' => $user->isGuest(),
-                        'is_supporter' => $donationGoal->userIsSupporter($user),
                         'admin' => $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,
@@ -81,7 +86,7 @@ class HandleInertiaRequests extends Middleware
                         'can' => Gate::forUser($user)->abilities(),
                         'pending_requests' => $user->cachedTeamRequestIds()['pending'],
                         'declined_requests' => $user->cachedTeamRequestIds()['declined'],
-                    ] : null,
+                    ], $user),
                 ];
             },
             'publicModerators' => Cache::remember('public-moderators', 3600, function () {
@@ -123,7 +128,7 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v53_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v56_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );

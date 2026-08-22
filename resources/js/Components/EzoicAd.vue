@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { useAdsDisabled } from '@/composables/useAdsDisabled'
 import { shouldServeEzoicAds } from '@/ezoic'
 
 const props = defineProps({
@@ -20,7 +21,7 @@ const props = defineProps({
 
 const page = usePage()
 
-const adsDisabled = computed(() => page.props.donation_goal?.ads_disabled ?? false)
+const adsDisabled = useAdsDisabled()
 const visible = computed(() => shouldServeEzoicAds(page.url, { adsDisabled: adsDisabled.value }))
 </script>
 

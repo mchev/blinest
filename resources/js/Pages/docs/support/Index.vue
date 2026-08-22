@@ -4,6 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import DonationGoalCard from '@/Components/Donations/DonationGoalCard.vue'
 import DonationHistoryList from '@/Components/Donations/DonationHistoryList.vue'
 import DonationInfrastructureSection from '@/Components/Donations/DonationInfrastructureSection.vue'
+import DonationPerksSection from '@/Components/Donations/DonationPerksSection.vue'
 import { useDonationGoal } from '@/composables/useDonationGoal'
 
 defineProps({
@@ -42,6 +43,8 @@ const formatMonth = (monthKey) => {
         <DonationGoalCard />
       </div>
 
+      <DonationPerksSection />
+
       <DonationInfrastructureSection />
 
       <div class="rounded-2xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
@@ -50,7 +53,6 @@ const formatMonth = (monthKey) => {
           <li>{{ __('Donation howto goal') }}</li>
           <li>{{ __('Donation howto ads') }}</li>
           <li>{{ __('Donation howto surplus') }}</li>
-          <li>{{ __('Donation howto badge') }}</li>
           <li>{{ __('Donation howto transparency') }}</li>
         </ul>
       </div>

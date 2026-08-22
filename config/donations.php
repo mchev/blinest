@@ -51,4 +51,18 @@ return [
     */
     'cache_ttl_seconds' => (int) env('DONATIONS_CACHE_TTL', 300),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Perks granted to users who donate during the current month
+    |--------------------------------------------------------------------------
+    |
+    | Add future perk keys here once implemented (see App\Enums\DonorPerk):
+    | custom_name_style, solo_elo
+    |
+    */
+    'supporter_perks' => [
+        'ad_free',
+        'avatar_crown',
+    ],
+
 ];

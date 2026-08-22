@@ -361,18 +361,23 @@ class DonationGoalService
             return [];
         }
 
-        $supporterIds = Donation::query()
-            ->where('month_key', $this->monthKey())
-            ->whereNotNull('user_id')
-            ->pluck('user_id')
+        $userIds = collect($entries)
+            ->pluck('user.id')
+            ->filter()
             ->unique()
+            ->values()
             ->all();
 
-        $supporterLookup = array_flip($supporterIds);
+        $perkMap = app(DonorPerkService::class)->perkMapForUserIds($userIds);
+        $donorPerks = app(DonorPerkService::class);
 
-        return array_map(function (array $entry) use ($supporterLookup): array {
+        return array_map(function (array $entry) use ($donorPerks, $perkMap): array {
             if (isset($entry['user']['id'])) {
-                $entry['user']['is_supporter'] = isset($supporterLookup[$entry['user']['id']]);
+                $entry['user'] = $donorPerks->enrichUserPayloadWithMap(
+                    $entry['user'],
+                    (int) $entry['user']['id'],
+                    $perkMap,
+                );
             }
 
             return $entry;

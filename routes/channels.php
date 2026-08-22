@@ -2,6 +2,8 @@
 
 use App\Models\Room;
 use App\Models\RoundStanding;
+use App\Models\User;
+use App\Services\Donations\DonorPerkService;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -19,7 +21,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('rooms.{room}', function ($user, Room $room) {
+Broadcast::channel('rooms.{room}', function (User $user, Room $room) {
     $user->loadMissing('userLevel');
 
     // Count rounds played in public rooms (where ELO was counted)
@@ -28,7 +30,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
         ->where('is_elo_counted', true)
         ->count();
 
-    return [
+    return app(DonorPerkService::class)->enrichUserPayload([
         'id' => $user->id,
         'name' => $user->name,
         'is_guest' => $user->isGuest(),
@@ -60,7 +62,7 @@ Broadcast::channel('rooms.{room}', function ($user, Room $room) {
                 ? $room->currentRound()->first()->userScore($user)
                 : 0,
         ],
-    ];
+    ], $user);
 });
 
 Broadcast::channel('chat-room.{id}', function ($user) {

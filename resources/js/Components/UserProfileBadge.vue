@@ -4,6 +4,8 @@ import { Link, usePage } from '@inertiajs/vue3'
 import LevelBadge from '@/Components/LevelBadge.vue'
 import EloBadge from '@/Components/EloBadge.vue'
 import SupporterBadge from '@/Components/Donations/SupporterBadge.vue'
+import UserAvatar from '@/Components/UserAvatar.vue'
+import { userHasDonorCrown } from '@/utils/donorPerks'
 
 const props = defineProps({
   user: {
@@ -100,6 +102,10 @@ const sizeConfig = computed(() => {
   }
   return configs[props.size]
 })
+
+const crownSize = computed(() => props.size)
+
+const showSupporterBadge = computed(() => props.user?.is_supporter && !userHasDonorCrown(props.user))
 </script>
 
 <template>
@@ -107,8 +113,7 @@ const sizeConfig = computed(() => {
   <div v-if="variant === 'badge'" class="relative inline-flex flex-col items-center justify-center">
     <!-- Avatar with level bubble and ELO -->
     <div class="relative flex items-center justify-center">
-      <!-- Avatar -->
-      <img :src="user.photo" :alt="user.name" :class="['rounded-full object-cover object-center shadow-lg ring-2', sizeConfig.avatar, ringColor]" />
+      <UserAvatar :user="user" :img-class="['rounded-full object-cover object-center shadow-lg ring-2', sizeConfig.avatar, ringColor].join(' ')" :crown-size="crownSize" />
 
       <!-- Level number in notification bubble - top right -->
       <div
@@ -127,7 +132,7 @@ const sizeConfig = computed(() => {
 
     <!-- ELO number - completely below the avatar, reduced spacing -->
     <div v-if="showElo && user.elo" class="mt-0.5 flex flex-col items-center justify-center gap-0.5">
-      <SupporterBadge v-if="user?.is_supporter" size="sm" />
+      <SupporterBadge v-if="showSupporterBadge" size="sm" />
       <div v-if="!hasPlayed" class="text-[10px] font-medium text-neutral-500" :title="__('Player has not played yet - ELO will be calculated after first game')" aria-label="Not played yet">
         {{ __('N/A') }}
       </div>
@@ -139,8 +144,7 @@ const sizeConfig = computed(() => {
 
   <!-- Full variant: with name and badges -->
   <div v-else class="flex items-center" :class="sizeConfig.gap">
-    <!-- Avatar -->
-    <img :src="user.photo" :alt="user.name" :class="['flex-shrink-0 rounded-full shadow-lg ring-2', sizeConfig.avatar, ringColor]" />
+    <UserAvatar :user="user" :img-class="['flex-shrink-0 rounded-full object-cover shadow-lg ring-2', sizeConfig.avatar, ringColor].join(' ')" :crown-size="crownSize" />
 
     <!-- Name and badges -->
     <div class="flex min-w-0 flex-1 flex-col">
@@ -152,7 +156,7 @@ const sizeConfig = computed(() => {
         <span v-else :class="['truncate font-medium text-neutral-400', sizeConfig.name]">
           {{ user?.name || __('Deleted user') }}
         </span>
-        <SupporterBadge v-if="user?.is_supporter" :size="size === 'lg' ? 'md' : 'sm'" />
+        <SupporterBadge v-if="showSupporterBadge" :size="size === 'lg' ? 'md' : 'sm'" />
       </div>
 
       <!-- Level and ELO badges -->

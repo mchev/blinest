@@ -48,6 +48,52 @@ class DonationGoalTest extends TestCase
                 ->where('auth.user.is_supporter', false));
     }
 
+    public function test_donor_receives_perks_in_shared_auth_payload(): void
+    {
+        $user = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_donor_perks',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => app(DonationGoalService::class)->monthKey(),
+            'user_id' => $user->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        Cache::flush();
+
+        $this->actingAs($user)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('auth.user.is_supporter', true)
+                ->where('auth.user.donor_perks', ['ad_free', 'avatar_crown']));
+    }
+
+    public function test_individual_donor_skips_ezoic_even_when_goal_not_reached(): void
+    {
+        $this->app->detectEnvironment(fn (): string => 'production');
+
+        $user = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_donor_ads',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => app(DonationGoalService::class)->monthKey(),
+            'user_id' => $user->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        Cache::flush();
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $this->assertStringNotContainsString('ezojs.com/ezoic/sa.min.js', $response->getContent());
+    }
+
     public function test_support_page_is_accessible_and_lists_history(): void
     {
         $this->get(route('docs.support'))

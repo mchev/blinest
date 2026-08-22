@@ -18,6 +18,7 @@ import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 import RoomSeoPanel from './partials/RoomSeoPanel.vue'
 import EzoicAd from '@/Components/EzoicAd.vue'
+import { useAdsDisabled } from '@/composables/useAdsDisabled'
 import { EZOIC, clearEzoicAds, scheduleEzoicSync } from '@/ezoic'
 
 const props = defineProps({
@@ -96,7 +97,8 @@ let roundsChannel = null
 let presenceHeartbeatTimer = null
 /** 'connected' | 'reconnecting' for connection indicator */
 const connectionState = ref('connected')
-const roomAdsEnabled = computed(() => joined.value && !round.value?.is_playing && !room.value.is_playing && !page.props.donation_goal?.ads_disabled)
+const adsDisabled = useAdsDisabled()
+const roomAdsEnabled = computed(() => joined.value && !round.value?.is_playing && !room.value.is_playing && !adsDisabled.value)
 /** Handler for beforeunload so we can remove it (same reference for add/removeEventListener). */
 function onBeforeUnloadPresenceLeft() {
   callPresenceLeft({ useBeacon: true })

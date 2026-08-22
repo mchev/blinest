@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import Dropdown from '@/Components/Dropdown.vue'
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
+import UserAvatar from '@/Components/UserAvatar.vue'
 
 const user = usePage().props.auth.user
 
@@ -18,7 +19,7 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <img :src="user.photo" class="h-10 w-10 rounded-full border-2 border-white/20 transition-colors group-hover:border-brand-accent" :alt="user.name" />
+          <UserAvatar :user="user" img-class="h-10 w-10 rounded-full border-2 border-white/20 transition-colors group-hover:border-brand-accent" crown-size="md" />
         </div>
       </div>
     </template>

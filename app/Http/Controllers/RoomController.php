@@ -17,6 +17,7 @@ use App\Rules\Reserved;
 use App\Seo\RoomHead;
 use App\Seo\SeoLandingHtml;
 use App\Services\Auth\GuestAuthService;
+use App\Services\Donations\DonorPerkService;
 use App\Services\RoomPresenceService;
 use App\Services\Rooms\OfficialRoomRegistry;
 use App\Services\Rooms\RoomContentService;
@@ -172,7 +173,9 @@ class RoomController extends Controller
                 'is_autostart' => $room->is_autostart,
                 'is_random' => $room->is_random,
                 'password' => $room->password,
-                'latest_messages' => $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
+                'latest_messages' => app(DonorPerkService::class)->enrichMessagesForChat(
+                    $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
+                ),
                 'pause_between_tracks' => $room->pause_between_tracks,
                 'pause_between_rounds' => $room->pause_between_rounds,
                 'tracks_count' => $tracksCount,
