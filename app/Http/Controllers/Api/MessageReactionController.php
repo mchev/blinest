@@ -4,28 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\MessageReactionUpdated;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreMessageReactionRequest;
 use App\Models\Message;
 use App\Models\MessageReaction;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class MessageReactionController extends Controller
 {
-    // Liste les réactions d'un message
-    public function index(Message $message)
+    public function index(Message $message): JsonResponse
     {
-        $reactions = $message->reactions
-            ->groupBy('emoji')
-            ->map(function ($group) {
-                return [
-                    'emoji' => $group[0]->emoji,
-                    'count' => $group->count(),
-                    'users' => $group->map(fn ($r) => [
-                        'id' => $r->user->id,
-                        'name' => $r->user->name,
-                    ])->values(),
-                ];
-            })->values();
+        $reactions = $this->groupedReactions($message);
 
         $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
 
@@ -35,57 +23,60 @@ class MessageReactionController extends Controller
         ]);
     }
 
-    // Ajoute ou retire une réaction
-    public function store(Request $request, Message $message)
+    public function store(StoreMessageReactionRequest $request, Message $message): JsonResponse
     {
-        $request->validate([
-            'emoji' => 'required|string|max:191',
-        ]);
-        $user = Auth::user();
-        $reaction = MessageReaction::where('message_id', $message->id)
+        $user = $request->user();
+        $emoji = $request->string('emoji')->toString();
+
+        $reaction = MessageReaction::query()
+            ->where('message_id', $message->id)
             ->where('user_id', $user->id)
-            ->where('emoji', $request->emoji)
+            ->where('emoji', $emoji)
             ->first();
+
         if ($reaction) {
             $reaction->delete();
-            $reactions = $message->reactions
-                ->groupBy('emoji')
-                ->map(function ($group) {
-                    return [
-                        'emoji' => $group[0]->emoji,
-                        'count' => $group->count(),
-                        'users' => $group->map(fn ($r) => [
-                            'id' => $r->user->id,
-                            'name' => $r->user->name,
-                        ])->values(),
-                    ];
-                })->values();
-            $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
+
+            $reactions = $this->groupedReactions($message->fresh());
+            $userReaction = $message->reactions()->where('user_id', $user->id)->first()?->emoji;
             broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
 
             return response()->json(['removed' => true]);
-        } else {
-            MessageReaction::create([
-                'message_id' => $message->id,
-                'user_id' => $user->id,
-                'emoji' => $request->emoji,
-            ]);
-            $reactions = $message->reactions
-                ->groupBy('emoji')
-                ->map(function ($group) {
-                    return [
-                        'emoji' => $group[0]->emoji,
-                        'count' => $group->count(),
-                        'users' => $group->map(fn ($r) => [
-                            'id' => $r->user->id,
-                            'name' => $r->user->name,
-                        ])->values(),
-                    ];
-                })->values();
-            $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
-            broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
-
-            return response()->json(['added' => true]);
         }
+
+        MessageReaction::query()->create([
+            'message_id' => $message->id,
+            'user_id' => $user->id,
+            'emoji' => $emoji,
+        ]);
+
+        $reactions = $this->groupedReactions($message->fresh());
+        $userReaction = $emoji;
+        broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
+
+        return response()->json(['added' => true]);
+    }
+
+    /**
+     * @return list<array{emoji: string, count: int, users: list<array{id: int, name: string}>}>
+     */
+    private function groupedReactions(Message $message): array
+    {
+        $message->loadMissing('reactions.user');
+
+        return $message->reactions
+            ->groupBy('emoji')
+            ->map(function ($group) {
+                return [
+                    'emoji' => $group[0]->emoji,
+                    'count' => $group->count(),
+                    'users' => $group->map(fn ($reaction) => [
+                        'id' => $reaction->user->id,
+                        'name' => $reaction->user->name,
+                    ])->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
     }
 }

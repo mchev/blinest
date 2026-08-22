@@ -1,4 +1,4 @@
-/** @typedef {'ad_free'|'avatar_crown'|'custom_name_style'|'solo_elo'} DonorPerkKey */
+/** @typedef {'ad_free'|'avatar_crown'|'supporter_reactions'|'custom_name_style'|'solo_elo'} DonorPerkKey */
 
 /**
  * @param {{ donor_perks?: DonorPerkKey[], is_supporter?: boolean }|null|undefined} user
@@ -9,7 +9,7 @@ export function userHasDonorPerk(user, perk) {
     return user.donor_perks.includes(perk)
   }
 
-  return Boolean(user?.is_supporter) && (perk === 'ad_free' || perk === 'avatar_crown')
+  return Boolean(user?.is_supporter) && (perk === 'ad_free' || perk === 'avatar_crown' || perk === 'supporter_reactions')
 }
 
 /**
@@ -17,4 +17,11 @@ export function userHasDonorPerk(user, perk) {
  */
 export function userHasDonorCrown(user) {
   return userHasDonorPerk(user, 'avatar_crown')
+}
+
+/**
+ * @param {{ donor_perks?: DonorPerkKey[], is_supporter?: boolean }|null|undefined} user
+ */
+export function userHasSupporterReactions(user) {
+  return userHasDonorPerk(user, 'supporter_reactions')
 }

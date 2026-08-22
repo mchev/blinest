@@ -25,7 +25,7 @@ class DonorPerkServiceTest extends TestCase
 
         Config::set('donations.monthly_goal_cents', 10_000);
         Config::set('donations.timezone', 'Europe/Paris');
-        Config::set('donations.supporter_perks', ['ad_free', 'avatar_crown']);
+        Config::set('donations.supporter_perks', ['ad_free', 'avatar_crown', 'supporter_reactions']);
 
         $this->service = app(DonorPerkService::class);
         $this->donationGoal = app(DonationGoalService::class);
@@ -56,7 +56,7 @@ class DonorPerkServiceTest extends TestCase
 
         $perks = $this->service->activePerksForUser($user);
 
-        $this->assertSame(['ad_free', 'avatar_crown'], $perks);
+        $this->assertSame(['ad_free', 'avatar_crown', 'supporter_reactions'], $perks);
         $this->assertTrue($this->service->userHasPerk($user, DonorPerk::AdFree));
         $this->assertTrue($this->service->userHasPerk($user, DonorPerk::AvatarCrown));
         $this->assertTrue($this->service->shouldDisableAdsForUser($user));
@@ -94,7 +94,7 @@ class DonorPerkServiceTest extends TestCase
         $payload = $this->service->enrichUserPayload(['id' => $user->id, 'name' => $user->name], $user);
 
         $this->assertTrue($payload['is_supporter']);
-        $this->assertSame(['ad_free', 'avatar_crown'], $payload['donor_perks']);
+        $this->assertSame(['ad_free', 'avatar_crown', 'supporter_reactions'], $payload['donor_perks']);
     }
 
     public function test_perk_map_batch_loads_supporters(): void
@@ -113,7 +113,7 @@ class DonorPerkServiceTest extends TestCase
 
         $map = $this->service->perkMapForUserIds([$donor->id, $other->id]);
 
-        $this->assertSame(['ad_free', 'avatar_crown'], $map[$donor->id]);
+        $this->assertSame(['ad_free', 'avatar_crown', 'supporter_reactions'], $map[$donor->id]);
         $this->assertArrayNotHasKey($other->id, $map);
     }
 

@@ -1,0 +1,37 @@
+---
+description: Vue i18n — __ in templates vs script setup
+globs: resources/js/**/*.vue
+alwaysApply: false
+---
+
+# Vue translations (`__`)
+
+`__()` in **templates** works via the global `Translation` mixin (`resources/js/translation.js`).
+
+In **`<script setup>`**, `__` is **not** available — it causes `TypeError: __ is not a function` in browser logs.
+
+## Script setup
+
+Use the existing composable:
+
+```vue
+<script setup>
+import { useTranslate } from '@/composables/useTranslate'
+
+const translate = useTranslate()
+
+const label = computed(() => translate('My key', { count: 3 }))
+</script>
+
+<template>
+  <!-- Either form works in template -->
+  {{ __('My key') }}
+  {{ translate('My key') }}
+</template>
+```
+
+## Do not
+
+- Call `__()` inside `<script setup>` without `useTranslate()`
+- Import `__` from `translation.js` (default export is a mixin object, not a function)
+- Rely on `window.__` (same mixin object, not callable)

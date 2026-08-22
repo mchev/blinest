@@ -42,7 +42,9 @@ export function useDonationGoal() {
 
   const donationUrl = computed(() => goal.value?.payment_url ?? null)
 
-  const recentSupporters = computed(() => goal.value?.recent_supporters ?? [])
+  const monthlySupporters = computed(() => goal.value?.monthly_supporters ?? [])
+
+  const recentSupporters = computed(() => monthlySupporters.value)
 
   const pitchLine = computed(() => resolveDonationPitch(goal.value, translate))
 
@@ -67,6 +69,7 @@ export function useDonationGoal() {
   return {
     goal,
     donationUrl,
+    monthlySupporters,
     recentSupporters,
     pitchLine,
     daysUnit,

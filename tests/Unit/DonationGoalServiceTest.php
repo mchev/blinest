@@ -240,4 +240,35 @@ class DonationGoalServiceTest extends TestCase
         $this->assertSame($first->id, $supporters[0]['id']);
         $this->assertSame($second->id, $supporters[1]['id']);
     }
+
+    public function test_monthly_supporters_only_includes_current_month(): void
+    {
+        $current = User::factory()->create(['is_guest' => false]);
+        $past = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_month_current',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => $this->service->monthKey(),
+            'user_id' => $current->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_month_past',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => '2020-01',
+            'user_id' => $past->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        $supporters = $this->service->monthlySupporters();
+
+        $this->assertCount(1, $supporters);
+        $this->assertSame($current->id, $supporters[0]['id']);
+        $this->assertTrue($supporters[0]['is_supporter']);
+        $this->assertSame(['ad_free', 'avatar_crown', 'supporter_reactions'], $supporters[0]['donor_perks']);
+    }
 }

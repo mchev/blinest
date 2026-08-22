@@ -280,7 +280,18 @@ class User extends Authenticatable
 
     public function setPasswordAttribute($password)
     {
+        if ($password === null) {
+            $this->attributes['password'] = null;
+
+            return;
+        }
+
         $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
+    }
+
+    public function hasPassword(): bool
+    {
+        return filled($this->getRawOriginal('password'));
     }
 
     public function isAdministrator()

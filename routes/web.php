@@ -67,6 +67,12 @@ Route::middleware(['auth', 'not.guest'])->group(function () {
         ->name('users.show');
     Route::post('users/{user}', [UserController::class, 'update'])
         ->name('users.update');
+    Route::put('users/{user}/password', [UserController::class, 'updatePassword'])
+        ->name('users.password.update');
+    Route::post('users/{user}/photo', [UserController::class, 'updatePhoto'])
+        ->name('users.photo.update');
+    Route::delete('users/{user}/photo', [UserController::class, 'destroyPhoto'])
+        ->name('users.photo.destroy');
     Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
 });

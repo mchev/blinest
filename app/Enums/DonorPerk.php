@@ -7,6 +7,8 @@ enum DonorPerk: string
     case AdFree = 'ad_free';
     case AvatarCrown = 'avatar_crown';
 
+    case SupporterReactions = 'supporter_reactions';
+
     /** Reserved for future rollout — enable in config when implemented. */
     case CustomNameStyle = 'custom_name_style';
 

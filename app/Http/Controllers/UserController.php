@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
+use App\Http\Requests\DeleteUserPhotoRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
+use App\Http\Requests\UpdateUserPhotoRequest;
+use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\User;
-use App\Rules\Reserved;
+use App\Services\Account\AccountPageService;
 use App\Services\BrevoService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -13,41 +16,23 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Laravel\Head\Facades\Head;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private AccountPageService $account,
+    ) {}
+
     public function show()
     {
         $user = Auth::user();
 
-        Head::title($user->name);
+        Head::title(__('My account'));
 
         return Inertia::render('Me/Show', [
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'photo' => $user->photo,
-                'created_at' => $user->created_at->format('d/m/Y H:i'),
-                'created_at_from_now' => $user->created_at->diffForHumans(),
-                'latest_round_at' => $user->totalScores()->latest()->first()?->updated_at->format('d/m/Y H:i'),
-                'rooms' => $user->moderatedRooms,
-                'playlists' => $user->moderatedPlaylists,
-                'bookmarked_rooms' => $user->bookmarkedRooms()->get(),
-                'total_score' => $user->totalScores()->sum('score'),
-                'scores' => $user->totalScores()->whereHas('room')->with('room')->paginate(10)->through(fn ($score) => [
-                    'room_id' => $score->room->id,
-                    'room_slug' => $score->room->slug,
-                    'name' => $score->room->name,
-                    'date' => $score->updated_at->diffForHumans(),
-                    'total' => $score->score,
-                    'max' => $user->maxScoreByRoom(Room::find($score->room->id))->first()?->total ?? '-',
-                ]),
-            ],
+            'account' => $this->account->payload($user),
         ]);
     }
 
@@ -64,28 +49,34 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserProfileRequest $request, User $user)
     {
-        if (Auth::user()->id === $user->id) {
-            $request->validate([
-                'name' => ['required', 'min:2', 'max:25', Rule::unique('users')->ignore($user->id), new Reserved($user->name)],
-                'email' => ['required', 'max:255', 'email:rfc,dns', Rule::unique('users')->ignore($user->id)],
-                'password' => ['nullable', Rules\Password::defaults()],
-                'photo' => ['nullable', 'image', 'max:1024'],
-            ]);
+        $user->update($request->validated());
 
-            $user->update($request->only('name', 'email'));
+        return Redirect::back()->with('success', __('Information updated'));
+    }
 
-            if ($request->file('photo')) {
-                $user->updatePhoto($request->file('photo'));
-            }
+    public function updatePhoto(UpdateUserPhotoRequest $request, User $user)
+    {
+        $user->updatePhoto($request->file('photo'));
 
-            if ($request->get('password')) {
-                $user->update(['password' => Hash::make($request->get('password'))]);
-            }
+        return Redirect::back()->with('success', __('Avatar updated'));
+    }
 
-            return Redirect::back()->with('success', __('Information updated'));
-        }
+    public function destroyPhoto(DeleteUserPhotoRequest $request, User $user)
+    {
+        $user->deletePhoto();
+
+        return Redirect::back()->with('success', __('Avatar removed'));
+    }
+
+    public function updatePassword(UpdateUserPasswordRequest $request, User $user)
+    {
+        $user->update([
+            'password' => Hash::make($request->string('password')->toString()),
+        ]);
+
+        return Redirect::back()->with('success', __('Password updated'));
     }
 
     public function destroy(User $user)

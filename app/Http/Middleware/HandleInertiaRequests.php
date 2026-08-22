@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\User;
+use App\Services\Chat\ChatReactionService;
 use App\Services\Donations\DonationGoalService;
 use App\Services\Donations\DonorPerkService;
 use App\Support\ZiggyRouteCache;
@@ -46,6 +47,7 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user()?->load('userLevel');
         $donationGoal = app(DonationGoalService::class);
         $donorPerks = app(DonorPerkService::class);
+        $chatReactions = app(ChatReactionService::class);
 
         return array_merge(parent::share($request), [
             'auth' => function () use ($user, $donorPerks) {
@@ -128,7 +130,7 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v56_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v65_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );
@@ -138,6 +140,7 @@ class HandleInertiaRequests extends Middleware
                 $request->user(),
                 app()->getLocale(),
             ),
+            'chat_reactions' => fn () => $chatReactions->emojiCatalog(),
         ]);
     }
 }

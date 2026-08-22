@@ -1168,6 +1168,10 @@
     @apply border-brand-secondary/35 bg-brand-secondary/10;
   }
 
+  .chat-reaction--supporter {
+    @apply border-amber-400/25 bg-amber-500/10;
+  }
+
   .chat-guest-banner {
     @apply w-full rounded-lg border border-white/10 bg-brand-midnight/80 px-4 py-6 text-sm text-white/70;
   }

@@ -71,9 +71,40 @@ class DonationGoalService
     {
         $progress = $this->currentProgress();
         $progress['payment_url'] = $this->paymentUrlForUser($user, $locale);
-        $progress['recent_supporters'] = $this->recentSupporters(3);
+        $progress['monthly_supporters'] = $this->monthlySupporters();
 
         return $progress;
+    }
+
+    /**
+     * @return list<array{id: int, name: string, photo: string, is_supporter: bool, donor_perks: list<string>}>
+     */
+    public function monthlySupporters(?string $monthKey = null, ?int $limit = null): array
+    {
+        $monthKey ??= $this->monthKey();
+        $donorPerks = app(DonorPerkService::class);
+
+        $supporters = Donation::query()
+            ->with(['user:id,name,photo_path'])
+            ->where('month_key', $monthKey)
+            ->whereNotNull('user_id')
+            ->orderByDesc('donated_at')
+            ->get()
+            ->unique('user_id')
+            ->map(function (Donation $donation) use ($donorPerks): array {
+                return $donorPerks->enrichUserPayload([
+                    'id' => $donation->user->id,
+                    'name' => $donation->user->name,
+                    'photo' => $donation->user->photo,
+                ], $donation->user);
+            })
+            ->values();
+
+        if ($limit !== null) {
+            $supporters = $supporters->take($limit);
+        }
+
+        return $supporters->all();
     }
 
     /**
@@ -81,20 +112,7 @@ class DonationGoalService
      */
     public function recentSupporters(int $limit = 3): array
     {
-        return Donation::query()
-            ->with(['user:id,name,photo_path'])
-            ->whereNotNull('user_id')
-            ->orderByDesc('donated_at')
-            ->get()
-            ->unique('user_id')
-            ->take($limit)
-            ->map(fn (Donation $donation): array => [
-                'id' => $donation->user->id,
-                'name' => $donation->user->name,
-                'photo' => $donation->user->photo,
-            ])
-            ->values()
-            ->all();
+        return $this->monthlySupporters(limit: $limit);
     }
 
     public function monthKey(?CarbonInterface $date = null): string
@@ -237,6 +255,7 @@ class DonationGoalService
                 'donation_count' => 0,
                 'months_supported' => 0,
                 'first_donated_at' => null,
+                'first_supported_month_key' => null,
             ];
         }
 
@@ -247,6 +266,7 @@ class DonationGoalService
             'donation_count' => (int) (clone $query)->count(),
             'months_supported' => (int) (clone $query)->pluck('month_key')->unique()->count(),
             'first_donated_at' => (clone $query)->orderBy('donated_at')->value('donated_at')?->toIso8601String(),
+            'first_supported_month_key' => (clone $query)->orderBy('month_key')->value('month_key'),
         ];
     }
 

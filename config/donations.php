@@ -63,6 +63,21 @@ return [
     'supporter_perks' => [
         'ad_free',
         'avatar_crown',
+        'supporter_reactions',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exclusive chat reaction emojis for monthly supporters
+    |--------------------------------------------------------------------------
+    */
+    'supporter_reaction_emojis' => [
+        '☕',
+        '💎',
+        '🙏',
+        '✨',
+        '🎁',
+        '🫶',
     ],
 
 ];

@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { useDonationGoal } from '@/composables/useDonationGoal'
+import DonationMonthlySupporters from '@/Components/Donations/DonationMonthlySupporters.vue'
 
 defineProps({
   compact: {
@@ -10,7 +11,7 @@ defineProps({
   },
 })
 
-const { goal, donationUrl, recentSupporters, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, translate } = useDonationGoal()
+const { goal, donationUrl, monthlySupporters, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, translate } = useDonationGoal()
 
 const showConfetti = ref(false)
 
@@ -72,14 +73,7 @@ watch(
         </div>
       </div>
 
-      <div v-if="recentSupporters.length" class="flex items-center gap-2.5">
-        <div class="flex -space-x-2">
-          <img v-for="supporter in recentSupporters" :key="supporter.id" :src="supporter.photo" :alt="supporter.name" :title="supporter.name" class="h-7 w-7 rounded-full object-cover ring-2 ring-brand-deep" loading="lazy" />
-        </div>
-        <p class="text-xs leading-snug text-white/55">
-          {{ translate('Donation recent supporters') }}
-        </p>
-      </div>
+      <DonationMonthlySupporters :supporters="monthlySupporters" :max-visible="compact ? 6 : 10" :compact="compact" />
 
       <div class="h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" :aria-valuenow="goal.percent" aria-valuemin="0" aria-valuemax="100" :aria-label="progressAriaLabel">
         <div class="h-full rounded-full transition-all duration-500 ease-out" :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'" :style="{ width: `${goal.percent}%` }" />

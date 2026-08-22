@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import UserAvatar from '@/Components/UserAvatar.vue'
+import { userHasSupporterReactions } from '@/utils/donorPerks'
 import Moderation from './Moderation.vue'
 
 const props = defineProps({
@@ -18,8 +19,12 @@ const props = defineProps({
 const moderate = ref(false)
 const reporting = ref(false)
 const reported = ref(false)
-const { auth, publicModerators } = usePage().props
+const { auth, publicModerators, chat_reactions: chatReactions } = usePage().props
 const user = auth.user
+
+const standardEmojis = computed(() => chatReactions?.standard ?? [])
+const supporterEmojis = computed(() => chatReactions?.supporter ?? [])
+const canUseSupporterReactions = computed(() => userHasSupporterReactions(user))
 
 const isModerator = computed(() => props.room.moderators.some((x) => x.id === user.id))
 const userIsPublicModerator = computed(() => publicModerators.some((x) => x.id === user.id))
@@ -45,7 +50,6 @@ const report = async () => {
 const reactions = ref([])
 const userReaction = ref(null)
 const showEmojiPicker = ref(false)
-const emojiList = ['👍', '😂', '❤️', '🔥', '😮', '😢', '👏', '😡', '🎉', '😎', '🤔', '🙌', '💯', '🎵', '🥁', '🎸', '🎤', '🎻', '🎺', '🎷', '🥁', '🎶', '😊', '😃', '😞', '😉', '😛', '😲', '😘', '😕', '🤑']
 
 const fetchReactions = async () => {
   const { data } = await axios.get(`/api/messages/${props.message.id}/reactions`)
@@ -263,7 +267,7 @@ onUnmounted(() => {
         <!-- Réactions -->
         <div class="relative mt-2 flex flex-wrap items-center gap-1">
           <div v-for="reaction in reactions" :key="reaction.emoji" class="group/emoji relative">
-            <button class="chat-reaction" :class="{ 'chat-reaction--mine': userReaction === reaction.emoji }" @click="toggleReaction(reaction.emoji)" type="button">
+            <button class="chat-reaction" :class="{ 'chat-reaction--mine': userReaction === reaction.emoji, 'chat-reaction--supporter': supporterEmojis.includes(reaction.emoji) }" @click="toggleReaction(reaction.emoji)" type="button">
               <span>{{ reaction.emoji }}</span>
               <span class="text-xs font-medium">{{ reaction.count }}</span>
             </button>
@@ -287,9 +291,18 @@ onUnmounted(() => {
         marginBottom: emojiPickerPosition.marginBottom || '0',
       }"
     >
-      <button v-for="emoji in emojiList" :key="emoji" class="text-xl transition-transform hover:scale-125" @click="selectEmoji(emoji)">
+      <button v-for="emoji in standardEmojis" :key="emoji" class="text-xl transition-transform hover:scale-125" @click="selectEmoji(emoji)">
         {{ emoji }}
       </button>
+      <template v-if="supporterEmojis.length">
+        <div class="my-1 w-full border-t border-white/10" />
+        <p class="w-full px-1 text-[10px] font-semibold uppercase tracking-wide" :class="canUseSupporterReactions ? 'text-amber-300/90' : 'text-white/35'">
+          {{ __('Supporter reactions') }}
+        </p>
+        <button v-for="emoji in supporterEmojis" :key="`supporter-${emoji}`" class="text-xl transition-transform" :class="canUseSupporterReactions ? 'hover:scale-125' : 'cursor-not-allowed opacity-40'" :disabled="!canUseSupporterReactions" :title="canUseSupporterReactions ? undefined : __('Supporter reaction emoji locked')" @click="canUseSupporterReactions && selectEmoji(emoji)">
+          {{ emoji }}
+        </button>
+      </template>
     </div>
   </div>
 

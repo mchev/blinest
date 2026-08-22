@@ -44,7 +44,7 @@ class DonationGoalTest extends TestCase
                 ->has('donation_goal')
                 ->where('donation_goal.raised_cents', 4_000)
                 ->where('donation_goal.goal_cents', 10_000)
-                ->has('donation_goal.recent_supporters')
+                ->has('donation_goal.monthly_supporters')
                 ->where('auth.user.is_supporter', false));
     }
 
@@ -68,7 +68,7 @@ class DonationGoalTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('auth.user.is_supporter', true)
-                ->where('auth.user.donor_perks', ['ad_free', 'avatar_crown']));
+                ->where('auth.user.donor_perks', ['ad_free', 'avatar_crown', 'supporter_reactions']));
     }
 
     public function test_individual_donor_skips_ezoic_even_when_goal_not_reached(): void
