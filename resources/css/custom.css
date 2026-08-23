@@ -565,35 +565,35 @@
   }
 
   .user-avatar__crown {
-    @apply pointer-events-none absolute -top-3.5 left-1/2 z-10 -translate-x-1/2 text-amber-300 drop-shadow-[0_2px_4px_rgb(0_0_0/0.45)];
-    width: 1.75rem;
-    height: 1.4rem;
-    filter: drop-shadow(0 0 4px rgb(251 191 36 / 0.45));
+    @apply pointer-events-none absolute -top-2 left-1/2 z-10 -translate-x-1/2 text-amber-300/80 drop-shadow-[0_1px_2px_rgb(0_0_0/0.35)];
+    width: 1.15rem;
+    height: 0.92rem;
+    filter: drop-shadow(0 0 2px rgb(251 191 36 / 0.25));
   }
 
   .user-avatar__crown--sm {
-    @apply -top-2.5;
-    width: 1.3rem;
-    height: 1.05rem;
+    @apply -top-1.5;
+    width: 0.9rem;
+    height: 0.72rem;
   }
 
   .user-avatar__crown--lg {
-    @apply -top-5;
-    width: 2.1rem;
-    height: 1.75rem;
+    @apply -top-3;
+    width: 1.45rem;
+    height: 1.15rem;
   }
 
   .user-avatar__crown svg {
     @apply h-full w-full;
-    stroke-width: 2.25;
-  }
-
-  .user-avatar__crown--sm svg {
     stroke-width: 2.5;
   }
 
+  .user-avatar__crown--sm svg {
+    stroke-width: 2.75;
+  }
+
   .user-avatar__crown--lg svg {
-    stroke-width: 2;
+    stroke-width: 2.25;
   }
 
   /* ── Room gameplay ── */

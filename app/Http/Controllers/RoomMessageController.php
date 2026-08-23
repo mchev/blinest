@@ -7,6 +7,7 @@ use App\Events\MessageReported;
 use App\Events\NewMessage;
 use App\Models\Message;
 use App\Models\Room;
+use App\Support\ClientIp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -37,7 +38,7 @@ class RoomMessageController extends Controller
 
             $message = $room->messages()->create([
                 'user_id' => Auth::user()->id,
-                'user_ip' => Request::ip(),
+                'user_ip' => ClientIp::from(Request::instance()),
                 'body' => $body,
             ]);
 

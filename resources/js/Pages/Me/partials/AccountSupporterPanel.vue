@@ -1,8 +1,10 @@
 <script setup>
+import { watch } from 'vue'
+import { useForm } from '@inertiajs/vue3'
 import LucideIcon from '@/Components/Icons/LucideIcon.vue'
 import { useDonationGoal } from '@/composables/useDonationGoal'
 
-defineProps({
+const props = defineProps({
   account: {
     type: Object,
     required: true,
@@ -11,11 +13,28 @@ defineProps({
 
 const { formatEuros } = useDonationGoal()
 
+const preferencesForm = useForm({
+  show_donation_history_on_profile: props.account.show_donation_history_on_profile ?? true,
+})
+
+watch(
+  () => props.account.show_donation_history_on_profile,
+  (value) => {
+    preferencesForm.show_donation_history_on_profile = value ?? true
+  },
+)
+
 const perks = [
   { icon: 'circle-slash', title: 'Donation perk ad free title', description: 'Donation perk ad free desc' },
   { icon: 'crown', title: 'Donation perk crown title', description: 'Donation perk crown desc' },
   { icon: 'smile-plus', title: 'Donation perk reactions title', description: 'Donation perk reactions desc' },
 ]
+
+const savePreferences = () => {
+  preferencesForm.patch(route('users.donation-preferences.update', props.account.id), {
+    preserveScroll: true,
+  })
+}
 </script>
 
 <template>
@@ -40,7 +59,15 @@ const perks = [
       </div>
     </div>
 
-    <ul class="space-y-2">
+    <label v-if="account.donation_summary?.donation_count > 0" class="flex cursor-pointer items-start gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
+      <input v-model="preferencesForm.show_donation_history_on_profile" type="checkbox" class="mt-0.5 rounded border-white/20 bg-black/30 text-amber-400 focus:ring-amber-400/30" :disabled="preferencesForm.processing" @change="savePreferences" />
+      <span class="min-w-0">
+        <span class="block text-sm font-semibold text-white">{{ __('Show donation history on profile') }}</span>
+        <span class="mt-0.5 block text-xs leading-relaxed text-white/45">{{ __('Show donation history on profile hint') }}</span>
+      </span>
+    </label>
+
+    <ul v-if="account.is_supporter" class="space-y-2">
       <li v-for="perk in perks" :key="perk.title" class="flex gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
         <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-amber-400/20 bg-amber-500/10 text-amber-300">
           <LucideIcon :name="perk.icon" icon-class="h-4 w-4" />

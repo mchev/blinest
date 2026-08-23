@@ -59,7 +59,7 @@ class ProfileController extends Controller
             default => $this->profiles->scores($user, $page, 10, $sort, $direction),
         };
 
-        if (($profile['donation_summary']['donation_count'] ?? 0) > 0) {
+        if ($this->profiles->shouldShowDonationHistory($user)) {
             $props['donations'] = Inertia::defer(fn () => $this->profiles->donationHistory($user));
         }
 

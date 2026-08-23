@@ -41,6 +41,7 @@ class User extends Authenticatable
         'ip',
         'is_guest',
         'guest_token',
+        'show_donation_history_on_profile',
     ];
 
     /**
@@ -64,6 +65,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'is_guest' => 'boolean',
+            'show_donation_history_on_profile' => 'boolean',
         ];
     }
 

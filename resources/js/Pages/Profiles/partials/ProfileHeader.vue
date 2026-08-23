@@ -25,7 +25,7 @@ defineEmits(['open-level'])
     <div class="p-6 sm:p-8">
       <div class="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:text-left">
         <div class="relative shrink-0">
-          <UserAvatar :user="profile" img-class="h-24 w-24 rounded-full border-2 border-white/15 object-cover shadow-lg sm:h-28 sm:w-28" crown-size="lg" />
+          <UserAvatar :user="profile" img-class="h-24 w-24 rounded-full border-2 border-white/15 object-cover shadow-lg sm:h-28 sm:w-28" crown-size="md" />
           <div v-if="profile.level" class="absolute -bottom-1 -right-1">
             <LevelBadge :level="profile.level" :current-xp="profile.current_xp" :xp-for-next-level="profile.xp_for_next_level" :total-xp="profile.total_xp" :level-metrics="profile.level_metrics" size="sm" @click="$emit('open-level')" />
           </div>

@@ -4,65 +4,51 @@ namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Moderation\ModerationBannedUserService;
+use App\Services\Moderation\ModerationUserService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BannedUserController extends Controller
 {
+    public function __construct(
+        private ModerationBannedUserService $bannedUsers,
+        private ModerationUserService $moderationUsers,
+    ) {}
+
     public function index(Request $request)
     {
-        $query = User::banned()
-            ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            })
-            ->when($request->sort_by, function ($query, $sortBy) use ($request) {
-                $direction = $request->sort_direction === 'asc' ? 'asc' : 'desc';
-                $query->orderBy($sortBy, $direction);
-            }, function ($query) {
-                $query->latest();
-            });
-
-        $bannedUsers = $query->paginate($request->per_page ?? 10)
-            ->withQueryString();
+        $viewer = $request->user();
 
         return Inertia::render('Moderation/BannedUsers', [
-            'bannedUsers' => $bannedUsers,
-            'filters' => $request->only(['search', 'per_page', 'sort_by', 'sort_direction']),
+            'bannedUsers' => $this->bannedUsers->paginateBannedUsers(
+                $viewer,
+                $request->string('search')->toString() ?: null,
+                (int) $request->input('per_page', 20),
+            ),
+            'filters' => $request->only(['search', 'per_page']),
+            'canViewSensitiveData' => $this->moderationUsers->canViewSensitiveData($viewer),
         ]);
-    }
-
-    public function ban(Request $request, User $user)
-    {
-        $request->validate([
-            'reason' => 'required|string|max:255',
-            'duration' => 'required|integer|min:1',
-        ]);
-
-        try {
-            $user->ban([
-                'reason' => $request->reason,
-                'expires_at' => now()->addDays($request->duration),
-            ]);
-
-            return back()->with('success', 'User has been banned successfully.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to ban user. Please try again.');
-        }
     }
 
     public function unban(User $user)
     {
-        try {
-            if (! $user->isBanned()) {
-                return back()->with('error', 'User is not banned.');
-            }
+        if (! $user->isBanned()) {
+            return back()->withErrors([
+                'error' => __('Moderation user is not banned'),
+            ]);
+        }
 
+        try {
             $user->unban();
 
-            return back()->with('success', 'User has been unbanned successfully.');
+            return back()->with('success', __('Moderation user unbanned', ['name' => $user->name]));
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to unban user. Please try again.');
+            report($e);
+
+            return back()->withErrors([
+                'error' => __('Moderation unban failed'),
+            ]);
         }
     }
 }

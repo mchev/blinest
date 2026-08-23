@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
   <div class="flex flex-col items-center gap-4 sm:items-start">
     <div class="group relative" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false" @drop.prevent="onDrop">
       <button type="button" class="relative rounded-full outline-none ring-brand-primary/40 transition focus-visible:ring-2" :class="isDragging ? 'ring-2 ring-brand-secondary' : ''" :disabled="form.processing" @click="openPicker">
-        <UserAvatar :user="displayUser" img-class="h-28 w-28 rounded-full border-2 border-white/15 object-cover shadow-lg sm:h-32 sm:w-32" crown-size="lg" />
+        <UserAvatar :user="displayUser" img-class="h-28 w-28 rounded-full border-2 border-white/15 object-cover shadow-lg sm:h-32 sm:w-32" crown-size="md" />
 
         <span class="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full bg-brand-midnight/70 opacity-0 transition group-focus-within:opacity-100 group-hover:opacity-100" :class="form.processing || isDragging ? '!opacity-100' : ''">
           <LucideIcon v-if="!form.processing" name="camera" icon-class="h-6 w-6 text-white" />

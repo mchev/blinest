@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Jobs\UpdateUserLevel;
 use App\Providers\AppServiceProvider;
+use App\Support\ClientIp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +41,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
         $user->update([
-            'ip' => $request->ip(),
+            'ip' => ClientIp::from($request),
         ]);
 
         UpdateUserLevel::dispatch(

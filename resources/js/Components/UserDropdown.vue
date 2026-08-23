@@ -19,7 +19,7 @@ const isUrl = (...urls) => {
     <template #default>
       <div class="group flex cursor-pointer select-none items-center">
         <div class="mr-1 whitespace-nowrap">
-          <UserAvatar :user="user" img-class="h-10 w-10 rounded-full border-2 border-white/20 transition-colors group-hover:border-brand-accent" crown-size="md" />
+          <UserAvatar :user="user" img-class="h-10 w-10 rounded-full border-2 border-white/20 transition-colors group-hover:border-brand-accent" crown-size="sm" />
         </div>
       </div>
     </template>

@@ -4,13 +4,10 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\LocalTrackController;
 use App\Http\Controllers\Moderation\BannedUserController;
 use App\Http\Controllers\Moderation\DashboardController;
-// Moderation
+use App\Http\Controllers\Moderation\LocalTrackController as ModerationLocalTrackController;
 use App\Http\Controllers\Moderation\ModeratorController;
 use App\Http\Controllers\Moderation\TrashedMessageController;
-// Teams
 use App\Http\Controllers\Moderation\UserManagementController;
-use App\Http\Controllers\ModerationController;
-// Tracks
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\PlaylistModeratorController;
 use App\Http\Controllers\ProfileController;
@@ -67,6 +64,8 @@ Route::middleware(['auth', 'not.guest'])->group(function () {
         ->name('users.show');
     Route::post('users/{user}', [UserController::class, 'update'])
         ->name('users.update');
+    Route::patch('users/{user}/donation-preferences', [UserController::class, 'updateDonationPreferences'])
+        ->name('users.donation-preferences.update');
     Route::put('users/{user}/password', [UserController::class, 'updatePassword'])
         ->name('users.password.update');
     Route::post('users/{user}/photo', [UserController::class, 'updatePhoto'])
@@ -89,14 +88,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
-
-    // Public moderation group
-    Route::middleware('auth.moderator')->group(function () {
-        Route::get('/moderation', [ModerationController::class, 'index'])
-            ->name('moderation.index');
-        Route::get('moderation/users/{user}/informations', [ModerationController::class, 'fetchUserInformations'])
-            ->name('moderation.users.informations');
-    });
 
     // Teams
     Route::post('teams/{team}/request', [TeamRequestController::class, 'store']);
@@ -267,14 +258,10 @@ Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')-
     // Banned Users
     Route::get('/banned-users', [BannedUserController::class, 'index'])->name('banned-users.index')->withHead(title: 'Utilisateurs bannis');
     Route::post('/banned-users/{user}/unban', [BannedUserController::class, 'unban'])->name('banned-users.unban');
-    Route::post('/banned-users/{user}/ban', [BannedUserController::class, 'ban'])->name('banned-users.ban');
 
     // User Management
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index')->withHead(title: 'Gestion des utilisateurs');
-    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show')->withHead(title: 'Gestion des utilisateurs');
-    Route::post('/users/{user}/warn', [UserManagementController::class, 'warn'])->name('users.warn');
-    Route::post('/users/{user}/mute', [UserManagementController::class, 'mute'])->name('users.mute');
-    Route::post('/users/{user}/unmute', [UserManagementController::class, 'unmute'])->name('users.unmute');
+    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show')->withHead(title: 'Fiche utilisateur');
     Route::post('/users/{user}/ban', [UserManagementController::class, 'ban'])->name('users.ban');
 
     // Moderators
@@ -282,9 +269,9 @@ Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')-
     Route::post('/moderators/{user}', [ModeratorController::class, 'store'])->name('moderators.store');
     Route::delete('/moderators/{user}', [ModeratorController::class, 'destroy'])->name('moderators.destroy');
 
-    // Tracks Manager
-    Route::get('/tracks', [App\Http\Controllers\Moderation\LocalTrackController::class, 'index'])->name('tracks.index')->withHead(title: 'Gestionnaire de pistes');
-    Route::delete('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'destroy'])->name('tracks.destroy');
-    Route::put('/tracks/{localTrack}', [App\Http\Controllers\Moderation\LocalTrackController::class, 'update'])->name('tracks.update');
+    // Local Tracks
+    Route::get('/tracks', [ModerationLocalTrackController::class, 'index'])->name('tracks.index')->withHead(title: 'Gestionnaire de pistes');
+    Route::delete('/tracks/{localTrack}', [ModerationLocalTrackController::class, 'destroy'])->name('tracks.destroy');
+    Route::put('/tracks/{localTrack}', [ModerationLocalTrackController::class, 'update'])->name('tracks.update');
 
 });

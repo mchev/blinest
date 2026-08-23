@@ -51,7 +51,7 @@ class ProfilePageTest extends TestCase
                     ->where('id', $profileUser->id)
                     ->where('name', $profileUser->name)
                     ->has('stats')
-                    ->has('donation_summary')
+                    ->missing('donation_summary')
                     ->etc()
                 )
                 ->has('scores.data', 1)
@@ -142,6 +142,34 @@ class ProfilePageTest extends TestCase
                 ->loadDeferredProps(fn (Assert $reload) => $reload
                     ->has('donations', 1)
                 )
+            );
+    }
+
+    public function test_profile_hides_donation_history_when_user_opted_out(): void
+    {
+        $viewer = User::factory()->create(['is_guest' => false]);
+        $profileUser = User::factory()->create([
+            'is_guest' => false,
+            'show_donation_history_on_profile' => false,
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_profile_hidden',
+            'amount_cents' => 500,
+            'currency' => 'eur',
+            'month_key' => app(DonationGoalService::class)->monthKey(),
+            'user_id' => $profileUser->id,
+            'donated_at' => now('Europe/Paris'),
+        ]);
+
+        Cache::flush();
+
+        $this->actingAs($viewer)
+            ->get(route('user.profile', $profileUser))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->missing('profile.donation_summary')
+                ->missing('donations')
             );
     }
 

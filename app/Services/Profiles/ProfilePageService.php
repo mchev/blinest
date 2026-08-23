@@ -61,7 +61,7 @@ class ProfilePageService
 
         $userLevel = $user->userLevel;
 
-        return $this->donorPerks->enrichUserPayload([
+        $payload = [
             'id' => $user->id,
             'name' => $user->name,
             'photo' => $user->photo,
@@ -81,8 +81,22 @@ class ProfilePageService
             'total_public_score' => $totals['total_public_score'],
             'total_private_score' => $totals['total_private_score'],
             'stats' => $stats,
-            'donation_summary' => $this->donationGoal->userDonationSummary($user),
-        ], $user);
+        ];
+
+        if ($this->shouldShowDonationHistory($user)) {
+            $payload['donation_summary'] = $this->donationGoal->userDonationSummary($user);
+        }
+
+        return $this->donorPerks->enrichUserPayload($payload, $user);
+    }
+
+    public function shouldShowDonationHistory(User $user): bool
+    {
+        if (! $user->show_donation_history_on_profile) {
+            return false;
+        }
+
+        return ($this->donationGoal->userDonationSummary($user)['donation_count'] ?? 0) > 0;
     }
 
     public function scores(User $user, int $page = 1, int $perPage = 10, string $sort = 'updated_at', string $direction = 'desc'): LengthAwarePaginator

@@ -15,7 +15,7 @@ class UserIsPublicModerator
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->isPublicModerator()) {
+        if ($request->user()->isPublicModerator() || $request->user()->isAdministrator()) {
             return $next($request);
         }
 

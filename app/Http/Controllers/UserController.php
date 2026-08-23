@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteUserPhotoRequest;
+use App\Http\Requests\UpdateDonationPreferencesRequest;
 use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserPhotoRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\User;
 use App\Services\Account\AccountPageService;
 use App\Services\BrevoService;
+use App\Services\Profiles\ProfileCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +56,15 @@ class UserController extends Controller
         $user->update($request->validated());
 
         return Redirect::back()->with('success', __('Information updated'));
+    }
+
+    public function updateDonationPreferences(UpdateDonationPreferencesRequest $request, User $user)
+    {
+        $user->update($request->validated());
+
+        app(ProfileCacheService::class)->forget($user);
+
+        return Redirect::back()->with('success', __('Donation preferences updated'));
     }
 
     public function updatePhoto(UpdateUserPhotoRequest $request, User $user)

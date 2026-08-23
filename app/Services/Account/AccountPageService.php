@@ -49,6 +49,7 @@ class AccountPageService
                 'support' => route('docs.support'),
             ],
             'donation_summary' => $this->donationGoal->userDonationSummary($user),
+            'show_donation_history_on_profile' => $user->show_donation_history_on_profile,
         ];
 
         return $this->donorPerks->enrichUserPayload($payload, $user);

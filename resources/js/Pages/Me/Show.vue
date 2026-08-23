@@ -33,7 +33,7 @@ defineProps({
         </div>
 
         <aside class="space-y-6 lg:col-span-5">
-          <AccountSupporterPanel v-if="account.is_supporter" :account="account" />
+          <AccountSupporterPanel v-if="account.is_supporter || account.donation_summary?.donation_count > 0" :account="account" />
           <AccountShortcuts :account="account" />
         </aside>
       </div>

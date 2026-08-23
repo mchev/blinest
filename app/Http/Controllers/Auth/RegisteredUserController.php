@@ -7,6 +7,7 @@ use App\Jobs\ProcessUserCreated;
 use App\Models\User;
 use App\Providers\AppServiceProvider;
 use App\Rules\Reserved;
+use App\Support\ClientIp;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'ip' => $request->ip(),
+            'ip' => ClientIp::from($request),
         ]);
 
         event(new Registered($user));
