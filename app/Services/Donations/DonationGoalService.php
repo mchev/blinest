@@ -20,7 +20,7 @@ class DonationGoalService
 
     public function monthlyGoalCents(): int
     {
-        return max(1, (int) config('donations.monthly_goal_cents', 10_000));
+        return max(1, (int) config('donations.monthly_goal_cents', 6_000));
     }
 
     public function paymentUrl(): string

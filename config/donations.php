@@ -7,7 +7,7 @@ return [
     | Monthly server funding goal (in euro cents)
     |--------------------------------------------------------------------------
     */
-    'monthly_goal_cents' => (int) env('DONATIONS_MONTHLY_GOAL_CENTS', 10_000),
+    'monthly_goal_cents' => (int) env('DONATIONS_MONTHLY_GOAL_CENTS', 6_000),
 
     /*
     |--------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Services\Chat\BannedUserMessageCleanupService;
 use App\Services\Donations\DonationGoalService;
 use App\Services\Donations\DonorPerkService;
 use App\Support\ClientIp;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Console\ClearCommand;
 use Laravel\Horizon\Console\TerminateCommand;
+use Mchev\Banhammer\Models\Ban;
 use SocialiteProviders\Discord\Provider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
@@ -72,6 +74,20 @@ class AppServiceProvider extends ServiceProvider
         $this->bootAuth();
         $this->bootRoute();
         $this->bootViews();
+        $this->bootBanSideEffects();
+    }
+
+    public function bootBanSideEffects(): void
+    {
+        Ban::created(function (Ban $ban): void {
+            $bannable = $ban->bannable;
+
+            if (! $bannable instanceof User) {
+                return;
+            }
+
+            app(BannedUserMessageCleanupService::class)->cleanup($bannable);
+        });
     }
 
     public function bootAuth(): void
@@ -87,6 +103,17 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: ClientIp::from($request));
+        });
+
+        RateLimiter::for('chat-messages', function (Request $request) {
+            $user = $request->user();
+
+            if ($user?->isAdministrator() || $user?->isPublicModerator()) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute((int) config('chat.moderation.rate_limit_per_minute', 15))
+                ->by($user?->id ?: ClientIp::from($request));
         });
 
     }

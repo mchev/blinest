@@ -50,6 +50,7 @@ Route::middleware(['auth', 'logout.banned', 'not.guest'])->group(function () {
 
     // Rooms Messages
     Route::post('rooms/{room}/message', [RoomMessageController::class, 'store'])
+        ->middleware('throttle:chat-messages')
         ->name('rooms.message.store');
 
     Route::post('rooms/{room}/message/{message}/report', [RoomMessageController::class, 'report'])

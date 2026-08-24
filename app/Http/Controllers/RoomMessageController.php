@@ -7,12 +7,17 @@ use App\Events\MessageReported;
 use App\Events\NewMessage;
 use App\Models\Message;
 use App\Models\Room;
+use App\Services\Chat\ChatModerationService;
 use App\Support\ClientIp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 class RoomMessageController extends Controller
 {
+    public function __construct(
+        private ChatModerationService $chatModeration,
+    ) {}
+
     public function store(Room $room)
     {
         if (Auth::user()->isGuest()) {
@@ -20,30 +25,26 @@ class RoomMessageController extends Controller
         }
 
         if (Auth::user()->isNotBanned()) {
-
-            // Validation
             Request::validate([
                 'body' => ['required', 'max:255'],
             ]);
 
-            // Bad Words Filter
-            $badwords = trans('bad-words');
+            $body = Request::string('body')->toString();
 
-            // Use regex to match whole words only
-            $badwordsregex = array_map(function ($word) {
-                return '/\b'.trim($word).'\b/i';
-            }, $badwords);
-
-            $body = preg_replace($badwordsregex, '*****', Request::input('body'));
+            $this->chatModeration->assertCanSend(Auth::user(), $room, $body);
 
             $message = $room->messages()->create([
                 'user_id' => Auth::user()->id,
                 'user_ip' => ClientIp::from(Request::instance()),
-                'body' => $body,
+                'body' => $this->chatModeration->filterBody($body),
             ]);
+
+            $this->chatModeration->recordSentMessage(Auth::user(), $room, $body);
 
             broadcast(new NewMessage($message));
         }
+
+        return response()->noContent();
     }
 
     public function report(Room $room, Message $message)
@@ -59,6 +60,8 @@ class RoomMessageController extends Controller
             broadcast(new MessageDeleted($message));
             $message->delete();
         }
+
+        return response()->noContent();
     }
 
     public function destroy(Message $message)
@@ -67,6 +70,8 @@ class RoomMessageController extends Controller
             broadcast(new MessageDeleted($message));
             $message->delete();
         }
+
+        return response()->noContent();
     }
 
     public function restore($id)
@@ -76,5 +81,7 @@ class RoomMessageController extends Controller
 
             return redirect()->back()->with('success', __('Message restored'));
         }
+
+        abort(403);
     }
 }
