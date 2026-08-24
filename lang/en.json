@@ -719,5 +719,13 @@
     "Audio": "Audio",
     "Show donation history on profile": "Show donation history on my public profile",
     "Show donation history on profile hint": "Turn this off to hide your past donations and supporter tenure from other players on your profile.",
-    "Donation preferences updated": "Donation preferences updated."
+    "Donation preferences updated": "Donation preferences updated.",
+    "Facebook data deletion status title": "Facebook data deletion request",
+    "Facebook data deletion status intro": "This page tracks the processing of your data deletion request submitted through Facebook.",
+    "Facebook data deletion processed at": "Processed on :date.",
+    "Facebook data deletion status pending": "Pending",
+    "Facebook data deletion status deleted": "Account deleted",
+    "Facebook data deletion status unlinked": "Facebook account unlinked",
+    "Facebook data deletion status not_found": "No linked data found",
+    "Facebook data deletion status failed": "Processing failed"
 }

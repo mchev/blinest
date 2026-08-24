@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FacebookDataDeletionController;
 use App\Http\Controllers\GuestJoinController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
@@ -31,6 +32,12 @@ Route::post('/contact', [ContactController::class, 'send'])
 
 Route::post('stripe/webhook', StripeWebhookController::class)
     ->name('stripe.webhook');
+
+Route::post('facebook/data-deletion', [FacebookDataDeletionController::class, 'store'])
+    ->name('facebook.data-deletion.callback');
+
+Route::get('data-deletion/{confirmationCode}', [FacebookDataDeletionController::class, 'show'])
+    ->name('facebook.data-deletion.status');
 
 // Auth Social Providers
 Route::get('/auth/redirect/{provider}', [SocialController::class, 'redirect'])

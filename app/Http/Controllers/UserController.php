@@ -9,7 +9,7 @@ use App\Http\Requests\UpdateUserPhotoRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\User;
 use App\Services\Account\AccountPageService;
-use App\Services\BrevoService;
+use App\Services\Auth\UserAccountDeletionService;
 use App\Services\Profiles\ProfileCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -25,6 +25,7 @@ class UserController extends Controller
 {
     public function __construct(
         private AccountPageService $account,
+        private UserAccountDeletionService $accountDeletion,
     ) {}
 
     public function show()
@@ -93,20 +94,14 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (Auth::user()->id === $user->id || Auth::user()->isAdministrator()) {
-            (new BrevoService)->contacts()->delete($user);
-            $user->deletePhoto();
-            $user->rooms()->delete();
-            $user->playlists()->delete();
-            $user->scores()->delete();
-            $user->totalScores()->delete();
-            $user->forceDelete();
+            $this->accountDeletion->delete($user);
             Session::flush();
             Auth::logout();
 
             return redirect('login');
-        } else {
-            abort(403, __('Unauthorized action'));
         }
+
+        abort(403, __('Unauthorized action'));
     }
 
     public function markNotificationAsRead(Request $request, $id)

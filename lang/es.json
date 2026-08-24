@@ -1275,5 +1275,13 @@
     "Audio": "Audio",
     "Show donation history on profile": "Mostrar el historial de donaciones en mi perfil público",
     "Show donation history on profile hint": "Desactiva esta opción para ocultar tus donaciones anteriores y el tiempo de apoyo en tu perfil.",
-    "Donation preferences updated": "Preferencias de donación actualizadas."
+    "Donation preferences updated": "Preferencias de donación actualizadas.",
+    "Facebook data deletion status title": "Solicitud de eliminación de Facebook",
+    "Facebook data deletion status intro": "Esta página permite seguir el tratamiento de tu solicitud de eliminación de datos enviada a través de Facebook.",
+    "Facebook data deletion processed at": "Procesado el :date.",
+    "Facebook data deletion status pending": "En curso",
+    "Facebook data deletion status deleted": "Cuenta eliminada",
+    "Facebook data deletion status unlinked": "Cuenta de Facebook desvinculada",
+    "Facebook data deletion status not_found": "No se encontraron datos vinculados",
+    "Facebook data deletion status failed": "Error de procesamiento"
 }

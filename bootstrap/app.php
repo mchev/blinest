@@ -51,6 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'stripe/webhook',
+            'facebook/data-deletion',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
