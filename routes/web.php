@@ -264,14 +264,16 @@ Route::middleware(['auth', 'verified', 'auth.moderator'])->prefix('moderation')-
     Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('users.show')->withHead(title: 'Fiche utilisateur');
     Route::post('/users/{user}/ban', [UserManagementController::class, 'ban'])->name('users.ban');
 
-    // Moderators
-    Route::get('/moderators', [ModeratorController::class, 'index'])->name('moderators.index')->withHead(title: 'Modérateurs');
-    Route::post('/moderators/{user}', [ModeratorController::class, 'store'])->name('moderators.store');
-    Route::delete('/moderators/{user}', [ModeratorController::class, 'destroy'])->name('moderators.destroy');
-
     // Local Tracks
     Route::get('/tracks', [ModerationLocalTrackController::class, 'index'])->name('tracks.index')->withHead(title: 'Gestionnaire de pistes');
     Route::delete('/tracks/{localTrack}', [ModerationLocalTrackController::class, 'destroy'])->name('tracks.destroy');
     Route::put('/tracks/{localTrack}', [ModerationLocalTrackController::class, 'update'])->name('tracks.update');
+
+    // Moderators management (admin only)
+    Route::middleware('auth.administrator')->group(function () {
+        Route::get('/moderators', [ModeratorController::class, 'index'])->name('moderators.index')->withHead(title: 'Modérateurs');
+        Route::delete('/moderators/rooms/{room:id}/users/{user}', [ModeratorController::class, 'detachRoom'])->name('moderators.rooms.detach');
+        Route::delete('/moderators/playlists/{playlist}/users/{user}', [ModeratorController::class, 'detachPlaylist'])->name('moderators.playlists.detach');
+    });
 
 });

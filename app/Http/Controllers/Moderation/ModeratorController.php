@@ -3,108 +3,47 @@
 namespace App\Http\Controllers\Moderation;
 
 use App\Http\Controllers\Controller;
+use App\Models\Playlist;
 use App\Models\Room;
-use App\Models\TotalScore;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Services\Moderation\ModerationModeratorService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class ModeratorController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        private ModerationModeratorService $moderators,
+    ) {}
+
+    public function index(Request $request): InertiaResponse
     {
-        $roomsWithModerators = Room::isPublic()
-            ->select('id', 'name', 'created_at')
-            ->withCount(['moderators'])
-            ->with(['moderators' => function ($query) use ($request) {
-                if ($request->search) {
-                    $query->where(function ($q) use ($request) {
-                        $searchTerm = "%{$request->search}%";
-                        $q->where('name', 'like', $searchTerm)
-                            ->orWhere('email', 'like', $searchTerm);
-                    });
-                }
-
-                $query->select([
-                    'users.id',
-                    'users.name',
-                    'users.email',
-                    'users.updated_at',
-                    'users.photo_path',
-                ])
-                    ->withCount(['moderatedRooms', 'moderatedPlaylists'])
-                    ->with(['messages' => function ($q) {
-                        $q->latest()->take(1);
-                    }]);
-            }])
-            ->orderBy('name')
-            ->limit(50)
-            ->get();
-
-        $moderatorIds = $roomsWithModerators->pluck('moderators.*.id')->flatten()->unique();
-
-        $latestScores = TotalScore::select('totalscorable_id', 'updated_at')
-            ->whereIn('totalscorable_id', $moderatorIds)
-            ->where('totalscorable_type', User::class)
-            ->groupBy('totalscorable_id')
-            ->selectRaw('MAX(updated_at) as latest_score_date')
-            ->get()
-            ->keyBy('totalscorable_id');
-
-        $sixMonthsAgo = now()->subMonths(8);
-
-        // On prépare la structure enrichie pour roomsWithModerators
-        $roomsWithModeratorsMapped = $roomsWithModerators->map(function ($room) use ($latestScores, $sixMonthsAgo) {
-            return [
-                'id' => $room->id,
-                'name' => $room->name,
-                'created_at' => $room->created_at->format('d/m/Y'),
-                'moderators_count' => $room->moderators_count,
-                'scores_count' => $room->scores_count,
-                'moderators' => $room->moderators->map(function ($moderator) use ($latestScores, $sixMonthsAgo) {
-                    $lastScoreDate = $latestScores->get($moderator->id)?->latest_score_date;
-                    $lastMessageDate = $moderator->messages->first()?->created_at;
-
-                    $lastActivity = max(
-                        $lastScoreDate ? Carbon::parse($lastScoreDate) : Carbon::create(0),
-                        $lastMessageDate ?? Carbon::create(0)
-                    );
-
-                    return [
-                        'id' => $moderator->id,
-                        'name' => $moderator->name,
-                        'photo' => $moderator->profile_photo_url,
-                        'last_connection' => $moderator->updated_at
-                            ? 'Connexion '.$moderator->updated_at->diffForHumans()
-                            : 'Jamais connecté',
-                        'last_game_activity' => $lastScoreDate
-                            ? 'Score '.Carbon::parse($lastScoreDate)->diffForHumans()
-                            : 'Aucun score enregistré',
-                        'last_message_date' => $lastMessageDate
-                            ? 'Message '.$lastMessageDate->diffForHumans()
-                            : 'Aucun message enregistré',
-                        'moderated_rooms_count' => $moderator->moderated_rooms_count,
-                        'moderated_playlists_count' => $moderator->moderatedPlaylists->count(),
-                        'is_inactive' => $lastActivity->isBefore($sixMonthsAgo),
-                    ];
-                }),
-            ];
-        });
-
-        // On extrait tous les modérateurs enrichis, puis uniques par id
-        $allModeratorsEnriched = $roomsWithModeratorsMapped->pluck('moderators')->flatten(1)->unique('id');
-        $activeModerators = $allModeratorsEnriched->where('is_inactive', false)->count();
-        $inactiveModerators = $allModeratorsEnriched->where('is_inactive', true)->count();
+        $payload = $this->moderators->paginate(
+            $request->string('search')->toString() ?: null,
+            $request->boolean('inactive_only'),
+            (int) $request->input('per_page', 20),
+        );
 
         return Inertia::render('Moderation/Moderators', [
-            'roomsWithModerators' => $roomsWithModeratorsMapped,
-            'filters' => $request->only(['search']),
-            'stats' => [
-                'total_rooms' => $roomsWithModerators->count(),
-                'active_moderators' => $activeModerators,
-                'inactive_moderators' => $inactiveModerators,
-            ],
+            'moderators' => $payload['moderators'],
+            'stats' => $payload['stats'],
+            'coverage' => $payload['coverage'],
+            'filters' => $request->only(['search', 'inactive_only', 'per_page']),
         ]);
+    }
+
+    public function detachRoom(Room $room, User $user)
+    {
+        $this->moderators->detachFromPublicRoom($room, $user);
+
+        return back()->with('success', __('Moderation moderator room access revoked'));
+    }
+
+    public function detachPlaylist(Playlist $playlist, User $user)
+    {
+        $this->moderators->detachFromPublicPlaylist($playlist, $user);
+
+        return back()->with('success', __('Moderation moderator playlist access revoked'));
     }
 }

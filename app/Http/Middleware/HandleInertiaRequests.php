@@ -61,7 +61,7 @@ class HandleInertiaRequests extends Middleware
                         'name' => $user->name,
                         'photo' => $user->photo,
                         'is_guest' => $user->isGuest(),
-                        'admin' => $user->isAdministrator(),
+                        'admin' => (bool) $user->isAdministrator(),
                         'is_public_moderator' => $user->isPublicModerator(),
                         'team' => $user->team,
                         'elo' => $user->elo ?? 1500,
@@ -130,7 +130,7 @@ class HandleInertiaRequests extends Middleware
             'language' => function () {
                 $locale = app()->getLocale();
 
-                return Cache::remember("inertia_translations_v76_{$locale}", 3600, function () use ($locale) {
+                return Cache::remember("inertia_translations_v78_{$locale}", 3600, function () use ($locale) {
                     return translations(
                         base_path('lang/'.$locale.'.json')
                     );

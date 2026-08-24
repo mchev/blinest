@@ -1,151 +1,336 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { ref, watch } from 'vue'
+import { Link, router, useForm, usePage } from '@inertiajs/vue3'
 import Layout from './Layout.vue'
-import Card from '@/Components/Card.vue'
+import Pagination from '@/Components/Pagination.vue'
+import LoadingButton from '@/Components/LoadingButton.vue'
 import debounce from 'lodash/debounce'
+import { useTranslate } from '@/composables/useTranslate'
 
 const props = defineProps({
-  roomsWithModerators: Array,
-  filters: Object,
-  stats: Object,
+  moderators: {
+    type: Object,
+    required: true,
+  },
+  stats: {
+    type: Object,
+    required: true,
+  },
+  coverage: {
+    type: Object,
+    required: true,
+  },
+  filters: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
+const page = usePage()
+const translate = useTranslate()
 const search = ref(props.filters?.search || '')
-const showOnlyInactive = ref(false)
+const inactiveOnly = ref(Boolean(props.filters?.inactive_only))
+const expandedModeratorId = ref(null)
+const revokingKey = ref(null)
+const revokeForm = useForm({})
 
-const filteredRooms = computed(() => {
-  if (showOnlyInactive.value) {
-    return props.roomsWithModerators
-      .map((room) => ({
-        ...room,
-        moderators: room.moderators.filter((mod) => mod.is_inactive),
-      }))
-      .filter((room) => room.moderators.length > 0)
-  }
-  return props.roomsWithModerators
+const performSearch = debounce(() => {
+  router.get(
+    route('moderation.moderators.index'),
+    {
+      search: search.value || undefined,
+      inactive_only: inactiveOnly.value ? 1 : undefined,
+      per_page: props.filters?.per_page || 20,
+    },
+    { preserveState: true, preserveScroll: true, replace: true },
+  )
+}, 300)
+
+watch(search, () => {
+  performSearch()
 })
 
-function submitSearch() {
-  router.get(route('moderation.moderators.index'), { search: search.value }, { preserveState: true, replace: true })
+watch(inactiveOnly, () => {
+  performSearch()
+})
+
+const formatDate = (value) => {
+  if (!value) {
+    return '—'
+  }
+
+  return new Date(value).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
-const debouncedSearch = debounce(() => {
-  router.get(route('moderation.moderators'), { search: search.value }, { preserveState: true, preserveScroll: true })
-}, 300)
+const formatDaysAgo = (days) => {
+  if (days === null || days === undefined) {
+    return translate('Moderation moderators no activity')
+  }
+
+  if (days === 0) {
+    return translate('Moderation moderators today')
+  }
+
+  return translate('Moderation moderators days ago', { count: days })
+}
+
+const activityClass = (moderator) => {
+  if (moderator.is_inactive) {
+    return 'text-amber-300'
+  }
+
+  if (moderator.days_since_activity !== null && moderator.days_since_activity <= 30) {
+    return 'text-emerald-300'
+  }
+
+  return 'text-white/70'
+}
+
+const toggleModerator = (moderatorId) => {
+  expandedModeratorId.value = expandedModeratorId.value === moderatorId ? null : moderatorId
+}
+
+const revokeRoomAccess = (moderator, room) => {
+  if (!confirm(translate('Moderation moderators revoke room confirm', { name: moderator.name, room: room.name }))) {
+    return
+  }
+
+  const key = `room-${moderator.id}-${room.id}`
+  revokingKey.value = key
+
+  revokeForm.delete(route('moderation.moderators.rooms.detach', { room: room.id, user: moderator.id }), {
+    preserveScroll: true,
+    onFinish: () => {
+      revokingKey.value = null
+    },
+  })
+}
+
+const revokePlaylistAccess = (moderator, playlist) => {
+  if (!confirm(translate('Moderation moderators revoke playlist confirm', { name: moderator.name, playlist: playlist.name }))) {
+    return
+  }
+
+  const key = `playlist-${moderator.id}-${playlist.id}`
+  revokingKey.value = key
+
+  revokeForm.delete(route('moderation.moderators.playlists.detach', { playlist: playlist.id, user: moderator.id }), {
+    preserveScroll: true,
+    onFinish: () => {
+      revokingKey.value = null
+    },
+  })
+}
+
+const isRevoking = (key) => revokingKey.value === key && revokeForm.processing
 </script>
 
 <template>
-  <Layout title="Modérateurs">
-    <Card class="overflow-hidden">
-      <div class="bg-black/20 p-6 backdrop-blur-sm">
-        <!-- Header with stats -->
-        <div class="mb-8">
-          <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="mb-4 text-2xl font-bold text-white sm:mb-0">Modérateurs</h2>
-            <div class="flex flex-col gap-4 sm:flex-row">
-              <div class="flex items-center gap-2">
-                <input type="checkbox" id="showOnlyInactive" v-model="showOnlyInactive" class="rounded border-neutral-700 bg-neutral-800 text-teal-500 focus:ring-teal-500" />
-                <label for="showOnlyInactive" class="text-sm text-neutral-300">Afficher uniquement les modérateurs inactifs (>8 mois)</label>
-              </div>
-              <form @submit.prevent="submitSearch" class="flex gap-2">
-                <input v-model="search" type="text" placeholder="Rechercher un modérateur..." class="w-full rounded-lg border px-4 py-2" @input="debouncedSearch" />
-                <button type="submit" class="rounded bg-teal-500 px-4 py-2 font-semibold text-white transition hover:bg-teal-600">Rechercher</button>
-              </form>
-            </div>
-          </div>
+  <Layout :title="__('Moderation moderators title')">
+    <div class="space-y-6">
+      <div v-if="page.props.flash?.success" class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+        {{ page.props.flash.success }}
+      </div>
 
-          <!-- Stats overview -->
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div class="rounded-lg bg-neutral-800/50 p-4">
-              <div class="mb-1 text-sm text-neutral-400">Salles publiques</div>
-              <div class="text-2xl font-bold text-white">{{ stats.total_rooms }}</div>
-            </div>
-            <div class="rounded-lg bg-neutral-800/50 p-4">
-              <div class="mb-1 text-sm text-neutral-400">Modérateurs actifs</div>
-              <div class="text-2xl font-bold text-white">{{ stats.active_moderators }}</div>
-            </div>
-            <div class="rounded-lg bg-neutral-800/50 p-4">
-              <div class="mb-1 text-sm text-neutral-400">Modérateurs inactifs</div>
-              <div class="text-2xl font-bold text-white">{{ stats.inactive_moderators }}</div>
-            </div>
-          </div>
+      <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8">
+        <div class="rounded-xl border border-white/10 bg-black/20 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-white/45">{{ __('Moderation moderators stats total') }}</p>
+          <p class="mt-1 text-2xl font-bold text-white">{{ stats.total_moderators }}</p>
         </div>
-
-        <!-- Rooms and moderators list -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div v-for="room in filteredRooms" :key="room.id" class="overflow-hidden rounded-lg bg-neutral-800/30">
-            <!-- Room header -->
-            <div class="border-b border-neutral-700 bg-neutral-800/50 p-4">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <svg class="h-5 w-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                  </svg>
-                  <div>
-                    <h3 class="text-lg font-semibold text-white">{{ room.name }}</h3>
-                    <p class="text-xs text-neutral-400">Créée le {{ room.created_at }}</p>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-sm text-neutral-400">{{ room.moderators_count }} modérateur(s)</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Moderators list -->
-            <div class="p-4">
-              <div v-if="room.moderators.length" class="space-y-4">
-                <div v-for="moderator in room.moderators" :key="moderator.id" class="rounded-lg bg-neutral-800/50 p-4 shadow-sm transition-all duration-200 hover:bg-neutral-700/60" :class="{ 'border-l-4 border-amber-500/70 opacity-60': moderator.is_inactive, 'border-l-4 border-teal-500': !moderator.is_inactive }">
-                  <div class="flex items-start gap-4">
-                    <img v-if="moderator.photo" :src="moderator.photo" class="h-12 w-12 rounded-full border-2 border-teal-500 object-cover shadow-md" />
-                    <div v-else class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-teal-500 bg-neutral-700 text-lg font-bold text-white shadow-md">
-                      {{ moderator.name.charAt(0) }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <div class="mb-2 flex flex-col justify-between sm:flex-row sm:items-center">
-                        <h4 class="truncate text-lg font-medium text-white">{{ moderator.name }}</h4>
-                        <div class="mt-1 flex items-center gap-3 sm:mt-0">
-                          <span class="rounded-full bg-neutral-700/70 px-2 py-1 text-xs font-medium text-teal-300"> {{ moderator.moderated_rooms_count }} salle(s) </span>
-                          <span class="rounded-full bg-neutral-700/70 px-2 py-1 text-xs font-medium text-teal-300"> {{ moderator.moderated_playlists_count }} playlist(s) </span>
-                        </div>
-                      </div>
-
-                      <!-- Activity indicators -->
-                      <div class="mt-2 grid grid-cols-1 gap-2 text-xs sm:grid-cols-3">
-                        <div class="flex items-center rounded-md bg-neutral-800/80 p-2 text-neutral-300">
-                          <svg class="mr-2 h-4 w-4 flex-shrink-0 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span class="truncate">{{ moderator.last_connection }}</span>
-                        </div>
-                        <div class="flex items-center rounded-md bg-neutral-800/80 p-2 text-neutral-300">
-                          <svg class="mr-2 h-4 w-4 flex-shrink-0 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
-                          <span class="truncate">{{ moderator.last_game_activity }}</span>
-                        </div>
-                        <div class="flex items-center rounded-md bg-neutral-800/80 p-2 text-neutral-300">
-                          <svg class="mr-2 h-4 w-4 flex-shrink-0 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                          </svg>
-                          <span class="truncate">{{ moderator.last_message_date }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div v-else class="rounded-lg bg-neutral-800/30 py-8 text-center italic text-neutral-400">
-                <svg class="mx-auto mb-2 h-10 w-10 text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <p>Aucun modérateur pour cette salle</p>
-              </div>
-            </div>
-          </div>
+        <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-emerald-300/70">{{ __('Moderation moderators stats active') }}</p>
+          <p class="mt-1 text-2xl font-bold text-emerald-300">{{ stats.active_moderators }}</p>
+        </div>
+        <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-amber-300/70">{{ __('Moderation moderators stats inactive') }}</p>
+          <p class="mt-1 text-2xl font-bold text-amber-300">{{ stats.inactive_moderators }}</p>
+        </div>
+        <div class="rounded-xl border border-red-500/20 bg-red-500/5 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-red-300/70">{{ __('Moderation moderators stats rooms without') }}</p>
+          <p class="mt-1 text-2xl font-bold text-red-300">{{ stats.rooms_without_moderators }}</p>
+        </div>
+        <div class="rounded-xl border border-red-500/20 bg-red-500/5 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-red-300/70">{{ __('Moderation moderators stats playlists without') }}</p>
+          <p class="mt-1 text-2xl font-bold text-red-300">{{ stats.playlists_without_moderators }}</p>
+        </div>
+        <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-amber-300/70">{{ __('Moderation moderators stats stale playlists') }}</p>
+          <p class="mt-1 text-2xl font-bold text-amber-300">{{ stats.stale_public_playlists }}</p>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-black/20 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-white/45">{{ __('Moderation moderators stats public rooms') }}</p>
+          <p class="mt-1 text-2xl font-bold text-white">{{ stats.public_rooms }}</p>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-black/20 p-4 xl:col-span-1">
+          <p class="text-xs uppercase tracking-wide text-white/45">{{ __('Moderation moderators stats public playlists') }}</p>
+          <p class="mt-1 text-2xl font-bold text-white">{{ stats.public_playlists }}</p>
         </div>
       </div>
-    </Card>
+
+      <div class="grid gap-4 xl:grid-cols-3">
+        <section class="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+          <h3 class="text-sm font-semibold text-red-200">{{ __('Moderation moderators coverage rooms title') }}</h3>
+          <p class="mt-1 text-xs text-white/45">{{ __('Moderation moderators coverage rooms hint') }}</p>
+          <ul v-if="coverage.rooms_without_moderators.length" class="mt-3 max-h-56 space-y-2 overflow-y-auto">
+            <li v-for="room in coverage.rooms_without_moderators" :key="`room-gap-${room.id}`" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm">
+              <p class="font-medium text-white">{{ room.name }}</p>
+              <p class="text-xs text-white/45">{{ __('Moderation moderators owner label') }}: {{ room.owner_name || '—' }}</p>
+            </li>
+          </ul>
+          <p v-else class="mt-3 text-sm text-white/45">{{ __('Moderation moderators coverage none') }}</p>
+        </section>
+
+        <section class="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+          <h3 class="text-sm font-semibold text-red-200">{{ __('Moderation moderators coverage playlists title') }}</h3>
+          <p class="mt-1 text-xs text-white/45">{{ __('Moderation moderators coverage playlists hint') }}</p>
+          <ul v-if="coverage.playlists_without_moderators.length" class="mt-3 max-h-56 space-y-2 overflow-y-auto">
+            <li v-for="playlist in coverage.playlists_without_moderators" :key="`playlist-gap-${playlist.id}`" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm">
+              <p class="font-medium text-white">{{ playlist.name }}</p>
+              <p class="text-xs text-white/45">{{ __('Moderation moderators owner label') }}: {{ playlist.owner_name || '—' }}</p>
+            </li>
+          </ul>
+          <p v-else class="mt-3 text-sm text-white/45">{{ __('Moderation moderators coverage none') }}</p>
+        </section>
+
+        <section class="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+          <h3 class="text-sm font-semibold text-amber-200">{{ __('Moderation moderators coverage stale title') }}</h3>
+          <p class="mt-1 text-xs text-white/45">{{ __('Moderation moderators coverage stale hint') }}</p>
+          <ul v-if="coverage.stale_public_playlists.length" class="mt-3 max-h-56 space-y-2 overflow-y-auto">
+            <li v-for="playlist in coverage.stale_public_playlists" :key="`stale-${playlist.id}`" class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm">
+              <p class="font-medium text-white">{{ playlist.name }}</p>
+              <p class="text-xs text-white/45">{{ __('Moderation moderators last activity') }}: {{ formatDate(playlist.last_activity_at) }}</p>
+            </li>
+          </ul>
+          <p v-else class="mt-3 text-sm text-white/45">{{ __('Moderation moderators coverage none') }}</p>
+        </section>
+      </div>
+
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div class="flex-1">
+          <label for="moderator-search" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-white/50">
+            {{ __('Moderation search moderators') }}
+          </label>
+          <div class="relative">
+            <input id="moderator-search" v-model="search" type="search" :placeholder="__('Moderation search moderators placeholder')" class="w-full rounded-xl border border-white/10 bg-black/30 py-2.5 pl-10 pr-4 text-white placeholder-white/35 focus:border-brand-primary/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+            <svg class="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-white/70">
+          <input v-model="inactiveOnly" type="checkbox" class="rounded border-white/20 bg-black/30 text-brand-primary focus:ring-brand-primary/30" />
+          {{ __('Moderation moderators inactive only') }}
+        </label>
+      </div>
+
+      <p class="text-sm text-white/45">{{ __('Moderation moderators sorted hint') }}</p>
+      <p class="text-sm text-white/45">{{ __('Moderation moderators count', { count: moderators.total }) }}</p>
+
+      <div v-if="moderators.data.length === 0" class="rounded-xl border border-dashed border-white/10 px-6 py-12 text-center">
+        <h3 class="text-lg font-medium text-white">{{ __('Moderation moderators no results') }}</h3>
+        <p class="mt-2 text-sm text-white/45">{{ __('Moderation moderators no results description') }}</p>
+      </div>
+
+      <div v-else class="overflow-x-auto rounded-xl border border-white/10">
+        <table class="min-w-full divide-y divide-white/10 text-sm">
+          <thead class="bg-black/30 text-left text-xs uppercase tracking-wide text-white/45">
+            <tr>
+              <th class="px-4 py-3">{{ __('User') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last activity') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last connection') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last message') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last ban') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last track') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last local track') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators last score') }}</th>
+              <th class="px-4 py-3">{{ __('Moderation moderators assignments') }}</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 bg-black/20">
+            <template v-for="moderator in moderators.data" :key="moderator.id">
+              <tr class="transition hover:bg-white/5" :class="{ 'bg-amber-500/5': moderator.is_inactive }">
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-3">
+                    <img :src="moderator.photo" :alt="moderator.name" class="h-10 w-10 rounded-full border border-white/10 object-cover" />
+                    <div>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <Link :href="moderator.profile_url" class="font-medium text-white hover:text-brand-accent">{{ moderator.name }}</Link>
+                        <span class="text-xs text-white/45">#{{ moderator.id }}</span>
+                        <span v-if="moderator.is_inactive" class="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-300">
+                          {{ __('Moderation moderators inactive badge') }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3" :class="activityClass(moderator)">
+                  <p>{{ formatDate(moderator.last_activity_at) }}</p>
+                  <p class="text-xs">{{ formatDaysAgo(moderator.days_since_activity) }}</p>
+                </td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_connection_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_message_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_ban_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_track_added_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_local_track_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ formatDate(moderator.last_score_at) }}</td>
+                <td class="px-4 py-3 text-white/70">{{ moderator.rooms_count }} / {{ moderator.playlists_count }}</td>
+                <td class="px-4 py-3 text-right">
+                  <button type="button" class="text-xs text-brand-accent hover:underline" @click="toggleModerator(moderator.id)">
+                    {{ expandedModeratorId === moderator.id ? __('Close') : __('Details') }}
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="expandedModeratorId === moderator.id">
+                <td colspan="10" class="bg-black/30 px-4 py-4">
+                  <div class="grid gap-4 lg:grid-cols-2">
+                    <section>
+                      <h4 class="mb-2 text-xs font-semibold uppercase tracking-wide text-white/45">{{ __('Moderation moderators rooms') }}</h4>
+                      <ul v-if="moderator.rooms.length" class="space-y-2">
+                        <li v-for="room in moderator.rooms" :key="`room-${room.id}`" class="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2">
+                          <div class="min-w-0">
+                            <p class="truncate text-sm text-white">{{ room.name }}</p>
+                            <p v-if="room.is_owner" class="text-xs text-brand-accent">{{ __('Moderation moderators owner badge') }}</p>
+                          </div>
+                          <LoadingButton v-if="!room.is_owner" type="button" class="retro-nav-btn text-xs" :loading="isRevoking(`room-${moderator.id}-${room.id}`)" @click.stop="revokeRoomAccess(moderator, room)">
+                            {{ __('Moderation moderators revoke') }}
+                          </LoadingButton>
+                        </li>
+                      </ul>
+                      <p v-else class="text-sm text-white/45">—</p>
+                    </section>
+
+                    <section>
+                      <h4 class="mb-2 text-xs font-semibold uppercase tracking-wide text-white/45">{{ __('Moderation moderators playlists') }}</h4>
+                      <ul v-if="moderator.playlists.length" class="space-y-2">
+                        <li v-for="playlist in moderator.playlists" :key="`playlist-${playlist.id}`" class="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2">
+                          <div class="min-w-0">
+                            <p class="truncate text-sm text-white">{{ playlist.name }}</p>
+                            <p v-if="playlist.is_owner" class="text-xs text-brand-accent">{{ __('Moderation moderators owner badge') }}</p>
+                          </div>
+                          <LoadingButton v-if="!playlist.is_owner" type="button" class="retro-nav-btn text-xs" :loading="isRevoking(`playlist-${moderator.id}-${playlist.id}`)" @click.stop="revokePlaylistAccess(moderator, playlist)">
+                            {{ __('Moderation moderators revoke') }}
+                          </LoadingButton>
+                        </li>
+                      </ul>
+                      <p v-else class="text-sm text-white/45">—</p>
+                    </section>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <Pagination v-if="moderators.data.length" :links="moderators.links" />
+    </div>
   </Layout>
 </template>
