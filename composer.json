@@ -38,6 +38,7 @@
         "socialiteproviders/spotify": "^4.1",
         "symfony/brevo-mailer": "^7.2",
         "symfony/http-client": "^7.2",
+        "symfony/mailer": "^8.1.2 !=8.1.5",
         "symfony/process": "^7.2",
         "tightenco/ziggy": "^2.2"
     },
