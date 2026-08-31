@@ -140,7 +140,10 @@ class Room extends Model
 
     public function moderators(): MorphToMany
     {
-        return $this->morphToMany(User::class, 'moderable')->select('users.id', 'users.name')->withTimestamps();
+        return $this->morphToMany(User::class, 'moderable')
+            ->using(Moderable::class)
+            ->select('users.id', 'users.name')
+            ->withTimestamps();
     }
 
     public function category(): BelongsTo

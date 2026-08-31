@@ -82,8 +82,6 @@ class ModerationModeratorService
         $this->assertNotRoomOwner($room, $user);
 
         $room->moderators()->detach($user->id);
-
-        $this->forgetModeratorCaches();
     }
 
     public function detachFromPublicPlaylist(Playlist $playlist, User $user): void
@@ -92,8 +90,6 @@ class ModerationModeratorService
         $this->assertNotPlaylistOwner($playlist, $user);
 
         $playlist->moderators()->detach($user->id);
-
-        $this->forgetModeratorCaches();
     }
 
     /**
@@ -183,21 +179,25 @@ class ModerationModeratorService
     private function publicModeratorIds(): Collection
     {
         $roomModeratorIds = DB::table('moderables')
+            ->join('users', 'users.id', '=', 'moderables.user_id')
             ->join('rooms', function ($join) {
                 $join->on('rooms.id', '=', 'moderables.moderable_id')
                     ->where('moderables.moderable_type', Room::class)
                     ->where('rooms.is_public', true)
                     ->whereNull('rooms.deleted_at');
             })
+            ->where('users.is_administrator', false)
             ->distinct()
             ->pluck('moderables.user_id');
 
         $playlistModeratorIds = DB::table('moderables')
+            ->join('users', 'users.id', '=', 'moderables.user_id')
             ->join('playlists', function ($join) {
                 $join->on('playlists.id', '=', 'moderables.moderable_id')
                     ->where('moderables.moderable_type', Playlist::class)
                     ->where('playlists.is_public', true);
             })
+            ->where('users.is_administrator', false)
             ->distinct()
             ->pluck('moderables.user_id');
 
@@ -423,14 +423,17 @@ class ModerationModeratorService
     private function publicRoomsWithoutModerators(): array
     {
         $rows = DB::table('rooms')
-            ->leftJoin('moderables', function ($join) {
-                $join->on('moderables.moderable_id', '=', 'rooms.id')
-                    ->where('moderables.moderable_type', Room::class);
-            })
             ->leftJoin('users', 'users.id', '=', 'rooms.user_id')
             ->where('rooms.is_public', true)
             ->whereNull('rooms.deleted_at')
-            ->whereNull('moderables.id')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('moderables')
+                    ->join('users as moderator_users', 'moderator_users.id', '=', 'moderables.user_id')
+                    ->whereColumn('moderables.moderable_id', 'rooms.id')
+                    ->where('moderables.moderable_type', Room::class)
+                    ->where('moderator_users.is_administrator', false);
+            })
             ->orderBy('rooms.name')
             ->limit(30)
             ->get([
@@ -454,13 +457,16 @@ class ModerationModeratorService
     private function publicPlaylistsWithoutModerators(): array
     {
         $rows = DB::table('playlists')
-            ->leftJoin('moderables', function ($join) {
-                $join->on('moderables.moderable_id', '=', 'playlists.id')
-                    ->where('moderables.moderable_type', Playlist::class);
-            })
             ->leftJoin('users', 'users.id', '=', 'playlists.user_id')
             ->where('playlists.is_public', true)
-            ->whereNull('moderables.id')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('moderables')
+                    ->join('users as moderator_users', 'moderator_users.id', '=', 'moderables.user_id')
+                    ->whereColumn('moderables.moderable_id', 'playlists.id')
+                    ->where('moderables.moderable_type', Playlist::class)
+                    ->where('moderator_users.is_administrator', false);
+            })
             ->orderBy('playlists.name')
             ->limit(30)
             ->get([
@@ -673,7 +679,7 @@ class ModerationModeratorService
         }
     }
 
-    private function forgetModeratorCaches(): void
+    public function invalidateCache(): void
     {
         Cache::forget(self::SNAPSHOT_CACHE_KEY);
         Cache::forget('public-moderators');

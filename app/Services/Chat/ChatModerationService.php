@@ -65,11 +65,21 @@ class ChatModerationService
 
     private function normalizeBody(string $body): string
     {
-        $normalized = Str::lower(trim($body));
+        $trimmed = trim($body);
+
+        if ($trimmed === '') {
+            return '';
+        }
+
+        $normalized = Str::lower($trimmed);
         $normalized = Str::transliterate($normalized);
         $normalized = preg_replace('/[\s\p{P}\p{S}]+/u', '', $normalized) ?? '';
 
-        return $normalized;
+        if ($normalized !== '') {
+            return $normalized;
+        }
+
+        return preg_replace('/\s+/u', '', $trimmed) ?? $trimmed;
     }
 
     private function assertNotFloodingRoom(User $user, Room $room): void

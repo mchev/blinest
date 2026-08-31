@@ -474,11 +474,11 @@ onUnmounted(() => {
             <span class="hidden sm:inline">{{ __('Import') }}</span>
           </button>
 
-          <a :href="route('playlists.export', playlist)" target="_blank" class="group flex items-center gap-1.5 rounded-lg border border-neutral-700/50 bg-neutral-800/50 px-3 py-1.5 text-sm font-medium text-neutral-200 transition-all duration-200 hover:border-teal-500/50 hover:bg-neutral-700 hover:text-white" :title="__('Export playlist to Excel spreadsheet')">
+          <a :href="route('playlists.export', playlist)" target="_blank" class="group flex items-center gap-1.5 rounded-lg border border-neutral-700/50 bg-neutral-800/50 px-3 py-1.5 text-sm font-medium text-neutral-200 transition-all duration-200 hover:border-teal-500/50 hover:bg-neutral-700 hover:text-white" :title="__('Export playlist to CSV file')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 transition-transform duration-200 group-hover:scale-110">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
-            <span class="hidden sm:inline">{{ __('Export to Excel') }}</span>
+            <span class="hidden sm:inline">{{ __('Export to CSV') }}</span>
           </a>
 
           <button v-if="(playlist.total_tracks ?? 0) > 0" type="button" class="group flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm font-medium text-red-300 transition-all duration-200 hover:border-red-400/50 hover:bg-red-500/20 disabled:pointer-events-none disabled:opacity-50" :disabled="clearingPlaylist" :title="__('Remove all tracks from this playlist')" @click="showClearPlaylistModal = true">

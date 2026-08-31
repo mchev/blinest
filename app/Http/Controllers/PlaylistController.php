@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\PlaylistExport;
 use App\Jobs\UpdateUserLevel;
 use App\Models\AnswerType;
 use App\Models\Playlist;
@@ -10,13 +9,13 @@ use App\Rules\Reserved;
 use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
+use App\Services\Playlists\PlaylistCsvExportService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Laravel\Head\Facades\Head;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PlaylistController extends Controller
 {
@@ -201,9 +200,13 @@ class PlaylistController extends Controller
         return abort(403, __('Unauthorized action'));
     }
 
-    public function export(Playlist $playlist)
+    public function export(Playlist $playlist, PlaylistCsvExportService $export)
     {
-        return Excel::download(new PlaylistExport($playlist), 'playlist.xlsx');
+        if (! auth()->user()->canEditPlaylist($playlist)) {
+            abort(403, __('Unauthorized action'));
+        }
+
+        return $export->download($playlist);
     }
 
     public function destroy(Playlist $playlist)

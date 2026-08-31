@@ -106,6 +106,9 @@ const revokeRoomAccess = (moderator, room) => {
 
   revokeForm.delete(route('moderation.moderators.rooms.detach', { room: room.id, user: moderator.id }), {
     preserveScroll: true,
+    onSuccess: () => {
+      router.reload({ only: ['moderators', 'stats', 'coverage'], preserveScroll: true })
+    },
     onFinish: () => {
       revokingKey.value = null
     },
@@ -122,6 +125,9 @@ const revokePlaylistAccess = (moderator, playlist) => {
 
   revokeForm.delete(route('moderation.moderators.playlists.detach', { playlist: playlist.id, user: moderator.id }), {
     preserveScroll: true,
+    onSuccess: () => {
+      router.reload({ only: ['moderators', 'stats', 'coverage'], preserveScroll: true })
+    },
     onFinish: () => {
       revokingKey.value = null
     },

@@ -146,7 +146,9 @@ class User extends Authenticatable
 
     public function moderatedPlaylists(): MorphToMany
     {
-        return $this->morphedByMany(Playlist::class, 'moderable')->orderBy('name');
+        return $this->morphedByMany(Playlist::class, 'moderable')
+            ->using(Moderable::class)
+            ->orderBy('name');
     }
 
     public function isPlaylistOwner(Playlist $playlist)
@@ -180,7 +182,9 @@ class User extends Authenticatable
 
     public function moderatedRooms(): MorphToMany
     {
-        return $this->morphedByMany(Room::class, 'moderable')->orderBy('name');
+        return $this->morphedByMany(Room::class, 'moderable')
+            ->using(Moderable::class)
+            ->orderBy('name');
     }
 
     public function isRoomModerator(Room $room)

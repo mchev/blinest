@@ -37,6 +37,41 @@ class ChatModerationTest extends TestCase
         ]);
     }
 
+    public function test_authenticated_user_can_send_emoji_only_chat_message(): void
+    {
+        [$user, $room] = $this->createUserAndRoom();
+
+        $this->actingAs($user)
+            ->post($this->messageStoreUrl($room), [
+                'body' => '😂',
+            ])
+            ->assertNoContent();
+
+        $this->assertDatabaseHas('messages', [
+            'user_id' => $user->id,
+            'body' => '😂',
+        ]);
+    }
+
+    public function test_duplicate_emoji_in_same_room_is_rejected(): void
+    {
+        [$user, $room] = $this->createUserAndRoom();
+
+        $this->actingAs($user)
+            ->post($this->messageStoreUrl($room), [
+                'body' => '👍',
+            ])
+            ->assertNoContent();
+
+        $this->actingAs($user)
+            ->post($this->messageStoreUrl($room), [
+                'body' => '👍',
+            ])
+            ->assertInvalid(['body']);
+
+        $this->assertDatabaseCount('messages', 1);
+    }
+
     public function test_duplicate_message_in_same_room_is_rejected(): void
     {
         [$user, $room] = $this->createUserAndRoom();
