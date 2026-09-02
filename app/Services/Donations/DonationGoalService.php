@@ -73,8 +73,6 @@ class DonationGoalService
         $progress = $this->currentProgress();
         $progress['payment_url'] = $this->paymentUrlForUser($user, $locale);
         $progress['monthly_supporters'] = $this->monthlySupporters();
-        $progress['carryover_supporters'] = $this->carryoverSupporters();
-        $progress['post_goal_supporters'] = $this->postGoalSupporters();
 
         return $progress;
     }
@@ -103,11 +101,20 @@ class DonationGoalService
             })
             ->values();
 
+        $existingIds = $supporters->pluck('id')->flip();
+
+        foreach ($this->carryoverSupporters($monthKey) as $carryoverSupporter) {
+            if (! $existingIds->has($carryoverSupporter['id'])) {
+                $supporters->push($carryoverSupporter);
+                $existingIds->put($carryoverSupporter['id'], true);
+            }
+        }
+
         if ($limit !== null) {
             $supporters = $supporters->take($limit);
         }
 
-        return $supporters->all();
+        return $supporters->values()->all();
     }
 
     /**

@@ -11,7 +11,7 @@ defineProps({
   },
 })
 
-const { goal, donationUrl, monthlySupporters, carryoverSupporters, postGoalSupporters, progressSegments, hasCarryover, hasSurplus, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, formatEuros, translate } = useDonationGoal()
+const { goal, donationUrl, monthlySupporters, progressSegments, hasCarryover, hasSurplus, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, formatEuros, translate } = useDonationGoal()
 
 const progressFillPercent = computed(() => Math.min(100, (progressSegments.value.carryover_percent ?? 0) + (progressSegments.value.raised_percent ?? 0)))
 
@@ -76,24 +76,6 @@ watch(
       </div>
 
       <DonationMonthlySupporters :supporters="monthlySupporters" :max-visible="compact ? 6 : 10" :compact="compact" />
-
-      <DonationMonthlySupporters
-        v-if="carryoverSupporters.length"
-        :supporters="carryoverSupporters"
-        :max-visible="compact ? 5 : 8"
-        :compact="compact"
-        :label="translate('Donation carryover supporters')"
-        :dropdown-title="translate('Donation carryover supporters')"
-      />
-
-      <DonationMonthlySupporters
-        v-if="postGoalSupporters.length && hasSurplus"
-        :supporters="postGoalSupporters"
-        :max-visible="compact ? 5 : 8"
-        :compact="compact"
-        :label="translate('Donation post goal supporters')"
-        :dropdown-title="translate('Donation post goal supporters')"
-      />
 
       <div class="space-y-1.5">
         <div class="relative h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" :aria-valuenow="goal.percent" aria-valuemin="0" aria-valuemax="100" :aria-label="progressAriaLabel">

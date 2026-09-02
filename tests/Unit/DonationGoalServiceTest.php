@@ -410,7 +410,6 @@ class DonationGoalServiceTest extends TestCase
         $this->assertSame(3_000, $progress['raised_cents']);
         $this->assertSame(20, $progress['progress_segments']['carryover_percent']);
         $this->assertSame(30, $progress['progress_segments']['raised_percent']);
-        $this->assertArrayHasKey('post_goal_supporters', $progress);
     }
 
     public function test_post_goal_supporters_counts_anonymous_donations_toward_threshold(): void
@@ -442,7 +441,7 @@ class DonationGoalServiceTest extends TestCase
         $this->assertSame($identifiedDonor->id, $supporters[0]['id']);
     }
 
-    public function test_carryover_supporters_returns_previous_month_post_goal_donors(): void
+    public function test_monthly_supporters_includes_carryover_donors_from_previous_month(): void
     {
         $timezone = 'Europe/Paris';
         $lastMonth = now($timezone)->subMonth()->format('Y-m');
@@ -477,12 +476,40 @@ class DonationGoalServiceTest extends TestCase
             'donated_at' => now($timezone),
         ]);
 
+        $supporters = $this->service->monthlySupporters();
+
+        $this->assertCount(2, $supporters);
+        $this->assertSame($currentDonor->id, $supporters[0]['id']);
+        $this->assertSame($carryoverDonor->id, $supporters[1]['id']);
+    }
+
+    public function test_carryover_supporters_returns_previous_month_post_goal_donors(): void
+    {
+        $timezone = 'Europe/Paris';
+        $lastMonth = now($timezone)->subMonth()->format('Y-m');
+
+        $carryoverDonor = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_carryover_only_base',
+            'amount_cents' => 10_000,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'donated_at' => now($timezone)->subMonth()->subHours(2),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_carryover_only_surplus',
+            'amount_cents' => 3_200,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'user_id' => $carryoverDonor->id,
+            'donated_at' => now($timezone)->subMonth()->subHour(),
+        ]);
+
         $supporters = $this->service->carryoverSupporters();
 
         $this->assertCount(1, $supporters);
         $this->assertSame($carryoverDonor->id, $supporters[0]['id']);
-
-        $progress = $this->service->currentProgressForUser();
-        $this->assertSame($carryoverDonor->id, $progress['carryover_supporters'][0]['id']);
     }
 }
