@@ -412,4 +412,77 @@ class DonationGoalServiceTest extends TestCase
         $this->assertSame(30, $progress['progress_segments']['raised_percent']);
         $this->assertArrayHasKey('post_goal_supporters', $progress);
     }
+
+    public function test_post_goal_supporters_counts_anonymous_donations_toward_threshold(): void
+    {
+        $timezone = 'Europe/Paris';
+        $currentMonth = $this->service->monthKey();
+        $identifiedDonor = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_anon_goal',
+            'amount_cents' => 10_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'donated_at' => now($timezone)->subHours(2),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_identified_surplus',
+            'amount_cents' => 2_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $identifiedDonor->id,
+            'donated_at' => now($timezone)->subHour(),
+        ]);
+
+        $supporters = $this->service->postGoalSupporters();
+
+        $this->assertCount(1, $supporters);
+        $this->assertSame($identifiedDonor->id, $supporters[0]['id']);
+    }
+
+    public function test_carryover_supporters_returns_previous_month_post_goal_donors(): void
+    {
+        $timezone = 'Europe/Paris';
+        $lastMonth = now($timezone)->subMonth()->format('Y-m');
+        $currentMonth = $this->service->monthKey();
+
+        $carryoverDonor = User::factory()->create(['is_guest' => false]);
+        $currentDonor = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_carryover_base',
+            'amount_cents' => 10_000,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'donated_at' => now($timezone)->subMonth()->subHours(2),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_carryover_surplus',
+            'amount_cents' => 3_200,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'user_id' => $carryoverDonor->id,
+            'donated_at' => now($timezone)->subMonth()->subHour(),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_carryover_current',
+            'amount_cents' => 1_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $currentDonor->id,
+            'donated_at' => now($timezone),
+        ]);
+
+        $supporters = $this->service->carryoverSupporters();
+
+        $this->assertCount(1, $supporters);
+        $this->assertSame($carryoverDonor->id, $supporters[0]['id']);
+
+        $progress = $this->service->currentProgressForUser();
+        $this->assertSame($carryoverDonor->id, $progress['carryover_supporters'][0]['id']);
+    }
 }

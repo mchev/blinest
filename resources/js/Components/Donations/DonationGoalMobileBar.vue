@@ -22,8 +22,7 @@ const progressFillPercent = computed(() => Math.min(100, (progressSegments.value
         />
         <span
           v-if="progressSegments.raised_percent > 0"
-          class="h-full"
-          :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'"
+          class="h-full bg-emerald-500"
           :style="{ width: progressFillPercent > 0 ? `${(progressSegments.raised_percent / progressFillPercent) * 100}%` : '0%' }"
         />
       </span>

@@ -11,7 +11,7 @@ defineProps({
   },
 })
 
-const { goal, donationUrl, monthlySupporters, postGoalSupporters, progressSegments, hasCarryover, hasSurplus, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, formatEuros, translate } = useDonationGoal()
+const { goal, donationUrl, monthlySupporters, carryoverSupporters, postGoalSupporters, progressSegments, hasCarryover, hasSurplus, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, formatEuros, translate } = useDonationGoal()
 
 const progressFillPercent = computed(() => Math.min(100, (progressSegments.value.carryover_percent ?? 0) + (progressSegments.value.raised_percent ?? 0)))
 
@@ -78,7 +78,16 @@ watch(
       <DonationMonthlySupporters :supporters="monthlySupporters" :max-visible="compact ? 6 : 10" :compact="compact" />
 
       <DonationMonthlySupporters
-        v-if="postGoalSupporters.length"
+        v-if="carryoverSupporters.length"
+        :supporters="carryoverSupporters"
+        :max-visible="compact ? 5 : 8"
+        :compact="compact"
+        :label="translate('Donation carryover supporters')"
+        :dropdown-title="translate('Donation carryover supporters')"
+      />
+
+      <DonationMonthlySupporters
+        v-if="postGoalSupporters.length && hasSurplus"
         :supporters="postGoalSupporters"
         :max-visible="compact ? 5 : 8"
         :compact="compact"
@@ -97,8 +106,7 @@ watch(
             />
             <div
               v-if="progressSegments.raised_percent > 0"
-              class="h-full"
-              :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'"
+              class="h-full bg-emerald-500"
               :style="{ width: progressFillPercent > 0 ? `${(progressSegments.raised_percent / progressFillPercent) * 100}%` : '0%' }"
             />
           </div>

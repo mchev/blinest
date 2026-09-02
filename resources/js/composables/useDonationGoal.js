@@ -73,6 +73,8 @@ export function useDonationGoal() {
 
   const monthlySupporters = computed(() => goal.value?.monthly_supporters ?? [])
 
+  const carryoverSupporters = computed(() => goal.value?.carryover_supporters ?? [])
+
   const postGoalSupporters = computed(() => goal.value?.post_goal_supporters ?? [])
 
   const progressSegments = computed(() => resolveProgressSegments(goal.value))
@@ -107,6 +109,7 @@ export function useDonationGoal() {
     goal,
     donationUrl,
     monthlySupporters,
+    carryoverSupporters,
     postGoalSupporters,
     progressSegments,
     hasCarryover,

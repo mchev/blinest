@@ -73,6 +73,7 @@ class DonationGoalService
         $progress = $this->currentProgress();
         $progress['payment_url'] = $this->paymentUrlForUser($user, $locale);
         $progress['monthly_supporters'] = $this->monthlySupporters();
+        $progress['carryover_supporters'] = $this->carryoverSupporters();
         $progress['post_goal_supporters'] = $this->postGoalSupporters();
 
         return $progress;
@@ -133,7 +134,6 @@ class DonationGoalService
         $donations = Donation::query()
             ->with(['user:id,name,photo_path'])
             ->where('month_key', $monthKey)
-            ->whereNotNull('user_id')
             ->orderBy('donated_at')
             ->orderBy('id')
             ->get();
@@ -143,6 +143,10 @@ class DonationGoalService
         foreach ($donations as $donation) {
             $beforeTotal = $runningTotal;
             $runningTotal += $donation->amount_cents;
+
+            if ($donation->user_id === null) {
+                continue;
+            }
 
             if ($beforeTotal >= $goalCents || $runningTotal > $goalCents) {
                 $postGoalDonations->push($donation);
@@ -166,6 +170,26 @@ class DonationGoalService
         }
 
         return $supporters->all();
+    }
+
+    /**
+     * Supporters who contributed to the surplus carried over from the previous month.
+     *
+     * @return list<array{id: int, name: string, photo: string, is_supporter: bool, donor_perks: list<string>}>
+     */
+    public function carryoverSupporters(?string $monthKey = null, ?int $limit = null): array
+    {
+        $monthKey ??= $this->monthKey();
+
+        if ($this->carryoverCentsBeforeMonth($monthKey) <= 0) {
+            return [];
+        }
+
+        $previousMonthKey = Carbon::createFromFormat('Y-m', $monthKey, $this->timezone())
+            ->subMonth()
+            ->format('Y-m');
+
+        return $this->postGoalSupporters($previousMonthKey, $limit);
     }
 
     public function monthKey(?CarbonInterface $date = null): string
