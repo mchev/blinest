@@ -105,6 +105,10 @@ class HomeCatalogService
 
         $tabs[] = 'minigames';
 
+        if ($user !== null) {
+            $tabs[] = 'favorites';
+        }
+
         return $tabs;
     }
 
@@ -117,6 +121,27 @@ class HomeCatalogService
         }
 
         return $tab;
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function resolveCategoryIds(Request $request): array
+    {
+        $ids = collect($request->input('category_ids', []))
+            ->map(fn (mixed $id): int => (int) $id)
+            ->filter(fn (int $id): bool => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($ids !== []) {
+            return $ids;
+        }
+
+        $singleCategoryId = $request->integer('category_id') ?: null;
+
+        return $singleCategoryId !== null ? [$singleCategoryId] : [];
     }
 
     public function paginate(Request $request): LengthAwarePaginator
@@ -133,6 +158,7 @@ class HomeCatalogService
 
         $items = match ($tab) {
             'mine' => $this->userRooms($request),
+            'favorites' => $this->favoriteRooms($request),
             'minigames' => $this->minigames($request),
             default => [],
         };
@@ -142,15 +168,15 @@ class HomeCatalogService
 
     private function paginateOfficialCatalog(Request $request): LengthAwarePaginator
     {
-        $categoryId = $request->integer('category_id') ?: null;
+        $categoryIds = $this->resolveCategoryIds($request);
         $pageName = 'catalog';
         $page = Paginator::resolveCurrentPage($pageName);
         $hiddenCategoryIds = config('blinest.homepage_hidden_category_ids', []);
 
         $sortedIds = collect($this->officialRoomIndex())
             ->when(
-                $categoryId !== null,
-                fn (Collection $rows) => $rows->where('category_id', $categoryId),
+                $categoryIds !== [],
+                fn (Collection $rows) => $rows->whereIn('category_id', $categoryIds),
                 fn (Collection $rows) => $rows->reject(
                     fn (array $row) => in_array($row['category_id'] ?? null, $hiddenCategoryIds, true),
                 ),
@@ -240,14 +266,14 @@ class HomeCatalogService
 
     private function paginateCommunityCatalog(Request $request): LengthAwarePaginator
     {
-        $categoryId = $request->integer('category_id') ?: null;
+        $categoryIds = $this->resolveCategoryIds($request);
         $pageName = 'catalog';
         $page = Paginator::resolveCurrentPage($pageName);
 
         $sortedIds = collect($this->communityRoomIndex())
             ->when(
-                $categoryId !== null,
-                fn (Collection $rows) => $rows->where('category_id', $categoryId),
+                $categoryIds !== [],
+                fn (Collection $rows) => $rows->whereIn('category_id', $categoryIds),
             )
             ->pluck('id')
             ->values()
@@ -345,13 +371,13 @@ class HomeCatalogService
         );
 
         $hiddenCategoryIds = config('blinest.homepage_hidden_category_ids', []);
-        $categoryId = $request->integer('category_id') ?: null;
+        $categoryIds = $this->resolveCategoryIds($request);
 
         return collect($rooms)
             ->when(
-                $categoryId !== null,
+                $categoryIds !== [],
                 fn (Collection $collection) => $collection->filter(
-                    fn (array $room) => ($room['category']['id'] ?? null) === $categoryId,
+                    fn (array $room) => in_array($room['category']['id'] ?? null, $categoryIds, true),
                 ),
                 fn (Collection $collection) => $collection->reject(
                     fn (array $room) => in_array($room['category']['id'] ?? null, $hiddenCategoryIds, true),
@@ -425,6 +451,32 @@ class HomeCatalogService
             $this->roomPresence->getMemberCountsForRooms(
                 collect($roomIds)->map(fn (int $id): array => ['id' => $id]),
             ),
+        );
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function favoriteRooms(Request $request): array
+    {
+        $user = $request->user();
+
+        if ($user === null) {
+            return [];
+        }
+
+        $rooms = $user->bookmarkedRooms()
+            ->whereNull('password')
+            ->with(['owner', 'category:id,name'])
+            ->withCount('rounds')
+            ->orderByDesc('bookmarks.created_at')
+            ->get()
+            ->map(fn (Room $room) => $this->mapRoomForHomepage($room))
+            ->values()
+            ->all();
+
+        return $this->overlayLiveRoomState(
+            $this->applyPresenceCounts($rooms),
         );
     }
 

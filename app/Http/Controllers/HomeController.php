@@ -33,7 +33,8 @@ class HomeController extends Controller
         return Inertia::render('Home/Index', [
             'filters' => fn () => $request->all('search'),
             'catalog' => fn () => $this->homeCatalog->resolveTab($request),
-            'catalog_category_id' => fn () => $request->integer('category_id') ?: null,
+            'catalog_category_ids' => fn () => $this->homeCatalog->resolveCategoryIds($request),
+            'catalog_category_id' => fn () => ($ids = $this->homeCatalog->resolveCategoryIds($request)) !== [] ? $ids[0] : null,
             'catalog_items' => Inertia::scroll(fn () => $this->homeCatalog->paginate($request)),
             'weekly_top_users' => fn () => $this->donationGoal->annotateSupporterStatus(
                 Cache::get('weekly-top-10-users', []) ?? [],

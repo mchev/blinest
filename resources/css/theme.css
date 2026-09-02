@@ -1,7 +1,7 @@
 /**
  * Blinest — palette rétro sobre (RGAA AA)
  * Fonds : midnight · deep
- * Accents : rose poussière · champagne · teal adouci
+ * Accents : teal (actions) · champagne · teal clair (highlights)
  */
 :root {
   color-scheme: dark;
@@ -11,10 +11,10 @@
   --color-deep-hover: 28 38 66;
   --color-deep-card: 20 30 54;
 
-  --color-primary: 186 86 106;
-  --color-primary-hover: 202 102 122;
-  --color-primary-dark: 158 68 86;
-  --color-primary-light: 220 142 152;
+  --color-primary: 48 124 130;
+  --color-primary-hover: 64 148 154;
+  --color-primary-dark: 32 100 106;
+  --color-primary-light: 88 168 174;
 
   --color-secondary: 196 184 132;
   --color-secondary-dark: 168 156 108;

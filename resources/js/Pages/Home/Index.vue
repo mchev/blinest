@@ -12,6 +12,10 @@ defineProps({
   catalog: String,
   catalog_items: Object,
   catalog_category_id: [Number, String, null],
+  catalog_category_ids: {
+    type: Array,
+    default: () => [],
+  },
   public_categories: Array,
   community_categories: Array,
   catalog_tab_player_counts: Object,
@@ -61,7 +65,7 @@ const user = usePage().props.auth.user
       <div class="flex flex-col gap-8 lg:flex-row lg:gap-8 xl:gap-10">
         <!-- Main Content -->
         <section class="min-w-0 flex-1 space-y-8">
-          <PublicRoomsGrid v-if="catalog_items" :catalog="catalog" :catalog-items="catalog_items" :catalog-category-id="catalog_category_id" :categories="public_categories" :community-categories="community_categories" :catalog-tab-player-counts="catalog_tab_player_counts" :hidden-category-ids="homepage_hidden_category_ids" />
+          <PublicRoomsGrid v-if="catalog_items" :catalog="catalog" :catalog-items="catalog_items" :catalog-category-id="catalog_category_id" :catalog-category-ids="catalog_category_ids" :categories="public_categories" :community-categories="community_categories" :catalog-tab-player-counts="catalog_tab_player_counts" :hidden-category-ids="homepage_hidden_category_ids" />
         </section>
 
         <!-- Sidebar -->

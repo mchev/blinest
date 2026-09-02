@@ -5,7 +5,9 @@ import { useCatalogLoadMore } from '@/composables/useCatalogLoadMore'
 import Room from './Room.vue'
 import MinigameCard from './MinigameCard.vue'
 import Icon from '@/Components/Icon.vue'
+import LucideIcon from '@/Components/Icons/LucideIcon.vue'
 import RoomCardSkeleton from './RoomCardSkeleton.vue'
+import HomeCategoryFilter from './HomeCategoryFilter.vue'
 
 const props = defineProps({
   catalog: {
@@ -19,6 +21,10 @@ const props = defineProps({
   catalogCategoryId: {
     type: [Number, String, null],
     default: null,
+  },
+  catalogCategoryIds: {
+    type: Array,
+    default: () => [],
   },
   categories: {
     type: Array,
@@ -41,7 +47,16 @@ const props = defineProps({
 const page = usePage()
 const pendingTab = ref(null)
 const pendingFilter = ref(false)
-const selectedCategoryId = ref(props.catalogCategoryId ? String(props.catalogCategoryId) : '')
+
+const normalizeCategoryIds = (ids = [], fallbackId = null) => {
+  if (ids?.length) {
+    return ids.map(String)
+  }
+
+  return fallbackId ? [String(fallbackId)] : []
+}
+
+const selectedCategoryIds = ref(normalizeCategoryIds(props.catalogCategoryIds, props.catalogCategoryId))
 
 const liveTabPlayerCounts = ref({
   official: props.catalogTabPlayerCounts?.official ?? 0,
@@ -113,10 +128,17 @@ const tabs = computed(() => {
 
   items.push({ id: 'minigames', label: t('Mini-games') })
 
+  if (user.value) {
+    items.push({
+      id: 'favorites',
+      label: t('Bookmarks'),
+      iconOnly: true,
+      icon: 'heart',
+    })
+  }
+
   return items
 })
-
-const switchTabsClass = computed(() => `home-rooms-switch--tabs-${tabs.value.length}`)
 
 const showCategoryFilter = computed(() => displayCatalog.value === 'official' || displayCatalog.value === 'community')
 
@@ -141,8 +163,12 @@ const catalogSeoIntro = computed(() => {
     return t('My rooms SEO intro')
   }
 
-  if (selectedCategoryId.value) {
-    const category = activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value)
+  if (displayCatalog.value === 'favorites') {
+    return t('Bookmarks SEO intro')
+  }
+
+  if (selectedCategoryIds.value.length === 1) {
+    const category = activeCategories.value.find((item) => String(item.id) === selectedCategoryIds.value[0])
 
     if (category) {
       return t('Official rooms SEO intro category', { category: t(category.name) })
@@ -154,36 +180,12 @@ const catalogSeoIntro = computed(() => {
 
 const activeCategories = computed(() => (displayCatalog.value === 'official' ? props.categories : props.communityCategories))
 
-const defaultOfficialCount = computed(() => {
-  const hidden = new Set(props.hiddenCategoryIds)
-
-  return props.categories.reduce((sum, category) => {
-    if (hidden.has(category.id)) {
-      return sum
-    }
-
-    return sum + (category.rooms_count ?? 0)
-  }, 0)
-})
-
-const communityCategoryTotal = computed(() => props.communityCategories.reduce((sum, category) => sum + (category.rooms_count ?? 0), 0))
-
-const categoryFilterCount = computed(() => {
-  if (!selectedCategoryId.value) {
-    return displayCatalog.value === 'official' ? defaultOfficialCount.value : communityCategoryTotal.value
-  }
-
-  const category = activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value)
-
-  return category?.rooms_count ?? 0
-})
-
 const selectedCategory = computed(() => {
-  if (!selectedCategoryId.value || displayCatalog.value !== 'official') {
+  if (selectedCategoryIds.value.length !== 1 || displayCatalog.value !== 'official') {
     return null
   }
 
-  return activeCategories.value.find((item) => String(item.id) === selectedCategoryId.value) ?? null
+  return activeCategories.value.find((item) => String(item.id) === selectedCategoryIds.value[0]) ?? null
 })
 
 const catalogItemsList = computed(() => {
@@ -196,13 +198,17 @@ const catalogItemsList = computed(() => {
 
 const catalogQuery = () => ({
   tab: props.catalog,
-  category_id: props.catalogCategoryId || undefined,
+  ...(props.catalogCategoryIds?.length
+    ? { category_ids: props.catalogCategoryIds }
+    : props.catalogCategoryId
+      ? { category_id: props.catalogCategoryId }
+      : {}),
 })
 
 const { loading: loadingMore, hasMore, showLoadMoreButton, loadMore, loadMoreTrigger, syncAutoLoad } = useCatalogLoadMore(() => props.catalogItems, catalogQuery)
 
 const partialReloadOptions = {
-  only: ['catalog', 'catalog_items', 'catalog_category_id'],
+  only: ['catalog', 'catalog_items', 'catalog_category_ids', 'catalog_category_id'],
   reset: ['catalog_items'],
   preserveState: true,
   preserveScroll: true,
@@ -239,12 +245,12 @@ const switchTab = (tab) => {
   }
 
   pendingTab.value = tab
-  selectedCategoryId.value = ''
+  selectedCategoryIds.value = []
 
   reloadCatalog({ tab })
 }
 
-watch(selectedCategoryId, (value, previous) => {
+watch(selectedCategoryIds, (value, previous) => {
   if (previous === undefined) {
     return
   }
@@ -257,15 +263,16 @@ watch(selectedCategoryId, (value, previous) => {
 
   reloadCatalog({
     tab: props.catalog,
-    category_id: value || undefined,
+    ...(value.length ? { category_ids: value.map(Number) } : {}),
   })
 })
 
 watch(
-  () => props.catalogCategoryId,
-  (value) => {
-    selectedCategoryId.value = value ? String(value) : ''
+  () => [props.catalogCategoryIds, props.catalogCategoryId],
+  ([ids, fallbackId]) => {
+    selectedCategoryIds.value = normalizeCategoryIds(ids, fallbackId)
   },
+  { deep: true },
 )
 
 watch(
@@ -293,22 +300,22 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
         </p>
       </div>
 
-      <div class="home-rooms-switch" :class="switchTabsClass" role="tablist" :aria-label="t('Home catalog')">
-        <button v-for="tab in tabs" :id="tabId(tab.id)" :key="tab.id" type="button" role="tab" class="home-rooms-switch__tab" :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id }" :aria-selected="displayCatalog === tab.id" :aria-controls="panelId(tab.id)" :tabindex="displayCatalog === tab.id ? 0 : -1" @click="switchTab(tab.id)">
-          <span class="home-rooms-switch__tab-inner">
-            <span>{{ tab.label }}</span>
-            <span v-if="tab.playerCount != null" class="home-rooms-switch__tab-count" :aria-label="t(':count players online', { count: tab.playerCount })">
-              <Icon name="users" class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              <span>{{ tab.playerCount }}</span>
+      <div class="home-rooms-toolbar">
+        <div class="home-rooms-switch home-rooms-toolbar__tabs" role="tablist" :aria-label="t('Home catalog')">
+          <button v-for="tab in tabs" :id="tabId(tab.id)" :key="tab.id" type="button" role="tab" class="home-rooms-switch__tab" :class="{ 'home-rooms-switch__tab--active': displayCatalog === tab.id, 'home-rooms-switch__tab--icon-only': tab.iconOnly }" :aria-selected="displayCatalog === tab.id" :aria-controls="panelId(tab.id)" :aria-label="tab.iconOnly ? tab.label : undefined" :tabindex="displayCatalog === tab.id ? 0 : -1" @click="switchTab(tab.id)">
+            <span class="home-rooms-switch__tab-inner">
+              <LucideIcon v-if="tab.icon === 'heart'" name="heart" class="home-rooms-switch__tab-icon" />
+              <span v-if="!tab.iconOnly">{{ tab.label }}</span>
+              <span v-if="tab.playerCount != null" class="home-rooms-switch__tab-count" :aria-label="t(':count players online', { count: tab.playerCount })">
+                <Icon name="users" class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span>{{ tab.playerCount }}</span>
+              </span>
             </span>
-          </span>
-        </button>
-      </div>
+          </button>
+        </div>
 
-      <select v-if="showCategoryFilter" id="home-room-category-filter" v-model="selectedCategoryId" class="retro-select home-rooms-toolbar__filter" :aria-label="t('Filter by category')" :disabled="showCatalogSkeleton">
-        <option value="">{{ t('All categories') }} ({{ categoryFilterCount }})</option>
-        <option v-for="category in activeCategories" :key="category.id" :value="String(category.id)">{{ t(category.name) }} ({{ category.rooms_count }})</option>
-      </select>
+        <HomeCategoryFilter v-if="showCategoryFilter" v-model="selectedCategoryIds" :categories="activeCategories" :disabled="showCatalogSkeleton" />
+      </div>
 
       <Link v-if="selectedCategory?.slug && displayCatalog === 'official'" :href="route('categories.show', selectedCategory.slug)" class="game-link-action text-sm">
         {{ t('View category page') }}
@@ -330,7 +337,13 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
           </Link>
         </div>
 
-        <div v-if="!catalogItemsList.length && displayCatalog === 'mine'" class="home-rooms-empty flex flex-col items-center gap-4">
+        <div v-if="!catalogItemsList.length && displayCatalog === 'favorites'" class="home-rooms-empty">
+          <p class="text-sm font-semibold text-white">
+            {{ t('No bookmarks found') }}
+          </p>
+        </div>
+
+        <div v-else-if="!catalogItemsList.length && displayCatalog === 'mine'" class="home-rooms-empty flex flex-col items-center gap-4">
           <h3 class="text-base font-bold text-white">
             {{ t('No rooms yet') }}
           </h3>
@@ -350,9 +363,9 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
 
         <div v-else-if="!catalogItemsList.length" class="home-rooms-empty">
           <p class="text-sm font-semibold text-white">
-            {{ selectedCategoryId ? t('No rooms in this category right now.') : t('No rooms available at the moment.') }}
+            {{ selectedCategoryIds.length ? t('No rooms in this category right now.') : t('No rooms available at the moment.') }}
           </p>
-          <button v-if="selectedCategoryId" type="button" class="game-link-action mt-3" @click="selectedCategoryId = ''">
+          <button v-if="selectedCategoryIds.length" type="button" class="game-link-action mt-3" @click="selectedCategoryIds = []">
             {{ t('Show all categories') }}
           </button>
         </div>

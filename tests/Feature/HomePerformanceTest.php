@@ -430,6 +430,64 @@ class HomePerformanceTest extends TestCase
                 ->where('catalog_items.total', 20));
     }
 
+    public function test_homepage_filters_catalog_by_multiple_category_ids(): void
+    {
+        $categoryA = Category::create(['name' => 'Rock']);
+        $categoryB = Category::create(['name' => 'Pop']);
+        $categoryC = Category::create(['name' => 'Jazz']);
+        $owner = User::factory()->create();
+
+        for ($i = 0; $i < 3; $i++) {
+            Room::create([
+                'name' => "Rock Room {$i}",
+                'user_id' => $owner->id,
+                'category_id' => $categoryA->id,
+                'is_public' => true,
+                'is_featured' => false,
+                'track_duration' => 30,
+                'tracks_by_round' => 10,
+            ]);
+        }
+
+        for ($i = 0; $i < 2; $i++) {
+            Room::create([
+                'name' => "Pop Room {$i}",
+                'user_id' => $owner->id,
+                'category_id' => $categoryB->id,
+                'is_public' => true,
+                'is_featured' => false,
+                'track_duration' => 30,
+                'tracks_by_round' => 10,
+            ]);
+        }
+
+        Room::create([
+            'name' => 'Jazz Room',
+            'user_id' => $owner->id,
+            'category_id' => $categoryC->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home', [
+            'tab' => 'official',
+            'category_ids' => [$categoryA->id, $categoryB->id],
+        ]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'official')
+                ->where('catalog_category_ids', [$categoryA->id, $categoryB->id])
+                ->where('catalog_items.total', 5));
+    }
+
     public function test_homepage_includes_catalog_tab_player_counts(): void
     {
         $category = Category::create(['name' => 'Pop']);
@@ -760,6 +818,62 @@ class HomePerformanceTest extends TestCase
                 ->where('catalog_items.total', 0));
     }
 
+    public function test_favorites_catalog_lists_bookmarked_rooms_for_authenticated_user(): void
+    {
+        $user = User::factory()->create();
+        $owner = User::factory()->create();
+        $category = Category::create(['name' => 'Pop']);
+
+        $bookmarkedRoom = Room::create([
+            'name' => 'Bookmarked Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        Room::create([
+            'name' => 'Other Room',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $user->bookmarkedRooms()->attach($bookmarkedRoom);
+
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->actingAs($user)
+            ->get(route('home', ['tab' => 'favorites']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'favorites')
+                ->has('catalog_items.data', 1)
+                ->where('catalog_items.data.0.name', 'Bookmarked Room'));
+    }
+
+    public function test_favorites_tab_falls_back_to_official_for_guests(): void
+    {
+        $this->mock(RoomPresenceService::class, function ($mock): void {
+            $mock->shouldReceive('getMemberCountsForRooms')
+                ->andReturn([]);
+        });
+
+        $this->get(route('home', ['tab' => 'favorites']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('catalog', 'official'));
+    }
+
     public function test_catalog_partial_reload_only_fetches_catalog_props(): void
     {
         $category = Category::create(['name' => 'Pop']);
@@ -796,7 +910,7 @@ class HomePerformanceTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('catalog', 'community')
-                ->reloadOnly(['catalog', 'catalog_items', 'catalog_category_id'], fn (Assert $reload) => $reload
+                ->reloadOnly(['catalog', 'catalog_items', 'catalog_category_ids', 'catalog_category_id'], fn (Assert $reload) => $reload
                     ->where('catalog', 'community')
                     ->has('catalog_items.data', 16)
                     ->missing('featured_rooms')
