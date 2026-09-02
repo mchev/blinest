@@ -108,6 +108,16 @@
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 6px 20px rgb(0 0 0 / 0.32), 0 0 10px rgb(var(--color-primary) / 0.08);
   }
 
+  .game-card--hot {
+    @apply border-brand-secondary/35;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 4px 16px rgb(0 0 0 / 0.28), 0 0 10px rgb(var(--color-secondary) / 0.14);
+  }
+
+  .group:hover .game-card--hot,
+  .game-card--hot:focus-within {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 6px 20px rgb(0 0 0 / 0.32), 0 0 14px rgb(var(--color-secondary) / 0.18);
+  }
+
   .game-card__scanlines {
     @apply pointer-events-none absolute inset-0 z-[1] opacity-[0.035];
     background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgb(255 255 255 / 0.25) 3px, rgb(255 255 255 / 0.25) 4px);
@@ -138,9 +148,18 @@
     box-shadow: var(--glow-primary);
   }
 
+  .live-pill--hot {
+    @apply bg-brand-secondary text-brand-midnight;
+    box-shadow: var(--glow-secondary);
+  }
+
   .live-pill__dot {
     @apply h-1.5 w-1.5 rounded-full bg-white;
     animation: live-dot 1.2s ease-in-out infinite;
+  }
+
+  .live-pill__dot--hot {
+    @apply bg-brand-midnight;
   }
 
   .retro-badge {
@@ -168,6 +187,11 @@
     box-shadow: 0 0 6px rgb(var(--color-primary) / 0.25);
   }
 
+  .retro-progress__fill--hot {
+    @apply bg-brand-secondary;
+    box-shadow: 0 0 8px rgb(var(--color-secondary) / 0.35);
+  }
+
   /* ── Buttons ── */
   .game-btn-play {
     @apply relative flex min-h-[44px] w-full items-center justify-center gap-2 overflow-hidden rounded-lg px-4 text-xs font-bold uppercase tracking-[0.14em] text-white;
@@ -186,6 +210,11 @@
   .game-btn-play-live {
     @apply game-btn-play bg-brand-primary hover:bg-brand-primary-hover;
     box-shadow: inset 0 -2px 0 rgb(var(--color-primary-dark));
+  }
+
+  .game-btn-play-hot {
+    @apply game-btn-play bg-brand-secondary text-brand-midnight hover:bg-brand-secondary/90;
+    box-shadow: inset 0 -2px 0 rgb(var(--color-secondary-dark));
   }
 
   .game-btn-play-join {
@@ -427,11 +456,15 @@
   }
 
   .home-rooms-toolbar {
-    @apply flex flex-wrap items-center justify-between gap-3;
+    @apply flex flex-nowrap items-center gap-2 sm:gap-3;
   }
 
   .home-rooms-toolbar__tabs {
     @apply min-w-0 flex-1;
+  }
+
+  .home-rooms-toolbar .home-rooms-switch {
+    @apply w-auto;
   }
 
   .home-category-filter {
@@ -439,7 +472,7 @@
   }
 
   .home-category-filter__trigger {
-    @apply inline-flex min-h-[2.75rem] items-center gap-2 rounded-full border border-white/10 bg-brand-deep/80 px-4 py-2 text-sm text-white transition-[border-color,background-color,box-shadow] duration-200;
+    @apply inline-flex min-h-[2.75rem] items-center gap-1.5 rounded-full border border-white/10 bg-brand-deep/80 px-3 py-2 text-sm text-white transition-[border-color,background-color,box-shadow] duration-200 sm:gap-2 sm:px-4;
     @apply hover:border-white/20 hover:bg-brand-deep-hover;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-midnight;
   }
@@ -453,11 +486,19 @@
   }
 
   .home-category-filter__value {
-    @apply max-w-[12rem] truncate font-semibold text-white sm:max-w-[14rem];
+    @apply hidden max-w-[12rem] truncate font-semibold text-white sm:inline sm:max-w-[14rem];
+  }
+
+  .home-category-filter__icon {
+    @apply h-4 w-4 shrink-0 text-white/70 sm:hidden;
+  }
+
+  .home-category-filter__badge {
+    @apply inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-brand-primary px-1 text-[10px] font-bold leading-none text-white sm:hidden;
   }
 
   .home-category-filter__chevron {
-    @apply h-4 w-4 shrink-0 text-white/45;
+    @apply hidden h-4 w-4 shrink-0 text-white/45 sm:block;
   }
 
   .home-category-filter__panel {

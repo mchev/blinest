@@ -65,11 +65,14 @@ const ctaLabel = computed(() => {
   }
 })
 
+const isPlayingWithPlayers = computed(() => isPlaying.value && memberCount.value >= 1)
+const isPlayingEmpty = computed(() => isPlaying.value && memberCount.value < 1)
+
 const ctaClass = computed(() => {
   switch (cardState.value) {
     case 'hot':
     case 'live':
-      return 'game-btn-play-live'
+      return 'game-btn-play-hot'
     case 'live-empty':
       return 'game-btn-play-join'
     default:
@@ -81,7 +84,6 @@ const isPasswordProtected = computed(() => Boolean(props.room.password))
 const isPrivateRoom = computed(() => !props.room.is_public)
 const isFeatured = computed(() => props.variant === 'featured')
 const isCatalog = computed(() => props.variant === 'catalog')
-const isLive = computed(() => isPlaying.value || cardState.value === 'hot' || cardState.value === 'live')
 
 const roomHref = computed(() => `/rooms/${props.room.slug}`)
 
@@ -122,7 +124,7 @@ function dotActive(index) {
 
 <template>
   <article ref="cardRef" class="group flex h-full w-full flex-col">
-    <div class="game-card flex h-full flex-col" :class="{ 'game-card--live': isLive }">
+    <div class="game-card flex h-full flex-col" :class="{ 'game-card--live': isPlayingEmpty, 'game-card--hot': isPlayingWithPlayers }">
       <Link :href="roomHref" :rel="isPrivateRoom ? 'nofollow' : undefined" prefetch="hover" class="relative block overflow-hidden" :class="isFeatured ? 'aspect-[16/10]' : 'aspect-[16/9]'">
         <img v-if="hasCustomPhoto" :src="room.photo" :alt="room.name" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
         <div v-else class="flex h-full w-full items-center justify-center bg-gradient-to-br transition-transform duration-700 group-hover:scale-105" :class="posterGradient" aria-hidden="true">
@@ -136,13 +138,13 @@ function dotActive(index) {
 
         <div class="absolute inset-0 bg-gradient-to-t from-brand-midnight via-brand-midnight/50 to-transparent" />
 
-        <div v-if="isPlaying" class="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
+        <div v-if="isPlaying" class="pointer-events-none absolute inset-x-0 top-3 flex justify-center" :class="isPlayingWithPlayers ? 'text-brand-secondary' : 'text-brand-primary'">
           <PlayingIcon class="h-8 w-14 drop-shadow-lg sm:h-10 sm:w-16" />
         </div>
 
         <div class="absolute left-2.5 top-2.5 z-20 flex flex-wrap gap-1.5">
-          <span v-if="isPlaying" class="live-pill">
-            <span class="live-pill__dot" aria-hidden="true" />
+          <span v-if="isPlaying" class="live-pill" :class="{ 'live-pill--hot': isPlayingWithPlayers }">
+            <span class="live-pill__dot" :class="{ 'live-pill__dot--hot': isPlayingWithPlayers }" aria-hidden="true" />
             LIVE
           </span>
           <span v-else class="retro-badge">
@@ -185,7 +187,14 @@ function dotActive(index) {
         </div>
 
         <div class="retro-progress absolute bottom-0 left-0 right-0 z-20">
-          <div class="retro-progress__fill" :class="{ 'retro-progress__fill--live': isPlaying }" :style="{ width: `${progressPercent}%` }" />
+          <div
+            class="retro-progress__fill"
+            :class="{
+              'retro-progress__fill--live': isPlayingEmpty,
+              'retro-progress__fill--hot': isPlayingWithPlayers,
+            }"
+            :style="{ width: `${progressPercent}%` }"
+          />
         </div>
       </Link>
 

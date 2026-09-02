@@ -73,8 +73,18 @@ const clearSelection = () => {
 
 <template>
   <Dropdown :auto-close="false" placement="bottom-end" :overlay="false" class="home-category-filter">
-    <div class="home-category-filter__trigger" :class="{ 'home-category-filter__trigger--active': selectedIds.length > 0 }" :aria-disabled="disabled">
+    <div
+      class="home-category-filter__trigger"
+      :class="{ 'home-category-filter__trigger--active': selectedIds.length > 0 }"
+      :aria-disabled="disabled"
+      :aria-label="t('Filter by category')"
+      :title="triggerLabel"
+    >
+      <svg class="home-category-filter__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M3 4.5a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 .53 1.28l-4.72 4.72v4.19a.75.75 0 0 1-1.085.67L7.5 13.09V9.5L2.72 4.72A.75.75 0 0 1 3 4.5Z" />
+      </svg>
       <span class="home-category-filter__value">{{ triggerLabel }}</span>
+      <span v-if="selectedIds.length" class="home-category-filter__badge">{{ selectedIds.length }}</span>
       <Icon name="cheveron-down" class="home-category-filter__chevron" aria-hidden="true" />
     </div>
 
