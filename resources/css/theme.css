@@ -25,6 +25,9 @@
   --color-accent-dark: 48 124 130;
   --color-accent-light: 132 192 198;
 
+  --color-danger: 208 78 94;
+  --color-danger-dark: 166 56 70;
+
   --glow-primary: 0 0 16px rgb(var(--color-primary) / 0.14);
   --glow-accent: 0 0 16px rgb(var(--color-accent) / 0.14);
   --glow-secondary: 0 0 12px rgb(var(--color-secondary) / 0.1);

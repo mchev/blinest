@@ -129,7 +129,13 @@ const flashAnswerChips = (goodAnswers) => {
 
   window.setTimeout(() => {
     flashingAnswerIds.value = flashingAnswerIds.value.filter((id) => !ids.includes(id))
-  }, 450)
+  }, 650)
+}
+
+const FEEDBACK_DURATIONS = {
+  good: 700,
+  almost: 1000,
+  bad: 550,
 }
 
 const showFeedback = (type) => {
@@ -143,7 +149,7 @@ const showFeedback = (type) => {
 
   feedbackTimer = window.setTimeout(() => {
     feedbackFlash.value = null
-  }, 550)
+  }, FEEDBACK_DURATIONS[type])
 }
 
 const showHint = (body) => {
@@ -289,7 +295,7 @@ const feedbackWrapClass = computed(() => ({
   'room-input-wrap--flash-bad': feedbackFlash.value === 'bad',
 }))
 
-const feedbackAriaLabel = computed(() => {
+const feedbackMessage = computed(() => {
   switch (feedbackFlash.value) {
     case 'good':
       return __('Correct answer')
@@ -313,7 +319,7 @@ const isAnswerFlashing = (answerId) => flashingAnswerIds.value.includes(answerId
   <div class="room-user-input w-full space-y-2">
     <form class="m-0 flex w-full items-center justify-center p-0" @submit.prevent="check">
       <div class="relative flex w-full flex-col">
-        <span class="sr-only" aria-live="polite" aria-atomic="true">{{ feedbackAriaLabel }}</span>
+        <span class="sr-only" aria-live="polite" aria-atomic="true">{{ feedbackMessage }}</span>
 
         <div class="room-input-wrap" :class="feedbackWrapClass">
           <div class="room-input-field">
