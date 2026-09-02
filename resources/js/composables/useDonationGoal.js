@@ -34,6 +34,35 @@ export function resolveDonationDaysUnit(goal, translate) {
   return translate('Donation days unit')
 }
 
+export function resolveProgressSegments(goal) {
+  if (!goal) {
+    return { carryover_percent: 0, raised_percent: 0, surplus_percent: 0 }
+  }
+
+  if (goal.progress_segments) {
+    return goal.progress_segments
+  }
+
+  const goalCents = goal.goal_cents ?? 0
+
+  if (goalCents <= 0) {
+    return { carryover_percent: 0, raised_percent: 0, surplus_percent: 0 }
+  }
+
+  const carryoverCents = goal.carryover_cents ?? 0
+  const raisedCents = goal.raised_cents ?? 0
+  const effectiveCents = goal.effective_cents ?? carryoverCents + raisedCents
+  const carryoverTowardGoal = Math.min(carryoverCents, goalCents)
+  const raisedTowardGoal = Math.min(raisedCents, Math.max(0, goalCents - carryoverCents))
+  const surplusCents = Math.max(0, effectiveCents - goalCents)
+
+  return {
+    carryover_percent: Math.round((carryoverTowardGoal / goalCents) * 100),
+    raised_percent: Math.round((raisedTowardGoal / goalCents) * 100),
+    surplus_percent: Math.min(25, Math.round((surplusCents / goalCents) * 100)),
+  }
+}
+
 export function useDonationGoal() {
   const page = usePage()
   const translate = useTranslate()
@@ -46,7 +75,7 @@ export function useDonationGoal() {
 
   const postGoalSupporters = computed(() => goal.value?.post_goal_supporters ?? [])
 
-  const progressSegments = computed(() => goal.value?.progress_segments ?? { carryover_percent: 0, raised_percent: 0, surplus_percent: 0 })
+  const progressSegments = computed(() => resolveProgressSegments(goal.value))
 
   const hasCarryover = computed(() => (goal.value?.carryover_cents ?? 0) > 0)
 

@@ -585,7 +585,7 @@ class DonationGoalService
 
     protected function cacheKey(string $monthKey): string
     {
-        return "donation_goal_progress:{$monthKey}";
+        return "donation_goal_progress:v2:{$monthKey}";
     }
 
     protected function forgetCache(string $monthKey): void
