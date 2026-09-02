@@ -1,7 +1,10 @@
 <script setup>
+import { computed } from 'vue'
 import { useDonationGoal } from '@/composables/useDonationGoal'
 
-const { goal, donationUrl, pitchLine, daysUnit, ctaLabel, translate } = useDonationGoal()
+const { goal, donationUrl, pitchLine, daysUnit, ctaLabel, progressSegments, translate } = useDonationGoal()
+
+const progressFillPercent = computed(() => Math.min(100, (progressSegments.value.carryover_percent ?? 0) + (progressSegments.value.raised_percent ?? 0)))
 </script>
 
 <template>
@@ -11,7 +14,19 @@ const { goal, donationUrl, pitchLine, daysUnit, ctaLabel, translate } = useDonat
     </span>
 
     <span class="relative h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10">
-      <span class="absolute inset-y-0 left-0 rounded-full bg-brand-primary transition-all duration-500" :class="{ 'bg-emerald-500': goal.goal_reached }" :style="{ width: `${goal.percent}%` }" />
+      <span class="absolute inset-y-0 left-0 flex overflow-hidden rounded-full transition-all duration-500" :style="{ width: `${progressFillPercent}%` }">
+        <span
+          v-if="progressSegments.carryover_percent > 0"
+          class="h-full bg-amber-400/90"
+          :style="{ width: progressFillPercent > 0 ? `${(progressSegments.carryover_percent / progressFillPercent) * 100}%` : '0%' }"
+        />
+        <span
+          v-if="progressSegments.raised_percent > 0"
+          class="h-full"
+          :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'"
+          :style="{ width: progressFillPercent > 0 ? `${(progressSegments.raised_percent / progressFillPercent) * 100}%` : '0%' }"
+        />
+      </span>
     </span>
 
     <span class="shrink-0 whitespace-nowrap text-[11px] font-bold tabular-nums" :class="goal.goal_reached ? 'text-emerald-400' : 'text-white/85'"> {{ goal.days_remaining }} {{ daysUnit }} </span>

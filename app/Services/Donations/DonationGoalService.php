@@ -73,6 +73,7 @@ class DonationGoalService
         $progress = $this->currentProgress();
         $progress['payment_url'] = $this->paymentUrlForUser($user, $locale);
         $progress['monthly_supporters'] = $this->monthlySupporters();
+        $progress['post_goal_supporters'] = $this->postGoalSupporters();
 
         return $progress;
     }
@@ -114,6 +115,57 @@ class DonationGoalService
     public function recentSupporters(int $limit = 3): array
     {
         return $this->monthlySupporters(limit: $limit);
+    }
+
+    /**
+     * Supporters whose donations contributed after the monthly goal was reached
+     * (including when the goal was already covered by carryover at month start).
+     *
+     * @return list<array{id: int, name: string, photo: string, is_supporter: bool, donor_perks: list<string>}>
+     */
+    public function postGoalSupporters(?string $monthKey = null, ?int $limit = null): array
+    {
+        $monthKey ??= $this->monthKey();
+        $goalCents = $this->monthlyGoalCents();
+        $runningTotal = $this->carryoverCentsBeforeMonth($monthKey);
+        $donorPerks = app(DonorPerkService::class);
+
+        $donations = Donation::query()
+            ->with(['user:id,name,photo_path'])
+            ->where('month_key', $monthKey)
+            ->whereNotNull('user_id')
+            ->orderBy('donated_at')
+            ->orderBy('id')
+            ->get();
+
+        $postGoalDonations = collect();
+
+        foreach ($donations as $donation) {
+            $beforeTotal = $runningTotal;
+            $runningTotal += $donation->amount_cents;
+
+            if ($beforeTotal >= $goalCents || $runningTotal > $goalCents) {
+                $postGoalDonations->push($donation);
+            }
+        }
+
+        $supporters = $postGoalDonations
+            ->sortByDesc(fn (Donation $donation): array => [$donation->donated_at, $donation->id])
+            ->unique('user_id')
+            ->map(function (Donation $donation) use ($donorPerks): array {
+                return $donorPerks->enrichUserPayload([
+                    'id' => $donation->user->id,
+                    'name' => $donation->user->name,
+                    'photo' => $donation->user->photo,
+                ], $donation->user);
+            })
+            ->values();
+
+        if ($limit !== null) {
+            $supporters = $supporters->take($limit);
+        }
+
+        return $supporters->all();
     }
 
     public function monthKey(?CarbonInterface $date = null): string
@@ -472,7 +524,38 @@ class DonationGoalService
             'days_remaining' => $daysRemaining,
             'payment_url' => $this->paymentUrl(),
             'ads_disabled' => $progress['goal_reached'],
+            'progress_segments' => $this->progressSegments($progress),
         ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $progress
+     * @return array{carryover_percent: int, raised_percent: int, surplus_percent: int}
+     */
+    protected function progressSegments(array $progress): array
+    {
+        $goalCents = (int) $progress['goal_cents'];
+        $carryoverCents = (int) $progress['carryover_cents'];
+        $raisedCents = (int) $progress['raised_cents'];
+        $effectiveCents = (int) $progress['effective_cents'];
+
+        if ($goalCents <= 0) {
+            return [
+                'carryover_percent' => 0,
+                'raised_percent' => 0,
+                'surplus_percent' => 0,
+            ];
+        }
+
+        $carryoverTowardGoal = min($carryoverCents, $goalCents);
+        $raisedTowardGoal = min($raisedCents, max(0, $goalCents - $carryoverCents));
+        $surplusCents = max(0, $effectiveCents - $goalCents);
+
+        return [
+            'carryover_percent' => (int) round(($carryoverTowardGoal / $goalCents) * 100),
+            'raised_percent' => (int) round(($raisedTowardGoal / $goalCents) * 100),
+            'surplus_percent' => (int) min(25, round(($surplusCents / $goalCents) * 100)),
+        ];
     }
 
     /**

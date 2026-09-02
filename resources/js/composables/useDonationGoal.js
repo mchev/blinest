@@ -44,6 +44,14 @@ export function useDonationGoal() {
 
   const monthlySupporters = computed(() => goal.value?.monthly_supporters ?? [])
 
+  const postGoalSupporters = computed(() => goal.value?.post_goal_supporters ?? [])
+
+  const progressSegments = computed(() => goal.value?.progress_segments ?? { carryover_percent: 0, raised_percent: 0, surplus_percent: 0 })
+
+  const hasCarryover = computed(() => (goal.value?.carryover_cents ?? 0) > 0)
+
+  const hasSurplus = computed(() => (goal.value?.surplus_cents ?? 0) > 0)
+
   const recentSupporters = computed(() => monthlySupporters.value)
 
   const pitchLine = computed(() => resolveDonationPitch(goal.value, translate))
@@ -70,6 +78,10 @@ export function useDonationGoal() {
     goal,
     donationUrl,
     monthlySupporters,
+    postGoalSupporters,
+    progressSegments,
+    hasCarryover,
+    hasSurplus,
     recentSupporters,
     pitchLine,
     daysUnit,

@@ -13,6 +13,14 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  label: {
+    type: String,
+    default: null,
+  },
+  dropdownTitle: {
+    type: String,
+    default: null,
+  },
   compact: {
     type: Boolean,
     default: false,
@@ -25,13 +33,17 @@ const visibleSupporters = computed(() => props.supporters.slice(0, props.maxVisi
 
 const overflowCount = computed(() => Math.max(0, props.supporters.length - props.maxVisible))
 
+const sectionLabel = computed(() => props.label ?? translate('Donation monthly supporters'))
+
+const dropdownLabel = computed(() => props.dropdownTitle ?? sectionLabel.value)
+
 const avatarSizeClass = computed(() => (props.compact ? 'h-6 w-6' : 'h-7 w-7'))
 </script>
 
 <template>
   <div v-if="supporters.length" class="relative z-10 space-y-2">
     <p class="text-xs leading-snug text-white/55">
-      {{ translate('Donation monthly supporters') }}
+      {{ sectionLabel }}
       <span class="text-white/35">· {{ supporters.length }}</span>
     </p>
 
@@ -49,7 +61,7 @@ const avatarSizeClass = computed(() => (props.compact ? 'h-6 w-6' : 'h-7 w-7'))
           <template #dropdown>
             <div class="w-60 p-2">
               <p class="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-white/50">
-                {{ translate('Donation monthly supporters') }}
+                {{ sectionLabel }}
                 <span class="text-white/35">({{ supporters.length }})</span>
               </p>
               <ul class="max-h-56 space-y-0.5 overflow-y-auto">

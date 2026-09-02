@@ -303,4 +303,113 @@ class DonationGoalServiceTest extends TestCase
         $this->assertTrue($supporters[0]['is_supporter']);
         $this->assertSame(['ad_free', 'avatar_crown', 'supporter_reactions'], $supporters[0]['donor_perks']);
     }
+
+    public function test_post_goal_supporters_includes_donors_after_carryover_goal_is_met(): void
+    {
+        $timezone = 'Europe/Paris';
+        $lastMonth = now($timezone)->subMonth()->format('Y-m');
+        $currentMonth = $this->service->monthKey();
+
+        $earlyDonor = User::factory()->create(['is_guest' => false]);
+        $postGoalDonor = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_post_goal_last',
+            'amount_cents' => 20_000,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'donated_at' => now($timezone)->subMonth(),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_post_goal_early',
+            'amount_cents' => 2_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $earlyDonor->id,
+            'donated_at' => now($timezone)->subHours(2),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_post_goal_late',
+            'amount_cents' => 1_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $postGoalDonor->id,
+            'donated_at' => now($timezone)->subHour(),
+        ]);
+
+        Cache::flush();
+
+        $supporters = $this->service->postGoalSupporters();
+
+        $this->assertCount(2, $supporters);
+        $this->assertSame($postGoalDonor->id, $supporters[0]['id']);
+        $this->assertSame($earlyDonor->id, $supporters[1]['id']);
+    }
+
+    public function test_post_goal_supporters_excludes_donors_before_goal_is_reached_without_carryover(): void
+    {
+        $timezone = 'Europe/Paris';
+        $currentMonth = $this->service->monthKey();
+
+        $beforeGoal = User::factory()->create(['is_guest' => false]);
+        $afterGoal = User::factory()->create(['is_guest' => false]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_before_goal',
+            'amount_cents' => 4_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $beforeGoal->id,
+            'donated_at' => now($timezone)->subHours(2),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_after_goal',
+            'amount_cents' => 7_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'user_id' => $afterGoal->id,
+            'donated_at' => now($timezone)->subHour(),
+        ]);
+
+        $supporters = $this->service->postGoalSupporters();
+
+        $this->assertCount(1, $supporters);
+        $this->assertSame($afterGoal->id, $supporters[0]['id']);
+    }
+
+    public function test_current_progress_includes_progress_segments_and_post_goal_supporters(): void
+    {
+        $timezone = 'Europe/Paris';
+        $lastMonth = now($timezone)->subMonth()->format('Y-m');
+        $currentMonth = $this->service->monthKey();
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_segments_last',
+            'amount_cents' => 12_000,
+            'currency' => 'eur',
+            'month_key' => $lastMonth,
+            'donated_at' => now($timezone)->subMonth(),
+        ]);
+
+        Donation::query()->create([
+            'stripe_checkout_session_id' => 'cs_segments_current',
+            'amount_cents' => 3_000,
+            'currency' => 'eur',
+            'month_key' => $currentMonth,
+            'donated_at' => now($timezone),
+        ]);
+
+        Cache::flush();
+
+        $progress = $this->service->currentProgressForUser();
+
+        $this->assertSame(2_000, $progress['carryover_cents']);
+        $this->assertSame(3_000, $progress['raised_cents']);
+        $this->assertSame(20, $progress['progress_segments']['carryover_percent']);
+        $this->assertSame(30, $progress['progress_segments']['raised_percent']);
+        $this->assertArrayHasKey('post_goal_supporters', $progress);
+    }
 }

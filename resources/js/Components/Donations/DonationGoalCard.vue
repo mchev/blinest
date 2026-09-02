@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { useDonationGoal } from '@/composables/useDonationGoal'
 import DonationMonthlySupporters from '@/Components/Donations/DonationMonthlySupporters.vue'
@@ -11,7 +11,9 @@ defineProps({
   },
 })
 
-const { goal, donationUrl, monthlySupporters, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, translate } = useDonationGoal()
+const { goal, donationUrl, monthlySupporters, postGoalSupporters, progressSegments, hasCarryover, hasSurplus, cardTitle, pitchLine, daysUnit, progressAriaLabel, ctaLabel, formatEuros, translate } = useDonationGoal()
+
+const progressFillPercent = computed(() => Math.min(100, (progressSegments.value.carryover_percent ?? 0) + (progressSegments.value.raised_percent ?? 0)))
 
 const showConfetti = ref(false)
 
@@ -75,8 +77,39 @@ watch(
 
       <DonationMonthlySupporters :supporters="monthlySupporters" :max-visible="compact ? 6 : 10" :compact="compact" />
 
-      <div class="h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" :aria-valuenow="goal.percent" aria-valuemin="0" aria-valuemax="100" :aria-label="progressAriaLabel">
-        <div class="h-full rounded-full transition-all duration-500 ease-out" :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'" :style="{ width: `${goal.percent}%` }" />
+      <DonationMonthlySupporters
+        v-if="postGoalSupporters.length"
+        :supporters="postGoalSupporters"
+        :max-visible="compact ? 5 : 8"
+        :compact="compact"
+        :label="translate('Donation post goal supporters')"
+        :dropdown-title="translate('Donation post goal supporters')"
+      />
+
+      <div class="space-y-1.5">
+        <div class="relative h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" :aria-valuenow="goal.percent" aria-valuemin="0" aria-valuemax="100" :aria-label="progressAriaLabel">
+          <div class="absolute inset-y-0 left-0 flex overflow-hidden rounded-full transition-all duration-500 ease-out" :style="{ width: `${progressFillPercent}%` }">
+            <div
+              v-if="progressSegments.carryover_percent > 0"
+              class="h-full bg-amber-400/90"
+              :style="{ width: progressFillPercent > 0 ? `${(progressSegments.carryover_percent / progressFillPercent) * 100}%` : '0%' }"
+              :title="translate('Donation carryover included', { amount: formatEuros(goal.carryover_cents) })"
+            />
+            <div
+              v-if="progressSegments.raised_percent > 0"
+              class="h-full"
+              :class="goal.goal_reached ? 'bg-emerald-500' : 'bg-brand-primary'"
+              :style="{ width: progressFillPercent > 0 ? `${(progressSegments.raised_percent / progressFillPercent) * 100}%` : '0%' }"
+            />
+          </div>
+        </div>
+
+        <p v-if="hasCarryover" class="text-[11px] leading-snug text-amber-200/80">
+          {{ translate('Donation carryover included', { amount: formatEuros(goal.carryover_cents) }) }}
+        </p>
+        <p v-if="hasSurplus" class="text-[11px] leading-snug text-emerald-300/85">
+          {{ translate('Donation surplus provisioned', { amount: formatEuros(goal.surplus_cents) }) }}
+        </p>
       </div>
 
       <div class="flex flex-col gap-2 pt-1">
