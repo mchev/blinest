@@ -1098,6 +1098,100 @@
     @apply text-brand-primary;
   }
 
+  .room-track-votes {
+    @apply flex items-stretch;
+  }
+
+  .room-track-votes--desktop {
+    @apply flex-col gap-1 rounded-lg border border-white/10 bg-brand-midnight/60 p-1 shadow-inner shadow-black/20;
+  }
+
+  .room-track-votes--mobile {
+    @apply gap-0.5 rounded-full border border-white/10 bg-brand-midnight/70 p-0.5;
+  }
+
+  .room-track-vote {
+    @apply flex flex-col items-center justify-center gap-0.5 rounded-md px-2 py-1.5 text-white/55 transition-all duration-200;
+    min-width: 2.25rem;
+  }
+
+  .room-track-votes--mobile .room-track-vote {
+    @apply min-h-[1.75rem] flex-row rounded-full px-2 py-1 text-[11px];
+    min-width: auto;
+  }
+
+  .room-track-vote:hover:not(:disabled) {
+    @apply bg-white/5 text-white/80;
+  }
+
+  .room-track-vote:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  .room-track-vote__icon {
+    @apply flex h-7 w-7 items-center justify-center rounded-md bg-brand-deep/80 transition-colors;
+  }
+
+  .room-track-votes--mobile .room-track-vote__icon {
+    @apply h-5 w-5 rounded-full bg-transparent;
+  }
+
+  .room-track-vote__count {
+    @apply min-w-[1.25rem] text-center text-[11px] font-semibold tabular-nums leading-none;
+  }
+
+  .room-track-votes--desktop .room-track-vote__count {
+    @apply text-xs;
+  }
+
+  .room-track-vote--up-active {
+    @apply text-brand-accent;
+  }
+
+  .room-track-vote--up-active .room-track-vote__icon {
+    @apply bg-brand-accent/25 text-brand-accent ring-1 ring-brand-accent/35;
+  }
+
+  .room-track-vote--down-active {
+    @apply text-brand-primary-light;
+  }
+
+  .room-track-vote--down-active .room-track-vote__icon {
+    @apply bg-brand-primary/25 text-brand-primary-light ring-1 ring-brand-primary/35;
+  }
+
+  .room-track-vote-dropdown {
+    @apply flex;
+  }
+
+  .room-track-vote-dropdown > button {
+    @apply flex w-full;
+  }
+
+  .room-downvote-menu {
+    @apply min-w-[13rem] py-1;
+  }
+
+  .room-downvote-menu__title {
+    @apply border-b border-white/10 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white/45;
+  }
+
+  .room-downvote-menu__list {
+    @apply py-1;
+  }
+
+  .room-downvote-menu__option {
+    @apply block w-full px-3 py-2 text-left text-sm text-white/85 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .room-track-votes--desktop .room-track-vote--down {
+    @apply border-t border-white/10 pt-1.5;
+  }
+
+  .room-track-votes--mobile .room-track-vote--down {
+    @apply border-l border-white/10 pl-1.5;
+  }
+
   .room-track-answer-type {
     @apply flex h-4 w-4 shrink-0 items-center justify-center text-[9px] font-bold uppercase;
   }

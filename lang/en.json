@@ -786,5 +786,15 @@
     "Facebook data deletion status deleted": "Account deleted",
     "Facebook data deletion status unlinked": "Facebook account unlinked",
     "Facebook data deletion status not_found": "No linked data found",
-    "Facebook data deletion status failed": "Processing failed"
+    "Facebook data deletion status failed": "Processing failed",
+    "Why are you downvoting?": "Why are you downvoting?",
+    "Poor sound quality": "Poor sound quality",
+    "Too difficult": "Too difficult",
+    "Bad passage choice": "Bad passage choice",
+    "Not my taste": "Not my taste",
+    "Controversial artist": "Controversial artist",
+    "Other reason": "Other reason",
+    "A downvote reason is required.": "A downvote reason is required.",
+    "All downvote reasons": "All downvote reasons",
+    "Remove downvote": "Remove downvote"
 }

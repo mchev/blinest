@@ -114,6 +114,11 @@ class Track extends Model
             $query->having('total_upvotes', '>=', $minUpvotes);
         })->when($filters['minDownvotes'] ?? null, function ($query, $minDownvotes) {
             $query->havingRaw('ABS(total_downvotes) >= ?', [$minDownvotes]);
+        })->when($filters['downvoteReason'] ?? null, function ($query, $reason) {
+            $query->whereHas('votes', function ($query) use ($reason) {
+                $query->where('votes', '<', 0)
+                    ->where('downvote_reason', $reason);
+            });
         })->when($filters['sortable'] ?? null, function ($query, $sortable) {
             if ($sortable['field'] == 'votes') {
                 if ($sortable['direction'] == 'asc') {

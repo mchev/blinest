@@ -52,6 +52,7 @@ const form = useForm({
   provider: props.filters.provider || '',
   minUpvotes: props.filters.minUpvotes || '',
   minDownvotes: props.filters.minDownvotes || '',
+  downvoteReason: props.filters.downvoteReason || '',
 })
 
 const selectedAnswer = ref(null)
@@ -67,6 +68,17 @@ const showDeleteTrackModal = ref(false)
 const trackToDelete = ref(null)
 const showClearPlaylistModal = ref(false)
 const clearingPlaylist = ref(false)
+
+const DOWNVOTE_REASON_LABELS = {
+  sound_quality: 'Poor sound quality',
+  difficulty: 'Too difficult',
+  passage_choice: 'Bad passage choice',
+  personal_taste: 'Not my taste',
+  controversial_artist: 'Controversial artist',
+  other: 'Other reason',
+}
+
+const downvoteReasonLabel = (reason) => __(DOWNVOTE_REASON_LABELS[reason] ?? reason)
 
 // Loading states with TypeScript-like interface
 const loadingStates = ref({
@@ -211,9 +223,10 @@ const reloadTracksFromFilters = throttle(() => {
     provider: form.provider,
     minUpvotes: form.minUpvotes,
     minDownvotes: form.minDownvotes,
+    downvoteReason: form.downvoteReason,
   })
 
-  const isSearchOrFilter = Boolean(form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes || form.sortable)
+  const isSearchOrFilter = Boolean(form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes || form.downvoteReason || form.sortable)
 
   if (isSearchOrFilter) {
     isSearching.value = true
@@ -237,7 +250,7 @@ const reloadTracksFromFilters = throttle(() => {
 }, 500)
 
 watch(
-  () => [form.search, form.paginate, form.sortable, form.difficulty, form.provider, form.minUpvotes, form.minDownvotes],
+  () => [form.search, form.paginate, form.sortable, form.difficulty, form.provider, form.minUpvotes, form.minDownvotes, form.downvoteReason],
   () => {
     reloadTracksFromFilters()
   },
@@ -309,6 +322,7 @@ const clearFilters = () => {
   form.provider = ''
   form.minUpvotes = ''
   form.minDownvotes = ''
+  form.downvoteReason = ''
 }
 
 const confirmDeleteTrack = () => {
@@ -507,7 +521,7 @@ onUnmounted(() => {
 
             <div class="flex items-center gap-3">
               <div class="whitespace-nowrap text-sm text-neutral-200">
-                <template v-if="form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes">
+                <template v-if="form.search || form.difficulty || form.provider || form.minUpvotes || form.minDownvotes || form.downvoteReason">
                   {{ tracks.total }} {{ __('results') }}
                   <span class="text-neutral-400">/ {{ playlist.total_tracks || tracks.total }} {{ __('tracks total') }}</span>
                 </template>
@@ -566,7 +580,17 @@ onUnmounted(() => {
               <option value="100">{{ __('More than') }} 100 {{ __('negative votes') }}</option>
             </SelectInput>
 
-            <button v-if="form.difficulty || form.provider || form.minUpvotes || form.minDownvotes" class="ml-auto px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:text-neutral-100" @click="clearFilters">
+            <SelectInput v-model="form.downvoteReason" class="w-48 text-xs">
+              <option value="">{{ __('All downvote reasons') }}</option>
+              <option value="sound_quality">{{ __('Poor sound quality') }}</option>
+              <option value="difficulty">{{ __('Too difficult') }}</option>
+              <option value="passage_choice">{{ __('Bad passage choice') }}</option>
+              <option value="personal_taste">{{ __('Not my taste') }}</option>
+              <option value="controversial_artist">{{ __('Controversial artist') }}</option>
+              <option value="other">{{ __('Other reason') }}</option>
+            </SelectInput>
+
+            <button v-if="form.difficulty || form.provider || form.minUpvotes || form.minDownvotes || form.downvoteReason" class="ml-auto px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:text-neutral-100" @click="clearFilters">
               {{ __('Clear filters') }}
             </button>
           </div>
@@ -780,14 +804,21 @@ onUnmounted(() => {
                 </SelectInput>
               </td>
               <td class="px-4 py-3">
-                <div class="flex items-center justify-center gap-3 text-sm">
-                  <div class="flex items-center gap-1 text-teal-400">
-                    <Icon name="thumb-up" class="h-4 w-4" />
-                    <span>{{ track.up_votes }}</span>
+                <div class="flex flex-col items-center gap-2 text-sm">
+                  <div class="flex items-center justify-center gap-3">
+                    <div class="flex items-center gap-1 text-teal-400">
+                      <Icon name="thumb-up" class="h-4 w-4" />
+                      <span>{{ track.up_votes }}</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-red-400">
+                      <Icon name="thumb-down" class="h-4 w-4" />
+                      <span>{{ track.down_votes }}</span>
+                    </div>
                   </div>
-                  <div class="flex items-center gap-1 text-red-400">
-                    <Icon name="thumb-down" class="h-4 w-4" />
-                    <span>{{ track.down_votes }}</span>
+                  <div v-if="track.downvote_breakdown && Object.keys(track.downvote_breakdown).length" class="flex max-w-[14rem] flex-wrap justify-center gap-1">
+                    <span v-for="(count, reason) in track.downvote_breakdown" :key="reason" class="rounded bg-red-400/10 px-1.5 py-0.5 text-[10px] font-medium text-red-300">
+                      {{ downvoteReasonLabel(reason) }} ({{ count }})
+                    </span>
                   </div>
                 </div>
               </td>

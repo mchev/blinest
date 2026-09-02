@@ -1,12 +1,13 @@
 <script setup>
-import Icon from '@/Components/Icon.vue'
+import TrackVoteActions from './TrackVoteActions.vue'
 
-const props = defineProps({
+defineProps({
   track: Object,
   getUserAnswerForTrackAndAnswer: Function,
   voteTrackUp: Function,
   voteTrackDown: Function,
   user: Object,
+  roomId: Number,
 })
 </script>
 
@@ -67,27 +68,9 @@ const props = defineProps({
         </div>
       </div>
 
-      <!-- Votes section: vertical layout -->
-      <div class="flex flex-col items-center justify-between gap-1 p-3">
-        <div class="flex flex-col items-center gap-2" v-if="user">
-          <button @click="voteTrackUp(track)" class="group flex flex-col items-center gap-1 transition-all duration-200" :title="__('Upvote this track')" :aria-label="__('Upvote this track')" :aria-pressed="track.user_voted_up">
-            <div class="flex h-7 w-7 items-center justify-center bg-brand-midnight transition-all duration-200 hover:bg-brand-accent" :class="{ 'bg-brand-accent': track.user_voted_up }">
-              <Icon name="thumb-up" class="h-3.5 w-3.5 text-white" aria-hidden="true" />
-            </div>
-            <span class="min-w-[1.5rem] text-center text-xs font-medium text-white/60 transition-colors group-hover:text-brand-accent" :class="{ 'text-brand-accent': track.user_voted_up }">
-              {{ track.upvotes }}
-            </span>
-          </button>
-
-          <button @click="voteTrackDown(track)" class="group flex flex-col items-center gap-1 transition-all duration-200" :title="__('Downvote this track')" :aria-label="__('Downvote this track')" :aria-pressed="track.user_voted_down">
-            <div class="flex h-7 w-7 items-center justify-center bg-brand-midnight transition-all duration-200 hover:bg-brand-primary" :class="{ 'bg-brand-primary': track.user_voted_down }">
-              <Icon name="thumb-down" class="h-3.5 w-3.5 text-white" aria-hidden="true" />
-            </div>
-            <span class="min-w-[1.5rem] text-center text-xs font-medium text-white/60 transition-colors group-hover:text-brand-primary" :class="{ 'text-brand-primary-light': track.user_voted_down }">
-              {{ track.downvotes }}
-            </span>
-          </button>
-        </div>
+      <!-- Votes -->
+      <div class="flex flex-col items-center justify-center p-3">
+        <TrackVoteActions v-if="user" :track="track" :room-id="roomId" variant="desktop" />
       </div>
     </div>
   </li>

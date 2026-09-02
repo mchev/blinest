@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\TrackVoted;
+use App\Http\Requests\DownvoteTrackRequest;
 use App\Jobs\ProcessDeletedTrack;
 use App\Jobs\SendDiscordNotification;
 use App\Jobs\UpdateUserLevel;
@@ -11,6 +12,7 @@ use App\Models\Room;
 use App\Models\Track;
 use App\Rules\AudioDuration;
 use App\Services\MusicProvidersService as MusicProviders;
+use App\Services\Tracks\TrackDownvoteService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -245,9 +247,9 @@ class TrackController extends Controller
         return Redirect::back()->with('success', __('All tracks removed from the playlist'));
     }
 
-    public function downvote(Room $room, Track $track)
+    public function downvote(DownvoteTrackRequest $request, Room $room, Track $track, TrackDownvoteService $downvotes)
     {
-        Auth::user()->downvote($track);
+        $downvotes->apply($request->user(), $track, $request->reason());
         broadcast(new TrackVoted($room, $track));
 
         // Update user level in queue when unliking a track

@@ -10,6 +10,7 @@ use App\Services\MusicProviders\BlinestLikesService;
 use App\Services\MusicProviders\DeezerService;
 use App\Services\MusicProviders\SpotifyService;
 use App\Services\Playlists\PlaylistCsvExportService;
+use App\Services\Tracks\TrackDownvoteBreakdownService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -106,7 +107,7 @@ class PlaylistController extends Controller
             // Move the track relations to the paginated query
             $tracks = $playlist->tracks()
                 ->with(['answers', 'upVoters', 'downVoters']) // Eager load only for paginated results
-                ->filter(Request::only('search', 'sortable', 'difficulty', 'provider', 'minUpvotes', 'minDownvotes'))
+                ->filter(Request::only('search', 'sortable', 'difficulty', 'provider', 'minUpvotes', 'minDownvotes', 'downvoteReason'))
                 ->when(! Request::has('sortable'), function ($query) {
                     $query->orderBy('created_at', 'desc');
                 })
@@ -128,6 +129,10 @@ class PlaylistController extends Controller
             $totalTracks = Cache::remember('playlist_total_tracks_'.$playlist->id, 30 * 60, function () use ($playlist) {
                 return $playlist->tracks()->count();
             });
+
+            $downvoteBreakdown = app(TrackDownvoteBreakdownService::class)->forTracks(
+                $tracks->getCollection()->pluck('id')
+            );
 
             Head::title($playlist->name);
 
@@ -153,7 +158,7 @@ class PlaylistController extends Controller
                     'difficulties' => $difficultyStats,
                     'total_tracks' => $totalTracks,
                 ],
-                'filters' => Request::only('search'),
+                'filters' => Request::only('search', 'paginate', 'sortable', 'difficulty', 'provider', 'minUpvotes', 'minDownvotes', 'downvoteReason'),
                 'answer_types' => Cache::remember('answer_types_'.app()->getLocale(), 60 * 24, function () {
                     return AnswerType::query()
                         ->get()
@@ -175,6 +180,7 @@ class PlaylistController extends Controller
                     'hint' => $track->hint,
                     'up_votes' => $track->upVoters->count(),
                     'down_votes' => $track->downVoters->count(),
+                    'downvote_breakdown' => $downvoteBreakdown[$track->id] ?? [],
                     'created_at' => $track->created_at->format('d/m/Y'),
                 ]),
             ]);

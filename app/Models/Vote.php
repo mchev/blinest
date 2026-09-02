@@ -2,91 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Str;
+use App\Enums\TrackDownvoteReason;
+use Overtrue\LaravelVote\Vote as BaseVote;
 
-class Vote extends Model
+class Vote extends BaseVote
 {
-    protected $guarded = [];
-
-    protected $appends = [
-        'is_up_vote',
-        'is_down_vote',
+    protected $casts = [
+        'votes' => 'int',
+        'downvote_reason' => TrackDownvoteReason::class,
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        $this->table = \config('vote.votes_table');
-
-        parent::__construct($attributes);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::saving(function ($vote) {
-            $userForeignKey = \config('vote.user_foreign_key');
-            $vote->{$userForeignKey} = $vote->{$userForeignKey} ?: auth()->id();
-
-            if (\config('vote.uuids')) {
-                $vote->{$vote->getKeyName()} = $vote->{$vote->getKeyName()} ?: (string) Str::orderedUuid();
-            }
-        });
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'votes' => 'int',
-        ];
-    }
-
-    public function votable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(\config('auth.providers.users.model'), \config('vote.user_foreign_key'));
-    }
-
-    public function voter(): BelongsTo
-    {
-        return $this->user();
-    }
-
-    public function isUpVote(): bool
-    {
-        return $this->votes > 0;
-    }
-
-    public function isDownVote(): bool
-    {
-        return $this->votes < 0;
-    }
-
-    public function getIsUpVoteAttribute(): bool
-    {
-        return $this->isUpVote();
-    }
-
-    public function getIsDownVoteAttribute(): bool
-    {
-        return $this->isDownVote();
-    }
-
-    public function scopeOfType(Builder $query, string $type): Builder
-    {
-        return $query->where('votable_type', app($type)->getMorphClass());
-    }
-
-    public function scopeOfVotable(Builder $query, string $type): Builder
-    {
-        return $this->scopeOfType(...\func_get_args());
-    }
 }

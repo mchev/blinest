@@ -1,7 +1,17 @@
 <script setup>
+import { computed } from 'vue'
 import Icon from '@/Components/Icon.vue'
 import MiniPlayer from '@/Components/MiniPlayer.vue'
 import SelectInput from '@/Components/SelectInput.vue'
+
+const DOWNVOTE_REASON_LABELS = {
+  sound_quality: 'Poor sound quality',
+  difficulty: 'Too difficult',
+  passage_choice: 'Bad passage choice',
+  personal_taste: 'Not my taste',
+  controversial_artist: 'Controversial artist',
+  other: 'Other reason',
+}
 
 const props = defineProps({
   track: {
@@ -21,6 +31,20 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-difficulty', 'remove'])
+
+const downvoteBreakdown = computed(() => {
+  if (!props.track.downvote_breakdown) {
+    return []
+  }
+
+  return Object.entries(props.track.downvote_breakdown)
+    .map(([reason, count]) => ({
+      reason,
+      count,
+      label: __(DOWNVOTE_REASON_LABELS[reason] ?? reason),
+    }))
+    .sort((a, b) => b.count - a.count)
+})
 </script>
 
 <template>
@@ -78,16 +102,23 @@ const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-d
         </SelectInput>
       </div>
 
-      <div class="flex items-center gap-4 text-sm text-neutral-200">
-        <div class="flex items-center gap-1">
-          <Icon name="thumb-up" class="h-3.5 w-3.5 text-teal-400" />
-          <span>{{ track.up_votes }}</span>
+      <div class="flex flex-col items-end gap-2 text-sm text-neutral-200">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1">
+            <Icon name="thumb-up" class="h-3.5 w-3.5 text-teal-400" />
+            <span>{{ track.up_votes }}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <Icon name="thumb-down" class="h-3.5 w-3.5 text-red-400" />
+            <span>{{ track.down_votes }}</span>
+          </div>
+          <span class="text-xs">{{ track.created_at }}</span>
         </div>
-        <div class="flex items-center gap-1">
-          <Icon name="thumb-down" class="h-3.5 w-3.5 text-red-400" />
-          <span>{{ track.down_votes }}</span>
+        <div v-if="downvoteBreakdown.length" class="flex max-w-full flex-wrap justify-end gap-1">
+          <span v-for="entry in downvoteBreakdown" :key="entry.reason" class="rounded bg-red-400/10 px-1.5 py-0.5 text-[10px] font-medium text-red-300" :title="entry.label">
+            {{ entry.label }} ({{ entry.count }})
+          </span>
         </div>
-        <span class="text-xs">{{ track.created_at }}</span>
       </div>
     </div>
   </div>

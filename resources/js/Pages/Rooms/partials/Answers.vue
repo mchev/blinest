@@ -130,10 +130,10 @@ const getUserAnswerForTrackAndAnswer = () => null
       <component :is="compact ? 'ul' : TransitionGroup" :name="compact ? undefined : 'flip-list'" tag="ul" :class="compact ? 'space-y-1.5' : 'space-y-3 md:space-y-4'">
         <template v-for="(track, index) in tracks" :key="track.id">
           <!-- Mobile version -->
-          <AnswerCardMobile :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" :is-latest="index === 0" class="md:hidden" />
+          <AnswerCardMobile :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" :room-id="roomId" :is-latest="index === 0" class="md:hidden" />
 
           <!-- Desktop version -->
-          <AnswerCardDesktop :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" class="hidden md:block" />
+          <AnswerCardDesktop :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" :room-id="roomId" class="hidden md:block" />
         </template>
 
         <li v-if="tracks.length === 0" class="flex items-center justify-center py-8 text-white/50 md:py-12" role="listitem">

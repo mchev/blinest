@@ -1379,5 +1379,15 @@
     "Facebook data deletion status failed": "Échec du traitement",
     "Show donation history on profile": "Afficher l'historique des dons sur mon profil public",
     "Show donation history on profile hint": "Masquez cette option pour que les autres joueurs ne voient plus vos dons passés ni la durée de soutien sur votre profil.",
-    "Donation preferences updated": "Préférences de don mises à jour."
+    "Donation preferences updated": "Préférences de don mises à jour.",
+    "Why are you downvoting?": "Pourquoi ce vote négatif ?",
+    "Poor sound quality": "Mauvaise qualité sonore",
+    "Too difficult": "Trop difficile",
+    "Bad passage choice": "Mauvais choix d'extrait",
+    "Not my taste": "Pas mon style",
+    "Controversial artist": "Artiste polémique",
+    "Other reason": "Autre raison",
+    "A downvote reason is required.": "Une raison est requise pour voter négativement.",
+    "All downvote reasons": "Toutes les raisons de vote négatif",
+    "Remove downvote": "Retirer le vote négatif"
 }

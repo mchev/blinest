@@ -1342,5 +1342,15 @@
     "Facebook data deletion status deleted": "Cuenta eliminada",
     "Facebook data deletion status unlinked": "Cuenta de Facebook desvinculada",
     "Facebook data deletion status not_found": "No se encontraron datos vinculados",
-    "Facebook data deletion status failed": "Error de procesamiento"
+    "Facebook data deletion status failed": "Error de procesamiento",
+    "Why are you downvoting?": "¿Por qué votas en contra?",
+    "Poor sound quality": "Mala calidad de sonido",
+    "Too difficult": "Demasiado difícil",
+    "Bad passage choice": "Mal extracto elegido",
+    "Not my taste": "No es de mi gusto",
+    "Controversial artist": "Artista polémico",
+    "Other reason": "Otra razón",
+    "A downvote reason is required.": "Se requiere un motivo para el voto negativo.",
+    "All downvote reasons": "Todos los motivos de voto negativo",
+    "Remove downvote": "Quitar voto negativo"
 }
