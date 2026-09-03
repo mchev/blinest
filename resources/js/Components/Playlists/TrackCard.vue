@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import Icon from '@/Components/Icon.vue'
 import MiniPlayer from '@/Components/MiniPlayer.vue'
 import SelectInput from '@/Components/SelectInput.vue'
+import { useTranslate } from '@/composables/useTranslate'
 
 const DOWNVOTE_REASON_LABELS = {
   sound_quality: 'Poor sound quality',
@@ -32,6 +33,8 @@ const props = defineProps({
 
 const emit = defineEmits(['edit-answer', 'create-answer', 'edit-hint', 'update-difficulty', 'remove'])
 
+const translate = useTranslate()
+
 const downvoteBreakdown = computed(() => {
   if (!props.track.downvote_breakdown) {
     return []
@@ -41,7 +44,7 @@ const downvoteBreakdown = computed(() => {
     .map(([reason, count]) => ({
       reason,
       count,
-      label: __(DOWNVOTE_REASON_LABELS[reason] ?? reason),
+      label: translate(DOWNVOTE_REASON_LABELS[reason] ?? reason),
     }))
     .sort((a, b) => b.count - a.count)
 })

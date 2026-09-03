@@ -18,6 +18,7 @@ import Sortable from '@/Components/Sortable.vue'
 import ImportPlaylist from './ImportPlaylist.vue'
 import UploadTrack from './UploadTrack.vue'
 import ConfirmModal from '@/Components/ConfirmModal.vue'
+import { useTranslate } from '@/composables/useTranslate'
 
 const props = defineProps({
   playlist: {
@@ -43,6 +44,8 @@ const props = defineProps({
 })
 
 const isModerator = computed(() => usePage().props.auth.user.is_public_moderator)
+
+const translate = useTranslate()
 
 const form = useForm({
   search: props.filters.search,
@@ -78,7 +81,7 @@ const DOWNVOTE_REASON_LABELS = {
   other: 'Other reason',
 }
 
-const downvoteReasonLabel = (reason) => __(DOWNVOTE_REASON_LABELS[reason] ?? reason)
+const downvoteReasonLabel = (reason) => translate(DOWNVOTE_REASON_LABELS[reason] ?? reason)
 
 // Loading states with TypeScript-like interface
 const loadingStates = ref({
