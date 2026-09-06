@@ -16,10 +16,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
+use Tests\Concerns\AddsRoomPresence;
 use Tests\TestCase;
 
 class RoundAnswerSubmissionTest extends TestCase
 {
+    use AddsRoomPresence;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -202,6 +204,8 @@ class RoundAnswerSubmissionTest extends TestCase
         ]);
 
         Cache::forget(Track::answersCacheKey($track->id));
+
+        $this->addUserToRoomPresence($room, $player);
 
         return [$round, $track, $player, $artistAnswer, $titleAnswer];
     }

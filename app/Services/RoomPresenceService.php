@@ -64,6 +64,18 @@ class RoomPresenceService
         return (int) Redis::zcard($key);
     }
 
+    public function isMember(Room $room, User $user): bool
+    {
+        return in_array($user->id, $this->getMemberIds($room), true);
+    }
+
+    public function ensureMember(Room $room, User $user): void
+    {
+        if (! $this->isMember($room, $user)) {
+            abort(403, __('Unauthorized action'));
+        }
+    }
+
     /**
      * Get member counts for multiple rooms in one Redis round-trip (pipeline).
      * Prunes stale members before counting.

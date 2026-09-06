@@ -9,6 +9,8 @@ use App\Models\Round;
 use App\Models\Score;
 use App\Models\Track;
 use App\Models\TrackAnswer;
+use App\Models\User;
+use App\Services\RoomPresenceService;
 use App\Services\RoundScoreService;
 use App\Services\Tracks\TrackAnswerCacheService;
 use Illuminate\Http\Request;
@@ -50,6 +52,8 @@ class RoundController extends Controller
 
     public function check(Request $request, Round $round, Track $track)
     {
+        $this->ensureRoundParticipant($round, $request->user());
+
         if ($round->finished_at || ! $this->isCurrentTrack($round, $track)) {
             $error = $round->finished_at ? 'round_ended' : 'track_mismatch';
 
@@ -276,6 +280,12 @@ class RoundController extends Controller
         ], 200);
     }
 
+    private function ensureRoundParticipant(Round $round, User $user): void
+    {
+        $round->loadMissing('room');
+        app(RoomPresenceService::class)->ensureMember($round->room, $user);
+    }
+
     private function isCurrentTrack(Round $round, Track $track): bool
     {
         $tracks = (array) $round->tracks;
@@ -295,6 +305,7 @@ class RoundController extends Controller
     public function trackListened(Request $request, Round $round, Track $track)
     {
         $user = $request->user();
+        $this->ensureRoundParticipant($round, $user);
 
         // Vérifier que la track fait partie du round
         $tracks = (array) $round->tracks;
@@ -320,6 +331,8 @@ class RoundController extends Controller
      */
     public function scores(Round $round)
     {
+        $this->ensureRoundParticipant($round, Auth::user());
+
         $roundScoreService = app(RoundScoreService::class);
         $scores = $roundScoreService->getAllScores($round->id);
 
