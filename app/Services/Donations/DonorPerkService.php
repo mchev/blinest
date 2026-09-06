@@ -6,6 +6,7 @@ use App\Enums\DonorPerk;
 use App\Models\Donation;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\Chat\MessageReactionService;
 
 class DonorPerkService
 {
@@ -114,9 +115,9 @@ class DonorPerkService
      * @param  iterable<Message>  $messages
      * @return list<array<string, mixed>>
      */
-    public function enrichMessagesForChat(iterable $messages): array
+    public function enrichMessagesForChat(iterable $messages, ?User $viewer = null): array
     {
-        $messages = collect($messages);
+        $messages = app(MessageReactionService::class)->eagerLoad($messages);
 
         if ($messages->isEmpty()) {
             return [];
@@ -130,9 +131,10 @@ class DonorPerkService
             ->all();
 
         $perkMap = $this->perkMapForUserIds($userIds);
+        $reactionService = app(MessageReactionService::class);
 
         return $messages
-            ->map(function (Message $message) use ($perkMap): array {
+            ->map(function (Message $message) use ($perkMap, $viewer, $reactionService): array {
                 $payload = $message->toArray();
 
                 if (isset($payload['user']['id'])) {
@@ -143,7 +145,7 @@ class DonorPerkService
                     );
                 }
 
-                return $payload;
+                return $reactionService->appendSummary($payload, $message, $viewer);
             })
             ->all();
     }

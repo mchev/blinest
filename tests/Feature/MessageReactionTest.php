@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Donation;
 use App\Models\Message;
+use App\Models\MessageReaction;
 use App\Models\Room;
 use App\Models\User;
 use App\Services\Donations\DonationGoalService;
@@ -61,6 +62,32 @@ class MessageReactionTest extends TestCase
             ->postJson("/api/messages/{$message->id}/reactions", ['emoji' => '☕'])
             ->assertOk()
             ->assertJson(['added' => true]);
+    }
+
+    public function test_room_show_includes_message_reactions_without_per_message_api_calls(): void
+    {
+        $viewer = User::factory()->create(['is_guest' => false]);
+        $message = $this->createMessage();
+
+        MessageReaction::query()->create([
+            'message_id' => $message->id,
+            'user_id' => $viewer->id,
+            'emoji' => '👍',
+        ]);
+
+        $room = Room::query()->findOrFail($message->messagable_id);
+
+        $this->actingAs($viewer)
+            ->get(route('rooms.show', $room->slug))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->has('room.latest_messages', 1)
+                ->where('room.latest_messages.0.id', $message->id)
+                ->where('room.latest_messages.0.reactions', fn ($reactions) => collect($reactions)->contains(
+                    fn ($reaction) => $reaction['emoji'] === '👍' && $reaction['count'] === 1
+                ))
+                ->where('room.latest_messages.0.user_reaction', '👍')
+            );
     }
 
     private function createMessage(): Message

@@ -7,19 +7,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMessageReactionRequest;
 use App\Models\Message;
 use App\Models\MessageReaction;
+use App\Services\Chat\MessageReactionService;
 use Illuminate\Http\JsonResponse;
 
 class MessageReactionController extends Controller
 {
+    public function __construct(private MessageReactionService $reactions) {}
+
     public function index(Message $message): JsonResponse
     {
-        $reactions = $this->groupedReactions($message);
-
-        $userReaction = $message->reactions()->where('user_id', auth()->id())->first()?->emoji;
-
         return response()->json([
-            'reactions' => $reactions,
-            'userReaction' => $userReaction,
+            'reactions' => $this->reactions->groupedReactions($message),
+            'userReaction' => $this->reactions->userReaction($message, auth()->user()),
         ]);
     }
 
@@ -37,8 +36,8 @@ class MessageReactionController extends Controller
         if ($reaction) {
             $reaction->delete();
 
-            $reactions = $this->groupedReactions($message->fresh());
-            $userReaction = $message->reactions()->where('user_id', $user->id)->first()?->emoji;
+            $reactions = $this->reactions->groupedReactions($message->fresh());
+            $userReaction = $this->reactions->userReaction($message->fresh(), $user);
             broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
 
             return response()->json(['removed' => true]);
@@ -50,33 +49,11 @@ class MessageReactionController extends Controller
             'emoji' => $emoji,
         ]);
 
-        $reactions = $this->groupedReactions($message->fresh());
+        $freshMessage = $message->fresh();
+        $reactions = $this->reactions->groupedReactions($freshMessage);
         $userReaction = $emoji;
         broadcast(new MessageReactionUpdated($message->id, $reactions, $userReaction));
 
         return response()->json(['added' => true]);
-    }
-
-    /**
-     * @return list<array{emoji: string, count: int, users: list<array{id: int, name: string}>}>
-     */
-    private function groupedReactions(Message $message): array
-    {
-        $message->loadMissing('reactions.user');
-
-        return $message->reactions
-            ->groupBy('emoji')
-            ->map(function ($group) {
-                return [
-                    'emoji' => $group[0]->emoji,
-                    'count' => $group->count(),
-                    'users' => $group->map(fn ($reaction) => [
-                        'id' => $reaction->user->id,
-                        'name' => $reaction->user->name,
-                    ])->values()->all(),
-                ];
-            })
-            ->values()
-            ->all();
     }
 }

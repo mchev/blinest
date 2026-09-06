@@ -47,14 +47,29 @@ const report = async () => {
 }
 
 // --- Réactions ---
-const reactions = ref([])
-const userReaction = ref(null)
+const reactions = ref(props.message.reactions ?? [])
+const userReaction = ref(props.message.user_reaction ?? null)
 const showEmojiPicker = ref(false)
 
+const hasHydratedReactions = () => Array.isArray(props.message.reactions)
+
+const syncReactionsFromMessage = (message) => {
+  if (!Array.isArray(message?.reactions)) {
+    return
+  }
+
+  reactions.value = message.reactions
+  userReaction.value = message.user_reaction ?? null
+}
+
 const fetchReactions = async () => {
-  const { data } = await axios.get(`/api/messages/${props.message.id}/reactions`)
-  reactions.value = data.reactions || data // supporte [{emoji, count}] ou {reactions, userReaction}
-  userReaction.value = data.userReaction || null
+  try {
+    const { data } = await axios.get(`/api/messages/${props.message.id}/reactions`)
+    reactions.value = data.reactions || data
+    userReaction.value = data.userReaction || null
+  } catch {
+    // Reactions are optional UI; avoid noisy errors when rate-limited.
+  }
 }
 
 const toggleReaction = async (emoji) => {
@@ -188,8 +203,19 @@ watch(showEmojiPicker, (isVisible) => {
   }
 })
 
+watch(
+  () => props.message,
+  (message) => {
+    syncReactionsFromMessage(message)
+  },
+  { deep: true },
+)
+
 onMounted(() => {
-  fetchReactions()
+  if (!hasHydratedReactions()) {
+    fetchReactions()
+  }
+
   listenForReactions()
 })
 onUnmounted(() => {

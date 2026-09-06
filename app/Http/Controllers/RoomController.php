@@ -179,6 +179,7 @@ class RoomController extends Controller
                 'password' => $room->password,
                 'latest_messages' => app(DonorPerkService::class)->enrichMessagesForChat(
                     $room->messages()->whereDate('created_at', '>=', now()->subHours(2))->orderByDesc('created_at')->limit(30)->get(),
+                    $request->user(),
                 ),
                 'pause_between_tracks' => $room->pause_between_tracks,
                 'pause_between_rounds' => $room->pause_between_rounds,
