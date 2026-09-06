@@ -13,6 +13,8 @@ use App\Models\Track;
 use App\Rules\AudioDuration;
 use App\Services\MusicProvidersService as MusicProviders;
 use App\Services\Tracks\TrackDownvoteService;
+use App\Services\Tracks\TrackUpvoteService;
+use App\Services\Tracks\TrackVotePayloadService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -247,28 +249,32 @@ class TrackController extends Controller
         return Redirect::back()->with('success', __('All tracks removed from the playlist'));
     }
 
-    public function downvote(DownvoteTrackRequest $request, Room $room, Track $track, TrackDownvoteService $downvotes)
+    public function downvote(DownvoteTrackRequest $request, Room $room, Track $track, TrackDownvoteService $downvotes, TrackVotePayloadService $votePayload)
     {
-        $downvotes->apply($request->user(), $track, $request->reason());
-        broadcast(new TrackVoted($room, $track));
+        $user = $request->user();
+        $downvotes->apply($user, $track, $request->reason());
+        broadcast(new TrackVoted($room, $track->fresh()));
 
-        // Update user level in queue when unliking a track
         UpdateUserLevel::dispatch(
-            user: Auth::user(),
+            user: $user,
             type: 'likes_count'
         );
+
+        return response()->json($votePayload->forTrack($track, $user));
     }
 
-    public function upvote(Room $room, Track $track)
+    public function upvote(Room $room, Track $track, TrackUpvoteService $upvotes, TrackVotePayloadService $votePayload)
     {
-        Auth::user()->upvote($track);
-        broadcast(new TrackVoted($room, $track));
+        $user = Auth::user();
+        $upvotes->apply($user, $track);
+        broadcast(new TrackVoted($room, $track->fresh()));
 
-        // Update user level in queue when liking a track
         UpdateUserLevel::dispatch(
-            user: Auth::user(),
+            user: $user,
             type: 'likes_count'
         );
+
+        return response()->json($votePayload->forTrack($track, $user));
     }
 
     public function upload(Playlist $playlist)

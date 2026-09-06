@@ -2,7 +2,6 @@
 import { usePage } from '@inertiajs/vue3'
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import { TransitionGroup } from 'vue'
-import axios from 'axios'
 import Card from '@/Components/Card.vue'
 import Icon from '@/Components/Icon.vue'
 import AnswerCardMobile from './AnswerCardMobile.vue'
@@ -79,8 +78,8 @@ onMounted(() => {
     .listen('TrackVoted', (e) => {
       const index = tracks.value.findIndex((x) => x.id === e.track.id)
       if (index !== -1) {
-        tracks.value[index].downvotes = e.track.downvotes
         tracks.value[index].upvotes = e.track.upvotes
+        tracks.value[index].downvotes = e.track.downvotes
       }
     })
 })
@@ -96,17 +95,6 @@ onUnmounted(() => {
   playlistChannel = null
 })
 
-const voteTrackDown = (track) => {
-  if (!props.roomId) return
-  axios.post(`/rooms/${props.roomId}/tracks/${track.id}/downvote`).catch((error) => console.error('Error downvoting track:', error))
-}
-
-const voteTrackUp = (track) => {
-  if (!props.roomId) return
-  axios.post(`/rooms/${props.roomId}/tracks/${track.id}/upvote`).catch((error) => console.error('Error upvoting track:', error))
-}
-
-/** Playlist : historique des extraits uniquement (pas d’affichage des scores / bonnes réponses). */
 const getUserAnswerForTrackAndAnswer = () => null
 </script>
 <template>
@@ -130,10 +118,10 @@ const getUserAnswerForTrackAndAnswer = () => null
       <component :is="compact ? 'ul' : TransitionGroup" :name="compact ? undefined : 'flip-list'" tag="ul" :class="compact ? 'space-y-1.5' : 'space-y-3 md:space-y-4'">
         <template v-for="(track, index) in tracks" :key="track.id">
           <!-- Mobile version -->
-          <AnswerCardMobile :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" :room-id="roomId" :is-latest="index === 0" class="md:hidden" />
+          <AnswerCardMobile :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :user="user" :room-id="roomId" :is-latest="index === 0" class="md:hidden" />
 
           <!-- Desktop version -->
-          <AnswerCardDesktop :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :voteTrackUp="voteTrackUp" :voteTrackDown="voteTrackDown" :user="user" :room-id="roomId" class="hidden md:block" />
+          <AnswerCardDesktop :track="track" :getUserAnswerForTrackAndAnswer="getUserAnswerForTrackAndAnswer" :user="user" :room-id="roomId" class="hidden md:block" />
         </template>
 
         <li v-if="tracks.length === 0" class="flex items-center justify-center py-8 text-white/50 md:py-12" role="listitem">

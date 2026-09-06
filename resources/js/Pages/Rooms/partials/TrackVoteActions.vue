@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import Icon from '@/Components/Icon.vue'
 import TrackDownvoteMenu from './TrackDownvoteMenu.vue'
+import { applyTrackVotePayload } from '@/composables/useTrackVote'
 
 const props = defineProps({
   track: {
@@ -21,34 +22,16 @@ const props = defineProps({
 
 const submittingUp = ref(false)
 
-const adjustVoteCount = (field, delta) => {
-  if (typeof props.track[field] === 'number') {
-    props.track[field] = Math.max(0, props.track[field] + delta)
-  }
-}
-
 const voteUp = async () => {
   if (!props.roomId || submittingUp.value) {
     return
   }
 
-  const wasUpvoted = Boolean(props.track.user_voted_up)
   submittingUp.value = true
 
   try {
-    await axios.post(`/rooms/${props.roomId}/tracks/${props.track.id}/upvote`)
-
-    if (wasUpvoted) {
-      return
-    }
-
-    if (props.track.user_voted_down) {
-      adjustVoteCount('downvotes', -1)
-    }
-
-    props.track.user_voted_up = true
-    props.track.user_voted_down = false
-    adjustVoteCount('upvotes', 1)
+    const { data } = await axios.post(`/rooms/${props.roomId}/tracks/${props.track.id}/upvote`)
+    applyTrackVotePayload(props.track, data)
   } catch (error) {
     console.error('Error upvoting track:', error)
   } finally {

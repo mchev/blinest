@@ -6,8 +6,6 @@ import TrackVoteActions from './TrackVoteActions.vue'
 const props = defineProps({
   track: Object,
   getUserAnswerForTrackAndAnswer: Function,
-  voteTrackUp: Function,
-  voteTrackDown: Function,
   user: Object,
   roomId: Number,
   isLatest: {

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
-class TrackDownvoteTest extends TestCase
+class TrackVoteTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -24,6 +24,86 @@ class TrackDownvoteTest extends TestCase
         Bus::fake();
     }
 
+    public function test_authenticated_user_can_upvote_track(): void
+    {
+        [$user, $room, $track] = $this->createRoomWithTrack();
+
+        $this->actingAs($user)
+            ->post($this->upvoteUrl($room, $track))
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 1,
+                'downvotes' => 0,
+                'user_voted_up' => true,
+                'user_voted_down' => false,
+            ]);
+
+        $this->assertDatabaseHas('votes', [
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+            'votes' => 1,
+        ]);
+    }
+
+    public function test_user_can_toggle_off_upvote(): void
+    {
+        [$user, $room, $track] = $this->createRoomWithTrack();
+
+        Vote::query()->create([
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+            'votes' => 1,
+        ]);
+
+        $this->actingAs($user)
+            ->post($this->upvoteUrl($room, $track))
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 0,
+                'downvotes' => 0,
+                'user_voted_up' => false,
+                'user_voted_down' => false,
+            ]);
+
+        $this->assertDatabaseMissing('votes', [
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+        ]);
+    }
+
+    public function test_upvote_replaces_existing_downvote(): void
+    {
+        [$user, $room, $track] = $this->createRoomWithTrack();
+
+        Vote::query()->create([
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+            'votes' => -1,
+            'downvote_reason' => TrackDownvoteReason::Other->value,
+        ]);
+
+        $this->actingAs($user)
+            ->post($this->upvoteUrl($room, $track))
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 1,
+                'downvotes' => 0,
+                'user_voted_up' => true,
+                'user_voted_down' => false,
+            ]);
+
+        $this->assertDatabaseCount('votes', 1);
+        $this->assertDatabaseHas('votes', [
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votes' => 1,
+        ]);
+    }
+
     public function test_authenticated_user_can_downvote_track_with_reason(): void
     {
         [$user, $room, $track] = $this->createRoomWithTrack();
@@ -32,7 +112,13 @@ class TrackDownvoteTest extends TestCase
             ->post($this->downvoteUrl($room, $track), [
                 'reason' => TrackDownvoteReason::Difficulty->value,
             ])
-            ->assertSuccessful();
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 0,
+                'downvotes' => 1,
+                'user_voted_up' => false,
+                'user_voted_down' => true,
+            ]);
 
         $this->assertDatabaseHas('votes', [
             'user_id' => $user->id,
@@ -66,12 +152,49 @@ class TrackDownvoteTest extends TestCase
 
         $this->actingAs($user)
             ->post($this->downvoteUrl($room, $track), [])
-            ->assertSuccessful();
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 0,
+                'downvotes' => 0,
+                'user_voted_up' => false,
+                'user_voted_down' => false,
+            ]);
 
         $this->assertDatabaseMissing('votes', [
             'user_id' => $user->id,
             'votable_id' => $track->id,
             'votable_type' => $track->getMorphClass(),
+        ]);
+    }
+
+    public function test_downvote_replaces_existing_upvote(): void
+    {
+        [$user, $room, $track] = $this->createRoomWithTrack();
+
+        Vote::query()->create([
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+            'votes' => 1,
+        ]);
+
+        $this->actingAs($user)
+            ->post($this->downvoteUrl($room, $track), [
+                'reason' => TrackDownvoteReason::Difficulty->value,
+            ])
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 0,
+                'downvotes' => 1,
+                'user_voted_up' => false,
+                'user_voted_down' => true,
+            ]);
+
+        $this->assertDatabaseCount('votes', 1);
+        $this->assertDatabaseHas('votes', [
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votes' => -1,
         ]);
     }
 
@@ -152,7 +275,7 @@ class TrackDownvoteTest extends TestCase
         $room = Room::factory()->create([
             'user_id' => $user->id,
             'category_id' => Category::factory()->create()->id,
-            'slug' => 'downvote-room-'.$user->id,
+            'slug' => 'vote-room-'.$user->id,
             'is_public' => true,
             'is_active' => true,
             'is_featured' => false,
@@ -177,5 +300,10 @@ class TrackDownvoteTest extends TestCase
     private function downvoteUrl(Room $room, Track $track): string
     {
         return "/rooms/{$room->id}/tracks/{$track->id}/downvote";
+    }
+
+    private function upvoteUrl(Room $room, Track $track): string
+    {
+        return "/rooms/{$room->id}/tracks/{$track->id}/upvote";
     }
 }

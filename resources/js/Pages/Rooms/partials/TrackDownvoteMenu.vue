@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import Dropdown from '@/Components/Dropdown.vue'
 import Icon from '@/Components/Icon.vue'
+import { applyTrackVotePayload } from '@/composables/useTrackVote'
 
 const DOWNVOTE_REASONS = [
   { value: 'sound_quality', label: 'Poor sound quality' },
@@ -30,12 +31,6 @@ const props = defineProps({
 
 const submitting = ref(false)
 
-const adjustDownvoteCount = (delta) => {
-  if (typeof props.track.downvotes === 'number') {
-    props.track.downvotes = Math.max(0, props.track.downvotes + delta)
-  }
-}
-
 const postDownvote = async (payload) => {
   if (!props.roomId || submitting.value) {
     return
@@ -44,22 +39,8 @@ const postDownvote = async (payload) => {
   submitting.value = true
 
   try {
-    await axios.post(`/rooms/${props.roomId}/tracks/${props.track.id}/downvote`, payload)
-
-    if (payload.reason) {
-      if (props.track.user_voted_up) {
-        if (typeof props.track.upvotes === 'number') {
-          props.track.upvotes = Math.max(0, props.track.upvotes - 1)
-        }
-      }
-
-      props.track.user_voted_down = true
-      props.track.user_voted_up = false
-      adjustDownvoteCount(1)
-    } else {
-      props.track.user_voted_down = false
-      adjustDownvoteCount(-1)
-    }
+    const { data } = await axios.post(`/rooms/${props.roomId}/tracks/${props.track.id}/downvote`, payload)
+    applyTrackVotePayload(props.track, data)
   } catch (error) {
     console.error('Error downvoting track:', error)
   } finally {
