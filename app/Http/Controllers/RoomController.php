@@ -22,6 +22,7 @@ use App\Services\RoomPresenceService;
 use App\Services\Rooms\OfficialRoomRegistry;
 use App\Services\Rooms\RoomContentService;
 use App\Services\Rooms\RoomLandingService;
+use App\Services\Rooms\RoomParticipationService;
 use App\Services\Tracks\TrackAnswerCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -112,6 +113,8 @@ class RoomController extends Controller
         }
 
         $this->guestAuth->ensureGuestSession();
+
+        app(RoomParticipationService::class)->grantAccess($room);
 
         $room->load('category', 'owner');
 
@@ -340,6 +343,8 @@ class RoomController extends Controller
      */
     public function joined(Request $request, Room $room): JsonResponse
     {
+        app(RoomParticipationService::class)->ensureCanParticipate($room);
+
         if (! $room->is_playing && $room->is_autostart) {
             if (! $room->isPlaying()) { // To be sure there is no round playing
                 StartRound::dispatch($room, $request->user());

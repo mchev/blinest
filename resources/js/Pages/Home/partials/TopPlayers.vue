@@ -29,16 +29,18 @@ const podiumOrder = computed(() => {
   ].filter((entry) => entry.player)
 })
 
-const podiumHeight = (rank) => {
-  if (rank === 1) return 'h-24'
-  if (rank === 2) return 'h-16'
-  return 'h-12'
+const avatarRingClass = (rank) => {
+  if (rank === 1) return 'ring-brand-secondary/80'
+  if (rank === 2) return 'ring-brand-accent/70'
+
+  return 'ring-brand-primary/70'
 }
 
 const rankBadgeClass = (rank) => {
-  if (rank === 1) return 'retro-rank-badge retro-rank-badge--1'
-  if (rank === 2) return 'retro-rank-badge retro-rank-badge--2'
-  return 'retro-rank-badge retro-rank-badge--3'
+  if (rank === 1) return 'home-weekly-podium__badge home-weekly-podium__badge--1'
+  if (rank === 2) return 'home-weekly-podium__badge home-weekly-podium__badge--2'
+
+  return 'home-weekly-podium__badge home-weekly-podium__badge--3'
 }
 </script>
 
@@ -48,25 +50,26 @@ const rankBadgeClass = (rank) => {
       {{ __('Top 10 of the week') }}
     </h3>
 
-    <div v-if="podium.length" class="mb-4 flex items-end justify-center gap-2 px-1" :class="{ 'mb-0': embedded && !rest.length }">
-      <div v-for="{ player, rank } in podiumOrder" :key="player.user?.id || rank" class="flex flex-col items-center" :class="rank === 1 ? 'w-[34%]' : 'w-[28%]'">
-        <div class="relative mb-2">
-          <span :class="rankBadgeClass(rank)">{{ rank }}</span>
+    <div v-if="podium.length" class="home-weekly-podium" :class="{ 'mb-0': embedded && !rest.length, 'mb-4': !embedded || rest.length }">
+      <div v-for="{ player, rank } in podiumOrder" :key="player.user?.id || rank" class="home-weekly-podium__spot" :class="`home-weekly-podium__spot--${rank}`">
+        <div class="home-weekly-podium__avatar">
+          <span :class="rankBadgeClass(rank)" aria-hidden="true">{{ rank }}</span>
           <Link v-if="player.user?.id" :href="route('user.profile', { user: player.user.id })">
-            <img :src="player.user.photo" :alt="player.user.name" class="rounded-full object-cover ring-2 ring-white/20 ring-offset-2 ring-offset-brand-deep" :class="rank === 1 ? 'h-16 w-16' : 'h-12 w-12'" loading="lazy" />
+            <img :src="player.user.photo" :alt="player.user.name" class="home-weekly-podium__photo" :class="[rank === 1 ? 'home-weekly-podium__photo--first' : '', avatarRingClass(rank)]" loading="lazy" />
           </Link>
-          <img v-else :src="player.user?.photo || 'https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'" class="h-12 w-12 rounded-full" loading="lazy" />
+          <img v-else :src="player.user?.photo || 'https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'" :alt="player.user?.name || __('Deleted user')" class="home-weekly-podium__photo" :class="avatarRingClass(rank)" loading="lazy" />
         </div>
-        <div class="retro-podium-block" :class="podiumHeight(rank)">
-          <Link v-if="player.user?.id" :href="route('user.profile', { user: player.user.id })" class="truncate text-center text-xs font-bold text-white hover:text-white/80">
+
+        <div class="home-weekly-podium__card">
+          <Link v-if="player.user?.id" :href="route('user.profile', { user: player.user.id })" class="home-weekly-podium__name" :title="player.user.name">
             {{ player.user.name }}
           </Link>
-          <span v-else class="truncate text-center text-xs font-bold text-white/70">
+          <span v-else class="home-weekly-podium__name text-white/70" :title="player.user?.name || __('Deleted user')">
             {{ player.user?.name || __('Deleted user') }}
           </span>
-          <span class="mt-1 text-xs font-bold text-white">
-            {{ player.total_score }}<sup class="text-[10px]">{{ __('PTS') }}</sup>
-          </span>
+          <p class="home-weekly-podium__score">
+            {{ player.total_score }}<sup>{{ __('PTS') }}</sup>
+          </p>
         </div>
       </div>
     </div>

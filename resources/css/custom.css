@@ -274,25 +274,81 @@
     @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-brand-midnight text-white;
   }
 
-  /* ── Podium ── */
-  .retro-podium-block {
-    @apply flex w-full flex-col items-center px-2 pb-2 pt-3;
-    @apply rounded-lg border border-white/10 bg-brand-deep/80;
+  /* ── Home weekly podium (sidebar) ── */
+  .home-weekly-podium {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 0.375rem;
+    padding-inline: 0.125rem;
   }
 
-  .retro-rank-badge {
-    @apply absolute -left-1 -top-1 z-10 flex h-6 w-6 items-center justify-center text-[11px] font-black text-white;
-    @apply rounded-sm;
+  .home-weekly-podium__spot {
+    @apply flex min-w-0 flex-col items-center;
   }
 
-  .retro-rank-badge--1 {
+  .home-weekly-podium__avatar {
+    @apply relative mb-2;
+  }
+
+  .home-weekly-podium__photo {
+    @apply h-11 w-11 rounded-full object-cover ring-2 ring-offset-2 ring-offset-brand-deep;
+  }
+
+  .home-weekly-podium__photo--first {
+    @apply h-14 w-14;
+  }
+
+  .home-weekly-podium__badge {
+    @apply absolute -left-0.5 -top-0.5 z-10 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black shadow-md ring-2 ring-brand-deep;
+  }
+
+  .home-weekly-podium__badge--1 {
     @apply bg-brand-secondary text-brand-midnight;
   }
-  .retro-rank-badge--2 {
+
+  .home-weekly-podium__badge--2 {
     @apply bg-brand-accent-dark text-white;
   }
-  .retro-rank-badge--3 {
+
+  .home-weekly-podium__badge--3 {
     @apply bg-brand-primary text-white;
+  }
+
+  .home-weekly-podium__card {
+    @apply flex w-full min-w-0 flex-col items-center justify-center rounded-lg border border-white/15 bg-brand-deep/90 px-2 py-2 text-center;
+    min-height: 3.5rem;
+  }
+
+  .home-weekly-podium__spot--1 .home-weekly-podium__card {
+    min-height: 4.75rem;
+    @apply border-brand-secondary/35 bg-brand-deep shadow-[0_10px_24px_-14px_rgba(0,0,0,0.75)];
+  }
+
+  .home-weekly-podium__spot--2 .home-weekly-podium__card {
+    min-height: 4rem;
+    @apply border-brand-accent/30;
+  }
+
+  .home-weekly-podium__spot--3 .home-weekly-podium__card {
+    min-height: 3.75rem;
+    @apply border-brand-primary/30;
+  }
+
+  .home-weekly-podium__name {
+    @apply w-full min-w-0 truncate text-[11px] font-bold leading-snug text-white hover:text-white/80;
+  }
+
+  .home-weekly-podium__spot--1 .home-weekly-podium__name {
+    @apply text-xs;
+  }
+
+  .home-weekly-podium__score {
+    @apply mt-1 text-[10px] font-bold leading-none text-white/90 tabular-nums;
+  }
+
+  .home-weekly-podium__score sup {
+    @apply ml-0.5 text-[9px] font-semibold text-white/55;
   }
 
   /* ── Site-wide chrome ── */

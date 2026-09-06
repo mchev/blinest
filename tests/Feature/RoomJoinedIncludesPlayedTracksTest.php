@@ -11,10 +11,12 @@ use App\Models\TrackAnswer;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Redis;
+use Tests\Concerns\GrantsRoomParticipation;
 use Tests\TestCase;
 
 class RoomJoinedIncludesPlayedTracksTest extends TestCase
 {
+    use GrantsRoomParticipation;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -92,6 +94,8 @@ class RoomJoinedIncludesPlayedTracksTest extends TestCase
         ]);
         $round->forceFill(['tracks' => [$t1->id, $t2->id, $t3->id]])->save();
 
+        $this->grantRoomParticipation($room, $player);
+
         // Show.vue calls `/rooms/{id}/joined`; resolveRouteBinding defaults to id when no `{room:slug}` hint.
         $response = $this->actingAs($player)->getJson('/rooms/'.$room->id.'/joined');
 
@@ -157,6 +161,8 @@ class RoomJoinedIncludesPlayedTracksTest extends TestCase
             'current_track_started_at' => now(),
         ]);
         $round->forceFill(['tracks' => [$t1->id]])->save();
+
+        $this->grantRoomParticipation($room, $player);
 
         $response = $this->actingAs($player)->getJson('/rooms/'.$room->id.'/joined');
 

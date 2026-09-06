@@ -13,12 +13,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
-use Tests\Concerns\AddsRoomPresence;
+use Tests\Concerns\GrantsRoomParticipation;
 use Tests\TestCase;
 
 class TrackAnswerAliasScoringTest extends TestCase
 {
-    use AddsRoomPresence;
+    use GrantsRoomParticipation;
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -104,7 +104,7 @@ class TrackAnswerAliasScoringTest extends TestCase
 
         Cache::forget(Track::answersCacheKey($track->id));
 
-        $this->addUserToRoomPresence($room, $player);
+        $this->grantRoomParticipation($room, $player);
 
         $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
             'text' => 'Alias Artist',
@@ -189,7 +189,7 @@ class TrackAnswerAliasScoringTest extends TestCase
 
         Cache::forget(Track::answersCacheKey($track->id));
 
-        $this->addUserToRoomPresence($room, $player);
+        $this->grantRoomParticipation($room, $player);
 
         $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
             'text' => 'a',
@@ -268,7 +268,7 @@ class TrackAnswerAliasScoringTest extends TestCase
 
         Cache::forget(Track::answersCacheKey($track->id));
 
-        $this->addUserToRoomPresence($room, $player);
+        $this->grantRoomParticipation($room, $player);
 
         $response = $this->actingAs($player)->postJson(route('rounds.track.check', [$round, $track]), [
             'text' => 'Cached Artist',
