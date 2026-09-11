@@ -138,6 +138,39 @@ class TrackVoteTest extends TestCase
             ->assertInvalid(['reason']);
     }
 
+    public function test_downvote_with_reason_updates_existing_downvote_without_changing_count(): void
+    {
+        [$user, $room, $track] = $this->createRoomWithTrack();
+
+        Vote::query()->create([
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votable_type' => $track->getMorphClass(),
+            'votes' => -1,
+            'downvote_reason' => TrackDownvoteReason::Difficulty->value,
+        ]);
+
+        $this->actingAs($user)
+            ->post($this->downvoteUrl($room, $track), [
+                'reason' => TrackDownvoteReason::Other->value,
+            ])
+            ->assertSuccessful()
+            ->assertJson([
+                'upvotes' => 0,
+                'downvotes' => 1,
+                'user_voted_up' => false,
+                'user_voted_down' => true,
+            ]);
+
+        $this->assertDatabaseCount('votes', 1);
+        $this->assertDatabaseHas('votes', [
+            'user_id' => $user->id,
+            'votable_id' => $track->id,
+            'votes' => -1,
+            'downvote_reason' => TrackDownvoteReason::Other->value,
+        ]);
+    }
+
     public function test_user_can_remove_existing_downvote_without_reason(): void
     {
         [$user, $room, $track] = $this->createRoomWithTrack();

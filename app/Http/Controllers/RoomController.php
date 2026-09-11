@@ -386,7 +386,7 @@ class RoomController extends Controller
                     foreach ($finishedIds as $finishedId) {
                         $finishedTrack = $finishedTracks->get($finishedId);
                         if ($finishedTrack) {
-                            $playedTracksPayload[] = $trackAnswerCache->playlistPayloadForRoom($finishedTrack);
+                            $playedTracksPayload[] = $trackAnswerCache->playlistPayloadForRoom($finishedTrack, $request->user());
                         }
                     }
                 }

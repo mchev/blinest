@@ -15,7 +15,17 @@ class TrackDownvoteService
     {
         DB::transaction(function () use ($user, $track, $reason): void {
             if ($user->hasDownvoted($track)) {
-                $user->cancelVote($track);
+                if ($reason === null) {
+                    $user->cancelVote($track);
+
+                    return;
+                }
+
+                Vote::query()
+                    ->where('user_id', $user->getKey())
+                    ->whereMorphedTo('votable', $track)
+                    ->where('votes', -1)
+                    ->update(['downvote_reason' => $reason]);
 
                 return;
             }

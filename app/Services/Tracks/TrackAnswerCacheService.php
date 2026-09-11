@@ -5,6 +5,7 @@ namespace App\Services\Tracks;
 use App\Models\AnswerType;
 use App\Models\Track;
 use App\Models\TrackAnswer;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -27,7 +28,7 @@ class TrackAnswerCacheService
     /**
      * @return array<string, mixed>
      */
-    public function playlistPayloadForRoom(Track $track): array
+    public function playlistPayloadForRoom(Track $track, ?User $user = null): array
     {
         $answers = $this->answersForTrack($track);
 
@@ -40,6 +41,8 @@ class TrackAnswerCacheService
             'hint' => $track->hint,
             'upvotes' => $track->upvotes,
             'downvotes' => $track->downvotes,
+            'user_voted_up' => $user?->hasUpvoted($track) ?? false,
+            'user_voted_down' => $user?->hasDownvoted($track) ?? false,
             'answers' => $answers->map(fn (TrackAnswer $answer) => [
                 'id' => $answer->id,
                 'value' => $answer->value,

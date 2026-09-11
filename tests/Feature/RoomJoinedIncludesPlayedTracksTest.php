@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TrackDownvoteReason;
 use App\Models\AnswerType;
 use App\Models\Category;
 use App\Models\Playlist;
@@ -9,6 +10,7 @@ use App\Models\Room;
 use App\Models\Track;
 use App\Models\TrackAnswer;
 use App\Models\User;
+use App\Models\Vote;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Redis;
 use Tests\Concerns\GrantsRoomParticipation;
@@ -114,6 +116,80 @@ class RoomJoinedIncludesPlayedTracksTest extends TestCase
 
         $tracksOrder = $response->json('round.tracks');
         $this->assertSame([$t1->id, $t2->id, $t3->id], array_map('intval', $tracksOrder));
+    }
+
+    public function test_joined_played_tracks_include_user_vote_flags(): void
+    {
+        $category = Category::create(['name' => 'Cat']);
+        $owner = User::factory()->create();
+        $player = User::factory()->create();
+
+        $room = Room::create([
+            'name' => 'Test Room Joined Vote Flags',
+            'user_id' => $owner->id,
+            'category_id' => $category->id,
+            'is_public' => true,
+            'is_featured' => false,
+            'is_playing' => true,
+            'is_autostart' => false,
+            'track_duration' => 30,
+            'tracks_by_round' => 10,
+        ]);
+
+        $playlist = Playlist::create([
+            'name' => 'P',
+            'user_id' => $owner->id,
+        ]);
+        $answerType = AnswerType::create(['name' => 'Artist']);
+
+        $makeTrack = function (string $suffix) use ($playlist, $owner, $answerType): Track {
+            $track = Track::create([
+                'playlist_id' => $playlist->id,
+                'user_id' => $owner->id,
+                'provider' => 'youtube',
+                'provider_id' => 'id-'.$suffix,
+                'preview_url' => 'https://example.com/preview-'.$suffix,
+                'artwork_url' => 'https://example.com/art-'.$suffix,
+            ]);
+            TrackAnswer::forceCreate([
+                'track_id' => $track->id,
+                'answer_type_id' => $answerType->id,
+                'value' => 'Answer '.$track->id,
+                'score' => 5.0,
+            ]);
+
+            return $track;
+        };
+
+        $t1 = $makeTrack('one');
+        $t2 = $makeTrack('two');
+        $t3 = $makeTrack('three');
+
+        Vote::query()->create([
+            'user_id' => $player->id,
+            'votable_id' => $t1->id,
+            'votable_type' => $t1->getMorphClass(),
+            'votes' => -1,
+            'downvote_reason' => TrackDownvoteReason::Other->value,
+        ]);
+
+        $round = $room->rounds()->create([
+            'current' => 3,
+            'is_playing' => true,
+            'current_track_started_at' => now(),
+        ]);
+        $round->forceFill(['tracks' => [$t1->id, $t2->id, $t3->id]])->save();
+
+        $this->grantRoomParticipation($room, $player);
+
+        $response = $this->actingAs($player)->getJson('/rooms/'.$room->id.'/joined');
+
+        $response->assertOk();
+        $played = $response->json('playedTracks');
+        $this->assertTrue($played[0]['user_voted_down']);
+        $this->assertFalse($played[0]['user_voted_up']);
+        $this->assertFalse($played[1]['user_voted_down']);
+        $this->assertFalse($played[1]['user_voted_up']);
     }
 
     public function test_joined_returns_empty_played_tracks_when_only_first_extract_has_started(): void
