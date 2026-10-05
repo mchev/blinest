@@ -99,13 +99,13 @@ class HomeCatalogService
     {
         $tabs = ['official', 'community'];
 
-        if ($user !== null) {
+        if ($user !== null && ! $user->isGuest()) {
             $tabs[] = 'mine';
         }
 
         $tabs[] = 'minigames';
 
-        if ($user !== null) {
+        if ($user !== null && ! $user->isGuest()) {
             $tabs[] = 'favorites';
         }
 

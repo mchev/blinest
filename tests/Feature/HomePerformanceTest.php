@@ -799,6 +799,18 @@ class HomePerformanceTest extends TestCase
                 ->where('catalog_items.data.0.tracks_count', 2));
     }
 
+    public function test_guest_user_cannot_open_mine_catalog_tab(): void
+    {
+        $guest = User::factory()->create(['is_guest' => true]);
+
+        $this->actingAs($guest)
+            ->get(route('home', ['tab' => 'mine']))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Home/Index')
+                ->where('catalog', 'official'));
+    }
+
     public function test_mine_catalog_is_empty_when_user_has_no_private_rooms(): void
     {
         $user = User::factory()->create();

@@ -96,6 +96,12 @@ provide('reportTabPlayerDelta', ({ tab, delta }) => {
 
 const user = computed(() => page.props.auth?.user ?? null)
 
+const canManageOwnRooms = computed(() => Boolean(user.value) && !user.value?.is_guest)
+
+const authEntryLoginHref = computed(() => (user.value?.is_guest ? route('guest.to-login') : route('login')))
+
+const authEntryRegisterHref = computed(() => (user.value?.is_guest ? route('guest.to-register') : route('register')))
+
 const displayCatalog = computed(() => pendingTab.value ?? props.catalog)
 
 const showTabSkeleton = computed(() => pendingTab.value !== null)
@@ -130,13 +136,13 @@ const tabs = computed(() => {
     },
   ]
 
-  if (user.value) {
+  if (canManageOwnRooms.value) {
     items.push({ id: 'mine', label: t('My rooms') })
   }
 
   items.push({ id: 'minigames', label: t('Mini-games') })
 
-  if (user.value) {
+  if (canManageOwnRooms.value) {
     items.push({
       id: 'favorites',
       label: t('Bookmarks'),
@@ -375,15 +381,23 @@ const tabId = (tab) => `home-catalog-tab-${tab}`
             {{ t('No rooms yet') }}
           </h3>
           <p class="max-w-md text-sm text-white/70">
-            {{ t('Create your first room to start playing') }}
+            {{ canManageOwnRooms ? t('Create your first room to start playing') : t('Home mine catalog guest CTA body') }}
           </p>
-          <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div v-if="canManageOwnRooms" class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link :href="route('rooms.create')" class="game-btn-secondary inline-flex">
               {{ t('Create my first room') }}
             </Link>
             <Link :href="route('docs.create-content')" class="game-link-action inline-flex items-center gap-1">
               {{ t('Créer rooms & playlists') }}
               <Icon name="cheveron-right" class="inline-block h-4 w-4" />
+            </Link>
+          </div>
+          <div v-else class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link :href="authEntryLoginHref" class="game-btn-secondary inline-flex">
+              {{ t('Login') }}
+            </Link>
+            <Link :href="authEntryRegisterHref" class="game-link-action inline-flex items-center justify-center px-3 py-2">
+              {{ t('Register') }}
             </Link>
           </div>
         </div>
