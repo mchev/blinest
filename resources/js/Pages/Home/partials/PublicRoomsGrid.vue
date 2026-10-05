@@ -56,6 +56,14 @@ const normalizeCategoryIds = (ids = [], fallbackId = null) => {
   return fallbackId ? [String(fallbackId)] : []
 }
 
+const categoryIdsEqual = (left, right) => {
+  if (left.length !== right.length) {
+    return false
+  }
+
+  return left.every((id, index) => id === right[index])
+}
+
 const selectedCategoryIds = ref(normalizeCategoryIds(props.catalogCategoryIds, props.catalogCategoryId))
 
 const liveTabPlayerCounts = ref({
@@ -222,6 +230,8 @@ const finishPartialReload = () => {
 }
 
 const reloadCatalog = (query) => {
+  router.cancelAll()
+
   router.get(
     route('home'),
     {
@@ -245,13 +255,24 @@ const switchTab = (tab) => {
   }
 
   pendingTab.value = tab
-  selectedCategoryIds.value = []
+
+  if (selectedCategoryIds.value.length > 0) {
+    selectedCategoryIds.value = []
+  }
 
   reloadCatalog({ tab })
 }
 
 watch(selectedCategoryIds, (value, previous) => {
   if (previous === undefined) {
+    return
+  }
+
+  if (pendingTab.value !== null) {
+    return
+  }
+
+  if (categoryIdsEqual(value, previous)) {
     return
   }
 
@@ -270,7 +291,13 @@ watch(selectedCategoryIds, (value, previous) => {
 watch(
   () => [props.catalogCategoryIds, props.catalogCategoryId],
   ([ids, fallbackId]) => {
-    selectedCategoryIds.value = normalizeCategoryIds(ids, fallbackId)
+    const next = normalizeCategoryIds(ids, fallbackId)
+
+    if (categoryIdsEqual(next, selectedCategoryIds.value)) {
+      return
+    }
+
+    selectedCategoryIds.value = next
   },
   { deep: true },
 )
