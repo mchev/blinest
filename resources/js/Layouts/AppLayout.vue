@@ -4,8 +4,7 @@ import Navbar from '@/Components/Navbar.vue'
 import MobileBottomNav from '@/Components/MobileBottomNav.vue'
 import Footer from '@/Components/Footer.vue'
 import SkipLink from '@/Components/SkipLink.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
+import Adsense from '@/Components/Adsense.vue'
 </script>
 <template>
   <div class="min-h-screen text-white">
@@ -19,7 +18,7 @@ import { EZOIC } from '@/ezoic'
             <main v-if="$slots.default" id="main-content" tabindex="-1" class="flex flex-col justify-between px-4 py-4 pb-20 focus:outline-none md:min-h-0 md:flex-1 md:overflow-y-auto md:px-12 md:pb-4 md:pt-6" scroll-region>
               <flash-messages />
               <slot />
-              <EzoicAd :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8 mb-4" />
+              <Adsense wrapper-class="mt-8 mb-4" />
               <Footer />
             </main>
           </Transition>

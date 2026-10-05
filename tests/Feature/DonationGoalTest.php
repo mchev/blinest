@@ -71,7 +71,7 @@ class DonationGoalTest extends TestCase
                 ->where('auth.user.donor_perks', ['ad_free', 'avatar_crown', 'supporter_reactions']));
     }
 
-    public function test_individual_donor_skips_ezoic_even_when_goal_not_reached(): void
+    public function test_individual_donor_skips_adsense_even_when_goal_not_reached(): void
     {
         $this->app->detectEnvironment(fn (): string => 'production');
 
@@ -91,7 +91,7 @@ class DonationGoalTest extends TestCase
         $response = $this->actingAs($user)->get(route('home'));
 
         $response->assertOk();
-        $this->assertStringNotContainsString('ezojs.com/ezoic/sa.min.js', $response->getContent());
+        $this->assertStringNotContainsString('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', $response->getContent());
     }
 
     public function test_support_page_is_accessible_and_lists_history(): void
@@ -104,7 +104,7 @@ class DonationGoalTest extends TestCase
                 ->has('recent_donations'));
     }
 
-    public function test_blade_skips_ezoic_scripts_when_goal_reached(): void
+    public function test_blade_skips_adsense_scripts_when_goal_reached(): void
     {
         $this->app->detectEnvironment(fn (): string => 'production');
 
@@ -123,6 +123,18 @@ class DonationGoalTest extends TestCase
         $response = $this->actingAs($user)->get(route('home'));
 
         $response->assertOk();
-        $this->assertStringNotContainsString('ezojs.com/ezoic/sa.min.js', $response->getContent());
+        $this->assertStringNotContainsString('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', $response->getContent());
+    }
+
+    public function test_blade_includes_adsense_script_for_visitors_when_ads_enabled(): void
+    {
+        $this->app->detectEnvironment(fn (): string => 'production');
+
+        $user = User::factory()->create(['is_guest' => false]);
+
+        $response = $this->actingAs($user)->get(route('home'));
+
+        $response->assertOk();
+        $this->assertStringContainsString('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', $response->getContent());
     }
 }

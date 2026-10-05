@@ -124,10 +124,10 @@ class AppServiceProvider extends ServiceProvider
             $donationGoal = app(DonationGoalService::class);
             $donorPerks = app(DonorPerkService::class);
 
-            $serveEzoicAds = ! $donationGoal->shouldDisableAds()
+            $serveAds = ! $donationGoal->shouldDisableAds()
                 && ! $donorPerks->shouldDisableAdsForUser(auth()->user());
 
-            $view->with('serveEzoicAds', $serveEzoicAds);
+            $view->with('serveAds', $serveAds);
         });
     }
 }

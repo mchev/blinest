@@ -1,8 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Card from '@/Components/Card.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
-import { EZOIC } from '@/ezoic'
+import Adsense from '@/Components/Adsense.vue'
 
 defineProps({
   page: Object,
@@ -17,7 +16,7 @@ defineProps({
           <small class="text-xs text-neutral-500">{{ __('Last revision') }} : {{ page.date }}</small>
         </div>
       </template>
-      <EzoicAd :placement-id="EZOIC.underFirstParagraph" wrapper-class="mb-6" />
+      <Adsense wrapper-class="mb-6" />
       <section class="prose prose-invert" v-html="page.content" />
     </Card>
   </AppLayout>

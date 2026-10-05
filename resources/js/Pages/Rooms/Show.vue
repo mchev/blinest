@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted, onBeforeUnmount, watch } from 'vue'
+import { computed, ref, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { usePage, Link, router } from '@inertiajs/vue3'
 import RoomLayout from '@/Layouts/RoomLayout.vue'
 import Card from '@/Components/Card.vue'
@@ -17,9 +17,8 @@ import FinishedRoundModal from './partials/FinishedRoundModal.vue'
 import RoundFinalizingOverlay from './partials/RoundFinalizingOverlay.vue'
 import SendSuggestionModal from './partials/SendSuggestionModal.vue'
 import RoomSeoPanel from './partials/RoomSeoPanel.vue'
-import EzoicAd from '@/Components/EzoicAd.vue'
+import Adsense from '@/Components/Adsense.vue'
 import { useAdsDisabled } from '@/composables/useAdsDisabled'
-import { EZOIC, clearEzoicAds, scheduleEzoicSync } from '@/ezoic'
 
 const props = defineProps({
   room: {
@@ -373,17 +372,6 @@ const fetchRoundScores = async (roundId) => {
   }
 }
 
-watch(
-  roomAdsEnabled,
-  (enabled) => {
-    if (enabled) {
-      scheduleEzoicSync(window.location.pathname, { force: true })
-    } else {
-      clearEzoicAds()
-    }
-  },
-  { immediate: true },
-)
 </script>
 <template>
   <RoomLayout>
@@ -489,7 +477,7 @@ watch(
 
         <RoomSeoPanel v-if="seo" :room="room" :seo="seo" />
 
-        <EzoicAd v-if="roomAdsEnabled" :placement-id="EZOIC.bottomOfPage" wrapper-class="mt-8" />
+        <Adsense v-if="roomAdsEnabled" force-serve wrapper-class="mt-8" />
       </div>
 
       <div v-if="user && displayChat && room.is_chat_active && showDesktopChat" class="chat-panel flex h-[48dvh] max-h-[32rem] min-h-[24rem] w-full flex-shrink-0 md:h-full md:max-h-none md:min-h-0 md:w-1/5">

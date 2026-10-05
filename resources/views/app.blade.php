@@ -2,15 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @production
-            @if ($serveEzoicAds ?? true)
-            <script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
-            <script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
-            <script async src="https://www.ezojs.com/ezoic/sa.min.js"></script>
-            <script>
-                window.ezstandalone = window.ezstandalone || {};
-                ezstandalone.cmd = ezstandalone.cmd || [];
-            </script>
-            <script src="https://ezoicanalytics.com/analytics.js"></script>
+            @if ($serveAds ?? true)
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ config('ads.client_id') }}"
+                crossorigin="anonymous"></script>
             @endif
         @endproduction
 

@@ -7,9 +7,6 @@
                 "boost:mcp"
             ]
         },
-        "ezoic-setup": {
-            "url": "https://setup-agent.ezoic.com/mcp"
-        },
         "herd": {
             "command": "php",
             "args": [
