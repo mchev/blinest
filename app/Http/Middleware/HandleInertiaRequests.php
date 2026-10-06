@@ -141,6 +141,7 @@ class HandleInertiaRequests extends Middleware
                 app()->getLocale(),
             ),
             'chat_reactions' => fn () => $chatReactions->emojiCatalog(),
+            'discord_invite_url' => fn () => config('blinest.discord_invite_url'),
         ]);
     }
 }

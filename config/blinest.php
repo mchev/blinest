@@ -18,4 +18,12 @@ return [
         explode(',', (string) env('BLINEST_HOMEPAGE_HIDDEN_CATEGORY_IDS', '5')),
     ))),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Community Discord invite
+    |--------------------------------------------------------------------------
+    */
+
+    'discord_invite_url' => env('DISCORD_INVITE_URL', 'https://discord.gg/EN8bMKr2w'),
+
 ];

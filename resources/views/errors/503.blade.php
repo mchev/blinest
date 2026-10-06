@@ -14,7 +14,7 @@
     <div>
         <p>
             Le site est actuellement en cours de maintenance, il sera bientôt de nouveau accessible.<br>
-            Vous pouvez toujours <a href="mailto:hello@blinest.com">envoyer un mail</a> ou suivre ce qu'il se passe sur le <a href="https://discord.com/invite/uKyVgcxcFa" rel="external nofollow">Discord</a>.
+            Vous pouvez toujours <a href="mailto:hello@blinest.com">envoyer un mail</a> ou suivre ce qu'il se passe sur le <a href="{{ config('blinest.discord_invite_url') }}" rel="external nofollow">Discord</a>.
         </p>
         <p>&mdash; Martin de Blinest</p>
     </div>

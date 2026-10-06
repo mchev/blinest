@@ -25,6 +25,19 @@ class HomePerformanceTest extends TestCase
         Cache::flush();
     }
 
+    public function test_home_page_shares_discord_invite_url(): void
+    {
+        config(['blinest.discord_invite_url' => 'https://discord.gg/test-invite']);
+
+        $user = User::factory()->create(['is_guest' => false]);
+
+        $this->actingAs($user)
+            ->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('discord_invite_url', 'https://discord.gg/test-invite'));
+    }
+
     public function test_homepage_room_payload_includes_photo_without_reverb_lookup(): void
     {
         $broadcastManager = Mockery::mock(BroadcastManager::class);
